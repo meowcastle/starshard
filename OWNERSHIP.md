@@ -67,6 +67,45 @@ If you add a binding, add it to `BINDINGS.md` in the same commit.
    transform — and evaluates it inside `new Function(...)`. Modules must be
    pulled in with `await import()` from `componentDidMount`. This is why
    `renderVals()` guards on `ready`.
+6. **A design export must never include or reference `astro.js`, `shards.js` or
+   `duet.js`.** Those are Claude Code's, they change most sessions, and an
+   export that `import()`s them as siblings has shipped a stale pre-refactor
+   copy of one or both **four times** — most recently the crash documented in
+   `STATUS.md` (`copy.fallbackWeave is not a function`, a function `shards.js`
+   stopped exporting when W2 landed). If a handoff includes either file, strip
+   it before merging and treat the export as having followed a stale reference.
+
+## Phone flow (<1024px) — the `p`-prefix rule
+
+`Star Shard v2.dc.html` is one file, one `Component`, two markup trees:
+`<sc-if value="{{ isDesktop }}">` (windowed multi-window desktop UI) and a
+sibling `<sc-if value="{{ isPhone }}">` (linear step flow, ported from the
+former standalone `Star Shard - Staging.dc.html`, now retired — see below).
+`isPhone`/`isDesktop` come from a `matchMedia('(max-width: 1023px)')` listener
+in `componentDidMount`, so only one tree's event handlers are ever mounted.
+
+**Every phone-specific state key, method, and top-level `renderVals()` binding
+is `p`-prefixed** (`pStep`, `pChart`, `pShards`, `pAdvance`, `pGoBack`, ...) —
+the same convention as the existing `f`/`d`/`g`/`w` prefixes for desktop's
+form/duet/guestbook/window state. A literal merge of the two flows' bindings
+has real name collisions (`chart`, `shards`, `hasDuet`, `todayMansion`) that
+would silently overwrite one screen's data with the other's; nothing checks
+for this except the convention.
+
+**Two exceptions, both deliberate:**
+- **Auth stays shared and unprefixed** (`authChecked`/`authEmail`/`doLogin`/
+  `doSignup`/`doLogout`/`checkAuth`/`isLoggedIn`/etc.) — a login is a login
+  regardless of viewport, and the phone account screen reuses the exact same
+  bindings as desktop's `wAccount` window, just restyled.
+- **`deck` stays shared and unprefixed** — it's account data (which of the 28
+  mansions a user has collected), not phone-UI state, and is meant to sync
+  across viewports the same way auth does. On login, `loadAndMergeDeck()`
+  unions the server deck with whatever's in `localStorage` rather than letting
+  either side overwrite the other — see the merge plan's data-loss note.
+
+If you add a new phone-only binding, prefix it. If you're not sure whether
+something is phone-UI state or shared account data, default to prefixing —
+an unprefixed collision is a silent bug, a redundant prefix is not.
 
 ## Privacy invariant
 

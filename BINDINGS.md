@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**349 bindings, 140 top-level.**
+**433 bindings, 213 top-level.**
 
 ## Rule
 
@@ -46,8 +46,13 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `glossary` | `gl` | `body`, `title` |
 | `guestEntries` | `ge` | `date`, `msg`, `name`, `stamp` |
 | `miniShards` | `m` | `border`, `color`, `label`, `value` |
+| `pCityResults` | `r` | `coords`, `name`, `pick`, `region` |
+| `pDeck` | `d` | `bg`, `border`, `numeral` |
+| `pPips` | `p` | `glyph`, `text`, `value` |
+| `pReadingParas` | `p` | `glyph`, `text`, `value` |
+| `pShards` | `s` | `body`, `cursor`, `displayTitle`, `file`, `gem`, `headline`, `hidden`, `kind`, `label`, `onReveal`, `revealed`, `size`, `status`, `title`, `titleColor`, `tradition` |
 | `placementRows` | `pr` | `label`, `value` |
-| `shards` | `s` | `body`, `file`, `gem`, `headline`, `hidden`, `onReveal`, `revealed`, `status`, `title`, `titleColor`, `tradition` |
+| `shards` | `s` | `body`, `cursor`, `displayTitle`, `file`, `gem`, `headline`, `hidden`, `kind`, `label`, `onReveal`, `revealed`, `size`, `status`, `title`, `titleColor`, `tradition` |
 | `stampOptions` | `st` | `bc`, `bg`, `pick`, `t` |
 | `startItems` | `si` | `icon`, `label`, `onClick` |
 | `taskItems` | `t` | `bc`, `bg`, `icon`, `label`, `onClick`, `x1`, `x2`, `y1`, `y2` |
@@ -118,10 +123,12 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `hasDuet` | component state |
 | `hasPlace` | component state |
 | `hasResults` | component state |
+| `isDesktop` | component state |
 | `isForgot` | component state |
 | `isLoggedIn` | component state |
 | `isLoggedOut` | component state |
 | `isLogin` | component state |
+| `isPhone` | component state |
 | `isReset` | component state |
 | `isSignup` | component state |
 | `manualMode` | component state |
@@ -134,6 +141,77 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `openDoc` | windows.js |
 | `openReader` | windows.js |
 | `openWheel` | windows.js |
+| `pAdvance` | component state |
+| `pCardNumeral` | component state |
+| `pCityResults` | component state |
+| `pCtaDisabled` | component state |
+| `pCtaLabel` | component state |
+| `pDate` | component state |
+| `pDeck` | component state |
+| `pDeckCount` | component state |
+| `pDoSearch` | component state |
+| `pDuetBody` | component state |
+| `pFormError` | component state |
+| `pFriendDate` | component state |
+| `pFriendLabel` | component state |
+| `pFriendMansion` | component state |
+| `pFriendName` | component state |
+| `pFriendNumeral` | component state |
+| `pGoAccount` | component state |
+| `pGoBack` | component state |
+| `pGoDuet` | component state |
+| `pHasDuet` | component state |
+| `pHasPlace` | component state |
+| `pHasResults` | component state |
+| `pIsAccount` | component state |
+| `pIsCard` | component state |
+| `pIsCollection` | component state |
+| `pIsDuet` | component state |
+| `pIsForm` | component state |
+| `pIsLanding` | component state |
+| `pIsShards` | component state |
+| `pIsShatter` | component state |
+| `pLat` | component state |
+| `pLon` | component state |
+| `pMansionEpithet` | component state |
+| `pMansionName` | component state |
+| `pManualMode` | component state |
+| `pManualToggleLabel` | component state |
+| `pName` | component state |
+| `pNotManual` | component state |
+| `pOffsetLine` | component state |
+| `pPips` | component state |
+| `pPlaceLine` | component state |
+| `pQuery` | component state |
+| `pQueryKey` | component state |
+| `pReadingLabel` | component state |
+| `pReadingParas` | component state |
+| `pRevealLabel` | component state |
+| `pSaveCard` | component state |
+| `pSearchLabel` | component state |
+| `pSetDate` | component state |
+| `pSetFriendDate` | component state |
+| `pSetFriendName` | component state |
+| `pSetLat` | component state |
+| `pSetLon` | component state |
+| `pSetName` | component state |
+| `pSetQuery` | component state |
+| `pSetTime` | component state |
+| `pSetTz` | component state |
+| `pShards` | component state |
+| `pShatterNote` | component state |
+| `pShowBack` | component state |
+| `pShowCta` | component state |
+| `pTime` | component state |
+| `pTimeKnown` | component state |
+| `pTimeUnknown` | component state |
+| `pTodayBody` | component state |
+| `pTodayDate` | component state |
+| `pTodayMansion` | component state |
+| `pToggleManual` | component state |
+| `pToggleTime` | component state |
+| `pTz` | component state |
+| `pTzNote` | component state |
 | `placeLine` | format.js |
 | `placementRows` | format.js + astro.js |
 | `playLabel` | component state |

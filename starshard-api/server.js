@@ -356,6 +356,35 @@ app.put('/api/state', requireAuth, wrap(async (req, res) => {
   res.status(204).end();
 }));
 
+app.get('/api/deck', requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute(
+    'SELECT deck_json FROM deck WHERE user_id = ?',
+    [req.userId]
+  );
+  if (!rows[0]) return res.json({ deck: null });
+  try {
+    res.json({ deck: JSON.parse(rows[0].deck_json) });
+  } catch (e) {
+    res.json({ deck: null });
+  }
+}));
+
+app.put('/api/deck', requireAuth, wrap(async (req, res) => {
+  const { deck } = req.body || {};
+  // Bounded domain (28 lunar mansions), unlike window_state's opaque blob —
+  // validate the shape, not just that it's JSON-serializable.
+  if (!Array.isArray(deck) || deck.length > 28 || !deck.every(n => Number.isInteger(n) && n >= 0 && n <= 27)) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+  const json = JSON.stringify([...new Set(deck)]);
+  await pool.execute(
+    'INSERT INTO deck (user_id, deck_json) VALUES (?, ?) ' +
+    'ON DUPLICATE KEY UPDATE deck_json = VALUES(deck_json)',
+    [req.userId, json]
+  );
+  res.status(204).end();
+}));
+
 app.get('/api/guestbook', wrap(async (req, res) => {
   const [rows] = await pool.execute(
     'SELECT name, msg, stamp, created_at FROM guestbook_entries ORDER BY id DESC LIMIT 50'

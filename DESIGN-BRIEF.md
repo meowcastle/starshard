@@ -73,6 +73,15 @@ And two files that are machine-generated — edits are silently discarded:
 The `<script type="text/x-dc">` block at the bottom of the `.dc.html` is shared.
 It holds state, lifecycle, and `renderVals()`. Leave its logic alone.
 
+**Do not include or reference `astro.js`, `shards.js` or `duet.js` in an
+export — not even as a sibling `import()`.** They change most sessions, and an
+export that references them has shipped a stale pre-refactor copy **four
+times now**, most recently a crash on the core reading step (`STATUS.md`:
+`copy.fallbackWeave is not a function` — a function `shards.js` stopped
+exporting a while back). If a mock needs sample reading text, hardcode a
+placeholder string in the export instead of importing the real module — the
+engineering side will wire it to the real one on merge.
+
 ---
 
 ## The one rule
@@ -101,25 +110,33 @@ copy — is yours to change freely.
 
 ## The work, in priority order
 
-### P1 — A phone-native path (the big one)
+### P1 — A phone-native path — done, and now live inside `v2.dc.html`
 
-Not a responsive squeeze of the window manager. A genuinely separate
-single-column flow at narrow viewports: one screen per step, full-bleed,
-thumb-reachable, no window chrome.
+The single-column, one-screen-per-step phone flow shipped and is merged into
+`Star Shard v2.dc.html` itself as a second markup tree, not a separate page.
+The root markup is now two siblings:
 
-Why the current build fails on a phone:
+```
+<sc-if value="{{ isDesktop }}">  the windowed desktop, ≥1024px, unchanged
+<sc-if value="{{ isPhone }}">    the phone flow, <1024px
+```
 
-- `dragWin` and `resizeWin` are the primary verbs and **have no touch equivalent**
-- Windows clamp to `max(300, viewport − 116)` px, so on a 390px phone a window is
-  300px wide starting at x=104 — it overflows — on top of a fixed 88px icon rail
-- The taskbar takes 46px and every title bar another ~25px, so 30–40% of the
-  viewport is chrome before any content
-- The ✕ and _ buttons are 20×17px against a 44px minimum tap target
-- **The Android back button and iOS edge-swipe exit the whole site**, because
-  opening a window is not a navigation
+`isPhone`/`isDesktop` come from a viewport listener in the script block; only
+one tree mounts its event handlers at a time.
 
-Keep the Windows-95 desktop at ≥1024px as the "you found the good version"
-reward, and let the phone flow link into it. Poolsuite does exactly this.
+**New binding convention: everything inside the phone tree is `p`-prefixed**
+(`{{ pStep }}`, `{{ pChart }}`, `{{ pAdvance }}`, `{{ pShards }}`, ...) to keep
+it collision-free with the desktop tree's own bindings, which use the file's
+existing `f`/`d`/`g`/`w` prefixes. If you're restyling something inside
+`<sc-if value="{{ isPhone }}">`, its bindings will be `p`-prefixed — that's
+expected, not a typo. The two exceptions are auth (`isLoggedIn`, `authEmail`,
+`doLogin`, etc.) and `deck`, both shared unprefixed with desktop since they're
+account data, not phone-UI state. Full rule: `OWNERSHIP.md`.
+
+The standalone `Star Shard - Staging.dc.html` export this was built from is
+retired — its content now lives inside `v2.dc.html`'s phone tree. Don't build
+against the standalone file going forward; treat `v2.dc.html` as the only
+live page, desktop and phone both.
 
 ### P2 — The share card, redesigned to 9:16
 
@@ -212,6 +229,9 @@ Please include in your handoff notes:
 1. Any binding you had to add, rename or remove
 2. Whether you changed the `CARD` or `LAYOUT` blocks
 3. Whether the meta tags survived
+4. Confirm the export does not import or reference `astro.js`, `shards.js` or
+   `duet.js` (see "What you must not touch" above — this has broken a handoff
+   four times)
 
 The engineering side runs `npm run bindings` on receipt, which fails the build on
 any binding mismatch, plus a browser smoke test that drives the full reading flow.

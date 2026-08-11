@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C5E58">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -24,17 +25,109 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <script src="./image-slot.js"></script>
 <style>
+/* Star Shard Design System v1.0 tokens — copied from design-system/src/tokens/
+   (which itself mirrors Claude Design's export), not hand-transcribed. Used by
+   the phone flow below 1024px; the desktop markup keeps its existing hex
+   values (out of scope for this pass — see CLAUDE.md/OWNERSHIP.md). */
+:root{
+  --cream:#F8F8F0;
+  --white:#FFFFFF;
+  --teal-100:#D8F0F0;
+  --teal-200:#A8E0DC;
+  --teal-500:#38C0B8;
+  --teal-700:#1C5E58;
+  --teal-900:#102828;
+  --pink-200:#F8E0E8;
+  --pink-500:#F878A8;
+  --pink-700:#A63459;
+  --butter-200:#F8F0C8;
+  --amber-700:#7A5C18;
+
+  --surface:var(--cream);
+  --surface-raised:var(--white);
+  --surface-sunken:var(--teal-100);
+  --backdrop:var(--teal-700);
+  --ink:var(--teal-900);
+  --ink-muted:var(--teal-700);
+  --ink-accent:var(--pink-700);
+  --ink-warn:var(--amber-700);
+  --accent:var(--teal-500);
+  --action:var(--pink-500);
+  --edge-light:var(--white);
+  --edge-dark:#4E8C86;
+  --focus:var(--pink-700);
+
+  --font-retro:'Pixelify Sans',monospace;
+  --font-display:'Baloo 2',cursive;
+  --font-body:'Varela Round',sans-serif;
+  --text-2xs:11px; --text-xs:13px; --text-sm:15px; --text-md:18px;
+  --text-lg:22px; --text-xl:28px; --text-2xl:36px; --text-3xl:46px;
+  --text-hero:64px; --text-numeral:200px;
+  --leading-tight:1.05; --leading-snug:1.2; --leading-normal:1.6;
+  --weight-display:800; --weight-heading:700;
+  --tracking-eyebrow:.18em; --tracking-display:-.01em;
+
+  --space-1:4px; --space-2:6px; --space-3:8px; --space-4:12px; --space-5:16px;
+  --space-6:20px; --space-7:24px; --space-8:32px; --space-9:40px;
+  --tap-min:44px; --measure:64ch;
+
+  --radius-none:0; --radius-round:50%; --radius-card:16px; --radius-card-sm:6px;
+  --bevel:2px;
+  --bevel-raised:var(--bevel) solid;
+  --border-raised-colors:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  --border-inset-colors:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);
+  --shadow-window:4px 4px 0 rgba(16,40,40,.45);
+  --shadow-raised:3px 3px 0 rgba(16,40,40,.35);
+  --shadow-chip:2px 2px 0 rgba(16,40,40,.30);
+  --focus-ring:3px solid var(--focus);
+  --focus-offset:2px;
+}
+/* card context — tarot faces, deck thumbnails, the share card. Roles inverted. */
+[data-context="card"]{
+  --surface:var(--teal-900);
+  --surface-raised:#1A3A38;
+  --surface-sunken:#0A1C1C;
+  --ink:var(--cream);
+  --ink-muted:var(--teal-200);
+  --ink-accent:var(--pink-500);
+  --ink-warn:var(--butter-200);
+  --edge-light:#2A5450;
+  --edge-dark:#061212;
+  --focus:var(--pink-500);
+}
+/* foil — rare-pull treatment. --ink-accent pinned to butter-200 here: the
+   inherited card-context pink-500 on foil-surface is 3.97:1, below AA
+   (STATUS.md). butter-200 on foil-surface is 8.81:1. */
+[data-context="card"][data-foil], [data-foil]{
+  --foil-surface:#5C3A1C;
+  --foil-sunken:#3A2408;
+  --foil-edge:var(--butter-200);
+  --surface:var(--foil-surface);
+  --surface-sunken:var(--foil-sunken);
+  --edge-light:var(--foil-edge);
+  --ink-accent:var(--butter-200);
+}
+:root{
+  --foil-surface:#5C3A1C;
+  --foil-sunken:#3A2408;
+  --foil-edge:#F8F0C8;
+}
+
 body{margin:0;background:#3b2a63}
 a{color:#3fb8ad}a:hover{color:#ff8fc0}
+*:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
 @keyframes twinkle{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes popIn{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1)}}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:translateY(6px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 input,select,button,textarea{font-family:'Varela Round',sans-serif}
 ::selection{background:#ff8fc0;color:#fff}
 </style>
 </helmet>
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
 <div style="min-height:160vh;font-family:'Varela Round',sans-serif;color:#4a3b47;background:linear-gradient(180deg,#2c1f4e 0%,#4a3277 45%,#7c4d92 80%,#b06aa8 100%);position:relative;padding-bottom:70px;box-sizing:border-box">
   <div style="position:absolute;inset:0;pointer-events:none;color:#ffe9f4;font-size:12px;font-family:monospace">
     <sc-if value="{{ sparklesOn }}" hint-placeholder-val="{{ true }}">
@@ -647,6 +740,347 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     <div style="flex:none;white-space:nowrap;background:#ffe9f4;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:4px 12px;font-family:'Pixelify Sans',monospace;font-size:13px;color:#8a4d9e">☾ {{ clock }}</div>
   </div>
 </div>
+</sc-if>
+
+<!-- =========================================================================
+     PHONE FLOW — <1024px. Ported from the standalone `Star Shard - Staging
+     .dc.html` export (now retired). Every binding here is p-prefixed except
+     auth (isLoggedIn/aEmail/authSubmit/etc., shared verbatim with desktop —
+     a login is a login regardless of viewport) and `deck` (account data, not
+     phone-UI state, shared the same way). See OWNERSHIP.md.
+     ========================================================================= -->
+<sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:var(--font-body);color:var(--ink);background:var(--teal-700);height:100dvh;max-height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;padding:0">
+
+  <header style="flex:none;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);min-height:46px;background:var(--surface);border-bottom:var(--bevel) solid var(--edge-dark)">
+    <sc-if value="{{ pShowBack }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ pGoBack }}" aria-label="go back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;font-size:26px;color:var(--ink-muted);cursor:pointer;margin-left:-10px">‹</button>
+    </sc-if>
+    <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted);flex:1">STAR SHARD</div>
+    <button onClick="{{ pGoAccount }}" aria-label="your account" style="min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;font-size:18px;color:var(--ink-muted);cursor:pointer;margin-right:-10px">☾</button>
+  </header>
+
+  <main style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;padding:var(--space-4);gap:var(--space-4)">
+
+    <sc-if value="{{ pIsLanding }}" hint-placeholder-val="{{ true }}">
+      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+          <span style="flex:1">☾ starshard.exe</span>
+          <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">_</span>
+          <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">✕</span>
+        </div>
+        <div style="padding:var(--space-5);display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-4)">
+          <p style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted);margin:0">28 LUNAR MANSIONS</p>
+          <h1 style="font-family:var(--font-display);font-weight:800;font-size:40px;color:var(--ink);line-height:1.05;margin:0">what's your<br>mansion?</h1>
+          <div data-context="card" style="width:152px;aspect-ratio:1080/1920;border-radius:var(--radius-card);box-shadow:var(--shadow-window);display:flex;flex-direction:column;gap:var(--space-3);padding:18px 16px;background:var(--surface);border:1px solid var(--edge-light);align-items:center;justify-content:center">
+            <div style="font-size:55px;color:var(--ink-accent);line-height:1">★</div>
+            <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted)">TAP TO TURN</div>
+          </div>
+          <p style="font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--ink-muted);max-width:300px;margin:0;text-wrap:pretty">a real natal chart, four traditions, and one card out of twenty-eight. your birth data never leaves this phone.</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pIsForm }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+          <span style="flex:1">✦ chart.exe</span>
+          <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">_</span>
+          <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">✕</span>
+        </div>
+        <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-5)">
+          <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-2xl);color:var(--ink);line-height:1.1;margin:0">tell the stars<br>about you ☆</h1>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <label for="p-name" style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">your name</label>
+            <input id="p-name" type="text" autocomplete="given-name" placeholder="mikufan39" value="{{ pName }}" onChange="{{ pSetName }}" style="background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <label for="p-date" style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">born on</label>
+            <input id="p-date" type="date" value="{{ pDate }}" onChange="{{ pSetDate }}" style="background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <sc-if value="{{ pTimeKnown }}" hint-placeholder-val="{{ true }}">
+              <label for="p-time" style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">at</label>
+              <input id="p-time" type="time" value="{{ pTime }}" onChange="{{ pSetTime }}" style="background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+            </sc-if>
+            <sc-if value="{{ pTimeUnknown }}" hint-placeholder-val="{{ false }}">
+              <p style="background:var(--surface-sunken);border:var(--bevel) solid var(--accent);padding:var(--space-4);font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink);margin:0">no problem — we'll skip your rising sign and houses rather than guess them, and read the sun, moon and mansion instead ✦</p>
+            </sc-if>
+            <label style="min-height:44px;display:flex;align-items:center;gap:var(--space-3);cursor:pointer">
+              <input type="checkbox" checked="{{ pTimeUnknown }}" onChange="{{ pToggleTime }}" style="width:22px;height:22px;accent-color:var(--pink-700);flex:none"></input>
+              <span style="font-size:var(--text-sm);color:var(--ink-muted)">i don't know my birth time</span>
+            </label>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <label for="p-city" style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">in</label>
+            <sc-if value="{{ pNotManual }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:var(--space-2)">
+                <input id="p-city" value="{{ pQuery }}" onChange="{{ pSetQuery }}" onKeyDown="{{ pQueryKey }}" placeholder="type your town… e.g. Poughkeepsie" style="flex:1;min-width:0;background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+                <button onClick="{{ pDoSearch }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="min-height:var(--tap-min);padding:0 18px;background:var(--teal-200);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">{{ pSearchLabel }}</button>
+              </div>
+              <sc-if value="{{ pHasResults }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);max-height:170px;overflow:auto">
+                  <sc-for list="{{ pCityResults }}" as="r" hint-placeholder-count="3">
+                    <div onClick="{{ r.pick }}" style="padding:11px 12px;font-size:var(--text-sm);cursor:pointer;border-bottom:1px dotted var(--teal-200);min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--ink)">
+                      <span>📍 {{ r.name }}<span style="color:var(--ink-muted);font-size:var(--text-xs)"> · {{ r.region }}</span></span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ pHasPlace }}" hint-placeholder-val="{{ false }}">
+                <div style="background:var(--surface-sunken);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);padding:10px 12px;font-size:var(--text-xs);color:var(--teal-700)">✓ {{ pPlaceLine }}<br><span style="color:var(--ink-muted)">{{ pOffsetLine }}</span></div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ pManualMode }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:var(--space-2)">
+                <input value="{{ pLat }}" onChange="{{ pSetLat }}" placeholder="lat 40.71" style="flex:1;min-width:0;background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+                <input value="{{ pLon }}" onChange="{{ pSetLon }}" placeholder="lon -74.01" style="flex:1;min-width:0;background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+                <input value="{{ pTz }}" onChange="{{ pSetTz }}" placeholder="utc -5" style="flex:1;min-width:0;background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+              </div>
+            </sc-if>
+            <div onClick="{{ pToggleManual }}" style="min-height:44px;display:flex;align-items:center;font-size:var(--text-xs);color:var(--ink-accent);cursor:pointer;text-decoration:underline dotted">{{ pManualToggleLabel }}</div>
+            <div style="font-size:var(--text-xs);color:var(--ink-muted)">{{ pTzNote }}</div>
+          </div>
+          <sc-if value="{{ pFormError }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--pink-200);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);padding:10px 12px;font-size:var(--text-xs);color:var(--pink-700)">⚠ {{ pFormError }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pIsShatter }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:var(--teal-200);color:var(--teal-700);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+          <span style="flex:1">✧ shatter.exe</span>
+        </div>
+        <div style="padding:var(--space-5)">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-6);padding:var(--space-8) var(--space-4)" aria-live="polite">
+            <div style="font-size:72px;color:var(--accent);animation:spin 3.4s linear infinite;line-height:1">✦</div>
+            <p style="font-family:var(--font-display);font-weight:800;font-size:var(--text-xl);color:var(--ink);margin:0">shattering the sky</p>
+            <p style="font-family:var(--font-retro);font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted);animation:blink 1.4s step-end infinite;margin:0">{{ pShatterNote }}</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pIsShards }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 var(--space-1)">
+        <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-xl);color:var(--cream);margin:0">your sky</h1>
+        <span style="font-family:var(--font-retro);font-size:var(--text-xs);letter-spacing:.16em;color:var(--teal-200)">{{ pRevealLabel }}</span>
+      </div>
+      <sc-for list="{{ pShards }}" as="s" hint-placeholder-count="4">
+        <div onClick="{{ s.onReveal }}" style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:{{ s.cursor }};min-height:var(--tap-min);width:100%">
+          <div style="display:flex;justify-content:space-between;padding:4px 9px;background:var(--accent);color:var(--teal-900);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:.14em">
+            <span>{{ s.file }}</span><span>{{ s.size }}</span>
+          </div>
+          <div style="padding:var(--space-5)">
+            <div style="display:flex;align-items:center;gap:var(--space-3)">
+              <div style="width:22px;height:26px;background:var(--accent);clip-path:polygon(50% 0%,100% 30%,82% 100%,18% 100%,0% 30%)"></div>
+              <div>
+                <div style="font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);color:var(--ink-muted)">{{ s.kind }} shard</div>
+                <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">{{ s.label }}</div>
+              </div>
+            </div>
+            <div style="font-family:var(--font-display);font-weight:700;font-size:var(--text-xs);margin:8px 0 4px;color:var(--ink)">{{ s.displayTitle }}</div>
+            <sc-if value="{{ s.revealed }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:var(--text-xs);color:var(--ink-muted);line-height:var(--leading-normal)">{{ s.body }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </sc-if>
+
+    <sc-if value="{{ pIsCard }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
+        <p style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--teal-200);margin:0">SCREENSHOT ME ✦</p>
+        <div data-context="card" style="width:288px;aspect-ratio:1080/1920;border-radius:var(--radius-card);box-shadow:var(--shadow-window);display:flex;flex-direction:column;gap:var(--space-3);padding:18px 16px;background:var(--surface);border:1px solid var(--edge-light);color:var(--ink)">
+          <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">{{ pCardNumeral }} of xxviii</div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1.15;color:var(--ink)">{{ pMansionName }}</div>
+          <div style="font-size:11px;color:var(--ink-accent)">{{ pMansionEpithet }}</div>
+          <div style="flex:1;min-height:0;margin:6px 0;border:1px solid var(--edge-light);background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="font-size:38px;color:var(--ink-muted)">☾</span></div>
+          <div style="font-family:var(--font-display);font-weight:800;font-size:44px;color:var(--ink-warn);line-height:.9;text-align:right">{{ pCardNumeral }}</div>
+          <div style="font-family:var(--font-retro);font-size:9px;letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">starshard95 · tag your oshi ♡</div>
+        </div>
+        <div style="width:100%;max-width:288px;display:flex;gap:var(--space-2);background:var(--surface);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);padding:var(--space-3) var(--space-2)">
+          <sc-for list="{{ pPips }}" as="p" hint-placeholder-count="4">
+            <span style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><span style="font-size:15px;color:var(--accent);line-height:1">{{ p.glyph }}</span><span style="font-family:var(--font-display);font-weight:700;font-size:11px;color:var(--ink);text-align:center">{{ p.value }}</span></span>
+          </sc-for>
+        </div>
+        <div style="width:100%;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+          <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+            <span style="flex:1">✎ reading.txt</span>
+          </div>
+          <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)" aria-live="polite">
+            <p style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted);margin:0">{{ pReadingLabel }}</p>
+            <sc-for list="{{ pReadingParas }}" as="p" hint-placeholder-count="1">
+              <p style="font-size:var(--text-sm);line-height:1.65;color:var(--ink);margin:0;text-wrap:pretty">{{ p.text }}</p>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pIsCollection }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+          <span style="flex:1">☾ deck.exe</span>
+        </div>
+        <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-4)">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-xl);color:var(--ink);margin:0">your deck</h1>
+            <span style="font-family:var(--font-retro);font-size:var(--text-xs);letter-spacing:.16em;color:var(--ink-accent)">{{ pDeckCount }} OF 28</span>
+          </div>
+          <div style="background:var(--surface-sunken);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2)">
+            <span style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted)">TODAY'S CROSSING · {{ pTodayDate }}</span>
+            <span style="font-family:var(--font-display);font-weight:700;font-size:var(--text-md);color:var(--ink)">{{ pTodayMansion }}</span>
+            <span style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-muted)">{{ pTodayBody }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-2)">
+            <sc-for list="{{ pDeck }}" as="d" hint-placeholder-count="28">
+              <div style="aspect-ratio:.57;background:{{ d.bg }};border:{{ d.border }};border-radius:var(--radius-card-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-retro);font-size:11px;color:var(--ink-warn)">{{ d.numeral }}</div>
+            </sc-for>
+          </div>
+          <button onClick="{{ pGoDuet }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="min-height:var(--tap-min);padding:11px 22px;background:var(--teal-200);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">chart a friend ✦</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pIsDuet }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+          <span style="flex:1">♡ duet.exe</span>
+        </div>
+        <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-5)">
+          <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-2xl);color:var(--ink);line-height:1.1;margin:0">chart a friend</h1>
+          <p style="font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--ink-muted);margin:0">two mansions side by side. we only need their birthday — the date alone places the moon closely enough for a duet.</p>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <label for="p-fname" style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">their name</label>
+            <input id="p-fname" type="text" placeholder="teto" value="{{ pFriendName }}" onChange="{{ pSetFriendName }}" style="background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+            <label for="p-fdate" style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">their birthday</label>
+            <input id="p-fdate" type="date" value="{{ pFriendDate }}" onChange="{{ pSetFriendDate }}" style="background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);border-radius:var(--radius-none);padding:10px 12px;min-height:var(--tap-min);width:100%;box-sizing:border-box;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)"></input>
+          </div>
+          <sc-if value="{{ pHasDuet }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:var(--space-4);justify-content:center">
+              <div data-context="card" style="width:132px;aspect-ratio:1080/1920;border-radius:var(--radius-card);box-shadow:var(--shadow-window);display:flex;flex-direction:column;gap:var(--space-3);padding:18px 16px;background:var(--surface);border:1px solid var(--edge-light);color:var(--ink)">
+                <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">{{ pCardNumeral }} of xxviii</div>
+                <div style="font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1.15;color:var(--ink)">{{ pMansionName }}</div>
+                <div style="font-size:11px;color:var(--ink-accent)">you</div>
+                <div style="flex:1;min-height:0;margin:6px 0;border:1px solid var(--edge-light);background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="font-size:38px;color:var(--ink-muted)">☾</span></div>
+                <div style="font-family:var(--font-display);font-weight:800;font-size:44px;color:var(--ink-warn);line-height:.9;text-align:right">{{ pCardNumeral }}</div>
+              </div>
+              <div data-context="card" style="width:132px;aspect-ratio:1080/1920;border-radius:var(--radius-card);box-shadow:var(--shadow-window);display:flex;flex-direction:column;gap:var(--space-3);padding:18px 16px;background:var(--surface);border:1px solid var(--edge-light);color:var(--ink)">
+                <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">{{ pFriendNumeral }} of xxviii</div>
+                <div style="font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1.15;color:var(--ink)">{{ pFriendMansion }}</div>
+                <div style="font-size:11px;color:var(--ink-accent)">{{ pFriendLabel }}</div>
+                <div style="flex:1;min-height:0;margin:6px 0;border:1px solid var(--edge-light);background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;overflow:hidden"><span style="font-size:38px;color:var(--ink-muted)">☾</span></div>
+                <div style="font-family:var(--font-display);font-weight:800;font-size:44px;color:var(--ink-warn);line-height:.9;text-align:right">{{ pFriendNumeral }}</div>
+              </div>
+            </div>
+            <p style="font-size:var(--text-sm);line-height:1.65;color:var(--ink);margin:0;text-wrap:pretty">{{ pDuetBody }}</p>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pIsAccount }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
+          <span style="flex:1">🔑 account.exe</span>
+        </div>
+        <div style="padding:var(--space-5);font-family:var(--font-body);font-size:var(--text-sm);color:var(--ink)">
+          <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center">
+              <div style="font-size:30px;margin-bottom:6px">☾</div>
+              <div style="font-weight:700;color:var(--ink-accent);margin-bottom:4px">signed in as</div>
+              <div style="margin-bottom:14px;word-break:break-all">{{ authEmail }}</div>
+              <div style="font-size:var(--text-xs);color:var(--ink-muted);margin-bottom:16px">your deck saves to your account automatically ♡</div>
+              <button onClick="{{ doLogout }}" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--teal-200);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">log out</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isLoggedOut }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:var(--text-xs);color:var(--ink-muted);margin-bottom:12px">choose a new password for your shard account ♡</div>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">new password</label>
+                <input value="{{ rPassword }}" onChange="{{ setRPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">confirm password</label>
+                <input value="{{ rPassword2 }}" onChange="{{ setRPassword2 }}" type="password" placeholder="type it again" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:var(--text-xs);color:var(--pink-700);margin-bottom:10px">{{ authError }}</div>
+                </sc-if>
+                <button onClick="{{ authSubmit }}" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer;margin-bottom:10px">{{ authSubmitLabel }}</button>
+                <div onClick="{{ backToLogin }}" style="text-align:center;font-size:var(--text-xs);color:var(--ink-accent);cursor:pointer;text-decoration:underline;min-height:44px;display:flex;align-items:center;justify-content:center">back to log in</div>
+              </sc-if>
+              <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:var(--text-xs);color:var(--ink-muted);margin-bottom:12px">enter your email and we'll send a link to reset your password ♡</div>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">email</label>
+                <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:var(--text-xs);color:var(--pink-700);margin-bottom:10px">{{ authError }}</div>
+                </sc-if>
+                <sc-if value="{{ authInfo }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:var(--text-xs);color:var(--teal-700);margin-bottom:10px">{{ authInfo }}</div>
+                </sc-if>
+                <button onClick="{{ authSubmit }}" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer;margin-bottom:10px">{{ authSubmitLabel }}</button>
+                <div onClick="{{ backToLogin }}" style="text-align:center;font-size:var(--text-xs);color:var(--ink-accent);cursor:pointer;text-decoration:underline;min-height:44px;display:flex;align-items:center;justify-content:center">back to log in</div>
+              </sc-if>
+              <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+                <div style="font-size:var(--text-xs);color:var(--ink-muted);margin-bottom:12px">your deck already saves on this phone. an account only matters if you want it on a second device ♡</div>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">email</label>
+                <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">password</label>
+                <input value="{{ aPassword }}" onChange="{{ setAPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:var(--text-xs);color:var(--pink-700);margin-bottom:10px">{{ authError }}</div>
+                </sc-if>
+                <button onClick="{{ authSubmit }}" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer;margin-bottom:10px">{{ authSubmitLabel }}</button>
+                <div onClick="{{ goToForgot }}" style="text-align:center;font-size:var(--text-xs);color:var(--ink-accent);cursor:pointer;text-decoration:underline;min-height:44px;display:flex;align-items:center;justify-content:center">forgot password?</div>
+                <div onClick="{{ toggleAuthMode }}" style="text-align:center;font-size:var(--text-xs);color:var(--ink-accent);cursor:pointer;text-decoration:underline;min-height:44px;display:flex;align-items:center;justify-content:center">{{ authSwitchLabel }}</div>
+              </sc-if>
+              <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:var(--text-xs);color:var(--ink-muted);margin-bottom:12px">your deck already saves on this phone. an account only matters if you want it on a second device ♡</div>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">email</label>
+                <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <label style="display:block;font-size:var(--text-xs);color:var(--ink-accent);margin-bottom:3px">password</label>
+                <input value="{{ aPassword }}" onChange="{{ setAPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:10px 12px;min-height:var(--tap-min);font-size:var(--text-sm);background:var(--white);border-width:var(--bevel);border-style:solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);color:var(--teal-900)"></input>
+                <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:var(--text-xs);color:var(--pink-700);margin-bottom:10px">{{ authError }}</div>
+                </sc-if>
+                <button onClick="{{ authSubmit }}" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer;margin-bottom:10px">{{ authSubmitLabel }}</button>
+                <div onClick="{{ toggleAuthMode }}" style="text-align:center;font-size:var(--text-xs);color:var(--ink-accent);cursor:pointer;text-decoration:underline;min-height:44px;display:flex;align-items:center;justify-content:center">{{ authSwitchLabel }}</div>
+              </sc-if>
+            </div>
+          </sc-if>
+          <div style="background:var(--surface-sunken);border:var(--bevel) solid var(--accent);padding:var(--space-4);display:flex;flex-direction:column;gap:var(--space-2);margin-top:var(--space-5)">
+            <span style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--teal-700)">WHAT WE STORE</span>
+            <span style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink)">Your email and which mansions you've collected. <b>Not</b> your birth date, time or city — those stay on your phone and are never sent to us.</span>
+          </div>
+          <p style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-muted);margin:var(--space-3) 0 0">You must be 13 or older to make an account. Under 13? The deck works fine without one.</p>
+        </div>
+      </div>
+    </sc-if>
+
+  </main>
+
+  <footer style="flex:none;padding:var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:var(--space-2);background:var(--surface);border-top:var(--bevel) solid var(--edge-light)">
+    <sc-if value="{{ pShowCta }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ pAdvance }}" disabled="{{ pCtaDisabled }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">{{ pCtaLabel }}</button>
+    </sc-if>
+    <sc-if value="{{ pIsCard }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ pSaveCard }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="width:100%;min-height:44px;padding:9px 22px;background:var(--teal-200);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">save to photos</button>
+    </sc-if>
+    <sc-if value="{{ pIsLanding }}" hint-placeholder-val="{{ true }}">
+      <p style="text-align:center;font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:.14em;color:var(--ink-muted);margin:0">FREE · NO ACCOUNT NEEDED ✦</p>
+    </sc-if>
+  </footer>
+
+</div>
+</sc-if>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1200, &quot;height&quot;: 860}, &quot;sparkles&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}, &quot;scanlines&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}, &quot;revealAll&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}}">
 // ===========================================================================
@@ -681,6 +1115,20 @@ const SHARD_META = [
 ];
 const STAMPS = ['⭐', '🎀', '🌙', '💿', '✿'];
 
+// Phone-flow shard chrome — a different label set than SHARD_META (lowercase,
+// file-manager flavour) because it's ported verbatim from the phone export's
+// own ShardCard component. Sliced to 3 when the birth time is unknown, same
+// as buildShards()'s fixed [house, mirror, moon, hearth] order.
+const PHONE_SHARD_META = [
+  { key: 'house', file: 'house.shd', label: 'placidus houses' },
+  { key: 'mirror', file: 'mirror.shd', label: 'the mirror' },
+  { key: 'moon', file: 'moon.shd', label: 'lunar mansion' },
+  { key: 'hearth', file: 'hearth.shd', label: 'planetary day' },
+];
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII'];
+const PHONE_STEPS = ['landing', 'form', 'shatter', 'shards', 'card', 'collection', 'duet', 'account'];
+const PHONE_CTA = ['draw my card ✦', '✧ shatter the sky ✧', '', 'weave my reading', 'see my deck ✦', 'start over', '', ''];
+
 // Chiptune loop for player.exe — notes in Hz, stepped every 240ms.
 const BGM_NOTES = [523.25, 659.25, 783.99, 659.25, 880, 783.99, 987.77, 783.99, 659.25, 523.25, 587.33, 659.25];
 
@@ -713,7 +1161,17 @@ class Component extends DCLogic {
     gName: '', gMsg: '', gStamp: '⭐', guestEntries: [], gBusy: false, gError: '',
     playing: false,
     authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '', authInfo: '',
-    aEmail: '', aPassword: '', rPassword: '', rPassword2: '', resetToken: ''
+    aEmail: '', aPassword: '', rPassword: '', rPassword2: '', resetToken: '',
+
+    // -- phone flow (<1024px) — see the p-prefix rule in OWNERSHIP.md. `deck`
+    // is shared with desktop (account data, not phone-UI state).
+    isPhone: typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches,
+    deck: [],
+    pStep: 0, pName: '', pDate: '1989-06-06', pTime: '16:42', pTimeKnown: true,
+    pQuery: '', pCityResults: [], pPlace: null, pSearching: false,
+    pManualMode: false, pLat: '', pLon: '', pTz: '',
+    pFormError: '', pChart: null, pRevealed: [false, false, false, false], pWeaveText: '',
+    pFriendName: '', pFriendDate: '',
   };
 
   // -- lifecycle ------------------------------------------------------------
@@ -735,11 +1193,14 @@ class Component extends DCLogic {
       const token = params.get('resetToken');
       if (token) {
         windows.account = { ...windows.account, open: true, min: false };
-        this.setState({ authMode: 'reset', resetToken: token });
+        this.setState({ authMode: 'reset', resetToken: token, pStep: 7 });
         history.replaceState(null, '', location.pathname + location.search);
       }
     } catch (e) {}
-    this.setState({ windows });
+
+    let deck = [];
+    try { deck = JSON.parse(localStorage.getItem('starshard.deck') || '[]'); } catch (e) {}
+    this.setState({ windows, deck });
 
     const tick = () => this.setState({ clock: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
     tick(); this.clockTimer = setInterval(tick, 20000);
@@ -752,11 +1213,21 @@ class Component extends DCLogic {
       this.setState({ guestEntries: entries.length ? entries : duetMod.getGuestbookSeed() });
     });
 
+    this.mq = window.matchMedia('(max-width: 1023px)');
+    this._onViewportChange = () => this.setState({ isPhone: this.mq.matches });
+    this.mq.addEventListener('change', this._onViewportChange);
+
+    window.addEventListener('popstate', this.pOnPop);
+
     this.forceUpdate();
     this.checkAuth();
   }
 
-  componentWillUnmount() { clearInterval(this.clockTimer); this.stopMusic(); clearTimeout(this._saveTimer); }
+  componentWillUnmount() {
+    clearInterval(this.clockTimer); this.stopMusic(); clearTimeout(this._saveTimer);
+    if (this.mq) this.mq.removeEventListener('change', this._onViewportChange);
+    window.removeEventListener('popstate', this.pOnPop);
+  }
 
   componentDidUpdate() {
     if (!this.state.authEmail || !this.state.windows) return;
@@ -772,13 +1243,27 @@ class Component extends DCLogic {
   checkAuth = async () => {
     const who = await this.api.me();
     this.setState({ authChecked: true, authEmail: who ? who.email : null });
-    if (who) this.loadLayout();
+    if (who) { this.loadLayout(); this.loadAndMergeDeck(); }
   };
 
   loadLayout = async () => {
     const saved = await this.api.loadWindowState();
     if (!saved) return;
     this.setState(st => ({ windows: this.winMod.mergeSavedLayout(st.windows, saved) }));
+  };
+
+  // Guests collect mansions into localStorage; an account may already have
+  // its own server-side deck, or — on a first-ever signup/login — none at
+  // all (api.loadDeck() resolves null, not []). Treat "no server deck yet"
+  // as empty and still push the local one up, rather than bailing out and
+  // silently stranding a guest's collection on one device forever.
+  loadAndMergeDeck = async () => {
+    const server = await this.api.loadDeck();
+    const serverDeck = Array.isArray(server) ? server : [];
+    const merged = Array.from(new Set([...(this.state.deck || []), ...serverDeck]));
+    this.setState({ deck: merged });
+    try { localStorage.setItem('starshard.deck', JSON.stringify(merged)); } catch (e) {}
+    this.api.saveDeck(merged);
   };
 
   doSignup = async () => {
@@ -789,6 +1274,7 @@ class Component extends DCLogic {
       const j = await this.api.signup(email, password);
       this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
       this.api.saveWindowState(this.state.windows);
+      this.loadAndMergeDeck();
     } catch (e) {
       this.setState({ authBusy: false, authError: this.api.signupError(e.code) });
     }
@@ -802,6 +1288,7 @@ class Component extends DCLogic {
       const j = await this.api.login(email, password);
       this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
       this.loadLayout();
+      this.loadAndMergeDeck();
     } catch (e) {
       this.setState({ authBusy: false, authError: this.api.loginError(e.code) });
     }
@@ -973,6 +1460,111 @@ class Component extends DCLogic {
     });
   };
 
+  // -- phone flow (<1024px) --------------------------------------------------
+
+  pGo(step, push = true) {
+    const url = '#p-' + PHONE_STEPS[step];
+    if (push) history.pushState({ pStep: step }, '', url);
+    else history.replaceState({ pStep: step }, '', url);
+    this.setState({ pStep: step });
+  }
+
+  pOnPop = (e) => {
+    const step = (e.state && typeof e.state.pStep === 'number') ? e.state.pStep : 0;
+    this.setState({ pStep: step });
+  };
+
+  pGoBack = () => { history.back(); };
+  pGoAccount = () => this.pGo(7);
+  pGoDuet = () => this.pGo(6);
+
+  pSearch = async () => {
+    const q = this.state.pQuery.trim();
+    if (!q) return;
+    this.setState({ pSearching: true, pCityResults: [], pFormError: '' });
+    try {
+      const res = await this.api.geocode(q);
+      this.setState({ pSearching: false, pCityResults: res, pFormError: res.length ? '' : 'no stars found by that name… try another spelling, or enter coordinates ♡' });
+    } catch (e) {
+      this.setState({ pSearching: false, pManualMode: true, pFormError: 'the star atlas is unreachable, enter coordinates manually ♡' });
+    }
+  };
+
+  pToggleTime = () => this.setState({ pTimeKnown: !this.state.pTimeKnown });
+
+  // Returns the computed chart, or null (having already set pFormError) on
+  // any input problem. Reuses chartFrom() — shared with desktop.
+  pComputeChart = () => {
+    const s = this.state;
+    if (!this.astro) return null;
+    if (!s.pDate) { this.setState({ pFormError: 'the stars need your birthday!!' }); return null; }
+    const time = s.pTimeKnown ? s.pTime : '12:00';
+    if (s.pManualMode) {
+      const lat = parseFloat(s.pLat), lon = parseFloat(s.pLon), tzOffset = parseFloat(s.pTz);
+      if ([lat, lon, tzOffset].some(isNaN)) { this.setState({ pFormError: 'manual mode needs latitude, longitude & UTC offset ♡' }); return null; }
+      const [y, m, d] = s.pDate.split('-').map(Number);
+      const [hh, mm] = time.split(':').map(Number);
+      return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset });
+    }
+    if (!s.pPlace) { this.setState({ pFormError: 'search for your birth town first, so the moon knows where to look ♡' }); return null; }
+    try { return this.chartFrom(s.pDate, time, s.pPlace); }
+    catch (e) { this.setState({ pFormError: 'could not read that timezone, try manual coordinates ♡', pManualMode: true }); return null; }
+  };
+
+  pWeave = (chart) => {
+    const text = this.reading.weave({ chart, name: this.state.pName, astro: this.astro, data: this.data });
+    this.setState({ pWeaveText: text });
+  };
+
+  pCollectDeck = (mansionIdx) => {
+    const deck = Array.from(new Set([...this.state.deck, mansionIdx]));
+    try { localStorage.setItem('starshard.deck', JSON.stringify(deck)); } catch (e) {}
+    this.setState({ deck });
+    if (this.state.authEmail) this.api.saveDeck(deck);
+  };
+
+  // The linear step state machine — mirrors the original phone export's
+  // advance(), but chart math and the reading go through the shared modules
+  // (chartFrom / reading.weave) instead of the phone's stale duplicates.
+  pAdvance = () => {
+    const { pStep, pRevealed, pChart } = this.state;
+    if (pStep === 0) return this.pGo(1);
+    if (pStep === 1) {
+      const c = this.pComputeChart();
+      if (!c) return;
+      this.setState({ pChart: c, pRevealed: [false, false, false, false], pWeaveText: '', pFormError: '' });
+      this.pGo(2);
+      setTimeout(() => { this.pGo(3); this.pWeave(c); }, 1300);
+      return;
+    }
+    if (pStep === 3) {
+      if (pRevealed.some(r => !r)) return this.setState({ pRevealed: [true, true, true, true] });
+      return this.pGo(4);
+    }
+    if (pStep === 4) {
+      if (pChart) this.pCollectDeck(pChart.mansion);
+      return this.pGo(5);
+    }
+    if (pStep === 5) return this.pGo(0);
+    return this.pGo(0);
+  };
+
+  pSaveCard = () => {
+    const s = this.state, A = this.astro, D = this.data, chart = s.pChart;
+    if (!chart) return;
+    this.cardMod.downloadCard({
+      name: s.pName || 'little star',
+      birthLine: this.fmt.birthLine(s.pDate, s.pTimeKnown ? s.pTime : 'time unknown', s.pPlace, s.pManualMode),
+      minis: [
+        ['sun', A.SIGNS[chart.sunSign], '#3fb8ad'],
+        ['moon', A.SIGNS[chart.moonSign], '#9d84e8'],
+        ['rising', s.pTimeKnown ? A.SIGNS[chart.ascSign] : '—', '#e0a63c'],
+        ['mansion', D.MANSIONS[chart.mansion][0], '#e677ab']
+      ],
+      reading: s.pWeaveText
+    });
+  };
+
   // -- binding surface ------------------------------------------------------
 
   renderVals() {
@@ -1026,7 +1618,103 @@ class Component extends DCLogic {
     const wd = ready ? this.wheel.wheelData(chart) : { ticks: [], glyphs: [], cusps: [], planets: [] };
     const T = s.today;
 
+    // -- phone flow (<1024px) — all p-prefixed, see the rule in OWNERSHIP.md.
+    const pChart = s.pChart;
+    const pAllContent = ready && pChart ? this.reading.buildShards(pChart, A, D) : [];
+    const pMeta = s.pTimeKnown ? PHONE_SHARD_META : PHONE_SHARD_META.slice(1);
+    const pContent = s.pTimeKnown ? pAllContent : pAllContent.slice(1);
+    const pShards = pMeta.map((m, i) => {
+      const c = pContent[i] || { headline: '', body: '' };
+      const rev = !!s.pRevealed[i];
+      return {
+        kind: m.key, file: m.file, label: rev ? m.label : 'face down',
+        size: rev ? '4KB' : '—', displayTitle: rev ? c.headline : 'tap to flip',
+        body: c.body, revealed: rev, cursor: rev ? 'default' : 'pointer',
+        onReveal: rev ? undefined : () => this.setState(st => { const r = [...st.pRevealed]; r[i] = true; return { pRevealed: r }; })
+      };
+    });
+    const pCount = s.pRevealed.filter(Boolean).length;
+    const pNeeded = s.pTimeKnown ? 4 : 3;
+    const pAllFlipped = pCount >= pNeeded;
+
+    const pArchetype = pChart && ready ? D.ARCHETYPES[pChart.moonSign] : null;
+    const pWeekday = pChart && ready ? D.WEEKDAYS[pChart.weekday] : null;
+    const pMansion = pChart && ready ? D.MANSIONS[pChart.mansion] : null;
+
+    let pOffsetLine = '', pTzNote = '';
+    if (ready && s.pPlace && s.pDate && !s.pManualMode) {
+      try {
+        const [y, m, d] = s.pDate.split('-').map(Number);
+        const [hh, mm] = (s.pTimeKnown ? s.pTime : '12:00').split(':').map(Number);
+        const info = this.tz.dstInfo(s.pPlace.tz, y, m, d, hh, mm);
+        pOffsetLine = this.fmt.offsetLine(info);
+        pTzNote = `UTC${info.off >= 0 ? '+' : ''}${info.off} on that date — daylight saving accounted for.`;
+      } catch (e) {}
+    }
+
+    let pFriendMansion = '', pFriendNumeral = '', pDuetBody = '';
+    if (ready && pChart && s.pFriendDate) {
+      try {
+        const [fy, fmo, fd] = s.pFriendDate.split('-').map(Number);
+        const r = this.reading.duetByDateOnly({ chart: pChart, friendYear: fy, friendMonth: fmo, friendDay: fd, astro: A, data: D });
+        pFriendMansion = r.friendMansion; pFriendNumeral = ROMAN[r.friendMansionIdx]; pDuetBody = r.duetBody;
+      } catch (e) {}
+    }
+
+    const pDeckSet = new Set(s.deck);
+    const pDeck = ROMAN.map((r, i) => {
+      const have = pDeckSet.has(i);
+      return { numeral: have ? r : '', bg: have ? 'var(--surface-raised)' : 'var(--surface-sunken)',
+        border: have ? 'var(--bevel) solid var(--accent)' : 'var(--bevel) solid var(--teal-200)' };
+    });
+
+    const pStep = s.pStep;
+
     return {
+      isPhone: s.isPhone, isDesktop: !s.isPhone,
+      pShowBack: pStep > 0, pGoBack: this.pGoBack, pGoAccount: this.pGoAccount, pGoDuet: this.pGoDuet,
+      pIsLanding: pStep === 0, pIsForm: pStep === 1, pIsShatter: pStep === 2, pIsShards: pStep === 3,
+      pIsCard: pStep === 4, pIsCollection: pStep === 5, pIsDuet: pStep === 6, pIsAccount: pStep === 7,
+      pName: s.pName, pDate: s.pDate, pTime: s.pTime,
+      pSetName: e => this.setState({ pName: e.target.value }), pSetDate: e => this.setState({ pDate: e.target.value }),
+      pSetTime: e => this.setState({ pTime: e.target.value }),
+      pTimeKnown: s.pTimeKnown, pTimeUnknown: !s.pTimeKnown, pToggleTime: this.pToggleTime,
+      pQuery: s.pQuery, pSetQuery: e => this.setState({ pQuery: e.target.value, pPlace: null }),
+      pQueryKey: e => { if (e.key === 'Enter') this.pSearch(); },
+      pDoSearch: this.pSearch, pSearchLabel: s.pSearching ? '...' : 'find ☆',
+      pCityResults: s.pCityResults.map(r => ({ ...r,
+        pick: () => this.setState({ pPlace: r, pCityResults: [], pQuery: `${r.name}, ${r.region}` }) })),
+      pHasResults: s.pCityResults.length > 0, pHasPlace: !!s.pPlace && !s.pManualMode,
+      pPlaceLine: ready ? this.fmt.placeLine(s.pPlace) : '', pOffsetLine, pTzNote,
+      pManualMode: s.pManualMode, pNotManual: !s.pManualMode,
+      pToggleManual: () => this.setState({ pManualMode: !s.pManualMode, pFormError: '' }),
+      pManualToggleLabel: s.pManualMode ? '← back to town search' : 'enter coordinates manually instead',
+      pLat: s.pLat, pLon: s.pLon, pTz: s.pTz,
+      pSetLat: e => this.setState({ pLat: e.target.value }), pSetLon: e => this.setState({ pLon: e.target.value }),
+      pSetTz: e => this.setState({ pTz: e.target.value }),
+      pFormError: s.pFormError,
+      pShatterNote: s.pTimeKnown ? 'COMPUTING PLACIDUS CUSPS' : 'PLACING SUN AND MOON',
+      pRevealLabel: `${pCount} OF ${pNeeded}`, pShards,
+      pCardNumeral: pChart ? ROMAN[pChart.mansion] : '',
+      pMansionName: pMansion ? pMansion[0] : '', pMansionEpithet: pMansion ? '“' + pMansion[1] + '”' : '',
+      pPips: [
+        { glyph: '⌂', value: pChart && s.pTimeKnown ? String(pChart.sunHouse) : '—' },
+        { glyph: '◈', value: pArchetype ? pArchetype[0].replace('The ', '') : '' },
+        { glyph: '☾', value: pChart && ready ? A.SIGNS[pChart.moonSign] : '' },
+        { glyph: '✦', value: pWeekday ? pWeekday[0].slice(0, 3).toUpperCase() : '' },
+      ],
+      pReadingLabel: s.pWeaveText ? 'WOVEN FOR YOU' : '',
+      pReadingParas: s.pWeaveText ? [{ text: s.pWeaveText, i: 0 }] : [],
+      pDeck, pDeckCount: s.deck.length,
+      pTodayDate: new Date().toLocaleDateString([], { month: 'short', day: 'numeric' }),
+      pTodayMansion: T && ready ? D.MANSIONS[T.mansion][0] : '', pTodayBody: T && ready ? D.MANSIONS[T.mansion][2] : '',
+      pFriendName: s.pFriendName, pSetFriendName: e => this.setState({ pFriendName: e.target.value }),
+      pFriendDate: s.pFriendDate, pSetFriendDate: e => this.setState({ pFriendDate: e.target.value }),
+      pFriendLabel: s.pFriendName || 'them', pFriendMansion, pFriendNumeral,
+      pHasDuet: !!(pFriendMansion && pChart), pDuetBody,
+      pAdvance: this.pAdvance, pSaveCard: this.pSaveCard,
+      pCtaLabel: pStep === 3 && !pAllFlipped ? `tap a shard · ${pCount} of ${pNeeded}` : (PHONE_CTA[pStep] || 'back to my deck'),
+      pCtaDisabled: false, pShowCta: pStep !== 2,
       sparklesOn: p.sparkles ?? true, scanlinesOn: p.scanlines ?? false,
       wWelcome: wv('welcome'), wReader: wv('reader'), wSky: wv('sky'), wCard: wv('card'), wLuna: wv('luna'),
       wToday: wv('today'), wWheel: wv('wheel'), wDuet: wv('duet'), wGuest: wv('guest'), wGloss: wv('gloss'),

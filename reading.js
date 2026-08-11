@@ -41,7 +41,7 @@ export function buildShards(chart, astro, data) {
   // Above the polar circle the houses come from Porphyry, not Placidus — say so
   // rather than claiming precision the chart does not have.
   const houseNote = chart.houseSystem === 'porphyry'
-    ? ' (your birthplace sits above the Arctic circle, where Placidus houses do not exist — these are Porphyry houses instead ✦)'
+    ? ' (your birthplace sits above the Arctic circle, where Placidus houses do not exist: these are Porphyry houses instead ✦)'
     : '';
 
   return [
@@ -76,6 +76,32 @@ export function weave({ chart, name, astro, data }) {
   const mansionLine = seededPick(data.WEAVE_MANSION_LINES, seed + '|mansion')(mansion[0]);
   const closer = seededPick(data.WEAVE_CLOSERS, seed + '|closer')(weekday[1]);
   return `${opener} ${mid} ${mansionLine} ${closer}`;
+}
+
+/**
+ * The phone flow's duet: date-only, no birth time or place needed for the
+ * friend — deliberately lower-friction than duetFacts()/duetText(), which
+ * need a full second chart. Reads the friend's moon mansion from their
+ * birthday alone (noon UT is close enough for a mansion-level placement)
+ * and describes the gap between the two mansions on the 28-station wheel.
+ */
+export function duetByDateOnly({ chart, friendYear, friendMonth, friendDay, astro, data }) {
+  const fjd = astro.julianDay(friendYear, friendMonth, friendDay, 12);
+  const friendMansionIdx = astro.mansionOf(astro.moonLongitude(fjd));
+  const friendMansion = data.MANSIONS[friendMansionIdx][0];
+  const mansion = data.MANSIONS[chart.mansion];
+  const gap = Math.min(
+    Math.abs(friendMansionIdx - chart.mansion),
+    28 - Math.abs(friendMansionIdx - chart.mansion)
+  );
+  const duetBody = gap === 0
+    ? `you share a mansion. ${mansion[0]} twice over: the same moon-station, which old almanacs read as an easy, uncanny sort of recognition.`
+    : gap <= 3
+      ? `${mansion[0]} and ${friendMansion} sit ${gap} station${gap > 1 ? 's' : ''} apart: neighbours on the moon's road. you tend to want the same things at the same time.`
+      : gap >= 12
+        ? `${mansion[0]} and ${friendMansion} sit almost opposite each other. the tradition reads that as complementary rather than difficult: you cover each other's blind spots.`
+        : `${mansion[0]} and ${friendMansion} are ${gap} stations apart: far enough to surprise each other, close enough to stay in step.`;
+  return { friendMansionIdx, friendMansion, duetBody };
 }
 
 /** Compatibility lines + score. Pure; no network. */

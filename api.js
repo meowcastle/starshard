@@ -92,6 +92,23 @@ export async function saveWindowState(state) {
   try { await call('/api/state', { method: 'PUT', body: { state } }); } catch (e) {}
 }
 
+// --- deck (collected mansions) ----------------------------------------------
+// The logged-out fallback is localStorage, handled at the Component layer —
+// this module only talks to the server half.
+
+/** Resolves to the saved deck array, or null. Never throws. */
+export async function loadDeck() {
+  try {
+    const j = await call('/api/deck');
+    return Array.isArray(j?.deck) ? j.deck : null;
+  } catch (e) { return null; }
+}
+
+/** Never throws — a failed deck save must not interrupt the user. */
+export async function saveDeck(deck) {
+  try { await call('/api/deck', { method: 'PUT', body: { deck } }); } catch (e) {}
+}
+
 // --- guestbook ---------------------------------------------------------------
 // Public, unauthenticated. Backed by starshard-api; no localStorage fallback.
 

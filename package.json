@@ -6,5 +6,8 @@
     "test": "node --test \"test/*.test.mjs\"",
     "bindings": "node tools/bindings.mjs",
     "check": "npm run bindings && npm test"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
   }
 }
