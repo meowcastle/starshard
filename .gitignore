@@ -21,6 +21,16 @@ design/incoming/
 design-system/dist/
 design-system/preview.html
 
+# /design-sync scratch: staged converter scripts + their own node_modules,
+# regenerated bundle output, and machine verification state. The durable
+# set (config.json, NOTES.md, conventions.md, previews/, overrides/) is
+# NOT covered by this and stays committed.
+design-system/.ds-sync/
+design-system/ds-bundle/
+design-system/.design-sync/.cache/
+design-system/.design-sync/learnings/
+design-system/.design-sync/node_modules
+
 .projects/cache
 .projects/vault
 .projects/state.test.json

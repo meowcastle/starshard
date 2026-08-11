@@ -1,0 +1,8 @@
+{
+  "pkg": "@starshard/design-system",
+  "globalName": "StarShardDS",
+  "projectId": "f4eaf5cf-7ef4-4e9f-9560-0b33d64de852",
+  "shape": "package",
+  "cssEntry": "dist/index.css",
+  "readmeHeader": ".design-sync/conventions.md"
+}
