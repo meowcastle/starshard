@@ -113,7 +113,7 @@
   --foil-edge:#F8F0C8;
 }
 
-body{margin:0;background:#3b2a63}
+body{margin:0;background:#3b2a63;overflow-x:hidden;overscroll-behavior-x:none}
 a{color:#3fb8ad}a:hover{color:#ff8fc0}
 *:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
 @keyframes twinkle{0%,100%{opacity:1}50%{opacity:.2}}
@@ -750,7 +750,7 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
      phone-UI state, shared the same way). See OWNERSHIP.md.
      ========================================================================= -->
 <sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
-<div style="font-family:var(--font-body);color:var(--ink);background:var(--teal-700);height:100dvh;max-height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;padding:0">
+<div style="font-family:var(--font-body);color:var(--ink);background:var(--teal-700);height:100dvh;max-height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;padding:0;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y">
 
   <header style="flex:none;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);min-height:46px;background:var(--surface);border-bottom:var(--bevel) solid var(--edge-dark)">
     <sc-if value="{{ pShowBack }}" hint-placeholder-val="{{ false }}">
@@ -760,15 +760,16 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     <button onClick="{{ pGoAccount }}" aria-label="your account" style="min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;font-size:18px;color:var(--ink-muted);cursor:pointer;margin-right:-10px">☾</button>
   </header>
 
-  <main style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;padding:var(--space-4);gap:var(--space-4)">
+  <main style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;display:flex;flex-direction:column;padding:var(--space-4);gap:var(--space-4)">
 
     <sc-if value="{{ pIsLanding }}" hint-placeholder-val="{{ true }}">
-      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+      <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
         <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
           <span style="flex:1">☾ starshard.exe</span>
           <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">_</span>
           <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">✕</span>
         </div>
+        <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
         <div style="padding:var(--space-5);display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-4)">
           <p style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted);margin:0">28 LUNAR MANSIONS</p>
           <h1 style="font-family:var(--font-display);font-weight:800;font-size:40px;color:var(--ink);line-height:1.05;margin:0">what's your<br>mansion?</h1>
@@ -782,12 +783,13 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsForm }}" hint-placeholder-val="{{ false }}">
-      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+      <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
         <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
           <span style="flex:1">✦ chart.exe</span>
           <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">_</span>
           <span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:var(--cream);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);color:var(--teal-900);font-size:11px">✕</span>
         </div>
+        <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
         <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-5)">
           <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-2xl);color:var(--ink);line-height:1.1;margin:0">tell the stars<br>about you ☆</h1>
 
@@ -852,10 +854,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsShatter }}" hint-placeholder-val="{{ false }}">
-      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+      <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
         <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:var(--teal-200);color:var(--teal-700);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
           <span style="flex:1">✧ shatter.exe</span>
         </div>
+        <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
         <div style="padding:var(--space-5)">
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-6);padding:var(--space-8) var(--space-4)" aria-live="polite">
             <div style="font-size:72px;color:var(--accent);animation:spin 3.4s linear infinite;line-height:1">✦</div>
@@ -867,12 +870,12 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsShards }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 var(--space-1)">
+      <div style="flex-shrink:0;display:flex;align-items:baseline;justify-content:space-between;padding:0 var(--space-1)">
         <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-xl);color:var(--cream);margin:0">your sky</h1>
         <span style="font-family:var(--font-retro);font-size:var(--text-xs);letter-spacing:.16em;color:var(--teal-200)">{{ pRevealLabel }}</span>
       </div>
       <sc-for list="{{ pShards }}" as="s" hint-placeholder-count="4">
-        <div onClick="{{ s.onReveal }}" style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:{{ s.cursor }};min-height:var(--tap-min);width:100%">
+        <div onClick="{{ s.onReveal }}" style="flex-shrink:0;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:{{ s.cursor }};min-height:var(--tap-min);width:100%">
           <div style="display:flex;justify-content:space-between;padding:4px 9px;background:var(--accent);color:var(--teal-900);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:.14em">
             <span>{{ s.file }}</span><span>{{ s.size }}</span>
           </div>
@@ -894,7 +897,7 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsCard }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
         <p style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--teal-200);margin:0">SCREENSHOT ME ✦</p>
         <div data-context="card" style="width:288px;aspect-ratio:1080/1920;border-radius:var(--radius-card);box-shadow:var(--shadow-window);display:flex;flex-direction:column;gap:var(--space-3);padding:18px 16px;background:var(--surface);border:1px solid var(--edge-light);color:var(--ink)">
           <div style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)">{{ pCardNumeral }} of xxviii</div>
@@ -909,10 +912,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
             <span style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><span style="font-size:15px;color:var(--accent);line-height:1">{{ p.glyph }}</span><span style="font-family:var(--font-display);font-weight:700;font-size:11px;color:var(--ink);text-align:center">{{ p.value }}</span></span>
           </sc-for>
         </div>
-        <div style="width:100%;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+        <div style="width:100%;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
           <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
             <span style="flex:1">✎ reading.txt</span>
           </div>
+          <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
           <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-3)" aria-live="polite">
             <p style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted);margin:0">{{ pReadingLabel }}</p>
             <sc-for list="{{ pReadingParas }}" as="p" hint-placeholder-count="1">
@@ -924,10 +928,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsCollection }}" hint-placeholder-val="{{ false }}">
-      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+      <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
         <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
           <span style="flex:1">☾ deck.exe</span>
         </div>
+        <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
         <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-4)">
           <div style="display:flex;align-items:baseline;justify-content:space-between">
             <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-xl);color:var(--ink);margin:0">your deck</h1>
@@ -949,10 +954,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsDuet }}" hint-placeholder-val="{{ false }}">
-      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+      <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
         <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
           <span style="flex:1">♡ duet.exe</span>
         </div>
+        <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
         <div style="padding:var(--space-5);display:flex;flex-direction:column;gap:var(--space-5)">
           <h1 style="font-family:var(--font-display);font-weight:800;font-size:var(--text-2xl);color:var(--ink);line-height:1.1;margin:0">chart a friend</h1>
           <p style="font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--ink-muted);margin:0">two mansions side by side. we only need their birthday — the date alone places the moon closely enough for a duet.</p>
@@ -988,10 +994,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     </sc-if>
 
     <sc-if value="{{ pIsAccount }}" hint-placeholder-val="{{ false }}">
-      <div style="background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
+      <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
         <div style="display:flex;align-items:center;gap:var(--space-3);padding:5px 7px;background:linear-gradient(90deg,var(--teal-700),var(--pink-700));color:var(--cream);font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase">
           <span style="flex:1">🔑 account.exe</span>
         </div>
+        <span style="position:absolute;right:1px;bottom:1px;width:14px;height:14px;background:repeating-linear-gradient(135deg,transparent 0 3px,var(--edge-dark) 3px 5px)"></span>
         <div style="padding:var(--space-5);font-family:var(--font-body);font-size:var(--text-sm);color:var(--ink)">
           <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
             <div style="text-align:center">
