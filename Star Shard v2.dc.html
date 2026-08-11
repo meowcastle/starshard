@@ -556,16 +556,56 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
         </sc-if>
         <sc-if value="{{ isLoggedOut }}" hint-placeholder-val="{{ true }}">
           <div>
-            <div style="font-size:12px;color:#c9b3c0;margin-bottom:12px">make an account and your desktop remembers itself: open windows, positions, all of it ♡</div>
-            <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">email</label>
-            <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
-            <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">password</label>
-            <input value="{{ aPassword }}" onChange="{{ setAPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
-            <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12px;color:#c0567a;margin-bottom:10px">{{ authError }}</div>
+            <sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#c9b3c0;margin-bottom:12px">choose a new password for your shard account ♡</div>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">new password</label>
+              <input value="{{ rPassword }}" onChange="{{ setRPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">confirm password</label>
+              <input value="{{ rPassword2 }}" onChange="{{ setRPassword2 }}" type="password" placeholder="type it again" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;color:#c0567a;margin-bottom:10px">{{ authError }}</div>
+              </sc-if>
+              <button onClick="{{ authSubmit }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3);margin-bottom:10px">{{ authSubmitLabel }}</button>
+              <div onClick="{{ backToLogin }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline">back to log in</div>
             </sc-if>
-            <button onClick="{{ authSubmit }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3);margin-bottom:10px">{{ authSubmitLabel }}</button>
-            <div onClick="{{ toggleAuthMode }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline">{{ authSwitchLabel }}</div>
+            <sc-if value="{{ isForgot }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#c9b3c0;margin-bottom:12px">enter your email and we'll send a link to reset your password ♡</div>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">email</label>
+              <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;color:#c0567a;margin-bottom:10px">{{ authError }}</div>
+              </sc-if>
+              <sc-if value="{{ authInfo }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;color:#5b9e6f;margin-bottom:10px">{{ authInfo }}</div>
+              </sc-if>
+              <button onClick="{{ authSubmit }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3);margin-bottom:10px">{{ authSubmitLabel }}</button>
+              <div onClick="{{ backToLogin }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline">back to log in</div>
+            </sc-if>
+            <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:12px;color:#c9b3c0;margin-bottom:12px">make an account and your desktop remembers itself: open windows, positions, all of it ♡</div>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">email</label>
+              <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">password</label>
+              <input value="{{ aPassword }}" onChange="{{ setAPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;color:#c0567a;margin-bottom:10px">{{ authError }}</div>
+              </sc-if>
+              <button onClick="{{ authSubmit }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3);margin-bottom:10px">{{ authSubmitLabel }}</button>
+              <div onClick="{{ goToForgot }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline;margin-bottom:8px">forgot password?</div>
+              <div onClick="{{ toggleAuthMode }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline">{{ authSwitchLabel }}</div>
+            </sc-if>
+            <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#c9b3c0;margin-bottom:12px">make an account and your desktop remembers itself: open windows, positions, all of it ♡</div>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">email</label>
+              <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">password</label>
+              <input value="{{ aPassword }}" onChange="{{ setAPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+              <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;color:#c0567a;margin-bottom:10px">{{ authError }}</div>
+              </sc-if>
+              <button onClick="{{ authSubmit }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3);margin-bottom:10px">{{ authSubmitLabel }}</button>
+              <div onClick="{{ toggleAuthMode }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline">{{ authSwitchLabel }}</div>
+            </sc-if>
           </div>
         </sc-if>
       </div>
@@ -652,8 +692,8 @@ class Component extends DCLogic {
     duet: null, duetText: '', duetWeaving: false,
     gName: '', gMsg: '', gStamp: '⭐', guestEntries: [],
     playing: false,
-    authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '',
-    aEmail: '', aPassword: ''
+    authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '', authInfo: '',
+    aEmail: '', aPassword: '', rPassword: '', rPassword2: '', resetToken: ''
   };
   async componentDidMount() {
     this.astro = await import('./astro.js');
@@ -671,6 +711,17 @@ class Component extends DCLogic {
       this.setState({ guestEntries: Array.isArray(saved) && saved.length ? saved : this.duetMod.GUESTBOOK_SEED });
     } catch (e) { this.setState({ guestEntries: this.duetMod.GUESTBOOK_SEED }); }
     this.forceUpdate();
+    try {
+      const params = new URLSearchParams(location.search);
+      const token = params.get('resetToken');
+      if (token) {
+        this.setState(st => ({
+          authMode: 'reset', resetToken: token,
+          windows: { ...st.windows, account: { ...st.windows.account, open: true, min: false } }
+        }));
+        history.replaceState(null, '', location.pathname);
+      }
+    } catch (e) {}
     this.checkAuth();
   }
   componentWillUnmount() { clearInterval(this.clockTimer); this.stopMusic(); clearTimeout(this._saveTimer); }
@@ -756,6 +807,42 @@ class Component extends DCLogic {
   doLogout = async () => {
     try { await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }); } catch (e) {}
     this.setState({ authEmail: null });
+  };
+  doForgotPassword = async () => {
+    const email = this.state.aEmail.trim();
+    if (!email) { this.setState({ authError: 'enter your email first ♡' }); return; }
+    this.setState({ authBusy: true, authError: '', authInfo: '' });
+    try {
+      const r = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      if (!r.ok && r.status === 429) {
+        this.setState({ authBusy: false, authError: 'too many tries, please wait a bit and try again ♡' });
+        return;
+      }
+      this.setState({ authBusy: false, authInfo: 'if that email has a shard account, a reset link is on its way ♡' });
+    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+  };
+  doResetPassword = async () => {
+    const { rPassword, rPassword2, resetToken } = this.state;
+    if (rPassword.length < 8) { this.setState({ authError: 'password needs to be 8 or more characters ♡' }); return; }
+    if (rPassword !== rPassword2) { this.setState({ authError: 'those passwords don’t match ♡' }); return; }
+    this.setState({ authBusy: true, authError: '' });
+    try {
+      const r = await fetch(`${API_BASE}/api/auth/reset-password`, {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: resetToken, password: rPassword })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        const msg = j.error === 'too_many_requests' ? 'too many tries, please wait a bit and try again ♡' : 'that reset link is invalid or expired, request a new one ♡';
+        this.setState({ authBusy: false, authError: msg });
+        return;
+      }
+      this.setState({ authBusy: false, authMode: 'login', rPassword: '', rPassword2: '', resetToken: '' });
+      this.checkAuth();
+    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
   };
   setWin(key, patch) { this.setState(st => ({ windows: { ...st.windows, [key]: { ...st.windows[key], ...patch } } })); }
   focusWin = key => this.setState(st => ({ zTop: st.zTop + 1, windows: { ...st.windows, [key]: { ...st.windows[key], z: st.zTop + 1 } } }));
@@ -1143,14 +1230,21 @@ class Component extends DCLogic {
       taskItems, clock: s.clock,
       isLoggedIn: !!s.authEmail, isLoggedOut: !s.authEmail, authEmail: s.authEmail,
       isLogin: s.authMode === 'login', isSignup: s.authMode === 'signup',
+      isForgot: s.authMode === 'forgot', isReset: s.authMode === 'reset',
       authModeLabel: s.authMode === 'login' ? 'log in' : 'sign up',
-      toggleAuthMode: () => this.setState({ authMode: s.authMode === 'login' ? 'signup' : 'login', authError: '' }),
+      toggleAuthMode: () => this.setState({ authMode: s.authMode === 'login' ? 'signup' : 'login', authError: '', authInfo: '' }),
       authSwitchLabel: s.authMode === 'login' ? "new here? sign up instead" : 'already have a shard? log in',
+      goToForgot: () => this.setState({ authMode: 'forgot', authError: '', authInfo: '' }),
+      backToLogin: () => this.setState({ authMode: 'login', authError: '', authInfo: '' }),
       aEmail: s.aEmail, aPassword: s.aPassword,
       setAEmail: e => this.setState({ aEmail: e.target.value }), setAPassword: e => this.setState({ aPassword: e.target.value }),
-      authError: s.authError, authBusy: s.authBusy,
-      authSubmit: s.authMode === 'login' ? this.doLogin : this.doSignup,
-      authSubmitLabel: s.authBusy ? 'one sec…' : (s.authMode === 'login' ? '☾ log in' : '✦ make my account'),
+      rPassword: s.rPassword, rPassword2: s.rPassword2,
+      setRPassword: e => this.setState({ rPassword: e.target.value }), setRPassword2: e => this.setState({ rPassword2: e.target.value }),
+      authError: s.authError, authInfo: s.authInfo, authBusy: s.authBusy,
+      authSubmit: s.authMode === 'login' ? this.doLogin : s.authMode === 'signup' ? this.doSignup
+        : s.authMode === 'forgot' ? this.doForgotPassword : this.doResetPassword,
+      authSubmitLabel: s.authBusy ? 'one sec…' : s.authMode === 'login' ? '☾ log in' : s.authMode === 'signup' ? '✦ make my account'
+        : s.authMode === 'forgot' ? '✉ send reset link' : '☾ set new password',
       openAccount: () => this.openWin('account'), doLogout: this.doLogout,
       accountStatusLabel: s.authEmail ? `☾ ${s.authEmail}` : '☾ save my layout'
     };

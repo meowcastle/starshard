@@ -1,20 +1,29 @@
 require('dotenv').config();
 
+const crypto = require('crypto');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql2/promise');
 const rateLimit = require('express-rate-limit');
+const { Resend } = require('resend');
 
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET;
 const COOKIE_NAME = 'starshard_session';
 const IS_PROD = process.env.NODE_ENV === 'production';
+const APP_URL = process.env.APP_URL || 'https://staging.starshard.net';
+const RESEND_FROM = process.env.RESEND_FROM || 'Star Shard <no-reply@starshard.net>';
 
 if (!JWT_SECRET) {
   console.error('JWT_SECRET is not set. Refusing to start.');
   process.exit(1);
+}
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+if (!resend) {
+  console.warn('RESEND_API_KEY is not set. Password reset emails will not send.');
 }
 
 const pool = mysql.createPool({
@@ -90,6 +99,20 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
 });
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
+const resetPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
 
 app.post('/api/auth/signup', signupLimiter, async (req, res) => {
   const { email, password } = req.body || {};
@@ -141,6 +164,74 @@ app.post('/api/auth/login', loginLimiter, async (req, res) => {
 
 app.post('/api/auth/logout', (req, res) => {
   res.clearCookie(COOKIE_NAME, { path: '/' });
+  res.status(204).end();
+});
+
+function hashToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+app.post('/api/auth/forgot-password', forgotPasswordLimiter, async (req, res) => {
+  const { email } = req.body || {};
+  if (typeof email !== 'string') {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const [rows] = await pool.execute('SELECT id FROM users WHERE email = ?', [normalizedEmail]);
+  const user = rows[0];
+
+  if (user) {
+    const token = crypto.randomBytes(32).toString('hex');
+    const tokenHash = hashToken(token);
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+    await pool.execute(
+      'INSERT INTO password_resets (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
+      [user.id, tokenHash, expiresAt]
+    );
+
+    if (resend) {
+      const resetUrl = `${APP_URL}/?resetToken=${token}`;
+      try {
+        await resend.emails.send({
+          from: RESEND_FROM,
+          to: normalizedEmail,
+          subject: 'reset your star shard password',
+          html: `<p>someone asked to reset the password on this star shard account.</p>` +
+            `<p><a href="${resetUrl}">click here to set a new password</a> (expires in 30 minutes)</p>` +
+            `<p>if this wasn't you, you can ignore this email.</p>`,
+        });
+      } catch (e) {
+        console.error('resend send failed', e);
+      }
+    }
+  }
+
+  // always respond the same way, whether or not the email exists
+  res.status(204).end();
+});
+
+app.post('/api/auth/reset-password', resetPasswordLimiter, async (req, res) => {
+  const { token, password } = req.body || {};
+  if (typeof token !== 'string' || typeof password !== 'string' || password.length < 8) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+
+  const tokenHash = hashToken(token);
+  const [rows] = await pool.execute(
+    'SELECT id, user_id, expires_at, used_at FROM password_resets WHERE token_hash = ?',
+    [tokenHash]
+  );
+  const reset = rows[0];
+  if (!reset || reset.used_at || new Date(reset.expires_at) < new Date()) {
+    return res.status(400).json({ error: 'invalid_or_expired_token' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  await pool.execute('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, reset.user_id]);
+  await pool.execute('UPDATE password_resets SET used_at = NOW() WHERE id = ?', [reset.id]);
+
+  setSessionCookie(res, reset.user_id);
   res.status(204).end();
 });
 
