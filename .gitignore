@@ -7,6 +7,11 @@ starshard-api/node_modules/
 starshard-api/.env
 starshard-api/run.log
 
+# site tooling: tests, and the vendored dc-runtime CDN deps for offline smoke runs
+node_modules/
+vendor/
+package-lock.json
+
 .projects/cache
 .projects/vault
 .projects/state.test.json

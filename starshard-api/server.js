@@ -35,6 +35,11 @@ const pool = mysql.createPool({
   connectionLimit: 5,
 });
 
+if (IS_PROD && !process.env.ALLOWED_ORIGINS) {
+  console.error('ALLOWED_ORIGINS is not set in production. Refusing to start.');
+  process.exit(1);
+}
+
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://staging.starshard.net')
   .split(',').map(o => o.trim()).filter(Boolean);
 
@@ -56,6 +61,11 @@ app.use((req, res, next) => {
 });
 app.use(express.json({ limit: '256kb' }));
 app.use(cookieParser());
+
+// Express 4 does not catch rejections from async route handlers — an unhandled
+// rejection terminates the process under Node >=15. Every async handler must be
+// wrapped in this, which routes failures to the error middleware at the bottom.
+const wrap = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 function signSession(userId) {
   return jwt.sign({ uid: userId }, JWT_SECRET, { expiresIn: '90d' });
@@ -114,7 +124,7 @@ const resetPasswordLimiter = rateLimit({
   message: { error: 'too_many_requests' },
 });
 
-app.post('/api/auth/signup', signupLimiter, async (req, res) => {
+app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   const { email, password } = req.body || {};
   if (typeof email !== 'string' || typeof password !== 'string') {
     return res.status(400).json({ error: 'invalid_input' });
@@ -139,9 +149,9 @@ app.post('/api/auth/signup', signupLimiter, async (req, res) => {
     console.error(e);
     res.status(500).json({ error: 'server_error' });
   }
-});
+}));
 
-app.post('/api/auth/login', loginLimiter, async (req, res) => {
+app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   const { email, password } = req.body || {};
   if (typeof email !== 'string' || typeof password !== 'string') {
     return res.status(400).json({ error: 'invalid_input' });
@@ -160,7 +170,7 @@ app.post('/api/auth/login', loginLimiter, async (req, res) => {
 
   setSessionCookie(res, user.id);
   res.json({ email: normalizedEmail });
-});
+}));
 
 app.post('/api/auth/logout', (req, res) => {
   res.clearCookie(COOKIE_NAME, { path: '/' });
@@ -171,7 +181,7 @@ function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
-app.post('/api/auth/forgot-password', forgotPasswordLimiter, async (req, res) => {
+app.post('/api/auth/forgot-password', forgotPasswordLimiter, wrap(async (req, res) => {
   const { email } = req.body || {};
   if (typeof email !== 'string') {
     return res.status(400).json({ error: 'invalid_input' });
@@ -209,9 +219,9 @@ app.post('/api/auth/forgot-password', forgotPasswordLimiter, async (req, res) =>
 
   // always respond the same way, whether or not the email exists
   res.status(204).end();
-});
+}));
 
-app.post('/api/auth/reset-password', resetPasswordLimiter, async (req, res) => {
+app.post('/api/auth/reset-password', resetPasswordLimiter, wrap(async (req, res) => {
   const { token, password } = req.body || {};
   if (typeof token !== 'string' || typeof password !== 'string' || password.length < 8) {
     return res.status(400).json({ error: 'invalid_input' });
@@ -233,9 +243,9 @@ app.post('/api/auth/reset-password', resetPasswordLimiter, async (req, res) => {
 
   setSessionCookie(res, reset.user_id);
   res.status(204).end();
-});
+}));
 
-app.get('/api/me', async (req, res) => {
+app.get('/api/me', wrap(async (req, res) => {
   const token = req.cookies[COOKIE_NAME];
   if (!token) return res.status(401).json({ error: 'not_authenticated' });
   let payload;
@@ -248,9 +258,9 @@ app.get('/api/me', async (req, res) => {
   const user = rows[0];
   if (!user) return res.status(401).json({ error: 'not_authenticated' });
   res.json({ email: user.email });
-});
+}));
 
-app.get('/api/state', requireAuth, async (req, res) => {
+app.get('/api/state', requireAuth, wrap(async (req, res) => {
   const [rows] = await pool.execute(
     'SELECT state_json FROM window_state WHERE user_id = ?',
     [req.userId]
@@ -261,9 +271,9 @@ app.get('/api/state', requireAuth, async (req, res) => {
   } catch (e) {
     res.json({ state: null });
   }
-});
+}));
 
-app.put('/api/state', requireAuth, async (req, res) => {
+app.put('/api/state', requireAuth, wrap(async (req, res) => {
   const { state } = req.body || {};
   if (typeof state !== 'object' || state === null) {
     return res.status(400).json({ error: 'invalid_input' });
@@ -278,6 +288,18 @@ app.put('/api/state', requireAuth, async (req, res) => {
     [req.userId, json]
   );
   res.status(204).end();
+}));
+
+// Anything a wrapped handler throws lands here: log it, answer 500, stay up.
+app.use((err, req, res, next) => {
+  console.error('[starshard-api]', req.method, req.path, err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: 'server_error' });
+});
+
+// Belt and braces for anything that escapes the wrapper (timers, listeners).
+process.on('unhandledRejection', err => {
+  console.error('[starshard-api] unhandled rejection', err);
 });
 
 app.listen(PORT, '127.0.0.1', () => {

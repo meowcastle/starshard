@@ -633,55 +633,53 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1200, &quot;height&quot;: 860}, &quot;sparkles&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}, &quot;scanlines&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}, &quot;revealAll&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}}">
+// ===========================================================================
+// Star Shard — component shell.
+//
+// OWNERSHIP: this block is the seam between Claude Design and Claude Code.
+// It should stay THIN: state, lifecycle, and renderVals (the binding surface
+// the markup above reads). All real logic lives in sibling ES modules that
+// Claude Code owns:
+//
+//   astro.js    ephemeris, houses, weekday      format.js   display strings
+//   tz.js       historical timezone + DST       api.js      ALL network I/O
+//   wheel.js    chart wheel geometry            card.js     share-card PNG
+//   reading.js  shard text + woven reading      windows.js  window manager
+//   shards.js / duet.js                         written content
+//
+// The runtime transpiles this with Babel presets ["react","typescript"] and
+// evaluates it inside new Function(...), so top-level `import` is a syntax
+// error here. Modules must be pulled in with dynamic import() from
+// componentDidMount — that is why renderVals guards on `ready`.
+//
+// See BINDINGS.md for the full list of names the markup depends on. If you
+// rename one there, rename it here.
+// ===========================================================================
+
+// Visual metadata for the four shards — safe to restyle from a design pass.
 const SHARD_META = [
   { key: 'house', title: 'house shard', file: 'house.shd', tradition: 'Placidus houses', gem: 'linear-gradient(160deg,#7fdbd4,#3fb8ad)', titleColor: '#3fb8ad' },
   { key: 'mirror', title: 'mirror shard', file: 'mirror.shd', tradition: 'Jungian archetypes', gem: 'linear-gradient(160deg,#c9b8f0,#9d84e8)', titleColor: '#9d84e8' },
   { key: 'moon', title: 'moon shard', file: 'moon.shd', tradition: 'manāzil al-qamar', gem: 'linear-gradient(160deg,#ffd98a,#f0b445)', titleColor: '#e0a63c' },
   { key: 'hearth', title: 'hearth shard', file: 'hearth.shd', tradition: 'folk star-lore', gem: 'linear-gradient(160deg,#ffb7d5,#ff8fc0)', titleColor: '#e677ab' }
 ];
-const WIN_TITLES = { welcome: ['🎀', 'welcome.exe'], reader: ['💿', 'shard reader'], sky: ['💎', 'your_sky.shards'], card: ['🖼', 'shard_card.bmp'], luna: ['📜', 'luna.txt'], today: ['🌙', 'today.exe'], wheel: ['🔮', 'chart_wheel.exe'], duet: ['💞', 'duet.exe'], guest: ['📖', 'guestbook.htm'], gloss: ['📚', 'grimoire.hlp'], player: ['🎧', 'player.exe'], doc: ['📄', 'reading.doc'], account: ['🔑', 'account.exe'] };
-const FOCUS_TB = 'linear-gradient(90deg,#ff8fc0,#9d84e8)', BLUR_TB = '#cfaec8';
 const STAMPS = ['⭐', '🎀', '🌙', '💿', '✿'];
-function offsetFor(tz, y, m, d, hh, mm) {
-  const get = t => {
-    const v = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longOffset' }).formatToParts(t).find(p => p.type === 'timeZoneName').value;
-    if (v === 'GMT' || v === 'UTC') return 0;
-    const mt = v.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
-    return mt ? (mt[1] === '-' ? -1 : 1) * (+mt[2] + (+(mt[3] || 0)) / 60) : 0;
-  };
-  let off = get(new Date(Date.UTC(y, m - 1, d, hh, mm)));
-  off = get(new Date(Date.UTC(y, m - 1, d, hh, mm) - off * 3600e3));
-  return off;
+
+// Chiptune loop for player.exe — notes in Hz, stepped every 240ms.
+const BGM_NOTES = [523.25, 659.25, 783.99, 659.25, 880, 783.99, 987.77, 783.99, 659.25, 523.25, 587.33, 659.25];
+
+// Window bindings used before the modules finish loading: correct geometry,
+// inert handlers. Prevents a blank first frame without duplicating logic.
+const NOOP = () => {};
+function inertWin(w) {
+  if (!w) return { show: false, x: 0, y: 0, z: 0, w: 0, h: 'auto', tbBg: '#cfaec8', resize: NOOP, focus: NOOP, drag: NOOP, minimize: NOOP, close: NOOP };
+  return { show: w.open && !w.min, x: w.x, y: w.y, z: w.z, w: w.w, h: w.h ? w.h + 'px' : 'auto',
+    tbBg: 'linear-gradient(90deg,#ff8fc0,#9d84e8)', resize: NOOP, focus: NOOP, drag: NOOP, minimize: NOOP, close: NOOP };
 }
-function dstInfo(tz, y, m, d, hh, mm) {
-  const off = offsetFor(tz, y, m, d, hh, mm);
-  const std = Math.min(offsetFor(tz, y, 1, 15, 12, 0), offsetFor(tz, y, 7, 15, 12, 0));
-  return { off, dst: off > std };
-}
-function initWindows() {
-  const W = typeof window !== 'undefined' ? window.innerWidth : 1200;
-  const cx = w => Math.max(104, Math.round((W - w) / 2) + 40);
-  const fit = w => Math.min(w, Math.round(W * 0.9), Math.max(300, W - 116));
-  return {
-    welcome: { open: true, min: false, x: cx(860), y: 24, z: 10, w: fit(860), h: null },
-    today: { open: true, min: false, x: Math.max(104, W - 384), y: 40, z: 15, w: fit(330), h: null },
-    reader: { open: false, min: false, x: cx(560) + 40, y: 56, z: 11, w: fit(560), h: null },
-    sky: { open: false, min: false, x: cx(860) + 20, y: 44, z: 12, w: fit(860), h: null },
-    card: { open: false, min: false, x: cx(500) + 70, y: 60, z: 13, w: fit(500), h: null },
-    luna: { open: false, min: false, x: cx(400) + 120, y: 110, z: 14, w: fit(400), h: null },
-    wheel: { open: false, min: false, x: cx(430) - 60, y: 70, z: 16, w: fit(430), h: null },
-    duet: { open: false, min: false, x: cx(520) + 90, y: 80, z: 17, w: fit(520), h: null },
-    guest: { open: false, min: false, x: cx(400) + 140, y: 90, z: 18, w: fit(400), h: 480 },
-    gloss: { open: false, min: false, x: cx(470) - 40, y: 100, z: 19, w: fit(470), h: 520 },
-    player: { open: false, min: false, x: Math.max(104, W - 420), y: 300, z: 20, w: fit(300), h: null },
-    doc: { open: false, min: false, x: cx(580), y: 50, z: 21, w: fit(580), h: 620 },
-    account: { open: false, min: false, x: cx(360), y: 90, z: 22, w: fit(360), h: null }
-  };
-}
-const API_BASE = typeof location !== 'undefined' ? `https://api.${location.hostname}` : '';
+
 class Component extends DCLogic {
   state = {
-    windows: initWindows(), zTop: 30, startOpen: false,
+    windows: null, zTop: 30, startOpen: false,
     fName: '', fDate: '2004-08-31', fTime: '12:00',
     fQuery: '', cityResults: [], fPlace: null, searching: false,
     manualMode: false, fLat: '', fLon: '', fTz: '',
@@ -695,280 +693,187 @@ class Component extends DCLogic {
     authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '', authInfo: '',
     aEmail: '', aPassword: '', rPassword: '', rPassword2: '', resetToken: ''
   };
+
+  // -- lifecycle ------------------------------------------------------------
+
   async componentDidMount() {
-    this.astro = await import('./astro.js');
-    this.data = await import('./shards.js');
-    this.duetMod = await import('./duet.js');
-    const tick = () => this.setState({ clock: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
-    tick(); this.clockTimer = setInterval(tick, 20000);
-    // today's sky
-    const jd = Date.now() / 86400000 + 2440587.5;
-    const moonLon = this.astro.moonLongitude(jd);
-    this.setState({ today: { mansion: this.astro.mansionOf(moonLon), moonSign: this.astro.signOf(moonLon) } });
-    // guestbook
-    try {
-      const saved = JSON.parse(localStorage.getItem('starshard-guestbook') || 'null');
-      this.setState({ guestEntries: Array.isArray(saved) && saved.length ? saved : this.duetMod.GUESTBOOK_SEED });
-    } catch (e) { this.setState({ guestEntries: this.duetMod.GUESTBOOK_SEED }); }
-    this.forceUpdate();
+    const [astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, win] = await Promise.all([
+      import('./astro.js'), import('./shards.js'), import('./duet.js'),
+      import('./format.js'), import('./tz.js'), import('./api.js'),
+      import('./wheel.js'), import('./card.js'), import('./reading.js'),
+      import('./windows.js')
+    ]);
+    Object.assign(this, { astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, winMod: win });
+    this.win = win.createWindowOps(this);
+    const windows = win.initWindows();
     try {
       const params = new URLSearchParams(location.search);
       const token = params.get('resetToken');
       if (token) {
-        this.setState(st => ({
-          authMode: 'reset', resetToken: token,
-          windows: { ...st.windows, account: { ...st.windows.account, open: true, min: false } }
-        }));
+        windows.account = { ...windows.account, open: true, min: false };
+        this.setState({ authMode: 'reset', resetToken: token });
         history.replaceState(null, '', location.pathname);
       }
     } catch (e) {}
+    this.setState({ windows });
+
+    const tick = () => this.setState({ clock: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
+    tick(); this.clockTimer = setInterval(tick, 20000);
+
+    const jd = Date.now() / 86400000 + 2440587.5;
+    const moonLon = astro.moonLongitude(jd);
+    this.setState({ today: { mansion: astro.mansionOf(moonLon), moonSign: astro.signOf(moonLon) } });
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('starshard-guestbook') || 'null');
+      this.setState({ guestEntries: Array.isArray(saved) && saved.length ? saved : duetMod.GUESTBOOK_SEED });
+    } catch (e) { this.setState({ guestEntries: duetMod.GUESTBOOK_SEED }); }
+
+    this.forceUpdate();
     this.checkAuth();
   }
+
   componentWillUnmount() { clearInterval(this.clockTimer); this.stopMusic(); clearTimeout(this._saveTimer); }
+
   componentDidUpdate() {
-    if (!this.state.authEmail) return;
+    if (!this.state.authEmail || !this.state.windows) return;
     const json = JSON.stringify(this.state.windows);
     if (json === this._lastWindowsJSON) return;
     this._lastWindowsJSON = json;
     clearTimeout(this._saveTimer);
-    this._saveTimer = setTimeout(() => this.saveWindowState(), 800);
+    this._saveTimer = setTimeout(() => this.api.saveWindowState(this.state.windows), 800);
   }
+
+  // -- accounts -------------------------------------------------------------
+
   checkAuth = async () => {
-    try {
-      const r = await fetch(`${API_BASE}/api/me`, { credentials: 'include' });
-      if (!r.ok) { this.setState({ authChecked: true }); return; }
-      const j = await r.json();
-      this.setState({ authChecked: true, authEmail: j.email });
-      this.loadWindowState();
-    } catch (e) { this.setState({ authChecked: true }); }
+    const who = await this.api.me();
+    this.setState({ authChecked: true, authEmail: who ? who.email : null });
+    if (who) this.loadLayout();
   };
-  loadWindowState = async () => {
-    try {
-      const r = await fetch(`${API_BASE}/api/state`, { credentials: 'include' });
-      if (!r.ok) return;
-      const j = await r.json();
-      if (j.state && typeof j.state === 'object') {
-        this.setState(st => {
-          const merged = { ...st.windows };
-          for (const k of Object.keys(merged)) { if (j.state[k]) merged[k] = { ...merged[k], ...j.state[k] }; }
-          return { windows: merged };
-        });
-      }
-    } catch (e) {}
+
+  loadLayout = async () => {
+    const saved = await this.api.loadWindowState();
+    if (!saved) return;
+    this.setState(st => ({ windows: this.winMod.mergeSavedLayout(st.windows, saved) }));
   };
-  saveWindowState = async () => {
-    try {
-      await fetch(`${API_BASE}/api/state`, {
-        method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ state: this.state.windows })
-      });
-    } catch (e) {}
-  };
+
   doSignup = async () => {
     const email = this.state.aEmail.trim(), password = this.state.aPassword;
     if (!email || password.length < 8) { this.setState({ authError: 'email + a password of 8 or more characters, please ♡' }); return; }
     this.setState({ authBusy: true, authError: '' });
     try {
-      const r = await fetch(`${API_BASE}/api/auth/signup`, {
-        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const j = await r.json();
-      if (!r.ok) {
-        const msg = j.error === 'email_taken' ? 'that email already has a shard account ♡'
-          : j.error === 'too_many_requests' ? 'too many tries, please wait a bit and try again ♡'
-          : 'could not create your account, try again ♡';
-        this.setState({ authBusy: false, authError: msg });
-        return;
-      }
+      const j = await this.api.signup(email, password);
       this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
-      this.saveWindowState();
-    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+      this.api.saveWindowState(this.state.windows);
+    } catch (e) {
+      this.setState({ authBusy: false, authError: this.api.signupError(e.code) });
+    }
   };
+
   doLogin = async () => {
     const email = this.state.aEmail.trim(), password = this.state.aPassword;
     if (!email || !password) { this.setState({ authError: 'enter your email and password ♡' }); return; }
     this.setState({ authBusy: true, authError: '' });
     try {
-      const r = await fetch(`${API_BASE}/api/auth/login`, {
-        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const j = await r.json();
-      if (!r.ok) {
-        const msg = j.error === 'too_many_requests' ? 'too many tries, please wait a bit and try again ♡' : 'wrong email or password ♡';
-        this.setState({ authBusy: false, authError: msg });
-        return;
-      }
+      const j = await this.api.login(email, password);
       this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
-      this.loadWindowState();
-    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+      this.loadLayout();
+    } catch (e) {
+      this.setState({ authBusy: false, authError: this.api.loginError(e.code) });
+    }
   };
-  doLogout = async () => {
-    try { await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }); } catch (e) {}
-    this.setState({ authEmail: null });
-  };
+
+  doLogout = async () => { await this.api.logout(); this.setState({ authEmail: null }); };
+
   doForgotPassword = async () => {
     const email = this.state.aEmail.trim();
     if (!email) { this.setState({ authError: 'enter your email first ♡' }); return; }
     this.setState({ authBusy: true, authError: '', authInfo: '' });
     try {
-      const r = await fetch(`${API_BASE}/api/auth/forgot-password`, {
-        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      if (!r.ok && r.status === 429) {
-        this.setState({ authBusy: false, authError: 'too many tries, please wait a bit and try again ♡' });
-        return;
-      }
+      await this.api.forgotPassword(email);
       this.setState({ authBusy: false, authInfo: 'if that email has a shard account, a reset link is on its way ♡' });
-    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+    } catch (e) {
+      this.setState({ authBusy: false, authError: this.api.forgotPasswordError(e.code) });
+    }
   };
+
   doResetPassword = async () => {
     const { rPassword, rPassword2, resetToken } = this.state;
     if (rPassword.length < 8) { this.setState({ authError: 'password needs to be 8 or more characters ♡' }); return; }
     if (rPassword !== rPassword2) { this.setState({ authError: 'those passwords don’t match ♡' }); return; }
     this.setState({ authBusy: true, authError: '' });
     try {
-      const r = await fetch(`${API_BASE}/api/auth/reset-password`, {
-        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: resetToken, password: rPassword })
-      });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok) {
-        const msg = j.error === 'too_many_requests' ? 'too many tries, please wait a bit and try again ♡' : 'that reset link is invalid or expired, request a new one ♡';
-        this.setState({ authBusy: false, authError: msg });
-        return;
-      }
+      await this.api.resetPassword(resetToken, rPassword);
       this.setState({ authBusy: false, authMode: 'login', rPassword: '', rPassword2: '', resetToken: '' });
       this.checkAuth();
-    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+    } catch (e) {
+      this.setState({ authBusy: false, authError: this.api.resetPasswordError(e.code) });
+    }
   };
-  setWin(key, patch) { this.setState(st => ({ windows: { ...st.windows, [key]: { ...st.windows[key], ...patch } } })); }
-  focusWin = key => this.setState(st => ({ zTop: st.zTop + 1, windows: { ...st.windows, [key]: { ...st.windows[key], z: st.zTop + 1 } } }));
-  openWin = key => this.setState(st => ({ zTop: st.zTop + 1, startOpen: false, windows: { ...st.windows, [key]: { ...st.windows[key], open: true, min: false, z: st.zTop + 1 } } }));
-  dragWin = key => e => {
-    if (e.button !== undefined && e.button !== 0) return;
-    e.preventDefault();
-    const win = this.state.windows[key];
-    const sx = e.clientX - win.x, sy = e.clientY - win.y;
-    this.focusWin(key);
-    const move = ev => this.setWin(key, {
-      x: Math.max(-120, Math.min(window.innerWidth - 100, ev.clientX - sx)),
-      y: Math.max(0, ev.clientY - sy)
-    });
-    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
-    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
-  };
-  resizeWin = key => e => {
-    if (e.button !== undefined && e.button !== 0) return;
-    e.preventDefault(); e.stopPropagation();
-    const rect = e.currentTarget.parentElement.getBoundingClientRect();
-    const sx = e.clientX, sy = e.clientY, w0 = rect.width, h0 = rect.height;
-    this.focusWin(key);
-    const move = ev => this.setWin(key, {
-      w: Math.max(320, Math.min(window.innerWidth - 20, w0 + ev.clientX - sx)),
-      h: Math.max(160, h0 + ev.clientY - sy)
-    });
-    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
-    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
-  };
-  winVals(key) {
-    const w = this.state.windows[key];
-    const focused = Object.values(this.state.windows).every(o => !o.open || o.min || o.z <= w.z);
-    return {
-      show: w.open && !w.min, x: w.x, y: w.y, z: w.z, w: w.w, h: w.h ? w.h + 'px' : 'auto',
-      tbBg: focused ? FOCUS_TB : BLUR_TB,
-      resize: this.resizeWin(key),
-      focus: () => { if (this.state.windows[key].z !== this.state.zTop) this.focusWin(key); },
-      drag: this.dragWin(key),
-      minimize: e => { e.stopPropagation(); this.setWin(key, { min: true }); },
-      close: e => { e.stopPropagation(); this.setWin(key, { open: false }); }
-    };
-  }
-  geocode = async q => {
-    const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=en&format=json`);
-    const j = await r.json();
-    return (j.results || []).map(x => ({ name: x.name, region: [x.admin1, x.country].filter(Boolean).join(', '), lat: x.latitude, lon: x.longitude, tz: x.timezone }));
-  };
+
+  // -- city lookup ----------------------------------------------------------
+
   search = async () => {
     const q = this.state.fQuery.trim();
     if (!q) return;
     this.setState({ searching: true, cityResults: [], formError: '' });
     try {
-      const res = await this.geocode(q);
+      const res = await this.api.geocode(q);
       this.setState({ searching: false, cityResults: res, formError: res.length ? '' : 'no stars found by that name… try another spelling, or enter coordinates ♡' });
     } catch (e) {
       this.setState({ searching: false, manualMode: true, formError: 'the star atlas is unreachable, enter coordinates manually ♡' });
     }
   };
+
   dSearch = async () => {
     const q = this.state.dQuery.trim();
     if (!q) return;
     this.setState({ dSearching: true, dResults: [], dError: '' });
     try {
-      const res = await this.geocode(q);
+      const res = await this.api.geocode(q);
       this.setState({ dSearching: false, dResults: res, dError: res.length ? '' : 'no stars found by that name ♡' });
     } catch (e) { this.setState({ dSearching: false, dError: 'the star atlas is unreachable, try again ♡' }); }
   };
+
+  // -- chart ----------------------------------------------------------------
+
   chartFrom(dateStr, timeStr, place) {
     const [y, m, d] = dateStr.split('-').map(Number);
     const [hh, mm] = timeStr.split(':').map(Number);
-    const tz = dstInfo(place.tz, y, m, d, hh, mm).off;
-    return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: place.lat, lon: place.lon, tzOffset: tz });
+    const tzOffset = this.tz.dstInfo(place.tz, y, m, d, hh, mm).off;
+    return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: place.lat, lon: place.lon, tzOffset });
   }
+
   compute = () => {
     const s = this.state;
     if (!this.astro) return;
     if (!s.fDate || !s.fTime) { this.setState({ formError: 'the stars need a date and a time!!' }); return; }
     let chart;
     if (s.manualMode) {
-      const lat = parseFloat(s.fLat), lon = parseFloat(s.fLon), tz = parseFloat(s.fTz);
-      if ([lat, lon, tz].some(isNaN)) { this.setState({ formError: 'manual mode needs latitude, longitude & UTC offset ♡' }); return; }
+      const lat = parseFloat(s.fLat), lon = parseFloat(s.fLon), tzOffset = parseFloat(s.fTz);
+      if ([lat, lon, tzOffset].some(isNaN)) { this.setState({ formError: 'manual mode needs latitude, longitude & UTC offset ♡' }); return; }
       const [y, m, d] = s.fDate.split('-').map(Number);
       const [hh, mm] = s.fTime.split(':').map(Number);
-      chart = this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset: tz });
+      chart = this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset });
     } else {
       if (!s.fPlace) { this.setState({ formError: 'search for your birth town first, so the moon knows where to look ♡' }); return; }
       try { chart = this.chartFrom(s.fDate, s.fTime, s.fPlace); }
       catch (e) { this.setState({ formError: 'could not read that timezone, try manual coordinates ♡', manualMode: true }); return; }
     }
     this.setState({ chart, formError: '', revealed: [false, false, false, false], weaveText: '', duet: null, duetText: '' });
-    this.openWin('sky');
+    this.win.openWin('sky');
   };
-  buildShards() {
-    const { chart } = this.state;
-    if (!chart || !this.data) return [];
-    const A = this.astro, D = this.data;
-    const moon = A.SIGNS[chart.moonSign], asc = A.SIGNS[chart.ascSign];
-    const man = D.MANSIONS[chart.mansion], wk = D.WEEKDAYS[chart.weekday], arch = D.ARCHETYPES[chart.moonSign];
-    const ord = n => n + (['th','st','nd','rd'][((n%100)-20)%10] || ['th','st','nd','rd'][n%100] || 'th');
-    return [
-      { headline: `${asc} rising · sun in the ${ord(chart.sunHouse)} house`, body: D.HOUSE_READINGS[chart.sunHouse - 1] + ` (and with ${asc} rising, you enter every room as a ${D.SIGN_FLAVOR[chart.ascSign]}.)` },
-      { headline: `${arch[0]} · moon in ${moon}`, body: arch[1] },
-      { headline: `${man[0]}: “${man[1]}”`, body: `Your moon rests in the ${ord(chart.mansion + 1)} of the 28 lunar mansions charted by classical Arab astronomers: ${man[2]}` },
-      { headline: `born on ${wk[0]}, day of ${wk[1]}`, body: wk[2] }
-    ];
-  }
+
   weave = async () => {
-    const { chart, fName } = this.state;
-    const A = this.astro, D = this.data;
-    const sun = A.SIGNS[chart.sunSign], moon = A.SIGNS[chart.moonSign], asc = A.SIGNS[chart.ascSign];
-    const man = D.MANSIONS[chart.mansion], arch = D.ARCHETYPES[chart.moonSign], wk = D.WEEKDAYS[chart.weekday];
     this.setState({ weaving: true });
-    let text;
-    try {
-      text = await window.claude.complete({
-        system: 'You write tiny astrology readings for Star Shard, a cute retro-web site for Vocaloid fans, magical-girl inspired. Voice: warm, playful, nostalgic internet-cute, family-friendly, no drama. Light fandom flavor without naming copyrighted characters. 80-110 words, one paragraph, may end with one kaomoji or ✦. No headings, no lists.',
-        messages: [{ role: 'user', content: `Weave one blended reading for ${fName || 'a fan'}: Sun in ${sun} (${chart.sunHouse}th Placidus house), Moon in ${moon}, ${asc} rising. Jungian archetype: ${arch[0]}. Lunar mansion: ${man[0]} (${man[1]}). Born on ${wk[0]}, ruled by ${wk[1]} in folk tradition. Blend all four gently.` }]
-      });
-      if (!text || !text.trim()) throw new Error('empty');
-    } catch (e) {
-      text = D.fallbackWeave(fName, sun, moon, asc, ['1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th'][chart.sunHouse - 1], man[0], arch[0], wk[1]);
-    }
-    this.setState({ weaving: false, weaveText: text.trim() });
-    this.openWin('card');
+    const text = await this.reading.weave({
+      chart: this.state.chart, name: this.state.fName, astro: this.astro, data: this.data
+    });
+    this.setState({ weaving: false, weaveText: text });
+    this.win.openWin('card');
   };
+
   computeDuet = async () => {
     const s = this.state;
     if (!s.chart) return;
@@ -976,26 +881,18 @@ class Component extends DCLogic {
     let chartB;
     try { chartB = this.chartFrom(s.dDate, s.dTime, s.dPlace); }
     catch (e) { this.setState({ dError: 'could not read that timezone ♡' }); return; }
-    const A = this.astro, D = this.data, M = this.duetMod;
-    const eA = M.ELEMENTS[M.SIGN_ELEMENT[s.chart.sunSign]], eB = M.ELEMENTS[M.SIGN_ELEMENT[chartB.sunSign]];
-    const pair = M.ELEMENT_PAIRS[`${eA}-${eB}`] || M.ELEMENT_PAIRS[`${eB}-${eA}`];
-    const score = M.duetScore(s.chart, chartB);
-    const lines = [
-      `☀ suns: ${A.SIGNS[s.chart.sunSign]} × ${A.SIGNS[chartB.sunSign]}: ${pair[1]}`,
-      `☾ moons: your moons rest in ${D.MANSIONS[s.chart.mansion][0]} and ${D.MANSIONS[chartB.mansion][0]}, two stations on the same lunar road; the moon visits you both every month.`,
-      `✶ days: a child of ${D.WEEKDAYS[s.chart.weekday][1]} and a child of ${D.WEEKDAYS[chartB.weekday][1]}, the old week put your stars on the same calendar for a reason.`
-    ];
-    this.setState({ duet: { score, pairTitle: pair[0], lines, chartB }, duetText: '…', duetWeaving: true });
-    let text;
-    try {
-      text = await window.claude.complete({
-        system: 'You write tiny two-person astrology compatibility readings for Star Shard, a cute retro-web site for Vocaloid fans. Warm, playful, family-friendly, no drama, no romance assumptions (could be friends). 60-90 words, one paragraph, may end with ✦.',
-        messages: [{ role: 'user', content: `Duet reading for ${s.fName || 'star one'} (Sun ${A.SIGNS[s.chart.sunSign]}, Moon ${A.SIGNS[s.chart.moonSign]}, mansion ${D.MANSIONS[s.chart.mansion][0]}) × ${s.dName || 'star two'} (Sun ${A.SIGNS[chartB.sunSign]}, Moon ${A.SIGNS[chartB.moonSign]}, mansion ${D.MANSIONS[chartB.mansion][0]}). Pair archetype: "${pair[0]}". Resonance ${score}%.` }]
-      });
-      if (!text || !text.trim()) throw new Error('empty');
-    } catch (e) { text = M.fallbackDuet(s.fName, s.dName, pair[0]); }
-    this.setState({ duetText: text.trim(), duetWeaving: false });
+
+    const facts = this.reading.duetFacts({ chartA: s.chart, chartB, duetMod: this.duetMod, data: this.data });
+    this.setState({ duet: { ...facts, chartB }, duetText: '…', duetWeaving: true });
+    const text = await this.reading.duetText({
+      chartA: s.chart, chartB, nameA: s.fName, nameB: s.dName,
+      facts, duetMod: this.duetMod, data: this.data
+    });
+    this.setState({ duetText: text, duetWeaving: false });
   };
+
+  // -- guestbook ------------------------------------------------------------
+
   signGuestbook = () => {
     const s = this.state;
     if (!s.gMsg.trim()) return;
@@ -1004,25 +901,26 @@ class Component extends DCLogic {
     this.setState({ guestEntries: entries, gMsg: '' });
     try { localStorage.setItem('starshard-guestbook', JSON.stringify(entries)); } catch (e) {}
   };
-  stopMusic() {
-    if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; }
-  }
+
+  // -- player.exe -----------------------------------------------------------
+
+  stopMusic() { if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; } }
+
   togglePlay = () => {
     if (this.state.playing) { this.stopMusic(); this.setState({ playing: false }); return; }
     if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const ctx = this.audioCtx;
     if (ctx.state === 'suspended') ctx.resume();
-    const notes = [523.25, 659.25, 783.99, 659.25, 880, 783.99, 987.77, 783.99, 659.25, 523.25, 587.33, 659.25];
     let i = 0;
     const step = () => {
       const t = ctx.currentTime;
       const o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = 'square'; o.frequency.value = notes[i % notes.length];
+      o.type = 'square'; o.frequency.value = BGM_NOTES[i % BGM_NOTES.length];
       g.gain.setValueAtTime(0.045, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
       o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + 0.24);
       if (i % 4 === 0) {
         const b = ctx.createOscillator(), bg = ctx.createGain();
-        b.type = 'triangle'; b.frequency.value = notes[i % notes.length] / 4;
+        b.type = 'triangle'; b.frequency.value = BGM_NOTES[i % BGM_NOTES.length] / 4;
         bg.gain.setValueAtTime(0.05, t); bg.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
         b.connect(bg); bg.connect(ctx.destination); b.start(t); b.stop(t + 0.42);
       }
@@ -1032,155 +930,96 @@ class Component extends DCLogic {
     this.musicTimer = setInterval(step, 240);
     this.setState({ playing: true });
   };
+
+  // -- share card -----------------------------------------------------------
+
   savePng = () => {
-    const s = this.state, A = this.astro, D = this.data;
-    const chart = s.chart;
+    const s = this.state, A = this.astro, D = this.data, chart = s.chart;
     if (!chart) return;
-    const W = 720, H = 1000, c = document.createElement('canvas');
-    c.width = W; c.height = H;
-    const x = c.getContext('2d');
-    const grad = x.createLinearGradient(0, 0, W, H);
-    grad.addColorStop(0, '#fefcff'); grad.addColorStop(0.55, '#f2fbfa'); grad.addColorStop(1, '#fff5fa');
-    x.fillStyle = grad; x.fillRect(0, 0, W, H);
-    x.strokeStyle = '#ffb7d5'; x.lineWidth = 8; x.strokeRect(10, 10, W - 20, H - 20);
-    x.strokeStyle = '#7fdbd4'; x.lineWidth = 2; x.strokeRect(24, 24, W - 48, H - 48);
-    x.fillStyle = '#c9a0b8'; x.font = '600 20px "Pixelify Sans", monospace'; x.textAlign = 'center';
-    x.fillText('✧ S T A R  S H A R D · C E R T I F I E D  C U T E ✧', W / 2, 80);
-    x.fillStyle = '#8a4d9e'; x.font = '800 58px "Baloo 2", sans-serif';
-    x.fillText(s.fName || 'little star', W / 2, 160);
-    x.fillStyle = '#a06f8c'; x.font = '20px "Varela Round", sans-serif';
-    const place = s.manualMode ? 'a custom spot on Earth' : (s.fPlace ? s.fPlace.name : '');
-    x.fillText(`${s.fDate} · ${s.fTime} · ${place}`, W / 2, 196);
-    const g = A.SIGN_GLYPHS;
-    const minis = [
-      ['sun', `${A.SIGNS[chart.sunSign]}`, '#3fb8ad'], ['moon', `${A.SIGNS[chart.moonSign]}`, '#9d84e8'],
-      ['rising', `${A.SIGNS[chart.ascSign]}`, '#e0a63c'], ['mansion', D.MANSIONS[chart.mansion][0], '#e677ab']
-    ];
-    minis.forEach((m2, i) => {
-      const bx = 60 + i * 155, by = 230, bw = 140, bh = 84;
-      x.fillStyle = '#ffffff'; x.fillRect(bx, by, bw, bh);
-      x.strokeStyle = m2[2]; x.lineWidth = 2.5; x.strokeRect(bx, by, bw, bh);
-      x.fillStyle = '#c9b3c0'; x.font = '600 14px "Varela Round", sans-serif';
-      x.fillText(m2[0].toUpperCase(), bx + bw / 2, by + 26);
-      x.fillStyle = m2[2]; x.font = '700 17px "Baloo 2", sans-serif';
-      x.fillText(m2[1], bx + bw / 2, by + 56);
+    this.cardMod.downloadCard({
+      name: s.fName || 'little star',
+      birthLine: this.fmt.birthLine(s.fDate, s.fTime, s.fPlace, s.manualMode),
+      minis: [
+        ['sun', A.SIGNS[chart.sunSign], '#3fb8ad'],
+        ['moon', A.SIGNS[chart.moonSign], '#9d84e8'],
+        ['rising', A.SIGNS[chart.ascSign], '#e0a63c'],
+        ['mansion', D.MANSIONS[chart.mansion][0], '#e677ab']
+      ],
+      reading: s.weaveText
     });
-    x.fillStyle = '#ffffff'; x.fillRect(60, 350, W - 120, 460);
-    x.strokeStyle = '#b7e3de'; x.setLineDash([8, 6]); x.lineWidth = 2.5; x.strokeRect(60, 350, W - 120, 460); x.setLineDash([]);
-    x.fillStyle = '#6d5a68'; x.font = '21px "Varela Round", sans-serif'; x.textAlign = 'left';
-    const words = (s.weaveText || 'a reading as unique as a limited-edition drop ✦').split(' ');
-    let line = '', ty = 396;
-    words.forEach(w2 => {
-      if (x.measureText(line + w2).width > W - 190) { x.fillText(line, 88, ty); ty += 34; line = ''; }
-      line += w2 + ' ';
-    });
-    x.fillText(line.trim(), 88, ty);
-    x.textAlign = 'center';
-    x.fillStyle = '#e0a63c'; x.font = '30px sans-serif';
-    x.fillText('✦  ★  ✧', W / 2, 880);
-    x.fillStyle = '#c9a0b8'; x.font = '600 18px "Pixelify Sans", monospace';
-    x.fillText('starshard95 · tag your oshi ♡', W / 2, 930);
-    const a = document.createElement('a');
-    a.download = `star-shard-${(s.fName || 'card').replace(/[^a-z0-9]/gi, '_')}.png`;
-    a.href = c.toDataURL('image/png');
-    a.click();
   };
-  degFmt(lon) {
-    const A = this.astro;
-    const d = Math.floor(lon % 30), m = Math.round((lon % 1) * 60);
-    return `${d}°${String(m).padStart(2, '0')}′ ${A.SIGNS[A.signOf(lon)]}`;
-  }
-  wheelData() {
-    const chart = this.state.chart, A = this.astro;
-    if (!chart) return { ticks: [], glyphs: [], cusps: [], planets: [] };
-    const asc = chart.asc, D2R = Math.PI / 180;
-    const pt = (r, L) => { const a = (L - asc) * D2R; return { x: +(170 - r * Math.cos(a)).toFixed(1), y: +(170 + r * Math.sin(a)).toFixed(1) }; };
-    const ticks = [], glyphs = [];
-    for (let s2 = 0; s2 < 12; s2++) {
-      const p1 = pt(132, s2 * 30), p2 = pt(160, s2 * 30);
-      ticks.push({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y });
-      const gm = pt(146, s2 * 30 + 15);
-      glyphs.push({ x: gm.x, y: gm.y, t: A.SIGN_GLYPHS[s2] });
-    }
-    const cusps = chart.cusps.map((L, i) => {
-      const p1 = pt(46, L), p2 = pt(132, L);
-      const next = chart.cusps[(i + 1) % 12];
-      let span = ((next - L) % 360 + 360) % 360;
-      const mid = pt(72, L + span / 2);
-      const angular = i === 0 || i === 3 || i === 6 || i === 9;
-      return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, num: String(i + 1), nx: mid.x, ny: mid.y, color: angular ? '#b45a8e' : '#e9b8d2', wdt: angular ? '2' : '1' };
-    });
-    const ps = pt(105, chart.sunLon), pm = pt(105, chart.moonLon);
-    if (Math.abs(ps.x - pm.x) < 26 && Math.abs(ps.y - pm.y) < 26) { pm.y = +(pm.y + 28).toFixed(1); }
-    const planets = [{ x: ps.x, y: ps.y, t: '☉', c: '#e0a63c' }, { x: pm.x, y: pm.y, t: '☽', c: '#9d84e8' }];
-    return { ticks, glyphs, cusps, planets };
-  }
+
+  // -- binding surface ------------------------------------------------------
+
   renderVals() {
     const s = this.state, p = this.props;
+    const ready = !!(this.astro && this.data && this.win);
+    const A = this.astro, D = this.data;
+    const wv = k => ready ? this.win.winVals(k) : inertWin(s.windows && s.windows[k]);
+
+    const content = ready && s.chart ? this.reading.buildShards(s.chart, A, D) : [];
     const revealAll = p.revealAll ?? false;
-    const content = this.buildShards();
     const shards = SHARD_META.map((m, i) => {
       const rev = revealAll || s.revealed[i];
-      return { ...m, ...content[i], revealed: rev, hidden: !rev, status: rev ? '4KB' : '???',
+      return { ...m, ...(content[i] || { headline: '', body: '' }), revealed: rev, hidden: !rev,
+        status: rev ? '4KB' : '???',
         onReveal: () => this.setState(st => { const r = [...st.revealed]; r[i] = true; return { revealed: r }; }) };
     });
     const allRevealed = shards.every(x => x.revealed);
-    const chart = s.chart, A = this.astro;
+
+    const chart = s.chart;
     let chartLine = '', miniShards = [], shareBirthLine = '', placementRows = [], cuspRows = [];
-    if (chart && A && this.data) {
-      const g = A.SIGN_GLYPHS;
+    if (chart && ready) {
+      const g = A.SIGN_GLYPHS, F = this.fmt;
       chartLine = `${g[chart.sunSign]} ${A.SIGNS[chart.sunSign]} sun · ${g[chart.moonSign]} ${A.SIGNS[chart.moonSign]} moon · ${g[chart.ascSign]} ${A.SIGNS[chart.ascSign]} rising`;
       miniShards = [
         { label: 'sun', value: `${g[chart.sunSign]} ${A.SIGNS[chart.sunSign]}`, border: '#8fd4cc', color: '#3fb8ad' },
         { label: 'moon', value: `${g[chart.moonSign]} ${A.SIGNS[chart.moonSign]}`, border: '#c9b8f0', color: '#9d84e8' },
         { label: 'rising', value: `${g[chart.ascSign]} ${A.SIGNS[chart.ascSign]}`, border: '#f0d09a', color: '#e0a63c' },
-        { label: 'mansion', value: this.data.MANSIONS[chart.mansion][0], border: '#f2b9d3', color: '#e677ab' }
+        { label: 'mansion', value: D.MANSIONS[chart.mansion][0], border: '#f2b9d3', color: '#e677ab' }
       ];
-      shareBirthLine = `${s.fDate} · ${s.fTime} · ${s.manualMode ? 'a custom spot on Earth' : (s.fPlace ? s.fPlace.name : '')}`;
+      shareBirthLine = F.birthLine(s.fDate, s.fTime, s.fPlace, s.manualMode);
       placementRows = [
-        { label: '☉ sun', value: this.degFmt(chart.sunLon) }, { label: '☽ moon', value: this.degFmt(chart.moonLon) },
-        { label: 'ASC', value: this.degFmt(chart.asc) }, { label: 'MC', value: this.degFmt(chart.mc) }
+        { label: '☉ sun', value: F.degFmt(chart.sunLon) }, { label: '☽ moon', value: F.degFmt(chart.moonLon) },
+        { label: 'ASC', value: F.degFmt(chart.asc) }, { label: 'MC', value: F.degFmt(chart.mc) }
       ];
-      cuspRows = chart.cusps.map((L, i) => ({ num: String(i + 1), value: this.degFmt(L) }));
+      cuspRows = chart.cusps.map((L, i) => ({ num: String(i + 1), value: F.degFmt(L) }));
     }
+
     let offsetLine = '';
-    if (s.fPlace && s.fDate && s.fTime && !s.manualMode) {
+    if (ready && s.fPlace && s.fDate && s.fTime && !s.manualMode) {
       try {
         const [y, m, d] = s.fDate.split('-').map(Number);
         const [hh, mm] = s.fTime.split(':').map(Number);
-        const info = dstInfo(s.fPlace.tz, y, m, d, hh, mm);
-        offsetLine = `clocks there read UTC${info.off >= 0 ? '+' : ''}${info.off}${info.dst ? ', daylight saving was on, handled automatically ✓' : ', no daylight saving that day ✓'}`;
+        offsetLine = this.fmt.offsetLine(this.tz.dstInfo(s.fPlace.tz, y, m, d, hh, mm));
       } catch (e) { offsetLine = ''; }
     }
-    const taskItems = Object.keys(s.windows).filter(k => s.windows[k].open).map(k => {
-      const w = s.windows[k];
-      const active = !w.min && w.z === s.zTop;
-      return {
-        icon: WIN_TITLES[k][0], label: WIN_TITLES[k][1],
-        bg: active ? '#ffe9f4' : '#fdeef8',
-        bc: active ? '#c586ad #fff #fff #c586ad' : '#fff #c586ad #c586ad #fff',
-        onClick: () => { if (w.min || w.z !== s.zTop) this.openWin(k); else this.setWin(k, { min: true }); }
-      };
-    });
-    const apps = [['reader', 'shard\u00A0reader.exe'], ['duet', 'duet.exe'], ['wheel', 'chart_wheel'], ['today', 'today.exe'], ['guest', 'guestbook'], ['gloss', 'grimoire.hlp'], ['player', 'player.exe'], ['luna', 'luna.txt'], ['account', 'account.exe'], ['welcome', 'home.lnk']];
-    const deskIcons = apps.map(([k, label]) => ({ icon: WIN_TITLES[k][0], label, onClick: () => this.openWin(k) }));
-    const startItems = apps.map(([k]) => ({ icon: WIN_TITLES[k][0], label: WIN_TITLES[k][1], onClick: () => this.openWin(k) }));
-    const wd = A ? this.wheelData() : { ticks: [], glyphs: [], cusps: [], planets: [] };
-    const D2 = this.data, T = s.today;
-    const wh = this.wheelData ? wd : null;
+
+    const WT = ready ? this.winMod.WIN_TITLES : {};
+    const apps = ready ? this.winMod.APPS : [];
+    const deskIcons = apps.map(([k, label]) => ({ icon: WT[k][0], label, onClick: () => this.win.openWin(k) }));
+    const startItems = apps.map(([k]) => ({ icon: WT[k][0], label: WT[k][1], onClick: () => this.win.openWin(k) }));
+    const wd = ready ? this.wheel.wheelData(chart) : { ticks: [], glyphs: [], cusps: [], planets: [] };
+    const T = s.today;
+
     return {
       sparklesOn: p.sparkles ?? true, scanlinesOn: p.scanlines ?? false,
-      wWelcome: this.winVals('welcome'), wReader: this.winVals('reader'), wSky: this.winVals('sky'), wCard: this.winVals('card'), wLuna: this.winVals('luna'),
-      wToday: this.winVals('today'), wWheel: this.winVals('wheel'), wDuet: this.winVals('duet'), wGuest: this.winVals('guest'), wGloss: this.winVals('gloss'), wPlayer: this.winVals('player'), wDoc: this.winVals('doc'), wAccount: this.winVals('account'),
+      wWelcome: wv('welcome'), wReader: wv('reader'), wSky: wv('sky'), wCard: wv('card'), wLuna: wv('luna'),
+      wToday: wv('today'), wWheel: wv('wheel'), wDuet: wv('duet'), wGuest: wv('guest'), wGloss: wv('gloss'),
+      wPlayer: wv('player'), wDoc: wv('doc'), wAccount: wv('account'),
       deskIcons, startItems,
-      openReader: () => this.openWin('reader'), openWheel: () => this.openWin('wheel'), openDoc: () => this.openWin('doc'),
-      restart: () => { this.setState({ chart: null, revealed: [false, false, false, false], weaveText: '', duet: null, duetText: '' }); this.setWin('card', { open: false }); this.setWin('sky', { open: false }); this.setWin('doc', { open: false }); this.openWin('reader'); },
+      openReader: () => this.win.openWin('reader'), openWheel: () => this.win.openWin('wheel'), openDoc: () => this.win.openWin('doc'),
+      restart: () => {
+        this.setState({ chart: null, revealed: [false, false, false, false], weaveText: '', duet: null, duetText: '' });
+        this.win.setWin('card', { open: false }); this.win.setWin('sky', { open: false }); this.win.setWin('doc', { open: false });
+        this.win.openWin('reader');
+      },
       hasChart: !!chart, noChart: !chart,
       todayDate: new Date().toLocaleDateString([], { month: 'short', day: 'numeric' }),
-      todayMansion: T && D2 ? D2.MANSIONS[T.mansion][0] : '…',
-      todayMeaning: T && D2 ? D2.MANSIONS[T.mansion][1] : '',
-      todayMoonSign: T && A ? A.SIGNS[T.moonSign] : '',
-      todayForecast: T && D2 ? `The moon is visiting ${D2.MANSIONS[T.mansion][0]} today: ${D2.MANSIONS[T.mansion][2]}` : 'reading the sky…',
+      todayMansion: T && ready ? D.MANSIONS[T.mansion][0] : '…',
+      todayMeaning: T && ready ? D.MANSIONS[T.mansion][1] : '',
+      todayMoonSign: T && ready ? A.SIGNS[T.moonSign] : '',
+      todayForecast: T && ready ? `The moon is visiting ${D.MANSIONS[T.mansion][0]} today: ${D.MANSIONS[T.mansion][2]}` : 'reading the sky…',
       fName: s.fName, fDate: s.fDate, fTime: s.fTime, fQuery: s.fQuery, fLat: s.fLat, fLon: s.fLon, fTz: s.fTz,
       setName: e => this.setState({ fName: e.target.value }), setDate: e => this.setState({ fDate: e.target.value }),
       setTime: e => this.setState({ fTime: e.target.value }),
@@ -1192,7 +1031,7 @@ class Component extends DCLogic {
       cityResults: s.cityResults.map(r => ({ ...r, coords: `${r.lat.toFixed(1)},${r.lon.toFixed(1)}`,
         pick: () => this.setState({ fPlace: r, cityResults: [], fQuery: `${r.name}, ${r.region}` }) })),
       hasResults: s.cityResults.length > 0, hasPlace: !!s.fPlace && !s.manualMode,
-      placeLine: s.fPlace ? `${s.fPlace.name}, ${s.fPlace.region} · ${s.fPlace.lat.toFixed(2)}°, ${s.fPlace.lon.toFixed(2)}°` : '',
+      placeLine: ready ? this.fmt.placeLine(s.fPlace) : '',
       offsetLine,
       manualMode: s.manualMode, notManual: !s.manualMode,
       toggleManual: () => this.setState({ manualMode: !s.manualMode, formError: '' }),
@@ -1224,10 +1063,10 @@ class Component extends DCLogic {
       stampOptions: STAMPS.map(t => ({ t, pick: () => this.setState({ gStamp: t }),
         bg: s.gStamp === t ? '#ffe9f4' : '#fdeef8', bc: s.gStamp === t ? '#c586ad #fff #fff #c586ad' : '#fff #c586ad #c586ad #fff' })),
       signGuestbook: this.signGuestbook, guestEntries: s.guestEntries,
-      glossary: this.duetMod ? this.duetMod.GLOSSARY.map(g2 => ({ title: g2[0], body: g2[1] })) : [],
+      glossary: ready ? this.duetMod.GLOSSARY.map(g2 => ({ title: g2[0], body: g2[1] })) : [],
       togglePlay: this.togglePlay, playLabel: s.playing ? '⏸ pause' : '▶ play', discAnim: s.playing ? 'spin 2.2s linear infinite' : 'none',
       startOpen: s.startOpen, toggleStart: () => this.setState({ startOpen: !s.startOpen }),
-      taskItems, clock: s.clock,
+      taskItems: ready ? this.win.taskItems() : [], clock: s.clock,
       isLoggedIn: !!s.authEmail, isLoggedOut: !s.authEmail, authEmail: s.authEmail,
       isLogin: s.authMode === 'login', isSignup: s.authMode === 'signup',
       isForgot: s.authMode === 'forgot', isReset: s.authMode === 'reset',
@@ -1245,7 +1084,7 @@ class Component extends DCLogic {
         : s.authMode === 'forgot' ? this.doForgotPassword : this.doResetPassword,
       authSubmitLabel: s.authBusy ? 'one sec…' : s.authMode === 'login' ? '☾ log in' : s.authMode === 'signup' ? '✦ make my account'
         : s.authMode === 'forgot' ? '✉ send reset link' : '☾ set new password',
-      openAccount: () => this.openWin('account'), doLogout: this.doLogout,
+      openAccount: () => this.win.openWin('account'), doLogout: this.doLogout,
       accountStatusLabel: s.authEmail ? `☾ ${s.authEmail}` : '☾ save my layout'
     };
   }

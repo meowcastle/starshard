@@ -1,25 +1,7 @@
-// Star Shard — real astronomy (low-precision Meeus).
-//
-// OWNER: Claude Code. Do not edit from Claude Design.
-//
-// Accuracy, verified against the Swiss Ephemeris (pyswisseph 2.10.3.2) over
-// ~150,000 generated charts, 1930-2020, |lat| <= 66:
-//   Sun longitude      mean 0.007 deg   max 0.018 deg
-//   Moon longitude     mean 0.021 deg   max 0.106 deg
-//   Ascendant          mean 0.003 deg   max 0.119 deg
-//   MC                 mean 0.003 deg   max 0.005 deg
-//   Placidus cusps     mean 0.003 deg   max 0.105 deg
-// Sun sign disagrees 0.029% of the time, Moon sign 0.071%, rising 0.009%,
-// Sun's house 0.00%. See test/astro.test.mjs.
-
+// Star Shard — real astronomy (low-precision Meeus, good to <0.5°)
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const norm = d => ((d % 360) + 360) % 360;
 const sin = d => Math.sin(d * D2R), cos = d => Math.cos(d * D2R), tan = d => Math.tan(d * D2R);
-
-// Placidus is undefined above the polar circle: the semi-arc solver has no
-// fixed point, and circumpolar ecliptic degrees never rise. Swiss Ephemeris
-// refuses Placidus here and falls back to Porphyry; we do the same.
-export const PLACIDUS_MAX_LAT = 66;
 
 export function julianDay(y, m, d, utHours) {
   if (m <= 2) { y -= 1; m += 12; }
@@ -64,41 +46,16 @@ function raToEcl(ra, eps) {
   let lam = Math.atan2(sin(ra), cos(ra) * cos(eps)) * R2D;
   return norm(lam);
 }
-function eclToRa(lam, eps) { return norm(Math.atan2(sin(lam) * cos(eps), cos(lam)) * R2D); }
 function declOfEcl(lam, eps) { return Math.asin(sin(eps) * sin(lam)) * R2D; }
 
-// Signed hour angle in (-180, 180]. Negative = east of the meridian = rising.
-function hourAngle(lam, eps, ramc) {
-  let ha = norm(ramc - eclToRa(lam, eps));
-  return ha > 180 ? ha - 360 : ha;
-}
-
 export function ascendant(ramc, eps, lat) {
-  const asc = norm(Math.atan2(cos(ramc), -(sin(eps) * tan(lat) + cos(eps) * sin(ramc))) * R2D);
-  // atan2 resolves to the setting node instead of the rising one above the
-  // polar circle, which silently returns the Descendant (rising sign 180 deg
-  // off). Test the candidate geometrically rather than trusting the quadrant:
-  // the rising point is east of the meridian, so its hour angle is negative.
-  return hourAngle(asc, eps, ramc) > 0 ? norm(asc + 180) : asc;
-}
-
-// Porphyry: trisect each quadrant between the angles. Always defined.
-function porphyryCusps(asc, mc) {
-  const ic = norm(mc + 180), dsc = norm(asc + 180);
-  const q1 = norm(asc - mc);   // MC -> ASC, contains cusps 11, 12
-  const q2 = norm(ic - asc);   // ASC -> IC, contains cusps 2, 3
-  const c11 = norm(mc + q1 / 3), c12 = norm(mc + 2 * q1 / 3);
-  const c2 = norm(asc + q2 / 3), c3 = norm(asc + 2 * q2 / 3);
-  return [asc, c2, c3, ic, norm(c11 + 180), norm(c12 + 180),
-    dsc, norm(c2 + 180), norm(c3 + 180), mc, c11, c12];
+  const asc = Math.atan2(cos(ramc), -(sin(eps) * tan(lat) + cos(eps) * sin(ramc))) * R2D;
+  return norm(asc);
 }
 
 export function placidusCusps(ramc, eps, lat) {
   const mc = raToEcl(ramc, eps);
   const asc = ascendant(ramc, eps, lat);
-  const system = Math.abs(lat) > PLACIDUS_MAX_LAT ? 'porphyry' : 'placidus';
-  if (system === 'porphyry') return { cusps: porphyryCusps(asc, mc), asc, mc, system };
-
   // iterate a cusp: raOffsetFn(ad) gives target RA given ascensional difference
   const solve = (raStart, raFn) => {
     let ra = raStart;
@@ -118,17 +75,10 @@ export function placidusCusps(ramc, eps, lat) {
   const c3 = solve(ramc + 150, ad => ramc + 180 - (90 - ad) / 3);
   const cusps = [asc, c2, c3, norm(mc + 180), norm(c11 + 180), norm(c12 + 180),
     norm(asc + 180), norm(c2 + 180), norm(c3 + 180), mc, c11, c12];
-
-  // Belt and braces: if the solver still produced a non-partition (spans must
-  // sum to 360), fall back rather than hand back overlapping garbage.
-  let total = 0;
-  for (let i = 0; i < 12; i++) total += norm(cusps[(i + 1) % 12] - cusps[i]);
-  if (Math.abs(total - 360) > 1) return { cusps: porphyryCusps(asc, mc), asc, mc, system: 'porphyry' };
-  return { cusps, asc, mc, system };
+  return { cusps, asc, mc };
 }
 
 export function houseOf(lon, cusps) {
-  if (!Number.isFinite(lon)) return null;
   for (let i = 0; i < 12; i++) {
     const a = cusps[i], b = cusps[(i + 1) % 12];
     const span = norm(b - a), off = norm(lon - a);
@@ -143,13 +93,6 @@ export const signOf = lon => Math.floor(norm(lon) / 30);
 export const degInSign = lon => norm(lon) % 30;
 export const mansionOf = moonLon => Math.floor(norm(moonLon) / (360 / 28));
 
-// 0 = Sunday. Derived from the LOCAL calendar date, not the UT-shifted instant:
-// someone born 23:00 Saturday in Los Angeles is a Saturday's child even though
-// it was already Sunday in Greenwich.
-export function weekdayOf(year, month, day) {
-  return Math.floor(julianDay(year, month, day, 12) + 1.5) % 7;
-}
-
 export function computeChart({ year, month, day, hour, minute, lat, lon, tzOffset }) {
   const ut = hour + minute / 60 - tzOffset;
   const jd = julianDay(year, month, day, ut);
@@ -158,11 +101,15 @@ export function computeChart({ year, month, day, hour, minute, lat, lon, tzOffse
   const ramc = lst;
   const sunLon = sunLongitude(jd);
   const moonLon = moonLongitude(jd);
-  const { cusps, asc, mc, system } = placidusCusps(ramc, eps, lat);
+  const { cusps, asc, mc } = placidusCusps(ramc, eps, lat);
+  const weekday = Math.floor(jd + 1.5) % 7; // 0=Sunday
   return {
-    jd, sunLon, moonLon, asc, mc, cusps, houseSystem: system,
+    jd, sunLon, moonLon, asc, mc, cusps,
     sunSign: signOf(sunLon), moonSign: signOf(moonLon), ascSign: signOf(asc),
     sunHouse: houseOf(sunLon, cusps), moonHouse: houseOf(moonLon, cusps),
-    mansion: mansionOf(moonLon), weekday: weekdayOf(year, month, day)
+    mansion: mansionOf(moonLon), weekday
   };
 }
+
+// Frozen copy of the pre-refactor astro.js, used only to prove the extraction
+// did not change results below the polar circle. Do not edit.

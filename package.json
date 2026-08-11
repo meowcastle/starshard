@@ -1,0 +1,10 @@
+{
+  "name": "starshard-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\"",
+    "bindings": "node tools/bindings.mjs",
+    "check": "npm run bindings && npm test"
+  }
+}
