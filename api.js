@@ -92,6 +92,21 @@ export async function saveWindowState(state) {
   try { await call('/api/state', { method: 'PUT', body: { state } }); } catch (e) {}
 }
 
+// --- guestbook ---------------------------------------------------------------
+// Public, unauthenticated. Backed by starshard-api; no localStorage fallback.
+
+/** Resolves to a list of entries, or [] on failure. Never throws. */
+export async function loadGuestbook() {
+  try {
+    const j = await call('/api/guestbook');
+    return Array.isArray(j?.entries) ? j.entries : [];
+  } catch (e) { return []; }
+}
+
+export async function postGuestbook(name, msg, stamp) {
+  return call('/api/guestbook', { method: 'POST', body: { name, msg, stamp } });
+}
+
 // --- error copy ------------------------------------------------------------
 // Keyed by the server's error codes; safe to reword, but keep the keys.
 
@@ -116,4 +131,8 @@ export function forgotPasswordError(code) {
 
 export function resetPasswordError(code) {
   return AUTH_COPY[code] || 'could not reset your password, try again ♡';
+}
+
+export function guestbookError(code) {
+  return AUTH_COPY[code] || 'could not sign the guestbook, try again ♡';
 }

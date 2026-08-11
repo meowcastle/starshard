@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**347 bindings, 138 top-level.**
+**349 bindings, 140 top-level.**
 
 ## Rule
 
@@ -107,8 +107,10 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `fTime` | component state |
 | `fTz` | component state |
 | `formError` | component state |
+| `gError` | component state |
 | `gMsg` | component state |
 | `gName` | component state |
+| `gSubmitLabel` | component state |
 | `glossary` | duet.js |
 | `goToForgot` | component state |
 | `guestEntries` | duet.js |

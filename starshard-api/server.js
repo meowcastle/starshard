@@ -67,24 +67,34 @@ app.use(cookieParser());
 // wrapped in this, which routes failures to the error middleware at the bottom.
 const wrap = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
-function signSession(userId) {
-  return jwt.sign({ uid: userId }, JWT_SECRET, { expiresIn: '90d' });
+function signSession(userId, tokenVersion) {
+  return jwt.sign({ uid: userId, tv: tokenVersion }, JWT_SECRET, { expiresIn: '90d' });
 }
 
-function requireAuth(req, res, next) {
+// Verifies the JWT AND that its token version still matches the DB, so a
+// logout (or password reset) actually revokes the token server-side instead
+// of just deleting the cookie on one device. Wrapped like every other async
+// handler — a DB hiccup here must 500, not crash the process.
+const requireAuth = wrap(async (req, res, next) => {
   const token = req.cookies[COOKIE_NAME];
   if (!token) return res.status(401).json({ error: 'not_authenticated' });
+  let payload;
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.userId = payload.uid;
-    next();
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (e) {
     return res.status(401).json({ error: 'not_authenticated' });
   }
-}
+  const [rows] = await pool.execute('SELECT token_version FROM users WHERE id = ?', [payload.uid]);
+  const user = rows[0];
+  if (!user || user.token_version !== payload.tv) {
+    return res.status(401).json({ error: 'not_authenticated' });
+  }
+  req.userId = payload.uid;
+  next();
+});
 
-function setSessionCookie(res, userId) {
-  res.cookie(COOKIE_NAME, signSession(userId), {
+function setSessionCookie(res, userId, tokenVersion) {
+  res.cookie(COOKIE_NAME, signSession(userId, tokenVersion), {
     httpOnly: true,
     secure: IS_PROD,
     sameSite: 'lax',
@@ -123,6 +133,18 @@ const resetPasswordLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
 });
+const guestbookPostLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
+
+// Keep in sync with STAMPS in Star Shard v2.dc.html — the guestbook is
+// public/unauthenticated, so the stamp is validated against a fixed set
+// rather than trusting arbitrary client input.
+const GUESTBOOK_STAMPS = new Set(['⭐', '🎀', '🌙', '💿', '✿']);
 
 app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   const { email, password } = req.body || {};
@@ -140,7 +162,7 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
       'INSERT INTO users (email, password_hash) VALUES (?, ?)',
       [normalizedEmail, passwordHash]
     );
-    setSessionCookie(res, result.insertId);
+    setSessionCookie(res, result.insertId, 0);
     res.status(201).json({ email: normalizedEmail });
   } catch (e) {
     if (e && e.code === 'ER_DUP_ENTRY') {
@@ -159,7 +181,7 @@ app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   const normalizedEmail = email.trim().toLowerCase();
 
   const [rows] = await pool.execute(
-    'SELECT id, password_hash FROM users WHERE email = ?',
+    'SELECT id, password_hash, token_version FROM users WHERE email = ?',
     [normalizedEmail]
   );
   const user = rows[0];
@@ -168,14 +190,23 @@ app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   const ok = await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
-  setSessionCookie(res, user.id);
+  setSessionCookie(res, user.id, user.token_version);
   res.json({ email: normalizedEmail });
 }));
 
-app.post('/api/auth/logout', (req, res) => {
+app.post('/api/auth/logout', wrap(async (req, res) => {
+  const token = req.cookies[COOKIE_NAME];
+  if (token) {
+    try {
+      const payload = jwt.verify(token, JWT_SECRET);
+      // Bumping token_version revokes this token server-side, not just the
+      // cookie — a copy of the JWT captured elsewhere stops working too.
+      await pool.execute('UPDATE users SET token_version = token_version + 1 WHERE id = ?', [payload.uid]);
+    } catch (e) { /* invalid/expired token — nothing to revoke */ }
+  }
   res.clearCookie(COOKIE_NAME, { path: '/' });
   res.status(204).end();
-});
+}));
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
@@ -238,10 +269,16 @@ app.post('/api/auth/reset-password', resetPasswordLimiter, wrap(async (req, res)
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
-  await pool.execute('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, reset.user_id]);
+  // Bump token_version too: a reset should log out every other session, not
+  // just issue the resetting device a new cookie alongside old valid ones.
+  await pool.execute(
+    'UPDATE users SET password_hash = ?, token_version = token_version + 1 WHERE id = ?',
+    [passwordHash, reset.user_id]
+  );
   await pool.execute('UPDATE password_resets SET used_at = NOW() WHERE id = ?', [reset.id]);
 
-  setSessionCookie(res, reset.user_id);
+  const [uRows] = await pool.execute('SELECT token_version FROM users WHERE id = ?', [reset.user_id]);
+  setSessionCookie(res, reset.user_id, uRows[0].token_version);
   res.status(204).end();
 }));
 
@@ -254,9 +291,9 @@ app.get('/api/me', wrap(async (req, res) => {
   } catch (e) {
     return res.status(401).json({ error: 'not_authenticated' });
   }
-  const [rows] = await pool.execute('SELECT email FROM users WHERE id = ?', [payload.uid]);
+  const [rows] = await pool.execute('SELECT email, token_version FROM users WHERE id = ?', [payload.uid]);
   const user = rows[0];
-  if (!user) return res.status(401).json({ error: 'not_authenticated' });
+  if (!user || user.token_version !== payload.tv) return res.status(401).json({ error: 'not_authenticated' });
   res.json({ email: user.email });
 }));
 
@@ -288,6 +325,43 @@ app.put('/api/state', requireAuth, wrap(async (req, res) => {
     [req.userId, json]
   );
   res.status(204).end();
+}));
+
+app.get('/api/guestbook', wrap(async (req, res) => {
+  const [rows] = await pool.execute(
+    'SELECT name, msg, stamp, created_at FROM guestbook_entries ORDER BY id DESC LIMIT 50'
+  );
+  res.json({
+    entries: rows.map(r => ({
+      name: r.name, msg: r.msg, stamp: r.stamp,
+      date: r.created_at.toISOString().slice(0, 10).replaceAll('-', '.'),
+    })),
+  });
+}));
+
+app.post('/api/guestbook', guestbookPostLimiter, wrap(async (req, res) => {
+  let { name, msg, stamp } = req.body || {};
+  if (typeof msg !== 'string' || !msg.trim() || msg.length > 280) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+  name = (typeof name === 'string' ? name.trim() : '').slice(0, 60) || 'anon';
+  if (typeof stamp !== 'string' || !GUESTBOOK_STAMPS.has(stamp)) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+
+  const [result] = await pool.execute(
+    'INSERT INTO guestbook_entries (name, msg, stamp) VALUES (?, ?, ?)',
+    [name, msg.trim(), stamp]
+  );
+  const [rows] = await pool.execute(
+    'SELECT name, msg, stamp, created_at FROM guestbook_entries WHERE id = ?',
+    [result.insertId]
+  );
+  const r = rows[0];
+  res.status(201).json({
+    name: r.name, msg: r.msg, stamp: r.stamp,
+    date: r.created_at.toISOString().slice(0, 10).replaceAll('-', '.'),
+  });
 }));
 
 // Anything a wrapped handler throws lands here: log it, answer 500, stay up.

@@ -479,8 +479,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
               <span onClick="{{ st.pick }}" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;background:{{ st.bg }};border:2px solid;border-color:{{ st.bc }}">{{ st.t }}</span>
             </sc-for>
             <div style="flex:1"></div>
-            <button onClick="{{ signGuestbook }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:6px 16px;cursor:pointer">sign ☆</button>
+            <button onClick="{{ signGuestbook }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:6px 16px;cursor:pointer">{{ gSubmitLabel }}</button>
           </div>
+          <sc-if value="{{ gError }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#c0567a">{{ gError }}</div>
+          </sc-if>
         </div>
         <sc-for list="{{ guestEntries }}" as="ge" hint-placeholder-count="3">
           <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:8px 11px;margin-bottom:7px">
@@ -701,7 +704,7 @@ class Component extends DCLogic {
     today: null,
     dName: '', dDate: '2004-01-01', dTime: '12:00', dQuery: '', dResults: [], dPlace: null, dSearching: false, dError: '',
     duet: null, duetText: '', duetWeaving: false,
-    gName: '', gMsg: '', gStamp: '⭐', guestEntries: [],
+    gName: '', gMsg: '', gStamp: '⭐', guestEntries: [], gBusy: false, gError: '',
     playing: false,
     authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '', authInfo: '',
     aEmail: '', aPassword: '', rPassword: '', rPassword2: '', resetToken: ''
@@ -737,10 +740,9 @@ class Component extends DCLogic {
     const moonLon = astro.moonLongitude(jd);
     this.setState({ today: { mansion: astro.mansionOf(moonLon), moonSign: astro.signOf(moonLon) } });
 
-    try {
-      const saved = JSON.parse(localStorage.getItem('starshard-guestbook') || 'null');
-      this.setState({ guestEntries: Array.isArray(saved) && saved.length ? saved : duetMod.GUESTBOOK_SEED });
-    } catch (e) { this.setState({ guestEntries: duetMod.GUESTBOOK_SEED }); }
+    this.api.loadGuestbook().then(entries => {
+      this.setState({ guestEntries: entries.length ? entries : duetMod.GUESTBOOK_SEED });
+    });
 
     this.forceUpdate();
     this.checkAuth();
@@ -906,13 +908,16 @@ class Component extends DCLogic {
 
   // -- guestbook ------------------------------------------------------------
 
-  signGuestbook = () => {
+  signGuestbook = async () => {
     const s = this.state;
-    if (!s.gMsg.trim()) return;
-    const entry = { name: s.gName.trim() || 'anon', msg: s.gMsg.trim(), stamp: s.gStamp, date: new Date().toISOString().slice(0, 10).replaceAll('-', '.') };
-    const entries = [entry, ...s.guestEntries].slice(0, 50);
-    this.setState({ guestEntries: entries, gMsg: '' });
-    try { localStorage.setItem('starshard-guestbook', JSON.stringify(entries)); } catch (e) {}
+    if (!s.gMsg.trim() || s.gBusy) return;
+    this.setState({ gBusy: true, gError: '' });
+    try {
+      const entry = await this.api.postGuestbook(s.gName.trim(), s.gMsg.trim(), s.gStamp);
+      this.setState(st => ({ gBusy: false, gMsg: '', guestEntries: [entry, ...st.guestEntries].slice(0, 50) }));
+    } catch (e) {
+      this.setState({ gBusy: false, gError: this.api.guestbookError(e.code) });
+    }
   };
 
   // -- player.exe -----------------------------------------------------------
@@ -1076,6 +1081,7 @@ class Component extends DCLogic {
       stampOptions: STAMPS.map(t => ({ t, pick: () => this.setState({ gStamp: t }),
         bg: s.gStamp === t ? '#ffe9f4' : '#fdeef8', bc: s.gStamp === t ? '#c586ad #fff #fff #c586ad' : '#fff #c586ad #c586ad #fff' })),
       signGuestbook: this.signGuestbook, guestEntries: s.guestEntries,
+      gError: s.gError, gSubmitLabel: s.gBusy ? 'signing…' : 'sign ☆',
       glossary: ready ? this.duetMod.GLOSSARY.map(g2 => ({ title: g2[0], body: g2[1] })) : [],
       togglePlay: this.togglePlay, playLabel: s.playing ? '⏸ pause' : '▶ play', discAnim: s.playing ? 'spin 2.2s linear infinite' : 'none',
       startOpen: s.startOpen, toggleStart: () => this.setState({ startOpen: !s.startOpen }),
