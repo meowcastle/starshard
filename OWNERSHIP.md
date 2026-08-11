@@ -83,24 +83,34 @@ Do not break this. It is the strongest differentiating claim the product has.
 These are deliberately **not** fixed, because they are decisions rather than
 defects. See `AUDIT.md`.
 
-- **W2** — `window.claude.complete` does not exist in the deployed runtime, so
-  every user gets the same fallback paragraph. `reading.js` now exposes
-  `hasLLM()` so the condition is explicit. Decide: delete the LLM path and grow
-  the written library, or add a real server-side completion endpoint.
+- **W2** — done. `hasLLM()`/`window.claude.complete` removed. `weave()` and
+  `duetText()` in `reading.js` assemble each paragraph from hand-written
+  opener/connective/mansion/closer variants (`shards.js`/`duet.js`), picked
+  deterministically per chart via `seededPick()`.
 - **W6** — the account system stores window positions and nothing else, while
   carrying a password database. Password reset now exists (Resend-backed,
   hashed/expiring/single-use tokens, `starshard-api/server.js`). Still no email
   verification, account deletion, data export, or age gating for a 13–17
   audience — decide whether those are needed or whether to scope the system
   back down.
-- **W8** — done. `<title>`, meta description, and OG/Twitter tags are in the
-  `<helmet>`. `og:image`/`twitter:image` point at a 240×360 placeholder pulled
-  from the `landing-mascot` slot — real share art is still open (W10). These
-  live in Design's territory per the split above; carry them through the next
-  regeneration (DESIGN-BRIEF.md's P3/handoff checklist already covers this).
-- **W11** — done. Guestbook is wired to `starshard-api` (`guestbook_entries`
-  table, public rate-limited GET/POST). Falls back to the seed only if the
-  table comes back empty.
+- **W8** — done, minus the image. `<title>`, meta description, and OG/Twitter
+  title/description tags are in the `<helmet>`. `og:image`/`twitter:image` were
+  added, then pulled: the only art available was a 240×360 crop, well under the
+  1200×630 platforms expect, and a bad card gets cached by Facebook for weeks.
+  No image renders cleaner than a small one. Add back once real 1200×630 share
+  art exists (W10). These tags live in Design's territory per the split above;
+  carry them through the next regeneration (DESIGN-BRIEF.md's P3/handoff
+  checklist covers this, including the export-exclusion list added after §1.1
+  of REVIEW.md).
+- **W11** — done, with a caveat (**W11b**). Guestbook is wired to
+  `starshard-api` (`guestbook_entries`, public rate-limited GET/POST, falls
+  back to a relative-dated seed only when the table is empty). Moderation
+  baseline shipped: an `ip_hash` column and `requireAdmin`-gated
+  `GET/DELETE /api/guestbook/*` routes, gated by a single `ADMIN_TOKEN` shared
+  secret (no user-role system exists yet). Still open: whether posting should
+  require an account, and who besides "whoever holds the token" should be able
+  to moderate. This is a public, unauthenticated write endpoint on a site 25%
+  of whose audience is 13–17 — treat that as a running decision, not settled.
 - **W16b** — signup still returns a distinct `email_taken` error, which is
   user enumeration. Deliberately left as-is: removing it means gating signup
   behind email verification (a real flow change, not a bug fix), and the

@@ -12,6 +12,10 @@ node_modules/
 vendor/
 package-lock.json
 
+# raw Claude Design exports/comps land here before anything gets promoted into
+# the real Code-owned modules — see OWNERSHIP.md and REVIEW.md §1.1
+design/incoming/
+
 .projects/cache
 .projects/vault
 .projects/state.test.json

@@ -184,11 +184,8 @@ the escape hatch worth borrowing.
 
 ## What's deliberately unfinished (not yours to fix)
 
-- Every user currently gets the same "woven reading" paragraph — the LLM call
-  doesn't exist in the deployed runtime. Being decided separately.
-- The guestbook is local to each browser; everyone sees the same three seeded
-  entries.
-- The account system saves window positions and nothing else.
+- The account system saves window positions and nothing else, and the
+  guestbook has no moderation path — both are being decided separately.
 
 ## Handing back
 
@@ -197,6 +194,14 @@ Please include in your handoff notes:
 1. Any binding you had to add, rename or remove
 2. Whether you changed the `CARD` or `LAYOUT` blocks
 3. Whether the meta tags survived
+4. **Do not include `astro.js`, `shards.js`, `duet.js`, `api.js`,
+   `format.js`, `tz.js`, `wheel.js`, `windows.js`, `reading.js`, or
+   `Star Shard v2.dc.html`/`Star Shard.dc.html` in the export** — your
+   canvas pages `import()` them as siblings for the preview, but they're
+   Code-owned and the exported copies go stale the moment Code fixes
+   something. An export folder with those files in it has already caused
+   one near-miss (REVIEW.md §1.1): reverting four shipped bug fixes by
+   getting copied into the repo by muscle memory.
 
 The engineering side runs `npm run bindings` on receipt, which fails the build on
 any binding mismatch, plus a browser smoke test that drives the full reading flow.

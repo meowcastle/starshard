@@ -1,0 +1,59 @@
+#!/bin/sh
+# Deploys to the Synology NAS staging environment. Replaces the manual
+# `ssh host 'cat > remote' < local` loop this project was deployed with by
+# hand for its first several sessions — scp/SFTP don't work on this NAS
+# (destination open fails), so it's cat-over-ssh, one file at a time.
+#
+# Usage:
+#   tools/deploy.sh frontend   # static site: index.html + all JS modules
+#   tools/deploy.sh backend    # starshard-api/server.js, restarts the process
+#   tools/deploy.sh all        # both
+#
+# Does NOT run DB migrations — those touch production data and stay a
+# deliberate, reviewed step (see the ad hoc PHP scripts used in git history).
+
+set -eu
+
+HOST=justin@wreckroom.nyc
+FRONTEND_REMOTE=/volume2/web/starshard-staging
+BACKEND_REMOTE=/volume2/web/starshard-api
+NODE_BIN=/volume2/@appstore/Node.js_v20/usr/local/bin/node
+
+FRONTEND_FILES="api.js astro.js card.js format.js reading.js tz.js wheel.js windows.js duet.js shards.js support.js image-slot.js"
+
+cd "$(dirname "$0")/.."
+
+deploy_frontend() {
+  echo "==> index.html"
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v2.dc.html"
+  for f in $FRONTEND_FILES; do
+    if [ -f "$f" ]; then
+      echo "==> $f"
+      ssh "$HOST" "cat > $FRONTEND_REMOTE/$f" < "$f"
+    fi
+  done
+  echo "frontend deployed."
+}
+
+deploy_backend() {
+  echo "==> starshard-api/server.js"
+  ssh "$HOST" "cat > $BACKEND_REMOTE/server.js" < starshard-api/server.js
+  echo "==> restarting api"
+  ssh "$HOST" "
+    pkill -f 'node server\\.js\$' || true
+    sleep 1
+    cd $BACKEND_REMOTE
+    nohup $NODE_BIN server.js >> run.log 2>&1 &
+    disown
+    sleep 2
+    tail -6 run.log
+  "
+  echo "backend deployed and restarted."
+}
+
+case "${1:-}" in
+  frontend) deploy_frontend ;;
+  backend) deploy_backend ;;
+  all) deploy_frontend; deploy_backend ;;
+  *) echo "usage: $0 {frontend|backend|all}" >&2; exit 1 ;;
+esac

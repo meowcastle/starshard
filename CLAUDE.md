@@ -130,11 +130,11 @@ Ephemeris Porphyry: max cusp error 0.06°, zero rising-sign disagreements.
 
 ## Open decisions — ask, do not guess
 
-- **W2.** `window.claude.complete` does not exist in the deployed runtime, so
-  every user gets the same fallback paragraph. `reading.js` exposes `hasLLM()`
-  to make that explicit. Decide: delete the LLM path and grow the written
-  library (12 houses × 12 archetypes × 28 mansions × 7 weekdays = 28,224
-  combinations already), or add a real server-side completion endpoint.
+- **W2.** Resolved — the LLM path is deleted. `weave()`/`duetText()` in
+  `reading.js` now assemble each paragraph from opener/connective/mansion/
+  closer variants in `shards.js`/`duet.js` (`seededPick()`, deterministic per
+  chart). Combined with the 12×12×28×7 = 28,224 underlying combinations, the
+  paragraph shape itself varies too, not just the swapped-in nouns.
 - **W6.** The account system runs a password database to persist *window
   positions* — it does not save the user's chart. Password reset now exists
   (Resend-backed, hashed/expiring/single-use tokens). Still no email

@@ -26,6 +26,11 @@ if (!resend) {
   console.warn('RESEND_API_KEY is not set. Password reset emails will not send.');
 }
 
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || null;
+if (!ADMIN_TOKEN) {
+  console.warn('ADMIN_TOKEN is not set. Guestbook moderation endpoints are disabled.');
+}
+
 const pool = mysql.createPool({
   socketPath: process.env.DB_SOCKET,
   user: process.env.DB_USER,
@@ -92,6 +97,21 @@ const requireAuth = wrap(async (req, res, next) => {
   req.userId = payload.uid;
   next();
 });
+
+// Minimal moderation gate: a single shared token in .env, sent as a header.
+// No admin UI or user roles exist yet — this exists so a spammer's posts can
+// actually be removed, not to model permissions properly. See OWNERSHIP.md W11b.
+function requireAdmin(req, res, next) {
+  const provided = req.headers['x-admin-token'];
+  if (!ADMIN_TOKEN || typeof provided !== 'string') {
+    return res.status(403).json({ error: 'not_authorized' });
+  }
+  const a = Buffer.from(provided), b = Buffer.from(ADMIN_TOKEN);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+    return res.status(403).json({ error: 'not_authorized' });
+  }
+  next();
+}
 
 function setSessionCookie(res, userId, tokenVersion) {
   res.cookie(COOKIE_NAME, signSession(userId, tokenVersion), {
@@ -232,7 +252,10 @@ app.post('/api/auth/forgot-password', forgotPasswordLimiter, wrap(async (req, re
     );
 
     if (resend) {
-      const resetUrl = `${APP_URL}/?resetToken=${token}`;
+      // Fragment, not query string: fragments never reach the server, so the
+      // token doesn't land in access logs or a Referer header on any outbound
+      // link from the reset page.
+      const resetUrl = `${APP_URL}/#resetToken=${token}`;
       try {
         await resend.emails.send({
           from: RESEND_FROM,
@@ -275,7 +298,13 @@ app.post('/api/auth/reset-password', resetPasswordLimiter, wrap(async (req, res)
     'UPDATE users SET password_hash = ?, token_version = token_version + 1 WHERE id = ?',
     [passwordHash, reset.user_id]
   );
-  await pool.execute('UPDATE password_resets SET used_at = NOW() WHERE id = ?', [reset.id]);
+  // Invalidate every outstanding token for this user, not just the one that
+  // was redeemed — otherwise an attacker's still-live token (e.g. from
+  // triggering a reset for someone else's email) survives a legitimate reset.
+  await pool.execute(
+    'UPDATE password_resets SET used_at = NOW() WHERE user_id = ? AND used_at IS NULL',
+    [reset.user_id]
+  );
 
   const [uRows] = await pool.execute('SELECT token_version FROM users WHERE id = ?', [reset.user_id]);
   setSessionCookie(res, reset.user_id, uRows[0].token_version);
@@ -348,10 +377,13 @@ app.post('/api/guestbook', guestbookPostLimiter, wrap(async (req, res) => {
   if (typeof stamp !== 'string' || !GUESTBOOK_STAMPS.has(stamp)) {
     return res.status(400).json({ error: 'invalid_input' });
   }
+  // Not stored to identify anyone, only so a spam wave from one source can be
+  // deleted as a set — see requireAdmin.
+  const ipHash = crypto.createHmac('sha256', JWT_SECRET).update(req.ip || '').digest('hex');
 
   const [result] = await pool.execute(
-    'INSERT INTO guestbook_entries (name, msg, stamp) VALUES (?, ?, ?)',
-    [name, msg.trim(), stamp]
+    'INSERT INTO guestbook_entries (name, msg, stamp, ip_hash) VALUES (?, ?, ?, ?)',
+    [name, msg.trim(), stamp, ipHash]
   );
   const [rows] = await pool.execute(
     'SELECT name, msg, stamp, created_at FROM guestbook_entries WHERE id = ?',
@@ -362,6 +394,27 @@ app.post('/api/guestbook', guestbookPostLimiter, wrap(async (req, res) => {
     name: r.name, msg: r.msg, stamp: r.stamp,
     date: r.created_at.toISOString().slice(0, 10).replaceAll('-', '.'),
   });
+}));
+
+// -- guestbook moderation: requireAdmin (shared token header), not public ---
+
+app.get('/api/guestbook/admin', requireAdmin, wrap(async (req, res) => {
+  const [rows] = await pool.execute(
+    'SELECT id, name, msg, stamp, ip_hash, created_at FROM guestbook_entries ORDER BY id DESC LIMIT 200'
+  );
+  res.json({ entries: rows });
+}));
+
+app.delete('/api/guestbook/:id', requireAdmin, wrap(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: 'invalid_input' });
+  await pool.execute('DELETE FROM guestbook_entries WHERE id = ?', [id]);
+  res.status(204).end();
+}));
+
+app.delete('/api/guestbook/by-ip/:ipHash', requireAdmin, wrap(async (req, res) => {
+  const [result] = await pool.execute('DELETE FROM guestbook_entries WHERE ip_hash = ?', [req.params.ipHash]);
+  res.json({ deleted: result.affectedRows });
 }));
 
 // Anything a wrapped handler throws lands here: log it, answer 500, stay up.

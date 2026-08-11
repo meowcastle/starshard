@@ -2,33 +2,29 @@
 //
 // OWNER: Claude Code. Do not edit from Claude Design.
 //
-// AUDIT W2 — READ THIS BEFORE CHANGING ANYTHING HERE.
-// `window.claude.complete` is provided by the Claude Design authoring runtime.
-// It does NOT exist in the deployed dc-runtime (support.js contains zero
-// references to it), so in production every call throws and every user gets the
-// identical fallback paragraph. `hasLLM()` makes that condition explicit rather
-// than silent. The recommended fix is to delete the LLM path entirely and grow
-// the hand-written library below: 12 house readings x 12 archetypes x 28
-// mansions x 7 weekdays is already 28,224 distinct four-part readings, and a
-// few connective sentences per pairing make it genuinely non-repeating.
+// AUDIT W2 — RESOLVED. `window.claude.complete` was provided by the Claude
+// Design authoring runtime and does not exist in the deployed dc-runtime, so
+// every "weave my reading" click used to return the identical fallback
+// paragraph. The LLM path is gone. Below is a genuine combinatorial library
+// instead: each paragraph is assembled from an opener, a connective sentence,
+// a mansion line, and a closer, each picked deterministically (same birth
+// data always weaves the same reading — this is a collectible, not a dice
+// roll) from a handful of hand-written variants via seededPick(). Combined
+// with the underlying 12 houses x 12 archetypes x 28 mansions x 7 weekdays,
+// the paragraph shape itself varies independently of which chart it's for.
 
 import { SIGNS } from './astro.js';
 import { ordinal, ORDINAL_WORDS } from './format.js';
 
-/** True when an LLM completion endpoint is actually reachable from this build. */
-export function hasLLM() {
-  return typeof window !== 'undefined'
-    && typeof window.claude?.complete === 'function';
-}
-
-const WEAVE_SYSTEM = 'You write tiny astrology readings for Star Shard, a cute retro-web site for Vocaloid fans, magical-girl inspired. Voice: warm, playful, nostalgic internet-cute, family-friendly, no drama. Light fandom flavor without naming copyrighted characters. 80-110 words, one paragraph, may end with one kaomoji or ✦. No headings, no lists.';
-
-const DUET_SYSTEM = 'You write tiny two-person astrology compatibility readings for Star Shard, a cute retro-web site for Vocaloid fans. Warm, playful, family-friendly, no drama, no romance assumptions (could be friends). 60-90 words, one paragraph, may end with ✦.';
-
-async function complete(system, prompt) {
-  const text = await window.claude.complete({ system, messages: [{ role: 'user', content: prompt }] });
-  if (!text || !text.trim()) throw new Error('empty completion');
-  return text.trim();
+// Deterministic string hash (FNV-1a) so a given seed always picks the same
+// index — the reading must be stable across reloads for the same chart.
+function seededPick(list, seed) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return list[Math.abs(h) % list.length];
 }
 
 /**
@@ -64,21 +60,22 @@ export function buildShards(chart, astro, data) {
   ];
 }
 
-/** One blended paragraph across all four traditions. Always resolves. */
-export async function weave({ chart, name, astro, data }) {
+/** One blended paragraph across all four traditions, assembled from the
+ * combinatorial library in shards.js. Deterministic per chart. */
+export function weave({ chart, name, astro, data }) {
   const sun = SIGNS[chart.sunSign], moon = SIGNS[chart.moonSign], asc = SIGNS[chart.ascSign];
   const mansion = data.MANSIONS[chart.mansion];
   const archetype = data.ARCHETYPES[chart.moonSign];
   const weekday = data.WEEKDAYS[chart.weekday];
   const house = ORDINAL_WORDS[chart.sunHouse - 1];
+  const who = name ? name : 'little star';
 
-  if (hasLLM()) {
-    try {
-      return await complete(WEAVE_SYSTEM,
-        `Weave one blended reading for ${name || 'a fan'}: Sun in ${sun} (${chart.sunHouse}th Placidus house), Moon in ${moon}, ${asc} rising. Jungian archetype: ${archetype[0]}. Lunar mansion: ${mansion[0]} (${mansion[1]}). Born on ${weekday[0]}, ruled by ${weekday[1]} in folk tradition. Blend all four gently.`);
-    } catch (e) { /* fall through to the written library */ }
-  }
-  return data.fallbackWeave(name, sun, moon, asc, house, mansion[0], archetype[0], weekday[1]).trim();
+  const seed = `${name || ''}|${sun}|${moon}|${asc}|${house}|${mansion[0]}|${archetype[0]}|${weekday[1]}`;
+  const opener = seededPick(data.WEAVE_OPENERS, seed + '|opener')(who);
+  const mid = seededPick(data.WEAVE_MIDS, seed + '|mid')(sun, house, moon, asc, archetype[0]);
+  const mansionLine = seededPick(data.WEAVE_MANSION_LINES, seed + '|mansion')(mansion[0]);
+  const closer = seededPick(data.WEAVE_CLOSERS, seed + '|closer')(weekday[1]);
+  return `${opener} ${mid} ${mansionLine} ${closer}`;
 }
 
 /** Compatibility lines + score. Pure; no network. */
@@ -95,13 +92,12 @@ export function duetFacts({ chartA, chartB, duetMod, data }) {
   return { score, pairTitle: pair[0], lines };
 }
 
-/** The duet paragraph. Always resolves. */
-export async function duetText({ chartA, chartB, nameA, nameB, facts, duetMod, data }) {
-  if (hasLLM()) {
-    try {
-      return await complete(DUET_SYSTEM,
-        `Duet reading for ${nameA || 'star one'} (Sun ${SIGNS[chartA.sunSign]}, Moon ${SIGNS[chartA.moonSign]}, mansion ${data.MANSIONS[chartA.mansion][0]}) × ${nameB || 'star two'} (Sun ${SIGNS[chartB.sunSign]}, Moon ${SIGNS[chartB.moonSign]}, mansion ${data.MANSIONS[chartB.mansion][0]}). Pair archetype: "${facts.pairTitle}". Resonance ${facts.score}%.`);
-    } catch (e) { /* fall through */ }
-  }
-  return duetMod.fallbackDuet(nameA, nameB, facts.pairTitle).trim();
+/** The duet paragraph, assembled from the combinatorial library in duet.js.
+ * Deterministic per chart pair. */
+export function duetText({ chartA, chartB, nameA, nameB, facts, duetMod, data }) {
+  const a = nameA || 'star one', b = nameB || 'star two';
+  const seed = `${a}|${b}|${facts.pairTitle}`;
+  const opener = seededPick(duetMod.DUET_OPENERS, seed + '|opener')(a, b, facts.pairTitle);
+  const closer = seededPick(duetMod.DUET_CLOSERS, seed + '|closer')();
+  return `${opener} ${closer}`;
 }

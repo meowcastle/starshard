@@ -28,5 +28,7 @@ CREATE TABLE IF NOT EXISTS guestbook_entries (
   name VARCHAR(60) NOT NULL,
   msg VARCHAR(280) NOT NULL,
   stamp VARCHAR(8) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  ip_hash CHAR(64) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_guestbook_ip_hash (ip_hash)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

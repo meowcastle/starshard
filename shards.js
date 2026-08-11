@@ -73,7 +73,46 @@ export const WEEKDAYS = [
   ['Saturday', 'Saturn', 'Saturday\'s child "works hard for a living," Saturn-ruled, patient as stone. The old lore promises: what you build slowly, lasts longest.']
 ];
 
-export function fallbackWeave(name, sunSign, moonSign, ascSign, house, mansion, archetype, weekdayPlanet) {
-  const who = name ? name : 'little star';
-  return `Okay ${who}, here\'s the whole constellation of you: a ${sunSign} sun performing from the ${house} house, a ${moonSign} moon playing ${archetype} backstage, and ${ascSign} rising as your character-select screen. The moon-calendar keepers would file you under ${mansion}, and the old folk rhymes hand you to ${weekdayPlanet}. Four traditions, one verdict: you\'re a limited-edition drop. No reruns. ✦`;
-}
+// Woven-reading building blocks (see reading.js weaveReading). Each is a
+// small set of hand-written variants; reading.js picks deterministically per
+// chart, so paragraph shape varies independently of the underlying content.
+
+export const WEAVE_OPENERS = [
+  who => `okay ${who}, here's the whole constellation of you:`,
+  who => `${who}, the sky ran your numbers and here's the readout:`,
+  who => `four traditions checked in on ${who} today, here's the report:`,
+  who => `${who}: unlocked. here's your character sheet, sky-verified:`,
+  who => `paging ${who}, the stars have your file ready:`,
+  who => `${who}, every tradition on this site just weighed in on you at once:`,
+];
+
+export const WEAVE_MIDS = [
+  (sunSign, house, moonSign, ascSign, archetype) =>
+    `a ${sunSign} sun performing from the ${house} house, a ${moonSign} moon playing ${archetype} backstage, and ${ascSign} rising as your character-select screen.`,
+  (sunSign, house, moonSign, ascSign, archetype) =>
+    `${sunSign} energy running the show from the ${house} house, ${moonSign} feelings directed by your inner ${archetype}, and ${ascSign} as the skin you walk into a room wearing.`,
+  (sunSign, house, moonSign, ascSign, archetype) =>
+    `sun in ${sunSign} lighting up the ${house} house, moon in ${moonSign} quietly being your ${archetype}, ascendant in ${ascSign} greeting people before you say a word.`,
+  (sunSign, house, moonSign, ascSign, archetype) =>
+    `a ${house}-house ${sunSign} sun out front, a ${moonSign} moon running ${archetype} duty in the back room, and ${ascSign} rising as your opening cutscene.`,
+  (sunSign, house, moonSign, ascSign, archetype) =>
+    `${sunSign} where it counts (the ${house} house), ${moonSign} where it's felt (your inner ${archetype}), and ${ascSign} where it's seen first.`,
+  (sunSign, house, moonSign, ascSign, archetype) =>
+    `a ${sunSign} sun clocked into the ${house} house, a ${moonSign} moon on ${archetype} duty, and ${ascSign} as your opening theme song.`,
+];
+
+export const WEAVE_MANSION_LINES = [
+  mansion => `the moon-calendar keepers would file you under ${mansion}.`,
+  mansion => `classical star-charters would slot your moon into ${mansion}.`,
+  mansion => `on the old lunar map, you land in ${mansion}.`,
+  mansion => `${mansion} is where the sky's calendar-keepers would stamp your moon.`,
+];
+
+export const WEAVE_CLOSERS = [
+  weekdayPlanet => `and the old folk rhymes hand you to ${weekdayPlanet}. four traditions, one verdict: you're a limited-edition drop, no reruns. ✦`,
+  weekdayPlanet => `while the old birthday rhyme claims you for ${weekdayPlanet}. four different sky-books, one conclusion: there's only one of you. ✦`,
+  weekdayPlanet => `and the folk calendar signs you over to ${weekdayPlanet}. four traditions looked at the same sky and all landed on: iconic. ✦`,
+  weekdayPlanet => `and the week itself, the old planetary week, hands you to ${weekdayPlanet}. that's four traditions agreeing on one thing: you. ✦`,
+  weekdayPlanet => `and the "Monday's Child" rhyme puts you under ${weekdayPlanet}'s watch. four lenses, zero disagreement: you're the whole event. ✦`,
+  weekdayPlanet => `while folk tradition assigns your birthday to ${weekdayPlanet}. four sky-traditions, one shared opinion: main character. ✦`,
+];

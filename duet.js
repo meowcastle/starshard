@@ -20,17 +20,38 @@ export function duetScore(chartA, chartB) {
   const harm = g => Math.max(near(g, 0), near(g, 60), near(g, 120), near(g, 180) * 0.7, near(g, 90) * 0.5);
   return Math.round(68 + 30 * (harm(sunGap) * 0.5 + harm(moonGap) * 0.5));
 }
-export function fallbackDuet(nameA, nameB, pairTitle) {
-  return `${nameA || 'star one'} × ${nameB || 'star two'}: the sky filed you two under "${pairTitle}." Different orbits, same constellation. keep trading playlists and finishing each other's sentences. ✦`;
-}
+// Duet-reading building blocks (see reading.js duetReading).
+export const DUET_OPENERS = [
+  (a, b, pairTitle) => `${a} × ${b}: the sky filed you two under "${pairTitle}."`,
+  (a, b, pairTitle) => `${a} and ${b}, cross-referenced: the charts call this pairing "${pairTitle}."`,
+  (a, b, pairTitle) => `run ${a} against ${b} and the old star-math spits out "${pairTitle}."`,
+  (a, b, pairTitle) => `${a} meets ${b}: two charts, one verdict from the sky: "${pairTitle}."`,
+  (a, b, pairTitle) => `the compatibility engine looked at ${a} and ${b} and said "${pairTitle}."`,
+];
+
+export const DUET_CLOSERS = [
+  () => `different orbits, same constellation. keep trading playlists and finishing each other's sentences. ✦`,
+  () => `two separate charts, one shared frequency. that's rarer than it sounds. ✦`,
+  () => `not identical, just compatible, which honestly works out better. ✦`,
+  () => `the sky doesn't do this for just anyone. ✦`,
+  () => `file this one under: worth keeping. ✦`,
+];
 export const GLOSSARY = [
   ['🏠 Placidus houses', 'A way of slicing the sky into 12 "houses" based on the exact time and place you were born, worked out by Placidus de Titis in the 1600s and still the most-used system today. Your sun\'s house says where in life your light points. We compute the real cusps. no shortcuts.'],
   ['🪞 Jungian archetypes', 'Carl Jung believed we all carry shared inner characters (the Hero, the Caregiver, the Magician) living in the collective unconscious. Your moon sign hints at which one runs your backstage. It\'s psychology wearing a costume, and we love it for that.'],
   ['🌙 Manāzil al-qamar', 'The 28 "lunar mansions" of classical Arabic astronomy: the stations the moon visits on its monthly journey, recorded by scholars in the anwāʾ star-calendar books. We share them with love and respect, as a poetic and scholarly tradition of the Islamic golden age, not as religious guidance.'],
   ['🕯️ Folk star-lore', 'The old European birthday traditions: the "Monday\'s Child" rhyme (first printed in 1838) and the far older planetary week, where each day belongs to a wandering star. Your grandmother\'s astrology: small, sweet, and surprisingly sturdy.']
 ];
-export const GUESTBOOK_SEED = [
-  { name: 'mikufan39', msg: 'got the luckiest mansion on my first try!!! buying the gacha pull', stamp: '⭐', date: '2026.08.09' },
-  { name: 'teto_tuesday', msg: 'scorpio rising girlies rise up (mysteriously)', stamp: '🎀', date: '2026.08.08' },
-  { name: 'anon', msg: 'the moon shard made me cry a little. in a cute way', stamp: '🌙', date: '2026.08.07' }
-];
+// Shown only while guestbook_entries is empty. Dates computed relative to
+// "now" so this doesn't drift further into the past every week it's live.
+const daysAgo = n => {
+  const d = new Date(Date.now() - n * 86400000);
+  return d.toISOString().slice(0, 10).replaceAll('-', '.');
+};
+export function getGuestbookSeed() {
+  return [
+    { name: 'mikufan39', msg: 'got the luckiest mansion on my first try!!! buying the gacha pull', stamp: '⭐', date: daysAgo(2) },
+    { name: 'teto_tuesday', msg: 'scorpio rising girlies rise up (mysteriously)', stamp: '🎀', date: daysAgo(3) },
+    { name: 'anon', msg: 'the moon shard made me cry a little. in a cute way', stamp: '🌙', date: daysAgo(4) },
+  ];
+}

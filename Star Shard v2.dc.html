@@ -14,13 +14,13 @@
 <meta property="og:url" content="https://starshard.net/">
 <meta property="og:title" content="star shard ☆ collect your birth chart">
 <meta property="og:description" content="four shards, one chart: real Placidus houses, a Jungian archetype, a lunar mansion, and your birthday rhyme. ✧ shatter the sky ✧">
-<meta property="og:image" content="https://starshard.net/og-image.png">
-<meta property="og:image:width" content="240">
-<meta property="og:image:height" content="360">
+<!-- og:image / twitter:image deliberately omitted: the only art available is a
+     240x360 crop, well under the 1200x630 platforms expect, and Facebook caches
+     a bad scrape for weeks. No image renders cleaner than a small, weak one.
+     Add back once real 1200x630 share art exists (see AUDIT.md W10 / DESIGN-BRIEF.md P2). -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="star shard ☆ collect your birth chart">
 <meta name="twitter:description" content="four shards, one chart: real Placidus houses, a Jungian archetype, a lunar mansion, and your birthday rhyme. ✧ shatter the sky ✧">
-<meta name="twitter:image" content="https://starshard.net/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
 <script src="./image-slot.js"></script>
 <style>
@@ -684,6 +684,12 @@ const STAMPS = ['⭐', '🎀', '🌙', '💿', '✿'];
 // Chiptune loop for player.exe — notes in Hz, stepped every 240ms.
 const BGM_NOTES = [523.25, 659.25, 783.99, 659.25, 880, 783.99, 987.77, 783.99, 659.25, 523.25, 587.33, 659.25];
 
+// The static host serves astro.js/api.js/etc with no Cache-Control header, so
+// browsers cache them heuristically and a deploy can silently go stale for
+// anyone who already visited. Querystring-busting per page load fixes it
+// with no build step required.
+const BUILD_ID = Date.now();
+
 // Window bindings used before the modules finish loading: correct geometry,
 // inert handlers. Prevents a blank first frame without duplicating logic.
 const NOOP = () => {};
@@ -700,10 +706,10 @@ class Component extends DCLogic {
     fQuery: '', cityResults: [], fPlace: null, searching: false,
     manualMode: false, fLat: '', fLon: '', fTz: '',
     formError: '', chart: null, revealed: [false, false, false, false],
-    weaving: false, weaveText: '', clock: '',
+    weaveText: '', clock: '',
     today: null,
     dName: '', dDate: '2004-01-01', dTime: '12:00', dQuery: '', dResults: [], dPlace: null, dSearching: false, dError: '',
-    duet: null, duetText: '', duetWeaving: false,
+    duet: null, duetText: '',
     gName: '', gMsg: '', gStamp: '⭐', guestEntries: [], gBusy: false, gError: '',
     playing: false,
     authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '', authInfo: '',
@@ -714,21 +720,23 @@ class Component extends DCLogic {
 
   async componentDidMount() {
     const [astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, win] = await Promise.all([
-      import('./astro.js'), import('./shards.js'), import('./duet.js'),
-      import('./format.js'), import('./tz.js'), import('./api.js'),
-      import('./wheel.js'), import('./card.js'), import('./reading.js'),
-      import('./windows.js')
+      import(`./astro.js?v=${BUILD_ID}`), import(`./shards.js?v=${BUILD_ID}`), import(`./duet.js?v=${BUILD_ID}`),
+      import(`./format.js?v=${BUILD_ID}`), import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
+      import(`./wheel.js?v=${BUILD_ID}`), import(`./card.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
+      import(`./windows.js?v=${BUILD_ID}`)
     ]);
     Object.assign(this, { astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, winMod: win });
     this.win = win.createWindowOps(this);
     const windows = win.initWindows();
     try {
-      const params = new URLSearchParams(location.search);
+      // Fragment, not query string — see the matching note in server.js's
+      // forgot-password handler for why.
+      const params = new URLSearchParams(location.hash.replace(/^#/, ''));
       const token = params.get('resetToken');
       if (token) {
         windows.account = { ...windows.account, open: true, min: false };
         this.setState({ authMode: 'reset', resetToken: token });
-        history.replaceState(null, '', location.pathname);
+        history.replaceState(null, '', location.pathname + location.search);
       }
     } catch (e) {}
     this.setState({ windows });
@@ -741,7 +749,7 @@ class Component extends DCLogic {
     this.setState({ today: { mansion: astro.mansionOf(moonLon), moonSign: astro.signOf(moonLon) } });
 
     this.api.loadGuestbook().then(entries => {
-      this.setState({ guestEntries: entries.length ? entries : duetMod.GUESTBOOK_SEED });
+      this.setState({ guestEntries: entries.length ? entries : duetMod.getGuestbookSeed() });
     });
 
     this.forceUpdate();
@@ -880,16 +888,15 @@ class Component extends DCLogic {
     this.win.openWin('sky');
   };
 
-  weave = async () => {
-    this.setState({ weaving: true });
-    const text = await this.reading.weave({
+  weave = () => {
+    const text = this.reading.weave({
       chart: this.state.chart, name: this.state.fName, astro: this.astro, data: this.data
     });
-    this.setState({ weaving: false, weaveText: text });
+    this.setState({ weaveText: text });
     this.win.openWin('card');
   };
 
-  computeDuet = async () => {
+  computeDuet = () => {
     const s = this.state;
     if (!s.chart) return;
     if (!s.dDate || !s.dTime || !s.dPlace) { this.setState({ dError: 'the duet needs their date, time & town ♡' }); return; }
@@ -898,12 +905,11 @@ class Component extends DCLogic {
     catch (e) { this.setState({ dError: 'could not read that timezone ♡' }); return; }
 
     const facts = this.reading.duetFacts({ chartA: s.chart, chartB, duetMod: this.duetMod, data: this.data });
-    this.setState({ duet: { ...facts, chartB }, duetText: '…', duetWeaving: true });
-    const text = await this.reading.duetText({
+    const text = this.reading.duetText({
       chartA: s.chart, chartB, nameA: s.fName, nameB: s.dName,
       facts, duetMod: this.duetMod, data: this.data
     });
-    this.setState({ duetText: text, duetWeaving: false });
+    this.setState({ duet: { ...facts, chartB }, duetText: text });
   };
 
   // -- guestbook ------------------------------------------------------------
@@ -1058,7 +1064,7 @@ class Component extends DCLogic {
       shards, allRevealed,
       revealTitle: allRevealed ? 'your sky, in four shards ✧' : 'the sky shattered ✧',
       revealHint: allRevealed ? 'ALL SHARDS COLLECTED ✦ WEAVE THEM BELOW' : 'CLICK EACH SHARD TO OPEN A PIECE OF YOU',
-      chartLine, doWeave: this.weave, weaveLabel: s.weaving ? 'weaving… ✦ ✦ ✦' : '✦ weave my reading ✦',
+      chartLine, doWeave: this.weave, weaveLabel: '✦ weave my reading ✦',
       shareName: s.fName || 'little star', shareBirthLine, miniShards, weaveText: s.weaveText,
       savePng: this.savePng,
       wheelTicks: wd.ticks, wheelGlyphs: wd.glyphs, wheelCusps: wd.cusps, wheelPlanets: wd.planets,
@@ -1072,7 +1078,7 @@ class Component extends DCLogic {
       dResults: s.dResults.map(r => ({ ...r, pick: () => this.setState({ dPlace: r, dResults: [], dQuery: `${r.name}, ${r.region}` }) })),
       dHasResults: s.dResults.length > 0, dHasPlace: !!s.dPlace,
       dPlaceLine: s.dPlace ? `${s.dPlace.name}, ${s.dPlace.region}` : '', dError: s.dError,
-      doDuet: this.computeDuet, duetBtnLabel: s.duetWeaving ? 'harmonizing… ♪' : '♪ sing the duet ♪',
+      doDuet: this.computeDuet, duetBtnLabel: '♪ sing the duet ♪',
       hasDuet: !!s.duet,
       duetScoreStr: s.duet ? s.duet.score + '%' : '', duetPairTitle: s.duet ? s.duet.pairTitle : '',
       duetLines: s.duet ? s.duet.lines : [], duetText: s.duetText,
