@@ -1,5 +1,10 @@
 # Star Shard — brief for Claude Design
 
+> **Read `DESIGN-SYSTEM.md` first.** It supersedes anything in this file about
+> colour, type, spacing, shape or shadow. This brief still holds for the
+> product context, the audience, the ownership boundary, the binding contract
+> and the per-surface work queue.
+
 Self-contained: everything you need is in this document. Paste it in whole.
 
 ---
@@ -75,7 +80,7 @@ It holds state, lifecycle, and `renderVals()`. Leave its logic alone.
 **The markup binds to names that JavaScript supplies. If you rename one, the page
 renders the literal text `{{ thatName }}` to the user.**
 
-There are 336 bindings, 127 top-level. They are all listed in `BINDINGS.md`.
+There are 349 bindings, 140 top-level. They are all listed in `BINDINGS.md`.
 
 ```
 {{ revealTitle }}          a value to print
@@ -137,14 +142,24 @@ poster. Both are dense — 10 to 30 items — and both stay readable because the
 layout is a **real-world object the viewer already knows how to parse**. Pick an
 object before you pick a data model.
 
-### P3 — `<title>`, meta description, Open Graph tags
+### P3 — A real Open Graph image
 
-There are currently **none**. Every link posted to Discord, Twitter, Bluesky or
-iMessage renders as a bare URL with no preview image.
+The tags themselves have shipped — `<title>`, description, `og:*` and
+`twitter:*` are all in the `<helmet>` now. **The image is the problem.**
 
-These must be static HTML in the `<helmet>` — social scrapers and crawlers don't
-run JavaScript, so they can't be injected at runtime. That makes them yours, and
-it means **you have to carry them through every regeneration.**
+`og-image.png` is **240×360**: a portrait cosplay crop with no
+wordmark and nothing that says what the link is. The standard is 1200×630.
+LinkedIn needs 1200×627 for a large card and downgrades anything smaller; X's
+`summary_large_image` is built for 1200×628. It clears Facebook's 200×200 floor
+so it is not rejected — just rendered as a small thumbnail everywhere, which is
+roughly the outcome of having no image at all. And **Facebook caches scraped OG
+data for weeks**, so a bad card outlives the fix.
+
+Needs: 1200×630, card context, the wordmark, a mansion card, legible in a feed.
+
+These tags are static HTML — scrapers don't run JavaScript, so they can't be
+injected at runtime. That makes them yours, and it means **you have to carry
+them through every regeneration.**
 
 ### P4 — Make the 28 mansions the front door
 
@@ -184,8 +199,11 @@ the escape hatch worth borrowing.
 
 ## What's deliberately unfinished (not yours to fix)
 
-- The account system saves window positions and nothing else, and the
-  guestbook has no moderation path — both are being decided separately.
+- Every user currently gets the same "woven reading" paragraph — the LLM call
+  doesn't exist in the deployed runtime. Being decided separately.
+- The guestbook is local to each browser; everyone sees the same three seeded
+  entries.
+- The account system saves window positions and nothing else.
 
 ## Handing back
 
@@ -194,14 +212,6 @@ Please include in your handoff notes:
 1. Any binding you had to add, rename or remove
 2. Whether you changed the `CARD` or `LAYOUT` blocks
 3. Whether the meta tags survived
-4. **Do not include `astro.js`, `shards.js`, `duet.js`, `api.js`,
-   `format.js`, `tz.js`, `wheel.js`, `windows.js`, `reading.js`, or
-   `Star Shard v2.dc.html`/`Star Shard.dc.html` in the export** — your
-   canvas pages `import()` them as siblings for the preview, but they're
-   Code-owned and the exported copies go stale the moment Code fixes
-   something. An export folder with those files in it has already caused
-   one near-miss (REVIEW.md §1.1): reverting four shipped bug fixes by
-   getting copied into the repo by muscle memory.
 
 The engineering side runs `npm run bindings` on receipt, which fails the build on
 any binding mismatch, plus a browser smoke test that drives the full reading flow.

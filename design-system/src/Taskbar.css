@@ -1,0 +1,36 @@
+.ss-taskbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 46px;
+  padding: 0 var(--space-2);
+  background: var(--surface);
+  border-top: 2px solid var(--edge-light);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--ink);
+  overflow-x: auto;
+}
+.ss-taskbar__start {
+  flex: none;
+}
+.ss-taskbar__divider {
+  flex: none;
+  width: 2px;
+  height: 26px;
+  background: var(--edge-dark);
+  box-shadow: 1px 0 0 var(--edge-light);
+}
+.ss-taskbar__items {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.ss-taskbar__trailing {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}

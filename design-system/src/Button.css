@@ -1,0 +1,35 @@
+.ss-button {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--teal-900); /* button labels are always teal-900, never white — see DESIGN-SYSTEM.md 1.3 rule 1 */
+  border: 2px solid;
+  border-color: var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  box-shadow: var(--shadow-raised);
+  padding: 11px 22px;
+  cursor: pointer;
+  min-height: 32px;
+  min-width: 32px;
+  background: var(--action);
+}
+@media (max-width: 1023px) {
+  .ss-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+.ss-button:active:not(:disabled) {
+  border-color: var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+.ss-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.ss-button--secondary {
+  background: var(--teal-200);
+}
+.ss-button--tertiary {
+  background: transparent;
+}

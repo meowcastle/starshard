@@ -1,0 +1,53 @@
+.ss-shard {
+  background: var(--surface-raised);
+  border: 2px solid;
+  border-color: var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+.ss-shard__strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 8px;
+  font-family: var(--font-pixel);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.1em;
+  color: var(--white);
+}
+.ss-shard__body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  flex: 1;
+}
+.ss-shard__gem {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+.ss-shard__headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--ink);
+  margin: 0;
+}
+.ss-shard__text {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  line-height: 1.6;
+}
+.ss-shard__prompt {
+  font-family: var(--font-pixel);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
