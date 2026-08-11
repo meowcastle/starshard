@@ -1,0 +1,8 @@
+.DS_Store
+.thumbnail
+.claude/settings.local.json
+
+# backend
+starshard-api/node_modules/
+starshard-api/.env
+starshard-api/run.log

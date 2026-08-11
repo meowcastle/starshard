@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#3b2a63}
+a{color:#3fb8ad}a:hover{color:#ff8fc0}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes popIn{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+input,select,button,textarea{font-family:'Varela Round',sans-serif}
+::selection{background:#ff8fc0;color:#fff}
+</style>
+</helmet>
+<div style="min-height:160vh;font-family:'Varela Round',sans-serif;color:#4a3b47;background:linear-gradient(180deg,#2c1f4e 0%,#4a3277 45%,#7c4d92 80%,#b06aa8 100%);position:relative;padding-bottom:70px;box-sizing:border-box">
+  <div style="position:absolute;inset:0;pointer-events:none;color:#ffe9f4;font-size:12px;font-family:monospace">
+    <sc-if value="{{ sparklesOn }}" hint-placeholder-val="{{ true }}">
+      <span style="position:absolute;top:6%;left:12%;animation:twinkle 2.4s infinite">✦</span>
+      <span style="position:absolute;top:12%;right:18%;animation:twinkle 3.1s .4s infinite;color:#ffd98a">★</span>
+      <span style="position:absolute;top:30%;left:30%;animation:twinkle 2.1s .8s infinite">·</span>
+      <span style="position:absolute;top:8%;left:55%;animation:twinkle 2.8s .2s infinite">·</span>
+      <span style="position:absolute;top:48%;right:6%;animation:twinkle 2.6s .9s infinite;color:#ffb7d5">✧</span>
+      <span style="position:absolute;top:70%;left:8%;animation:twinkle 3.4s .5s infinite;color:#ffd98a">✦</span>
+      <span style="position:absolute;top:62%;right:28%;animation:twinkle 2.2s 1.1s infinite">·</span>
+      <span style="position:absolute;top:14%;left:72%;font-size:22px;color:#ffe9a8;animation:floaty 5s ease-in-out infinite">☾</span>
+    </sc-if>
+  </div>
+  <sc-if value="{{ scanlinesOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;pointer-events:none;z-index:1000;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 3px)"></div>
+  </sc-if>
+
+  <div style="position:absolute;left:16px;top:20px;display:flex;flex-flow:column nowrap;gap:10px;max-height:none;width:88px;z-index:1;align-content:flex-start">
+    <sc-for list="{{ deskIcons }}" as="ic" hint-placeholder-count="4">
+      <div onClick="{{ ic.onClick }}" style="width:80px;text-align:center;cursor:pointer">
+        <div style="font-size:29px">{{ ic.icon }}</div>
+        <div style="font-family:'Pixelify Sans',monospace;font-size:11.5px;color:#fff;text-shadow:1px 1px 0 #2c1f4e;margin-top:2px">{{ ic.label }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ wWelcome.show }}" hint-placeholder-val="{{ true }}">
+    <div onPointerDown="{{ wWelcome.focus }}" style="position:absolute;left:{{ wWelcome.x }}px;top:{{ wWelcome.y }}px;z-index:{{ wWelcome.z }};width:{{ wWelcome.w }}px;height:{{ wWelcome.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wWelcome.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wWelcome.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">☾ StarShard95 - welcome.exe</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wWelcome.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wWelcome.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wWelcome.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:26px 26px 18px;text-align:center">
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:center">
+          <div style="flex:1;min-width:280px">
+            <div style="display:inline-block;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:4px 14px;font-family:'Pixelify Sans',monospace;font-size:13px;color:#b45a8e;letter-spacing:.08em">✿ MAGICAL BIRTH CHART SYSTEM v2.0 ✿</div>
+            <h1 style="font-family:'Baloo 2',cursive;font-weight:800;font-size:clamp(44px,6.5vw,68px);line-height:1;margin:16px 0 6px;color:#8a4d9e;text-shadow:3px 3px 0 #ffd6e8">star shard ☆</h1>
+            <p style="font-size:15px;line-height:1.65;max-width:400px;margin:8px auto 20px;color:#8a7484">by the light of the moon, we'll read your stars ☾ enter your birth chart and collect four sparkly shards: houses, dreams, moon mansions &amp; old folk magic.</p>
+            <button onClick="{{ openReader }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:19px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;box-shadow:3px 3px 0 rgba(58,42,84,.35);padding:13px 34px;cursor:pointer">✦ get your shard ✦</button>
+          </div>
+          <div style="flex:none">
+            <div style="background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;box-shadow:3px 3px 0 rgba(30,20,54,.3);padding:0 0 6px">
+              <div style="padding:3px 8px;background:linear-gradient(90deg,#7fdbd4,#9d84e8);color:#fff;font-family:'Pixelify Sans',monospace;font-size:12px;text-align:left">suyin.png</div>
+              <div style="padding:8px">
+                <image-slot id="landing-mascot" style="width:180px;height:220px" shape="rect" placeholder="hand-drawn suyin art here ♡"></image-slot>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:22px">
+          <div style="width:168px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:13px 12px;text-align:left">
+            <div style="font-size:22px">🏠</div>
+            <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#3fb8ad;margin:4px 0 2px">house shard</div>
+            <div style="font-size:12px;line-height:1.5;color:#8a7484">real Placidus houses, where your sun actually lives</div>
+          </div>
+          <div style="width:168px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:13px 12px;text-align:left">
+            <div style="font-size:22px">🪞</div>
+            <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#9d84e8;margin:4px 0 2px">mirror shard</div>
+            <div style="font-size:12px;line-height:1.5;color:#8a7484">your Jungian archetype from the shadow realm</div>
+          </div>
+          <div style="width:168px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:13px 12px;text-align:left">
+            <div style="font-size:22px">🌙</div>
+            <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#e0a63c;margin:4px 0 2px">moon shard</div>
+            <div style="font-size:12px;line-height:1.5;color:#8a7484">your mansion among the 28 manāzil al-qamar</div>
+          </div>
+          <div style="width:168px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:13px 12px;text-align:left">
+            <div style="font-size:22px">🕯️</div>
+            <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#e677ab;margin:4px 0 2px">hearth shard</div>
+            <div style="font-size:12px;line-height:1.5;color:#8a7484">folk star-lore &amp; the old birthday rhymes</div>
+          </div>
+        </div>
+        <div style="margin-top:20px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;overflow:hidden;white-space:nowrap">
+          <div style="display:inline-block;animation:marquee 18s linear infinite;font-family:'Pixelify Sans',monospace;font-size:13px;color:#b45a8e;padding:5px 0">☆ welcome to starshard95 ☆ pretty guardian of your natal chart ☆ real star math · cute results · no drama ☆ tag your oshi ♡ ☆ welcome to starshard95 ☆ pretty guardian of your natal chart ☆ real star math · cute results · no drama ☆ tag your oshi ♡ </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wToday.show }}" hint-placeholder-val="{{ true }}">
+    <div onPointerDown="{{ wToday.focus }}" style="position:absolute;left:{{ wToday.x }}px;top:{{ wToday.y }}px;z-index:{{ wToday.z }};width:{{ wToday.w }}px;height:{{ wToday.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wToday.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wToday.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">🌙 today.exe</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wToday.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wToday.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wToday.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:16px 18px 18px;text-align:center">
+        <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;color:#c9a0b8">TODAY'S SKY · {{ todayDate }}</div>
+        <div style="font-size:30px;margin:8px 0 2px">☾</div>
+        <div style="font-family:'Baloo 2',cursive;font-weight:800;font-size:20px;color:#8a4d9e">{{ todayMansion }}</div>
+        <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#c9b3c0;margin:1px 0 8px">“{{ todayMeaning }}” · moon in {{ todayMoonSign }}</div>
+        <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:10px 12px;font-size:13px;line-height:1.6;color:#6d5a68;text-align:left">{{ todayForecast }}</div>
+        <div style="margin-top:9px;font-size:11px;color:#c9b3c0">the moon moves house roughly daily, come back tomorrow ♡</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wReader.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wReader.focus }}" style="position:absolute;left:{{ wReader.x }}px;top:{{ wReader.y }}px;z-index:{{ wReader.z }};width:{{ wReader.w }}px;height:{{ wReader.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wReader.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wReader.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">☾ birthdata.chart - shard reader</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wReader.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wReader.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wReader.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:20px 24px 24px">
+        <h2 style="font-family:'Baloo 2',cursive;font-weight:800;font-size:26px;margin:0 0 2px;color:#8a4d9e">tell the stars about you ☆</h2>
+        <p style="font-size:13px;color:#8a7484;margin:0 0 16px;line-height:1.5">exact time matters: the houses move every 4 minutes! (it's fine to guess)</p>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <label style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">your name (or fan name!)
+            <input value="{{ fName }}" onChange="{{ setName }}" placeholder="mikufan39" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:10px 12px;font-size:15px;outline:none;color:#4a3b47"></input>
+          </label>
+          <div style="display:flex;gap:12px">
+            <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">birth date
+              <input type="date" value="{{ fDate }}" onChange="{{ setDate }}" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 10px;font-size:15px;outline:none;color:#4a3b47"></input>
+            </label>
+            <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">birth time
+              <input type="time" value="{{ fTime }}" onChange="{{ setTime }}" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 10px;font-size:15px;outline:none;color:#4a3b47"></input>
+            </label>
+          </div>
+          <sc-if value="{{ notManual }}" hint-placeholder-val="{{ true }}">
+            <label style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">birth town or city
+              <div style="display:flex;gap:8px">
+                <input value="{{ fQuery }}" onChange="{{ setQuery }}" onKeyDown="{{ queryKey }}" placeholder="type your town… e.g. Poughkeepsie" style="flex:1;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:10px 12px;font-size:15px;outline:none;color:#4a3b47"></input>
+                <button onClick="{{ doSearch }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:0 18px;cursor:pointer">{{ searchLabel }}</button>
+              </div>
+            </label>
+            <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;max-height:170px;overflow:auto">
+                <sc-for list="{{ cityResults }}" as="r" hint-placeholder-count="3">
+                  <div onClick="{{ r.pick }}" style-hover="background:#ffe9f4" style="padding:9px 12px;font-size:14px;cursor:pointer;border-bottom:1px dotted #ecd2e2;display:flex;justify-content:space-between;gap:10px">
+                    <span>📍 {{ r.name }}<span style="color:#b294a8;font-size:12.5px"> · {{ r.region }}</span></span>
+                    <span style="color:#c9b3c0;font-size:12px;font-family:'Pixelify Sans',monospace">{{ r.coords }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasPlace }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#eafaf7;border:2px solid;border-color:#8fd4cc #fff #fff #8fd4cc;padding:9px 12px;font-size:13.5px;color:#2e8a80">✓ {{ placeLine }}<br><span style="font-size:12.5px;color:#5fa79f">{{ offsetLine }}</span></div>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ manualMode }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:10px">
+              <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">latitude
+                <input value="{{ fLat }}" onChange="{{ setLat }}" placeholder="40.71" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 10px;font-size:15px;outline:none;color:#4a3b47"></input>
+              </label>
+              <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">longitude (E+)
+                <input value="{{ fLon }}" onChange="{{ setLon }}" placeholder="-74.01" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 10px;font-size:15px;outline:none;color:#4a3b47"></input>
+              </label>
+              <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">UTC offset
+                <input value="{{ fTz }}" onChange="{{ setTz }}" placeholder="-5" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 10px;font-size:15px;outline:none;color:#4a3b47"></input>
+              </label>
+            </div>
+          </sc-if>
+          <div onClick="{{ toggleManual }}" style="font-size:12.5px;color:#b45a8e;cursor:pointer;text-decoration:underline dotted">{{ manualToggleLabel }}</div>
+          <sc-if value="{{ formError }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff0f6;border:2px solid;border-color:#e9a4c6 #fff #fff #e9a4c6;padding:9px 12px;font-size:13px;color:#e05c9a">⚠ {{ formError }}</div>
+          </sc-if>
+          <button onClick="{{ doCompute }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:18px;color:#8a4d9e;background:linear-gradient(135deg,#c9f2ee,#ffd6e8);border:2px solid;border-color:#fff #c586ad #c586ad #fff;box-shadow:3px 3px 0 rgba(58,42,84,.35);padding:13px;cursor:pointer;margin-top:2px">✧ shatter the sky ✧</button>
+          <div style="font-size:11px;color:#c9b3c0;text-align:center">daylight saving &amp; timezone are looked up automatically for your birthplace ♡</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wSky.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wSky.focus }}" style="position:absolute;left:{{ wSky.x }}px;top:{{ wSky.y }}px;z-index:{{ wSky.z }};width:{{ wSky.w }}px;height:{{ wSky.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wSky.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wSky.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">☾ your_sky.shards - 4 objects</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wSky.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wSky.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wSky.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:22px 24px 26px;text-align:center">
+        <h2 style="font-family:'Baloo 2',cursive;font-weight:800;font-size:28px;margin:0 0 2px;color:#8a4d9e">{{ revealTitle }}</h2>
+        <p style="font-size:14px;color:#8a7484;margin:0 0 4px">{{ chartLine }}</p>
+        <p style="font-family:'Pixelify Sans',monospace;font-size:13px;color:#c9a0b8;margin:0 0 20px">{{ revealHint }}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;text-align:left">
+          <sc-for list="{{ shards }}" as="s" hint-placeholder-count="4">
+            <div onClick="{{ s.onReveal }}" style="cursor:pointer;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;box-shadow:3px 3px 0 rgba(30,20,54,.25)">
+              <div style="padding:3px 8px;background:{{ s.gem }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:12px;display:flex;justify-content:space-between"><span>{{ s.file }}</span><span>{{ s.status }}</span></div>
+              <sc-if value="{{ s.hidden }}" hint-placeholder-val="{{ true }}">
+                <div style="height:216px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;background:#fff">
+                  <div style="width:58px;height:68px;background:{{ s.gem }};clip-path:polygon(50% 0%, 100% 30%, 82% 100%, 18% 100%, 0% 30%);animation:floaty 3s ease-in-out infinite"></div>
+                  <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a7484">{{ s.title }}</div>
+                  <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.08em;color:#c9b3c0">CLICK TO OPEN ✦</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ s.revealed }}" hint-placeholder-val="{{ false }}">
+                <div style="min-height:196px;background:#fff;padding:14px 15px;animation:popIn .45s ease">
+                  <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+                    <div style="width:22px;height:26px;background:{{ s.gem }};clip-path:polygon(50% 0%, 100% 30%, 82% 100%, 18% 100%, 0% 30%)"></div>
+                    <div>
+                      <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:{{ s.titleColor }}">{{ s.title }}</div>
+                      <div style="font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#c9b3c0">{{ s.tradition }}</div>
+                    </div>
+                  </div>
+                  <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:13.5px;color:#4a3b47;margin-bottom:5px">{{ s.headline }}</div>
+                  <div style="font-size:13px;line-height:1.6;color:#6d5a68">{{ s.body }}</div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
+          <button onClick="{{ openWheel }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;box-shadow:2px 2px 0 rgba(58,42,84,.3);padding:11px 20px;cursor:pointer">🔮 chart wheel</button>
+          <sc-if value="{{ allRevealed }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ doWeave }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:17px;color:#fff;background:linear-gradient(135deg,#9d84e8,#ff8fc0);border:2px solid;border-color:#fff #7a5b9e #7a5b9e #fff;box-shadow:3px 3px 0 rgba(30,20,54,.35);padding:11px 28px;cursor:pointer;animation:popIn .45s ease">{{ weaveLabel }}</button>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wWheel.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wWheel.focus }}" style="position:absolute;left:{{ wWheel.x }}px;top:{{ wWheel.y }}px;z-index:{{ wWheel.z }};width:{{ wWheel.w }}px;height:{{ wWheel.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wWheel.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wWheel.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">🔮 chart_wheel.exe - Placidus</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wWheel.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wWheel.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wWheel.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:14px 18px 18px;text-align:center">
+        <sc-if value="{{ noChart }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:30px 10px;font-size:13.5px;color:#8a7484">no chart loaded yet, run the 💿 shard reader first ♡</div>
+        </sc-if>
+        <sc-if value="{{ hasChart }}" hint-placeholder-val="{{ false }}">
+          <svg width="340" height="340" viewBox="0 0 340 340" style="max-width:100%">
+            <circle cx="170" cy="170" r="160" fill="#ffffff" stroke="#c586ad" strokeWidth="2"></circle>
+            <circle cx="170" cy="170" r="132" fill="none" stroke="#ecd2e2" strokeWidth="1"></circle>
+            <circle cx="170" cy="170" r="46" fill="#fff5fa" stroke="#ecd2e2" strokeWidth="1"></circle>
+            <sc-for list="{{ wheelTicks }}" as="t" hint-placeholder-count="1">
+              <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="#e9b8d2" strokeWidth="1"></line>
+            </sc-for>
+            <sc-for list="{{ wheelGlyphs }}" as="g2" hint-placeholder-count="1">
+              <text x="{{ g2.x }}" y="{{ g2.y }}" fontSize="15" fill="#b45a8e" textAnchor="middle" dominantBaseline="middle">{{ g2.t }}</text>
+            </sc-for>
+            <sc-for list="{{ wheelCusps }}" as="c2" hint-placeholder-count="1">
+              <line x1="{{ c2.x1 }}" y1="{{ c2.y1 }}" x2="{{ c2.x2 }}" y2="{{ c2.y2 }}" stroke="{{ c2.color }}" strokeWidth="{{ c2.wdt }}"></line>
+              <text x="{{ c2.nx }}" y="{{ c2.ny }}" fontSize="10" fill="#c9a0b8" textAnchor="middle" dominantBaseline="middle">{{ c2.num }}</text>
+            </sc-for>
+            <sc-for list="{{ wheelPlanets }}" as="p2" hint-placeholder-count="1">
+              <circle cx="{{ p2.x }}" cy="{{ p2.y }}" r="12" fill="#fff" stroke="{{ p2.c }}" strokeWidth="1.5"></circle>
+              <text x="{{ p2.x }}" y="{{ p2.y }}" fontSize="13" fill="{{ p2.c }}" textAnchor="middle" dominantBaseline="central">{{ p2.t }}</text>
+            </sc-for>
+          </svg>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px">
+            <sc-for list="{{ placementRows }}" as="pr" hint-placeholder-count="4">
+              <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:5px 10px;font-family:'Pixelify Sans',monospace;font-size:12px;color:#7a5b74">{{ pr.label }} {{ pr.value }}</div>
+            </sc-for>
+          </div>
+          <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;text-align:left;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:10px 14px">
+            <sc-for list="{{ cuspRows }}" as="cr" hint-placeholder-count="4">
+              <div style="font-family:'Pixelify Sans',monospace;font-size:12px;color:#8a7484;display:flex;justify-content:space-between;gap:8px"><span style="color:#b45a8e">house {{ cr.num }}</span><span>{{ cr.value }}</span></div>
+            </sc-for>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:#c9b3c0">real Placidus cusps, computed from your exact minute &amp; place ✦</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wDuet.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wDuet.focus }}" style="position:absolute;left:{{ wDuet.x }}px;top:{{ wDuet.y }}px;z-index:{{ wDuet.z }};width:{{ wDuet.w }}px;height:{{ wDuet.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wDuet.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wDuet.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">💞 duet.exe - chart × chart</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wDuet.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wDuet.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wDuet.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:18px 22px 22px">
+        <h2 style="font-family:'Baloo 2',cursive;font-weight:800;font-size:24px;margin:0 0 2px;color:#8a4d9e">sing a duet ♪</h2>
+        <p style="font-size:13px;color:#8a7484;margin:0 0 14px;line-height:1.5">your chart × a friend's chart = one very cute compatibility reading</p>
+        <sc-if value="{{ noChart }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff0f6;border:2px solid;border-color:#e9a4c6 #fff #fff #e9a4c6;padding:9px 12px;font-size:13px;color:#e05c9a">⚠ read your own shard first (💿 shard reader), then invite a friend here ♡</div>
+        </sc-if>
+        <sc-if value="{{ hasChart }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <label style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">friend's name
+              <input value="{{ dName }}" onChange="{{ setDName }}" placeholder="tetobestie" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 11px;font-size:14px;outline:none;color:#4a3b47"></input>
+            </label>
+            <div style="display:flex;gap:10px">
+              <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">their birth date
+                <input type="date" value="{{ dDate }}" onChange="{{ setDDate }}" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:8px 9px;font-size:14px;outline:none;color:#4a3b47"></input>
+              </label>
+              <label style="flex:1;display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">their birth time
+                <input type="time" value="{{ dTime }}" onChange="{{ setDTime }}" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:8px 9px;font-size:14px;outline:none;color:#4a3b47"></input>
+              </label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:#a06f8c">their birth town
+              <div style="display:flex;gap:8px">
+                <input value="{{ dQuery }}" onChange="{{ setDQuery }}" onKeyDown="{{ dQueryKey }}" placeholder="their town…" style="flex:1;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:9px 11px;font-size:14px;outline:none;color:#4a3b47"></input>
+                <button onClick="{{ doDSearch }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:0 16px;cursor:pointer">{{ dSearchLabel }}</button>
+              </div>
+            </label>
+            <sc-if value="{{ dHasResults }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;max-height:130px;overflow:auto">
+                <sc-for list="{{ dResults }}" as="r" hint-placeholder-count="2">
+                  <div onClick="{{ r.pick }}" style-hover="background:#ffe9f4" style="padding:8px 11px;font-size:13.5px;cursor:pointer;border-bottom:1px dotted #ecd2e2">📍 {{ r.name }}<span style="color:#b294a8;font-size:12px"> · {{ r.region }}</span></div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ dHasPlace }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#eafaf7;border:2px solid;border-color:#8fd4cc #fff #fff #8fd4cc;padding:8px 11px;font-size:13px;color:#2e8a80">✓ {{ dPlaceLine }}</div>
+            </sc-if>
+            <sc-if value="{{ dError }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff0f6;border:2px solid;border-color:#e9a4c6 #fff #fff #e9a4c6;padding:8px 11px;font-size:13px;color:#e05c9a">⚠ {{ dError }}</div>
+            </sc-if>
+            <button onClick="{{ doDuet }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:16px;color:#fff;background:linear-gradient(135deg,#ff8fc0,#9d84e8);border:2px solid;border-color:#fff #7a5b9e #7a5b9e #fff;box-shadow:2px 2px 0 rgba(30,20,54,.3);padding:11px;cursor:pointer">{{ duetBtnLabel }}</button>
+            <sc-if value="{{ hasDuet }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:14px 15px;animation:popIn .45s ease">
+                <div style="text-align:center;margin-bottom:8px">
+                  <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;color:#c9a0b8">STAR RESONANCE</div>
+                  <div style="font-family:'Baloo 2',cursive;font-weight:800;font-size:38px;color:#e677ab;line-height:1.1">{{ duetScoreStr }}</div>
+                  <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e">“{{ duetPairTitle }}”</div>
+                </div>
+                <sc-for list="{{ duetLines }}" as="dl" hint-placeholder-count="3">
+                  <div style="font-size:13px;line-height:1.6;color:#6d5a68;padding:6px 0;border-top:1px dotted #ecd2e2">{{ dl }}</div>
+                </sc-for>
+                <div style="margin-top:8px;background:#fff5fa;border:2px dashed #f2b9d3;padding:11px 12px;font-size:13px;line-height:1.65;color:#6d5a68">{{ duetText }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wCard.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wCard.focus }}" style="position:absolute;left:{{ wCard.x }}px;top:{{ wCard.y }}px;z-index:{{ wCard.z }};width:{{ wCard.w }}px;height:{{ wCard.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wCard.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wCard.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">☾ shard_card.bmp - kawaiiPaint</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wCard.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wCard.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wCard.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:18px 18px 20px">
+        <div style="background:linear-gradient(160deg,#fefcff,#f2fbfa 55%,#fff5fa);border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:22px 20px 16px;text-align:center;position:relative;overflow:hidden">
+          <div style="position:absolute;top:8px;left:12px;color:#7fdbd4;animation:twinkle 2.6s infinite">✦</div>
+          <div style="position:absolute;top:14px;right:16px;color:#ffb7d5;animation:twinkle 3.2s .5s infinite">★</div>
+          <div style="position:absolute;bottom:12px;left:18px;color:#ffd98a;animation:twinkle 2.9s .8s infinite">✧</div>
+          <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;color:#c9a0b8">✧ STAR SHARD · CERTIFIED CUTE ✧</div>
+          <div style="display:flex;justify-content:center;margin:12px 0 4px">
+            <image-slot id="card-art" style="width:110px;height:110px" shape="circle" placeholder="artist art ♡"></image-slot>
+          </div>
+          <div style="font-family:'Baloo 2',cursive;font-weight:800;font-size:26px;color:#8a4d9e">{{ shareName }}</div>
+          <div style="font-size:12px;color:#a06f8c;margin:2px 0 12px">{{ shareBirthLine }}</div>
+          <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:13px">
+            <sc-for list="{{ miniShards }}" as="m" hint-placeholder-count="4">
+              <div style="background:#fff;border:2px solid;border-color:#fff {{ m.border }} {{ m.border }} #fff;padding:6px 10px;min-width:78px">
+                <div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#c9b3c0">{{ m.label }}</div>
+                <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:12.5px;color:{{ m.color }}">{{ m.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:#fff;border:2px dashed #b7e3de;padding:13px;font-size:13px;line-height:1.7;color:#6d5a68;text-align:left">{{ weaveText }}</div>
+          <div style="margin-top:11px;font-family:'Pixelify Sans',monospace;font-size:11px;color:#c9a0b8">screenshot me &amp; tag your oshi ♡ · starshard95 ✦</div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+          <button onClick="{{ savePng }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(135deg,#3fb8ad,#9d84e8);border:2px solid;border-color:#fff #7a5b9e #7a5b9e #fff;padding:10px 22px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3)">💾 save card.png</button>
+          <button onClick="{{ openDoc }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:10px 22px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3)">📄 full reading</button>
+          <button onClick="{{ restart }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-size:13.5px;color:#8a7484;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:10px 18px;cursor:pointer">read another ☆</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wDoc.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wDoc.focus }}" style="position:absolute;left:{{ wDoc.x }}px;top:{{ wDoc.y }}px;z-index:{{ wDoc.z }};width:{{ wDoc.w }}px;height:{{ wDoc.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wDoc.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wDoc.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">📄 reading.doc - wordpad</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wDoc.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wDoc.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wDoc.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;margin:8px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:22px 24px">
+        <sc-if value="{{ noChart }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13.5px;color:#8a7484">no reading yet, run the 💿 shard reader first ♡</div>
+        </sc-if>
+        <sc-if value="{{ hasChart }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;margin-bottom:14px">
+            <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;color:#c9a0b8">✧ THE FULL READING ✧</div>
+            <div style="font-family:'Baloo 2',cursive;font-weight:800;font-size:26px;color:#8a4d9e">{{ shareName }}</div>
+            <div style="font-size:12px;color:#a06f8c">{{ shareBirthLine }}</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px">
+            <sc-for list="{{ placementRows }}" as="pr" hint-placeholder-count="4">
+              <div style="background:#fff5fa;border:1px solid #f2b9d3;padding:4px 9px;font-family:'Pixelify Sans',monospace;font-size:11.5px;color:#7a5b74">{{ pr.label }} {{ pr.value }}</div>
+            </sc-for>
+          </div>
+          <sc-for list="{{ shards }}" as="s" hint-placeholder-count="4">
+            <div style="margin-bottom:14px">
+              <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:16px;color:{{ s.titleColor }}">{{ s.title }} · <span style="font-size:12px;color:#c9b3c0;text-transform:uppercase;letter-spacing:.06em">{{ s.tradition }}</span></div>
+              <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:13.5px;color:#4a3b47;margin:3px 0">{{ s.headline }}</div>
+              <div style="font-size:13.5px;line-height:1.7;color:#6d5a68">{{ s.body }}</div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ weaveText }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff5fa;border:2px dashed #f2b9d3;padding:13px 14px;font-size:13.5px;line-height:1.7;color:#6d5a68;margin-bottom:12px"><span style="font-family:'Baloo 2',cursive;font-weight:700;color:#8a4d9e">woven together ✦ </span>{{ weaveText }}</div>
+          </sc-if>
+          <div style="font-size:11.5px;line-height:1.6;color:#b294a8;border-top:1px dotted #ecd2e2;padding-top:10px">sources &amp; respect: houses via Placidus de Titis (17th c.); archetypes after C.G. Jung; the manāzil al-qamar from classical Arabic star-calendars (anwāʾ), shared as cultural scholarship with love; folk lines from the 1838 “Monday's Child” rhyme &amp; the planetary week. open 📚 grimoire.hlp to learn more ♡</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wGuest.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wGuest.focus }}" style="position:absolute;left:{{ wGuest.x }}px;top:{{ wGuest.y }}px;z-index:{{ wGuest.z }};width:{{ wGuest.w }}px;height:{{ wGuest.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wGuest.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wGuest.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">📖 guestbook.htm</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wGuest.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wGuest.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wGuest.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:14px 16px 16px">
+        <div style="font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.1em;color:#c9a0b8;text-align:center;margin-bottom:10px">✍ SIGN THE GUESTBOOK ✍</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+          <input value="{{ gName }}" onChange="{{ setGName }}" placeholder="your name" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:8px 10px;font-size:13.5px;outline:none;color:#4a3b47"></input>
+          <textarea value="{{ gMsg }}" onChange="{{ setGMsg }}" placeholder="leave something cute…" rows="2" style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:8px 10px;font-size:13.5px;outline:none;color:#4a3b47;resize:none"></textarea>
+          <div style="display:flex;gap:6px;align-items:center">
+            <sc-for list="{{ stampOptions }}" as="st" hint-placeholder-count="5">
+              <span onClick="{{ st.pick }}" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;background:{{ st.bg }};border:2px solid;border-color:{{ st.bc }}">{{ st.t }}</span>
+            </sc-for>
+            <div style="flex:1"></div>
+            <button onClick="{{ signGuestbook }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:6px 16px;cursor:pointer">sign ☆</button>
+          </div>
+        </div>
+        <sc-for list="{{ guestEntries }}" as="ge" hint-placeholder-count="3">
+          <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:8px 11px;margin-bottom:7px">
+            <div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#b45a8e"><span style="font-weight:600">{{ ge.stamp }} {{ ge.name }}</span><span style="font-family:'Pixelify Sans',monospace;color:#c9b3c0">{{ ge.date }}</span></div>
+            <div style="font-size:13px;line-height:1.5;color:#6d5a68;margin-top:2px">{{ ge.msg }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wGloss.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wGloss.focus }}" style="position:absolute;left:{{ wGloss.x }}px;top:{{ wGloss.y }}px;z-index:{{ wGloss.z }};width:{{ wGloss.w }}px;height:{{ wGloss.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wGloss.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wGloss.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">📚 grimoire.hlp - the four traditions</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wGloss.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wGloss.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wGloss.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;padding:16px 18px 18px">
+        <sc-for list="{{ glossary }}" as="gl" hint-placeholder-count="4">
+          <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:12px 14px;margin-bottom:9px">
+            <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;margin-bottom:3px">{{ gl.title }}</div>
+            <div style="font-size:13px;line-height:1.65;color:#6d5a68">{{ gl.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wPlayer.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wPlayer.focus }}" style="position:absolute;left:{{ wPlayer.x }}px;top:{{ wPlayer.y }}px;z-index:{{ wPlayer.z }};width:{{ wPlayer.w }}px;height:{{ wPlayer.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wPlayer.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wPlayer.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">🎧 player.exe</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wPlayer.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wPlayer.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <div style="padding:14px 16px 16px;text-align:center">
+        <div style="width:64px;height:64px;margin:0 auto 8px;border-radius:50%;background:conic-gradient(#3b2a63 0 12%,#5a4390 0 24%,#3b2a63 0 36%,#5a4390 0 48%,#3b2a63 0 60%,#5a4390 0 72%,#3b2a63 0 84%,#5a4390 0 100%);border:3px solid #c586ad;display:flex;align-items:center;justify-content:center;animation:{{ discAnim }}">
+          <div style="width:18px;height:18px;border-radius:50%;background:#ffd6e8;border:2px solid #fff"></div>
+        </div>
+        <div style="font-family:'Pixelify Sans',monospace;font-size:12.5px;color:#7a5b74">♪ suyin_theme.chip <span style="color:#c9b3c0">(placeholder bgm)</span></div>
+        <div style="font-size:11px;color:#c9b3c0;margin:2px 0 10px">real track by your composer, someday ♡</div>
+        <button onClick="{{ togglePlay }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:8px 24px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3)">{{ playLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wLuna.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wLuna.focus }}" style="position:absolute;left:{{ wLuna.x }}px;top:{{ wLuna.y }}px;z-index:{{ wLuna.z }};width:{{ wLuna.w }}px;height:{{ wLuna.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45);animation:popIn .3s ease">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wLuna.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wLuna.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">luna.txt - notepad</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wLuna.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wLuna.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wLuna.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;margin:8px;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:14px 16px;font-family:'Pixelify Sans',monospace;font-size:14px;line-height:1.8;color:#7a5b74">★ starshard95 ★<br>a magical birth-chart system<br>─────────────<br>houses: Placidus (real math!)<br>mirror: Jungian archetypes<br>moon: manāzil al-qamar<br>hearth: folk star-lore<br>─────────────<br>art: your fave artists (soon ♡)<br>concept: suyinsama ☾</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ wAccount.show }}" hint-placeholder-val="{{ false }}">
+    <div onPointerDown="{{ wAccount.focus }}" style="position:absolute;left:{{ wAccount.x }}px;top:{{ wAccount.y }}px;z-index:{{ wAccount.z }};width:{{ wAccount.w }}px;height:{{ wAccount.h }};display:flex;flex-direction:column;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45);animation:popIn .3s ease">
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;background:{{ wAccount.tbBg }};color:#fff;font-family:'Pixelify Sans',monospace;font-size:15px">
+        <span onPointerDown="{{ wAccount.drag }}" style="flex:1;cursor:move;touch-action:none;user-select:none">🔑 account.exe</span>
+        <span style="display:flex;gap:3px">
+          <span onClick="{{ wAccount.minimize }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">_</span>
+          <span onClick="{{ wAccount.close }}" style="width:20px;height:17px;display:inline-flex;align-items:center;justify-content:center;background:#fdeef8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;font-size:10px;color:#7a5b74;cursor:pointer">✕</span>
+        </span>
+      </div>
+      <span onPointerDown="{{ wAccount.resize }}" style="position:absolute;right:1px;bottom:1px;width:15px;height:15px;cursor:nwse-resize;touch-action:none;background:repeating-linear-gradient(135deg,transparent 0 3px,#c586ad 3px 5px);z-index:5"></span>
+      <div style="flex:1;min-height:0;overflow:auto;margin:8px;padding:16px;font-family:'Varela Round',sans-serif;font-size:14px;color:#7a5b74">
+        <sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center">
+            <div style="font-size:30px;margin-bottom:6px">☾</div>
+            <div style="font-weight:700;color:#8a4d9e;margin-bottom:4px">signed in as</div>
+            <div style="margin-bottom:14px;word-break:break-all">{{ authEmail }}</div>
+            <div style="font-size:12px;color:#c9b3c0;margin-bottom:16px">your open windows &amp; their positions save automatically ♡</div>
+            <button onClick="{{ doLogout }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3)">log out</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isLoggedOut }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-size:12px;color:#c9b3c0;margin-bottom:12px">make an account and your desktop remembers itself: open windows, positions, all of it ♡</div>
+            <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">email</label>
+            <input value="{{ aEmail }}" onChange="{{ setAEmail }}" type="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;margin-bottom:10px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+            <label style="display:block;font-size:12px;color:#8a4d9e;margin-bottom:3px">password</label>
+            <input value="{{ aPassword }}" onChange="{{ setAPassword }}" type="password" placeholder="8+ characters" style="width:100%;box-sizing:border-box;margin-bottom:8px;padding:9px 10px;font-size:14px;outline:none;background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;color:#4a3b47"></input>
+            <sc-if value="{{ authError }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#c0567a;margin-bottom:10px">{{ authError }}</div>
+            </sc-if>
+            <button onClick="{{ authSubmit }}" style="width:100%;font-family:'Baloo 2',cursive;font-weight:700;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:9px;cursor:pointer;box-shadow:2px 2px 0 rgba(58,42,84,.3);margin-bottom:10px">{{ authSubmitLabel }}</button>
+            <div onClick="{{ toggleAuthMode }}" style="text-align:center;font-size:12px;color:#8a4d9e;cursor:pointer;text-decoration:underline">{{ authSwitchLabel }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ startOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:8px;bottom:52px;z-index:900;width:220px;background:#fdeef8;border:2px solid;border-color:#ffffff #c586ad #c586ad #ffffff;box-shadow:4px 4px 0 rgba(30,20,54,.45)">
+      <sc-for list="{{ startItems }}" as="si" hint-placeholder-count="5">
+        <div onClick="{{ si.onClick }}" style-hover="background:#ffe9f4" style="padding:9px 14px;font-size:14px;cursor:pointer;display:flex;gap:9px;align-items:center">{{ si.icon }} {{ si.label }}</div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <div style="position:fixed;left:0;right:0;bottom:0;height:46px;z-index:800;background:#fdeef8;border-top:2px solid #fff;box-shadow:0 -2px 0 #c586ad;display:flex;align-items:center;gap:8px;padding:0 8px;overflow-x:auto">
+    <button onClick="{{ toggleStart }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="flex:none;font-family:'Baloo 2',cursive;font-weight:800;font-size:15px;color:#8a4d9e;background:#ffd6e8;border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:5px 16px;cursor:pointer;display:flex;align-items:center;gap:7px">🌙 start</button>
+    <div style="flex:none;width:2px;height:26px;background:#c586ad;box-shadow:1px 0 0 #fff"></div>
+    <sc-for list="{{ taskItems }}" as="t" hint-placeholder-count="1">
+      <div onClick="{{ t.onClick }}" style="flex:none;white-space:nowrap;background:{{ t.bg }};border:2px solid;border-color:{{ t.bc }};padding:4px 14px;font-family:'Pixelify Sans',monospace;font-size:13px;color:#8a4d9e;cursor:pointer">{{ t.icon }} {{ t.label }}</div>
+    </sc-for>
+    <div style="flex:1"></div>
+    <div onClick="{{ openAccount }}" style="flex:none;white-space:nowrap;background:#ffe9f4;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:4px 12px;font-family:'Pixelify Sans',monospace;font-size:13px;color:#8a4d9e;cursor:pointer">{{ accountStatusLabel }}</div>
+    <div style="flex:none;white-space:nowrap;background:#ffe9f4;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:4px 12px;font-family:'Pixelify Sans',monospace;font-size:13px;color:#8a4d9e">☾ {{ clock }}</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1200, &quot;height&quot;: 860}, &quot;sparkles&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}, &quot;scanlines&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}, &quot;revealAll&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Vibes&quot;}}">
+const SHARD_META = [
+  { key: 'house', title: 'house shard', file: 'house.shd', tradition: 'Placidus houses', gem: 'linear-gradient(160deg,#7fdbd4,#3fb8ad)', titleColor: '#3fb8ad' },
+  { key: 'mirror', title: 'mirror shard', file: 'mirror.shd', tradition: 'Jungian archetypes', gem: 'linear-gradient(160deg,#c9b8f0,#9d84e8)', titleColor: '#9d84e8' },
+  { key: 'moon', title: 'moon shard', file: 'moon.shd', tradition: 'manāzil al-qamar', gem: 'linear-gradient(160deg,#ffd98a,#f0b445)', titleColor: '#e0a63c' },
+  { key: 'hearth', title: 'hearth shard', file: 'hearth.shd', tradition: 'folk star-lore', gem: 'linear-gradient(160deg,#ffb7d5,#ff8fc0)', titleColor: '#e677ab' }
+];
+const WIN_TITLES = { welcome: ['🎀', 'welcome.exe'], reader: ['💿', 'shard reader'], sky: ['💎', 'your_sky.shards'], card: ['🖼', 'shard_card.bmp'], luna: ['📜', 'luna.txt'], today: ['🌙', 'today.exe'], wheel: ['🔮', 'chart_wheel.exe'], duet: ['💞', 'duet.exe'], guest: ['📖', 'guestbook.htm'], gloss: ['📚', 'grimoire.hlp'], player: ['🎧', 'player.exe'], doc: ['📄', 'reading.doc'], account: ['🔑', 'account.exe'] };
+const FOCUS_TB = 'linear-gradient(90deg,#ff8fc0,#9d84e8)', BLUR_TB = '#cfaec8';
+const STAMPS = ['⭐', '🎀', '🌙', '💿', '✿'];
+function offsetFor(tz, y, m, d, hh, mm) {
+  const get = t => {
+    const v = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longOffset' }).formatToParts(t).find(p => p.type === 'timeZoneName').value;
+    if (v === 'GMT' || v === 'UTC') return 0;
+    const mt = v.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+    return mt ? (mt[1] === '-' ? -1 : 1) * (+mt[2] + (+(mt[3] || 0)) / 60) : 0;
+  };
+  let off = get(new Date(Date.UTC(y, m - 1, d, hh, mm)));
+  off = get(new Date(Date.UTC(y, m - 1, d, hh, mm) - off * 3600e3));
+  return off;
+}
+function dstInfo(tz, y, m, d, hh, mm) {
+  const off = offsetFor(tz, y, m, d, hh, mm);
+  const std = Math.min(offsetFor(tz, y, 1, 15, 12, 0), offsetFor(tz, y, 7, 15, 12, 0));
+  return { off, dst: off > std };
+}
+function initWindows() {
+  const W = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  const cx = w => Math.max(104, Math.round((W - w) / 2) + 40);
+  const fit = w => Math.min(w, Math.round(W * 0.9), Math.max(300, W - 116));
+  return {
+    welcome: { open: true, min: false, x: cx(860), y: 24, z: 10, w: fit(860), h: null },
+    today: { open: true, min: false, x: Math.max(104, W - 384), y: 40, z: 15, w: fit(330), h: null },
+    reader: { open: false, min: false, x: cx(560) + 40, y: 56, z: 11, w: fit(560), h: null },
+    sky: { open: false, min: false, x: cx(860) + 20, y: 44, z: 12, w: fit(860), h: null },
+    card: { open: false, min: false, x: cx(500) + 70, y: 60, z: 13, w: fit(500), h: null },
+    luna: { open: false, min: false, x: cx(400) + 120, y: 110, z: 14, w: fit(400), h: null },
+    wheel: { open: false, min: false, x: cx(430) - 60, y: 70, z: 16, w: fit(430), h: null },
+    duet: { open: false, min: false, x: cx(520) + 90, y: 80, z: 17, w: fit(520), h: null },
+    guest: { open: false, min: false, x: cx(400) + 140, y: 90, z: 18, w: fit(400), h: 480 },
+    gloss: { open: false, min: false, x: cx(470) - 40, y: 100, z: 19, w: fit(470), h: 520 },
+    player: { open: false, min: false, x: Math.max(104, W - 420), y: 300, z: 20, w: fit(300), h: null },
+    doc: { open: false, min: false, x: cx(580), y: 50, z: 21, w: fit(580), h: 620 },
+    account: { open: false, min: false, x: cx(360), y: 90, z: 22, w: fit(360), h: null }
+  };
+}
+const API_BASE = typeof location !== 'undefined' ? `https://api.${location.hostname}` : '';
+class Component extends DCLogic {
+  state = {
+    windows: initWindows(), zTop: 30, startOpen: false,
+    fName: '', fDate: '2004-08-31', fTime: '12:00',
+    fQuery: '', cityResults: [], fPlace: null, searching: false,
+    manualMode: false, fLat: '', fLon: '', fTz: '',
+    formError: '', chart: null, revealed: [false, false, false, false],
+    weaving: false, weaveText: '', clock: '',
+    today: null,
+    dName: '', dDate: '2004-01-01', dTime: '12:00', dQuery: '', dResults: [], dPlace: null, dSearching: false, dError: '',
+    duet: null, duetText: '', duetWeaving: false,
+    gName: '', gMsg: '', gStamp: '⭐', guestEntries: [],
+    playing: false,
+    authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '',
+    aEmail: '', aPassword: ''
+  };
+  async componentDidMount() {
+    this.astro = await import('./astro.js');
+    this.data = await import('./shards.js');
+    this.duetMod = await import('./duet.js');
+    const tick = () => this.setState({ clock: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
+    tick(); this.clockTimer = setInterval(tick, 20000);
+    // today's sky
+    const jd = Date.now() / 86400000 + 2440587.5;
+    const moonLon = this.astro.moonLongitude(jd);
+    this.setState({ today: { mansion: this.astro.mansionOf(moonLon), moonSign: this.astro.signOf(moonLon) } });
+    // guestbook
+    try {
+      const saved = JSON.parse(localStorage.getItem('starshard-guestbook') || 'null');
+      this.setState({ guestEntries: Array.isArray(saved) && saved.length ? saved : this.duetMod.GUESTBOOK_SEED });
+    } catch (e) { this.setState({ guestEntries: this.duetMod.GUESTBOOK_SEED }); }
+    this.forceUpdate();
+    this.checkAuth();
+  }
+  componentWillUnmount() { clearInterval(this.clockTimer); this.stopMusic(); clearTimeout(this._saveTimer); }
+  componentDidUpdate() {
+    if (!this.state.authEmail) return;
+    const json = JSON.stringify(this.state.windows);
+    if (json === this._lastWindowsJSON) return;
+    this._lastWindowsJSON = json;
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this.saveWindowState(), 800);
+  }
+  checkAuth = async () => {
+    try {
+      const r = await fetch(`${API_BASE}/api/me`, { credentials: 'include' });
+      if (!r.ok) { this.setState({ authChecked: true }); return; }
+      const j = await r.json();
+      this.setState({ authChecked: true, authEmail: j.email });
+      this.loadWindowState();
+    } catch (e) { this.setState({ authChecked: true }); }
+  };
+  loadWindowState = async () => {
+    try {
+      const r = await fetch(`${API_BASE}/api/state`, { credentials: 'include' });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (j.state && typeof j.state === 'object') {
+        this.setState(st => {
+          const merged = { ...st.windows };
+          for (const k of Object.keys(merged)) { if (j.state[k]) merged[k] = { ...merged[k], ...j.state[k] }; }
+          return { windows: merged };
+        });
+      }
+    } catch (e) {}
+  };
+  saveWindowState = async () => {
+    try {
+      await fetch(`${API_BASE}/api/state`, {
+        method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state: this.state.windows })
+      });
+    } catch (e) {}
+  };
+  doSignup = async () => {
+    const email = this.state.aEmail.trim(), password = this.state.aPassword;
+    if (!email || password.length < 8) { this.setState({ authError: 'email + a password of 8 or more characters, please ♡' }); return; }
+    this.setState({ authBusy: true, authError: '' });
+    try {
+      const r = await fetch(`${API_BASE}/api/auth/signup`, {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const j = await r.json();
+      if (!r.ok) { this.setState({ authBusy: false, authError: j.error === 'email_taken' ? 'that email already has a shard account ♡' : 'could not create your account, try again ♡' }); return; }
+      this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
+      this.saveWindowState();
+    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+  };
+  doLogin = async () => {
+    const email = this.state.aEmail.trim(), password = this.state.aPassword;
+    if (!email || !password) { this.setState({ authError: 'enter your email and password ♡' }); return; }
+    this.setState({ authBusy: true, authError: '' });
+    try {
+      const r = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const j = await r.json();
+      if (!r.ok) { this.setState({ authBusy: false, authError: 'wrong email or password ♡' }); return; }
+      this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
+      this.loadWindowState();
+    } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
+  };
+  doLogout = async () => {
+    try { await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }); } catch (e) {}
+    this.setState({ authEmail: null });
+  };
+  setWin(key, patch) { this.setState(st => ({ windows: { ...st.windows, [key]: { ...st.windows[key], ...patch } } })); }
+  focusWin = key => this.setState(st => ({ zTop: st.zTop + 1, windows: { ...st.windows, [key]: { ...st.windows[key], z: st.zTop + 1 } } }));
+  openWin = key => this.setState(st => ({ zTop: st.zTop + 1, startOpen: false, windows: { ...st.windows, [key]: { ...st.windows[key], open: true, min: false, z: st.zTop + 1 } } }));
+  dragWin = key => e => {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    const win = this.state.windows[key];
+    const sx = e.clientX - win.x, sy = e.clientY - win.y;
+    this.focusWin(key);
+    const move = ev => this.setWin(key, {
+      x: Math.max(-120, Math.min(window.innerWidth - 100, ev.clientX - sx)),
+      y: Math.max(0, ev.clientY - sy)
+    });
+    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+  };
+  resizeWin = key => e => {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault(); e.stopPropagation();
+    const rect = e.currentTarget.parentElement.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY, w0 = rect.width, h0 = rect.height;
+    this.focusWin(key);
+    const move = ev => this.setWin(key, {
+      w: Math.max(320, Math.min(window.innerWidth - 20, w0 + ev.clientX - sx)),
+      h: Math.max(160, h0 + ev.clientY - sy)
+    });
+    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+  };
+  winVals(key) {
+    const w = this.state.windows[key];
+    const focused = Object.values(this.state.windows).every(o => !o.open || o.min || o.z <= w.z);
+    return {
+      show: w.open && !w.min, x: w.x, y: w.y, z: w.z, w: w.w, h: w.h ? w.h + 'px' : 'auto',
+      tbBg: focused ? FOCUS_TB : BLUR_TB,
+      resize: this.resizeWin(key),
+      focus: () => { if (this.state.windows[key].z !== this.state.zTop) this.focusWin(key); },
+      drag: this.dragWin(key),
+      minimize: e => { e.stopPropagation(); this.setWin(key, { min: true }); },
+      close: e => { e.stopPropagation(); this.setWin(key, { open: false }); }
+    };
+  }
+  geocode = async q => {
+    const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=en&format=json`);
+    const j = await r.json();
+    return (j.results || []).map(x => ({ name: x.name, region: [x.admin1, x.country].filter(Boolean).join(', '), lat: x.latitude, lon: x.longitude, tz: x.timezone }));
+  };
+  search = async () => {
+    const q = this.state.fQuery.trim();
+    if (!q) return;
+    this.setState({ searching: true, cityResults: [], formError: '' });
+    try {
+      const res = await this.geocode(q);
+      this.setState({ searching: false, cityResults: res, formError: res.length ? '' : 'no stars found by that name… try another spelling, or enter coordinates ♡' });
+    } catch (e) {
+      this.setState({ searching: false, manualMode: true, formError: 'the star atlas is unreachable, enter coordinates manually ♡' });
+    }
+  };
+  dSearch = async () => {
+    const q = this.state.dQuery.trim();
+    if (!q) return;
+    this.setState({ dSearching: true, dResults: [], dError: '' });
+    try {
+      const res = await this.geocode(q);
+      this.setState({ dSearching: false, dResults: res, dError: res.length ? '' : 'no stars found by that name ♡' });
+    } catch (e) { this.setState({ dSearching: false, dError: 'the star atlas is unreachable, try again ♡' }); }
+  };
+  chartFrom(dateStr, timeStr, place) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [hh, mm] = timeStr.split(':').map(Number);
+    const tz = dstInfo(place.tz, y, m, d, hh, mm).off;
+    return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: place.lat, lon: place.lon, tzOffset: tz });
+  }
+  compute = () => {
+    const s = this.state;
+    if (!this.astro) return;
+    if (!s.fDate || !s.fTime) { this.setState({ formError: 'the stars need a date and a time!!' }); return; }
+    let chart;
+    if (s.manualMode) {
+      const lat = parseFloat(s.fLat), lon = parseFloat(s.fLon), tz = parseFloat(s.fTz);
+      if ([lat, lon, tz].some(isNaN)) { this.setState({ formError: 'manual mode needs latitude, longitude & UTC offset ♡' }); return; }
+      const [y, m, d] = s.fDate.split('-').map(Number);
+      const [hh, mm] = s.fTime.split(':').map(Number);
+      chart = this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset: tz });
+    } else {
+      if (!s.fPlace) { this.setState({ formError: 'search for your birth town first, so the moon knows where to look ♡' }); return; }
+      try { chart = this.chartFrom(s.fDate, s.fTime, s.fPlace); }
+      catch (e) { this.setState({ formError: 'could not read that timezone, try manual coordinates ♡', manualMode: true }); return; }
+    }
+    this.setState({ chart, formError: '', revealed: [false, false, false, false], weaveText: '', duet: null, duetText: '' });
+    this.openWin('sky');
+  };
+  buildShards() {
+    const { chart } = this.state;
+    if (!chart || !this.data) return [];
+    const A = this.astro, D = this.data;
+    const moon = A.SIGNS[chart.moonSign], asc = A.SIGNS[chart.ascSign];
+    const man = D.MANSIONS[chart.mansion], wk = D.WEEKDAYS[chart.weekday], arch = D.ARCHETYPES[chart.moonSign];
+    const ord = n => n + (['th','st','nd','rd'][((n%100)-20)%10] || ['th','st','nd','rd'][n%100] || 'th');
+    return [
+      { headline: `${asc} rising · sun in the ${ord(chart.sunHouse)} house`, body: D.HOUSE_READINGS[chart.sunHouse - 1] + ` (and with ${asc} rising, you enter every room as a ${D.SIGN_FLAVOR[chart.ascSign]}.)` },
+      { headline: `${arch[0]} · moon in ${moon}`, body: arch[1] },
+      { headline: `${man[0]}: “${man[1]}”`, body: `Your moon rests in the ${ord(chart.mansion + 1)} of the 28 lunar mansions charted by classical Arab astronomers: ${man[2]}` },
+      { headline: `born on ${wk[0]}, day of ${wk[1]}`, body: wk[2] }
+    ];
+  }
+  weave = async () => {
+    const { chart, fName } = this.state;
+    const A = this.astro, D = this.data;
+    const sun = A.SIGNS[chart.sunSign], moon = A.SIGNS[chart.moonSign], asc = A.SIGNS[chart.ascSign];
+    const man = D.MANSIONS[chart.mansion], arch = D.ARCHETYPES[chart.moonSign], wk = D.WEEKDAYS[chart.weekday];
+    this.setState({ weaving: true });
+    let text;
+    try {
+      text = await window.claude.complete({
+        system: 'You write tiny astrology readings for Star Shard, a cute retro-web site for Vocaloid fans, magical-girl inspired. Voice: warm, playful, nostalgic internet-cute, family-friendly, no drama. Light fandom flavor without naming copyrighted characters. 80-110 words, one paragraph, may end with one kaomoji or ✦. No headings, no lists.',
+        messages: [{ role: 'user', content: `Weave one blended reading for ${fName || 'a fan'}: Sun in ${sun} (${chart.sunHouse}th Placidus house), Moon in ${moon}, ${asc} rising. Jungian archetype: ${arch[0]}. Lunar mansion: ${man[0]} (${man[1]}). Born on ${wk[0]}, ruled by ${wk[1]} in folk tradition. Blend all four gently.` }]
+      });
+      if (!text || !text.trim()) throw new Error('empty');
+    } catch (e) {
+      text = D.fallbackWeave(fName, sun, moon, asc, ['1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th'][chart.sunHouse - 1], man[0], arch[0], wk[1]);
+    }
+    this.setState({ weaving: false, weaveText: text.trim() });
+    this.openWin('card');
+  };
+  computeDuet = async () => {
+    const s = this.state;
+    if (!s.chart) return;
+    if (!s.dDate || !s.dTime || !s.dPlace) { this.setState({ dError: 'the duet needs their date, time & town ♡' }); return; }
+    let chartB;
+    try { chartB = this.chartFrom(s.dDate, s.dTime, s.dPlace); }
+    catch (e) { this.setState({ dError: 'could not read that timezone ♡' }); return; }
+    const A = this.astro, D = this.data, M = this.duetMod;
+    const eA = M.ELEMENTS[M.SIGN_ELEMENT[s.chart.sunSign]], eB = M.ELEMENTS[M.SIGN_ELEMENT[chartB.sunSign]];
+    const pair = M.ELEMENT_PAIRS[`${eA}-${eB}`] || M.ELEMENT_PAIRS[`${eB}-${eA}`];
+    const score = M.duetScore(s.chart, chartB);
+    const lines = [
+      `☀ suns: ${A.SIGNS[s.chart.sunSign]} × ${A.SIGNS[chartB.sunSign]}: ${pair[1]}`,
+      `☾ moons: your moons rest in ${D.MANSIONS[s.chart.mansion][0]} and ${D.MANSIONS[chartB.mansion][0]}, two stations on the same lunar road; the moon visits you both every month.`,
+      `✶ days: a child of ${D.WEEKDAYS[s.chart.weekday][1]} and a child of ${D.WEEKDAYS[chartB.weekday][1]}, the old week put your stars on the same calendar for a reason.`
+    ];
+    this.setState({ duet: { score, pairTitle: pair[0], lines, chartB }, duetText: '…', duetWeaving: true });
+    let text;
+    try {
+      text = await window.claude.complete({
+        system: 'You write tiny two-person astrology compatibility readings for Star Shard, a cute retro-web site for Vocaloid fans. Warm, playful, family-friendly, no drama, no romance assumptions (could be friends). 60-90 words, one paragraph, may end with ✦.',
+        messages: [{ role: 'user', content: `Duet reading for ${s.fName || 'star one'} (Sun ${A.SIGNS[s.chart.sunSign]}, Moon ${A.SIGNS[s.chart.moonSign]}, mansion ${D.MANSIONS[s.chart.mansion][0]}) × ${s.dName || 'star two'} (Sun ${A.SIGNS[chartB.sunSign]}, Moon ${A.SIGNS[chartB.moonSign]}, mansion ${D.MANSIONS[chartB.mansion][0]}). Pair archetype: "${pair[0]}". Resonance ${score}%.` }]
+      });
+      if (!text || !text.trim()) throw new Error('empty');
+    } catch (e) { text = M.fallbackDuet(s.fName, s.dName, pair[0]); }
+    this.setState({ duetText: text.trim(), duetWeaving: false });
+  };
+  signGuestbook = () => {
+    const s = this.state;
+    if (!s.gMsg.trim()) return;
+    const entry = { name: s.gName.trim() || 'anon', msg: s.gMsg.trim(), stamp: s.gStamp, date: new Date().toISOString().slice(0, 10).replaceAll('-', '.') };
+    const entries = [entry, ...s.guestEntries].slice(0, 50);
+    this.setState({ guestEntries: entries, gMsg: '' });
+    try { localStorage.setItem('starshard-guestbook', JSON.stringify(entries)); } catch (e) {}
+  };
+  stopMusic() {
+    if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; }
+  }
+  togglePlay = () => {
+    if (this.state.playing) { this.stopMusic(); this.setState({ playing: false }); return; }
+    if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = this.audioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const notes = [523.25, 659.25, 783.99, 659.25, 880, 783.99, 987.77, 783.99, 659.25, 523.25, 587.33, 659.25];
+    let i = 0;
+    const step = () => {
+      const t = ctx.currentTime;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'square'; o.frequency.value = notes[i % notes.length];
+      g.gain.setValueAtTime(0.045, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t + 0.24);
+      if (i % 4 === 0) {
+        const b = ctx.createOscillator(), bg = ctx.createGain();
+        b.type = 'triangle'; b.frequency.value = notes[i % notes.length] / 4;
+        bg.gain.setValueAtTime(0.05, t); bg.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+        b.connect(bg); bg.connect(ctx.destination); b.start(t); b.stop(t + 0.42);
+      }
+      i++;
+    };
+    step();
+    this.musicTimer = setInterval(step, 240);
+    this.setState({ playing: true });
+  };
+  savePng = () => {
+    const s = this.state, A = this.astro, D = this.data;
+    const chart = s.chart;
+    if (!chart) return;
+    const W = 720, H = 1000, c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const x = c.getContext('2d');
+    const grad = x.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, '#fefcff'); grad.addColorStop(0.55, '#f2fbfa'); grad.addColorStop(1, '#fff5fa');
+    x.fillStyle = grad; x.fillRect(0, 0, W, H);
+    x.strokeStyle = '#ffb7d5'; x.lineWidth = 8; x.strokeRect(10, 10, W - 20, H - 20);
+    x.strokeStyle = '#7fdbd4'; x.lineWidth = 2; x.strokeRect(24, 24, W - 48, H - 48);
+    x.fillStyle = '#c9a0b8'; x.font = '600 20px "Pixelify Sans", monospace'; x.textAlign = 'center';
+    x.fillText('✧ S T A R  S H A R D · C E R T I F I E D  C U T E ✧', W / 2, 80);
+    x.fillStyle = '#8a4d9e'; x.font = '800 58px "Baloo 2", sans-serif';
+    x.fillText(s.fName || 'little star', W / 2, 160);
+    x.fillStyle = '#a06f8c'; x.font = '20px "Varela Round", sans-serif';
+    const place = s.manualMode ? 'a custom spot on Earth' : (s.fPlace ? s.fPlace.name : '');
+    x.fillText(`${s.fDate} · ${s.fTime} · ${place}`, W / 2, 196);
+    const g = A.SIGN_GLYPHS;
+    const minis = [
+      ['sun', `${A.SIGNS[chart.sunSign]}`, '#3fb8ad'], ['moon', `${A.SIGNS[chart.moonSign]}`, '#9d84e8'],
+      ['rising', `${A.SIGNS[chart.ascSign]}`, '#e0a63c'], ['mansion', D.MANSIONS[chart.mansion][0], '#e677ab']
+    ];
+    minis.forEach((m2, i) => {
+      const bx = 60 + i * 155, by = 230, bw = 140, bh = 84;
+      x.fillStyle = '#ffffff'; x.fillRect(bx, by, bw, bh);
+      x.strokeStyle = m2[2]; x.lineWidth = 2.5; x.strokeRect(bx, by, bw, bh);
+      x.fillStyle = '#c9b3c0'; x.font = '600 14px "Varela Round", sans-serif';
+      x.fillText(m2[0].toUpperCase(), bx + bw / 2, by + 26);
+      x.fillStyle = m2[2]; x.font = '700 17px "Baloo 2", sans-serif';
+      x.fillText(m2[1], bx + bw / 2, by + 56);
+    });
+    x.fillStyle = '#ffffff'; x.fillRect(60, 350, W - 120, 460);
+    x.strokeStyle = '#b7e3de'; x.setLineDash([8, 6]); x.lineWidth = 2.5; x.strokeRect(60, 350, W - 120, 460); x.setLineDash([]);
+    x.fillStyle = '#6d5a68'; x.font = '21px "Varela Round", sans-serif'; x.textAlign = 'left';
+    const words = (s.weaveText || 'a reading as unique as a limited-edition drop ✦').split(' ');
+    let line = '', ty = 396;
+    words.forEach(w2 => {
+      if (x.measureText(line + w2).width > W - 190) { x.fillText(line, 88, ty); ty += 34; line = ''; }
+      line += w2 + ' ';
+    });
+    x.fillText(line.trim(), 88, ty);
+    x.textAlign = 'center';
+    x.fillStyle = '#e0a63c'; x.font = '30px sans-serif';
+    x.fillText('✦  ★  ✧', W / 2, 880);
+    x.fillStyle = '#c9a0b8'; x.font = '600 18px "Pixelify Sans", monospace';
+    x.fillText('starshard95 · tag your oshi ♡', W / 2, 930);
+    const a = document.createElement('a');
+    a.download = `star-shard-${(s.fName || 'card').replace(/[^a-z0-9]/gi, '_')}.png`;
+    a.href = c.toDataURL('image/png');
+    a.click();
+  };
+  degFmt(lon) {
+    const A = this.astro;
+    const d = Math.floor(lon % 30), m = Math.round((lon % 1) * 60);
+    return `${d}°${String(m).padStart(2, '0')}′ ${A.SIGNS[A.signOf(lon)]}`;
+  }
+  wheelData() {
+    const chart = this.state.chart, A = this.astro;
+    if (!chart) return { ticks: [], glyphs: [], cusps: [], planets: [] };
+    const asc = chart.asc, D2R = Math.PI / 180;
+    const pt = (r, L) => { const a = (L - asc) * D2R; return { x: +(170 - r * Math.cos(a)).toFixed(1), y: +(170 + r * Math.sin(a)).toFixed(1) }; };
+    const ticks = [], glyphs = [];
+    for (let s2 = 0; s2 < 12; s2++) {
+      const p1 = pt(132, s2 * 30), p2 = pt(160, s2 * 30);
+      ticks.push({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y });
+      const gm = pt(146, s2 * 30 + 15);
+      glyphs.push({ x: gm.x, y: gm.y, t: A.SIGN_GLYPHS[s2] });
+    }
+    const cusps = chart.cusps.map((L, i) => {
+      const p1 = pt(46, L), p2 = pt(132, L);
+      const next = chart.cusps[(i + 1) % 12];
+      let span = ((next - L) % 360 + 360) % 360;
+      const mid = pt(72, L + span / 2);
+      const angular = i === 0 || i === 3 || i === 6 || i === 9;
+      return { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, num: String(i + 1), nx: mid.x, ny: mid.y, color: angular ? '#b45a8e' : '#e9b8d2', wdt: angular ? '2' : '1' };
+    });
+    const ps = pt(105, chart.sunLon), pm = pt(105, chart.moonLon);
+    if (Math.abs(ps.x - pm.x) < 26 && Math.abs(ps.y - pm.y) < 26) { pm.y = +(pm.y + 28).toFixed(1); }
+    const planets = [{ x: ps.x, y: ps.y, t: '☉', c: '#e0a63c' }, { x: pm.x, y: pm.y, t: '☽', c: '#9d84e8' }];
+    return { ticks, glyphs, cusps, planets };
+  }
+  renderVals() {
+    const s = this.state, p = this.props;
+    const revealAll = p.revealAll ?? false;
+    const content = this.buildShards();
+    const shards = SHARD_META.map((m, i) => {
+      const rev = revealAll || s.revealed[i];
+      return { ...m, ...content[i], revealed: rev, hidden: !rev, status: rev ? '4KB' : '???',
+        onReveal: () => this.setState(st => { const r = [...st.revealed]; r[i] = true; return { revealed: r }; }) };
+    });
+    const allRevealed = shards.every(x => x.revealed);
+    const chart = s.chart, A = this.astro;
+    let chartLine = '', miniShards = [], shareBirthLine = '', placementRows = [], cuspRows = [];
+    if (chart && A && this.data) {
+      const g = A.SIGN_GLYPHS;
+      chartLine = `${g[chart.sunSign]} ${A.SIGNS[chart.sunSign]} sun · ${g[chart.moonSign]} ${A.SIGNS[chart.moonSign]} moon · ${g[chart.ascSign]} ${A.SIGNS[chart.ascSign]} rising`;
+      miniShards = [
+        { label: 'sun', value: `${g[chart.sunSign]} ${A.SIGNS[chart.sunSign]}`, border: '#8fd4cc', color: '#3fb8ad' },
+        { label: 'moon', value: `${g[chart.moonSign]} ${A.SIGNS[chart.moonSign]}`, border: '#c9b8f0', color: '#9d84e8' },
+        { label: 'rising', value: `${g[chart.ascSign]} ${A.SIGNS[chart.ascSign]}`, border: '#f0d09a', color: '#e0a63c' },
+        { label: 'mansion', value: this.data.MANSIONS[chart.mansion][0], border: '#f2b9d3', color: '#e677ab' }
+      ];
+      shareBirthLine = `${s.fDate} · ${s.fTime} · ${s.manualMode ? 'a custom spot on Earth' : (s.fPlace ? s.fPlace.name : '')}`;
+      placementRows = [
+        { label: '☉ sun', value: this.degFmt(chart.sunLon) }, { label: '☽ moon', value: this.degFmt(chart.moonLon) },
+        { label: 'ASC', value: this.degFmt(chart.asc) }, { label: 'MC', value: this.degFmt(chart.mc) }
+      ];
+      cuspRows = chart.cusps.map((L, i) => ({ num: String(i + 1), value: this.degFmt(L) }));
+    }
+    let offsetLine = '';
+    if (s.fPlace && s.fDate && s.fTime && !s.manualMode) {
+      try {
+        const [y, m, d] = s.fDate.split('-').map(Number);
+        const [hh, mm] = s.fTime.split(':').map(Number);
+        const info = dstInfo(s.fPlace.tz, y, m, d, hh, mm);
+        offsetLine = `clocks there read UTC${info.off >= 0 ? '+' : ''}${info.off}${info.dst ? ', daylight saving was on, handled automatically ✓' : ', no daylight saving that day ✓'}`;
+      } catch (e) { offsetLine = ''; }
+    }
+    const taskItems = Object.keys(s.windows).filter(k => s.windows[k].open).map(k => {
+      const w = s.windows[k];
+      const active = !w.min && w.z === s.zTop;
+      return {
+        icon: WIN_TITLES[k][0], label: WIN_TITLES[k][1],
+        bg: active ? '#ffe9f4' : '#fdeef8',
+        bc: active ? '#c586ad #fff #fff #c586ad' : '#fff #c586ad #c586ad #fff',
+        onClick: () => { if (w.min || w.z !== s.zTop) this.openWin(k); else this.setWin(k, { min: true }); }
+      };
+    });
+    const apps = [['reader', 'shard\u00A0reader.exe'], ['duet', 'duet.exe'], ['wheel', 'chart_wheel'], ['today', 'today.exe'], ['guest', 'guestbook'], ['gloss', 'grimoire.hlp'], ['player', 'player.exe'], ['luna', 'luna.txt'], ['account', 'account.exe'], ['welcome', 'home.lnk']];
+    const deskIcons = apps.map(([k, label]) => ({ icon: WIN_TITLES[k][0], label, onClick: () => this.openWin(k) }));
+    const startItems = apps.map(([k]) => ({ icon: WIN_TITLES[k][0], label: WIN_TITLES[k][1], onClick: () => this.openWin(k) }));
+    const wd = A ? this.wheelData() : { ticks: [], glyphs: [], cusps: [], planets: [] };
+    const D2 = this.data, T = s.today;
+    const wh = this.wheelData ? wd : null;
+    return {
+      sparklesOn: p.sparkles ?? true, scanlinesOn: p.scanlines ?? false,
+      wWelcome: this.winVals('welcome'), wReader: this.winVals('reader'), wSky: this.winVals('sky'), wCard: this.winVals('card'), wLuna: this.winVals('luna'),
+      wToday: this.winVals('today'), wWheel: this.winVals('wheel'), wDuet: this.winVals('duet'), wGuest: this.winVals('guest'), wGloss: this.winVals('gloss'), wPlayer: this.winVals('player'), wDoc: this.winVals('doc'), wAccount: this.winVals('account'),
+      deskIcons, startItems,
+      openReader: () => this.openWin('reader'), openWheel: () => this.openWin('wheel'), openDoc: () => this.openWin('doc'),
+      restart: () => { this.setState({ chart: null, revealed: [false, false, false, false], weaveText: '', duet: null, duetText: '' }); this.setWin('card', { open: false }); this.setWin('sky', { open: false }); this.setWin('doc', { open: false }); this.openWin('reader'); },
+      hasChart: !!chart, noChart: !chart,
+      todayDate: new Date().toLocaleDateString([], { month: 'short', day: 'numeric' }),
+      todayMansion: T && D2 ? D2.MANSIONS[T.mansion][0] : '…',
+      todayMeaning: T && D2 ? D2.MANSIONS[T.mansion][1] : '',
+      todayMoonSign: T && A ? A.SIGNS[T.moonSign] : '',
+      todayForecast: T && D2 ? `The moon is visiting ${D2.MANSIONS[T.mansion][0]} today: ${D2.MANSIONS[T.mansion][2]}` : 'reading the sky…',
+      fName: s.fName, fDate: s.fDate, fTime: s.fTime, fQuery: s.fQuery, fLat: s.fLat, fLon: s.fLon, fTz: s.fTz,
+      setName: e => this.setState({ fName: e.target.value }), setDate: e => this.setState({ fDate: e.target.value }),
+      setTime: e => this.setState({ fTime: e.target.value }),
+      setQuery: e => this.setState({ fQuery: e.target.value, fPlace: null }),
+      queryKey: e => { if (e.key === 'Enter') this.search(); },
+      setLat: e => this.setState({ fLat: e.target.value }), setLon: e => this.setState({ fLon: e.target.value }),
+      setTz: e => this.setState({ fTz: e.target.value }),
+      doSearch: this.search, searchLabel: s.searching ? '...' : 'find ☆',
+      cityResults: s.cityResults.map(r => ({ ...r, coords: `${r.lat.toFixed(1)},${r.lon.toFixed(1)}`,
+        pick: () => this.setState({ fPlace: r, cityResults: [], fQuery: `${r.name}, ${r.region}` }) })),
+      hasResults: s.cityResults.length > 0, hasPlace: !!s.fPlace && !s.manualMode,
+      placeLine: s.fPlace ? `${s.fPlace.name}, ${s.fPlace.region} · ${s.fPlace.lat.toFixed(2)}°, ${s.fPlace.lon.toFixed(2)}°` : '',
+      offsetLine,
+      manualMode: s.manualMode, notManual: !s.manualMode,
+      toggleManual: () => this.setState({ manualMode: !s.manualMode, formError: '' }),
+      manualToggleLabel: s.manualMode ? '← back to town search' : 'enter coordinates manually instead',
+      formError: s.formError, doCompute: this.compute,
+      shards, allRevealed,
+      revealTitle: allRevealed ? 'your sky, in four shards ✧' : 'the sky shattered ✧',
+      revealHint: allRevealed ? 'ALL SHARDS COLLECTED ✦ WEAVE THEM BELOW' : 'CLICK EACH SHARD TO OPEN A PIECE OF YOU',
+      chartLine, doWeave: this.weave, weaveLabel: s.weaving ? 'weaving… ✦ ✦ ✦' : '✦ weave my reading ✦',
+      shareName: s.fName || 'little star', shareBirthLine, miniShards, weaveText: s.weaveText,
+      savePng: this.savePng,
+      wheelTicks: wd.ticks, wheelGlyphs: wd.glyphs, wheelCusps: wd.cusps, wheelPlanets: wd.planets,
+      placementRows, cuspRows,
+      dName: s.dName, dDate: s.dDate, dTime: s.dTime, dQuery: s.dQuery,
+      setDName: e => this.setState({ dName: e.target.value }), setDDate: e => this.setState({ dDate: e.target.value }),
+      setDTime: e => this.setState({ dTime: e.target.value }),
+      setDQuery: e => this.setState({ dQuery: e.target.value, dPlace: null }),
+      dQueryKey: e => { if (e.key === 'Enter') this.dSearch(); },
+      doDSearch: this.dSearch, dSearchLabel: s.dSearching ? '...' : 'find ☆',
+      dResults: s.dResults.map(r => ({ ...r, pick: () => this.setState({ dPlace: r, dResults: [], dQuery: `${r.name}, ${r.region}` }) })),
+      dHasResults: s.dResults.length > 0, dHasPlace: !!s.dPlace,
+      dPlaceLine: s.dPlace ? `${s.dPlace.name}, ${s.dPlace.region}` : '', dError: s.dError,
+      doDuet: this.computeDuet, duetBtnLabel: s.duetWeaving ? 'harmonizing… ♪' : '♪ sing the duet ♪',
+      hasDuet: !!s.duet,
+      duetScoreStr: s.duet ? s.duet.score + '%' : '', duetPairTitle: s.duet ? s.duet.pairTitle : '',
+      duetLines: s.duet ? s.duet.lines : [], duetText: s.duetText,
+      gName: s.gName, gMsg: s.gMsg,
+      setGName: e => this.setState({ gName: e.target.value }), setGMsg: e => this.setState({ gMsg: e.target.value }),
+      stampOptions: STAMPS.map(t => ({ t, pick: () => this.setState({ gStamp: t }),
+        bg: s.gStamp === t ? '#ffe9f4' : '#fdeef8', bc: s.gStamp === t ? '#c586ad #fff #fff #c586ad' : '#fff #c586ad #c586ad #fff' })),
+      signGuestbook: this.signGuestbook, guestEntries: s.guestEntries,
+      glossary: this.duetMod ? this.duetMod.GLOSSARY.map(g2 => ({ title: g2[0], body: g2[1] })) : [],
+      togglePlay: this.togglePlay, playLabel: s.playing ? '⏸ pause' : '▶ play', discAnim: s.playing ? 'spin 2.2s linear infinite' : 'none',
+      startOpen: s.startOpen, toggleStart: () => this.setState({ startOpen: !s.startOpen }),
+      taskItems, clock: s.clock,
+      isLoggedIn: !!s.authEmail, isLoggedOut: !s.authEmail, authEmail: s.authEmail,
+      isLogin: s.authMode === 'login', isSignup: s.authMode === 'signup',
+      authModeLabel: s.authMode === 'login' ? 'log in' : 'sign up',
+      toggleAuthMode: () => this.setState({ authMode: s.authMode === 'login' ? 'signup' : 'login', authError: '' }),
+      authSwitchLabel: s.authMode === 'login' ? "new here? sign up instead" : 'already have a shard? log in',
+      aEmail: s.aEmail, aPassword: s.aPassword,
+      setAEmail: e => this.setState({ aEmail: e.target.value }), setAPassword: e => this.setState({ aPassword: e.target.value }),
+      authError: s.authError, authBusy: s.authBusy,
+      authSubmit: s.authMode === 'login' ? this.doLogin : this.doSignup,
+      authSubmitLabel: s.authBusy ? 'one sec…' : (s.authMode === 'login' ? '☾ log in' : '✦ make my account'),
+      openAccount: () => this.openWin('account'), doLogout: this.doLogout,
+      accountStatusLabel: s.authEmail ? `☾ ${s.authEmail}` : '☾ save my layout'
+    };
+  }
+}
+</script>
+</body>
+</html>
