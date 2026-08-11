@@ -723,7 +723,13 @@ class Component extends DCLogic {
         body: JSON.stringify({ email, password })
       });
       const j = await r.json();
-      if (!r.ok) { this.setState({ authBusy: false, authError: j.error === 'email_taken' ? 'that email already has a shard account ♡' : 'could not create your account, try again ♡' }); return; }
+      if (!r.ok) {
+        const msg = j.error === 'email_taken' ? 'that email already has a shard account ♡'
+          : j.error === 'too_many_requests' ? 'too many tries, please wait a bit and try again ♡'
+          : 'could not create your account, try again ♡';
+        this.setState({ authBusy: false, authError: msg });
+        return;
+      }
       this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
       this.saveWindowState();
     } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
@@ -738,7 +744,11 @@ class Component extends DCLogic {
         body: JSON.stringify({ email, password })
       });
       const j = await r.json();
-      if (!r.ok) { this.setState({ authBusy: false, authError: 'wrong email or password ♡' }); return; }
+      if (!r.ok) {
+        const msg = j.error === 'too_many_requests' ? 'too many tries, please wait a bit and try again ♡' : 'wrong email or password ♡';
+        this.setState({ authBusy: false, authError: msg });
+        return;
+      }
       this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
       this.loadWindowState();
     } catch (e) { this.setState({ authBusy: false, authError: 'the shard server is unreachable, try again ♡' }); }
