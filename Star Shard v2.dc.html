@@ -123,6 +123,14 @@ a{color:#3fb8ad}a:hover{color:#ff8fc0}
 @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 @keyframes pop{0%{transform:translateY(6px);opacity:0}100%{transform:none;opacity:1}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes shardBob{0%,100%{transform:translateY(-10px) rotate(-3deg)}50%{transform:translateY(10px) rotate(3deg)}}
+@keyframes glowPulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes chargeShake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,-3px)}}
+@keyframes ringOut{0%{transform:scale(.4);opacity:1}100%{transform:scale(2.6);opacity:0}}
+@keyframes burstStar{0%{transform:scale(.3) rotate(0deg);opacity:1}100%{transform:scale(3.4) rotate(45deg);opacity:0}}
+@keyframes flyOut{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(.3);opacity:0}}
+@keyframes flashWhite{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+@keyframes promptBlink{0%,100%{opacity:1}50%{opacity:.15}}
 input,select,button,textarea{font-family:'Varela Round',sans-serif}
 ::selection{background:#ff8fc0;color:#fff}
 </style>
@@ -750,9 +758,76 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
      phone-UI state, shared the same way). See OWNERSHIP.md.
      ========================================================================= -->
 <sc-if value="{{ isPhone }}" hint-placeholder-val="{{ false }}">
-<div style="font-family:var(--font-body);color:var(--ink);background:var(--teal-700);height:100dvh;max-height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;padding:0;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y">
+<div style="font-family:var(--font-body);color:var(--ink);background:radial-gradient(130% 100% at 50% 0%,#17496B 0%,#0C1D33 52%,#050D1A 100%);height:100dvh;max-height:100dvh;display:flex;flex-direction:column;max-width:520px;margin:0 auto;padding:0;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y">
 
-  <header style="flex:none;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);min-height:46px;background:var(--surface);border-bottom:var(--bevel) solid var(--edge-dark)">
+  <!-- The opener always plays on mount — it's the front door, not a first-run
+       tutorial. See pCharge(). Resolves to the returning user's card/deck via
+       pOpenSave(), or the landing screen for a first-time visitor. -->
+  <sc-if value="{{ pIntroShow }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(120% 110% at 50% 16%,#1A5580 0%,#0C1D33 52%,#050D1A 100%);opacity:{{ pIntroOpacity }};transition:opacity .8s ease">
+      <div style="position:absolute;inset:0;pointer-events:none;color:var(--cream);font-family:var(--font-retro);font-size:13px">
+        <span style="position:absolute;top:10%;left:14%;animation:twinkle 2.6s infinite">✦</span>
+        <span style="position:absolute;top:18%;right:20%;color:var(--butter-200);animation:twinkle 3.2s .5s infinite">★</span>
+        <span style="position:absolute;top:34%;left:26%;font-size:10px;animation:twinkle 2s .9s infinite">·</span>
+        <span style="position:absolute;top:8%;left:58%;font-size:10px;animation:twinkle 2.9s .3s infinite">·</span>
+        <span style="position:absolute;bottom:24%;left:10%;color:var(--pink-500);animation:twinkle 2.4s .7s infinite">✧</span>
+        <span style="position:absolute;bottom:16%;right:12%;animation:twinkle 3.5s .2s infinite">✦</span>
+        <span style="position:absolute;top:26%;right:38%;font-size:10px;animation:twinkle 2.2s 1.2s infinite">·</span>
+        <span style="position:absolute;bottom:12%;left:32%;font-size:10px;animation:twinkle 2.7s .4s infinite">·</span>
+        <span style="position:absolute;top:60%;right:24%;color:var(--butter-200);font-size:10px;animation:twinkle 3s .6s infinite">·</span>
+        <span style="position:absolute;top:12%;right:8%;font-size:34px;color:var(--butter-200);animation:floaty 5s ease-in-out infinite">☾</span>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:6px">
+        <div style="font-family:var(--font-retro);font-size:14px;letter-spacing:.34em;color:var(--teal-200)">☾ STARSHARD95 ☆</div>
+        <div onClick="{{ pShardClick }}" style="position:relative;width:260px;height:300px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <div style="position:absolute;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(248,120,168,.5) 0%,rgba(51,190,224,.30) 52%,transparent 72%);filter:blur(5px);animation:glowPulse 2.8s ease-in-out infinite"></div>
+          <sc-if value="{{ pIntroCharge }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;width:170px;height:170px;border-radius:50%;border:3px solid var(--cream);animation:ringOut .5s ease-out infinite"></div>
+            <div style="position:absolute;width:170px;height:170px;border-radius:50%;border:2px solid var(--pink-200);animation:ringOut .5s .25s ease-out infinite"></div>
+          </sc-if>
+          <sc-if value="{{ pShardVisible }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative;animation:{{ pShardAnim }}">
+              <svg width="132" height="176" viewBox="0 0 120 160" style="display:block;filter:{{ pShardFilter }};transition:filter .3s">
+                <polygon points="60,4 95,46 83,132 60,156 37,132 25,46" fill="#F878A8" stroke="#F8F8F0" stroke-width="3" stroke-linejoin="round"></polygon>
+                <polygon points="60,4 25,46 37,132 60,156" fill="#F8E0E8" opacity="0.9"></polygon>
+                <polygon points="60,4 95,46 83,132 60,156" fill="#F878A8" opacity="0.55"></polygon>
+                <polygon points="60,4 46,58 60,150 74,58" fill="#F8E0E8" opacity="0.75"></polygon>
+                <polygon points="50,28 56,24 44,72 38,68" fill="#FFFFFF" opacity="0.8"></polygon>
+                <polygon points="66,20 70,18 63,42 59,40" fill="#FFFFFF" opacity="0.7"></polygon>
+                <path d="M44 92 q5 -6 10 0" stroke="#A63459" stroke-width="3" fill="none" stroke-linecap="round"></path>
+                <path d="M66 92 q5 -6 10 0" stroke="#A63459" stroke-width="3" fill="none" stroke-linecap="round"></path>
+                <circle cx="43" cy="102" r="4.5" fill="#F878A8" opacity="0.55"></circle>
+                <circle cx="77" cy="102" r="4.5" fill="#F878A8" opacity="0.55"></circle>
+                <path d="M56 102 q4 5 8 0" stroke="#A63459" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+              </svg>
+              <span style="position:absolute;top:-8px;right:-16px;color:var(--cream);font-size:18px;animation:twinkle 1.8s infinite">✦</span>
+              <span style="position:absolute;bottom:6px;left:-20px;color:var(--butter-200);font-size:14px;animation:twinkle 2.4s .6s infinite">★</span>
+              <span style="position:absolute;top:40%;left:-26px;color:var(--pink-200);font-size:12px;animation:twinkle 2.1s 1s infinite">✧</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ pIntroBurst }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;color:var(--cream);font-size:110px;line-height:1;animation:burstStar .75s ease-out forwards">✦</div>
+            <sc-for list="{{ pBurstBits }}" as="b" hint-placeholder-count="3">
+              <span style="position:absolute;color:{{ b.c }};font-size:{{ b.fs }};--tx:{{ b.tx }};--ty:{{ b.ty }};animation:flyOut .9s {{ b.d }} ease-out forwards;opacity:0">{{ b.t }}</span>
+            </sc-for>
+          </sc-if>
+        </div>
+        <div style="height:22px;font-family:var(--font-retro);font-size:14px;letter-spacing:.18em;color:var(--pink-200);animation:promptBlink 1.6s step-end infinite">{{ pIntroPrompt }}</div>
+      </div>
+      <sc-if value="{{ pIntroBurst }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:var(--cream);animation:flashWhite 1s ease-out forwards;pointer-events:none"></div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;color:var(--teal-200);font-family:var(--font-retro);font-size:12px">
+    <span style="position:absolute;top:14%;left:6%;animation:twinkle 2.8s infinite">✦</span>
+    <span style="position:absolute;top:38%;right:5%;color:var(--butter-200);animation:twinkle 3.3s .6s infinite">★</span>
+    <span style="position:absolute;bottom:22%;left:8%;color:var(--pink-200);animation:twinkle 2.5s 1s infinite">✧</span>
+    <span style="position:absolute;bottom:9%;right:9%;font-size:10px;animation:twinkle 3.1s .3s infinite">·</span>
+  </div>
+
+  <header data-context="card" style="position:relative;z-index:1;flex:none;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);min-height:46px;background:var(--surface);border-bottom:var(--bevel) solid var(--accent);color:var(--ink)">
     <sc-if value="{{ pShowBack }}" hint-placeholder-val="{{ false }}">
       <button onClick="{{ pGoBack }}" aria-label="go back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;font-size:26px;color:var(--ink-muted);cursor:pointer;margin-left:-10px">‹</button>
     </sc-if>
@@ -760,7 +835,7 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
     <button onClick="{{ pGoAccount }}" aria-label="your account" style="min-width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;font-size:18px;color:var(--ink-muted);cursor:pointer;margin-right:-10px">☾</button>
   </header>
 
-  <main style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;display:flex;flex-direction:column;padding:var(--space-4);gap:var(--space-4)">
+  <main style="position:relative;z-index:1;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;display:flex;flex-direction:column;padding:var(--space-4);gap:var(--space-4)">
 
     <sc-if value="{{ pIsLanding }}" hint-placeholder-val="{{ true }}">
       <div style="flex-shrink:0;position:relative;background:var(--surface-raised);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-window);border-radius:var(--radius-none)">
@@ -1074,9 +1149,11 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
 
   </main>
 
-  <footer style="flex:none;padding:var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:var(--space-2);background:var(--surface);border-top:var(--bevel) solid var(--edge-light)">
+  <footer data-context="card" style="position:relative;z-index:1;flex:none;padding:var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:var(--space-2);background:var(--surface);border-top:var(--bevel) solid var(--accent);color:var(--ink)">
     <sc-if value="{{ pShowCta }}" hint-placeholder-val="{{ true }}">
-      <button onClick="{{ pAdvance }}" disabled="{{ pCtaDisabled }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">{{ pCtaLabel }}</button>
+      <div style="display:flex;flex-direction:column;box-shadow:0 0 22px rgba(248,120,168,.45)">
+        <button onClick="{{ pAdvance }}" disabled="{{ pCtaDisabled }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="width:100%;min-height:var(--tap-min);padding:11px 22px;background:var(--action);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">{{ pCtaLabel }}</button>
+      </div>
     </sc-if>
     <sc-if value="{{ pIsCard }}" hint-placeholder-val="{{ false }}">
       <button onClick="{{ pSaveCard }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="width:100%;min-height:44px;padding:9px 22px;background:var(--teal-200);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">save to photos</button>
@@ -1179,6 +1256,7 @@ class Component extends DCLogic {
     pManualMode: false, pLat: '', pLon: '', pTz: '',
     pFormError: '', pChart: null, pRevealed: [false, false, false, false], pWeaveText: '',
     pFriendName: '', pFriendDate: '',
+    pIntroPhase: 'float', pHasSave: false,
   };
 
   // -- lifecycle ------------------------------------------------------------
@@ -1207,7 +1285,17 @@ class Component extends DCLogic {
 
     let deck = [];
     try { deck = JSON.parse(localStorage.getItem('starshard.deck') || '[]'); } catch (e) {}
-    this.setState({ windows, deck });
+
+    // A returning phone visitor's last-used birth data, separate from `deck`
+    // — used by the intro's "welcome back" fast path (pOpenSave()).
+    let save = null, savePatch = { deck };
+    try { save = JSON.parse(localStorage.getItem('starshard.save') || 'null'); } catch (e) {}
+    if (save && save.date) Object.assign(savePatch, {
+      pHasSave: true, pName: save.name || '', pDate: save.date, pTime: save.time || '12:00',
+      pTimeKnown: !!save.timeKnown, pPlace: save.place || null,
+      pManualMode: !!save.manualMode, pLat: save.lat || '', pLon: save.lon || '', pTz: save.tz || '',
+    });
+    this.setState({ windows, ...savePatch });
 
     const tick = () => this.setState({ clock: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) });
     tick(); this.clockTimer = setInterval(tick, 20000);
@@ -1226,6 +1314,10 @@ class Component extends DCLogic {
 
     window.addEventListener('popstate', this.pOnPop);
 
+    // The opener always plays — it's the front door, not a first-run
+    // tutorial. Auto-charges after a beat; a tap on the shard charges early.
+    this._introTimers = [setTimeout(() => this.pCharge(), 1500)];
+
     this.forceUpdate();
     this.checkAuth();
   }
@@ -1234,6 +1326,7 @@ class Component extends DCLogic {
     clearInterval(this.clockTimer); this.stopMusic(); clearTimeout(this._saveTimer);
     if (this.mq) this.mq.removeEventListener('change', this._onViewportChange);
     window.removeEventListener('popstate', this.pOnPop);
+    (this._introTimers || []).forEach(clearTimeout);
   }
 
   componentDidUpdate() {
@@ -1485,6 +1578,48 @@ class Component extends DCLogic {
   pGoAccount = () => this.pGo(7);
   pGoDuet = () => this.pGo(6);
 
+  // -- the opener animation: float -> charge -> burst -> fade -> done -------
+
+  pCharge = () => {
+    if (this.state.pIntroPhase !== 'float') return;
+    (this._introTimers || []).forEach(clearTimeout);
+    this.setState({ pIntroPhase: 'charge' });
+    this._introTimers = [
+      setTimeout(() => this.setState({ pIntroPhase: 'burst' }), 780),
+      setTimeout(() => this.setState({ pIntroPhase: 'fade' }), 1520),
+      setTimeout(() => { this.setState({ pIntroPhase: 'done' }); this.pOpenSave(); }, 2300),
+    ];
+  };
+
+  pShardClick = () => this.pCharge();
+
+  // Resume where they left off: their card if birth data is saved, the deck
+  // if only mansions are, otherwise the landing screen. Fires once the
+  // opener finishes, never interrupts it.
+  pOpenSave = () => {
+    const s = this.state;
+    if (s.pHasSave && this.astro) {
+      const c = this.pComputeChart();
+      if (c) {
+        this.setState({ pChart: c, pRevealed: [true, true, true, true] });
+        this.pWeave(c);
+        return this.pGo(4, false);
+      }
+    }
+    if (s.deck.length) return this.pGo(5, false);
+    this.pGo(0, false);
+  };
+
+  pSaveBirth = () => {
+    const s = this.state;
+    const save = {
+      name: s.pName, date: s.pDate, time: s.pTime, timeKnown: s.pTimeKnown,
+      place: s.pPlace, manualMode: s.pManualMode, lat: s.pLat, lon: s.pLon, tz: s.pTz,
+    };
+    try { localStorage.setItem('starshard.save', JSON.stringify(save)); } catch (e) {}
+    this.setState({ pHasSave: true });
+  };
+
   pSearch = async () => {
     const q = this.state.pQuery.trim();
     if (!q) return;
@@ -1537,6 +1672,7 @@ class Component extends DCLogic {
     const { pStep, pRevealed, pChart } = this.state;
     if (pStep === 0) return this.pGo(1);
     if (pStep === 1) {
+      this.pSaveBirth();
       const c = this.pComputeChart();
       if (!c) return;
       this.setState({ pChart: c, pRevealed: [false, false, false, false], pWeaveText: '', pFormError: '' });
@@ -1677,8 +1813,35 @@ class Component extends DCLogic {
 
     const pStep = s.pStep;
 
+    // -- the opener animation --------------------------------------------
+    const ip = s.pIntroPhase;
+    const pBurstBits = [];
+    if (ip === 'burst' || ip === 'fade') {
+      const glyphs = ['✦', '★', '✧', '·', '♡'];
+      const cols = ['#F8F8F0', '#F8E0E8', '#F8F0C8', '#A6DFF5', '#F878A8'];
+      for (let i = 0; i < 18; i++) {
+        const a = (i / 18) * Math.PI * 2, r = 140 + (i % 3) * 65;
+        pBurstBits.push({
+          tx: Math.round(Math.cos(a) * r) + 'px', ty: Math.round(Math.sin(a) * r) + 'px',
+          t: glyphs[i % 5], c: cols[i % 5], d: ((i % 4) * 0.06).toFixed(2) + 's',
+          fs: (14 + (i * 7) % 18) + 'px',
+        });
+      }
+    }
+    const pIntroPrompt = ip === 'charge' || ip === 'burst'
+      ? '✦ ✦ ✦'
+      : (s.pHasSave ? (s.pName ? 'welcome back, ' + s.pName + ' ☆' : 'welcome back ☆') : '— reading the sky —');
+
     return {
       isPhone: s.isPhone, isDesktop: !s.isPhone,
+      pIntroShow: ip !== 'done', pIntroOpacity: ip === 'fade' ? 0 : 1,
+      pIntroCharge: ip === 'charge', pIntroBurst: ip === 'burst' || ip === 'fade',
+      pShardVisible: ip === 'float' || ip === 'charge',
+      pShardAnim: ip === 'charge' ? 'chargeShake .1s linear infinite' : 'shardBob 3.4s ease-in-out infinite',
+      pShardFilter: ip === 'charge'
+        ? 'brightness(1.6) saturate(1.25) drop-shadow(0 0 34px #F8F8F0)'
+        : 'drop-shadow(0 0 16px rgba(248,120,168,.85))',
+      pIntroPrompt, pBurstBits, pShardClick: this.pShardClick,
       pShowBack: pStep > 0, pGoBack: this.pGoBack, pGoAccount: this.pGoAccount, pGoDuet: this.pGoDuet,
       pIsLanding: pStep === 0, pIsForm: pStep === 1, pIsShatter: pStep === 2, pIsShards: pStep === 3,
       pIsCard: pStep === 4, pIsCollection: pStep === 5, pIsDuet: pStep === 6, pIsAccount: pStep === 7,

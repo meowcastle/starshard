@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**433 bindings, 213 top-level.**
+**449 bindings, 223 top-level.**
 
 ## Rule
 
@@ -46,6 +46,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `glossary` | `gl` | `body`, `title` |
 | `guestEntries` | `ge` | `date`, `msg`, `name`, `stamp` |
 | `miniShards` | `m` | `border`, `color`, `label`, `value` |
+| `pBurstBits` | `b` | `c`, `d`, `fs`, `t`, `tx`, `ty` |
 | `pCityResults` | `r` | `coords`, `name`, `pick`, `region` |
 | `pDeck` | `d` | `bg`, `border`, `numeral` |
 | `pPips` | `p` | `glyph`, `text`, `value` |
@@ -142,6 +143,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `openReader` | windows.js |
 | `openWheel` | windows.js |
 | `pAdvance` | component state |
+| `pBurstBits` | component state |
 | `pCardNumeral` | component state |
 | `pCityResults` | component state |
 | `pCtaDisabled` | component state |
@@ -163,6 +165,11 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `pHasDuet` | component state |
 | `pHasPlace` | component state |
 | `pHasResults` | component state |
+| `pIntroBurst` | component state |
+| `pIntroCharge` | component state |
+| `pIntroOpacity` | component state |
+| `pIntroPrompt` | component state |
+| `pIntroShow` | component state |
 | `pIsAccount` | component state |
 | `pIsCard` | component state |
 | `pIsCollection` | component state |
@@ -198,6 +205,10 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `pSetQuery` | component state |
 | `pSetTime` | component state |
 | `pSetTz` | component state |
+| `pShardAnim` | component state |
+| `pShardClick` | component state |
+| `pShardFilter` | component state |
+| `pShardVisible` | component state |
 | `pShards` | component state |
 | `pShatterNote` | component state |
 | `pShowBack` | component state |
