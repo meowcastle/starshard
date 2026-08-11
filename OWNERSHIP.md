@@ -93,10 +93,19 @@ defects. See `AUDIT.md`.
   verification, account deletion, data export, or age gating for a 13–17
   audience — decide whether those are needed or whether to scope the system
   back down.
-- **W8** — no `<title>`, meta description or OG tags. These must be static HTML
-  to be read by crawlers and social scrapers, so they live in the `<helmet>` and
-  are **Claude Design's** to add and to keep across regenerations.
+- **W8** — done. `<title>`, meta description, and OG/Twitter tags are in the
+  `<helmet>`. `og:image`/`twitter:image` point at a 240×360 placeholder pulled
+  from the `landing-mascot` slot — real share art is still open (W10). These
+  live in Design's territory per the split above; carry them through the next
+  regeneration (DESIGN-BRIEF.md's P3/handoff checklist already covers this).
+- **W11** — done. Guestbook is wired to `starshard-api` (`guestbook_entries`
+  table, public rate-limited GET/POST). Falls back to the seed only if the
+  table comes back empty.
+- **W16b** — signup still returns a distinct `email_taken` error, which is
+  user enumeration. Deliberately left as-is: removing it means gating signup
+  behind email verification (a real flow change, not a bug fix), and the
+  practical mitigation — 8 signups/hour/IP — is already in place. Revisit if
+  that tradeoff stops feeling right. (W16a, session revocation on logout, is
+  fixed — see `starshard-api/server.js`'s `token_version`.)
 - **W10** — the share card renders 720×1000; the share surface is 9:16.
   `card.js` `CARD` block is where that changes.
-- **W11** — the guestbook is `localStorage` only. Either wire it to the API or
-  reframe it as private notes.
