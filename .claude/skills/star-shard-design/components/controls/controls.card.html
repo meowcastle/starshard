@@ -1,0 +1,40 @@
+<!-- @dsCard group="Components" viewport="700x290" subtitle="Button variants, states, and the inset field" name="Controls" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+html,body{margin:0}*{box-sizing:border-box}
+body{background:var(--surface);color:var(--ink);font-family:var(--font-body);padding:16px}
+.lbl{font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px}
+.btn{min-height:44px;padding:11px 22px;color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border:2px solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer}
+.btn:active{border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)}
+.btn:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
+.p{background:var(--action)}.s{background:var(--teal-200)}.t{background:transparent}
+.inp{background:var(--white);border:2px solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);padding:10px 12px;min-height:44px;width:100%;font-family:var(--font-body);font-size:var(--text-sm);color:var(--teal-900)}
+</style></head><body>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+<div>
+<div class="lbl">variants</div>
+<div style="display:flex;flex-direction:column;gap:9px;align-items:flex-start">
+<button class="btn p">✧ shatter the sky ✧</button>
+<button class="btn s">chart wheel</button>
+<button class="btn t">read another ☆</button>
+</div>
+<div class="lbl" style="margin-top:16px">pressed · disabled</div>
+<div style="display:flex;gap:9px;align-items:center">
+<span class="btn p" style="display:inline-block;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)">pressed</span>
+<span class="btn p" style="display:inline-block;opacity:.45">disabled</span>
+</div>
+</div>
+<div>
+<div class="lbl">input · inset bevel</div>
+<label class="lbl" for="n" style="display:block">your name</label>
+<input class="inp" id="n" placeholder="mikufan39">
+<label class="lbl" for="d" style="display:block;margin-top:12px">born on</label>
+<input class="inp" id="d" value="2004-08-31" type="date">
+<div style="font-size:var(--text-xs);color:var(--ink-muted);margin-top:6px">we never send this anywhere</div>
+<div class="lbl" style="margin-top:14px">focus</div>
+<input class="inp" style="outline:var(--focus-ring);outline-offset:var(--focus-offset)" value="focused">
+</div>
+</div>
+</body></html>

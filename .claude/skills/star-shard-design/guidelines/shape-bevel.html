@@ -1,0 +1,16 @@
+<!-- @dsCard group="Shape" viewport="700x170" subtitle="Raised vs inset — the through-line" name="The bevel" -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+html,body{margin:0}
+body{background:var(--surface);color:var(--ink);font-family:var(--font-body);padding:16px;box-sizing:border-box}
+*{box-sizing:border-box}
+.lbl{font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-muted)}
+</style></head><body>
+<div style="display:flex;gap:16px;align-items:flex-start">
+<div><div class="lbl" style="margin-bottom:6px">raised</div><div style="background:var(--surface-raised);border:2px solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);padding:14px 20px;font-family:var(--font-display);font-weight:700">buttons, cards, windows</div></div>
+<div><div class="lbl" style="margin-bottom:6px">inset</div><div style="background:var(--white);border:2px solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);padding:14px 20px;color:var(--ink-muted)">inputs, wells</div></div>
+<div><div class="lbl" style="margin-bottom:6px">pressed</div><div style="background:var(--action);border:2px solid;border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);padding:14px 20px;font-family:var(--font-display);font-weight:700;color:var(--teal-900);transform:translate(2px,2px)">translate 2px</div></div>
+</div>
+</body></html>

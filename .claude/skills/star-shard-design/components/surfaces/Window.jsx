@@ -1,22 +1,6 @@
-import type { CSSProperties, ReactNode } from 'react';
+import React from 'react';
 
-/**
- * Desktop window chrome. Desktop only — below 1024px the phone flow renders
- * screens instead, and no Window ever mounts.
- */
-export interface WindowProps {
-  title?: string;
-  /** Unicode glyph shown before the title, e.g. "☾". */
-  icon?: string;
-  /** Blurred windows drop the gradient bar for flat teal-200. */
-  focused?: boolean;
-  onMinimize?: () => void;
-  onClose?: () => void;
-  children?: ReactNode;
-  style?: CSSProperties;
-}
-
-export function Window({ title = 'window', icon, focused = true, onMinimize, onClose, children, style }: WindowProps) {
+export function Window({ title = 'window', icon, focused = true, onMinimize, onClose, children, style }) {
   return (
     <div
       style={{
@@ -54,7 +38,7 @@ export function Window({ title = 'window', icon, focused = true, onMinimize, onC
   );
 }
 
-function WinControl({ label, onClick, children }: { label: string; onClick?: () => void; children: ReactNode }) {
+function WinControl({ label, onClick, children }) {
   return (
     <button
       type="button"

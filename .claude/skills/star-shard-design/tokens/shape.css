@@ -1,0 +1,22 @@
+:root{
+  /* Radius is 0 unless the thing is physically round or physically a card. */
+  --radius-none:0;
+  --radius-round:50%;
+  --radius-card:16px;
+  /* miniature cards only — deck grids and collection thumbnails, where 16px
+     would eat the whole tile. Same concept as --radius-card, scaled. */
+  --radius-card-sm:6px;
+
+  --bevel:2px;
+  --bevel-raised:var(--bevel) solid;
+  --border-raised-colors:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  --border-inset-colors:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);
+
+  /* Hard offsets. No blur, ever. */
+  --shadow-window:4px 4px 0 rgba(16,40,40,.45);
+  --shadow-raised:3px 3px 0 rgba(16,40,40,.35);
+  --shadow-chip:2px 2px 0 rgba(16,40,40,.30);
+
+  --focus-ring:3px solid var(--focus);
+  --focus-offset:2px;
+}

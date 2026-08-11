@@ -1,0 +1,17 @@
+/* Derived, not brand-supplied: the spec fixes type and color but leaves
+   spacing implicit. These are the values actually used across v2.dc.html
+   and the spec's own panels, snapped to the smallest consistent set. */
+:root{
+  --space-1:4px;
+  --space-2:6px;
+  --space-3:8px;
+  --space-4:12px;
+  --space-5:16px;
+  --space-6:20px;
+  --space-7:24px;
+  --space-8:32px;
+  --space-9:40px;
+
+  --tap-min:44px;      /* never smaller, any surface */
+  --measure:64ch;      /* max paragraph width */
+}

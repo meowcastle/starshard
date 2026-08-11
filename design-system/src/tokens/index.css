@@ -1,0 +1,11 @@
+/* Star Shard Design System v1.0 tokens — copied verbatim from Claude
+   Design's own export (design/incoming/tokens/), not hand-transcribed from
+   DESIGN-SYSTEM.md's markdown appendix. That appendix is a condensed excerpt;
+   these files are the real, more complete source (e.g. the actual 9-step
+   spacing scale derived from v2.dc.html usage, the foil sub-ramp, --tap-min).
+   Re-copy from a future Design export rather than hand-editing these. */
+@import './fonts.css';
+@import './colors.css';
+@import './typography.css';
+@import './spacing.css';
+@import './shape.css';

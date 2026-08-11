@@ -1,30 +1,13 @@
-import type { CSSProperties } from 'react';
+import React from 'react';
 
-export type ShardKind = 'house' | 'mirror' | 'moon' | 'hearth';
-
-const KIND: Record<ShardKind, { label: string; file: string }> = {
-  house: { label: 'placidus houses', file: 'house.shd' },
-  mirror: { label: 'the mirror', file: 'mirror.shd' },
-  moon: { label: 'lunar mansion', file: 'moon.shd' },
-  hearth: { label: 'planetary day', file: 'hearth.shd' },
+const KIND = {
+  house:  { label: 'placidus houses', file: 'house.shd' },
+  mirror: { label: 'the mirror',      file: 'mirror.shd' },
+  moon:   { label: 'lunar mansion',   file: 'moon.shd' },
+  hearth: { label: 'planetary day',   file: 'hearth.shd' },
 };
 
-/**
- * One of the four shards of a reading, styled as a file in a file manager.
- * Starts face down; flipping all four unlocks the reading.
- */
-export interface ShardCardProps {
-  kind?: ShardKind;
-  title?: string;
-  body?: string;
-  /** Fake byte size in the title strip — flavour only. */
-  size?: string;
-  revealed?: boolean;
-  onReveal?: () => void;
-  style?: CSSProperties;
-}
-
-export function ShardCard({ kind = 'house', title, body, size = '4KB', revealed = true, onReveal, style }: ShardCardProps) {
+export function ShardCard({ kind = 'house', title, body, size = '4KB', revealed = true, onReveal, style }) {
   const meta = KIND[kind] || KIND.house;
   return (
     <div

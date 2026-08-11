@@ -1,17 +1,7 @@
-import { useId, type CSSProperties, type InputHTMLAttributes } from 'react';
+import React from 'react';
 
-/**
- * Single-line text field with an inset bevel — the visual inverse of Button.
- */
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  /** Rendered in Pixelify above the field, uppercase. */
-  label?: string;
-  /** Helper line below the field. */
-  hint?: string;
-}
-
-export function Input({ label, id, hint, style, ...rest }: InputProps) {
-  const auto = useId();
+export function Input({ label, id, hint, style, ...rest }) {
+  const auto = React.useId();
   const inputId = id || auto;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
@@ -40,11 +30,10 @@ export function Input({ label, id, hint, style, ...rest }: InputProps) {
           padding: '10px 12px',
           minHeight: 'var(--tap-min)',
           width: '100%',
-          boxSizing: 'border-box',
           fontFamily: 'var(--font-body)',
           fontSize: 'var(--text-sm)',
           color: 'var(--teal-900)',
-          ...(style as CSSProperties),
+          ...style,
         }}
         {...rest}
       />

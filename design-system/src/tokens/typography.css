@@ -1,0 +1,28 @@
+:root{
+  --font-retro:'Pixelify Sans',monospace;
+  --font-display:'Baloo 2',cursive;
+  --font-body:'Varela Round',sans-serif;
+
+  --text-2xs:11px;
+  --text-xs:13px;
+  --text-sm:15px;
+  --text-md:18px;
+  --text-lg:22px;
+  --text-xl:28px;
+  --text-2xl:36px;
+  --text-3xl:46px;
+
+  /* two documented exceptions to the scale */
+  --text-hero:64px;
+  --text-numeral:200px;
+
+  --leading-tight:1.05;
+  --leading-snug:1.2;
+  --leading-normal:1.6;
+
+  --weight-display:800;
+  --weight-heading:700;
+
+  --tracking-eyebrow:.18em;
+  --tracking-display:-.01em;
+}

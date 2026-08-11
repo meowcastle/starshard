@@ -1,0 +1,66 @@
+:root{
+  /* base ramp — 8 values from Suyin's media kit, 4 derived for contrast */
+  --cream:#F8F8F0;
+  --white:#FFFFFF;
+  --teal-100:#D8F0F0;
+  --teal-200:#A8E0DC;
+  --teal-500:#38C0B8;
+  --teal-700:#1C5E58;
+  --teal-900:#102828;
+  --pink-200:#F8E0E8;
+  --pink-500:#F878A8;
+  --pink-700:#A63459;
+  --butter-200:#F8F0C8;
+  --amber-700:#7A5C18;
+
+  /* semantic — page context (default) */
+  --surface:var(--cream);
+  --surface-raised:var(--white);
+  --surface-sunken:var(--teal-100);
+  --backdrop:var(--teal-700);
+  --ink:var(--teal-900);
+  --ink-muted:var(--teal-700);
+  --ink-accent:var(--pink-700);
+  --ink-warn:var(--amber-700);
+  --accent:var(--teal-500);
+  --action:var(--pink-500);
+  --edge-light:var(--white);
+  --edge-dark:#4E8C86;
+  --focus:var(--pink-700);
+}
+
+/* card context — same palette, roles inverted. Tarot faces, the share PNG
+   and the OG image. A collectible should read as an object, not a page. */
+[data-context="card"]{
+  --surface:var(--teal-900);
+  --surface-raised:#1A3A38;
+  --surface-sunken:#0A1C1C;
+  --ink:var(--cream);
+  --ink-muted:var(--teal-200);
+  --ink-accent:var(--pink-500);
+  --ink-warn:var(--butter-200);
+  --edge-light:#2A5450;
+  --edge-dark:#061212;
+  --focus:var(--pink-500);
+}
+
+/* foil — the rare-pull treatment. A warm sub-ramp of card context, not a
+   second theme: it swaps only surface, sunken and edge, and inherits ink.
+   Used by TarotCard[rare] and nothing else. */
+[data-context="card"][data-foil],
+[data-foil]{
+  --foil-surface:#5C3A1C;
+  --foil-sunken:#3A2408;
+  --foil-edge:var(--butter-200);
+  --surface:var(--foil-surface);
+  --surface-sunken:var(--foil-sunken);
+  --edge-light:var(--foil-edge);
+}
+
+/* also exposed unscoped so a card can reference the foil values without
+   opting the whole subtree into the treatment */
+:root{
+  --foil-surface:#5C3A1C;
+  --foil-sunken:#3A2408;
+  --foil-edge:#F8F0C8;
+}

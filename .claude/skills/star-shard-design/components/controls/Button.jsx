@@ -1,23 +1,13 @@
-import { useState, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from 'react';
+import React from 'react';
 
-/**
- * Primary action control. Bevelled, square, hard shadow; presses by
- * translating 2px into the page.
- */
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** primary = pink-500 fill, secondary = teal-200, tertiary = transparent. */
-  variant?: 'primary' | 'secondary' | 'tertiary';
-  children?: ReactNode;
-}
-
-const VARIANT_FILL: Record<NonNullable<ButtonProps['variant']>, string> = {
+const VARIANT_FILL = {
   primary: 'var(--action)',
   secondary: 'var(--teal-200)',
   tertiary: 'transparent',
 };
 
-export function Button({ variant = 'primary', type = 'button', disabled, onClick, children, style, ...rest }: ButtonProps) {
-  const [pressed, setPressed] = useState(false);
+export function Button({ variant = 'primary', type = 'button', disabled, onClick, children, style, ...rest }) {
+  const [pressed, setPressed] = React.useState(false);
   return (
     <button
       type={type}
@@ -30,10 +20,10 @@ export function Button({ variant = 'primary', type = 'button', disabled, onClick
         minHeight: 'var(--tap-min)',
         padding: '11px 22px',
         background: VARIANT_FILL[variant],
-        // label is always teal-900 — white on these fills fails AA
+        /* label is always teal-900 — white on these fills fails AA */
         color: 'var(--teal-900)',
         fontFamily: 'var(--font-display)',
-        fontWeight: 'var(--weight-heading)' as CSSProperties['fontWeight'],
+        fontWeight: 'var(--weight-heading)',
         fontSize: 'var(--text-sm)',
         borderRadius: 'var(--radius-none)',
         borderWidth: 'var(--bevel)',

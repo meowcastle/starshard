@@ -1,8 +1,17 @@
 # @starshard/design-system
 
-Implements `DESIGN-SYSTEM.md` v1.0: the token ramp, type scale, bevel/shadow
-system, and six components (`Window`, `Button`, `Input`, `Taskbar`,
-`ShardCard`, `MansionCard`) described in its §4.
+A real buildable package wrapping Claude Design's own component
+implementations — `Window`, `Button`, `Input`, `ShardCard`, `TarotCard` —
+plus a spec-compliant `Taskbar` that Design's export didn't include.
+
+Source of truth for the five adopted components and all tokens is
+**`.claude/skills/star-shard-design/`** (installed from a Design export),
+not `DESIGN-SYSTEM.md`'s markdown appendix — the real `tokens/*.css` files
+there are more complete than that appendix (e.g. the actual 9-step spacing
+scale derived from `Star Shard v2.dc.html` usage, the foil sub-ramp used by
+`TarotCard[rare]`, `--tap-min`). Re-adopt from a future Design export rather
+than hand-editing `Button.tsx`/`Input.tsx`/`Window.tsx`/`ShardCard.tsx`/
+`TarotCard.tsx` or `src/tokens/*.css` directly.
 
 ## What this is for
 
@@ -34,10 +43,11 @@ python3 -m http.server 8935   # or any static server
 # open http://localhost:8935/preview.html
 ```
 
-## Scope
+## Known gap vs. DESIGN-SYSTEM.md
 
-Six components, matching `DESIGN-SYSTEM.md` §4 exactly. Not built: the
-`Shard card` face variants beyond the four accent hues, the Tarot card's foil
-variant, and the transactional-email template (§5.6) — that one is plain HTML
-with inline styles for email-client compatibility and doesn't belong in a
-React component library.
+§4 says ShardCard should keep four distinct accent hues (house teal-500,
+mirror pink-700, moon amber-700, hearth pink-500). Design's actual
+`ShardCard.jsx` uses `--accent` (teal-500) for all four kinds — the title
+strip doesn't currently vary by kind. Adopted as-is since this package
+tracks Design's real implementation, not the spec doc; flag it to Design if
+that's unintended.
