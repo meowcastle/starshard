@@ -21,7 +21,7 @@ The user enters their name, birth date, birth time and birth city, hits
 |---|---|---|
 | 🏠 | **house** | Placidus houses — which of the 12 houses the Sun occupies, plus rising sign |
 | 🪞 | **mirror** | A Jungian archetype, mapped from the Moon sign |
-| 🌙 | **moon** | One of the 28 *manāzil al-qamar*, the classical Arabic lunar mansions |
+| 🌙 | **moon** | One of **28 lunar mansions** ("The Void," "The Ghost"…) — a station system shared across Arabic, Indian, Chinese and Japanese sky-lore, shown with all four names |
 | 🕯️ | **hearth** | The "Monday's Child" rhyme and the planetary ruler of the birth weekday |
 
 Reveal all four and a **"weave my reading"** button appears, which blends them
@@ -199,6 +199,27 @@ pages exist now, but nothing in the app points at them yet. Also open: real
 per-mansion art (the OG images are a generated card in the design system's
 tokens, not commissioned illustration — same honest-placeholder posture as the
 rest of the product's art).
+
+**Card template spec (naming v3 — applies to the landing treatment, the
+tarot/mansion cards, and art direction handed to illustrators):**
+
+- **Epithet large** (Baloo 2) — the card's identity ("The Void"). Mansions are
+  always "The ___"; the mirror shard's future 16 archetypes will use compound
+  single words, so the two systems never collide.
+- **Kanji corner glyph** (虛宿) · the mansion's **real asterism** as the
+  constellation mark (star data: `research/mansions-table.json`)
+- **Four cultural names small along the base** — Arabic · Sanskrit · Chinese ·
+  Japanese — with the match-quality flag (STRONG / PARTIAL / DIVERGENT) as a
+  subtle mark, never hidden
+- **Art direction: star-seed interstellar, in card context** — the mansion as a
+  seed of light; the cultures live in the type layer, not the illustration
+  style. The Void and The Ghost should look like cards people fight over.
+- **Copy sources:** birth entry (~80–100 words) = the card back · daily
+  crossing = the today screen · grimoire trivia = permalink content.
+  **Fushigi Yūgi is grimoire trivia only** — never display names, never imagery.
+- `[VERIFY]`-flagged facts in the batch files are not final until cleared —
+  `research/verify-report.md` lists what's already cleared; the permalink
+  generator picks corrections up on regeneration.
 
 ### P5 — Accessibility
 

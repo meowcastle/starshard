@@ -116,11 +116,13 @@ function extractBlockquote(block, labelRe) {
 // colon shape. Stop at the next "**Label" token, full stop, regardless of
 // how its own bold/colon wrapping continues.
 const FIELD_LABELS = ['Position', 'Stars', 'FY', 'Match'];
-// `[VERIFY ...]`/`[THIN]`/`[HISTORY-ONLY]` are internal editorial review
-// flags for whoever ships the content, not reader-facing copy — the
-// blanket "presented as history, never as practice" line in the page's own
-// sources footer already covers what [HISTORY-ONLY] exists to flag.
-const stripEditorialFlags = s => s.replace(/`?\[(?:VERIFY|THIN|HISTORY-ONLY)[^\]]*\]`?/gi, '');
+// `[VERIFY ...]`/`[THIN]`/`[HISTORY-ONLY]`/`[NEEDS-HUMAN ...]` are internal
+// editorial review flags for whoever ships the content, not reader-facing
+// copy — the blanket "presented as history, never as practice" line in the
+// page's own sources footer already covers what [HISTORY-ONLY] exists to
+// flag. Add new flag names to this alternation as the research process
+// introduces them.
+const stripEditorialFlags = s => s.replace(/`?\[(?:VERIFY|THIN|HISTORY-ONLY|NEEDS-HUMAN)[^\]]*\]`?/gi, '');
 const clean = s => stripEditorialFlags(s).replace(/\*/g, '').replace(/\s+/g, ' ').replace(/[·\-–—:]\s*$/, '').trim();
 function captureField(block, label) {
   const stopLabels = FIELD_LABELS.filter(l => l !== label).join('|');

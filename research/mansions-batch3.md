@@ -19,18 +19,22 @@ the honest off-ecliptic leap.
 | China | 亢 Kàng | "the Neck" of the Azure Dragon · animal: dragon |
 | Japan | 亢宿 | (grimoire: Amiboshi's mansion — the gentle twin) `[VERIFY wamyō]` |
 
-**Old calendars:** tradition praises this station for its **modesty motif** —
-some sources call it the best of the mansions for exactly that quietness.
-`[THIN]` sourcing on the praise; reviewer to firm up.
+**Old calendars:** `[NEEDS-HUMAN]` — a floating "best of the mansions" saying
+circulates for this station, but Ibn Qutaybah's al-Ghafr section contains no
+such praise and no classical attribution was found (see `verify-report.md`).
+The lexicon literature may hold a real version with a different motif — the
+moon alighting here *clear of the Lion's hindparts and the Scorpion's claws*
+(escape-from-harm). Reviewer: Lane's Lexicon s.v. غفر, Lisān al-ʿArab, Tāj
+al-ʿArūs, al-Bīrūnī's al-Āthār al-Bāqiya. Nothing ships until confirmed.
 
 **Election lore — *tradition says*:** digging, wells, and the finding of
 treasure; hinders travel. `[HISTORY-ONLY]` Picatrix: treasure and wells;
 separation (mixed flag).
 
 **Birth entry:**
-> your mansion is The Veil — the covered station, praised in the old books
-> precisely for what it doesn't show. its election lore is digging and buried
-> treasure, and that's the whole read: your best work lives under the surface.
+> your mansion is The Veil — the covered station, named for what it doesn't
+> show. its election lore is digging and buried treasure, and that's the whole
+> read: your best work lives under the surface.
 > the drafts folder. the private playlist. the twelve-layer inner life behind
 > the calm face. people who earn their way past the veil never quite recover
 > from what they find ✦
@@ -57,20 +61,22 @@ Zubenelgenubi and Zubeneschamali, "the southern claw" and "the northern claw"
 | China | 氐 Dǐ | "the Foundation" · Azure Dragon · animal: raccoon-dog |
 | Japan | 氐宿 | (grimoire: Tomo's mansion) `[VERIFY wamyō]` |
 
-**Old calendars:** the best name-story in the deck — these stars were the
-Scorpion's claws for millennia, until the Romans cut them off and made them
-**Libra's scales.** The star names still say claw. The constellation now says
-balance. `[VERIFY exact framing]` — the claw→scales history is standard star
-lore; cite properly before ship.
+**Old calendars:** the best name-story in the deck, now verified — **Babylon
+read these stars both ways at once**: a scorpion's claws *and* zibanītu, "the
+scales of heaven" (star lists, c. 1000 BC). The Greeks kept the claws
+(Chelae); Rome restored the older Balance as Libra. And the buried gem:
+Arabic *zubānā* (claw) is etymologically related to Babylonian *zibanītu* —
+which meant *balance*. Even the word "claw" has a scale hidden inside it.
 
 **Election lore — *tradition says*:** hinders journeys and marriage — but
 good for **freeing captives**. `[HISTORY-ONLY]` Picatrix: discord, crop
 destruction (hostile flags — history shelf).
 
 **Birth entry:**
-> your mansion is The Claws — the two bright stars that were the scorpion's
-> grip until rome renamed them the scales of balance. both things are true
-> about you. you know exactly what's yours, what isn't, and when to let go —
+> your mansion is The Claws — two bright stars the old skies read two ways at
+> once: a scorpion's grip, and a set of scales. babylon saw both; greece kept
+> the claws; rome restored the balance. both things are true about you. you
+> know exactly what's yours, what isn't, and when to let go —
 > and the old tradition marks this station for *freeing captives*, which is
 > the claws' secret: they're not for grabbing. they're for holding the line,
 > and for opening ✦
@@ -136,7 +142,7 @@ said heart, China said heart (心), about the same red star
 
 **Old calendars:** a winter rain naw'. `[THIN]` beyond. (Antares' name is
 Greek for "rival of Ares" — the star red enough to be mistaken for Mars.
-`[VERIFY cite]`)
+Confirmed; Britannica.)
 
 **Election lore — *tradition says*:** victory over enemies — with the honest
 warning that the same books mark it for sedition and discord. A heart this
@@ -173,9 +179,9 @@ Shaula, the raised sting
 | China | 尾 Wěi | "the Tail" · Azure Dragon · animal: tiger |
 | Japan | 尾宿 | (grimoire: Ashitare's mansion) `[VERIFY wamyō]` |
 
-**Old calendars:** `[THIN]`. (Modern note worth the flag: star maps place the
-center of our galaxy toward this station — the root of the root. `[VERIFY
-before ship]`)
+**Old calendars:** `[THIN]`. (In the *sidereal* Vedic frame, Mūla is
+traditionally said to point toward the galactic center — true in that frame;
+in our tropical grid the center falls in #21. Grimoire can hold both.)
 
 **Election lore — *tradition says*:** the martial end of the scorpion —
 sieges, pursuit; the old electors kept peace-work away from it.
@@ -251,7 +257,8 @@ The famous starless stretch of sky; π Sgr stands at its edge as a marker.
 
 **Old calendars:** entered ~January 4, with the coziest sajʿ in the whole
 tradition: *"cream is eaten, and cold is told to calm."* Midwinter comfort,
-canonized.
+canonized. Ibn Qutaybah's own description of this station: *"a patch of sky
+with no stars in it."*
 
 **Election lore — *tradition says*:** harvests, gain, buildings, travel —
 a productive station despite the blankness. (Agrippa alone adds a
@@ -270,6 +277,11 @@ separations warning — `[HISTORY-ONLY]`, mixed flag, history shelf.)
 > the moon rests in The Empty District tonight — the starless field. a quiet
 > day, and a productive one: tradition calls it good for building and
 > harvesting, gently. no rush. cream is eaten; cold is told to calm ✦
+
+**Grimoire trivia (verified):** modern astronomy places Sagittarius A* — the
+center of our galaxy — inside this station's span (26°51′ Sagittarius,
+tropical). **The starless mansion secretly holds the heart of the galaxy.**
+The quietest room in the sky turns out to be the middle of everything.
 
 **Tags:** `rest · space · calm · quiet-productivity`
 

@@ -61,13 +61,13 @@ test('mansion #10 is "The Throne" and #24 is "The Void", not the pilot doc\'s li
   assert.equal(twentyFour.slug, 'the-void');
 });
 
-test('no internal editorial review flags ([VERIFY]/[THIN]/[HISTORY-ONLY]) leak into parsed fields', () => {
+test('no internal editorial review flags ([VERIFY]/[THIN]/[HISTORY-ONLY]/[NEEDS-HUMAN]) leak into parsed fields', () => {
   for (const m of mansions) {
     for (const field of [m.position, m.stars, m.electionLore, m.birthEntry, m.dailyCrossing]) {
-      assert.doesNotMatch(field, /\[(VERIFY|THIN|HISTORY-ONLY)/i, `#${m.id} leaked an editorial flag: ${field}`);
+      assert.doesNotMatch(field, /\[(VERIFY|THIN|HISTORY-ONLY|NEEDS-HUMAN)/i, `#${m.id} leaked an editorial flag: ${field}`);
     }
     for (const row of m.crossCultural) {
-      assert.doesNotMatch(row.meaning, /\[(VERIFY|THIN|HISTORY-ONLY)/i, `#${m.id} ${row.sky} leaked an editorial flag`);
+      assert.doesNotMatch(row.meaning, /\[(VERIFY|THIN|HISTORY-ONLY|NEEDS-HUMAN)/i, `#${m.id} ${row.sky} leaked an editorial flag`);
     }
   }
 });
