@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#102828">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<!--
+  STOPGAP MARKUP — Code-authored, pending a real Claude Design handoff.
+
+  No fresh Design export exists with a real sig.*-namespaced binding
+  manifest (Starshard V3 (1)/'s two files are disposable Design-canvas
+  mocks: flat unprefixed bindings, hardcoded sample data, their own inline
+  ring-drawing code — not receipt-protocol handoffs). Rather than block the
+  whole Sigil/Sounding MVP on a Design pass that hasn't happened, this page
+  was built directly against DESIGN-SYSTEM.md's tokens using the sig.*/
+  snd.* binding namespace DESIGN-BRIEF.md v2 already specifies, so a future
+  real export's reconciliation is "does the manifest match this," not a
+  wholesale rewrite. Do NOT hand-merge a future Design export into this
+  file without checking that namespace first — see OWNERSHIP.md.
+
+  "Star Shard v2.dc.html" is retired as the live page and kept only as a
+  reference until this page passes an extended smoke test — see
+  test/smoke.mjs and CLAUDE.md's receipt protocol.
+-->
+<title>star shard ☆ your star shard</title>
+<meta name="description" content="enter your birth minute and get your star shard: a personal 28-station ring, read live from the real sky. your birth data never leaves your browser.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://starshard.net/">
+<meta property="og:title" content="star shard ☆ your star shard">
+<meta property="og:description" content="a nightly ritual played against the real sky. enter your birth minute, get your star shard, and walk the road one station a night.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="star shard ☆ your star shard">
+<meta name="twitter:description" content="a nightly ritual played against the real sky. enter your birth minute, get your star shard, and walk the road one station a night.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* -- DESIGN-SYSTEM.md's own copy/paste token block, verbatim -- */
+:root {
+  --cream:#F8F8F0; --white:#FFFFFF;
+  --teal-100:#D8F0F0; --teal-200:#A8E0DC; --teal-500:#38C0B8;
+  --teal-700:#1C5E58; --teal-900:#102828;
+  --pink-200:#F8E0E8; --pink-500:#F878A8; --pink-700:#A63459;
+  --butter-200:#F8F0C8; --amber-700:#7A5C18;
+
+  --surface:var(--cream); --surface-raised:var(--white);
+  --surface-sunken:var(--teal-100); --backdrop:var(--teal-700);
+  --ink:var(--teal-900); --ink-muted:var(--teal-700);
+  --ink-accent:var(--pink-700); --ink-warn:var(--amber-700);
+  --accent:var(--teal-500); --action:var(--pink-500);
+  --edge-light:var(--white); --edge-dark:#4E8C86; --focus:var(--pink-700);
+
+  --text-2xs:11px; --text-xs:13px; --text-sm:15px; --text-md:18px;
+  --text-lg:22px; --text-xl:28px; --text-2xl:36px; --text-3xl:46px;
+
+  --space-1:4px;  --space-2:8px;  --space-3:12px; --space-4:16px;
+  --space-6:24px; --space-8:32px; --space-12:48px; --space-16:64px;
+
+  --shadow-window:4px 4px 0 rgba(16,40,40,.45);
+  --shadow-raised:3px 3px 0 rgba(16,40,40,.35);
+  --shadow-chip:2px 2px 0 rgba(16,40,40,.30);
+}
+[data-context="card"] {
+  --surface:var(--teal-900); --surface-raised:#1A3A38;
+  --surface-sunken:#0A1C1C; --backdrop:#0A1C1C;
+  --ink:var(--cream); --ink-muted:var(--teal-200);
+  --ink-accent:var(--pink-500); --ink-warn:var(--butter-200);
+  --edge-light:#2A5450; --edge-dark:#061212; --focus:var(--pink-500);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--backdrop); color:var(--ink);
+  font-family:'Varela Round',sans-serif; font-size:var(--text-sm); line-height:1.6;
+}
+a{color:var(--ink-accent)}
+.eyebrow{font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs); letter-spacing:.18em; text-transform:uppercase; color:var(--ink-muted)}
+.h1{font-family:'Baloo 2',cursive; font-weight:800; font-size:var(--text-2xl); line-height:1.15; margin:0}
+.h2{font-family:'Baloo 2',cursive; font-weight:700; font-size:var(--text-xl); line-height:1.2; margin:0}
+.h3{font-family:'Baloo 2',cursive; font-weight:700; font-size:var(--text-lg); line-height:1.3; margin:0}
+.muted{color:var(--ink-muted)}
+.screen{
+  width:100%; max-width:420px; min-height:100vh; margin:0 auto;
+  background:var(--surface); color:var(--ink);
+  display:flex; flex-direction:column;
+  border-left:3px solid; border-right:3px solid;
+  border-color:var(--edge-light) var(--edge-dark);
+}
+.pad{padding:0 24px}
+.field{display:flex; flex-direction:column; gap:6px; margin-bottom:14px}
+.field label{font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs); letter-spacing:.18em; text-transform:uppercase; color:var(--ink-muted)}
+.field input{
+  height:56px; border:3px solid; border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);
+  background:var(--white); color:var(--ink); font-family:'Varela Round',sans-serif; font-size:var(--text-sm);
+  padding:0 14px; border-radius:0;
+}
+.field input:focus{outline:3px solid var(--focus); outline-offset:2px}
+.hint{font-size:var(--text-xs); color:var(--ink-muted); line-height:1.5}
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  min-height:56px; border:3px solid; border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  box-shadow:var(--shadow-raised); font-family:'Baloo 2',cursive; font-weight:700; font-size:var(--text-md);
+  color:var(--ink); background:var(--surface-raised); cursor:pointer; width:100%; padding:8px 16px;
+}
+.btn:active{border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark); box-shadow:none}
+.btn-primary{background:var(--action); color:var(--teal-900)}
+.btn-tertiary{background:transparent; box-shadow:none}
+.btn:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+.btn[disabled]{opacity:.55; cursor:default}
+.card-panel{
+  background:var(--surface-raised); border:3px solid;
+  border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  box-shadow:var(--shadow-raised); padding:16px; margin:0 24px 14px;
+}
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs); letter-spacing:.1em; color:var(--ink-muted)}
+.chip{border:2px solid var(--edge-dark); padding:4px 8px}
+.pips{font-family:'Pixelify Sans',monospace; letter-spacing:.2em; color:var(--ink-muted)}
+.link-btn{background:none; border:none; color:var(--ink-muted); text-decoration:underline; font-family:'Varela Round',sans-serif; font-size:var(--text-sm); cursor:pointer; padding:10px}
+.ring-seg-dark{stroke:var(--edge-dark)}
+.ring-seg-lit{stroke:var(--teal-500)}
+.ring-seg-now{stroke:var(--pink-500)}
+.ring-tick{stroke:var(--edge-dark); stroke-width:2}
+.ring-mark{fill:var(--ink)}
+.errline{color:var(--ink-warn); font-size:var(--text-xs)}
+.top-bar{display:flex; justify-content:space-between; padding:16px 24px 0}
+.auth-panel{margin:12px 24px 0; padding:12px; border-top:2px dashed var(--edge-dark)}
+@keyframes ss-in{from{opacity:0}to{opacity:1}}
+.screen-in{animation:ss-in .35s ease both}
+@media (prefers-reduced-motion: reduce){*{animation:none !important}}
+</style>
+</helmet>
+
+<div class="screen" role="main">
+
+<!-- ============================= S1 · ARRIVAL ============================ -->
+<sc-if value="{{ sigIsEntry }}" hint-placeholder-val="{{ true }}">
+<div class="screen-in pad" style="padding-top:26px;padding-bottom:26px;display:flex;flex-direction:column;flex:1">
+  <div class="eyebrow">✧ star shard ✧</div>
+  <h1 class="h1" style="margin-top:14px">when did you arrive?</h1>
+  <p class="muted" style="margin:10px 0 20px">the sky wrote something down that minute. we just read it back.</p>
+
+  <div class="field">
+    <label for="sig-name">your name</label>
+    <input id="sig-name" type="text" value="{{ sigName }}" onInput="{{ sigSetName }}" placeholder="suyin">
+  </div>
+  <div class="field">
+    <label for="sig-date">date of arrival</label>
+    <input id="sig-date" type="date" value="{{ sigDate }}" onInput="{{ sigSetDate }}">
+  </div>
+  <sc-if value="{{ sigTimeKnown }}">
+  <div class="field">
+    <label for="sig-time">time</label>
+    <input id="sig-time" type="time" value="{{ sigTime }}" onInput="{{ sigSetTime }}">
+  </div>
+  </sc-if>
+  <button type="button" class="link-btn" style="text-align:left;padding-left:0" onClick="{{ sigToggleTime }}">{{ sigTimeToggleLabel }}</button>
+  <p class="hint" style="margin:4px 0 14px">that's fine. we'll read your station without the step, and leave your facing blank. nothing is guessed.</p>
+
+  <sc-if value="{{ sigManualMode }}">
+  <div class="field">
+    <label for="sig-lat">latitude</label>
+    <input id="sig-lat" type="text" value="{{ sigLat }}" onInput="{{ sigSetLat }}" placeholder="40.71">
+  </div>
+  <div class="field">
+    <label for="sig-lon">longitude</label>
+    <input id="sig-lon" type="text" value="{{ sigLon }}" onInput="{{ sigSetLon }}" placeholder="-74.01">
+  </div>
+  <div class="field">
+    <label for="sig-tz">utc offset</label>
+    <input id="sig-tz" type="text" value="{{ sigTz }}" onInput="{{ sigSetTz }}" placeholder="-5">
+  </div>
+  </sc-if>
+  <sc-if value="{{ sigNotManualMode }}">
+  <div class="field">
+    <label for="sig-place">where you landed</label>
+    <input id="sig-place" type="text" value="{{ sigQuery }}" onInput="{{ sigSetQuery }}" placeholder="brooklyn, ny">
+  </div>
+  <button type="button" class="btn" onClick="{{ sigSearch }}">{{ sigSearchLabel }}</button>
+  <sc-if value="{{ sigHasResults }}">
+    <sc-for list="{{ sigCityResults }}" as="r">
+      <button type="button" class="btn btn-tertiary" onClick="{{ r.pick }}" style="justify-content:flex-start;text-align:left">{{ r.name }}, {{ r.region }}</button>
+    </sc-for>
+  </sc-if>
+  </sc-if>
+  <button type="button" class="link-btn" style="text-align:left;padding-left:0" onClick="{{ sigToggleManual }}">{{ sigManualToggleLabel }}</button>
+
+  <sc-if value="{{ sigFormError }}">
+    <p class="errline">{{ sigFormError }}</p>
+  </sc-if>
+
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:18px">
+    <button type="button" class="btn btn-primary" onClick="{{ sigSubmit }}">read my mark ✦</button>
+    <span class="eyebrow" style="text-align:center">this never leaves your phone</span>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============================= A2 · FALLING ============================ -->
+<sc-if value="{{ sigIsFalling }}">
+<div class="screen-in" data-context="card" style="min-height:100vh;background:var(--surface-sunken);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;color:var(--ink)">
+  <div class="eyebrow">reading the sky</div>
+  <div style="font-size:28px;letter-spacing:.4em">✦ ✦ ✦</div>
+</div>
+</sc-if>
+
+<!-- ============================= S2 · THE SIGIL PROFILE ==================== -->
+<sc-if value="{{ sigIsProfile }}">
+<div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column">
+  <div class="top-bar" style="padding:0 0 6px">
+    <span class="eyebrow">{{ sigProfileName }}'s star shard</span>
+    <span class="eyebrow">{{ sigWalkedLabel }}</span>
+  </div>
+
+  <div style="display:flex;justify-content:center;padding:10px 0">
+    <svg viewBox="0 0 200 200" width="260" height="260" role="img" aria-label="your star shard ring">
+      <sc-for list="{{ ringSegments }}" as="seg">
+        <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
+      </sc-for>
+      <sc-for list="{{ ringTicks }}" as="t">
+        <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
+      </sc-for>
+      <sc-for list="{{ ringMarks }}" as="m">
+        <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="ring-mark"></circle>
+      </sc-for>
+    </svg>
+  </div>
+
+  <sc-if value="{{ sigIsNewborn }}">
+    <p class="h3" style="padding:0 24px;margin-top:10px">{{ sigStrangeLine }}</p>
+    <p class="muted pad" style="margin-top:8px">tonight the lantern stands in <strong style="color:var(--ink)">{{ sndStationEpithet }}</strong>, one of the twenty-eight. your ring is dark. it lights one segment at a time, and only by walking.</p>
+  </sc-if>
+
+  <div class="card-panel" style="margin-top:14px">
+    <div class="eyebrow" style="margin-bottom:6px">✦ the strike</div>
+    <div style="display:flex;gap:10px;align-items:baseline"><span class="h3">{{ sigStrikeEpithet }}</span><span class="muted">· {{ sigStrikeStepName }}</span></div>
+    <p style="margin:8px 0 0">{{ sigStrikeHeadline }}</p>
+    <p style="margin:8px 0 0" class="muted">{{ sigStrikeBody }}</p>
+  </div>
+
+  <div class="card-panel">
+    <div class="eyebrow" style="margin-bottom:6px">◍ the root</div>
+    <div style="display:flex;gap:10px;align-items:baseline"><span class="h3">{{ sigRootEpithet }}</span><sc-if value="{{ sigRootHasStep }}"><span class="muted">· {{ sigRootStepName }}</span></sc-if></div>
+    <p style="margin:8px 0 0">{{ sigRootLine }}</p>
+  </div>
+
+  <div style="display:flex;gap:14px;padding:0 24px 14px">
+    <div class="card-panel" style="flex:1;margin:0">
+      <div class="eyebrow" style="margin-bottom:6px">☾ the glow</div>
+      <p style="margin:0">{{ sigGlowLine }}</p>
+    </div>
+    <div class="card-panel" style="flex:1;margin:0">
+      <div class="eyebrow" style="margin-bottom:6px">✋ the hand</div>
+      <p style="margin:0">{{ sigHandLine }}</p>
+    </div>
+  </div>
+
+  <sc-if value="{{ sigHasFacing }}">
+  <div class="card-panel">
+    <div class="eyebrow" style="margin-bottom:6px">▲ the facing</div>
+    <p style="margin:0">{{ sigFacingLine }}</p>
+  </div>
+  </sc-if>
+
+  <div class="card-panel">
+    <div class="eyebrow" style="margin-bottom:6px">○ the answering star</div>
+    <p style="margin:0">{{ sigAnsweringLine }}</p>
+  </div>
+
+  <div class="card-panel" style="background:var(--surface-accent, var(--pink-200))">
+    <div class="eyebrow" style="margin-bottom:6px;color:var(--ink-accent)">the gait · {{ sigGaitTypeLabel }}</div>
+    <p style="margin:0">{{ sigGaitLine }}</p>
+    <p class="h3" style="margin:10px 0 0">{{ sigGaitPermission }}</p>
+  </div>
+
+  <sc-if value="{{ sigIsWalkedAlready }}">
+  <div class="card-panel" style="background:var(--surface-sunken);display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div class="eyebrow">next crossing</div>
+      <div class="h3">{{ sigCountdown }}</div>
+    </div>
+    <span class="eyebrow">grace 1h</span>
+  </div>
+  </sc-if>
+
+  <div class="pad" style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:8px">
+    <sc-if value="{{ sigCanWalkTonight }}">
+      <button type="button" class="btn btn-primary" onClick="{{ sigWalkTonight }}">walk tonight's crossing ☾</button>
+    </sc-if>
+    <sc-if value="{{ sigAlreadyWalkedTonight }}">
+      <button type="button" class="btn btn-primary" onClick="{{ sigOpenShare }}">share my shard</button>
+    </sc-if>
+    <button type="button" class="link-btn" onClick="{{ sigToggleAuth }}">{{ sigAuthToggleLabel }}</button>
+  </div>
+
+  <sc-if value="{{ sigAuthOpen }}">
+  <div class="auth-panel">
+    <sc-if value="{{ isLoggedIn }}">
+      <p class="muted">signed in as {{ authEmail }}</p>
+      <button type="button" class="btn btn-tertiary" onClick="{{ doLogout }}">log out</button>
+    </sc-if>
+    <sc-if value="{{ isNotLoggedIn }}">
+      <p class="hint" style="margin-bottom:8px">save your shard to an account so it follows you across devices.</p>
+      <div class="field"><label for="sig-a-email">email</label><input id="sig-a-email" type="email" value="{{ aEmail }}" onInput="{{ setAEmail }}"></div>
+      <div class="field"><label for="sig-a-pass">password</label><input id="sig-a-pass" type="password" value="{{ aPassword }}" onInput="{{ setAPassword }}"></div>
+      <sc-if value="{{ authError }}"><p class="errline">{{ authError }}</p></sc-if>
+      <button type="button" class="btn" disabled="{{ authBusy }}" onClick="{{ authSubmit }}">{{ authSubmitLabel }}</button>
+      <button type="button" class="link-btn" onClick="{{ authSwitchMode }}">{{ authSwitchLabel }}</button>
+    </sc-if>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============================= S3 · THE SOUNDING ========================= -->
+<sc-if value="{{ sndIsBeat0 }}">
+<div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 1 · the station</span><span class="pips">{{ sndPips }}</span></div>
+  <div class="card-panel" style="margin:18px 0 0;padding:20px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="h2">{{ sndStationEpithet }}</span><span class="muted">{{ sndStationKanji }}</span></div>
+    <p class="muted" style="margin:6px 0 0">{{ sndStepName }} · the lantern stands here tonight</p>
+    <div class="chip-row" style="margin-top:14px">
+      <sc-for list="{{ sndCrossCultural }}" as="c">
+        <span class="chip">{{ c.name }} · {{ c.sky }}</span>
+      </sc-for>
+    </div>
+  </div>
+  <div style="margin-top:auto;padding-top:16px">
+    <button type="button" class="btn btn-primary" onClick="{{ sndNext }}">next ✦</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sndIsBeat1 }}">
+<div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 2 · the cast</span><span class="pips">{{ sndPips }}</span></div>
+  <h2 class="h2" style="margin-top:20px">{{ sndCastKindLabel }}</h2>
+  <p class="muted" style="margin-top:8px">{{ sndCastFlavor }}</p>
+  <div style="display:flex;align-items:center;gap:10px;margin-top:18px">
+    <div class="card-panel" style="flex:1;margin:0"><div class="eyebrow">now</div><div class="h3" style="margin-top:4px">{{ sndNowEpithet }}</div><div class="muted">{{ sndNowStepName }}</div></div>
+    <sc-if value="{{ sndHasBecoming }}">
+      <span style="font-family:'Baloo 2',cursive;font-size:24px;color:var(--ink-accent)">→</span>
+      <div class="card-panel" style="flex:1;margin:0;background:var(--surface-sunken)"><div class="eyebrow">becoming</div><div class="h3" style="margin-top:4px">{{ sndBecomingEpithet }}</div><div class="muted">{{ sndBecomingStepName }}</div></div>
+    </sc-if>
+  </div>
+  <div style="margin-top:auto;padding-top:16px">
+    <button type="button" class="btn btn-primary" onClick="{{ sndNext }}">next ✦</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sndIsBeat2 }}">
+<div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 3 · the counsel</span><span class="pips">{{ sndPips }}</span></div>
+  <div class="card-panel" style="margin:18px 0 0;padding:20px">
+    <div class="eyebrow" style="color:var(--ink-accent);margin-bottom:10px">tonight favors</div>
+    <p class="h3" style="margin:0;line-height:1.4">{{ sndCounselBody }}</p>
+  </div>
+  <div class="card-panel" style="background:var(--pink-200)">
+    <div class="eyebrow" style="color:var(--ink-accent);margin-bottom:6px">for you, tonight</div>
+    <p style="margin:0">{{ sndRelational }}</p>
+  </div>
+  <div style="margin-top:auto;padding-top:16px">
+    <button type="button" class="btn btn-primary" onClick="{{ sndNext }}">next ✦</button>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sndIsBeat3 }}">
+<div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh" data-context="card">
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 4 · the question</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <p class="h1" style="line-height:1.25">{{ sndQuestion }}</p>
+  </div>
+  <p class="muted" style="margin-bottom:16px">asked, never answered. nothing to type, nothing to send.</p>
+  <button type="button" class="btn btn-primary" onClick="{{ sndClaim }}" disabled="{{ sndClaiming }}">{{ sndClaimLabel }}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ sndIsBeat4 }}">
+<div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 5 · the claim</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="display:flex;justify-content:center;padding:16px 0 0">
+    <svg viewBox="0 0 200 200" width="240" height="240" role="img" aria-label="your star shard ring">
+      <sc-for list="{{ ringSegments }}" as="seg">
+        <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
+      </sc-for>
+      <sc-for list="{{ ringTicks }}" as="t">
+        <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
+      </sc-for>
+      <sc-for list="{{ ringMarks }}" as="m">
+        <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="ring-mark"></circle>
+      </sc-for>
+    </svg>
+  </div>
+  <p class="h2" style="text-align:center;margin-top:14px">kindled.</p>
+  <p class="muted" style="text-align:center;margin-top:8px">{{ sndClaimEpithet }} · {{ sndClaimStepName }} is lit on your ring.</p>
+  <p class="h3" style="text-align:center;margin-top:20px">{{ sndCloseLine }}</p>
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:16px">
+    <button type="button" class="btn btn-primary" onClick="{{ sndToShare }}">share my shard</button>
+    <button type="button" class="link-btn" onClick="{{ sndToProfile }}">back to my shard</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============================= S2b · SHARE =============================== -->
+<sc-if value="{{ sigIsShare }}">
+<div class="screen-in" data-context="card" style="min-height:100vh;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:26px">
+  <svg viewBox="0 0 200 200" width="260" height="260" role="img" aria-label="your star shard ring">
+    <sc-for list="{{ ringSegments }}" as="seg">
+      <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
+    </sc-for>
+    <sc-for list="{{ ringTicks }}" as="t">
+      <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
+    </sc-for>
+    <sc-for list="{{ ringMarks }}" as="m">
+      <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="ring-mark"></circle>
+    </sc-for>
+  </svg>
+  <div class="h1">{{ sigProfileName }}</div>
+  <div class="muted">{{ sigShareStat }}</div>
+  <button type="button" class="link-btn" onClick="{{ sigCloseShare }}">back</button>
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const BUILD_ID = Date.now();
+
+class Component extends DCLogic {
+  state = {
+    ready: false,
+
+    sigStep: 'entry', // entry | falling | profile | share
+    sndStep: null,    // null | 0..4  — a Sounding overlay on top of sigStep
+
+    sigName: '', sigDate: '1999-07-15', sigTime: '23:40', sigTimeKnown: true,
+    sigQuery: '', sigCityResults: [], sigPlace: null, sigSearching: false,
+    sigManualMode: false, sigLat: '', sigLon: '', sigTz: '',
+    sigFormError: '',
+
+    sigChart: null, sigil: null, sigPlan: null, sigArrival: null,
+    sigRecollection: [], // [{station,step,castContext,kindledAt}]
+    sigJustKindled: null,
+
+    sndCast: null, sndRelation: null, sndLight: null, sndSounding: null, sndClaiming: false,
+
+    sigAuthOpen: false,
+    authChecked: false, authEmail: null, authMode: 'login', authBusy: false, authError: '',
+    aEmail: '', aPassword: '',
+  };
+
+  async componentDidMount() {
+    const [astro, sigilMod, sky, reading, stationsMod, copy, tz, api] = await Promise.all([
+      import(`./astro.js?v=${BUILD_ID}`), import(`./sigil.js?v=${BUILD_ID}`),
+      import(`./sky.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
+      import(`./stations.js?v=${BUILD_ID}`), import(`./sigil-copy.js?v=${BUILD_ID}`),
+      import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
+    ]);
+    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, copy, tz, api });
+
+    let save = null;
+    try { save = JSON.parse(localStorage.getItem('starshard.sigil-save') || 'null'); } catch (e) {}
+    let recollection = [];
+    try { recollection = JSON.parse(localStorage.getItem('starshard.recollection') || '[]'); } catch (e) {}
+
+    const patch = { ready: true, sigRecollection: Array.isArray(recollection) ? recollection : [] };
+    if (save && save.sigil) {
+      Object.assign(patch, {
+        sigName: save.name || '', sigChart: save.chart, sigil: save.sigil,
+        sigPlan: this.sigilMod.readingPlan(save.sigil),
+        sigStep: 'profile',
+      });
+    }
+    this.setState(patch, () => {
+      if (this.state.sigStep === 'profile') this.refreshArrivalAndTonight();
+    });
+
+    const who = await this.api.me();
+    if (who) {
+      this.setState({ authChecked: true, authEmail: who.email });
+      this.loadAndMergeAccount();
+    } else {
+      this.setState({ authChecked: true });
+    }
+  }
+
+  // -- birth entry ----------------------------------------------------------
+
+  sigSetName = e => this.setState({ sigName: e.target.value });
+  sigSetDate = e => this.setState({ sigDate: e.target.value });
+  sigSetTime = e => this.setState({ sigTime: e.target.value });
+  sigToggleTime = () => this.setState({ sigTimeKnown: !this.state.sigTimeKnown });
+  sigToggleManual = () => this.setState({ sigManualMode: !this.state.sigManualMode, sigFormError: '' });
+  sigSetLat = e => this.setState({ sigLat: e.target.value });
+  sigSetLon = e => this.setState({ sigLon: e.target.value });
+  sigSetTz = e => this.setState({ sigTz: e.target.value });
+  sigSetQuery = e => this.setState({ sigQuery: e.target.value, sigPlace: null });
+
+  sigSearch = async () => {
+    const q = this.state.sigQuery.trim();
+    if (!q) return;
+    this.setState({ sigSearching: true, sigCityResults: [], sigFormError: '' });
+    try {
+      const res = await this.api.geocode(q);
+      this.setState({ sigSearching: false, sigCityResults: res, sigFormError: res.length ? '' : 'no stars found by that name, try another spelling or enter coordinates ♡' });
+    } catch (e) {
+      this.setState({ sigSearching: false, sigManualMode: true, sigFormError: 'the star atlas is unreachable, enter coordinates manually ♡' });
+    }
+  };
+
+  chartFrom(dateStr, timeStr, place) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [hh, mm] = timeStr.split(':').map(Number);
+    const tzOffset = this.tz.dstInfo(place.tz, y, m, d, hh, mm).off;
+    return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: place.lat, lon: place.lon, tzOffset });
+  }
+
+  sigSubmit = () => {
+    const s = this.state;
+    if (!s.sigDate) { this.setState({ sigFormError: 'the stars need your birthday!!' }); return; }
+    const time = s.sigTimeKnown ? s.sigTime : '12:00';
+    let chart;
+    if (s.sigManualMode) {
+      const lat = parseFloat(s.sigLat), lon = parseFloat(s.sigLon), tzOffset = parseFloat(s.sigTz);
+      if ([lat, lon, tzOffset].some(isNaN)) { this.setState({ sigFormError: 'manual mode needs latitude, longitude & UTC offset ♡' }); return; }
+      const [y, m, d] = s.sigDate.split('-').map(Number);
+      const [hh, mm] = time.split(':').map(Number);
+      chart = this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset });
+    } else {
+      if (!s.sigPlace) { this.setState({ sigFormError: 'search for your birth town first, so the moon knows where to look ♡' }); return; }
+      try { chart = this.chartFrom(s.sigDate, time, s.sigPlace); }
+      catch (e) { this.setState({ sigFormError: 'could not read that timezone, try manual coordinates ♡', sigManualMode: true }); return; }
+    }
+
+    const sigil = this.sigilMod.deriveSigil(chart, { timeKnown: s.sigTimeKnown });
+    const plan = this.sigilMod.readingPlan(sigil);
+    try {
+      localStorage.setItem('starshard.sigil-save', JSON.stringify({ name: s.sigName, chart, sigil }));
+    } catch (e) {}
+    this.api.saveSigil(sigil);
+
+    this.setState({ sigChart: chart, sigil, sigPlan: plan, sigFormError: '', sigStep: 'falling' }, () => {
+      this.refreshArrivalAndTonight();
+      setTimeout(() => this.setState({ sigStep: 'profile' }), 700); // DESIGN-SYSTEM.md's reveal beat
+    });
+  };
+
+  // -- computed reading + tonight's cast --------------------------------------
+
+  refreshArrivalAndTonight = () => {
+    const s = this.state;
+    if (!s.sigil || !s.sigPlan) return;
+    const arrival = this.reading.arrivalReading({ sigil: s.sigil, plan: s.sigPlan, stations: this.stations, copy: this.copy, name: s.sigName || 'traveler' });
+
+    const jd = Date.now() / 86400000 + 2440587.5;
+    const moonLon = this.astro.moonLongitude(jd), sunLon = this.astro.sunLongitude(jd);
+    const cast = this.sky.castKind(moonLon, jd);
+    const light = this.sky.moonPhase(sunLon, moonLon);
+    const birthNak = this.sky.siderealNakshatra(s.sigChart.moonLon, s.sigChart.jd);
+    const todayNak = this.sky.siderealNakshatra(moonLon, jd);
+    const relation = this.sky.tarabala(birthNak.index, todayNak.index);
+    const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy });
+
+    this.setState({ sigArrival: arrival, sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding });
+  };
+
+  // -- Sounding navigation ----------------------------------------------------
+
+  sigWalkTonight = () => this.setState({ sndStep: 0 });
+  sndNext = () => this.setState(st => ({ sndStep: Math.min(4, (st.sndStep || 0) + 1) }));
+  sndToProfile = () => this.setState({ sndStep: null, sigJustKindled: null });
+  sndToShare = () => this.setState({ sndStep: null, sigStep: 'share' });
+  sigOpenShare = () => this.setState({ sigStep: 'share' });
+  sigCloseShare = () => this.setState({ sigStep: 'profile' });
+
+  alreadyKindled(station, step) {
+    return this.state.sigRecollection.some(r => r.station === station && r.step === step);
+  }
+
+  sndClaim = async () => {
+    const s = this.state;
+    if (!s.sndCast) return;
+    const { station, step } = s.sndCast.current;
+    if (this.alreadyKindled(station, step)) { this.setState({ sndStep: 4 }); return; }
+
+    const record = { station, step, castContext: { current: s.sndRelation.taraName, light: s.sndLight.name, castKind: s.sndCast.kind }, kindledAt: new Date().toISOString() };
+    const merged = [...s.sigRecollection, record];
+    this.setState({ sigRecollection: merged, sigJustKindled: { station, step }, sndStep: 4 });
+    try { localStorage.setItem('starshard.recollection', JSON.stringify(merged)); } catch (e) {}
+
+    if (this.state.authEmail) {
+      try { await this.api.addRecollection(station, record.castContext); }
+      catch (e) { /* logged, retried on next loadAndMergeAccount() via the server's own idempotent claim check */ console.warn('addRecollection failed', e); }
+    }
+  };
+
+  // -- account: sigil + recollection sync (mirrors the pre-reboot page's
+  // loadAndMergeDeck() exactly, but unions recollection by (station,step)
+  // key rather than a bare-int Set, since each record also carries
+  // castContext/kindledAt the old deck array never had) --------------------
+
+  loadAndMergeAccount = async () => {
+    const [serverSigil, serverRecollection] = await Promise.all([this.api.loadSigil(), this.api.loadRecollection()]);
+    const s = this.state;
+    if (!s.sigil && serverSigil) {
+      const plan = this.sigilMod.readingPlan(serverSigil);
+      this.setState({ sigil: serverSigil, sigPlan: plan, sigChart: s.sigChart }, () => {
+        if (s.sigChart) this.refreshArrivalAndTonight();
+      });
+    } else if (s.sigil) {
+      this.api.saveSigil(s.sigil);
+    }
+
+    const byKey = new Map();
+    for (const r of [...s.sigRecollection, ...serverRecollection]) byKey.set(`${r.station}:${r.step}`, r);
+    const merged = [...byKey.values()];
+    this.setState({ sigRecollection: merged });
+    try { localStorage.setItem('starshard.recollection', JSON.stringify(merged)); } catch (e) {}
+  };
+
+  // -- auth (unprefixed — shared account data, not phone-UI state; ported
+  // from Star Shard v2.dc.html's own doLogin/doSignup/doLogout) ------------
+
+  sigToggleAuth = () => this.setState(st => ({ sigAuthOpen: !st.sigAuthOpen }));
+  authSwitchMode = () => this.setState(st => ({ authMode: st.authMode === 'login' ? 'signup' : 'login', authError: '' }));
+
+  doSignup = async () => {
+    const email = this.state.aEmail.trim(), password = this.state.aPassword;
+    if (!email || password.length < 8) { this.setState({ authError: 'email + a password of 8 or more characters, please ♡' }); return; }
+    this.setState({ authBusy: true, authError: '' });
+    try {
+      const j = await this.api.signup(email, password);
+      this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
+      this.loadAndMergeAccount();
+    } catch (e) {
+      this.setState({ authBusy: false, authError: this.api.signupError(e.code) });
+    }
+  };
+
+  doLogin = async () => {
+    const email = this.state.aEmail.trim(), password = this.state.aPassword;
+    if (!email || !password) { this.setState({ authError: 'enter your email and password ♡' }); return; }
+    this.setState({ authBusy: true, authError: '' });
+    try {
+      const j = await this.api.login(email, password);
+      this.setState({ authBusy: false, authEmail: j.email, aPassword: '' });
+      this.loadAndMergeAccount();
+    } catch (e) {
+      this.setState({ authBusy: false, authError: this.api.loginError(e.code) });
+    }
+  };
+
+  doLogout = async () => {
+    await this.api.logout();
+    this.setState({ authEmail: null, aEmail: '', aPassword: '' });
+  };
+
+  // -- render -----------------------------------------------------------------
+
+  renderVals() {
+    const s = this.state;
+    if (!s.ready) return { sigIsEntry: true, sigTimeKnown: true, sigManualMode: false, sigTimeToggleLabel: '', sigSearchLabel: '', sigManualToggleLabel: '', sigNotManualMode: true, sigHasResults: false };
+
+    const sigil = s.sigil, plan = s.sigPlan, arrival = s.sigArrival, sounding = s.sndSounding, cast = s.sndCast;
+
+    const tonight = cast ? { station: cast.current.station, step: cast.current.step } : null;
+    const ring = sigil
+      ? this.sigilMod.sigilRingData(sigil, { kindled: s.sigRecollection, tonight })
+      : { segments: [], skyTicks: [], natalMarks: [] };
+    const ringSegments = ring.segments.map(seg => ({ d: seg.d, cls: 'ring-seg-' + seg.state }));
+    const ringTicks = ring.skyTicks;
+    const ringMarks = ring.natalMarks;
+
+    const walkedCount = s.sigRecollection.length;
+    const tonightAlreadyKindled = tonight ? this.alreadyKindled(tonight.station, tonight.step) : false;
+
+    const sndBeatIdx = s.sndStep;
+    const pips = ['●○○○○', '○●○○○', '○○●○○', '○○○●○', '○○○○●'][sndBeatIdx] || '';
+
+    return {
+      // -- entry ---------------------------------------------------------
+      sigIsEntry: s.sigStep === 'entry',
+      sigName: s.sigName, sigSetName: this.sigSetName,
+      sigDate: s.sigDate, sigSetDate: this.sigSetDate,
+      sigTime: s.sigTime, sigSetTime: this.sigSetTime,
+      sigTimeKnown: s.sigTimeKnown, sigToggleTime: this.sigToggleTime,
+      sigTimeToggleLabel: s.sigTimeKnown ? "i don't know my birth time" : 'actually, i do know my birth time',
+      sigManualMode: s.sigManualMode, sigNotManualMode: !s.sigManualMode, sigToggleManual: this.sigToggleManual,
+      sigManualToggleLabel: s.sigManualMode ? 'search for my town instead' : 'enter coordinates manually instead',
+      sigLat: s.sigLat, sigSetLat: this.sigSetLat, sigLon: s.sigLon, sigSetLon: this.sigSetLon, sigTz: s.sigTz, sigSetTz: this.sigSetTz,
+      sigQuery: s.sigQuery, sigSetQuery: this.sigSetQuery, sigSearch: this.sigSearch,
+      sigSearchLabel: s.sigSearching ? 'searching…' : 'search',
+      sigHasResults: s.sigCityResults.length > 0,
+      sigCityResults: s.sigCityResults.map(r => ({ ...r, pick: () => this.setState({ sigPlace: r, sigCityResults: [], sigQuery: `${r.name}, ${r.region}` }) })),
+      sigFormError: s.sigFormError,
+      sigSubmit: this.sigSubmit,
+
+      // -- falling ---------------------------------------------------------
+      sigIsFalling: s.sigStep === 'falling',
+
+      // -- profile -----------------------------------------------------------
+      sigIsProfile: s.sigStep === 'profile' && sndBeatIdx == null,
+      sigProfileName: s.sigName || 'traveler',
+      sigWalkedLabel: walkedCount === 0 ? 'night zero' : `${walkedCount} night${walkedCount === 1 ? '' : 's'} walked`,
+      sigIsNewborn: walkedCount === 0,
+      sigStrangeLine: arrival ? arrival.handle.strangeLine : '',
+      sigStrikeEpithet: arrival ? arrival.strike.epithet : '', sigStrikeStepName: arrival ? arrival.strike.stepName : '',
+      sigStrikeHeadline: arrival ? arrival.strike.headline : '',
+      sigStrikeBody: arrival ? arrival.strike.body : '',
+      sigRootEpithet: arrival ? arrival.root.epithet : '', sigRootHasStep: !!(arrival && arrival.root.stepName),
+      sigRootStepName: arrival && arrival.root.stepName ? arrival.root.stepName : '', sigRootLine: arrival ? arrival.root.line : '',
+      sigGlowLine: arrival ? arrival.glow.line : '', sigHandLine: arrival ? arrival.hand.line : '',
+      sigHasFacing: !!(arrival && !arrival.facing.skip), sigFacingLine: arrival && !arrival.facing.skip ? arrival.facing.line : '',
+      sigAnsweringLine: arrival ? arrival.answering.line : '',
+      sigGaitTypeLabel: arrival ? arrival.handle.typeLabel : '', sigGaitLine: arrival ? arrival.gait.gait : '', sigGaitPermission: arrival ? arrival.gait.permission : '',
+      sigIsWalkedAlready: tonightAlreadyKindled,
+      sigCountdown: '', // live per-second countdown is a follow-up pass — see STATUS.md
+      sigCanWalkTonight: !tonightAlreadyKindled,
+      sigAlreadyWalkedTonight: tonightAlreadyKindled,
+      sigWalkTonight: this.sigWalkTonight, sigOpenShare: this.sigOpenShare,
+      sigAuthOpen: s.sigAuthOpen, sigToggleAuth: this.sigToggleAuth,
+      sigAuthToggleLabel: s.sigAuthOpen ? 'hide account' : (s.authEmail ? `☾ ${s.authEmail}` : 'save my shard to an account'),
+
+      // -- Sounding ------------------------------------------------------
+      sndIsBeat0: sndBeatIdx === 0, sndIsBeat1: sndBeatIdx === 1, sndIsBeat2: sndBeatIdx === 2,
+      sndIsBeat3: sndBeatIdx === 3, sndIsBeat4: sndBeatIdx === 4,
+      sndPips: pips,
+      sndStationEpithet: sounding ? sounding.station.epithet : '', sndStationKanji: sounding ? sounding.station.kanji : '',
+      sndStepName: sounding ? sounding.station.stepName : '',
+      sndCrossCultural: sounding ? sounding.station.crossCultural : [],
+      sndCastKindLabel: sounding ? sounding.cast.kind : '', sndCastFlavor: sounding ? sounding.cast.flavor : '',
+      sndNowEpithet: sounding ? sounding.cast.now.epithet : '', sndNowStepName: sounding ? sounding.cast.now.stepName : '',
+      sndHasBecoming: !!(sounding && sounding.cast.becoming),
+      sndBecomingEpithet: sounding && sounding.cast.becoming ? sounding.cast.becoming.epithet : '',
+      sndBecomingStepName: sounding && sounding.cast.becoming ? sounding.cast.becoming.stepName : '',
+      sndCounselBody: sounding ? sounding.counsel.body : '', sndRelational: sounding ? sounding.counsel.relational : '',
+      sndQuestion: sounding ? sounding.question.text : '',
+      sndClaiming: s.sndClaiming, sndClaimLabel: tonightAlreadyKindled ? 'already kindled tonight' : 'claim tonight ✦',
+      sndClaim: this.sndClaim, sndNext: this.sndNext, sndToProfile: this.sndToProfile, sndToShare: this.sndToShare,
+      sndClaimEpithet: sounding ? sounding.claim.epithet : '', sndClaimStepName: sounding ? sounding.claim.stepName : '',
+      sndCloseLine: sounding ? sounding.claim.closeLine : '',
+
+      // -- share ---------------------------------------------------------
+      sigIsShare: s.sigStep === 'share', sigCloseShare: this.sigCloseShare,
+      sigShareStat: `${walkedCount} of 112 kindled · ${arrival ? arrival.handle.typeLabel.toLowerCase() : ''}`,
+
+      // -- ring (shared across profile / beat4 / share) --------------------
+      ringSegments, ringTicks, ringMarks,
+
+      // -- auth (unprefixed) -----------------------------------------------
+      isLoggedIn: !!s.authEmail, isNotLoggedIn: !s.authEmail, authEmail: s.authEmail,
+      authMode: s.authMode, authSwitchMode: this.authSwitchMode,
+      authSwitchLabel: s.authMode === 'login' ? 'new here? sign up instead' : 'already have a shard? log in',
+      aEmail: s.aEmail, setAEmail: e => this.setState({ aEmail: e.target.value }),
+      aPassword: s.aPassword, setAPassword: e => this.setState({ aPassword: e.target.value }),
+      authError: s.authError, authBusy: s.authBusy,
+      authSubmit: s.authMode === 'login' ? this.doLogin : this.doSignup,
+      authSubmitLabel: s.authBusy ? 'one sec…' : (s.authMode === 'login' ? '☾ log in' : '✦ make my account'),
+      doLogout: this.doLogout,
+    };
+  }
+}
+</script>
+</body>
+</html>

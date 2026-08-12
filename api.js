@@ -109,6 +109,49 @@ export async function saveDeck(deck) {
   try { await call('/api/deck', { method: 'PUT', body: { deck } }); } catch (e) {}
 }
 
+// --- sigil (the reboot's derived natal object) ------------------------------
+// Never sends birth data — only the derived sigil (station/step/type indices),
+// same privacy posture as `deck`. The logged-out fallback is localStorage,
+// handled at the Component layer, same split as deck's.
+
+/** Resolves to the saved sigil object, or null. Never throws. */
+export async function loadSigil() {
+  try {
+    const j = await call('/api/sigil');
+    return j && typeof j.sigil === 'object' ? j.sigil : null;
+  } catch (e) { return null; }
+}
+
+/** Never throws — a failed sigil sync must not interrupt the arrival
+ * reading (DESIGN-BRIEF.md v2 law 4: no spinner on the reading). */
+export async function saveSigil(sigil) {
+  try { await call('/api/sigil', { method: 'PUT', body: { sigil } }); } catch (e) {}
+}
+
+// --- recollection (kindled station+step segments) ---------------------------
+// Unlike deck's flat mansion-id array, each record carries castContext/
+// kindledAt, so the merge on login unions by (station, step) key, not a
+// bare-int Set — see loadAndMergeRecollection in Star Shard's script block.
+
+/** Resolves to the recollection array, or [] on failure (list shape,
+ * matches loadGuestbook — not loadDeck's null-on-failure). */
+export async function loadRecollection() {
+  try {
+    const j = await call('/api/recollection');
+    return Array.isArray(j?.recollection) ? j.recollection : [];
+  } catch (e) { return []; }
+}
+
+/** Throws (unlike saveDeck) — kindling is a confirmed user-facing action
+ * (the Sounding's "kindled." beat); a silent failure here would show the
+ * user success locally while the server never recorded it, desyncing the
+ * ring with no error surfaced anywhere. Callers still don't await this
+ * before updating the UI — see the no-spinner note above — the throw is
+ * for logging/retry, not to block the claim beat. */
+export async function addRecollection(station, castContext) {
+  return call('/api/recollection', { method: 'POST', body: { station, castContext } });
+}
+
 // --- guestbook ---------------------------------------------------------------
 // Public, unauthenticated. Backed by starshard-api; no localStorage fallback.
 
@@ -152,4 +195,9 @@ export function resetPasswordError(code) {
 
 export function guestbookError(code) {
   return AUTH_COPY[code] || 'could not sign the guestbook, try again ♡';
+}
+
+export function recollectionError(code) {
+  if (code === 'not_claimable') return 'that station isn\'t open for you right now ♡';
+  return AUTH_COPY[code] || 'could not sync your kindling, it\'ll try again later ♡';
 }

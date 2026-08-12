@@ -28,7 +28,9 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | File | What it is |
 |---|---|
 | `astro.js` | ephemeris, Placidus/Porphyry houses, lunar mansion, weekday |
-| `sky.js` | daily engine: moon phase, tārābala (sidereal-27/Lahiri), planetary hours |
+| `sky.js` | daily engine: moon phase, tārābala (sidereal-27/Lahiri), planetary hours, station/step cast kinds |
+| `sigil.js` | the Sigil: natal derivation, the 5 Traveler types, the arrival reading's 9-beat grammar (`readingPlan()`), ring SVG geometry |
+| `sigil-copy.js` | placeholder prose templates for `reading.js`'s arrival/Sounding composers — content-authored stopgap, tier-0 vocabulary only, pending SIGIL-READING.md §4's real ~60-piece pass |
 | `deck.js` | the collection game: claim windows, grace, "returns in N days" |
 | `events.js` | the event calendar: dated sky events (eclipses, supermoons, etc.), foil conditions |
 | `astronomy-engine.js` | vendored third-party (MIT) — sunrise/sunset only, see `tools/vendor-astronomy.mjs` |
@@ -55,10 +57,16 @@ If you add a binding, add it to `BINDINGS.md` in the same commit.
 
 `support.js`, `image-slot.js`. Rebuilt by the dc-runtime; edits will be lost.
 
-`mansions/*.html`, `mansions/index.html`, `mansions/og/*.jpg`, `sitemap.xml`.
-Rebuilt by `tools/build-mansions.mjs` / `tools/build-mansion-images.mjs`;
-hand-edits diverge silently on the next regeneration. The two build
-*scripts* are normal `tools/**`, Claude-Code-owned.
+`mansions/*.html`, `mansions/index.html`, `mansions/og/*.jpg`, `sitemap.xml`,
+`stations.js`. Rebuilt by `tools/build-mansions.mjs` /
+`tools/build-mansion-images.mjs`; hand-edits diverge silently on the next
+regeneration. The two build *scripts* are normal `tools/**`, Claude-Code-
+owned. `stations.js` is the browser-side copy of the same corpus (0-indexed,
+`station = id - 1`) that `sigil.js`/`reading.js` import at runtime — a stale
+copy fails silently (wrong epithet/kanji served into a real reading, no
+`{{ }}` tell), so `test/stations.test.mjs` diffs it against a fresh
+in-memory render the same way `npm run bindings` catches a stale
+`BINDINGS.md`.
 
 **Known gap in the source content:** the parser's epithets for all 28
 mansions are hand-transcribed in `tools/build-mansions.mjs`'s
@@ -132,8 +140,12 @@ an unprefixed collision is a silent bug, a redundant prefix is not.
 Birth date, birth time and birth coordinates are computed in the browser by
 `astro.js` and are **never** sent to the Star Shard backend. The only outbound
 call carrying user input is the Open-Meteo city lookup, which receives a place
-name and nothing else. The backend stores an email, a bcrypt hash, and a JSON
-blob of window coordinates.
+name and nothing else. The backend stores an email, a bcrypt hash, a JSON
+blob of window coordinates, and — as of the reboot — the *derived* Sigil
+(station/step/type indices, `sigil` table) and kindled `(station, step)`
+records (`recollection` table). Storing the derived sigil is a deliberate,
+scoped allowance (COSMOLOGY.md §7) — storing birth data itself is not, and
+`PUT /api/sigil`/`POST /api/recollection` never receive it.
 
 Do not break this. It is the strongest differentiating claim the product has.
 

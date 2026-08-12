@@ -23,7 +23,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const PAGE = 'Star Shard v2.dc.html';
+// "Star Shard v2.dc.html" is retired and archived — this smoke test
+// exercises its old phone flow, kept only as a reference until it's
+// deleted outright. See "Star Shard v3.dc.html" / test/smoke.mjs for the
+// live page's own smoke test.
+const PAGE = 'Star Shard v2 (archived).dc.html';
 const OUT = process.argv.includes('--out')
   ? path.resolve(process.argv[process.argv.indexOf('--out') + 1])
   : fs.mkdtempSync('/tmp/starshard-smoke-phone-');

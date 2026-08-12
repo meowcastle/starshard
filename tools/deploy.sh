@@ -20,13 +20,16 @@ FRONTEND_REMOTE=/volume2/web/starshard-staging
 BACKEND_REMOTE=/volume2/web/starshard-api
 NODE_BIN=/volume2/@appstore/Node.js_v20/usr/local/bin/node
 
-FRONTEND_FILES="api.js astro.js card.js format.js reading.js tz.js wheel.js windows.js duet.js shards.js sky.js deck.js events.js astronomy-engine.js support.js image-slot.js sitemap.xml"
+FRONTEND_FILES="api.js astro.js card.js format.js reading.js tz.js wheel.js windows.js duet.js shards.js sky.js sigil.js sigil-copy.js deck.js events.js stations.js astronomy-engine.js support.js image-slot.js sitemap.xml"
 
 cd "$(dirname "$0")/.."
 
 deploy_frontend() {
   echo "==> index.html"
-  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v2.dc.html"
+  # "Star Shard v3.dc.html" is the live page as of the Sigil/Sounding MVP —
+  # "Star Shard v2 (archived).dc.html" stays in the repo as reference only,
+  # not deployed. See CLAUDE.md's receipt protocol.
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3.dc.html"
   for f in $FRONTEND_FILES; do
     if [ -f "$f" ]; then
       echo "==> $f"

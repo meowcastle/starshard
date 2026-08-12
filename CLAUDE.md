@@ -2,28 +2,92 @@
 
 Read this before touching anything. It is short on purpose.
 
-## What this is
+## What this is (post-reboot)
 
-A kawaii Windows-95 desktop simulation that computes a real natal chart and
-returns it as four collectible "shards": Placidus houses, a Jungian archetype,
-one of the 28 *manāzil al-qamar* (classical Arabic lunar mansions), and the
-"Monday's Child" folk rhyme. Single page, no framework of our own, no build step.
+**Star Shard is a divination game played against the real sky.** The user's
+birth minute computes their **Sigil** — a dark ring of 28 arcs with bright
+natal marks; their personal Star Shard. Each night the Moon stands in one of
+28 stations on the **Moonroad**; visiting kindles one segment of the user's
+own ring and files a relational paragraph into their codex. The story is
+revealed through play, never told up front. Single page, no framework of our
+own, no build step. The reference docs, in reading order: `BLUEPRINT.html`
+(the system map) → `COSMOLOGY.md` (canon + formal system + data model) →
+`SIGIL-READING.md` (the arrival grammar) → `DESIGN-BRIEF.md` v2 (what Design
+is building).
 
 It is a web property for Suyin (@suyinsama) — Vocaloid/Hatsune Miku cosplay,
 ~13M monthly views, audience 62% female, 25% aged 13–17, and overwhelmingly on
 phones. That last fact should inform most decisions.
 
+The **front end is being rebuilt from scratch** against this reboot. The
+engine modules, the database, and everything verified below carry forward
+unchanged. The old four-shard flip flow (houses / archetype / mansion /
+weekday) is retired as a surface; its computations live on inside the Sigil.
+
+## The MVP build — this cycle's work, in order
+
+A fresh Claude Design export is incoming: the Sigil mockup, built from
+scratch. **Receipt protocol for a from-scratch export:**
+
+1. **Do not diff it against the old markup.** The old page is retired, not
+   the baseline. Archive `Star Shard v2.dc.html` (keep it until the new page
+   passes smoke; it is reference, not target).
+2. **The export's script block is disposable mock wiring.** Rebuild the
+   `x-dc` block thin — state + lifecycle + `renderVals()` — wired to real
+   modules. Any hardcoded sample text in the export is placeholder by
+   contract (Design is instructed never to import engine modules).
+3. **Expect namespaced bindings** — `sig.*` (arrival/ring), `snd.*`
+   (Sounding), `cdx.*` (codex), `crd.*` (cards); auth + `deck` shared
+   unprefixed — and a **binding manifest** in the handoff notes. If the
+   manifest is missing, run `npm run bindings` to inventory, map each name to
+   a module source, and **flag anything unmappable — do not guess.**
+4. Verify no engine imports snuck into the export, and that the `<helmet>`
+   meta/OG tags survived.
+5. The old page stays live until the new one passes an extended smoke test
+   (arrival flow + night loop).
+
+**Build order (COSMOLOGY §7 + SIGIL-READING §5):**
+
+1. `sigil.js` — natal derivation from `astro.js` longitudes (station + step
+   for Sun/Moon, rising station, natal light from elongation, farlight
+   `(sunStation+13)%28+1`, type from Sky arithmetic per COSMOLOGY §3.4),
+   `readingPlan(sigil)` returning ordered beats + a stable variant hash
+   (SIGIL-READING §3), and the SVG ring renderer (28 arcs × 4 segment ticks;
+   Design art-directs the output). Tests for all of it. **The Keeper table is
+   `[VERIFY]`-blocked — use a placeholder table flagged loudly; research is
+   clearing it. Ask, do not guess.**
+2. Step arithmetic + cast kinds (steady / turning / threshold from real lunar
+   velocity, ≈3:1:rare) in `sky.js`. Tests.
+3. Schema migration — deck → station+step Recollection records + reveal state
+   (`tier`, `fragmentsUnlocked`, `actMilestones`), per COSMOLOGY §7. The
+   privacy invariant holds: the Sigil is computed client-side; the server
+   stores only the derived sigil object per account, never birth data.
+4. `reading.js` — the arrival composer per SIGIL-READING's grammar. Build the
+   template engine and slots now; the ~60-piece prose kit arrives from the
+   content pass. **Keep prose out of code** — templates keyed by id, so
+   swapping placeholder → real copy is mechanical.
+5. Wire the new page: bindings green (`npm run check`), smoke extended to
+   drive arrival end-to-end.
+6. Permalinks — regenerate with the tier-0 frame when the copy pass lands
+   (epithets unchanged). Don't block earlier steps on this.
+
+Explicitly deferred (on the record, Justin's call): new minigames, more
+easter eggs, community features, the Remembering endgame, paradox cards,
+Undertext rendering, event-foil curriculum. `shards.js` / `duet.js` /
+`windows.js` are legacy with the old page — keep them functional until it's
+archived, build nothing new on them.
+
 ## The one thing that will break this repo
 
 **Two agents work here: Claude Design and Claude Code. They must never edit the
-same file in the same cycle.** A Claude Design handoff *replaces*
-`Star Shard v2.dc.html` — it does not merge it, and git will not warn you.
+same file in the same cycle.** A Claude Design handoff *replaces* the
+`.dc.html` page — it does not merge it, and git will not warn you.
 
 You (Claude Code) own everything except the markup:
 
 | Yours | Claude Design's | Generated — never edit |
 |---|---|---|
-| `astro.js` `sky.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
+| `astro.js` `sky.js` `sigil.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
@@ -32,14 +96,17 @@ and workflow rules in `OWNERSHIP.md`.
 ## Architecture
 
 ```
-Star Shard v2.dc.html
+<new page>.dc.html            (replacing Star Shard v2.dc.html — archived)
   ├─ markup            Claude Design
-  ├─ <helmet>          Claude Design  (fonts, styles, and the missing meta tags)
+  ├─ <helmet>          Claude Design  (fonts, styles, meta/OG tags)
   └─ <script x-dc>     SHARED — state + lifecycle + renderVals(), nothing else
        │
        ├─ astro.js     ephemeris, houses, lunar mansion, weekday
-       ├─ sky.js       daily engine: moon phase, tārābala, planetary hours
-       ├─ deck.js      the collection game: claim windows, grace, returns-in-N-days
+       ├─ sigil.js     NEW — Sigil derivation, type, readingPlan(), SVG ring
+       ├─ sky.js       daily engine: moon phase, tārābala, planetary hours,
+       │               station+step+cast (NEW arithmetic lands here)
+       ├─ deck.js      the collection game: claim windows, grace, returns —
+       │               migrating to station+step Recollection + reveal state
        ├─ events.js    the event calendar: dated sky events, foil conditions
        ├─ astronomy-engine.js   vendored third-party (sunrise/sunset only)
        ├─ format.js    degFmt, ordinal, place/birth lines
@@ -47,11 +114,10 @@ Star Shard v2.dc.html
        ├─ api.js       ALL network I/O
        ├─ wheel.js     chart-wheel SVG coordinates
        ├─ card.js      share-card PNG   (CARD block is design-tunable)
-       ├─ reading.js   shard text, woven reading, duet text
-       ├─ windows.js   window manager   (LAYOUT block is design-tunable)
-       └─ shards.js / duet.js   written content
+       ├─ reading.js   arrival composer (NEW grammar) + collected text
+       └─ windows.js / shards.js / duet.js   legacy with the old page
 
-starshard-api/          Express 4 + MySQL: accounts + saved window layout
+starshard-api/          Express 4 + MySQL: accounts + saved state
 
 mansions/               generated: 28 static permalink pages + index + OG
                          images — tools/build-mansions.mjs regenerates it,
@@ -64,7 +130,7 @@ mansions/               generated: 28 static permalink pages + index + OG
    with Babel presets `["react","typescript"]` — no module transform — and
    evaluates it inside `new Function(...)`. A static import is a syntax error.
    Modules load via `await import()` in `componentDidMount`; that is why
-   `renderVals()` guards on `ready` and falls back to `inertWin()`.
+   `renderVals()` guards on `ready` and falls back to an inert state.
 2. **`support.js` fetches React, ReactDOM and `@babel/standalone` from
    unpkg.com on every page load** — ~3.3MB before first paint, and the script
    block is transpiled in the browser. If unpkg is unreachable the page renders
@@ -79,19 +145,28 @@ mansions/               generated: 28 static permalink pages + index + OG
 - **Privacy.** Birth date, time and coordinates are computed in the browser and
   are never sent to our backend. The only outbound call carrying user input is
   the Open-Meteo city lookup, which gets a place name and nothing else. This is
-  the product's strongest differentiating claim — do not break it.
+  the product's strongest differentiating claim — do not break it. (Storing the
+  *derived* sigil object server-side per account is allowed by COSMOLOGY §7;
+  storing birth data is not.)
 - **No logic in the markup.** If you want a computation inside `{{ }}`, it goes
   in a module and comes back through `renderVals()`.
 - **`astro.js` is verified, not vibes.** See below before you "improve" it.
+- **The ethics floor** (COSMOLOGY §4.5): count UP, never down · live
+  return-countdowns · ~24h windows + grace · no paid pulls, no currency ·
+  foils only for real sky events · notifications opt-in, off by default for
+  minors. These are load-bearing product decisions, not copy suggestions.
+- **The vocabulary law** (COSMOLOGY §2/§5): mythic terms are tier-gated; the
+  reveal-state tier controls which strings render. Build the gate into the
+  template layer, not into per-surface if-statements.
 
 ## Verify before you commit
 
 ```bash
 npm run check      # regenerate BINDINGS.md + fail on mismatch, then run tests
-npm test           # 12 tests: degFmt, weekday, cusps, ascendant, no-regression
+npm test           # degFmt, weekday, cusps, ascendant, no-regression + NEW sigil/step tests
 npm run bindings   # fails if the markup binds a name renderVals() omits
 
-# browser smoke test — drives the whole reading flow and asserts on the result
+# browser smoke test — drives the whole flow and asserts on the result
 npm i -D playwright && npx playwright install chromium
 node test/smoke.mjs
 # offline / CI:
@@ -123,6 +198,11 @@ runs 3,000 random sub-polar charts through both and asserts agreement to 1e-9.
 Above 66° latitude Placidus is undefined, so `placidusCusps()` falls back to
 Porphyry and sets `chart.houseSystem = 'porphyry'`. Verified against Swiss
 Ephemeris Porphyry: max cusp error 0.06°, zero rising-sign disagreements.
+
+Note for `sigil.js`: a station is 12.857°, a step 3.214° — the Moon's
+verified max error (0.106°) is ~3% of a step, so **step assignment near a
+boundary is honest to within a rounding sliver**; do not add fake precision
+(no seconds-of-arc in UI copy).
 
 ## What `sky.js` is worth
 
@@ -167,19 +247,20 @@ unavailability.
   became an unhandled rejection and killed the process. Every async handler is
   now wrapped in `wrap()` with an error middleware. Verified: dead DB used to
   give HTTP 000 + process exit, now gives HTTP 500 and stays up.
+- **Stale-export crashes.** A Design export that imports `astro.js`,
+  `shards.js` or `duet.js` has shipped a stale pre-refactor copy four times.
+  The from-scratch rebuild makes this moot *only if* the receipt protocol
+  above is followed — check imports on every handoff anyway.
 
 ## Open decisions — ask, do not guess
 
-- **W2.** Resolved — the LLM path is deleted. `weave()`/`duetText()` in
-  `reading.js` now assemble each paragraph from opener/connective/mansion/
-  closer variants in `shards.js`/`duet.js` (`seededPick()`, deterministic per
-  chart). Combined with the 12×12×28×7 = 28,224 underlying combinations, the
-  paragraph shape itself varies too, not just the swapped-in nouns.
-- **W6.** The account system runs a password database to persist *window
-  positions* — it does not save the user's chart. Password reset now exists
-  (Resend-backed, hashed/expiring/single-use tokens). Still no email
-  verification, no account deletion, no data export, and a quarter of the
-  audience is 13–17. Decide whether those are needed, or whether to scope the
-  system back down.
+- **The Keeper table** — the per-station luminary cycle is `[VERIFY]`-blocked
+  pending research. Placeholder + loud flag until cleared.
+- **W6.** The account system runs a password database; with reveal state and
+  Recollection it now stores real progression. Still no email verification,
+  no account deletion, no data export — and a quarter of the audience is
+  13–17. This needs a decision before public launch; raise it, don't decide
+  it.
 
-Full findings and reasoning: `AUDIT.md`.
+Full findings and reasoning: `AUDIT.md` (historical) · current system:
+`BLUEPRINT.html` · `COSMOLOGY.md` · `SIGIL-READING.md`.

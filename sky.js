@@ -1,4 +1,5 @@
-// Star Shard — the daily engine: moon phases, tārābala, planetary hours.
+// Star Shard — the daily engine: moon phases, tārābala, planetary hours,
+// station/step cast kinds.
 //
 // OWNER: Claude Code. Do not edit from Claude Design.
 //
@@ -7,7 +8,12 @@
 //     it already powers, PLUS moonPhase() and tarabala() below — both only
 //     need Sun+Moon longitude, which astro.js already computes and has
 //     verified against Swiss Ephemeris. This module never recomputes Sun or
-//     Moon position itself; callers pass in longitudes from astro.js.
+//     Moon position itself; callers pass in longitudes from astro.js. The
+//     one exception is castKind() below, which genuinely needs a SECOND
+//     sample (jd +/- 0.5) to measure the Moon's real angular rate, the same
+//     way deck.js's own local moonRate() already does — not a duplicate
+//     position computation, just two more calls to the same verified
+//     moonLongitude().
 //   - astronomy-engine.js (vendored, see tools/vendor-astronomy.mjs) is
 //     canonical only for what astro.js cannot do at all: sunrise/sunset
 //     (planetaryHours() below; other-planet positions for a future
@@ -27,6 +33,8 @@
 // the number that actually matters for tārābala, since a misclassified
 // nakshatra doesn't nudge a displayed value, it flips the whole favorable/
 // unfavorable verdict.
+
+import { moonLongitude } from './astro.js';
 
 const norm = d => ((d % 360) + 360) % 360;
 
@@ -112,12 +120,19 @@ const MOON_PHASES = [
 ];
 
 /** Phase of the Moon from Sun/Moon tropical longitudes (from astro.js). No
- * astronomy-engine dependency — this is pure Sun-Moon angular geometry. */
+ * astronomy-engine dependency — this is pure Sun-Moon angular geometry.
+ * `index` (0-7) is derived from the SAME MOON_PHASES table `name` uses, not
+ * a separately-computed bin formula — two independent binning rules for the
+ * same boundary would disagree exactly at the 8 bin edges (e.g. angle=337.5
+ * sits in the 'waning crescent' bin by this table's own `<=` rule but a
+ * naive `floor((angle+22.5)/45)%8` formula gives 'new moon' there instead).
+ * sigil.js's natalLight is this index. */
 export function moonPhase(sunLon, moonLon) {
   const angle = norm(moonLon - sunLon);
-  const name = MOON_PHASES.find(p => angle <= p.max).name;
+  const idx = MOON_PHASES.findIndex(p => angle <= p.max) % 8;
+  const name = MOON_PHASES[idx].name;
   const illumination = (1 - Math.cos(angle * Math.PI / 180)) / 2;
-  return { angle, name, illumination };
+  return { angle, name, illumination, index: idx };
 }
 
 // -- planetary hours ----------------------------------------------------------
@@ -129,7 +144,8 @@ export const PLANETARY_HOUR_ORDER = ['Saturn', 'Jupiter', 'Mars', 'Sun', 'Venus'
 
 // Ruling planet of each hour-1-of-the-day, indexed like JS Date#getDay() /
 // astro.js's weekdayOf() (0 = Sunday) — matches shards.js's WEEKDAYS table.
-const WEEKDAY_RULER = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+// Exported for sigil.js's birth-day Keeper derivation.
+export const WEEKDAY_RULER = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
 
 /**
  * Sunrise-to-sunset split into 12 unequal "hours", then sunset-to-next-
@@ -188,4 +204,82 @@ export async function planetaryHours(date, lat, lon) {
   const current = all.find(h => now >= h.start.getTime() && now < h.end.getTime()) || null;
 
   return { available: true, sunrise: sunrise.date, sunset: sunset.date, nextSunrise: nextSunrise.date, dayHours, nightHours, current };
+}
+
+// -- cast kind: steady / turning / threshold -------------------------------
+//
+// station/step arithmetic is duplicated here (not imported from sigil.js)
+// deliberately: sigil.js already imports FROM sky.js (moonPhase,
+// PLANETARY_HOUR_ORDER, WEEKDAY_RULER), so importing sigil.js here would be
+// circular. These are two one-line functions — not worth restructuring the
+// existing import direction over, same call this codebase already makes for
+// `norm`, duplicated per-module rather than centralized.
+const STATION_WIDTH = 360 / 28;  // 12.857...deg
+const STEP_WIDTH = 360 / 112;    // 3.214...deg (STATION_WIDTH / 4, exactly —
+                                  // stations and steps tile the circle with
+                                  // no offset, so a plain `lon % STEP_WIDTH`
+                                  // below is already "degrees into the
+                                  // current step," no station-relative
+                                  // arithmetic needed)
+const stationOf = lon => Math.floor(norm(lon) / STATION_WIDTH);
+const stepOf = lon => Math.min(3, Math.floor((norm(lon) % STATION_WIDTH) / STEP_WIDTH));
+
+// REBOOT.md/COSMOLOGY §3.2's own numbers ("final quarter of a step ~90min,
+// or of a station ~6h") are ambiguous between two literal readings: one
+// widens the window specifically for the last step of a station (~6h
+// there, ~90min elsewhere) and produces steady:turning ~= 1.3:1; the other
+// applies a SINGLE uniform 90-min-of-current-step rule to all four steps
+// and reproduces the doc's own stated ~3:1 target exactly, since a uniform
+// 90-min tail out of a ~5.85h step is 25% of all time regardless of which
+// step it is. This module implements the uniform reading. Station
+// boundaries (step 3 ending) are still a bigger narrative event than an
+// ordinary step boundary — castKind() flags that via `becoming`'s
+// station-vs-step jump, not via a wider detection window.
+const TURNING_MINUTES = 90;
+// COSMOLOGY frames `threshold` as "minutes-wide," but astro.js's own Moon-
+// longitude error (mean ~2.5min, max ~11-13min of timing jitter at the
+// Moon's real rate) makes any band narrower than that indistinguishable
+// from ephemeris noise, not a real astronomical event. 20 minutes is the
+// honest floor — safely above the max noise, still comfortably inside the
+// 90-minute turning window — not the literal spec number.
+const THRESHOLD_MINUTES = 20;
+
+/** Same finite-difference technique as deck.js's own local moonRate() —
+ * the Moon's real angular rate (deg/day) right now, not a fixed mean. */
+function moonRate(jd) {
+  const before = moonLongitude(jd - 0.5), after = moonLongitude(jd + 0.5);
+  return norm(after - before);
+}
+
+/**
+ * Tonight's cast kind — steady (one card), turning (a present -> becoming
+ * pair, the lantern nearing a step boundary), or threshold (rare, minutes-
+ * wide, exactly at a boundary; takes priority over turning). `moonLon`/`jd`
+ * are the current instant's values (astro.js's moonLongitude(jd) and jd
+ * itself — same inputs deck.js's claimStates() already takes).
+ *
+ * `becoming` is null for a steady cast. Otherwise it's the next
+ * (station, step): an ordinary step advance for steps 0-2, or a station-
+ * level jump (station+1, step 0) when leaving step 3 — the composer should
+ * treat that case as the bigger narrative beat it is.
+ */
+export function castKind(moonLon, jd) {
+  const rate = moonRate(jd); // deg/day
+  const lon = norm(moonLon);
+  const station = stationOf(lon), step = stepOf(lon);
+
+  const degIntoStep = norm(lon) % STEP_WIDTH;
+  const minutesIntoStep = (degIntoStep / rate) * 24 * 60;
+  const minutesToStepEnd = ((STEP_WIDTH - degIntoStep) / rate) * 24 * 60;
+
+  let kind;
+  if (minutesIntoStep <= THRESHOLD_MINUTES || minutesToStepEnd <= THRESHOLD_MINUTES) kind = 'threshold';
+  else if (minutesToStepEnd <= TURNING_MINUTES) kind = 'turning';
+  else kind = 'steady';
+
+  const becomingStep = (step + 1) % 4;
+  const becomingStation = step === 3 ? (station + 1) % 28 : station;
+  const becoming = kind === 'steady' ? null : { station: becomingStation, step: becomingStep };
+
+  return { kind, current: { station, step }, becoming };
 }

@@ -1,266 +1,253 @@
-# Star Shard — brief for Claude Design
+# Star Shard — brief for Claude Design · v2 (the overhaul)
 
-> **Read `DESIGN-SYSTEM.md` first.** It supersedes anything in this file about
-> colour, type, spacing, shape or shadow. This brief still holds for the
-> product context, the audience, the ownership boundary, the binding contract
-> and the per-surface work queue.
+**This supersedes the previous brief wholesale.** The front end is being
+rebuilt from scratch against the reboot. The database and engine stay; the
+markup, the surfaces, and the product frame are new.
 
-Self-contained: everything you need is in this document. Paste it in whole.
+> **Read `DESIGN-SYSTEM.md` first.** It is still the visual law — colour,
+> type, spacing, shape, shadow, the card-context inversion, the WCAG floors.
+> Nothing in this file overrides it.
+
+**The packet, in reading order** (everything you need, nothing you don't):
+
+1. `BLUEPRINT.html` — the system map. Form and function on one page: the
+   five-layer stack, the traceability matrix, the night loop, the Reveal
+   ladder, the MVP build order. When lost, return here.
+2. This file — your marching orders.
+3. `DESIGN-SYSTEM.md` — the visual law.
+4. `COSMOLOGY.md` — the canon. Especially: §2 the lexicon **with reveal
+   tiers** (a copy law, see below) · §3.3 the Sigil · §3.4 the five types ·
+   §3.5 the Sounding · §4 Recollection · §5 the Reveal.
+5. `REBOOT.md` — the Sounding's five-beat spec and the wheel topology.
+6. `research/mansions-table.json` — per-station card data: epithet, kanji,
+   real asterism star positions, the four cultural names, match flags.
+7. `research/mansion-names.md` — the approved 28-epithet slate.
+8. `research/mansions-pilot.md` + `mansions-batch1..4.md` — real copy, for
+   honest comps (don't lorem-ipsum the cards; the corpus exists).
+9. `OWNERSHIP.md` + `BINDINGS.md` — the seam contract with engineering.
+
+Historical files (`AUDIT.md`, `STRATEGY.md`, `REVIEW.md`, `STATUS.md`) and
+the content-side research (iching, rave-mandala, starmyths, physics-paradox,
+verify-report) are **not** in your packet — their conclusions are already
+baked into the five files above.
 
 ---
 
-## The product
+## The product (as of the reboot)
 
-**Star Shard** is a kawaii Windows-95 desktop simulation that computes a real
-astrological birth chart and returns it as four collectible "shards."
+**Star Shard is a divination game played against the real sky.** One star
+sowed itself into travelers; your birth minute is recorded as your **Sigil —
+your personal Star Shard**: a dark ring of 28 arcs with bright natal marks.
+Each night the Moon (**the Lantern**) stands in one of 28 stations on the
+**Moonroad**; visiting during the crossing is a short five-beat reading
+(**the Sounding**) that ends by **kindling one segment of your own ring**.
+The collected text is written *about you* — relational, through your natal
+chart. The story is **revealed, never told**: no surface explains the myth;
+it surfaces in codex fragments as you walk, in an order set by your own
+birth chart.
 
-The user enters their name, birth date, birth time and birth city, hits
-**"✧ shatter the sky ✧,"** and gets four face-down gem cards to flip:
+The one-sentence pitch for every screen you draw: *a beautiful nightly
+ritual that slowly reveals it was always about you.*
 
-| | Shard | Tradition |
-|---|---|---|
-| 🏠 | **house** | Placidus houses — which of the 12 houses the Sun occupies, plus rising sign |
-| 🪞 | **mirror** | A Jungian archetype, mapped from the Moon sign |
-| 🌙 | **moon** | One of **28 lunar mansions** ("The Void," "The Ghost"…) — a station system shared across Arabic, Indian, Chinese and Japanese sky-lore, shown with all four names |
-| 🕯️ | **hearth** | The "Monday's Child" rhyme and the planetary ruler of the birth weekday |
+## Who it's for — unchanged, and it still drives every decision
 
-Reveal all four and a **"weave my reading"** button appears, which blends them
-into one paragraph and produces a shareable card.
-
-Current desktop apps: `shard reader.exe`, `chart_wheel.exe`, `duet.exe`
-(two-person compatibility), `today.exe` (today's lunar mansion), `guestbook.htm`,
-`grimoire.hlp` (glossary crediting each tradition), `player.exe` (chiptune),
-`luna.txt`, `reading.doc`, `account.exe`.
-
-## Who it's for — this should drive every decision
-
-It is a web property for **Suyin (@suyinsama)**: daily Hatsune Miku and Vocaloid
-cosplay from Brooklyn, ~13M monthly views, 104K followers, 67.7% completion rate.
+Web property for **Suyin (@suyinsama)**: daily Hatsune Miku / Vocaloid
+cosplay from Brooklyn, ~13M monthly views, 104K followers.
 
 | | |
 |---|---|
 | Gender | 62% female |
-| Age | 25.3% are **13–17** · 26.7% are 25–34 · 74.7% are 18+ |
+| Age | 25.3% are **13–17** · 74.7% are 18+ |
 | Geography | 34% US, then UK, Germany, Philippines, Indonesia |
-| **Where they come from** | **87% of her YouTube views come from the Shorts feed** |
+| **Where they come from** | **87% of views are from the YouTube Shorts feed** |
 
-That last row is the whole brief. **Her audience is functionally phone-only**,
-and the site is currently a draggable multi-window desktop. Mobile is 52–64% of
-all web traffic; for this audience it is higher.
+**The audience is functionally phone-only.** Design phone-first; the desktop
+gets the chrome, the phone gets the flavour (`DESIGN-SYSTEM.md` §context).
+The Win95 desktop simulation is **no longer the product frame** — retro
+survives as homage in the tokens, not as windows to drag.
 
-The voice is established and working — warm, lowercase, nostalgic-cute,
-family-friendly, "tag your oshi," "no drama." Keep it.
+## The voice — carried forward, plus two new laws
 
----
+Warm, lowercase, nostalgic-cute, family-friendly, no drama. Keep it. Two
+additions, both binding:
 
-## What you own
-
-| Yours | |
-|---|---|
-| `Star Shard v2.dc.html` | the markup and the `<helmet>` — layout, styles, window chrome, copy in the markup, fonts, and the meta tags (see P3) |
-| `.image-slots.state.json` | slot artwork |
-| `CARD` block at the top of `card.js` | share-card sizes, colours, type |
-| `LAYOUT` block at the top of `windows.js` | initial window positions and sizes |
-
-## What you must not touch
-
-`astro.js` · `sky.js` · `deck.js` · `events.js` · `astronomy-engine.js` · `format.js` · `tz.js` · `api.js` · `wheel.js` · `reading.js` ·
-`shards.js` · `duet.js` · `starshard-api/**` · `test/**` · `tools/**`
-
-And two files that are machine-generated — edits are silently discarded:
-`support.js`, `image-slot.js`.
-
-The `<script type="text/x-dc">` block at the bottom of the `.dc.html` is shared.
-It holds state, lifecycle, and `renderVals()`. Leave its logic alone.
-
-**Do not include or reference `astro.js`, `shards.js` or `duet.js` in an
-export — not even as a sibling `import()`.** They change most sessions, and an
-export that references them has shipped a stale pre-refactor copy **four
-times now**, most recently a crash on the core reading step (`STATUS.md`:
-`copy.fallbackWeave is not a function` — a function `shards.js` stopped
-exporting a while back). If a mock needs sample reading text, hardcode a
-placeholder string in the export instead of importing the real module — the
-engineering side will wire it to the real one on merge.
+1. **Journey vector** (COSMOLOGY §1): the traveler is never "from Earth" —
+   the traveler is *currently* Earth. Copy leans on arriving, crossing,
+   bound-for, carried-from.
+2. **The vocabulary law** (COSMOLOGY §2): every mythic term has a reveal
+   tier. A term above the viewer's tier never appears on their surface —
+   UI, cards, notifications, emails, empty states, *anything*. Tier-0
+   verbs are small and concrete: **kindle, gather, walk, cross.** The words
+   *Recollection*, *Silverway*, and *the Great Sowing* are earned, not
+   shown. Public pages (permalinks, OG images, landing) are pre-arrival
+   surfaces: **tier-0 only.**
 
 ---
 
-## The one rule
+## What you're building — the MVP surfaces
 
-**The markup binds to names that JavaScript supplies. If you rename one, the page
-renders the literal text `{{ thatName }}` to the user.**
+### S1 · Arrival — Act 0, "The Itch" (new)
 
-There are 349 bindings, 140 top-level. They are all listed in `BINDINGS.md`.
+Birth entry → the Sigil reading. The whole act is: the dark ring draws
+itself, the natal marks light, tonight's crossing is named, and one strange
+line lands — *"this mark is older than your name."* **Zero myth. Zero
+cosmology.** No "discover the ancient wisdom of…" — the hook is
+specificity, beauty, and one splinter of the uncanny. Birth entry must
+handle: date only (no time) gracefully — the Sigil has an honest fallback
+(Moon station without step, no facing).
 
-```
-{{ revealTitle }}          a value to print
-{{ doCompute }}            a click handler
-{{ wReader.show }}         a window's visibility
-<sc-if value="{{ x }}">    conditional block
-<sc-for list="{{ xs }}" as="x">   repeated block
-```
+### S2 · The Sigil ring — the share artifact (new; the growth engine)
 
-You can move these anywhere, restyle them, wrap them, drop them, duplicate them.
-**Do not rename them, and do not invent new ones** — a new binding needs a
-matching change in the script block, so flag it in your handoff notes instead.
+An SVG ring: 28 arcs (the road), each with 4 segment ticks (the Steps);
+natal marks bright; kindled segments lit; everything else dark. It is the
+share artifact **at every stage** — a newborn ring must already be worth
+posting, and a walked ring must read as a wheel of light. Aesthetics are
+yours; the geometry is the spec (engineering renders it from `sigil.js`;
+you art-direct the renderer's output — strokes, glow, foil states, the
+natal-mark glyphs).
 
-Everything else in the markup — every inline style, every element, every bit of
-copy — is yours to change freely.
+Share render: **1080×1920 (9:16) primary**, 1:1 or 4:5 secondary crop.
+Design it as a full-bleed screenshot, not a download: no chrome in frame,
+one element legible at ~100px thumbnail, the user's name on it (naming
+converts "a screenshot" into "my artifact"). Reference points that still
+hold: Receiptify's receipt, Instafest's poster — dense but parseable
+because the layout is a real-world object. Ours is: **a star chart being
+hand-lit.**
 
----
+### S3 · The Sounding — the nightly screen (five beats)
 
-## The work, in priority order
+The core loop, ~90 seconds, once a night. Five beats (spec: REBOOT.md §3 +
+COSMOLOGY §3.5): the station card → the cast (steady / turning /
+threshold — tonight's texture) → the counsel → the question → **the claim,
+which kindles**. Beat 5 shows the traveler's own ring segment lighting —
+**never a counter incrementing, never a number going up.** Close: *"that's
+tonight's road. walk it well."* Live return-countdown to the next crossing
+when the window is closed.
 
-### P1 — A phone-native path — done, and now live inside `v2.dc.html`
+### S4 · The codex — album that becomes an autobiography (new)
 
-The single-column, one-screen-per-step phone flow shipped and is merged into
-`Star Shard v2.dc.html` itself as a second markup tree, not a separate page.
-The root markup is now two siblings:
+Where collected paragraphs and myth fragments file themselves. Milestone
+reveals are **quiet**: no fanfare screens, no modal celebrations — a new
+page simply *is* there, as if it always had been. Two structural
+requirements: (a) every page template **reserves a second text block**
+below the main text — the "undertext" slot, hidden at launch (a later
+feature reveals faint text beneath already-read pages; the slot must exist
+in the template now so pages don't reflow later); (b) fragment pages can
+render in *any* order — sequencing is per-user, driven by their chart.
 
-```
-<sc-if value="{{ isDesktop }}">  the windowed desktop, ≥1024px, unchanged
-<sc-if value="{{ isPhone }}">    the phone flow, <1024px
-```
+### S5 · Card faces — the 28 stations (spec carried forward, still binding)
 
-`isPhone`/`isDesktop` come from a viewport listener in the script block; only
-one tree mounts its event handlers at a time.
+- **Epithet large** (Baloo 2) — the card's identity ("The Void"). Stations
+  are always "The ___".
+- **Kanji corner glyph** (虛宿) · the station's **real asterism** as the
+  constellation mark (star data: `research/mansions-table.json`).
+- **Four cultural names small along the base** — Arabic · Sanskrit ·
+  Chinese · Japanese — with the match-quality flag (STRONG / PARTIAL /
+  DIVERGENT) as a subtle mark, never hidden.
+- **Art direction: star-seed interstellar, in card context** — the station
+  as a seed of light; the cultures live in the type layer, not the
+  illustration style. The Void and The Ghost should look like cards people
+  fight over.
+- Foil states exist **only for real sky events**; foil accent is
+  butter-200 (pink-500 fails contrast — `DESIGN-SYSTEM.md`).
+- **Fushigi Yūgi is grimoire trivia only** — never display names, never
+  imagery.
 
-**New binding convention: everything inside the phone tree is `p`-prefixed**
-(`{{ pStep }}`, `{{ pChart }}`, `{{ pAdvance }}`, `{{ pShards }}`, ...) to keep
-it collision-free with the desktop tree's own bindings, which use the file's
-existing `f`/`d`/`g`/`w` prefixes. If you're restyling something inside
-`<sc-if value="{{ isPhone }}">`, its bindings will be `p`-prefixed — that's
-expected, not a typo. The two exceptions are auth (`isLoggedIn`, `authEmail`,
-`doLogin`, etc.) and `deck`, both shared unprefixed with desktop since they're
-account data, not phone-UI state. Full rule: `OWNERSHIP.md`.
+### S6 · Station permalinks + OG — the public front door
 
-The standalone `Star Shard - Staging.dc.html` export this was built from is
-retired — its content now lives inside `v2.dc.html`'s phone tree. Don't build
-against the standalone file going forward; treat `v2.dc.html` as the only
-live page, desktop and phone both.
+The 28 static pages exist and regenerate from tooling (`/mansions/*.html` —
+regenerate, don't hand-edit). Yours: the landing treatment that leads with
+"what's tonight's station?" and points at them, and the **main-site OG
+image** (still missing): 1200×630, card context, wordmark, a station card,
+legible in a feed. Meta tags are static HTML — scrapers don't run JS —
+so you carry them through every export. Tier-0 vocabulary everywhere here.
 
-### P2 — The share card, redesigned to 9:16
+### S7 · Emails
 
-The card is the growth engine and it is the least-finished thing in the build.
+Design-system tokens apply end-to-end. Same vocabulary law: an email never
+uses a word above the recipient's tier. Notification copy counts UP
+("nights walked"), never down, and is opt-in (off by default for minors).
 
-- **Render 1080×1920 (9:16).** It currently renders 720×1000, which is the feed
-  aspect, not the Stories aspect. Ship a 1:1 or 4:5 crop as a secondary.
-- **The `card-art` image slot is empty.** Suyin's art in that circle is the
-  entire reason this artifact travels rather than any other astrology card.
-  Filling it is the single highest-value thing on this list.
-- **Design it to look right as a full-bleed screenshot**, not just as a
-  download — most people screenshot. No browser chrome in frame, no scrolling,
-  nothing overlapping.
-- **One element must be legible at ~100px thumbnail size.**
-- The user's name is already on it. Keep it there — naming converts "a
-  screenshot of a thing" into "my artifact."
+## What stays exactly as it is
 
-Reference points that work: Receiptify's thermal receipt, Instafest's festival
-poster. Both are dense — 10 to 30 items — and both stay readable because the
-layout is a **real-world object the viewer already knows how to parse**. Pick an
-object before you pick a data model.
+- **The intro animation** and **the runner minigame** — the two things that
+  survived the reboot with their inspiration intact. Do not redesign them;
+  do link to the runner from wherever feels like a hidden door rather than
+  a menu item (it's an easter egg now).
+- **The grimoire's credits posture** — each tradition named and sourced,
+  scholarship not religious guidance. This framing is deliberate; it
+  survives the overhaul.
+- **The honesty** — real astronomy, stated plainly; the Porphyry fallback
+  above 66° latitude needs to be sayable in the UI; the sidereal caveat
+  ships in the grimoire.
 
-### P3 — A real Open Graph image
+## What's retired
 
-The tags themselves have shipped — `<title>`, description, `og:*` and
-`twitter:*` are all in the `<helmet>` now. **The image is the problem.**
-
-`og-image.png` is **240×360**: a portrait cosplay crop with no
-wordmark and nothing that says what the link is. The standard is 1200×630.
-LinkedIn needs 1200×627 for a large card and downgrades anything smaller; X's
-`summary_large_image` is built for 1200×628. It clears Facebook's 200×200 floor
-so it is not rejected — just rendered as a small thumbnail everywhere, which is
-roughly the outcome of having no image at all. And **Facebook caches scraped OG
-data for weeks**, so a bad card outlives the fix.
-
-Needs: 1200×630, card context, the wordmark, a mansion card, legible in a feed.
-
-These tags are static HTML — scrapers don't run JavaScript, so they can't be
-injected at runtime. That makes them yours, and it means **you have to carry
-them through every regeneration.**
-
-### P4 — Make the 28 mansions the front door — permalinks done, landing treatment still open
-
-The lunar mansions are the most distinctive thing in the product and they were
-buried three windows deep. No competitor has them — not Co–Star, not CHANI, not
-Astro-Seek.
-
-**The permalink half of this shipped**: all 28 mansions now have a real static
-page at `/mansions/<slug>.html` (generated by `tools/build-mansions.mjs`, real
-content parsed from `research/mansions-batch1-4.md` + `mansions-pilot.md`,
-epithets like "The Throne"/"The Gathered Stars"/"The Void"), each with its own
-title/meta/OG tags and a generated 1200×630 OG image
-(`tools/build-mansion-images.mjs`), plus `/mansions/index.html` and a
-`sitemap.xml`. These are plain semantic HTML, no dc-runtime — regenerate, don't
-hand-edit (see `OWNERSHIP.md`).
-
-**Still open, and yours**: the actual landing treatment inside the app that
-leads with "what's your mansion?" and links out to these permalinks — the
-pages exist now, but nothing in the app points at them yet. Also open: real
-per-mansion art (the OG images are a generated card in the design system's
-tokens, not commissioned illustration — same honest-placeholder posture as the
-rest of the product's art).
-
-**Card template spec (naming v3 — applies to the landing treatment, the
-tarot/mansion cards, and art direction handed to illustrators):**
-
-- **Epithet large** (Baloo 2) — the card's identity ("The Void"). Mansions are
-  always "The ___"; the mirror shard's future 16 archetypes will use compound
-  single words, so the two systems never collide.
-- **Kanji corner glyph** (虛宿) · the mansion's **real asterism** as the
-  constellation mark (star data: `research/mansions-table.json`)
-- **Four cultural names small along the base** — Arabic · Sanskrit · Chinese ·
-  Japanese — with the match-quality flag (STRONG / PARTIAL / DIVERGENT) as a
-  subtle mark, never hidden
-- **Art direction: star-seed interstellar, in card context** — the mansion as a
-  seed of light; the cultures live in the type layer, not the illustration
-  style. The Void and The Ghost should look like cards people fight over.
-- **Copy sources:** birth entry (~80–100 words) = the card back · daily
-  crossing = the today screen · grimoire trivia = permalink content.
-  **Fushigi Yūgi is grimoire trivia only** — never display names, never imagery.
-- `[VERIFY]`-flagged facts in the batch files are not final until cleared —
-  `research/verify-report.md` lists what's already cleared; the permalink
-  generator picks corrections up on regeneration.
-
-### P5 — Accessibility
-
-Retro chrome fights WCAG by construction, and the current build is `<div>` soup:
-no landmarks, no heading order, no focus indicators, tap targets under 44px, and
-gray-on-gray contrast. `98.css`'s approach — style semantic HTML, ship no JS — is
-the escape hatch worth borrowing.
+The draggable multi-window desktop as the product frame · the four-shard
+flip flow (its contents — houses, archetype, mansion, weekday — are
+absorbed into the Sigil's natal parts) · the guestbook · `player.exe` and
+the rest of the desktop apps (their spirits may return later as easter
+eggs; not MVP).
 
 ---
 
-## What to preserve
+## The four laws (from BLUEPRINT §6 — every screen must pass all four)
 
-- **The four-shard reveal.** Face-down → click → flip → all four → weave. That
-  sequence is the product.
-- **The voice.** Lowercase, warm, no drama, family-friendly.
-- **The `grimoire.hlp` credits.** Each tradition is named and sourced, and the
-  *manāzil al-qamar* are explicitly framed as cultural scholarship rather than
-  religious guidance. That framing is deliberate and should survive.
-- **The honesty.** The site computes real Placidus houses and says so. Don't add
-  claims of precision the chart doesn't have — and note that above 66° latitude
-  it falls back to Porphyry and needs to be able to say that in the UI.
+1. **Vocabulary law** — tiers, as above.
+2. **Register law** — physics/philosophy content is curriculum, never
+   engine. If a screen's copy ever says "because quantum," it's wrong.
+3. **Ethics floor** — count UP · live return-countdowns · ~24h windows +
+   grace · no paid pulls, no currency, no odds theater ("the sky is the
+   drop table") · notifications opt-in, off by default for minors.
+4. **Privacy & respect** — birth data never leaves the browser (there is no
+   "creating your account…" spinner on the reading; it computes locally and
+   the UI should feel that fast). Coined words on all surfaces; real
+   traditions credited in the glossary.
 
-## What's deliberately unfinished (not yours to fix)
+**Accessibility carries forward with more force in a from-scratch build:**
+semantic HTML with landmarks and heading order, visible focus, 44px tap
+targets, contrast per `DESIGN-SYSTEM.md` (button labels are teal-900, never
+white). You are no longer styling `<div>` soup — don't create new soup.
 
-- Every user currently gets the same "woven reading" paragraph — the LLM call
-  doesn't exist in the deployed runtime. Being decided separately.
-- The guestbook is local to each browser; everyone sees the same three seeded
-  entries.
-- The account system saves window positions and nothing else.
+---
 
-## Handing back
+## The seam — how a from-scratch export merges cleanly
 
-Please include in your handoff notes:
+The two-agent contract survives the overhaul; the binding *inventory*
+doesn't. Read `OWNERSHIP.md` + `BINDINGS.md`, then:
 
-1. Any binding you had to add, rename or remove
+**You own:** the markup + `<helmet>` of the `.dc.html` export ·
+`.image-slots.state.json` · the `CARD` block (`card.js`) · the `LAYOUT`
+block (`windows.js`).
+
+**You must not touch or import:** `astro.js` · `sky.js` · `sigil.js` ·
+`deck.js` · `events.js` · `astronomy-engine.js` · `format.js` · `tz.js` ·
+`api.js` · `wheel.js` · `reading.js` · `shards.js` · `duet.js` ·
+`starshard-api/**` · `test/**` · `tools/**` · machine-generated
+`support.js` / `image-slot.js`. **Never reference engine modules from an
+export — not even a sibling `import()`.** This shipped a stale crash four
+separate times pre-reboot. Mocks get hardcoded placeholder strings;
+engineering wires the real values on merge.
+
+**The one rule, updated for a fresh build:** markup binds to names that
+JavaScript supplies — a renamed binding renders literal `{{ thatName }}`
+to the user. Since the markup is new, the binding inventory will be new
+too. Convention: **namespace per surface** — `sig.*` (arrival + ring),
+`snd.*` (Sounding), `cdx.*` (codex), `crd.*` (cards) — with auth and
+`deck` shared unprefixed as before. Build against placeholder values, and
+ship a **binding manifest** in your handoff notes: every `{{ name }}` you
+used, per surface, with one line on what it should contain. Engineering
+rewires the script block to your manifest and `npm run bindings` verifies
+the match on receipt.
+
+## Handing back — the checklist
+
+1. The binding manifest (every binding, per surface, one line each)
 2. Whether you changed the `CARD` or `LAYOUT` blocks
-3. Whether the meta tags survived
-4. Confirm the export does not import or reference `astro.js`, `shards.js` or
-   `duet.js` (see "What you must not touch" above — this has broken a handoff
-   four times)
+3. Confirm the meta tags / OG survived in the `<helmet>`
+4. Confirm the export imports **no** engine modules
+5. Which surfaces are in this export and which are still to come
 
-The engineering side runs `npm run bindings` on receipt, which fails the build on
-any binding mismatch, plus a browser smoke test that drives the full reading flow.
-Both catch handoff breakage before it ships.
+Engineering runs `npm run bindings` + a browser smoke test of the full
+night loop on every receipt. Both exist to catch handoff breakage before it
+ships — they're your safety net, not your adversary.

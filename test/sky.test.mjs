@@ -130,6 +130,115 @@ test('moonPhase on real full/new moon instants (pyswisseph-derived JDs, via astr
   assert.ok(nw.illumination < 0.001, nw.illumination);
 });
 
+// sigil.js's natalLight is moonPhase().index — it must never disagree with
+// .name's own bin, including exactly at the 8 bin edges, where an earlier
+// draft that computed .index via a separate floor((angle+22.5)/45) formula
+// (rather than reading the same MOON_PHASES table .name uses) silently did.
+test('moonPhase().index never disagrees with .name\'s own bin, including at the 8 bin edges', () => {
+  const NAMES_IN_INDEX_ORDER = [
+    'new moon', 'waxing crescent', 'first quarter', 'waxing gibbous',
+    'full moon', 'waning gibbous', 'last quarter', 'waning crescent',
+  ];
+  for (let angle = 0; angle < 360; angle += 5) {
+    const p = S.moonPhase(0, angle);
+    assert.equal(NAMES_IN_INDEX_ORDER[p.index], p.name, `angle=${angle}`);
+  }
+  for (const edge of [0, 22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]) {
+    const p = S.moonPhase(0, edge);
+    assert.equal(NAMES_IN_INDEX_ORDER[p.index], p.name, `edge angle=${edge}`);
+    assert.ok(p.index >= 0 && p.index <= 7, `index out of range at edge=${edge}: ${p.index}`);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// castKind — steady / turning / threshold, and the finite-difference rate
+// it's built on.
+// ---------------------------------------------------------------------------
+
+test('castKind\'s h=0.5 finite-difference rate matches a much finer h across many charts', () => {
+  // Verify the error-propagation math, don't just trust it: a central
+  // difference's truncation error scales with h^2, so a far finer h should
+  // agree closely if the coarse one is actually fine for a ~20min timing
+  // band (this codebase's standing rule: verify against an independent
+  // reference, not the same formula's own reasoning about itself).
+  const fine = jd => {
+    const h = 1 / 24; // 1 hour
+    return ((A.moonLongitude(jd + h) - A.moonLongitude(jd - h) + 360) % 360) / (2 * h);
+  };
+  const coarse = jd => (A.moonLongitude(jd + 0.5) - A.moonLongitude(jd - 0.5) + 360) % 360;
+  for (let i = 0; i < 20; i++) {
+    const jd = A.julianDay(1995 + i * 2, 1, 1, 0) + i * 53;
+    const diff = Math.abs(coarse(jd) - fine(jd));
+    assert.ok(diff < 0.01, `jd=${jd}: h=0.5 rate disagrees with h=1hr rate by ${diff} deg/day`);
+  }
+});
+
+test('castKind: steady:turning ratio over a real multi-year sweep lands near 3:1, threshold is rare', () => {
+  const counts = { steady: 0, turning: 0, threshold: 0 };
+  const N = 3000;
+  for (let i = 0; i < N; i++) {
+    const jd = A.julianDay(1980, 1, 1, 0) + i * 3.7; // irregular step, wide spread
+    const moonLon = A.moonLongitude(jd);
+    counts[S.castKind(moonLon, jd).kind]++;
+  }
+  const ratio = counts.steady / counts.turning;
+  assert.ok(ratio > 2.4 && ratio < 3.8, `steady:turning ratio ${ratio} (steady=${counts.steady}, turning=${counts.turning}) not near 3:1`);
+  // "Rare" isn't sub-5% here, and shouldn't be asserted as such: threshold
+  // is a symmetric +/-20min band around EVERY step boundary (entering and
+  // leaving), against a ~5.85h average step, so its expected share is
+  // ~(2*20)/(5.85*60) = ~11.4% of all time — smaller than turning's ~25%
+  // and much smaller than steady's ~65%, which is what "rare" means here
+  // (smallest of three), not an arbitrary sub-5% figure.
+  const thresholdRate = counts.threshold / N;
+  assert.ok(thresholdRate < 0.16, `threshold fired ${counts.threshold}/${N} (${(thresholdRate * 100).toFixed(1)}%) — expected near 11%`);
+  assert.ok(thresholdRate < counts.turning / N, 'threshold should be rarer than turning');
+});
+
+test('castKind: threshold takes priority over turning right at a step boundary', () => {
+  // Construct a jd where the moon sits within THRESHOLD_MINUTES of a step
+  // boundary by searching near a real chart's crossing.
+  let jd = A.julianDay(2026, 8, 12, 0);
+  const STEP_WIDTH = 360 / 112;
+  // Walk forward in small increments until we're within one step's end.
+  for (let step = 0; step < 2000; step++) {
+    const lon = A.moonLongitude(jd);
+    const intoStep = ((lon % STEP_WIDTH) + STEP_WIDTH) % STEP_WIDTH;
+    const toEnd = STEP_WIDTH - intoStep;
+    if (toEnd < 0.02) break; // within a few minutes of the boundary
+    jd += 0.002; // ~2.9 minutes per iteration
+  }
+  const moonLon = A.moonLongitude(jd);
+  const cast = S.castKind(moonLon, jd);
+  assert.equal(cast.kind, 'threshold', `expected threshold near a boundary, got ${cast.kind}`);
+  assert.notEqual(cast.becoming, null);
+});
+
+test('castKind: becoming is an ordinary step advance for steps 0-2, a station jump for step 3', () => {
+  const STATION_WIDTH = 360 / 28, STEP_WIDTH = 360 / 112;
+  // Mid-step (not near any boundary) for a station/step where step < 3.
+  const midStep0 = 0 * STATION_WIDTH + 1 * STEP_WIDTH + STEP_WIDTH / 2; // station 0, step 1, midway
+  const jdA = A.julianDay(2026, 1, 1, 0);
+  const rateA = (A.moonLongitude(jdA + 0.5) - A.moonLongitude(jdA - 0.5) + 360) % 360;
+  // Force castKind's internal station/step reading via a synthetic moonLon
+  // (castKind only uses moonLon for station/step and degIntoStep, and jd
+  // only for the rate — safe to pair an arbitrary jd with a chosen moonLon
+  // for this structural check).
+  const castNonTerminal = S.castKind(midStep0, jdA);
+  if (castNonTerminal.kind !== 'steady') {
+    assert.equal(castNonTerminal.becoming.station, castNonTerminal.current.station);
+    assert.equal(castNonTerminal.becoming.step, (castNonTerminal.current.step + 1) % 4);
+  }
+
+  // Deep into step 3 (Leaving) of station 5 but not within the boundary
+  // bands, so it should read 'steady' with becoming null; instead push it
+  // to the tail of step 3 to force turning/threshold and check the jump.
+  const tailOfStep3 = 5 * STATION_WIDTH + 3 * STEP_WIDTH + STEP_WIDTH * 0.99;
+  const castTerminal = S.castKind(tailOfStep3, jdA);
+  assert.notEqual(castTerminal.kind, 'steady');
+  assert.equal(castTerminal.becoming.station, (5 + 1) % 28);
+  assert.equal(castTerminal.becoming.step, 0);
+});
+
 // ---------------------------------------------------------------------------
 // Planetary hours — Chaldean order, weekday-ruler mapping, and the polar
 // day/night fallback (confirmed from astronomy-engine's own source to

@@ -1,13 +1,19 @@
 #!/usr/bin/env node
-// Browser smoke test: boots the real page, drives the whole reading flow, and
-// fails on unresolved {{ bindings }}, page errors, or an impossible degree.
+// Browser smoke test: boots the real page, drives the whole night loop
+// (birth entry -> the Sigil reading -> all 5 Sounding beats -> claim), and
+// fails on unresolved {{ bindings }}, page errors, or a ring that never
+// lights.
 //
 //   npm i -D playwright && npx playwright install chromium
 //   node test/smoke.mjs                 # headless, writes screenshots to /tmp
 //   node test/smoke.mjs --out ./shots   # keep the screenshots
 //
-// This is the check that proves a Claude Design handoff did not break the
-// wiring. Run it before merging a design branch.
+// This is the check that proves a handoff (Design or otherwise) did not
+// break the wiring. Run it before merging.
+//
+// "Star Shard v2 (archived).dc.html" is retired and kept only as reference
+// — this test targets "Star Shard v3.dc.html", the live page as of the
+// Sigil/Sounding MVP. See CLAUDE.md's receipt protocol.
 //
 // OWNER: Claude Code.
 
@@ -17,7 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const PAGE = 'Star Shard v2.dc.html';
+const PAGE = 'Star Shard v3.dc.html';
 const OUT = process.argv.includes('--out')
   ? path.resolve(process.argv[process.argv.indexOf('--out') + 1])
   : fs.mkdtempSync('/tmp/starshard-smoke-');
@@ -41,7 +47,7 @@ const base = `http://localhost:${server.address().port}`;
 
 const browser = await chromium.launch(
   process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
-const page = await browser.newPage({ viewport: { width: 1200, height: 900 } });
+const page = await browser.newPage({ viewport: { width: 420, height: 900 } });
 page.setDefaultTimeout(8000);
 
 // The dc-runtime pulls React, ReactDOM and @babel/standalone from unpkg.com at
@@ -71,68 +77,73 @@ if (VENDOR_DIR) {
 
 const fatal = [];
 page.on('pageerror', e => fatal.push(`page error: ${e.message}`));
+// Same filter test/smoke.mjs has always used: unresolved-{{ }} console noise
+// and a benign "Failed to load resource" (unpkg 404 races, etc.) are not
+// treated as fatal — they're covered by the explicit body-text assertion
+// below instead, which is a stronger and less flaky check.
 page.on('console', m => { if (m.type() === 'error' && !/\{\{/.test(m.text()) && !/Failed to load resource/.test(m.text())) fatal.push(`console: ${m.text()}`); });
 
 const shot = n => page.screenshot({ path: path.join(OUT, `${n}.png`) });
 
 await page.goto(base, { waitUntil: 'domcontentloaded' });
-await page.waitForFunction(() => /star shard/.test(document.body.innerText || ''), null, { timeout: 20000 });
-await page.waitForTimeout(800);
-await shot('01-landing');
+// case-insensitive: .eyebrow's CSS text-transform:uppercase renders the
+// literal lowercase markup text as uppercase, and innerText reflects the
+// rendered case, not the DOM's literal text.
+await page.waitForFunction(() => /star shard/i.test(document.body.innerText || ''), null, { timeout: 20000 });
+await page.waitForTimeout(500);
+await shot('01-entry');
 
-await page.getByText('✦ get your shard ✦').click();
+// -- birth entry (manual coordinates — no network geocoder dependency) ------
 await page.getByText('enter coordinates manually instead').click();
-await page.locator('input[placeholder="mikufan39"]').fill('smoketest');
-await page.locator('input[type=date]').first().fill('1989-06-06');
-await page.locator('input[type=time]').first().fill('16:40');
-await page.locator('input[placeholder="40.71"]').fill('40.71');
-await page.locator('input[placeholder="-74.01"]').fill('-74.01');
-await page.locator('input[placeholder="-5"]').fill('-5');
+await page.locator('#sig-name').fill('smoketest');
+await page.locator('#sig-date').fill('1989-06-06');
+await page.locator('#sig-time').fill('16:40');
+await page.locator('#sig-lat').fill('40.71');
+await page.locator('#sig-lon').fill('-74.01');
+await page.locator('#sig-tz').fill('-5');
 await shot('02-form');
 
-await page.getByText('✧ shatter the sky ✧').click();
-await page.waitForTimeout(400);
-for (let i = 0; i < 4; i++) {
-  const c = page.getByText('CLICK TO OPEN ✦');
-  if (await c.count()) await c.nth(0).click();
-  await page.waitForTimeout(120);
-}
-await shot('03-shards');
+await page.getByText('read my mark ✦').click();
+await page.waitForTimeout(900); // the 700ms reveal beat + a margin
+await shot('03-sigil');
 
-await page.getByText('🔮 chart wheel').first().click();
+// -- the Sigil profile: natal parts + ring should have rendered -------------
+const profileBody = await page.evaluate(() => document.body.innerText || '');
+const fail = [];
+// These labels sit in .eyebrow divs (CSS text-transform:uppercase) —
+// innerText reflects the rendered case, so match case-insensitively.
+if (!/the strike/i.test(profileBody)) fail.push('no "the strike" beat rendered on the Sigil profile');
+if (!/the root/i.test(profileBody)) fail.push('no "the root" beat rendered on the Sigil profile');
+if (!/the gait/i.test(profileBody)) fail.push('no "the gait" beat rendered on the Sigil profile');
+const ringPathCount = await page.locator('svg path').count();
+if (ringPathCount < 100) fail.push(`expected ~112 ring segment paths, found ${ringPathCount} — did sigilRingData() render?`);
+
+// -- walk tonight's crossing: all 5 Sounding beats + claim -------------------
+await page.getByText("walk tonight's crossing").click();
 await page.waitForTimeout(300);
-await shot('04-wheel');
+await shot('04-beat0-station');
 
-// today.exe — proves sky.js (moon phase + tārābala + planetary hours) is
-// actually wired in, not just unit-tested. See sky.js/reading.js's
-// todayPhaseLine/todayRelation, and loadHours() for the async hour fetch.
-await page.getByText('today.exe').first().click();
-await page.waitForTimeout(500); // loadHours() is async (dynamic-imports astronomy-engine.js)
-await shot('05-today');
+for (let i = 0; i < 3; i++) {
+  await page.getByText('next ✦').click();
+  await page.waitForTimeout(200);
+}
+await shot('05-beat3-question');
 
-const body = await page.evaluate(() => document.body.innerText || '');
+await page.getByText(/claim tonight ✦|already kindled tonight/).click();
+await page.waitForTimeout(400);
+await shot('06-beat4-claim');
+
+const claimBody = await page.evaluate(() => document.body.innerText || '');
+if (!/kindled\./.test(claimBody)) fail.push('claim beat did not render "kindled."');
+if (!/walk it well/.test(claimBody)) fail.push('claim beat did not render the close line');
 
 // --- assertions ------------------------------------------------------------
 
-const fail = [];
-if (/\{\{\s*\w/.test(body)) {
+const fullBody = await page.evaluate(() => document.body.innerText || '');
+if (/\{\{\s*\w/.test(fullBody)) {
   fail.push('unresolved bindings in the rendered page: ' +
-    [...new Set([...body.matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)].map(m => m[1]))].join(', '));
+    [...new Set([...fullBody.matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)].map(m => m[1]))].join(', '));
 }
-const degs = [...body.matchAll(/(\d+)°(\d{2})′/g)];
-if (!degs.length) fail.push('no formatted degrees rendered — did the chart compute?');
-for (const [full, d, m] of degs) {
-  if (+m > 59) fail.push(`impossible degree rendered: ${full}`);
-  if (+d > 29) fail.push(`degree out of sign range: ${full}`);
-}
-for (const marker of ['house shard', 'mirror shard', 'moon shard', 'hearth shard']) {
-  if (!body.includes(marker)) fail.push(`missing "${marker}" after reveal`);
-}
-if (!/rising/.test(body)) fail.push('no rising sign rendered');
-if (!/% lit/.test(body)) fail.push('no moon-phase line rendered in today.exe — sky.js wiring broken?');
-const TARA_NAMES = ['Janma', 'Sampat', 'Vipat', 'Kṣema', 'Pratyari', 'Sādhaka', 'Naidhana', 'Mitra', 'Parama Mitra'];
-if (!TARA_NAMES.some(t => body.includes(t))) fail.push('no tārābala name rendered in today.exe — sky.js wiring broken?');
-if (!/hour of \w+/.test(body)) fail.push('no planetary-hour line rendered in today.exe — loadHours() wiring broken?');
 fail.push(...fatal);
 
 await browser.close();
@@ -144,4 +155,4 @@ if (fail.length) {
   for (const f of fail) console.error(`    ${f}`);
   process.exit(1);
 }
-console.log(`✓ smoke test passed — full reading flow renders, ${degs.length} degrees all valid`);
+console.log('✓ smoke test passed — the full night loop renders, the ring kindles, no unresolved bindings');

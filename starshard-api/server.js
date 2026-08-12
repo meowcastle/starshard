@@ -385,6 +385,131 @@ app.put('/api/deck', requireAuth, wrap(async (req, res) => {
   res.status(204).end();
 }));
 
+// -- Sigil + Recollection (the reboot) ---------------------------------
+//
+// Engine modules (sigil.js/deck.js/astro.js) live at repo root, which has
+// its own `"type": "module"` package.json — this file's own `"type":
+// "commonjs"` doesn't apply to them. Node resolves an import specifier
+// relative to the module doing the importing, so a dynamic import() of
+// those files from here correctly loads them as ESM regardless of this
+// file's own type. Cached after the first call.
+let _enginePromise = null;
+function loadEngine() {
+  if (!_enginePromise) {
+    _enginePromise = Promise.all([
+      import('../sigil.js'),
+      import('../deck.js'),
+      import('../astro.js'),
+    ]).then(([sigilMod, deckMod, astroMod]) => ({ sigilMod, deckMod, astroMod }));
+  }
+  return _enginePromise;
+}
+
+app.get('/api/sigil', requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute('SELECT sigil_json FROM sigil WHERE user_id = ?', [req.userId]);
+  if (!rows[0]) return res.json({ sigil: null });
+  try {
+    res.json({ sigil: JSON.parse(rows[0].sigil_json) });
+  } catch (e) {
+    res.json({ sigil: null });
+  }
+}));
+
+app.put('/api/sigil', requireAuth, wrap(async (req, res) => {
+  const { sigil } = req.body || {};
+  if (!sigil || typeof sigil !== 'object') return res.status(400).json({ error: 'invalid_input' });
+
+  const inRange = (n, lo, hi) => Number.isInteger(n) && n >= lo && n <= hi;
+  const nullOr = (v, ok) => v === null || ok(v);
+  const TYPES = ['seedborn', 'homebound', 'outbound', 'emberwake', 'farbank'];
+  const { sunStation, sunStep, moonStation, moonStep, risingStation, natalLight, keeper, type, farlight } = sigil;
+
+  const shapeOk =
+    inRange(sunStation, 0, 27) && inRange(sunStep, 0, 3) &&
+    inRange(moonStation, 0, 27) && nullOr(moonStep, v => inRange(v, 0, 3)) &&
+    nullOr(risingStation, v => inRange(v, 0, 27)) &&
+    inRange(natalLight, 0, 7) && inRange(keeper, 0, 6) &&
+    TYPES.includes(type) && inRange(farlight, 0, 27);
+  if (!shapeOk) return res.status(400).json({ error: 'invalid_input' });
+
+  // type/farlight are pure functions of sunStation/moonStation
+  // (sigil.js's deriveType/farlightOf) — don't trust a client-submitted
+  // value that doesn't match what those functions independently produce,
+  // rather than storing an internally-inconsistent sigil.
+  const { sigilMod } = await loadEngine();
+  if (type !== sigilMod.deriveType(sunStation, moonStation) || farlight !== sigilMod.farlightOf(sunStation)) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+
+  const json = JSON.stringify({ sunStation, sunStep, moonStation, moonStep, risingStation, natalLight, keeper, type, farlight });
+  await pool.execute(
+    'INSERT INTO sigil (user_id, sigil_json) VALUES (?, ?) ' +
+    'ON DUPLICATE KEY UPDATE sigil_json = VALUES(sigil_json)',
+    [req.userId, json]
+  );
+  res.status(204).end();
+}));
+
+app.get('/api/recollection', requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute(
+    'SELECT station, step, cast_context_json, kindled_at FROM recollection WHERE user_id = ?',
+    [req.userId]
+  );
+  res.json({
+    recollection: rows.map(r => {
+      let castContext = {};
+      try { castContext = JSON.parse(r.cast_context_json); } catch (e) {}
+      return { station: r.station, step: r.step, castContext, kindledAt: r.kindled_at };
+    }),
+  });
+}));
+
+// Claimability is computed HERE, from the server's own real-time moon
+// position, and never trusted from the client — a logged-in user with
+// devtools could otherwise loop all 112 (station, step) combinations and
+// fully light their ring in seconds, contradicting the ethics floor ("the
+// sky is the drop table," COSMOLOGY §4). Reuses deck.js's already-tested
+// claimStates() rather than reimplementing the claim-window/grace logic a
+// second time. The client's `station` is a claim TRIGGER, not trusted data;
+// `step` is never accepted from the client at all — it's derived here.
+app.post('/api/recollection', requireAuth, wrap(async (req, res) => {
+  const { station, castContext } = req.body || {};
+  if (!Number.isInteger(station) || station < 0 || station > 27) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+
+  const { deckMod, astroMod, sigilMod } = await loadEngine();
+  const jd = Date.now() / 86400000 + 2440587.5;
+  const moonLon = astroMod.moonLongitude(jd);
+  const todayStation = astroMod.mansionOf(moonLon);
+  const states = deckMod.claimStates({ moonLon, jd, todayMansion: todayStation });
+  const entry = states[station];
+  if (!entry || !entry.claimable) {
+    return res.status(403).json({ error: 'not_claimable' });
+  }
+  // Claiming today's real station records the Lantern's actual current
+  // step. A grace claim (yesterday's station, visited late) records step 3
+  // (Leaving) — the last step the Lantern actually stood in there before
+  // moving on; there is no "current step" of a station the Moon has
+  // already left.
+  const step = station === todayStation ? sigilMod.stepOf(moonLon) : 3;
+
+  const contextJson = JSON.stringify(castContext && typeof castContext === 'object' ? castContext : {});
+  await pool.execute(
+    'INSERT INTO recollection (user_id, station, step, cast_context_json) VALUES (?, ?, ?, ?) ' +
+    'ON DUPLICATE KEY UPDATE id = id', // no-op: an already-kindled segment kindles once, ever
+    [req.userId, station, step, contextJson]
+  );
+  const [rows] = await pool.execute(
+    'SELECT station, step, cast_context_json, kindled_at FROM recollection WHERE user_id = ? AND station = ? AND step = ?',
+    [req.userId, station, step]
+  );
+  const r = rows[0];
+  let storedContext = {};
+  try { storedContext = JSON.parse(r.cast_context_json); } catch (e) {}
+  res.status(201).json({ station: r.station, step: r.step, castContext: storedContext, kindledAt: r.kindled_at });
+}));
+
 app.get('/api/guestbook', wrap(async (req, res) => {
   const [rows] = await pool.execute(
     'SELECT name, msg, stamp, created_at FROM guestbook_entries ORDER BY id DESC LIMIT 50'
