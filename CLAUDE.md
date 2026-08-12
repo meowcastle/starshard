@@ -23,7 +23,7 @@ You (Claude Code) own everything except the markup:
 
 | Yours | Claude Design's | Generated — never edit |
 |---|---|---|
-| `astro.js` `sky.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
+| `astro.js` `sky.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
@@ -39,6 +39,8 @@ Star Shard v2.dc.html
        │
        ├─ astro.js     ephemeris, houses, lunar mansion, weekday
        ├─ sky.js       daily engine: moon phase, tārābala, planetary hours
+       ├─ deck.js      the collection game: claim windows, grace, returns-in-N-days
+       ├─ events.js    the event calendar: dated sky events, foil conditions
        ├─ astronomy-engine.js   vendored third-party (sunrise/sunset only)
        ├─ format.js    degFmt, ordinal, place/birth lines
        ├─ tz.js        historical UTC offset + DST for a birth moment
@@ -50,6 +52,10 @@ Star Shard v2.dc.html
        └─ shards.js / duet.js   written content
 
 starshard-api/          Express 4 + MySQL: accounts + saved window layout
+
+mansions/               generated: 28 static permalink pages + index + OG
+                         images — tools/build-mansions.mjs regenerates it,
+                         never hand-edit (see OWNERSHIP.md)
 ```
 
 ## Runtime constraints — these are not negotiable

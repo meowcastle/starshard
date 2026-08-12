@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**455 bindings, 229 top-level.**
+**472 bindings, 243 top-level.**
 
 ## Rule
 
@@ -48,7 +48,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `miniShards` | `m` | `border`, `color`, `label`, `value` |
 | `pBurstBits` | `b` | `c`, `d`, `fs`, `t`, `tx`, `ty` |
 | `pCityResults` | `r` | `coords`, `name`, `pick`, `region` |
-| `pDeck` | `d` | `bg`, `border`, `numeral` |
+| `pDeck` | `d` | `bg`, `border`, `cursor`, `numeral`, `onClick`, `sub` |
 | `pPips` | `p` | `glyph`, `text`, `value` |
 | `pReadingParas` | `p` | `glyph`, `text`, `value` |
 | `pShards` | `s` | `body`, `cursor`, `displayTitle`, `file`, `gem`, `headline`, `hidden`, `kind`, `label`, `onReveal`, `revealed`, `size`, `status`, `title`, `titleColor`, `tradition` |
@@ -79,6 +79,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `backToLogin` | component state |
 | `chartLine` | astro.js |
 | `cityResults` | api.js |
+| `claimToday` | component state |
 | `clock` | component state |
 | `cuspRows` | format.js + astro.js |
 | `dDate` | component state |
@@ -124,6 +125,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `hasDuet` | component state |
 | `hasPlace` | component state |
 | `hasResults` | component state |
+| `hourAvailable` | component state |
+| `hourCurrentPlanet` | component state |
+| `hourPlaceLabel` | component state |
 | `isDesktop` | component state |
 | `isForgot` | component state |
 | `isLoggedIn` | component state |
@@ -165,6 +169,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `pHasDuet` | component state |
 | `pHasPlace` | component state |
 | `pHasResults` | component state |
+| `pHourAvailable` | component state |
+| `pHourCurrentPlanet` | component state |
+| `pHourPlaceLabel` | component state |
 | `pIntroBurst` | component state |
 | `pIntroCharge` | component state |
 | `pIntroOpacity` | component state |
@@ -264,11 +271,18 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `startItems` | windows.js |
 | `startOpen` | component state |
 | `taskItems` | windows.js |
+| `todayAlreadyCollected` | component state |
+| `todayClaimBg` | component state |
+| `todayClaimColor` | component state |
+| `todayClaimLabel` | component state |
 | `todayDate` | component state |
+| `todayFoil` | component state |
+| `todayFoilReason` | component state |
 | `todayForecast` | shards.js |
 | `todayMansion` | shards.js |
 | `todayMeaning` | shards.js |
 | `todayMoonSign` | astro.js |
+| `todayNotCollected` | component state |
 | `todayPhaseLine` | component state |
 | `todayTaraLine` | component state |
 | `todayTaraName` | component state |

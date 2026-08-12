@@ -29,6 +29,8 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 |---|---|
 | `astro.js` | ephemeris, Placidus/Porphyry houses, lunar mansion, weekday |
 | `sky.js` | daily engine: moon phase, tārābala (sidereal-27/Lahiri), planetary hours |
+| `deck.js` | the collection game: claim windows, grace, "returns in N days" |
+| `events.js` | the event calendar: dated sky events (eclipses, supermoons, etc.), foil conditions |
 | `astronomy-engine.js` | vendored third-party (MIT) — sunrise/sunset only, see `tools/vendor-astronomy.mjs` |
 | `format.js` | degree/ordinal/place display strings |
 | `tz.js` | historical UTC offset + DST for a birth moment |
@@ -52,6 +54,22 @@ If you add a binding, add it to `BINDINGS.md` in the same commit.
 ### Generated — never hand-edit
 
 `support.js`, `image-slot.js`. Rebuilt by the dc-runtime; edits will be lost.
+
+`mansions/*.html`, `mansions/index.html`, `mansions/og/*.jpg`, `sitemap.xml`.
+Rebuilt by `tools/build-mansions.mjs` / `tools/build-mansion-images.mjs`;
+hand-edits diverge silently on the next regeneration. The two build
+*scripts* are normal `tools/**`, Claude-Code-owned.
+
+**Known gap in the source content:** the parser's epithets for all 28
+mansions are hand-transcribed in `tools/build-mansions.mjs`'s
+`MANSION_EPITHETS`, not parsed — `research/mansions-pilot.md`'s headings for
+#10/#24 were never actually updated to the "v3" titles
+`research/mansions-batch1.md`'s retitle note announces ("The Throne"/
+"The Void"), and #22/23/25/26/27/28 originally had no heading anywhere
+before `research/mansions-batch4.md` landed. If more mansion prose is
+added later, check the new source's heading against this table before
+assuming the parser will pick up a new epithet correctly — it won't; the
+table needs a manual update too.
 
 ## Rules
 

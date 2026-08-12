@@ -103,10 +103,11 @@ await page.getByText('🔮 chart wheel').first().click();
 await page.waitForTimeout(300);
 await shot('04-wheel');
 
-// today.exe — proves sky.js (moon phase + tārābala) is actually wired in,
-// not just unit-tested. See sky.js/reading.js's todayPhaseLine/todayRelation.
+// today.exe — proves sky.js (moon phase + tārābala + planetary hours) is
+// actually wired in, not just unit-tested. See sky.js/reading.js's
+// todayPhaseLine/todayRelation, and loadHours() for the async hour fetch.
 await page.getByText('today.exe').first().click();
-await page.waitForTimeout(300);
+await page.waitForTimeout(500); // loadHours() is async (dynamic-imports astronomy-engine.js)
 await shot('05-today');
 
 const body = await page.evaluate(() => document.body.innerText || '');
@@ -131,6 +132,7 @@ if (!/rising/.test(body)) fail.push('no rising sign rendered');
 if (!/% lit/.test(body)) fail.push('no moon-phase line rendered in today.exe — sky.js wiring broken?');
 const TARA_NAMES = ['Janma', 'Sampat', 'Vipat', 'Kṣema', 'Pratyari', 'Sādhaka', 'Naidhana', 'Mitra', 'Parama Mitra'];
 if (!TARA_NAMES.some(t => body.includes(t))) fail.push('no tārābala name rendered in today.exe — sky.js wiring broken?');
+if (!/hour of \w+/.test(body)) fail.push('no planetary-hour line rendered in today.exe — loadHours() wiring broken?');
 fail.push(...fatal);
 
 await browser.close();

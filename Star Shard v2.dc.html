@@ -235,6 +235,15 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
         <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#c9b3c0;margin:1px 0 8px">“{{ todayMeaning }}” · moon in {{ todayMoonSign }}</div>
         <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:10px 12px;font-size:13px;line-height:1.6;color:#6d5a68;text-align:left">{{ todayForecast }}</div>
         <div style="margin-top:8px;font-size:12px;color:#a06f8c">☾ {{ todayPhaseLine }}</div>
+        <sc-if value="{{ todayAlreadyCollected }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:6px;font-size:11.5px;color:#5b9e6f">✓ today's mansion is in your deck</div>
+        </sc-if>
+        <sc-if value="{{ todayNotCollected }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ claimToday }}" style-active="border-color:#c586ad #fff #fff #c586ad" style="margin-top:6px;font-family:'Baloo 2',cursive;font-weight:700;font-size:12.5px;color:{{ todayClaimColor }};background:{{ todayClaimBg }};border:2px solid;border-color:#fff #c586ad #c586ad #fff;padding:5px 14px;cursor:pointer">{{ todayClaimLabel }}</button>
+          <sc-if value="{{ todayFoil }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:4px;font-size:10.5px;color:#a06f8c;font-style:italic">✦ {{ todayFoilReason }} ✦</div>
+          </sc-if>
+        </sc-if>
         <div style="margin-top:12px;padding-top:10px;border-top:1px dotted #ecd2e2;text-align:left">
           <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;color:#c9a0b8;text-align:center;margin-bottom:6px">YOUR DAILY RELATION</div>
           <sc-if value="{{ noChart }}" hint-placeholder-val="{{ false }}">
@@ -243,6 +252,9 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
           <sc-if value="{{ hasChart }}" hint-placeholder-val="{{ false }}">
             <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#8a4d9e;text-align:center">{{ todayTaraName }}</div>
             <div style="font-size:12.5px;line-height:1.55;color:#6d5a68;margin-top:2px">{{ todayTaraLine }}</div>
+            <sc-if value="{{ hourAvailable }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#a06f8c;margin-top:7px;text-align:center">✦ hour of {{ hourCurrentPlanet }} · cast at {{ hourPlaceLabel }}</div>
+            </sc-if>
           </sc-if>
         </div>
         <div style="margin-top:9px;font-size:11px;color:#c9b3c0">the moon moves house roughly daily, come back tomorrow ♡</div>
@@ -1029,12 +1041,29 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
             <span style="font-family:var(--font-display);font-weight:700;font-size:var(--text-md);color:var(--ink)">{{ pTodayMansion }}</span>
             <span style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-muted)">{{ pTodayBody }}</span>
             <span style="font-size:var(--text-xs);color:var(--ink-accent)">☾ {{ pTodayPhaseLine }}</span>
+            <sc-if value="{{ todayAlreadyCollected }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:var(--text-xs);color:var(--accent)">✓ today's mansion is in your deck</span>
+            </sc-if>
+            <sc-if value="{{ todayNotCollected }}" hint-placeholder-val="{{ true }}">
+              <span onClick="{{ claimToday }}" style="align-self:flex-start;font-family:var(--font-display);font-weight:700;font-size:var(--text-xs);color:{{ todayClaimColor }};background:{{ todayClaimBg }};border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);padding:5px 12px;cursor:pointer;min-height:32px;display:flex;align-items:center">{{ todayClaimLabel }}</span>
+              <sc-if value="{{ todayFoil }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:var(--text-2xs);color:var(--ink-muted);font-style:italic">✦ {{ todayFoilReason }} ✦</span>
+              </sc-if>
+            </sc-if>
             <span style="font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);color:var(--ink);margin-top:var(--space-2)">{{ pTodayTaraName }}</span>
             <span style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-muted)">{{ pTodayTaraLine }}</span>
+            <sc-if value="{{ pHourAvailable }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:var(--text-xs);color:var(--ink-accent)">✦ hour of {{ pHourCurrentPlanet }} · cast at {{ pHourPlaceLabel }}</span>
+            </sc-if>
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-2)">
             <sc-for list="{{ pDeck }}" as="d" hint-placeholder-count="28">
-              <div style="aspect-ratio:.57;background:{{ d.bg }};border:{{ d.border }};border-radius:var(--radius-card-sm);display:flex;align-items:center;justify-content:center;font-family:var(--font-retro);font-size:11px;color:var(--ink-warn)">{{ d.numeral }}</div>
+              <div onClick="{{ d.onClick }}" style="aspect-ratio:.57;background:{{ d.bg }};border:{{ d.border }};border-radius:var(--radius-card-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--font-retro);font-size:11px;color:var(--ink-warn);cursor:{{ d.cursor }}">
+                <span>{{ d.numeral }}</span>
+                <sc-if value="{{ d.sub }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:8px;letter-spacing:.04em">{{ d.sub }}</span>
+                </sc-if>
+              </div>
             </sc-for>
           </div>
           <button onClick="{{ pGoDuet }}" style-active="border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);box-shadow:none;transform:translate(2px,2px)" style="min-height:var(--tap-min);padding:11px 22px;background:var(--teal-200);color:var(--teal-900);font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);border-radius:var(--radius-none);border-width:var(--bevel);border-style:solid;border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);box-shadow:var(--shadow-raised);cursor:pointer">chart a friend ✦</button>
@@ -1253,7 +1282,7 @@ class Component extends DCLogic {
     manualMode: false, fLat: '', fLon: '', fTz: '',
     formError: '', chart: null, revealed: [false, false, false, false],
     weaveText: '', clock: '',
-    today: null,
+    today: null, hourInfo: null, hourPlaceLabel: '',
     dName: '', dDate: '2004-01-01', dTime: '12:00', dQuery: '', dResults: [], dPlace: null, dSearching: false, dError: '',
     duet: null, duetText: '',
     gName: '', gMsg: '', gStamp: '⭐', guestEntries: [], gBusy: false, gError: '',
@@ -1271,18 +1300,20 @@ class Component extends DCLogic {
     pFormError: '', pChart: null, pRevealed: [false, false, false, false], pWeaveText: '',
     pFriendName: '', pFriendDate: '',
     pIntroPhase: 'float', pHasSave: false,
+    pHourInfo: null, pHourPlaceLabel: '',
   };
 
   // -- lifecycle ------------------------------------------------------------
 
   async componentDidMount() {
-    const [astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, win, skyMod] = await Promise.all([
+    const [astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, win, skyMod, deckMod, eventsMod] = await Promise.all([
       import(`./astro.js?v=${BUILD_ID}`), import(`./shards.js?v=${BUILD_ID}`), import(`./duet.js?v=${BUILD_ID}`),
       import(`./format.js?v=${BUILD_ID}`), import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
       import(`./wheel.js?v=${BUILD_ID}`), import(`./card.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
-      import(`./windows.js?v=${BUILD_ID}`), import(`./sky.js?v=${BUILD_ID}`)
+      import(`./windows.js?v=${BUILD_ID}`), import(`./sky.js?v=${BUILD_ID}`), import(`./deck.js?v=${BUILD_ID}`),
+      import(`./events.js?v=${BUILD_ID}`)
     ]);
-    Object.assign(this, { astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, winMod: win, sky: skyMod });
+    Object.assign(this, { astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, winMod: win, sky: skyMod, deckMod, eventsMod });
     this.win = win.createWindowOps(this);
     const windows = win.initWindows();
     try {
@@ -1489,6 +1520,22 @@ class Component extends DCLogic {
     }
     this.setState({ chart, formError: '', revealed: [false, false, false, false], weaveText: '', duet: null, duetText: '' });
     this.win.openWin('sky');
+    this.loadHours();
+  };
+
+  // Planetary hours need an observer lat/lon — there's no "current location"
+  // anywhere in this app (birth data never leaves the browser and nothing
+  // else asks where the user is right now), so this deliberately reuses the
+  // birth chart's own place, labeled honestly as where the chart was cast
+  // rather than implying it's where the user is today.
+  loadHours = async () => {
+    const s = this.state;
+    const lat = s.manualMode ? parseFloat(s.fLat) : (s.fPlace && s.fPlace.lat);
+    const lon = s.manualMode ? parseFloat(s.fLon) : (s.fPlace && s.fPlace.lon);
+    const label = s.manualMode ? 'your entered coordinates' : (s.fPlace ? s.fPlace.name : '');
+    if (lat == null || lon == null || isNaN(lat) || isNaN(lon)) { this.setState({ hourInfo: { available: false }, hourPlaceLabel: '' }); return; }
+    const info = await this.sky.planetaryHours(new Date(), lat, lon);
+    this.setState({ hourInfo: info, hourPlaceLabel: label });
   };
 
   weave = () => {
@@ -1619,6 +1666,7 @@ class Component extends DCLogic {
       if (c) {
         this.setState({ pChart: c, pRevealed: [true, true, true, true] });
         this.pWeave(c);
+        this.pLoadHours();
         return this.pGo(4, false);
       }
     }
@@ -1634,6 +1682,17 @@ class Component extends DCLogic {
     };
     try { localStorage.setItem('starshard.save', JSON.stringify(save)); } catch (e) {}
     this.setState({ pHasSave: true });
+  };
+
+  // See loadHours() (desktop) for why this reuses the chart's own place.
+  pLoadHours = async () => {
+    const s = this.state;
+    const lat = s.pManualMode ? parseFloat(s.pLat) : (s.pPlace && s.pPlace.lat);
+    const lon = s.pManualMode ? parseFloat(s.pLon) : (s.pPlace && s.pPlace.lon);
+    const label = s.pManualMode ? 'your entered coordinates' : (s.pPlace ? s.pPlace.name : '');
+    if (lat == null || lon == null || isNaN(lat) || isNaN(lon)) { this.setState({ pHourInfo: { available: false }, pHourPlaceLabel: '' }); return; }
+    const info = await this.sky.planetaryHours(new Date(), lat, lon);
+    this.setState({ pHourInfo: info, pHourPlaceLabel: label });
   };
 
   pSearch = async () => {
@@ -1674,7 +1733,12 @@ class Component extends DCLogic {
     this.setState({ pWeaveText: text });
   };
 
-  pCollectDeck = (mansionIdx) => {
+  // Shared/unprefixed — deck is account data, not phone-UI state (see
+  // OWNERSHIP.md). Used both for the unconditional natal-mansion reveal on
+  // first chart computation and for the gated daily claim (deck.js's
+  // claimStates() decides *whether* a claim is allowed; this just performs
+  // one once it's already been decided).
+  collectMansion = (mansionIdx) => {
     const deck = Array.from(new Set([...this.state.deck, mansionIdx]));
     try { localStorage.setItem('starshard.deck', JSON.stringify(deck)); } catch (e) {}
     this.setState({ deck });
@@ -1693,6 +1757,7 @@ class Component extends DCLogic {
       if (!c) return;
       this.setState({ pChart: c, pRevealed: [false, false, false, false], pWeaveText: '', pFormError: '' });
       this.pGo(2);
+      this.pLoadHours();
       setTimeout(() => { this.pGo(3); this.pWeave(c); }, 1300);
       return;
     }
@@ -1701,7 +1766,7 @@ class Component extends DCLogic {
       return this.pGo(4);
     }
     if (pStep === 4) {
-      if (pChart) this.pCollectDeck(pChart.mansion);
+      if (pChart) this.collectMansion(pChart.mansion);
       return this.pGo(5);
     }
     if (pStep === 5) return this.pGo(0);
@@ -1779,6 +1844,16 @@ class Component extends DCLogic {
     const todayPhaseLine = T && ready ? this.reading.todayPhaseLine({ today: T, sky: this.sky }) : '';
     const todayTara = T && ready && chart ? this.reading.todayRelation({ chart, today: T, sky: this.sky, data: D }) : null;
 
+    // -- the collection game — shared/unprefixed, see deck.js's header and
+    // OWNERSHIP.md. Claiming today's crossing needs no chart of your own.
+    const todayAlreadyCollected = T && ready ? s.deck.includes(T.mansion) : false;
+    const claimToday = () => this.collectMansion(T.mansion);
+    const claims = T && ready ? this.deckMod.claimStates({ moonLon: T.moonLon, jd: T.jd, todayMansion: T.mansion }) : null;
+    // Every rarity is a real rarity — see events.js's header. Foil status is
+    // per (date, mansion): the Pleiades mansion is always foil; an eclipse/
+    // supermoon/etc. day makes ANY claim that day foil.
+    const todayFoilInfo = T && ready ? this.eventsMod.foilInfo(new Date(), T.mansion) : { foil: false, reason: null };
+
     // -- phone flow (<1024px) — all p-prefixed, see the rule in OWNERSHIP.md.
     const pChart = s.pChart;
     const pTodayTara = T && ready && pChart ? this.reading.todayRelation({ chart: pChart, today: T, sky: this.sky, data: D }) : null;
@@ -1825,9 +1900,20 @@ class Component extends DCLogic {
 
     const pDeckSet = new Set(s.deck);
     const pDeck = ROMAN.map((r, i) => {
-      const have = pDeckSet.has(i);
-      return { numeral: have ? r : '', bg: have ? 'var(--surface-raised)' : 'var(--surface-sunken)',
-        border: have ? 'var(--bevel) solid var(--accent)' : 'var(--bevel) solid var(--teal-200)' };
+      if (pDeckSet.has(i)) {
+        return { numeral: r, sub: '', bg: 'var(--surface-raised)', border: 'var(--bevel) solid var(--accent)', onClick: undefined, cursor: 'default' };
+      }
+      const cs = claims ? claims[i] : null;
+      if (cs && cs.claimable) {
+        const fi = this.eventsMod ? this.eventsMod.foilInfo(new Date(), i) : { foil: false };
+        return fi.foil
+          ? { numeral: '✦', sub: 'foil!', bg: 'var(--foil-surface)', border: 'var(--bevel) solid var(--foil-edge)', onClick: () => this.collectMansion(i), cursor: 'pointer' }
+          : { numeral: '✦', sub: 'claim', bg: 'var(--butter-200)', border: 'var(--bevel) solid var(--pink-700)', onClick: () => this.collectMansion(i), cursor: 'pointer' };
+      }
+      // Plain "N days" — never urgency styling, per STRATEGY.md §5's "no
+      // countdown-urgency UI" guardrail. The mansion returns; it's not a
+      // deadline.
+      return { numeral: '', sub: cs ? `${cs.returnsInDays}d` : '', bg: 'var(--surface-sunken)', border: 'var(--bevel) solid var(--teal-200)', onClick: undefined, cursor: 'default' };
     });
 
     const pStep = s.pStep;
@@ -1853,6 +1939,11 @@ class Component extends DCLogic {
 
     return {
       isPhone: s.isPhone, isDesktop: !s.isPhone,
+      todayAlreadyCollected, todayNotCollected: T && ready ? !todayAlreadyCollected : false, claimToday,
+      todayFoil: todayFoilInfo.foil, todayFoilReason: todayFoilInfo.reason || '',
+      todayClaimLabel: todayFoilInfo.foil ? '✦ claim today\'s foil mansion ✦' : 'claim today\'s mansion ✦',
+      todayClaimBg: todayFoilInfo.foil ? '#5C3A1C' : '#ffd6e8',
+      todayClaimColor: todayFoilInfo.foil ? '#F8F0C8' : '#8a4d9e',
       pIntroShow: ip !== 'done', pIntroOpacity: ip === 'fade' ? 0 : 1,
       pIntroCharge: ip === 'charge', pIntroBurst: ip === 'burst' || ip === 'fade',
       pShardVisible: ip === 'float' || ip === 'charge',
@@ -1899,6 +1990,9 @@ class Component extends DCLogic {
       pTodayMansion: T && ready ? D.MANSIONS[T.mansion][0] : '', pTodayBody: T && ready ? D.MANSIONS[T.mansion][2] : '',
       pTodayPhaseLine: todayPhaseLine,
       pTodayTaraName: pTodayTara ? pTodayTara.taraName : '', pTodayTaraLine: pTodayTara ? pTodayTara.taraLine : '',
+      pHourAvailable: !!(s.pHourInfo && s.pHourInfo.available),
+      pHourCurrentPlanet: s.pHourInfo && s.pHourInfo.available && s.pHourInfo.current ? s.pHourInfo.current.planet : '',
+      pHourPlaceLabel: s.pHourPlaceLabel,
       pFriendName: s.pFriendName, pSetFriendName: e => this.setState({ pFriendName: e.target.value }),
       pFriendDate: s.pFriendDate, pSetFriendDate: e => this.setState({ pFriendDate: e.target.value }),
       pFriendLabel: s.pFriendName || 'them', pFriendMansion, pFriendNumeral,
@@ -1925,6 +2019,9 @@ class Component extends DCLogic {
       todayForecast: T && ready ? `The moon is visiting ${D.MANSIONS[T.mansion][0]} today: ${D.MANSIONS[T.mansion][2]}` : 'reading the sky…',
       todayPhaseLine,
       todayTaraName: todayTara ? todayTara.taraName : '', todayTaraLine: todayTara ? todayTara.taraLine : '',
+      hourAvailable: !!(s.hourInfo && s.hourInfo.available),
+      hourCurrentPlanet: s.hourInfo && s.hourInfo.available && s.hourInfo.current ? s.hourInfo.current.planet : '',
+      hourPlaceLabel: s.hourPlaceLabel,
       fName: s.fName, fDate: s.fDate, fTime: s.fTime, fQuery: s.fQuery, fLat: s.fLat, fLon: s.fLon, fTz: s.fTz,
       setName: e => this.setState({ fName: e.target.value }), setDate: e => this.setState({ fDate: e.target.value }),
       setTime: e => this.setState({ fTime: e.target.value }),
