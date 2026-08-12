@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**449 bindings, 223 top-level.**
+**455 bindings, 229 top-level.**
 
 ## Rule
 
@@ -219,6 +219,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `pTodayBody` | component state |
 | `pTodayDate` | component state |
 | `pTodayMansion` | component state |
+| `pTodayPhaseLine` | component state |
+| `pTodayTaraLine` | component state |
+| `pTodayTaraName` | component state |
 | `pToggleManual` | component state |
 | `pToggleTime` | component state |
 | `pTz` | component state |
@@ -266,6 +269,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `todayMansion` | shards.js |
 | `todayMeaning` | shards.js |
 | `todayMoonSign` | astro.js |
+| `todayPhaseLine` | component state |
+| `todayTaraLine` | component state |
+| `todayTaraName` | component state |
 | `toggleAuthMode` | component state |
 | `toggleManual` | component state |
 | `togglePlay` | component state |

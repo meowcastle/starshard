@@ -127,3 +127,23 @@ export function duetText({ chartA, chartB, nameA, nameB, facts, duetMod, data })
   const closer = seededPick(duetMod.DUET_CLOSERS, seed + '|closer')();
   return `${opener} ${closer}`;
 }
+
+/**
+ * Today's tārābala: the count from the chart's own birth nakshatra (sidereal,
+ * Lahiri — a different, hidden 27-station track from the visible 28-mansion
+ * shard) to today's nakshatra. `today` is the { moonLon, jd, nakshatraIdx }
+ * object componentDidMount() computes once at mount; `chart` supplies the
+ * birth side via its own moonLon/jd. Pure; no network.
+ */
+export function todayRelation({ chart, today, sky, data }) {
+  const birthNak = sky.siderealNakshatra(chart.moonLon, chart.jd);
+  const r = sky.tarabala(birthNak.index, today.nakshatraIdx);
+  const taraLine = data.TARA_VERDICT_LINES[r.verdict](r.taraName);
+  return { taraName: r.taraName, taraLine };
+}
+
+/** Today's moon phase as a display string, e.g. "waxing gibbous, 78% lit". */
+export function todayPhaseLine({ today, sky }) {
+  const p = sky.moonPhase(today.sunLon, today.moonLon);
+  return `${p.name}, ${Math.round(p.illumination * 100)}% lit`;
+}

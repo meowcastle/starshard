@@ -116,3 +116,13 @@ export const WEAVE_CLOSERS = [
   weekdayPlanet => `and the "Monday's Child" rhyme puts you under ${weekdayPlanet}'s watch. four lenses, zero disagreement: you're the whole event. ✦`,
   weekdayPlanet => `while folk tradition assigns your birthday to ${weekdayPlanet}. four sky-traditions, one shared opinion: main character. ✦`,
 ];
+
+// One line per tarabala() verdict tier (sky.js), not per individual tara —
+// depth-per-tara is a future content pass, not this one. Keyed by
+// TARA_NAMES' verdict field.
+export const TARA_VERDICT_LINES = {
+  favorable: taraName => `a good day to lean into things: ${taraName} favors you today ✦`,
+  unfavorable: taraName => `a quieter day, maybe: ${taraName} asks for a little more care`,
+  mixed: taraName => `${taraName}, your own birth-station, returns: steady and familiar, gentler on anything urgent`,
+  'most favorable': taraName => `${taraName}: about as good as the sky gets for you today ✦`,
+};

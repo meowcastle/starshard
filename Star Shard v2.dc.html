@@ -234,6 +234,17 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
         <div style="font-family:'Baloo 2',cursive;font-weight:800;font-size:20px;color:#8a4d9e">{{ todayMansion }}</div>
         <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#c9b3c0;margin:1px 0 8px">“{{ todayMeaning }}” · moon in {{ todayMoonSign }}</div>
         <div style="background:#fff;border:2px solid;border-color:#c586ad #fff #fff #c586ad;padding:10px 12px;font-size:13px;line-height:1.6;color:#6d5a68;text-align:left">{{ todayForecast }}</div>
+        <div style="margin-top:8px;font-size:12px;color:#a06f8c">☾ {{ todayPhaseLine }}</div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px dotted #ecd2e2;text-align:left">
+          <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;color:#c9a0b8;text-align:center;margin-bottom:6px">YOUR DAILY RELATION</div>
+          <sc-if value="{{ noChart }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;color:#8a7484;text-align:center">run the 💿 shard reader first to see your own relation to today's sky ♡</div>
+          </sc-if>
+          <sc-if value="{{ hasChart }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;color:#8a4d9e;text-align:center">{{ todayTaraName }}</div>
+            <div style="font-size:12.5px;line-height:1.55;color:#6d5a68;margin-top:2px">{{ todayTaraLine }}</div>
+          </sc-if>
+        </div>
         <div style="margin-top:9px;font-size:11px;color:#c9b3c0">the moon moves house roughly daily, come back tomorrow ♡</div>
       </div>
     </div>
@@ -1017,6 +1028,9 @@ input,select,button,textarea{font-family:'Varela Round',sans-serif}
             <span style="font-family:var(--font-retro);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);color:var(--ink-muted)">TODAY'S CROSSING · {{ pTodayDate }}</span>
             <span style="font-family:var(--font-display);font-weight:700;font-size:var(--text-md);color:var(--ink)">{{ pTodayMansion }}</span>
             <span style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-muted)">{{ pTodayBody }}</span>
+            <span style="font-size:var(--text-xs);color:var(--ink-accent)">☾ {{ pTodayPhaseLine }}</span>
+            <span style="font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);color:var(--ink);margin-top:var(--space-2)">{{ pTodayTaraName }}</span>
+            <span style="font-size:var(--text-xs);line-height:var(--leading-normal);color:var(--ink-muted)">{{ pTodayTaraLine }}</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-2)">
             <sc-for list="{{ pDeck }}" as="d" hint-placeholder-count="28">
@@ -1262,13 +1276,13 @@ class Component extends DCLogic {
   // -- lifecycle ------------------------------------------------------------
 
   async componentDidMount() {
-    const [astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, win] = await Promise.all([
+    const [astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, win, skyMod] = await Promise.all([
       import(`./astro.js?v=${BUILD_ID}`), import(`./shards.js?v=${BUILD_ID}`), import(`./duet.js?v=${BUILD_ID}`),
       import(`./format.js?v=${BUILD_ID}`), import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
       import(`./wheel.js?v=${BUILD_ID}`), import(`./card.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
-      import(`./windows.js?v=${BUILD_ID}`)
+      import(`./windows.js?v=${BUILD_ID}`), import(`./sky.js?v=${BUILD_ID}`)
     ]);
-    Object.assign(this, { astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, winMod: win });
+    Object.assign(this, { astro, data, duetMod, fmt, tz, api, wheel, cardMod, reading, winMod: win, sky: skyMod });
     this.win = win.createWindowOps(this);
     const windows = win.initWindows();
     try {
@@ -1302,7 +1316,9 @@ class Component extends DCLogic {
 
     const jd = Date.now() / 86400000 + 2440587.5;
     const moonLon = astro.moonLongitude(jd);
-    this.setState({ today: { mansion: astro.mansionOf(moonLon), moonSign: astro.signOf(moonLon) } });
+    const sunLon = astro.sunLongitude(jd);
+    const nakshatraIdx = skyMod.siderealNakshatra(moonLon, jd).index;
+    this.setState({ today: { mansion: astro.mansionOf(moonLon), moonSign: astro.signOf(moonLon), moonLon, jd, sunLon, nakshatraIdx } });
 
     this.api.loadGuestbook().then(entries => {
       this.setState({ guestEntries: entries.length ? entries : duetMod.getGuestbookSeed() });
@@ -1760,9 +1776,12 @@ class Component extends DCLogic {
     const startItems = apps.map(([k]) => ({ icon: WT[k][0], label: WT[k][1], onClick: () => this.win.openWin(k) }));
     const wd = ready ? this.wheel.wheelData(chart) : { ticks: [], glyphs: [], cusps: [], planets: [] };
     const T = s.today;
+    const todayPhaseLine = T && ready ? this.reading.todayPhaseLine({ today: T, sky: this.sky }) : '';
+    const todayTara = T && ready && chart ? this.reading.todayRelation({ chart, today: T, sky: this.sky, data: D }) : null;
 
     // -- phone flow (<1024px) — all p-prefixed, see the rule in OWNERSHIP.md.
     const pChart = s.pChart;
+    const pTodayTara = T && ready && pChart ? this.reading.todayRelation({ chart: pChart, today: T, sky: this.sky, data: D }) : null;
     const pAllContent = ready && pChart ? this.reading.buildShards(pChart, A, D) : [];
     const pMeta = s.pTimeKnown ? PHONE_SHARD_META : PHONE_SHARD_META.slice(1);
     const pContent = s.pTimeKnown ? pAllContent : pAllContent.slice(1);
@@ -1878,6 +1897,8 @@ class Component extends DCLogic {
       pDeck, pDeckCount: s.deck.length,
       pTodayDate: new Date().toLocaleDateString([], { month: 'short', day: 'numeric' }),
       pTodayMansion: T && ready ? D.MANSIONS[T.mansion][0] : '', pTodayBody: T && ready ? D.MANSIONS[T.mansion][2] : '',
+      pTodayPhaseLine: todayPhaseLine,
+      pTodayTaraName: pTodayTara ? pTodayTara.taraName : '', pTodayTaraLine: pTodayTara ? pTodayTara.taraLine : '',
       pFriendName: s.pFriendName, pSetFriendName: e => this.setState({ pFriendName: e.target.value }),
       pFriendDate: s.pFriendDate, pSetFriendDate: e => this.setState({ pFriendDate: e.target.value }),
       pFriendLabel: s.pFriendName || 'them', pFriendMansion, pFriendNumeral,
@@ -1902,6 +1923,8 @@ class Component extends DCLogic {
       todayMeaning: T && ready ? D.MANSIONS[T.mansion][1] : '',
       todayMoonSign: T && ready ? A.SIGNS[T.moonSign] : '',
       todayForecast: T && ready ? `The moon is visiting ${D.MANSIONS[T.mansion][0]} today: ${D.MANSIONS[T.mansion][2]}` : 'reading the sky…',
+      todayPhaseLine,
+      todayTaraName: todayTara ? todayTara.taraName : '', todayTaraLine: todayTara ? todayTara.taraLine : '',
       fName: s.fName, fDate: s.fDate, fTime: s.fTime, fQuery: s.fQuery, fLat: s.fLat, fLon: s.fLon, fTz: s.fTz,
       setName: e => this.setState({ fName: e.target.value }), setDate: e => this.setState({ fDate: e.target.value }),
       setTime: e => this.setState({ fTime: e.target.value }),

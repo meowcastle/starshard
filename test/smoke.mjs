@@ -103,6 +103,12 @@ await page.getByText('🔮 chart wheel').first().click();
 await page.waitForTimeout(300);
 await shot('04-wheel');
 
+// today.exe — proves sky.js (moon phase + tārābala) is actually wired in,
+// not just unit-tested. See sky.js/reading.js's todayPhaseLine/todayRelation.
+await page.getByText('today.exe').first().click();
+await page.waitForTimeout(300);
+await shot('05-today');
+
 const body = await page.evaluate(() => document.body.innerText || '');
 
 // --- assertions ------------------------------------------------------------
@@ -122,6 +128,9 @@ for (const marker of ['house shard', 'mirror shard', 'moon shard', 'hearth shard
   if (!body.includes(marker)) fail.push(`missing "${marker}" after reveal`);
 }
 if (!/rising/.test(body)) fail.push('no rising sign rendered');
+if (!/% lit/.test(body)) fail.push('no moon-phase line rendered in today.exe — sky.js wiring broken?');
+const TARA_NAMES = ['Janma', 'Sampat', 'Vipat', 'Kṣema', 'Pratyari', 'Sādhaka', 'Naidhana', 'Mitra', 'Parama Mitra'];
+if (!TARA_NAMES.some(t => body.includes(t))) fail.push('no tārābala name rendered in today.exe — sky.js wiring broken?');
 fail.push(...fatal);
 
 await browser.close();
