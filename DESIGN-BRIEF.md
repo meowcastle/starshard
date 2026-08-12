@@ -64,7 +64,7 @@ family-friendly, "tag your oshi," "no drama." Keep it.
 
 ## What you must not touch
 
-`astro.js` · `format.js` · `tz.js` · `api.js` · `wheel.js` · `reading.js` ·
+`astro.js` · `sky.js` · `astronomy-engine.js` · `format.js` · `tz.js` · `api.js` · `wheel.js` · `reading.js` ·
 `shards.js` · `duet.js` · `starshard-api/**` · `test/**` · `tools/**`
 
 And two files that are machine-generated — edits are silently discarded:

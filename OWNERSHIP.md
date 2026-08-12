@@ -28,6 +28,8 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | File | What it is |
 |---|---|
 | `astro.js` | ephemeris, Placidus/Porphyry houses, lunar mansion, weekday |
+| `sky.js` | daily engine: moon phase, tārābala (sidereal-27/Lahiri), planetary hours |
+| `astronomy-engine.js` | vendored third-party (MIT) — sunrise/sunset only, see `tools/vendor-astronomy.mjs` |
 | `format.js` | degree/ordinal/place display strings |
 | `tz.js` | historical UTC offset + DST for a birth moment |
 | `api.js` | **all** network I/O — nothing else may call `fetch()` |

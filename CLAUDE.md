@@ -23,7 +23,7 @@ You (Claude Code) own everything except the markup:
 
 | Yours | Claude Design's | Generated — never edit |
 |---|---|---|
-| `astro.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
+| `astro.js` `sky.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
@@ -38,6 +38,8 @@ Star Shard v2.dc.html
   └─ <script x-dc>     SHARED — state + lifecycle + renderVals(), nothing else
        │
        ├─ astro.js     ephemeris, houses, lunar mansion, weekday
+       ├─ sky.js       daily engine: moon phase, tārābala, planetary hours
+       ├─ astronomy-engine.js   vendored third-party (sunrise/sunset only)
        ├─ format.js    degFmt, ordinal, place/birth lines
        ├─ tz.js        historical UTC offset + DST for a birth moment
        ├─ api.js       ALL network I/O
@@ -61,7 +63,9 @@ starshard-api/          Express 4 + MySQL: accounts + saved window layout
    unpkg.com on every page load** — ~3.3MB before first paint, and the script
    block is transpiled in the browser. If unpkg is unreachable the page renders
    raw `{{ mustaches }}`. `tools/vendor.mjs` mirrors them locally for tests.
-   Self-hosting them in production is an open improvement.
+   Self-hosting them in production is an open improvement. `astronomy-engine.js`
+   does not repeat this: it's vendored and committed (`tools/vendor-astronomy.mjs`
+   regenerates it), not fetched from a CDN.
 3. **Nothing outside `api.js` may call `fetch()`.**
 
 ## Invariants
@@ -113,6 +117,36 @@ runs 3,000 random sub-polar charts through both and asserts agreement to 1e-9.
 Above 66° latitude Placidus is undefined, so `placidusCusps()` falls back to
 Porphyry and sets `chart.houseSystem = 'porphyry'`. Verified against Swiss
 Ephemeris Porphyry: max cusp error 0.06°, zero rising-sign disagreements.
+
+## What `sky.js` is worth
+
+Two ephemeris sources, each canonical for a specific thing — deliberate, not
+accidental. `astro.js`'s Meeus Sun/Moon stays canonical for tārābala and moon
+phase (both only need Sun+Moon longitude, which `astro.js` already computes
+and has verified); `sky.js` never recomputes position itself. `astronomy-engine.js`
+(vendored, MIT, `tools/vendor-astronomy.mjs`) is canonical only for what
+`astro.js` cannot do: sunrise/sunset for `planetaryHours()`. If a future
+void-of-course feature uses `astronomy-engine`'s other-planet positions for
+"today's Moon," that will be a *different* engine than the one powering
+tārābala's "today's Moon" on the same day — both accurate, but not
+bit-identical. Know that going in.
+
+`lahiriAyanamsa()` is a linear approximation (not the full Swiss Ephemeris
+precession model), fit against 12 real pyswisseph 2.10.3.2 `SIDM_LAHIRI`
+reference points (1900–2050, see `test/sky.test.mjs`). The number that
+matters isn't the formula's isolated accuracy, it's whether it ever
+misclassifies which of the 27 sidereal-nakshatra bins a chart lands in — a
+wrong bin doesn't nudge a number, it flips tārābala's favorable/unfavorable
+verdict. Run through `astro.js`'s own `moonLongitude()` for 500 charts,
+1930–2020: **0 mismatches against Swiss Ephemeris.**
+
+`planetaryHours()` returns `{ available: false }` for genuine polar
+day/night — confirmed directly from `astronomy-engine`'s source that
+`SearchRiseSet` returns `null` (not an exception) when no rise/set event
+exists in a 3-day search window. This is deliberately a short window: a wider
+one would silently find the *next* real sunrise/sunset months later and
+build nonsense multi-day "hours" out of the gap instead of reporting
+unavailability.
 
 ## Recently fixed — do not reintroduce
 
