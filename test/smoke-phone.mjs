@@ -1,4 +1,12 @@
 #!/usr/bin/env node
+// NON-FUNCTIONAL as of the August 13, 2026 reading-corpus cleanup: this
+// drives "Star Shard v2 (archived).dc.html", whose script block calls
+// reading.js's buildShards()/weave() — both removed along with the rest of
+// the pre-reboot four-shard composers, since nothing on the live v3 page
+// uses them. Left here as a historical reference for the pattern, not a
+// test anyone should expect to pass; test/smoke.mjs (the v3 page's own
+// smoke test) is the one that matters now.
+//
 // Browser smoke test for the phone flow (<1024px), same shape as test/smoke.mjs
 // but at a phone viewport, driving the linear landing -> form -> shatter ->
 // shards -> card flow through manual coordinates. Fails on unresolved

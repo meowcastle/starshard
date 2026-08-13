@@ -10,8 +10,8 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | `CLAUDE.md` | Claude Code | Auto-loaded every session. Architecture, runtime constraints, invariants, verification commands. |
 | `DESIGN-BRIEF.md` | Claude Design | Self-contained, paste-ready. Product, audience, what it owns, the work queue. |
 | `OWNERSHIP.md` | both / humans | This file. The per-file boundary and the workflow rules. |
-| `BINDINGS.md` | both | **Generated.** The 336 names the markup binds. Rebuild with `npm run bindings`. |
-| `AUDIT.md` | humans | The product audit and competitive analysis the refactor came out of. |
+| `BINDINGS.md` | both | **Generated.** The names `Star Shard v3.dc.html`'s markup binds. Rebuild with `npm run bindings`. |
+| `docs/archive/AUDIT.md` | humans | Historical — the pre-reboot product audit and competitive analysis. |
 
 ## The split
 
@@ -19,9 +19,7 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 
 | File | What it is |
 |---|---|
-| `Star Shard v2.dc.html` — **markup + `<helmet>` only** | layout, styles, window chrome, copy in the markup, fonts, `<title>`/meta/OG tags |
-| `.image-slots.state.json` | slot artwork (generated) |
-| `.thumbnail` | preview (generated) |
+| `Star Shard v3.dc.html` — **markup + `<helmet>` only** | layout, styles, copy in the markup, fonts, `<title>`/meta/OG tags |
 
 ### Claude Code owns
 
@@ -37,25 +35,33 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | `format.js` | degree/ordinal/place display strings |
 | `tz.js` | historical UTC offset + DST for a birth moment |
 | `api.js` | **all** network I/O — nothing else may call `fetch()` |
-| `wheel.js` | chart-wheel SVG geometry |
-| `card.js` | share-card PNG (the `CARD` block at the top is design-tunable) |
-| `reading.js` | shard text, woven reading, duet text |
-| `windows.js` | window manager (the `LAYOUT` block at the top is design-tunable) |
-| `shards.js`, `duet.js` | written content |
+| `reading.js` | the Sigil/Sounding composers: `arrivalReading()`, `fullReading()`, `soundingReading()` |
 | `starshard-api/**` | the Node/Express/MySQL backend |
 | `test/**` | tests |
 
 ### Shared seam — change deliberately, announce it
 
-`Star Shard v2.dc.html`, the `<script type="text/x-dc">` block at the bottom.
+`Star Shard v3.dc.html`, the `<script type="text/x-dc">` block at the bottom.
 
 It is intentionally thin: state, lifecycle, and `renderVals()` — the object the
 markup binds to. Both agents need it, so treat it as a contract, not as code.
 If you add a binding, add it to `BINDINGS.md` in the same commit.
 
+### Retired (August 13, 2026 reading-corpus cleanup)
+
+`windows.js`, `card.js`, `image-slot.js`, `duet.js`, `wheel.js`, `shards.js`,
+`design-system.html` — the pre-reboot four-shard flip UI's window manager,
+share-card renderer, generated image-slot data, duet composer, chart-wheel
+geometry, and written content, plus a superseded standalone design-token
+preview page. Nothing on the live `Star Shard v3.dc.html` page references
+any of them (verified directly, not assumed, before removal); they're
+retired along with `Star Shard v2 (archived).dc.html`, the only thing that
+ever called them, and stay in git history if a future feature wants the
+pattern back.
+
 ### Generated — never hand-edit
 
-`support.js`, `image-slot.js`. Rebuilt by the dc-runtime; edits will be lost.
+`support.js`. Rebuilt by the dc-runtime; edits will be lost.
 
 `mansions/*.html`, `mansions/index.html`, `mansions/og/*.jpg`, `sitemap.xml`,
 `stations.js`, `reading-copy.js`. Rebuilt by `tools/build-mansions.mjs` /
@@ -99,45 +105,33 @@ table needs a manual update too.
    transform — and evaluates it inside `new Function(...)`. Modules must be
    pulled in with `await import()` from `componentDidMount`. This is why
    `renderVals()` guards on `ready`.
-6. **A design export must never include or reference `astro.js`, `shards.js` or
-   `duet.js`.** Those are Claude Code's, they change most sessions, and an
-   export that `import()`s them as siblings has shipped a stale pre-refactor
-   copy of one or both **four times** — most recently the crash documented in
-   `STATUS.md` (`copy.fallbackWeave is not a function`, a function `shards.js`
-   stopped exporting when W2 landed). If a handoff includes either file, strip
-   it before merging and treat the export as having followed a stale reference.
+6. **A design export must never include or reference `astro.js`, `sigil.js`
+   or `reading.js`.** Those are Claude Code's, they change most sessions,
+   and an export that `import()`s an engine module as a sibling has shipped
+   a stale pre-refactor copy **four times** in this repo's history (the
+   original instance, pre-reboot: `docs/archive/STATUS.md`'s `copy.fallbackWeave is not
+   a function` crash, from the now-retired `shards.js`). If a handoff
+   includes an engine module, strip it before merging and treat the export
+   as having followed a stale reference.
 
-## Phone flow (<1024px) — the `p`-prefix rule
+## Binding namespace — historical note + current convention
 
-`Star Shard v2.dc.html` is one file, one `Component`, two markup trees:
-`<sc-if value="{{ isDesktop }}">` (windowed multi-window desktop UI) and a
-sibling `<sc-if value="{{ isPhone }}">` (linear step flow, ported from the
-former standalone `Star Shard - Staging.dc.html`, now retired — see below).
-`isPhone`/`isDesktop` come from a `matchMedia('(max-width: 1023px)')` listener
-in `componentDidMount`, so only one tree's event handlers are ever mounted.
+`Star Shard v2 (archived).dc.html` used a desktop/phone dual-tree
+(`isDesktop`/`isPhone`) with a `p`-prefix convention for every phone-only
+binding, to avoid collisions with the desktop tree's own bindings. That
+architecture is retired along with the page — `Star Shard v3.dc.html` is a
+single phone-first tree with no desktop/phone split, so there's no `p`-prefix
+convention to follow.
 
-**Every phone-specific state key, method, and top-level `renderVals()` binding
-is `p`-prefixed** (`pStep`, `pChart`, `pShards`, `pAdvance`, `pGoBack`, ...) —
-the same convention as the existing `f`/`d`/`g`/`w` prefixes for desktop's
-form/duet/guestbook/window state. A literal merge of the two flows' bindings
-has real name collisions (`chart`, `shards`, `hasDuet`, `todayMansion`) that
-would silently overwrite one screen's data with the other's; nothing checks
-for this except the convention.
-
-**Two exceptions, both deliberate:**
-- **Auth stays shared and unprefixed** (`authChecked`/`authEmail`/`doLogin`/
-  `doSignup`/`doLogout`/`checkAuth`/`isLoggedIn`/etc.) — a login is a login
-  regardless of viewport, and the phone account screen reuses the exact same
-  bindings as desktop's `wAccount` window, just restyled.
-- **`deck` stays shared and unprefixed** — it's account data (which of the 28
-  mansions a user has collected), not phone-UI state, and is meant to sync
-  across viewports the same way auth does. On login, `loadAndMergeDeck()`
-  unions the server deck with whatever's in `localStorage` rather than letting
-  either side overwrite the other — see the merge plan's data-loss note.
-
-If you add a new phone-only binding, prefix it. If you're not sure whether
-something is phone-UI state or shared account data, default to prefixing —
-an unprefixed collision is a silent bug, a redundant prefix is not.
+**Current convention** (`DESIGN-BRIEF.md` v2, and CLAUDE.md's receipt
+protocol): namespace per surface — `sig.*` (arrival + ring), `snd.*`
+(Sounding), `cdx.*` (codex, not yet built), `crd.*` (cards, not yet built) —
+with `auth`/`deck` shared unprefixed, same reasoning as before (a login is a
+login regardless of surface; `deck`/`recollection` are account data, not
+UI state, and sync across sessions the same way auth does). If you're not
+sure whether a binding is surface-local or shared account data, default to
+namespacing — an unprefixed collision is a silent bug, a redundant prefix
+is not.
 
 ## Privacy invariant
 
@@ -156,12 +150,15 @@ Do not break this. It is the strongest differentiating claim the product has.
 ## Known open items
 
 These are deliberately **not** fixed, because they are decisions rather than
-defects. See `AUDIT.md`.
+defects. See `docs/archive/AUDIT.md`.
 
-- **W2** — done. `hasLLM()`/`window.claude.complete` removed. `weave()` and
-  `duetText()` in `reading.js` assemble each paragraph from hand-written
-  opener/connective/mansion/closer variants (`shards.js`/`duet.js`), picked
-  deterministically per chart via `seededPick()`.
+- **W2** — done, and superseded. `hasLLM()`/`window.claude.complete` was
+  removed pre-reboot; the `weave()`/`duetText()` mechanism it describes
+  (hand-written variants in the now-retired `shards.js`/`duet.js`) was
+  itself retired in the reading-corpus cleanup. The live equivalent is
+  `reading.js`'s `arrivalReading()`/`fullReading()`, against the real
+  corpus in `reading-copy.js` — same `seededPick()` determinism, real
+  content instead of a combinatorial library.
 - **W6** — the account system stores window positions and nothing else, while
   carrying a password database. Password reset now exists (Resend-backed,
   hashed/expiring/single-use tokens, `starshard-api/server.js`). Still no email
@@ -192,5 +189,8 @@ defects. See `AUDIT.md`.
   practical mitigation — 8 signups/hour/IP — is already in place. Revisit if
   that tradeoff stops feeling right. (W16a, session revocation on logout, is
   fixed — see `starshard-api/server.js`'s `token_version`.)
-- **W10** — the share card renders 720×1000; the share surface is 9:16.
-  `card.js` `CARD` block is where that changes.
+- **W10** — superseded. The old 720×1000 share card and its `card.js`
+  `CARD` block are retired along with the four-shard flip UI. The current
+  share surface is the Sigil ring render on `Star Shard v3.dc.html`'s
+  share screen — 9:16 was a design requirement from the start there, not
+  an open item to fix.

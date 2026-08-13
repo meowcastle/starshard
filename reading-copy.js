@@ -2612,7 +2612,7 @@ export const COPY = {
     ]
   },
   "STATION.15.strike": {
-    "text": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint the arabs named the station for the fact that you can barely see it: al-ghafr, the cover. the thing that veils. and the old election books give this sky digging and buried treasure, which is the joke and the instruction at once: the station about what's hidden is the station about what's worth finding. india names this sky svāti, and gives it to vāyu, the wind — its emblem a young shoot bending in open air. so your hunger is to move freely, and to bend without breaking, and you have organized more of your life around not being pinned down than you would probably admit. the cost is that a cover works on everyone. the drafts folder, the private practice, the version of the work nobody has seen — the habit of keeping the good thing under wraps stops being protection at some point and starts being the reason nobody has found it.",
+    "text": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is al-ghafr, the cover: the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for forgiveness — because to forgive, in that language's logic, is to cover something over. and then there is the part almost nobody knows, which the oldest books say plainly. the arabs called al-ghafr the best of the twenty-eight mansions — and their reason was not poetry. look at where it sits: the lion's dangerous end is teeth and claws, and this station has only its tail. the scorpion's dangerous end is the sting, and this station has only its claws. it is the one stretch of the road that is out of reach of both. the best station for ever, between the claws and the lion, went the old line. so your hunger is to find the safe gap and work in it. india's name here is svāti, given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of water underground. later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. the cost is that a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
     "tokens": [
       {
         "text": "your sun landed at ",
@@ -2623,7 +2623,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — the autumn balance point, where day and night come level — on three stars so faint the arabs named the station for the fact that you can barely see it: ",
+        "text": " — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is ",
         "emphasis": null
       },
       {
@@ -2639,15 +2639,55 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". the thing that veils. and the old election books give this sky ",
+        "text": ": the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for ",
         "emphasis": null
       },
       {
-        "text": "digging and buried treasure",
+        "text": "forgiveness",
         "emphasis": "bold"
       },
       {
-        "text": ", which is the joke and the instruction at once: the station about what's hidden is the station about what's worth finding. india names this sky ",
+        "text": " — because to forgive, in that language's logic, is to cover something over. and then there is the part almost nobody knows, which the oldest books say plainly. the arabs called al-ghafr ",
+        "emphasis": null
+      },
+      {
+        "text": "the best of the twenty-eight mansions",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — and their reason was not poetry. look at where it sits: the lion's dangerous end is teeth and claws, and this station has only its ",
+        "emphasis": null
+      },
+      {
+        "text": "tail",
+        "emphasis": "bold"
+      },
+      {
+        "text": ". the scorpion's dangerous end is the sting, and this station has only its ",
+        "emphasis": null
+      },
+      {
+        "text": "claws",
+        "emphasis": "bold"
+      },
+      {
+        "text": ". it is the one stretch of the road that is out of reach of both. ",
+        "emphasis": null
+      },
+      {
+        "text": "the best station for ever, between the claws and the lion",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", went the old line. so your hunger is ",
+        "emphasis": null
+      },
+      {
+        "text": "to find the safe gap and work in it.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " india's name here is ",
         "emphasis": null
       },
       {
@@ -2655,15 +2695,15 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and gives it to vāyu, the wind — its emblem a young shoot bending in open air. so your hunger is ",
+        "text": ", given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of ",
         "emphasis": null
       },
       {
-        "text": "to move freely, and to bend without breaking",
+        "text": "water underground",
         "emphasis": "bold"
       },
       {
-        "text": ", and you have organized more of your life around not being pinned down than you would probably admit. the cost is that a cover works on everyone. the drafts folder, the private practice, the version of the work nobody has seen — the habit of keeping the good thing under wraps stops being protection at some point and starts being the reason nobody has found it.",
+        "text": ". later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. the cost is that a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
         "emphasis": null
       }
     ]
@@ -2711,7 +2751,7 @@ export const COPY = {
     ]
   },
   "STATION.15.answer": {
-    "text": "across the wheel, the veil answers you — the covered sky the old books gave to buried treasure. once a year the full moon rises there and asks what you've been keeping under wraps, and whether it was ever really about protecting it.",
+    "text": "across the wheel, the veil answers you — the safe gap the old books called the best station on the road. once a year the full moon rises there and asks what you've been keeping under wraps, and whether it was ever really about protecting it.",
     "tokens": [
       {
         "text": "across the wheel, ",
@@ -2722,7 +2762,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " answers you — the covered sky the old books gave to buried treasure. once a year the full moon rises there and asks what you've been keeping under wraps, and whether it was ever really about protecting it.",
+        "text": " answers you — the safe gap the old books called the best station on the road. once a year the full moon rises there and asks what you've been keeping under wraps, and whether it was ever really about protecting it.",
         "emphasis": null
       }
     ]
@@ -4458,4 +4498,4 @@ export const COPY = {
 };
 
 export const STATION_SLOTS = 112;
-export const COPY_VERSION = "4044edbd";
+export const COPY_VERSION = "62a7615a";

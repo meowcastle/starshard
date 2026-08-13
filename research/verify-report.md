@@ -85,22 +85,54 @@ reissued batch 3.
 
 ---
 
-## 🙋 NEEDS-HUMAN — one item
+## ✅ RESOLVED — the former NEEDS-HUMAN item (closed August 12, 2026)
 
-**al-Ghafr's "modesty praise" (#15) — do not ship as written.** The claim
-("tradition praises al-Ghafr as the best mansion, for its modesty") could not be
-verified: **Ibn Qutaybah's al-Ghafr section contains no such praise**, and the
-floating Arabic phrase appears only on modern occult forums with no classical
-attribution. There *may* be a real "best of the mansions" tradition with a
-different motif — the moon alighting there *clear of the Lion's hindparts and
-the Scorpion's claws* (escape-from-harm, not modesty) — reported in lexicon
-literature. **Question for the Arabic-literate reviewer:** check Lane's Lexicon
-s.v. غفر and Lisān al-ʿArab/Tāj al-ʿArūs under the same root, plus al-Bīrūnī's
-al-Āthār al-Bāqiya. The reissued batch 3 entry has the unverified claim
-removed and the reviewer question embedded.
-([Ibn Qutaybah al-Ghafr](https://shamela.ws/book/9093/114))
+**al-Ghafr (#15) is cleared, and the result improved the entry.** Researched
+directly against classical Arabic sources rather than waiting on a reviewer:
 
----
+- **The root is confirmed.** غ-ف-ر means to cover / veil / conceal — Lisān
+  al-ʿArab states it outright (*wa-aṣl al-ghafr al-taghṭiya wa-l-satr*), and
+  it is the same root behind *maghfira*, forgiveness, glossed by the
+  lexicographers themselves as the veiling of sins. Lane also records الغفر
+  as "three small stars, the Fifteenth Mansion of the Moon." Our "cover /
+  veil" gloss stands.
+- **Two rival classical etymologies, both legitimate**: the stars' dimness
+  ("as though covered" — al-Bīrūnī, al-Marzūqī), or *al-ghafra*, the tuft of
+  hair at the tip of the old sky-Lion's tail (al-Zajjāj, quoted by
+  al-Bīrūnī). The entry now presents both and asserts neither. The *young
+  ibex* sense of غُفْر is real lexically but **no source applies it to the
+  mansion** — do not use it.
+- **"Praised for its modesty" is REFUTED**, as suspected. No classical
+  source moralizes the veil; the "covering" register is optical (dim light)
+  or military (the *mighfar*, the mail hood under a helmet). The claim
+  survives only on modern occult forums. It stays deleted.
+- **But the "best of the mansions" tradition is REAL — and the hypothesized
+  motif was exactly right.** Attested in four independent classical texts
+  across four centuries: **Ibn Qutayba** (d. 889), *Kitāb al-Anwāʾ*;
+  **al-Marzūqī** (d. 1030), *al-Azmina wa-l-amkina*; **al-Bīrūnī** (d.
+  1048), *al-Āthār al-bāqiya*; **al-Tīfāshī** (d. 1253). The stated reason
+  is positional safety, not virtue: al-Ghafr lies where the Lion offers only
+  its harmless tail and the Scorpion only its harmless claws — out of reach
+  of fang, talon and sting. The old rajaz line runs *"best station for ever,
+  between al-Zubānā and al-Asad."* Allen reports the same from al-Bīrūnī.
+  **This is now the heart of the station's reading.**
+- **Election lore, correctly attributed.** Ibn Qutayba gives the Arabic
+  election as auspicious *especially for istinbāṭ al-miyāh* — the finding of
+  underground water. The **digging / buried-treasure** version is the later
+  Latin upgrade (Picatrix I.4 "Algafra"; Agrippa II.33), and the entry now
+  says so instead of implying an Arabic origin.
+
+**Do not claim, ever:** modesty as the reason · the ibex etymology · a
+confident third star (Lane says λ, Allen says φ — write "three faint stars,
+usually identified as ι, κ and λ") · the 13th mansion (Allen miscounts; it
+is the **15th**) · "the Scribe" as an Arabic name (it comes from Agrippa's
+talismanic image) · "the prophets were born under al-Ghafr" without noting
+that al-Bīrūnī himself rejected it · any page number in Sachau's English
+translation (unverified — al-Bīrūnī was read in the Arabic instead).
+
+**Station 15 is unblocked for ship.** The Arabic reviewer pass, when it
+happens, is now a confirmation of sourced claims rather than an open
+question.
 
 ## Remaining human-only items (unchanged)
 

@@ -26,7 +26,8 @@ markup, the surfaces, and the product frame are new.
    honest comps (don't lorem-ipsum the cards; the corpus exists).
 9. `OWNERSHIP.md` + `BINDINGS.md` — the seam contract with engineering.
 
-Historical files (`AUDIT.md`, `STRATEGY.md`, `REVIEW.md`, `STATUS.md`) and
+Historical files (`docs/archive/AUDIT.md`, `docs/archive/STRATEGY.md`,
+`docs/archive/REVIEW.md`, `docs/archive/STATUS.md`) and
 the content-side research (iching, rave-mandala, starmyths, physics-paradox,
 verify-report) are **not** in your packet — their conclusions are already
 baked into the five files above.
@@ -216,15 +217,17 @@ white). You are no longer styling `<div>` soup — don't create new soup.
 The two-agent contract survives the overhaul; the binding *inventory*
 doesn't. Read `OWNERSHIP.md` + `BINDINGS.md`, then:
 
-**You own:** the markup + `<helmet>` of the `.dc.html` export ·
-`.image-slots.state.json` · the `CARD` block (`card.js`) · the `LAYOUT`
-block (`windows.js`).
+**You own:** the markup + `<helmet>` of the `.dc.html` export. (The old
+`CARD`/`LAYOUT` design-tunable blocks, `card.js`/`windows.js`, and
+`.image-slots.state.json` belonged to the retired four-shard flip UI and no
+longer exist — the live page has no equivalent yet; if the Sigil ring or
+share render need a design-tunable block, propose one in your handoff notes
+rather than assuming the old ones still apply.)
 
 **You must not touch or import:** `astro.js` · `sky.js` · `sigil.js` ·
 `deck.js` · `events.js` · `astronomy-engine.js` · `format.js` · `tz.js` ·
-`api.js` · `wheel.js` · `reading.js` · `shards.js` · `duet.js` ·
-`starshard-api/**` · `test/**` · `tools/**` · machine-generated
-`support.js` / `image-slot.js`. **Never reference engine modules from an
+`api.js` · `reading.js` · `starshard-api/**` · `test/**` · `tools/**` ·
+machine-generated `support.js`. **Never reference engine modules from an
 export — not even a sibling `import()`.** This shipped a stale crash four
 separate times pre-reboot. Mocks get hardcoded placeholder strings;
 engineering wires the real values on merge.

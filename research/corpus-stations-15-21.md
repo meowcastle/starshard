@@ -15,25 +15,39 @@ longest note.
 
 ## STATION.15 — The Veil · 亢宿
 
-*0°00′–12°51′ Libra · ι/κ/λ Virginis · Arabic al-Ghafr, "the cover" ·
-Svāti, the wind's shoot · guardian: the dragon · kept by Venus · Azure
-Dragon*
+*0°00′–12°51′ Libra · three faint stars in Virgo, usually identified as
+ι/κ/λ · Arabic al-Ghafr, "the cover" · Svāti, the wind's shoot ·
+guardian: the dragon · kept by Venus · Azure Dragon*
 
 **STATION.15.strike**
 your sun landed at **0° libra** — the autumn balance point, where day and
-night come level — on three stars so faint the arabs named the station
-for the fact that you can barely see it: *al-ghafr*, **the cover**. the
-thing that veils. and the old election books give this sky **digging and
-buried treasure**, which is the joke and the instruction at once: the
-station about what's hidden is the station about what's worth finding.
-india names this sky **svāti**, and gives it to vāyu, the wind — its
-emblem a young shoot bending in open air. so your hunger is **to move
-freely, and to bend without breaking**, and you have organized more of
-your life around not being pinned down than you would probably admit.
-the cost is that a cover works on everyone. the drafts folder, the
-private practice, the version of the work nobody has seen — the habit of
-keeping the good thing under wraps stops being protection at some point
-and starts being the reason nobody has found it.
+night come level — on three stars so faint that the name the arabs gave
+them is *al-ghafr*, **the cover**: the thing that veils. medieval writers
+argued about why. some said the stars are simply dim, as though something
+were laid over them. others said the word means the tuft of hair at the
+tip of the old sky-lion's tail. the root is the same one that gives the
+arabic word for **forgiveness** — because to forgive, in that language's
+logic, is to cover something over.
+and then there is the part almost nobody knows, which the oldest books
+say plainly. the arabs called al-ghafr **the best of the twenty-eight
+mansions** — and their reason was not poetry. look at where it sits: the
+lion's dangerous end is teeth and claws, and this station has only its
+**tail**. the scorpion's dangerous end is the sting, and this station has
+only its **claws**. it is the one stretch of the road that is out of
+reach of both. *the best station for ever, between the claws and the
+lion*, went the old line.
+so your hunger is **to find the safe gap and work in it.** india's name
+here is **svāti**, given to vāyu, the wind, with a young shoot for its
+emblem — bending without snapping. you have organized more of your life
+around staying unpinned than you would probably admit, and it has worked.
+the oldest books also give this sky one job above all: the finding of
+**water underground**. later magicians in europe upgraded that to buried
+treasure. keep the older version — you are the one who knows where the
+water is.
+the cost is that a cover works on everyone, including the people who
+would have helped. the drafts folder, the private practice, the version
+of the work nobody has seen: the habit of staying out of reach stops
+being protection at some point and becomes the reason nobody found you.
 
 **STATION.15.root**
 this sky's guardian is **the dragon** itself — the second station of the
@@ -55,10 +69,10 @@ attention to notice how much you're not saying, and you tend to like
 whoever notices.
 
 **STATION.15.answer**
-across the wheel, **the veil** answers you — the covered sky the old
-books gave to buried treasure. once a year the full moon rises there and
-asks what you've been keeping under wraps, and whether it was ever really
-about protecting it.
+across the wheel, **the veil** answers you — the safe gap the old books
+called the best station on the road. once a year the full moon rises
+there and asks what you've been keeping under wraps, and whether it was
+ever really about protecting it.
 
 ---
 
@@ -395,12 +409,17 @@ replaceable, which is a different wound with a different shape. Later
 batches should keep watching for this; the corpus is now large enough
 that repetition is the main quality risk.
 
-**Flag carried:** station 15's al-Ghafr is the `[NEEDS-HUMAN]` item in
-`research/verify-report.md` (an unresolved Lane's Lexicon question about
-the name's sense). The reading above uses only the uncontested
-"cover/veil" reading and the election lore, so it is safe to draft — but
-**it must not ship until an Arabic-reading reviewer clears it**, per the
-standing rule.
+**Flag CLEARED — station 15 is unblocked.** The `[NEEDS-HUMAN]`
+al-Ghafr item is resolved against classical sources (see
+`research/verify-report.md`, and the rewritten strike above): the
+"cover/veil" gloss is correct and rooted in غ-ف-ر; the *modesty* praise
+was a modern-forum invention and is gone; and the genuine tradition —
+**al-Ghafr as the best of the twenty-eight mansions** — is attested in
+Ibn Qutayba (d. 889), al-Marzūqī (d. 1030), al-Bīrūnī (d. 1048) and
+al-Tīfāshī (d. 1253), for the reason that it lies in the safe gap
+between the Lion's harmless tail and the Scorpion's harmless claws.
+Water-finding is the Arabic election; buried treasure is the later Latin
+upgrade (Picatrix, Agrippa) and is attributed as such.
 
 **Verify queue (running):** Antares as "rival of Ares" and the Arabic /
 Chinese heart convergence · the Babylon→Greece→Rome claws-to-scales

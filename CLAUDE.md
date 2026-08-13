@@ -19,19 +19,26 @@ It is a web property for Suyin (@suyinsama) — Vocaloid/Hatsune Miku cosplay,
 ~13M monthly views, audience 62% female, 25% aged 13–17, and overwhelmingly on
 phones. That last fact should inform most decisions.
 
-The **front end is being rebuilt from scratch** against this reboot. The
-engine modules, the database, and everything verified below carry forward
-unchanged. The old four-shard flip flow (houses / archetype / mansion /
-weekday) is retired as a surface; its computations live on inside the Sigil.
+The **front end was rebuilt from scratch** against this reboot; the engine
+modules and the database carried forward. The old four-shard flip flow
+(houses / archetype / mansion / weekday) is retired; its computations live
+on inside the Sigil. Status: `Star Shard v3.dc.html` is the live page —
+**a Code-authored stopgap**, not a Claude Design export (no fresh export
+existed with a real binding manifest when it was built), using the
+`sig.*`/`snd.*` namespace `DESIGN-BRIEF.md` v2 specifies so a future real
+handoff reconciles cleanly. `Star Shard v2 (archived).dc.html` is retired,
+kept only as reference. What shipped, in order: `sigil.js` (natal
+derivation, the arrival grammar, ring geometry, and — added after
+INSTRUMENT.md landed — `movingLight()`, the Becoming); `sky.js`'s
+station/step cast kinds; the `sigil`/`recollection` DB tables (additive,
+alongside the untouched `deck` table); `reading.js`'s composers, now
+against the real corpus (`reading-copy.js`, per `PORT-SPEC.md`) instead of
+placeholder prose. See `docs/archive/STATUS.md` for the day-by-day trail.
 
-## The MVP build — this cycle's work, in order
+**Receipt protocol, for whenever a real Claude Design export actually
+lands** (still binding, nothing here is retired):
 
-A fresh Claude Design export is incoming: the Sigil mockup, built from
-scratch. **Receipt protocol for a from-scratch export:**
-
-1. **Do not diff it against the old markup.** The old page is retired, not
-   the baseline. Archive `Star Shard v2.dc.html` (keep it until the new page
-   passes smoke; it is reference, not target).
+1. **Diff it against the current markup, not the archived v2 page.**
 2. **The export's script block is disposable mock wiring.** Rebuild the
    `x-dc` block thin — state + lifecycle + `renderVals()` — wired to real
    modules. Any hardcoded sample text in the export is placeholder by
@@ -43,39 +50,15 @@ scratch. **Receipt protocol for a from-scratch export:**
    a module source, and **flag anything unmappable — do not guess.**
 4. Verify no engine imports snuck into the export, and that the `<helmet>`
    meta/OG tags survived.
-5. The old page stays live until the new one passes an extended smoke test
-   (arrival flow + night loop).
-
-**Build order (COSMOLOGY §7 + SIGIL-READING §5):**
-
-1. `sigil.js` — natal derivation from `astro.js` longitudes (station + step
-   for Sun/Moon, rising station, natal light from elongation, farlight
-   `(sunStation+13)%28+1`, type from Sky arithmetic per COSMOLOGY §3.4),
-   `readingPlan(sigil)` returning ordered beats + a stable variant hash
-   (SIGIL-READING §3), and the SVG ring renderer (28 arcs × 4 segment ticks;
-   Design art-directs the output). Tests for all of it. **The Keeper table is
-   `[VERIFY]`-blocked — use a placeholder table flagged loudly; research is
-   clearing it. Ask, do not guess.**
-2. Step arithmetic + cast kinds (steady / turning / threshold from real lunar
-   velocity, ≈3:1:rare) in `sky.js`. Tests.
-3. Schema migration — deck → station+step Recollection records + reveal state
-   (`tier`, `fragmentsUnlocked`, `actMilestones`), per COSMOLOGY §7. The
-   privacy invariant holds: the Sigil is computed client-side; the server
-   stores only the derived sigil object per account, never birth data.
-4. `reading.js` — the arrival composer per SIGIL-READING's grammar. Build the
-   template engine and slots now; the ~60-piece prose kit arrives from the
-   content pass. **Keep prose out of code** — templates keyed by id, so
-   swapping placeholder → real copy is mechanical.
-5. Wire the new page: bindings green (`npm run check`), smoke extended to
-   drive arrival end-to-end.
-6. Permalinks — regenerate with the tier-0 frame when the copy pass lands
-   (epithets unchanged). Don't block earlier steps on this.
+5. Reconcile against the stopgap's own bindings (`BINDINGS.md`) rather than
+   assuming a wholesale replacement is needed — the namespace was chosen
+   specifically to make this a diff, not a rewrite.
 
 Explicitly deferred (on the record, Justin's call): new minigames, more
 easter eggs, community features, the Remembering endgame, paradox cards,
-Undertext rendering, event-foil curriculum. `shards.js` / `duet.js` /
-`windows.js` are legacy with the old page — keep them functional until it's
-archived, build nothing new on them.
+Undertext rendering, event-foil curriculum, the Full Reading's page surface
+(`reading.js`'s `fullReading()` is built and tested; nothing renders it
+yet — no spec says where it lives in the UI).
 
 ## The one thing that will break this repo
 
@@ -87,7 +70,7 @@ You (Claude Code) own everything except the markup:
 
 | Yours | Claude Design's | Generated — never edit |
 |---|---|---|
-| `astro.js` `sky.js` `sigil.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `wheel.js` `card.js` `reading.js` `windows.js` `shards.js` `duet.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>`, `.image-slots.state.json` | `support.js` `image-slot.js` |
+| `astro.js` `sky.js` `sigil.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `reading.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>` | `support.js` |
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
@@ -96,28 +79,30 @@ and workflow rules in `OWNERSHIP.md`.
 ## Architecture
 
 ```
-<new page>.dc.html            (replacing Star Shard v2.dc.html — archived)
-  ├─ markup            Claude Design
+Star Shard v3.dc.html
+  ├─ markup            Claude Design (currently: a Code-authored stopgap —
+  │                    see "Status" above)
   ├─ <helmet>          Claude Design  (fonts, styles, meta/OG tags)
   └─ <script x-dc>     SHARED — state + lifecycle + renderVals(), nothing else
        │
        ├─ astro.js     ephemeris, houses, lunar mansion, weekday
-       ├─ sigil.js     NEW — Sigil derivation, type, readingPlan(), SVG ring
+       ├─ sigil.js     the Sigil: natal derivation, type, movingLight()/the
+       │               Becoming, readingPlan(), SVG ring
        ├─ sky.js       daily engine: moon phase, tārābala, planetary hours,
-       │               station+step+cast (NEW arithmetic lands here)
+       │               station+step+cast kinds
        ├─ deck.js      the collection game: claim windows, grace, returns —
-       │               migrating to station+step Recollection + reveal state
+       │               server-side claimability check for POST /api/recollection
        ├─ events.js    the event calendar: dated sky events, foil conditions
        ├─ astronomy-engine.js   vendored third-party (sunrise/sunset only)
        ├─ format.js    degFmt, ordinal, place/birth lines
        ├─ tz.js        historical UTC offset + DST for a birth moment
        ├─ api.js       ALL network I/O
-       ├─ wheel.js     chart-wheel SVG coordinates
-       ├─ card.js      share-card PNG   (CARD block is design-tunable)
-       ├─ reading.js   arrival composer (NEW grammar) + collected text
-       └─ windows.js / shards.js / duet.js   legacy with the old page
+       ├─ reading.js   the Sigil/Sounding composers: arrivalReading(),
+       │               fullReading(), soundingReading()
+       ├─ reading-copy.js   generated: the real corpus, browser-side (PORT-SPEC.md)
+       └─ sigil-copy.js     placeholder prose — Sounding only; arrival is real
 
-starshard-api/          Express 4 + MySQL: accounts + saved state
+starshard-api/          Express 4 + MySQL: accounts, sigil, recollection
 
 mansions/               generated: 28 static permalink pages + index + OG
                          images — tools/build-mansions.mjs regenerates it,
@@ -247,10 +232,12 @@ unavailability.
   became an unhandled rejection and killed the process. Every async handler is
   now wrapped in `wrap()` with an error middleware. Verified: dead DB used to
   give HTTP 000 + process exit, now gives HTTP 500 and stays up.
-- **Stale-export crashes.** A Design export that imports `astro.js`,
-  `shards.js` or `duet.js` has shipped a stale pre-refactor copy four times.
-  The from-scratch rebuild makes this moot *only if* the receipt protocol
-  above is followed — check imports on every handoff anyway.
+- **Stale-export crashes.** A Design export that imports an engine module
+  as a sibling (originally `astro.js`/`shards.js`; `shards.js` no longer
+  exists, but the failure mode applies to any engine module) has shipped a
+  stale pre-refactor copy four times. The from-scratch rebuild makes this
+  moot *only if* the receipt protocol above is followed — check imports on
+  every handoff anyway.
 
 ## Open decisions — ask, do not guess
 
@@ -262,5 +249,5 @@ unavailability.
   13–17. This needs a decision before public launch; raise it, don't decide
   it.
 
-Full findings and reasoning: `AUDIT.md` (historical) · current system:
+Full findings and reasoning: `docs/archive/AUDIT.md` (historical) · current system:
 `BLUEPRINT.html` · `COSMOLOGY.md` · `SIGIL-READING.md`.

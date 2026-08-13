@@ -13,8 +13,15 @@ vendor/
 package-lock.json
 
 # raw Claude Design exports/comps land here before anything gets promoted into
-# the real Code-owned modules — see OWNERSHIP.md and REVIEW.md §1.1
+# the real Code-owned modules — see OWNERSHIP.md and docs/archive/REVIEW.md §1.1
 design/incoming/
+
+# Two raw exports landed at the repo root instead of design/incoming/ (Aug
+# 2026 cleanup) — ignored by name rather than moved, since the newest one is
+# still the live page's reference until a real Design handoff replaces it.
+# Put future exports in design/incoming/ and this won't be needed again.
+/Star Shard Astrology Website (1)/
+/Starshard V3 (1)/
 
 # design-system/ is a real buildable package (source is committed); its
 # build output regenerates from src/ and shouldn't be
