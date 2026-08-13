@@ -95,12 +95,11 @@ is either the most annoying thing about you or the most useful.
 *Fire when the birth time is unknown or the moon changed station that
 day. Phrased as depth, never as apology (SIGIL-READING §3 rule 5).*
 
-**STEP.moon.unknown** — you didn't give the clock, so this reading names
-the sky your moon was in and stops there. that isn't a missing piece;
-it's an honest edge. the moon crosses one of these skies roughly every
-day, and where inside it your moon stood is the one thing only the hour
-knows. if you ever find the time on a certificate, come back — this page
-gets deeper, not different.
+**STEP.moon.unknown** — you didn't give the clock. the moon crosses
+one of these skies roughly every day, so the sky it stood in is
+certain and its exact place inside that sky is the one thing only the
+hour knows. birth certificates usually carry it. if yours turns up,
+bring it back here.
 
 **STEP.moon.crossing** — and your moon arrived on a **crossing day**: it
 changed skies within hours of your birth. so your inner life was written
@@ -110,9 +109,9 @@ don't have to. the sky didn't.
 
 **FACING.unknown** — the horizon needs a clock. without a birth time
 there is no honest way to say which sky was rising when you arrived —
-it changes completely every four minutes, and guessing would be the one
-dishonest thing on this page. the rest of your shard doesn't depend on
-it.
+it changes completely every four minutes — a different door for
+someone born ten minutes after you, in the same room. nothing else on
+your shard depends on it.
 
 ## LIGHT — the moon phase you were born under
 
@@ -143,13 +142,13 @@ most impatient light in the sky: nearly there, not there. you are the one
 who finishes other people's projects, and the one who cannot leave a thing
 at 90%. rest is a skill you had to learn on purpose, if you've learned it.
 
-**LIGHT.full** — a **full moon**. and this page can show its work here: a
-moon is only full when it stands opposite the sun across the whole width
-of the sky. the distance between your two lights — the very thing that can
-make you feel split — is the same geometry that made the night you arrived
-bright. full-moon people don't arrive subtle. people read light off you
-when you're saying nothing at all, which means you were never hiding as
-well as you thought you were.
+**LIGHT.full** — a **full moon**. a moon is only full when it stands
+opposite the sun across the whole width of the sky — so the distance
+between your two lights, the very thing that can make you feel split,
+is the same geometry that made the night you arrived bright. full-moon
+people don't arrive subtle. people read light off you when you're
+saying nothing at all. you were never hiding as well as you thought
+you were.
 
 **LIGHT.waning_gibbous** — a **full moon just past full**, beginning to
 let go. you are the one who knows when a thing is finished, usually before
@@ -195,9 +194,9 @@ the people who learn your period stop taking it personally.
 mars's day in french** (*mardi*): the same war-god, named twice, because
 two different peoples looked at the same red planet and agreed. tuesday
 gives its children a working edge — the ability to start the
-confrontation rather than wait for it. worth knowing how tyr lost his
-hand: he put it in the wolf's mouth as a pledge, and the other gods broke
-their word. it was never a day about winning. it was a day about being
+confrontation rather than wait for it. tyr lost his hand in the wolf's
+mouth. he put it there as a pledge, and the other gods broke their
+word. it was never a day about winning. it was a day about being
 the one who pays what was promised, in a room where not everyone will.
 
 **KEEPER.wednesday** — you arrived on **wednesday — odin's day, and

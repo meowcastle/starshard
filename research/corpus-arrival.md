@@ -40,8 +40,8 @@ a star came apart. the iron in your blood, the calcium in your teeth,
 the gold in somebody's ring — all of it was inside.
 
 **ARRIVAL.2**
-**that isn't mythology. that's physics.** you are, chemically, a piece
-of one.
+every atom in you heavier than helium was made inside a star. you are,
+chemically, a piece of one.
 
 **ARRIVAL.3**
 everything after this is what people built on top of that. four
@@ -53,8 +53,6 @@ we kept the good parts. here's yours.
 ---
 
 ## HOWITWORKS — screen 2 (before we ask for anything)
-
-**HOWITWORKS.head** star shard reads four sky-maps at once.
 
 **HOWITWORKS.arabia**
 `ARABIA` — twenty-eight waystations, mapped by people who steered by
@@ -68,16 +66,7 @@ something.
 `CHINA` — the same stars again. an animal guards each one.
 
 **HOWITWORKS.europe**
-`EUROPE` — the zodiac. the one you already know your sign in.
-
-**HOWITWORKS.changes**
-and one thing that isn't a sky-map: **the changes model**. anything
-real already carries the seed of what it's turning into. that's why
-your reading has a second half.
-
-**HOWITWORKS.compute**
-no quizzes. we compute where the sun and moon stood at your minute, and
-read all four maps at that spot.
+`EUROPE` — the zodiac. yours is in there.
 
 **HOWITWORKS.privacy**
 `your birth details are computed on this device and never uploaded.`
@@ -90,8 +79,8 @@ read all four maps at that spot.
 
 **ASK.date** the date is enough to begin.
 
-**ASK.time** the time is optional. it unlocks the horizon — how you
-enter a room — and it changes every four minutes, so we won't guess.
+**ASK.time** the time is optional. it fixes the horizon — the sky that
+was climbing when you arrived.
 
 **ASK.place** the place, so we know which sky was overhead.
 
@@ -151,16 +140,14 @@ the oldest astrology still hiding in ordinary language.
 minute. not who you are. the door people come through to reach you.
 
 **LEAD.answering**
-**the sky opposite you.** every chart has a far side. this one comes
-with a fact you can check.
+**the sky opposite you.** every chart has a far side.
 
 **LEAD.gait**
-**how you walk.** not a label we picked. a shape that falls out of
-where your two lights stood.
+**how you walk.** your two lights, taken together.
 
 **LEAD.becoming**
-**what you're turning into.** a reading isn't a photograph. one part of
-your chart was already moving when you arrived.
+**what you're turning into.** one part of your chart was already moving
+when you arrived.
 
 ---
 
@@ -172,12 +159,10 @@ scholarly vocabulary is allowed to live.*
 **DEPTH.toggle** where this comes from ▾
 
 **DEPTH.intro**
-four traditions named this stretch of sky. where they disagree, we say
-so instead of picking a winner.
+four traditions named this stretch of sky.
 
 **DEPTH.disagree**
-the sky-maps conflict here. four cultures, the same stars, different
-deserts.
+they disagree here. four cultures, the same stars, different deserts.
 
 ---
 
@@ -189,11 +174,10 @@ deserts.
 you probably already knew most of that.
 
 **CLOSE.recognition.2**
-that isn't a trick. it's the point. the sky didn't tell us who you are.
-it gave us somewhere to look. you were already there.
+most people do.
 
 **CLOSE.recognition.3**
-what it can do is show you the shape from outside.
+it's a strange thing to see it from outside, in someone else's words.
 
 ---
 

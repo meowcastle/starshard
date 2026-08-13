@@ -28,10 +28,9 @@ were laid over them. others said the word means the tuft of hair at the
 tip of the old sky-lion's tail. the root is the same one that gives the
 arabic word for **forgiveness** — because to forgive, in that language's
 logic, is to cover something over.
-and then there is the part almost nobody knows, which the oldest books
-say plainly. the arabs called al-ghafr **the best of the twenty-eight
-mansions** — and their reason was not poetry. look at where it sits: the
-lion's dangerous end is teeth and claws, and this station has only its
+the oldest books call al-ghafr **the best of the twenty-eight
+mansions**, and the reason is position, not poetry. the lion's
+dangerous end is teeth and claws, and this station has only its
 **tail**. the scorpion's dangerous end is the sting, and this station has
 only its **claws**. it is the one stretch of the road that is out of
 reach of both. *the best station for ever, between the claws and the
@@ -187,12 +186,12 @@ your sun landed on **antares** — the red star at the center of the
 scorpion, and one of the few places where two sky-cultures that never met
 reached for the **same word**. the arabs called it *qalb al-ʿaqrab*, the
 scorpion's **heart**. china's name for this station is 心 — **heart**.
-the greek name says something else worth knowing: *antares* means
-**rival of ares** — the rival of mars. it is red enough, and bright
+the greek name, *antares*, means **rival of ares** — the rival of
+mars. it is red enough, and bright
 enough, that it competes with a planet.
 india names this sky **jyeṣṭhā**, which means **the eldest**, and gives
-it to indra, king of the gods. so the hunger here is layered and honest:
-you want to be **the most important one to somebody** — the first called,
+it to indra, king of the gods. your hunger: you want to be **the most
+important one to somebody** — the first called,
 the one who gets told first — and you will take on any amount of
 protecting to earn it.
 the cost is the rivalry buried in the name. a heart that burns that hot

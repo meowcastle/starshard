@@ -34,9 +34,9 @@ the truth.
 the second house is what you keep. money is the obvious part. the rest
 is everything you'd grab in a fire — the jacket, the notebook, the
 hard drive, the one mug.
-a light here means your sense of being okay is bound up in what you can
-hold. that isn't greed. it's a specific, physical way of feeling safe,
-and it means going broke lands on you as something closer to
+a light here means your sense of being okay is bound up in what you
+can hold. it's a physical way of feeling safe, and it means going
+broke lands on you as something closer to
 homelessness of the spirit than an inconvenience. people with nothing
 here don't get it. don't bother explaining.
 
@@ -45,38 +45,37 @@ the third house is the near world. the six blocks around you. siblings,
 neighbours, the group chat, the drive you could do asleep.
 a light here works in short range and fast turns. you think by
 talking, learn by asking the person next to you, and know an absurd
-amount about a very small radius. the cost is scale: you'll build the
-best local thing in the city and forget for years that the rest of the
-country exists.
+amount about a very small radius. you'll build the best local thing in
+the city and forget for years that the rest of the country exists.
 
 **HOUSE.04**
 the fourth house is the room you grew up in — the actual room, the
 smell of it, whatever was on the wall. family lives here, and so does
 the floor under everything else.
 a light here means home isn't a background detail for you, it's load-
-bearing. you can't work in a place you haven't made yours. the cost
-runs backwards: this house doesn't only hold the home you have, it
-holds the one you came from, and you'll be renovating that one your
-whole life whether or not you meant to move in.
+bearing. you can't work in a place you haven't made yours. this house
+holds the home you came from as well as the one you have, and you'll
+be renovating that first one your whole life whether or not you meant
+to move in.
 
 **HOUSE.05**
 the fifth house is what you make for fun. the drawing nobody's seen.
 the mix. the kid. the person you flirted with badly and would do it
 again.
 a light here has to be making something or it goes strange. play isn't
-optional maintenance for you, it's the engine. the cost is that this
-house makes things for the joy of it and the world keeps asking what
-you're going to do with them — and the day you answer that question
-seriously is the day it stops working.
+optional maintenance for you, it's the engine. you make things for the
+joy of it and the world keeps asking what you're going to do with
+them. the day you answer that question seriously is the day it stops
+working.
 
 **HOUSE.06**
 the sixth house is the daily work. not the career — the tuesday. the
 inbox, the reps, the meals, the body's small ongoing negotiations.
 a light here means you're built at the level of the routine, and you
 find out who you are by what you do repeatedly. it also means you
-notice everything that's slightly wrong, in yourself first. the cost is
-that a life this attentive to maintenance can quietly become
-maintenance, and nobody throws a party for the person who kept it all
+notice everything that's slightly wrong, in yourself first. a life
+this attentive to maintenance can quietly become maintenance, and
+nobody throws a party for the person who kept it all
 running.
 
 **HOUSE.07**
@@ -84,10 +83,9 @@ the seventh house sits directly across from the doorway: the other
 person. partners, the closest friend, the enemy who knows you best.
 a light here means you find out what you think by watching it land on
 somebody. you're not incomplete alone — you're just under-lit, like a
-room with the switch by the door. the cost is that everyone here has,
-at least once, taken a partner's opinion of them as evidence. that
-isn't weakness. it's the house doing exactly what it does, without
-supervision.
+room with the switch by the door. everyone here has, at least once,
+taken a partner's opinion of them as evidence. that's the house doing
+what it does, unsupervised.
 
 **HOUSE.08**
 the eighth house is what you don't say out loud. what you owe. what
@@ -95,9 +93,9 @@ you inherited. what happens with the lights off, and what happens when
 something ends.
 a light here gives you a startling tolerance for other people's worst
 hour. you can sit with grief, debt, the diagnosis, the thing they've
-never told anyone, and not flinch. the cost is that people bring you
-the heaviest thing they own and then go home lighter, and you have
-never quite worked out where to put it afterward.
+never told anyone, and not flinch. people bring you the heaviest thing
+they own and then go home lighter. you have never quite worked out
+where to put it afterward.
 
 **HOUSE.09**
 the ninth house is the far world. the flight. the degree. the belief
@@ -105,8 +103,8 @@ you'd argue for at 2am. anything more than a day's travel from where
 you started.
 a light here needs the horizon to keep moving. you take an idea
 seriously enough to reorganize your life around it, then take another
-one. the cost is distance from the near world: you can be enormously
-well-travelled and slightly unreachable, and the people six blocks away
+one. you can be enormously well-travelled and slightly unreachable,
+and the people six blocks away
 notice long before you do.
 
 **HOUSE.10**
@@ -114,8 +112,8 @@ the tenth house is the top of the chart — the point directly overhead
 at your minute. what you're known for. the answer to *what do you do*.
 a light here is visible whether or not you wanted it visible. you'll
 be given responsibility early, and judged in public for things other
-people get to fumble privately. the cost is a strange one to explain:
-being known for a thing quietly narrows the number of things you're
+people get to fumble privately. being known for a thing quietly
+narrows the number of things you're
 allowed to be, and the narrowing happens in other people's heads where
 you can't reach it.
 
@@ -124,8 +122,8 @@ the eleventh house is your people. friends, scenes, the group, the
 version of the future you're all building without having agreed to.
 a light here belongs to something. you find yourself in the plural —
 in the crew, the server, the band, the movement — and it's genuine
-belonging, not a substitute for it. the cost is that groups have
-weather, and yours moves you. when the scene shifts you'll feel it
+belonging, not a substitute for it. groups have weather, and yours
+moves you. when the scene shifts you'll feel it
 before you can name it, and you'll change your life over something
 nobody actually said.
 
@@ -134,21 +132,21 @@ the twelfth house is the back room. solitude, sleep, the hospital, the
 studio at 4am. what's hidden — including from you.
 a light here spends part of its life offstage and doesn't fully know
 why. you need more alone than you admit to, and you process things
-somewhere you can't watch. the cost, and it's real: this house makes
-excellent art and unreliable self-reports. you are the last person to
+somewhere you can't watch. this house makes excellent art and
+unreliable self-reports. you are the last person to
 find out what you've been dealing with, and you'll hear it first from
 someone who loves you and finally said it.
 
 **HOUSE.empty**
-most of your houses are empty. that's how charts work — twelve rooms,
-a handful of lights. an empty house isn't a missing part of your life.
-it's just not where your weather comes from.
+most of your houses are empty. twelve rooms, a handful of lights. the
+dark ones are still yours. they're just not where your weather comes
+from.
 
 **HOUSE.porphyry**
-your birthplace sits far enough north that the usual house math breaks
-down — above about 66°, the standard system stops producing sensible
-divisions. these are calculated a different way. everything else on
-this page is unaffected, and we'd rather say so than pretend.
+you were born far enough north that the sun can refuse to set in
+summer. the usual twelve-room division of the sky falls apart up
+there, so yours is drawn by an older method — same rooms, different
+arithmetic.
 
 ---
 
@@ -174,17 +172,17 @@ other. that's a full moon, and that's why the night you arrived was
 bright.
 what you do and what you need were never going to be satisfied by the
 same afternoon. you'll be accused of two opposite failures, often in
-the same week, by people who are each only looking at one side. the
-useful part: you can see both banks. most people can't see the one
+the same week, by people who are each only looking at one side. you
+can see both banks. most people can't see the one
 they're standing on.
 
 **ASPECT.sunmoon.trine**
 your sun and moon sit an easy third of the wheel apart. they get along
 without being introduced.
 things come to you in one piece — you want something and feeling it is
-not a separate step. it reads as grace from outside and it is genuinely
-that. the cost is that nothing in your chart forces you to examine
-yourself. friction builds people, and you got less of it, so you'll
+not a separate step. it reads as grace from outside and it is. nothing
+in your chart forces you to examine yourself, though. friction builds
+people and you got less of it, so you'll
 have to go looking for the hard conversation nobody's making you have.
 
 **ASPECT.sunmoon.square**
@@ -192,16 +190,16 @@ your sun and moon sit at a right angle — the tense one, the grinding
 one.
 what you're built to do and what you need to feel safe want different
 afternoons, and neither one is going to concede. you've experienced
-this as a personal failing since roughly age eleven. it isn't. it's a
-motor. the people with this angle are the ones who actually produce
+this as a personal failing since roughly age eleven. it's a motor. the
+people with this angle are the ones who actually produce
 things, because a square doesn't let you sit down.
 
 **ASPECT.sunmoon.sextile**
 your sun and moon are a sixth of the wheel apart — a working
 relationship, available if you use it.
 you can get your head and your gut into the same room when you decide
-to. the operative word is *decide*: this angle offers, it doesn't
-insist. left alone it does nothing, which is why the ability can sit
+to. deciding is the whole mechanism. this angle offers; it never
+insists. left alone it does nothing, which is why the ability can sit
 unused for a decade and then turn out to have been there the whole
 time.
 
@@ -209,15 +207,15 @@ time.
 your sun sits right on the horizon that was rising — the thing you are
 and the door people come through are the same door.
 what you see is what you get, and you get it immediately. no
-translation layer. the cost is no cover: on a bad day everybody knows,
+translation layer. on a bad day everybody knows,
 because you don't have a lobby to wait in.
 
 **ASPECT.sunrising.square**
 your sun sits at a right angle to your rising sign. the way you come
 across and the thing you actually are keep missing each other.
 you've been misread your entire life, consistently, in the same
-direction. it's not paranoia — it's ninety degrees of geometry. the
-upside nobody mentions: people who take the time to get past the first
+direction. it's ninety degrees of geometry. people who take the time
+to get past the first
 impression tend to stay, because they had to work for it and the work
 selected for them.
 
@@ -226,8 +224,8 @@ your sun and rising sit comfortably apart. the entrance matches the
 person.
 you're easy to meet and the ease is real, not performance. it's a
 significant advantage and you have probably never noticed you have it.
-the cost is that a good first impression can carry you further than
-your preparation, and one day it won't.
+a good first impression can carry you further than your preparation,
+and one day it won't.
 
 **ASPECT.moonrising.conjunction**
 your moon sits on the rising horizon. your inner weather is on the
@@ -243,15 +241,12 @@ your moon sits opposite the horizon — down at the base of the chart,
 as far from the door as it gets.
 whatever you show, the thing that actually moves you is somewhere in
 the back of the house. you can be enormously well-liked and still feel
-unmet, and the gap isn't anyone's fault; it's structural. the fix is
-unglamorous and it works: you have to say the thing. nobody's going to
-guess it from the doorway.
+unmet, and the gap isn't anyone's fault; it's structural. you have to
+say the thing out loud. nobody's going to guess it from the doorway.
 
 **ASPECT.none**
-no clean angles between your lights this time — they're at distances
-the old geometry doesn't name. that's more common than the internet
-suggests, and it means your parts aren't locked into a fixed argument
-with each other. you get to arrange them yourself.
+your lights sit at distances the old geometry never named. no fixed
+argument runs between them. you get to arrange them yourself.
 
 ---
 
@@ -262,8 +257,8 @@ once a month each. They must never be left to the model.*
 
 **NIGHT.sun**
 tonight the moon is standing in your own sun's sky.
-it happens once a month and it's the closest thing this system has to
-an anniversary. the light that crossed here at your birth has moved on
+it happens once a month. the light that crossed here at your birth has
+moved on
 years ago; the moon comes back and stands in the same doorway anyway.
 nothing is required of you. people tend to want to be alone on this
 one, or with exactly one person, and both are correct.
@@ -286,12 +281,10 @@ been rehearsing, this is the night the doorway is open.
 
 **NIGHT.becoming**
 tonight the moon is in your becoming.
-of every night in the month, this is the one to pay attention to. the
-station your chart is turning toward is lit, and the traditions all
-agree on what to do with a night like this, which is nothing dramatic:
-notice what you're drawn to, and write it down. the ones who do this
-for a few months end up with a record of the direction they were
-already going, in their own handwriting.
+the station your chart is turning toward is lit. notice what you're
+drawn to, and write it down. do it for a few months and you end up
+holding a record of the direction you were already going, in your own
+handwriting.
 
 **NIGHT.extra.opposite** *(EXTRA — not in the current build)*
 tonight the moon stands opposite your sun's sky — the far bank. once a
@@ -310,8 +303,8 @@ good enough that nobody notices. One per cast kind, plus a generic.*
 
 **FALLBACK.steady**
 the moon is deep in {tonightEpithet} tonight, well inside it, not going
-anywhere for hours. steady sky. whatever you're in the middle of, the
-sky's advice is to stay in the middle of it a while longer.
+anywhere for hours. steady sky. whatever you're in the middle of, stay
+in the middle of it a while longer.
 
 **FALLBACK.turning**
 the moon is in the last stretch of {tonightEpithet} and already leaning
@@ -324,17 +317,23 @@ a narrow window, a few hours wide. thresholds don't come with
 instructions. notice what you notice.
 
 **FALLBACK.generic**
-tonight the moon is crossing {tonightEpithet}. that's the whole
-reading — the sky doesn't owe anyone more than that, and some nights
-the honest version is just where things are.
+tonight the moon is crossing {tonightEpithet}, and nothing else in the
+sky is pulling at it. a quiet one. whatever you were going to do
+tonight is the right thing to do.
 
 ---
 
 ## Production notes
 
-**~3,100 words. Four bills closed:** 12 houses (+ the empty-house and
+**~2,800 words. Four bills closed:** 12 houses (+ the empty-house and
 Porphyry notes), 11 aspect passages (+ a no-aspect graceful), 4 special
 nights (+ 2 marked extras), 4 fallbacks.
+
+**Fourth-wall pass applied Aug 13** (`WRITING.md`): every "the cost
+is…", "the useful part:", "the upside nobody mentions:" cut, the
+Porphyry note rewritten as a fact about the reader's birthplace rather
+than a disclaimer, and FALLBACK.generic no longer defends itself. Slot
+IDs and count unchanged (35).
 
 **Written at the sharpened bar**, which shows up as: sentence lengths
 that vary hard, a concrete object in nearly every passage (the one mug,

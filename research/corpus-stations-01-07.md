@@ -316,8 +316,8 @@ dog · kept by Jupiter · first station of the Vermilion Bird*
 **STATION.07.strike**
 your sun landed on **castor and pollux** — the twins, the two bright
 heads of gemini, which the arabs read as the outstretched **forearm** of
-a much larger sky-figure. the greek story of those two stars is the one
-worth knowing: the brothers were half-mortal, and when the mortal one
+a much larger sky-figure. in the greek story the brothers were half-
+mortal, and when the mortal one
 died the immortal one refused to take eternity alone, so they split it —
 alternating, one up while the other is under, forever.
 india's name for this sky is **punarvasu** — literally *the goods

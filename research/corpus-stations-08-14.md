@@ -278,8 +278,8 @@ this is an inner life of unglamorous, load-bearing work.
 the room reads you as **useful**, and that word is doing a lot of quiet
 damage. people bring you tasks, not confidences; they thank the outcome,
 not you. a hand-rooted moon can go years being indispensable and
-un-asked-about. the thing worth knowing: the worm doesn't need the
-credit, but it does need the ground to be worth the effort — and you get
+un-asked-about. the worm doesn't need the credit, but it does need the
+ground to be worth the effort — and you get
 to choose whose ground.
 
 **STATION.13.facing**

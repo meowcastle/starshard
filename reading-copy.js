@@ -117,10 +117,10 @@ export const COPY = {
     ]
   },
   "STEP.moon.unknown": {
-    "text": "you didn't give the clock, so this reading names the sky your moon was in and stops there. that isn't a missing piece; it's an honest edge. the moon crosses one of these skies roughly every day, and where inside it your moon stood is the one thing only the hour knows. if you ever find the time on a certificate, come back — this page gets deeper, not different.",
+    "text": "you didn't give the clock. the moon crosses one of these skies roughly every day, so the sky it stood in is certain and its exact place inside that sky is the one thing only the hour knows. birth certificates usually carry it. if yours turns up, bring it back here.",
     "tokens": [
       {
-        "text": "you didn't give the clock, so this reading names the sky your moon was in and stops there. that isn't a missing piece; it's an honest edge. the moon crosses one of these skies roughly every day, and where inside it your moon stood is the one thing only the hour knows. if you ever find the time on a certificate, come back — this page gets deeper, not different.",
+        "text": "you didn't give the clock. the moon crosses one of these skies roughly every day, so the sky it stood in is certain and its exact place inside that sky is the one thing only the hour knows. birth certificates usually carry it. if yours turns up, bring it back here.",
         "emphasis": null
       }
     ]
@@ -143,10 +143,10 @@ export const COPY = {
     ]
   },
   "FACING.unknown": {
-    "text": "the horizon needs a clock. without a birth time there is no honest way to say which sky was rising when you arrived — it changes completely every four minutes, and guessing would be the one dishonest thing on this page. the rest of your shard doesn't depend on it.",
+    "text": "the horizon needs a clock. without a birth time there is no honest way to say which sky was rising when you arrived — it changes completely every four minutes — a different door for someone born ten minutes after you, in the same room. nothing else on your shard depends on it.",
     "tokens": [
       {
-        "text": "the horizon needs a clock. without a birth time there is no honest way to say which sky was rising when you arrived — it changes completely every four minutes, and guessing would be the one dishonest thing on this page. the rest of your shard doesn't depend on it.",
+        "text": "the horizon needs a clock. without a birth time there is no honest way to say which sky was rising when you arrived — it changes completely every four minutes — a different door for someone born ten minutes after you, in the same room. nothing else on your shard depends on it.",
         "emphasis": null
       }
     ]
@@ -220,7 +220,7 @@ export const COPY = {
     ]
   },
   "LIGHT.full": {
-    "text": "a full moon. and this page can show its work here: a moon is only full when it stands opposite the sun across the whole width of the sky. the distance between your two lights — the very thing that can make you feel split — is the same geometry that made the night you arrived bright. full-moon people don't arrive subtle. people read light off you when you're saying nothing at all, which means you were never hiding as well as you thought you were.",
+    "text": "a full moon. a moon is only full when it stands opposite the sun across the whole width of the sky — so the distance between your two lights, the very thing that can make you feel split, is the same geometry that made the night you arrived bright. full-moon people don't arrive subtle. people read light off you when you're saying nothing at all. you were never hiding as well as you thought you were.",
     "tokens": [
       {
         "text": "a ",
@@ -231,7 +231,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". and this page can show its work here: a moon is only full when it stands opposite the sun across the whole width of the sky. the distance between your two lights — the very thing that can make you feel split — is the same geometry that made the night you arrived bright. full-moon people don't arrive subtle. people read light off you when you're saying nothing at all, which means you were never hiding as well as you thought you were.",
+        "text": ". a moon is only full when it stands opposite the sun across the whole width of the sky — so the distance between your two lights, the very thing that can make you feel split, is the same geometry that made the night you arrived bright. full-moon people don't arrive subtle. people read light off you when you're saying nothing at all. you were never hiding as well as you thought you were.",
         "emphasis": null
       }
     ]
@@ -330,7 +330,7 @@ export const COPY = {
     ]
   },
   "KEEPER.tuesday": {
-    "text": "you arrived on tuesday — tyr's day in english, mars's day in french (mardi): the same war-god, named twice, because two different peoples looked at the same red planet and agreed. tuesday gives its children a working edge — the ability to start the confrontation rather than wait for it. worth knowing how tyr lost his hand: he put it in the wolf's mouth as a pledge, and the other gods broke their word. it was never a day about winning. it was a day about being the one who pays what was promised, in a room where not everyone will.",
+    "text": "you arrived on tuesday — tyr's day in english, mars's day in french (mardi): the same war-god, named twice, because two different peoples looked at the same red planet and agreed. tuesday gives its children a working edge — the ability to start the confrontation rather than wait for it. tyr lost his hand in the wolf's mouth. he put it there as a pledge, and the other gods broke their word. it was never a day about winning. it was a day about being the one who pays what was promised, in a room where not everyone will.",
     "tokens": [
       {
         "text": "you arrived on ",
@@ -349,7 +349,7 @@ export const COPY = {
         "emphasis": "italic"
       },
       {
-        "text": "): the same war-god, named twice, because two different peoples looked at the same red planet and agreed. tuesday gives its children a working edge — the ability to start the confrontation rather than wait for it. worth knowing how tyr lost his hand: he put it in the wolf's mouth as a pledge, and the other gods broke their word. it was never a day about winning. it was a day about being the one who pays what was promised, in a room where not everyone will.",
+        "text": "): the same war-god, named twice, because two different peoples looked at the same red planet and agreed. tuesday gives its children a working edge — the ability to start the confrontation rather than wait for it. tyr lost his hand in the wolf's mouth. he put it there as a pledge, and the other gods broke their word. it was never a day about winning. it was a day about being the one who pays what was promised, in a room where not everyone will.",
         "emphasis": null
       }
     ]
@@ -982,14 +982,10 @@ export const COPY = {
     ]
   },
   "ARRIVAL.2": {
-    "text": "that isn't mythology. that's physics. you are, chemically, a piece of one.",
+    "text": "every atom in you heavier than helium was made inside a star. you are, chemically, a piece of one.",
     "tokens": [
       {
-        "text": "that isn't mythology. that's physics.",
-        "emphasis": "bold"
-      },
-      {
-        "text": " you are, chemically, a piece of one.",
+        "text": "every atom in you heavier than helium was made inside a star. you are, chemically, a piece of one.",
         "emphasis": null
       }
     ]
@@ -1008,15 +1004,6 @@ export const COPY = {
     "tokens": [
       {
         "text": "we kept the good parts. here's yours.",
-        "emphasis": null
-      }
-    ]
-  },
-  "HOWITWORKS.head": {
-    "text": "star shard reads four sky-maps at once.",
-    "tokens": [
-      {
-        "text": "star shard reads four sky-maps at once.",
         "emphasis": null
       }
     ]
@@ -1049,36 +1036,10 @@ export const COPY = {
     ]
   },
   "HOWITWORKS.europe": {
-    "text": "`EUROPE` — the zodiac. the one you already know your sign in.",
+    "text": "`EUROPE` — the zodiac. yours is in there.",
     "tokens": [
       {
-        "text": "`EUROPE` — the zodiac. the one you already know your sign in.",
-        "emphasis": null
-      }
-    ]
-  },
-  "HOWITWORKS.changes": {
-    "text": "and one thing that isn't a sky-map: the changes model. anything real already carries the seed of what it's turning into. that's why your reading has a second half.",
-    "tokens": [
-      {
-        "text": "and one thing that isn't a sky-map: ",
-        "emphasis": null
-      },
-      {
-        "text": "the changes model",
-        "emphasis": "bold"
-      },
-      {
-        "text": ". anything real already carries the seed of what it's turning into. that's why your reading has a second half.",
-        "emphasis": null
-      }
-    ]
-  },
-  "HOWITWORKS.compute": {
-    "text": "no quizzes. we compute where the sun and moon stood at your minute, and read all four maps at that spot.",
-    "tokens": [
-      {
-        "text": "no quizzes. we compute where the sun and moon stood at your minute, and read all four maps at that spot.",
+        "text": "`EUROPE` — the zodiac. yours is in there.",
         "emphasis": null
       }
     ]
@@ -1111,10 +1072,10 @@ export const COPY = {
     ]
   },
   "ASK.time": {
-    "text": "the time is optional. it unlocks the horizon — how you enter a room — and it changes every four minutes, so we won't guess.",
+    "text": "the time is optional. it fixes the horizon — the sky that was climbing when you arrived.",
     "tokens": [
       {
-        "text": "the time is optional. it unlocks the horizon — how you enter a room — and it changes every four minutes, so we won't guess.",
+        "text": "the time is optional. it fixes the horizon — the sky that was climbing when you arrived.",
         "emphasis": null
       }
     ]
@@ -1257,40 +1218,40 @@ export const COPY = {
     ]
   },
   "LEAD.answering": {
-    "text": "the sky opposite you. every chart has a far side. this one comes with a fact you can check.",
+    "text": "the sky opposite you. every chart has a far side.",
     "tokens": [
       {
         "text": "the sky opposite you.",
         "emphasis": "bold"
       },
       {
-        "text": " every chart has a far side. this one comes with a fact you can check.",
+        "text": " every chart has a far side.",
         "emphasis": null
       }
     ]
   },
   "LEAD.gait": {
-    "text": "how you walk. not a label we picked. a shape that falls out of where your two lights stood.",
+    "text": "how you walk. your two lights, taken together.",
     "tokens": [
       {
         "text": "how you walk.",
         "emphasis": "bold"
       },
       {
-        "text": " not a label we picked. a shape that falls out of where your two lights stood.",
+        "text": " your two lights, taken together.",
         "emphasis": null
       }
     ]
   },
   "LEAD.becoming": {
-    "text": "what you're turning into. a reading isn't a photograph. one part of your chart was already moving when you arrived.",
+    "text": "what you're turning into. one part of your chart was already moving when you arrived.",
     "tokens": [
       {
         "text": "what you're turning into.",
         "emphasis": "bold"
       },
       {
-        "text": " a reading isn't a photograph. one part of your chart was already moving when you arrived.",
+        "text": " one part of your chart was already moving when you arrived.",
         "emphasis": null
       }
     ]
@@ -1305,19 +1266,19 @@ export const COPY = {
     ]
   },
   "DEPTH.intro": {
-    "text": "four traditions named this stretch of sky. where they disagree, we say so instead of picking a winner.",
+    "text": "four traditions named this stretch of sky.",
     "tokens": [
       {
-        "text": "four traditions named this stretch of sky. where they disagree, we say so instead of picking a winner.",
+        "text": "four traditions named this stretch of sky.",
         "emphasis": null
       }
     ]
   },
   "DEPTH.disagree": {
-    "text": "the sky-maps conflict here. four cultures, the same stars, different deserts.",
+    "text": "they disagree here. four cultures, the same stars, different deserts.",
     "tokens": [
       {
-        "text": "the sky-maps conflict here. four cultures, the same stars, different deserts.",
+        "text": "they disagree here. four cultures, the same stars, different deserts.",
         "emphasis": null
       }
     ]
@@ -1332,19 +1293,19 @@ export const COPY = {
     ]
   },
   "CLOSE.recognition.2": {
-    "text": "that isn't a trick. it's the point. the sky didn't tell us who you are. it gave us somewhere to look. you were already there.",
+    "text": "most people do.",
     "tokens": [
       {
-        "text": "that isn't a trick. it's the point. the sky didn't tell us who you are. it gave us somewhere to look. you were already there.",
+        "text": "most people do.",
         "emphasis": null
       }
     ]
   },
   "CLOSE.recognition.3": {
-    "text": "what it can do is show you the shape from outside.",
+    "text": "it's a strange thing to see it from outside, in someone else's words.",
     "tokens": [
       {
-        "text": "what it can do is show you the shape from outside.",
+        "text": "it's a strange thing to see it from outside, in someone else's words.",
         "emphasis": null
       }
     ]
@@ -1430,79 +1391,79 @@ export const COPY = {
     ]
   },
   "HOUSE.02": {
-    "text": "the second house is what you keep. money is the obvious part. the rest is everything you'd grab in a fire — the jacket, the notebook, the hard drive, the one mug. a light here means your sense of being okay is bound up in what you can hold. that isn't greed. it's a specific, physical way of feeling safe, and it means going broke lands on you as something closer to homelessness of the spirit than an inconvenience. people with nothing here don't get it. don't bother explaining.",
+    "text": "the second house is what you keep. money is the obvious part. the rest is everything you'd grab in a fire — the jacket, the notebook, the hard drive, the one mug. a light here means your sense of being okay is bound up in what you can hold. it's a physical way of feeling safe, and it means going broke lands on you as something closer to homelessness of the spirit than an inconvenience. people with nothing here don't get it. don't bother explaining.",
     "tokens": [
       {
-        "text": "the second house is what you keep. money is the obvious part. the rest is everything you'd grab in a fire — the jacket, the notebook, the hard drive, the one mug. a light here means your sense of being okay is bound up in what you can hold. that isn't greed. it's a specific, physical way of feeling safe, and it means going broke lands on you as something closer to homelessness of the spirit than an inconvenience. people with nothing here don't get it. don't bother explaining.",
+        "text": "the second house is what you keep. money is the obvious part. the rest is everything you'd grab in a fire — the jacket, the notebook, the hard drive, the one mug. a light here means your sense of being okay is bound up in what you can hold. it's a physical way of feeling safe, and it means going broke lands on you as something closer to homelessness of the spirit than an inconvenience. people with nothing here don't get it. don't bother explaining.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.03": {
-    "text": "the third house is the near world. the six blocks around you. siblings, neighbours, the group chat, the drive you could do asleep. a light here works in short range and fast turns. you think by talking, learn by asking the person next to you, and know an absurd amount about a very small radius. the cost is scale: you'll build the best local thing in the city and forget for years that the rest of the country exists.",
+    "text": "the third house is the near world. the six blocks around you. siblings, neighbours, the group chat, the drive you could do asleep. a light here works in short range and fast turns. you think by talking, learn by asking the person next to you, and know an absurd amount about a very small radius. you'll build the best local thing in the city and forget for years that the rest of the country exists.",
     "tokens": [
       {
-        "text": "the third house is the near world. the six blocks around you. siblings, neighbours, the group chat, the drive you could do asleep. a light here works in short range and fast turns. you think by talking, learn by asking the person next to you, and know an absurd amount about a very small radius. the cost is scale: you'll build the best local thing in the city and forget for years that the rest of the country exists.",
+        "text": "the third house is the near world. the six blocks around you. siblings, neighbours, the group chat, the drive you could do asleep. a light here works in short range and fast turns. you think by talking, learn by asking the person next to you, and know an absurd amount about a very small radius. you'll build the best local thing in the city and forget for years that the rest of the country exists.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.04": {
-    "text": "the fourth house is the room you grew up in — the actual room, the smell of it, whatever was on the wall. family lives here, and so does the floor under everything else. a light here means home isn't a background detail for you, it's load-bearing. you can't work in a place you haven't made yours. the cost runs backwards: this house doesn't only hold the home you have, it holds the one you came from, and you'll be renovating that one your whole life whether or not you meant to move in.",
+    "text": "the fourth house is the room you grew up in — the actual room, the smell of it, whatever was on the wall. family lives here, and so does the floor under everything else. a light here means home isn't a background detail for you, it's load-bearing. you can't work in a place you haven't made yours. this house holds the home you came from as well as the one you have, and you'll be renovating that first one your whole life whether or not you meant to move in.",
     "tokens": [
       {
-        "text": "the fourth house is the room you grew up in — the actual room, the smell of it, whatever was on the wall. family lives here, and so does the floor under everything else. a light here means home isn't a background detail for you, it's load-bearing. you can't work in a place you haven't made yours. the cost runs backwards: this house doesn't only hold the home you have, it holds the one you came from, and you'll be renovating that one your whole life whether or not you meant to move in.",
+        "text": "the fourth house is the room you grew up in — the actual room, the smell of it, whatever was on the wall. family lives here, and so does the floor under everything else. a light here means home isn't a background detail for you, it's load-bearing. you can't work in a place you haven't made yours. this house holds the home you came from as well as the one you have, and you'll be renovating that first one your whole life whether or not you meant to move in.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.05": {
-    "text": "the fifth house is what you make for fun. the drawing nobody's seen. the mix. the kid. the person you flirted with badly and would do it again. a light here has to be making something or it goes strange. play isn't optional maintenance for you, it's the engine. the cost is that this house makes things for the joy of it and the world keeps asking what you're going to do with them — and the day you answer that question seriously is the day it stops working.",
+    "text": "the fifth house is what you make for fun. the drawing nobody's seen. the mix. the kid. the person you flirted with badly and would do it again. a light here has to be making something or it goes strange. play isn't optional maintenance for you, it's the engine. you make things for the joy of it and the world keeps asking what you're going to do with them. the day you answer that question seriously is the day it stops working.",
     "tokens": [
       {
-        "text": "the fifth house is what you make for fun. the drawing nobody's seen. the mix. the kid. the person you flirted with badly and would do it again. a light here has to be making something or it goes strange. play isn't optional maintenance for you, it's the engine. the cost is that this house makes things for the joy of it and the world keeps asking what you're going to do with them — and the day you answer that question seriously is the day it stops working.",
+        "text": "the fifth house is what you make for fun. the drawing nobody's seen. the mix. the kid. the person you flirted with badly and would do it again. a light here has to be making something or it goes strange. play isn't optional maintenance for you, it's the engine. you make things for the joy of it and the world keeps asking what you're going to do with them. the day you answer that question seriously is the day it stops working.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.06": {
-    "text": "the sixth house is the daily work. not the career — the tuesday. the inbox, the reps, the meals, the body's small ongoing negotiations. a light here means you're built at the level of the routine, and you find out who you are by what you do repeatedly. it also means you notice everything that's slightly wrong, in yourself first. the cost is that a life this attentive to maintenance can quietly become maintenance, and nobody throws a party for the person who kept it all running.",
+    "text": "the sixth house is the daily work. not the career — the tuesday. the inbox, the reps, the meals, the body's small ongoing negotiations. a light here means you're built at the level of the routine, and you find out who you are by what you do repeatedly. it also means you notice everything that's slightly wrong, in yourself first. a life this attentive to maintenance can quietly become maintenance, and nobody throws a party for the person who kept it all running.",
     "tokens": [
       {
-        "text": "the sixth house is the daily work. not the career — the tuesday. the inbox, the reps, the meals, the body's small ongoing negotiations. a light here means you're built at the level of the routine, and you find out who you are by what you do repeatedly. it also means you notice everything that's slightly wrong, in yourself first. the cost is that a life this attentive to maintenance can quietly become maintenance, and nobody throws a party for the person who kept it all running.",
+        "text": "the sixth house is the daily work. not the career — the tuesday. the inbox, the reps, the meals, the body's small ongoing negotiations. a light here means you're built at the level of the routine, and you find out who you are by what you do repeatedly. it also means you notice everything that's slightly wrong, in yourself first. a life this attentive to maintenance can quietly become maintenance, and nobody throws a party for the person who kept it all running.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.07": {
-    "text": "the seventh house sits directly across from the doorway: the other person. partners, the closest friend, the enemy who knows you best. a light here means you find out what you think by watching it land on somebody. you're not incomplete alone — you're just under-lit, like a room with the switch by the door. the cost is that everyone here has, at least once, taken a partner's opinion of them as evidence. that isn't weakness. it's the house doing exactly what it does, without supervision.",
+    "text": "the seventh house sits directly across from the doorway: the other person. partners, the closest friend, the enemy who knows you best. a light here means you find out what you think by watching it land on somebody. you're not incomplete alone — you're just under-lit, like a room with the switch by the door. everyone here has, at least once, taken a partner's opinion of them as evidence. that's the house doing what it does, unsupervised.",
     "tokens": [
       {
-        "text": "the seventh house sits directly across from the doorway: the other person. partners, the closest friend, the enemy who knows you best. a light here means you find out what you think by watching it land on somebody. you're not incomplete alone — you're just under-lit, like a room with the switch by the door. the cost is that everyone here has, at least once, taken a partner's opinion of them as evidence. that isn't weakness. it's the house doing exactly what it does, without supervision.",
+        "text": "the seventh house sits directly across from the doorway: the other person. partners, the closest friend, the enemy who knows you best. a light here means you find out what you think by watching it land on somebody. you're not incomplete alone — you're just under-lit, like a room with the switch by the door. everyone here has, at least once, taken a partner's opinion of them as evidence. that's the house doing what it does, unsupervised.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.08": {
-    "text": "the eighth house is what you don't say out loud. what you owe. what you inherited. what happens with the lights off, and what happens when something ends. a light here gives you a startling tolerance for other people's worst hour. you can sit with grief, debt, the diagnosis, the thing they've never told anyone, and not flinch. the cost is that people bring you the heaviest thing they own and then go home lighter, and you have never quite worked out where to put it afterward.",
+    "text": "the eighth house is what you don't say out loud. what you owe. what you inherited. what happens with the lights off, and what happens when something ends. a light here gives you a startling tolerance for other people's worst hour. you can sit with grief, debt, the diagnosis, the thing they've never told anyone, and not flinch. people bring you the heaviest thing they own and then go home lighter. you have never quite worked out where to put it afterward.",
     "tokens": [
       {
-        "text": "the eighth house is what you don't say out loud. what you owe. what you inherited. what happens with the lights off, and what happens when something ends. a light here gives you a startling tolerance for other people's worst hour. you can sit with grief, debt, the diagnosis, the thing they've never told anyone, and not flinch. the cost is that people bring you the heaviest thing they own and then go home lighter, and you have never quite worked out where to put it afterward.",
+        "text": "the eighth house is what you don't say out loud. what you owe. what you inherited. what happens with the lights off, and what happens when something ends. a light here gives you a startling tolerance for other people's worst hour. you can sit with grief, debt, the diagnosis, the thing they've never told anyone, and not flinch. people bring you the heaviest thing they own and then go home lighter. you have never quite worked out where to put it afterward.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.09": {
-    "text": "the ninth house is the far world. the flight. the degree. the belief you'd argue for at 2am. anything more than a day's travel from where you started. a light here needs the horizon to keep moving. you take an idea seriously enough to reorganize your life around it, then take another one. the cost is distance from the near world: you can be enormously well-travelled and slightly unreachable, and the people six blocks away notice long before you do.",
+    "text": "the ninth house is the far world. the flight. the degree. the belief you'd argue for at 2am. anything more than a day's travel from where you started. a light here needs the horizon to keep moving. you take an idea seriously enough to reorganize your life around it, then take another one. you can be enormously well-travelled and slightly unreachable, and the people six blocks away notice long before you do.",
     "tokens": [
       {
-        "text": "the ninth house is the far world. the flight. the degree. the belief you'd argue for at 2am. anything more than a day's travel from where you started. a light here needs the horizon to keep moving. you take an idea seriously enough to reorganize your life around it, then take another one. the cost is distance from the near world: you can be enormously well-travelled and slightly unreachable, and the people six blocks away notice long before you do.",
+        "text": "the ninth house is the far world. the flight. the degree. the belief you'd argue for at 2am. anything more than a day's travel from where you started. a light here needs the horizon to keep moving. you take an idea seriously enough to reorganize your life around it, then take another one. you can be enormously well-travelled and slightly unreachable, and the people six blocks away notice long before you do.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.10": {
-    "text": "the tenth house is the top of the chart — the point directly overhead at your minute. what you're known for. the answer to what do you do. a light here is visible whether or not you wanted it visible. you'll be given responsibility early, and judged in public for things other people get to fumble privately. the cost is a strange one to explain: being known for a thing quietly narrows the number of things you're allowed to be, and the narrowing happens in other people's heads where you can't reach it.",
+    "text": "the tenth house is the top of the chart — the point directly overhead at your minute. what you're known for. the answer to what do you do. a light here is visible whether or not you wanted it visible. you'll be given responsibility early, and judged in public for things other people get to fumble privately. being known for a thing quietly narrows the number of things you're allowed to be, and the narrowing happens in other people's heads where you can't reach it.",
     "tokens": [
       {
         "text": "the tenth house is the top of the chart — the point directly overhead at your minute. what you're known for. the answer to ",
@@ -1513,43 +1474,43 @@ export const COPY = {
         "emphasis": "italic"
       },
       {
-        "text": ". a light here is visible whether or not you wanted it visible. you'll be given responsibility early, and judged in public for things other people get to fumble privately. the cost is a strange one to explain: being known for a thing quietly narrows the number of things you're allowed to be, and the narrowing happens in other people's heads where you can't reach it.",
+        "text": ". a light here is visible whether or not you wanted it visible. you'll be given responsibility early, and judged in public for things other people get to fumble privately. being known for a thing quietly narrows the number of things you're allowed to be, and the narrowing happens in other people's heads where you can't reach it.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.11": {
-    "text": "the eleventh house is your people. friends, scenes, the group, the version of the future you're all building without having agreed to. a light here belongs to something. you find yourself in the plural — in the crew, the server, the band, the movement — and it's genuine belonging, not a substitute for it. the cost is that groups have weather, and yours moves you. when the scene shifts you'll feel it before you can name it, and you'll change your life over something nobody actually said.",
+    "text": "the eleventh house is your people. friends, scenes, the group, the version of the future you're all building without having agreed to. a light here belongs to something. you find yourself in the plural — in the crew, the server, the band, the movement — and it's genuine belonging, not a substitute for it. groups have weather, and yours moves you. when the scene shifts you'll feel it before you can name it, and you'll change your life over something nobody actually said.",
     "tokens": [
       {
-        "text": "the eleventh house is your people. friends, scenes, the group, the version of the future you're all building without having agreed to. a light here belongs to something. you find yourself in the plural — in the crew, the server, the band, the movement — and it's genuine belonging, not a substitute for it. the cost is that groups have weather, and yours moves you. when the scene shifts you'll feel it before you can name it, and you'll change your life over something nobody actually said.",
+        "text": "the eleventh house is your people. friends, scenes, the group, the version of the future you're all building without having agreed to. a light here belongs to something. you find yourself in the plural — in the crew, the server, the band, the movement — and it's genuine belonging, not a substitute for it. groups have weather, and yours moves you. when the scene shifts you'll feel it before you can name it, and you'll change your life over something nobody actually said.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.12": {
-    "text": "the twelfth house is the back room. solitude, sleep, the hospital, the studio at 4am. what's hidden — including from you. a light here spends part of its life offstage and doesn't fully know why. you need more alone than you admit to, and you process things somewhere you can't watch. the cost, and it's real: this house makes excellent art and unreliable self-reports. you are the last person to find out what you've been dealing with, and you'll hear it first from someone who loves you and finally said it.",
+    "text": "the twelfth house is the back room. solitude, sleep, the hospital, the studio at 4am. what's hidden — including from you. a light here spends part of its life offstage and doesn't fully know why. you need more alone than you admit to, and you process things somewhere you can't watch. this house makes excellent art and unreliable self-reports. you are the last person to find out what you've been dealing with, and you'll hear it first from someone who loves you and finally said it.",
     "tokens": [
       {
-        "text": "the twelfth house is the back room. solitude, sleep, the hospital, the studio at 4am. what's hidden — including from you. a light here spends part of its life offstage and doesn't fully know why. you need more alone than you admit to, and you process things somewhere you can't watch. the cost, and it's real: this house makes excellent art and unreliable self-reports. you are the last person to find out what you've been dealing with, and you'll hear it first from someone who loves you and finally said it.",
+        "text": "the twelfth house is the back room. solitude, sleep, the hospital, the studio at 4am. what's hidden — including from you. a light here spends part of its life offstage and doesn't fully know why. you need more alone than you admit to, and you process things somewhere you can't watch. this house makes excellent art and unreliable self-reports. you are the last person to find out what you've been dealing with, and you'll hear it first from someone who loves you and finally said it.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.empty": {
-    "text": "most of your houses are empty. that's how charts work — twelve rooms, a handful of lights. an empty house isn't a missing part of your life. it's just not where your weather comes from.",
+    "text": "most of your houses are empty. twelve rooms, a handful of lights. the dark ones are still yours. they're just not where your weather comes from.",
     "tokens": [
       {
-        "text": "most of your houses are empty. that's how charts work — twelve rooms, a handful of lights. an empty house isn't a missing part of your life. it's just not where your weather comes from.",
+        "text": "most of your houses are empty. twelve rooms, a handful of lights. the dark ones are still yours. they're just not where your weather comes from.",
         "emphasis": null
       }
     ]
   },
   "HOUSE.porphyry": {
-    "text": "your birthplace sits far enough north that the usual house math breaks down — above about 66°, the standard system stops producing sensible divisions. these are calculated a different way. everything else on this page is unaffected, and we'd rather say so than pretend.",
+    "text": "you were born far enough north that the sun can refuse to set in summer. the usual twelve-room division of the sky falls apart up there, so yours is drawn by an older method — same rooms, different arithmetic.",
     "tokens": [
       {
-        "text": "your birthplace sits far enough north that the usual house math breaks down — above about 66°, the standard system stops producing sensible divisions. these are calculated a different way. everything else on this page is unaffected, and we'd rather say so than pretend.",
+        "text": "you were born far enough north that the sun can refuse to set in summer. the usual twelve-room division of the sky falls apart up there, so yours is drawn by an older method — same rooms, different arithmetic.",
         "emphasis": null
       }
     ]
@@ -1564,72 +1525,64 @@ export const COPY = {
     ]
   },
   "ASPECT.sunmoon.opposition": {
-    "text": "your sun and moon stood across the whole width of the sky from each other. that's a full moon, and that's why the night you arrived was bright. what you do and what you need were never going to be satisfied by the same afternoon. you'll be accused of two opposite failures, often in the same week, by people who are each only looking at one side. the useful part: you can see both banks. most people can't see the one they're standing on.",
+    "text": "your sun and moon stood across the whole width of the sky from each other. that's a full moon, and that's why the night you arrived was bright. what you do and what you need were never going to be satisfied by the same afternoon. you'll be accused of two opposite failures, often in the same week, by people who are each only looking at one side. you can see both banks. most people can't see the one they're standing on.",
     "tokens": [
       {
-        "text": "your sun and moon stood across the whole width of the sky from each other. that's a full moon, and that's why the night you arrived was bright. what you do and what you need were never going to be satisfied by the same afternoon. you'll be accused of two opposite failures, often in the same week, by people who are each only looking at one side. the useful part: you can see both banks. most people can't see the one they're standing on.",
+        "text": "your sun and moon stood across the whole width of the sky from each other. that's a full moon, and that's why the night you arrived was bright. what you do and what you need were never going to be satisfied by the same afternoon. you'll be accused of two opposite failures, often in the same week, by people who are each only looking at one side. you can see both banks. most people can't see the one they're standing on.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.sunmoon.trine": {
-    "text": "your sun and moon sit an easy third of the wheel apart. they get along without being introduced. things come to you in one piece — you want something and feeling it is not a separate step. it reads as grace from outside and it is genuinely that. the cost is that nothing in your chart forces you to examine yourself. friction builds people, and you got less of it, so you'll have to go looking for the hard conversation nobody's making you have.",
+    "text": "your sun and moon sit an easy third of the wheel apart. they get along without being introduced. things come to you in one piece — you want something and feeling it is not a separate step. it reads as grace from outside and it is. nothing in your chart forces you to examine yourself, though. friction builds people and you got less of it, so you'll have to go looking for the hard conversation nobody's making you have.",
     "tokens": [
       {
-        "text": "your sun and moon sit an easy third of the wheel apart. they get along without being introduced. things come to you in one piece — you want something and feeling it is not a separate step. it reads as grace from outside and it is genuinely that. the cost is that nothing in your chart forces you to examine yourself. friction builds people, and you got less of it, so you'll have to go looking for the hard conversation nobody's making you have.",
+        "text": "your sun and moon sit an easy third of the wheel apart. they get along without being introduced. things come to you in one piece — you want something and feeling it is not a separate step. it reads as grace from outside and it is. nothing in your chart forces you to examine yourself, though. friction builds people and you got less of it, so you'll have to go looking for the hard conversation nobody's making you have.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.sunmoon.square": {
-    "text": "your sun and moon sit at a right angle — the tense one, the grinding one. what you're built to do and what you need to feel safe want different afternoons, and neither one is going to concede. you've experienced this as a personal failing since roughly age eleven. it isn't. it's a motor. the people with this angle are the ones who actually produce things, because a square doesn't let you sit down.",
+    "text": "your sun and moon sit at a right angle — the tense one, the grinding one. what you're built to do and what you need to feel safe want different afternoons, and neither one is going to concede. you've experienced this as a personal failing since roughly age eleven. it's a motor. the people with this angle are the ones who actually produce things, because a square doesn't let you sit down.",
     "tokens": [
       {
-        "text": "your sun and moon sit at a right angle — the tense one, the grinding one. what you're built to do and what you need to feel safe want different afternoons, and neither one is going to concede. you've experienced this as a personal failing since roughly age eleven. it isn't. it's a motor. the people with this angle are the ones who actually produce things, because a square doesn't let you sit down.",
+        "text": "your sun and moon sit at a right angle — the tense one, the grinding one. what you're built to do and what you need to feel safe want different afternoons, and neither one is going to concede. you've experienced this as a personal failing since roughly age eleven. it's a motor. the people with this angle are the ones who actually produce things, because a square doesn't let you sit down.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.sunmoon.sextile": {
-    "text": "your sun and moon are a sixth of the wheel apart — a working relationship, available if you use it. you can get your head and your gut into the same room when you decide to. the operative word is decide: this angle offers, it doesn't insist. left alone it does nothing, which is why the ability can sit unused for a decade and then turn out to have been there the whole time.",
+    "text": "your sun and moon are a sixth of the wheel apart — a working relationship, available if you use it. you can get your head and your gut into the same room when you decide to. deciding is the whole mechanism. this angle offers; it never insists. left alone it does nothing, which is why the ability can sit unused for a decade and then turn out to have been there the whole time.",
     "tokens": [
       {
-        "text": "your sun and moon are a sixth of the wheel apart — a working relationship, available if you use it. you can get your head and your gut into the same room when you decide to. the operative word is ",
-        "emphasis": null
-      },
-      {
-        "text": "decide",
-        "emphasis": "italic"
-      },
-      {
-        "text": ": this angle offers, it doesn't insist. left alone it does nothing, which is why the ability can sit unused for a decade and then turn out to have been there the whole time.",
+        "text": "your sun and moon are a sixth of the wheel apart — a working relationship, available if you use it. you can get your head and your gut into the same room when you decide to. deciding is the whole mechanism. this angle offers; it never insists. left alone it does nothing, which is why the ability can sit unused for a decade and then turn out to have been there the whole time.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.sunrising.conjunction": {
-    "text": "your sun sits right on the horizon that was rising — the thing you are and the door people come through are the same door. what you see is what you get, and you get it immediately. no translation layer. the cost is no cover: on a bad day everybody knows, because you don't have a lobby to wait in.",
+    "text": "your sun sits right on the horizon that was rising — the thing you are and the door people come through are the same door. what you see is what you get, and you get it immediately. no translation layer. on a bad day everybody knows, because you don't have a lobby to wait in.",
     "tokens": [
       {
-        "text": "your sun sits right on the horizon that was rising — the thing you are and the door people come through are the same door. what you see is what you get, and you get it immediately. no translation layer. the cost is no cover: on a bad day everybody knows, because you don't have a lobby to wait in.",
+        "text": "your sun sits right on the horizon that was rising — the thing you are and the door people come through are the same door. what you see is what you get, and you get it immediately. no translation layer. on a bad day everybody knows, because you don't have a lobby to wait in.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.sunrising.square": {
-    "text": "your sun sits at a right angle to your rising sign. the way you come across and the thing you actually are keep missing each other. you've been misread your entire life, consistently, in the same direction. it's not paranoia — it's ninety degrees of geometry. the upside nobody mentions: people who take the time to get past the first impression tend to stay, because they had to work for it and the work selected for them.",
+    "text": "your sun sits at a right angle to your rising sign. the way you come across and the thing you actually are keep missing each other. you've been misread your entire life, consistently, in the same direction. it's ninety degrees of geometry. people who take the time to get past the first impression tend to stay, because they had to work for it and the work selected for them.",
     "tokens": [
       {
-        "text": "your sun sits at a right angle to your rising sign. the way you come across and the thing you actually are keep missing each other. you've been misread your entire life, consistently, in the same direction. it's not paranoia — it's ninety degrees of geometry. the upside nobody mentions: people who take the time to get past the first impression tend to stay, because they had to work for it and the work selected for them.",
+        "text": "your sun sits at a right angle to your rising sign. the way you come across and the thing you actually are keep missing each other. you've been misread your entire life, consistently, in the same direction. it's ninety degrees of geometry. people who take the time to get past the first impression tend to stay, because they had to work for it and the work selected for them.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.sunrising.trine": {
-    "text": "your sun and rising sit comfortably apart. the entrance matches the person. you're easy to meet and the ease is real, not performance. it's a significant advantage and you have probably never noticed you have it. the cost is that a good first impression can carry you further than your preparation, and one day it won't.",
+    "text": "your sun and rising sit comfortably apart. the entrance matches the person. you're easy to meet and the ease is real, not performance. it's a significant advantage and you have probably never noticed you have it. a good first impression can carry you further than your preparation, and one day it won't.",
     "tokens": [
       {
-        "text": "your sun and rising sit comfortably apart. the entrance matches the person. you're easy to meet and the ease is real, not performance. it's a significant advantage and you have probably never noticed you have it. the cost is that a good first impression can carry you further than your preparation, and one day it won't.",
+        "text": "your sun and rising sit comfortably apart. the entrance matches the person. you're easy to meet and the ease is real, not performance. it's a significant advantage and you have probably never noticed you have it. a good first impression can carry you further than your preparation, and one day it won't.",
         "emphasis": null
       }
     ]
@@ -1644,28 +1597,28 @@ export const COPY = {
     ]
   },
   "ASPECT.moonrising.opposition": {
-    "text": "your moon sits opposite the horizon — down at the base of the chart, as far from the door as it gets. whatever you show, the thing that actually moves you is somewhere in the back of the house. you can be enormously well-liked and still feel unmet, and the gap isn't anyone's fault; it's structural. the fix is unglamorous and it works: you have to say the thing. nobody's going to guess it from the doorway.",
+    "text": "your moon sits opposite the horizon — down at the base of the chart, as far from the door as it gets. whatever you show, the thing that actually moves you is somewhere in the back of the house. you can be enormously well-liked and still feel unmet, and the gap isn't anyone's fault; it's structural. you have to say the thing out loud. nobody's going to guess it from the doorway.",
     "tokens": [
       {
-        "text": "your moon sits opposite the horizon — down at the base of the chart, as far from the door as it gets. whatever you show, the thing that actually moves you is somewhere in the back of the house. you can be enormously well-liked and still feel unmet, and the gap isn't anyone's fault; it's structural. the fix is unglamorous and it works: you have to say the thing. nobody's going to guess it from the doorway.",
+        "text": "your moon sits opposite the horizon — down at the base of the chart, as far from the door as it gets. whatever you show, the thing that actually moves you is somewhere in the back of the house. you can be enormously well-liked and still feel unmet, and the gap isn't anyone's fault; it's structural. you have to say the thing out loud. nobody's going to guess it from the doorway.",
         "emphasis": null
       }
     ]
   },
   "ASPECT.none": {
-    "text": "no clean angles between your lights this time — they're at distances the old geometry doesn't name. that's more common than the internet suggests, and it means your parts aren't locked into a fixed argument with each other. you get to arrange them yourself.",
+    "text": "your lights sit at distances the old geometry never named. no fixed argument runs between them. you get to arrange them yourself.",
     "tokens": [
       {
-        "text": "no clean angles between your lights this time — they're at distances the old geometry doesn't name. that's more common than the internet suggests, and it means your parts aren't locked into a fixed argument with each other. you get to arrange them yourself.",
+        "text": "your lights sit at distances the old geometry never named. no fixed argument runs between them. you get to arrange them yourself.",
         "emphasis": null
       }
     ]
   },
   "NIGHT.sun": {
-    "text": "tonight the moon is standing in your own sun's sky. it happens once a month and it's the closest thing this system has to an anniversary. the light that crossed here at your birth has moved on years ago; the moon comes back and stands in the same doorway anyway. nothing is required of you. people tend to want to be alone on this one, or with exactly one person, and both are correct.",
+    "text": "tonight the moon is standing in your own sun's sky. it happens once a month. the light that crossed here at your birth has moved on years ago; the moon comes back and stands in the same doorway anyway. nothing is required of you. people tend to want to be alone on this one, or with exactly one person, and both are correct.",
     "tokens": [
       {
-        "text": "tonight the moon is standing in your own sun's sky. it happens once a month and it's the closest thing this system has to an anniversary. the light that crossed here at your birth has moved on years ago; the moon comes back and stands in the same doorway anyway. nothing is required of you. people tend to want to be alone on this one, or with exactly one person, and both are correct.",
+        "text": "tonight the moon is standing in your own sun's sky. it happens once a month. the light that crossed here at your birth has moved on years ago; the moon comes back and stands in the same doorway anyway. nothing is required of you. people tend to want to be alone on this one, or with exactly one person, and both are correct.",
         "emphasis": null
       }
     ]
@@ -1689,10 +1642,10 @@ export const COPY = {
     ]
   },
   "NIGHT.becoming": {
-    "text": "tonight the moon is in your becoming. of every night in the month, this is the one to pay attention to. the station your chart is turning toward is lit, and the traditions all agree on what to do with a night like this, which is nothing dramatic: notice what you're drawn to, and write it down. the ones who do this for a few months end up with a record of the direction they were already going, in their own handwriting.",
+    "text": "tonight the moon is in your becoming. the station your chart is turning toward is lit. notice what you're drawn to, and write it down. do it for a few months and you end up holding a record of the direction you were already going, in your own handwriting.",
     "tokens": [
       {
-        "text": "tonight the moon is in your becoming. of every night in the month, this is the one to pay attention to. the station your chart is turning toward is lit, and the traditions all agree on what to do with a night like this, which is nothing dramatic: notice what you're drawn to, and write it down. the ones who do this for a few months end up with a record of the direction they were already going, in their own handwriting.",
+        "text": "tonight the moon is in your becoming. the station your chart is turning toward is lit. notice what you're drawn to, and write it down. do it for a few months and you end up holding a record of the direction you were already going, in your own handwriting.",
         "emphasis": null
       }
     ]
@@ -1716,10 +1669,10 @@ export const COPY = {
     ]
   },
   "FALLBACK.steady": {
-    "text": "the moon is deep in {tonightEpithet} tonight, well inside it, not going anywhere for hours. steady sky. whatever you're in the middle of, the sky's advice is to stay in the middle of it a while longer.",
+    "text": "the moon is deep in {tonightEpithet} tonight, well inside it, not going anywhere for hours. steady sky. whatever you're in the middle of, stay in the middle of it a while longer.",
     "tokens": [
       {
-        "text": "the moon is deep in {tonightEpithet} tonight, well inside it, not going anywhere for hours. steady sky. whatever you're in the middle of, the sky's advice is to stay in the middle of it a while longer.",
+        "text": "the moon is deep in {tonightEpithet} tonight, well inside it, not going anywhere for hours. steady sky. whatever you're in the middle of, stay in the middle of it a while longer.",
         "emphasis": null
       }
     ]
@@ -1743,10 +1696,10 @@ export const COPY = {
     ]
   },
   "FALLBACK.generic": {
-    "text": "tonight the moon is crossing {tonightEpithet}. that's the whole reading — the sky doesn't owe anyone more than that, and some nights the honest version is just where things are.",
+    "text": "tonight the moon is crossing {tonightEpithet}, and nothing else in the sky is pulling at it. a quiet one. whatever you were going to do tonight is the right thing to do.",
     "tokens": [
       {
-        "text": "tonight the moon is crossing {tonightEpithet}. that's the whole reading — the sky doesn't owe anyone more than that, and some nights the honest version is just where things are.",
+        "text": "tonight the moon is crossing {tonightEpithet}, and nothing else in the sky is pulling at it. a quiet one. whatever you were going to do tonight is the right thing to do.",
         "emphasis": null
       }
     ]
@@ -2452,7 +2405,7 @@ export const COPY = {
     ]
   },
   "STATION.07.strike": {
-    "text": "your sun landed on castor and pollux — the twins, the two bright heads of gemini, which the arabs read as the outstretched forearm of a much larger sky-figure. the greek story of those two stars is the one worth knowing: the brothers were half-mortal, and when the mortal one died the immortal one refused to take eternity alone, so they split it — alternating, one up while the other is under, forever. india's name for this sky is punarvasu — literally the goods returned, the restoration of what was lost, and usually rendered as the light that comes back — and its deity is aditi, the boundless mother — the sky of restoration, of second arrivals. that is your hunger: you want the return. friends who drift back. projects that revive the moment you touch them. the door you left open on purpose. the cost is exactly that door. if everything can come back, nothing has to be finished now — and a life can quietly become a hallway of things still technically open.",
+    "text": "your sun landed on castor and pollux — the twins, the two bright heads of gemini, which the arabs read as the outstretched forearm of a much larger sky-figure. in the greek story the brothers were half-mortal, and when the mortal one died the immortal one refused to take eternity alone, so they split it — alternating, one up while the other is under, forever. india's name for this sky is punarvasu — literally the goods returned, the restoration of what was lost, and usually rendered as the light that comes back — and its deity is aditi, the boundless mother — the sky of restoration, of second arrivals. that is your hunger: you want the return. friends who drift back. projects that revive the moment you touch them. the door you left open on purpose. the cost is exactly that door. if everything can come back, nothing has to be finished now — and a life can quietly become a hallway of things still technically open.",
     "tokens": [
       {
         "text": "your sun landed on ",
@@ -2471,7 +2424,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " of a much larger sky-figure. the greek story of those two stars is the one worth knowing: the brothers were half-mortal, and when the mortal one died the immortal one refused to take eternity alone, so they split it — alternating, one up while the other is under, forever. india's name for this sky is ",
+        "text": " of a much larger sky-figure. in the greek story the brothers were half-mortal, and when the mortal one died the immortal one refused to take eternity alone, so they split it — alternating, one up while the other is under, forever. india's name for this sky is ",
         "emphasis": null
       },
       {
@@ -3245,7 +3198,7 @@ export const COPY = {
     ]
   },
   "STATION.13.root": {
-    "text": "this sky's guardian is the strangest on the whole road: the earthworm — the animal that makes soil by passing the world through its own body, and without which nothing anyone eats would grow. it is mercury-kept, so the labor runs through language and detail as much as through hands. this is an inner life of unglamorous, load-bearing work. the room reads you as useful, and that word is doing a lot of quiet damage. people bring you tasks, not confidences; they thank the outcome, not you. a hand-rooted moon can go years being indispensable and un-asked-about. the thing worth knowing: the worm doesn't need the credit, but it does need the ground to be worth the effort — and you get to choose whose ground.",
+    "text": "this sky's guardian is the strangest on the whole road: the earthworm — the animal that makes soil by passing the world through its own body, and without which nothing anyone eats would grow. it is mercury-kept, so the labor runs through language and detail as much as through hands. this is an inner life of unglamorous, load-bearing work. the room reads you as useful, and that word is doing a lot of quiet damage. people bring you tasks, not confidences; they thank the outcome, not you. a hand-rooted moon can go years being indispensable and un-asked-about. the worm doesn't need the credit, but it does need the ground to be worth the effort — and you get to choose whose ground.",
     "tokens": [
       {
         "text": "this sky's guardian is the strangest on the whole road: ",
@@ -3272,7 +3225,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and that word is doing a lot of quiet damage. people bring you tasks, not confidences; they thank the outcome, not you. a hand-rooted moon can go years being indispensable and un-asked-about. the thing worth knowing: the worm doesn't need the credit, but it does need the ground to be worth the effort — and you get to choose whose ground.",
+        "text": ", and that word is doing a lot of quiet damage. people bring you tasks, not confidences; they thank the outcome, not you. a hand-rooted moon can go years being indispensable and un-asked-about. the worm doesn't need the credit, but it does need the ground to be worth the effort — and you get to choose whose ground.",
         "emphasis": null
       }
     ]
@@ -3436,7 +3389,7 @@ export const COPY = {
     ]
   },
   "STATION.15.strike": {
-    "text": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is al-ghafr, the cover: the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for forgiveness — because to forgive, in that language's logic, is to cover something over. and then there is the part almost nobody knows, which the oldest books say plainly. the arabs called al-ghafr the best of the twenty-eight mansions — and their reason was not poetry. look at where it sits: the lion's dangerous end is teeth and claws, and this station has only its tail. the scorpion's dangerous end is the sting, and this station has only its claws. it is the one stretch of the road that is out of reach of both. the best station for ever, between the claws and the lion, went the old line. so your hunger is to find the safe gap and work in it. india's name here is svāti, given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of water underground. later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. the cost is that a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
+    "text": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is al-ghafr, the cover: the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for forgiveness — because to forgive, in that language's logic, is to cover something over. the oldest books call al-ghafr the best of the twenty-eight mansions, and the reason is position, not poetry. the lion's dangerous end is teeth and claws, and this station has only its tail. the scorpion's dangerous end is the sting, and this station has only its claws. it is the one stretch of the road that is out of reach of both. the best station for ever, between the claws and the lion, went the old line. so your hunger is to find the safe gap and work in it. india's name here is svāti, given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of water underground. later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. the cost is that a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
     "tokens": [
       {
         "text": "your sun landed at ",
@@ -3471,7 +3424,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — because to forgive, in that language's logic, is to cover something over. and then there is the part almost nobody knows, which the oldest books say plainly. the arabs called al-ghafr ",
+        "text": " — because to forgive, in that language's logic, is to cover something over. the oldest books call al-ghafr ",
         "emphasis": null
       },
       {
@@ -3479,7 +3432,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — and their reason was not poetry. look at where it sits: the lion's dangerous end is teeth and claws, and this station has only its ",
+        "text": ", and the reason is position, not poetry. the lion's dangerous end is teeth and claws, and this station has only its ",
         "emphasis": null
       },
       {
@@ -3868,7 +3821,7 @@ export const COPY = {
     ]
   },
   "STATION.18.strike": {
-    "text": "your sun landed on antares — the red star at the center of the scorpion, and one of the few places where two sky-cultures that never met reached for the same word. the arabs called it qalb al-ʿaqrab, the scorpion's heart. china's name for this station is 心 — heart. the greek name says something else worth knowing: antares means rival of ares — the rival of mars. it is red enough, and bright enough, that it competes with a planet. india names this sky jyeṣṭhā, which means the eldest, and gives it to indra, king of the gods. so the hunger here is layered and honest: you want to be the most important one to somebody — the first called, the one who gets told first — and you will take on any amount of protecting to earn it. the cost is the rivalry buried in the name. a heart that burns that hot keeps score of its own significance, and the ugliest hours of this station are the ones spent quietly measuring your place against someone else's. it isn't jealousy exactly. it's the eldest's terror of being replaceable.",
+    "text": "your sun landed on antares — the red star at the center of the scorpion, and one of the few places where two sky-cultures that never met reached for the same word. the arabs called it qalb al-ʿaqrab, the scorpion's heart. china's name for this station is 心 — heart. the greek name, antares, means rival of ares — the rival of mars. it is red enough, and bright enough, that it competes with a planet. india names this sky jyeṣṭhā, which means the eldest, and gives it to indra, king of the gods. your hunger: you want to be the most important one to somebody — the first called, the one who gets told first — and you will take on any amount of protecting to earn it. the cost is the rivalry buried in the name. a heart that burns that hot keeps score of its own significance, and the ugliest hours of this station are the ones spent quietly measuring your place against someone else's. it isn't jealousy exactly. it's the eldest's terror of being replaceable.",
     "tokens": [
       {
         "text": "your sun landed on ",
@@ -3911,7 +3864,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". the greek name says something else worth knowing: ",
+        "text": ". the greek name, ",
         "emphasis": null
       },
       {
@@ -3919,7 +3872,7 @@ export const COPY = {
         "emphasis": "italic"
       },
       {
-        "text": " means ",
+        "text": ", means ",
         "emphasis": null
       },
       {
@@ -3943,7 +3896,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and gives it to indra, king of the gods. so the hunger here is layered and honest: you want to be ",
+        "text": ", and gives it to indra, king of the gods. your hunger: you want to be ",
         "emphasis": null
       },
       {
@@ -5322,4 +5275,4 @@ export const COPY = {
 };
 
 export const STATION_SLOTS = 112;
-export const COPY_VERSION = "715dda82";
+export const COPY_VERSION = "c96cb694";

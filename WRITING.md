@@ -84,6 +84,38 @@ already have:
   knowledge back, in words they didn't have to find, is the feeling
   we're selling.
 
+## Never break the fourth wall
+
+**The product does not narrate its own trustworthiness, method, or
+intentions.** Trust is demonstrated, never claimed.
+
+The compute readout *is* the proof — so we never also say "we compute
+this." The disagreement flags *show* that the traditions conflict — so
+we never say "where they disagree, we say so." Every sentence that
+explains why the product is honest is a sentence spending the reader's
+attention on us instead of on them.
+
+Banned constructions:
+
+| Kill | Why |
+|---|---|
+| "we compute / we don't guess / we won't fake" | describing our method to be believed |
+| "that isn't a trick, it's the point" | defending the reading instead of giving it |
+| "this isn't a label we picked" | arguing with an objection nobody made |
+| "a reading isn't a photograph" | explaining what a reading is, mid-reading |
+| "where they disagree, we say so" | announcing editorial policy |
+| "built on trust", "computed X way" | product marketing inside the experience |
+| any sentence whose subject is *the app* | see the voice law above |
+
+**Define by assertion, not negation.** "That isn't mythology, that's
+physics" is weaker than "every atom in you heavier than helium was made
+inside a star." The negation invites the doubt it's answering.
+
+**The test:** cover the sentence and ask whether the reader loses
+anything about *themselves* or *the sky*. If the only loss is a reason
+to trust us, cut it — the reading earns that on its own or it doesn't
+earn it at all.
+
 ## Length is a feature, not a virtue
 
 The Deep Chart earns ~1,000 words because someone chose to read it. The

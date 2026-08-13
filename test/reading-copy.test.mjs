@@ -18,9 +18,9 @@ test('reading-copy.js is not stale relative to tools/build-reading-copy.mjs\'s c
   assert.equal(committed, copyJs(), 'reading-copy.js is stale — run node tools/build-reading-copy.mjs');
 });
 
-test('exactly 246 slots, exactly 112 STATION.* slots', () => {
+test('exactly 243 slots, exactly 112 STATION.* slots', () => {
   const ids = Object.keys(COPY);
-  assert.equal(ids.length, 246);
+  assert.equal(ids.length, 243);
   assert.equal(ids.filter(id => id.startsWith('STATION.')).length, 112);
 });
 
