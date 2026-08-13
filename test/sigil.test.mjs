@@ -245,6 +245,53 @@ test('movingLight: becomingStation wraps correctly at the top of the wheel (stat
   assert.equal(m.becomingStation, 0);
 });
 
+// -- natalAspects ---------------------------------------------------------
+
+test('natalAspects: rising and midheaven are excluded when the birth time is unknown, leaving only the sun-moon pair', () => {
+  const chart = { sunLon: 10, moonLon: 10, asc: 100, mc: 190 }; // sun-moon conjunct; would also hit asc/mc pairs if included
+  const withTime = G.natalAspects(chart, { timeKnown: true });
+  const withoutTime = G.natalAspects(chart, { timeKnown: false });
+  assert.ok(withTime.length > withoutTime.length);
+  assert.ok(withoutTime.every(a => a.from !== 'rising' && a.to !== 'rising' && a.from !== 'midheaven' && a.to !== 'midheaven'));
+  assert.deepEqual(withoutTime.map(a => [a.from, a.to]), [['sun', 'moon']]);
+});
+
+test('natalAspects: midheaven is a real candidate point, not silently skipped', () => {
+  // Only sun-midheaven lands in any aspect's orb; the other five pairs
+  // (sun-moon, sun-rising, moon-rising, moon-mc, rising-mc) are each hand-
+  // verified to fall in a no-aspect gap between orbs.
+  const chart = { sunLon: 0, moonLon: 30, asc: 68, mc: 0 };
+  const aspects = G.natalAspects(chart, { timeKnown: true });
+  assert.equal(aspects.length, 1);
+  assert.equal(aspects[0].from, 'sun');
+  assert.equal(aspects[0].to, 'midheaven');
+  assert.equal(aspects[0].aspect, 'conjunction');
+  assert.equal(aspects[0].orbUsed, 0);
+});
+
+test('natalAspects: sorted tightest-orb-first', () => {
+  // moon-midheaven: exact opposition (orb 0). sun-moon and sun-midheaven:
+  // both 2deg from an aspect (orb 2, tied — order between them doesn't
+  // matter, only that both sort after the exact hit). sun-rising,
+  // moon-rising, rising-midheaven: each hand-verified to land in a gap.
+  const chart = { sunLon: 0, moonLon: 2, asc: 40, mc: 182 };
+  const aspects = G.natalAspects(chart, { timeKnown: true });
+  assert.equal(aspects.length, 3);
+  assert.equal(aspects[0].from, 'moon');
+  assert.equal(aspects[0].to, 'midheaven');
+  assert.equal(aspects[0].orbUsed, 0);
+  for (let i = 1; i < aspects.length; i++) assert.ok(aspects[i].orbUsed >= aspects[i - 1].orbUsed);
+});
+
+test('natalAspects: reuses transits.js\'s classifyAspect (not a second orb table) — same orb boundary behavior', () => {
+  const chart = { sunLon: 0, moonLon: 8, asc: 0, mc: 0 }; // exactly at conjunction's 8deg orb
+  const inOrb = G.natalAspects(chart, { timeKnown: false });
+  assert.equal(inOrb.find(a => a.from === 'sun' && a.to === 'moon').aspect, 'conjunction');
+  const chart2 = { sunLon: 0, moonLon: 8.01, asc: 0, mc: 0 }; // just past it
+  const outOfOrb = G.natalAspects(chart2, { timeKnown: false });
+  assert.equal(outOfOrb.find(a => a.from === 'sun' && a.to === 'moon'), undefined);
+});
+
 // -- readingPlan --------------------------------------------------------------
 
 test('readingPlan: nine beats present, in order', () => {

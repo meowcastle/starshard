@@ -349,3 +349,45 @@ export function soundingReading({ sigil, cast, relation, light, stations, copy }
 
   return { station, cast: castBeat, counsel, question, claim };
 }
+
+// Plain-language point labels for the PATTERN tab — the ring/point-marker
+// labels ('rising', 'midheaven') read fine as headers but "sun + rising"
+// reads better as a pair label than "sun + midheaven" does for "midheaven".
+// Kept as a tiny local map rather than threading display strings through
+// sigil.js's natalAspects(), which stays plain geometry.
+const POINT_LABEL = { sun: 'sun', moon: 'moon', rising: 'rising', midheaven: 'midheaven' };
+
+/**
+ * The Deep Chart's PATTERN tab: sigil.js's natalAspects() geometry, matched
+ * against the real corpus (corpus-chart-daily.md batch 7's ASPECT.* — ten
+ * of the eighteen possible pair+aspect combinations are written; MC pairs
+ * and a few pair+aspect combinations aren't yet).
+ *
+ * Mirrors Star Shard - Deep Chart (hi-fi).dc.html's own reference
+ * implementation's choice on the missing-copy question deliberately, not
+ * by coincidence: a hit with no written passage still appears in the list
+ * (`hasPassage: false`, a `missing` dev flag naming the exact slot to
+ * raise) rather than being silently dropped — PRODUCT.md §3 says "most
+ * charts have one to three real aspects," and hiding an aspect that exists
+ * because nobody's written it yet would make the tab quietly lie about the
+ * chart's geometry instead of just being honest that the prose isn't there.
+ *
+ * `aspects` is sigil.js's natalAspects() output; `copy` is reading-copy.js's
+ * COPY map.
+ */
+export function patternAspects(aspects, copy) {
+  const items = aspects.map(a => {
+    const key = `ASPECT.${a.from}${a.to}.${a.aspect}`;
+    const entry = copy[key];
+    return {
+      pair: `${POINT_LABEL[a.from]} + ${POINT_LABEL[a.to]}`,
+      aspect: a.aspect, plain: a.plain,
+      orbUsed: Math.round(a.orbUsed * 10) / 10, maxOrb: a.maxOrb,
+      text: entry ? entry.text : '',
+      hasPassage: !!entry,
+      missingIf: !entry,
+      missing: entry ? '' : `${key} — not in corpus batch 7, raise it`,
+    };
+  });
+  return { items, none: items.length === 0, noneText: copy['ASPECT.none'].text };
+}

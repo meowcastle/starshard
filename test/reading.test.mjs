@@ -235,3 +235,43 @@ test('soundingReading: re-visiting the SAME tonight (station, step, kind) reads 
   assert.notDeepEqual({ station: third.station.station, step: third.station.step },
     { station: first.station.station, step: first.station.step });
 });
+
+// -- patternAspects (the Deep Chart's PATTERN tab) -------------------------
+
+test('patternAspects: a written combination returns real corpus text', () => {
+  const chart = { sunLon: 0, moonLon: 0 }; // exact sun-moon conjunction
+  const aspects = G.natalAspects(chart, { timeKnown: false });
+  const pattern = R.patternAspects(aspects, READING_COPY);
+  assert.equal(pattern.items.length, 1);
+  const item = pattern.items[0];
+  assert.equal(item.pair, 'sun + moon');
+  assert.equal(item.hasPassage, true);
+  assert.equal(item.missing, '');
+  assert.equal(item.text, READING_COPY['ASPECT.sunmoon.conjunction'].text);
+  assert.equal(pattern.none, false);
+});
+
+test('patternAspects: a real aspect with no written passage is surfaced, not hidden — the tab must not lie about the chart\'s geometry', () => {
+  // sun-rising opposition is real geometry but not one of the ten written
+  // combinations (sunrising only has conjunction/square/trine).
+  const chart = { sunLon: 0, moonLon: 30, asc: 180, mc: 100 };
+  const aspects = G.natalAspects(chart, { timeKnown: true });
+  const pattern = R.patternAspects(aspects, READING_COPY);
+  assert.equal(pattern.items.length, 1);
+  const item = pattern.items[0];
+  assert.equal(item.pair, 'sun + rising');
+  assert.equal(item.aspect, 'opposition');
+  assert.equal(item.hasPassage, false);
+  assert.equal(item.missingIf, true);
+  assert.equal(item.text, '');
+  assert.equal(item.missing, 'ASPECT.sunrising.opposition — not in corpus batch 7, raise it');
+});
+
+test('patternAspects: no aspects in orb falls back to ASPECT.none, real corpus text', () => {
+  const chart = { sunLon: 0, moonLon: 30, asc: 68, mc: 40 }; // hand-verified: nothing in orb
+  const aspects = G.natalAspects(chart, { timeKnown: true });
+  const pattern = R.patternAspects(aspects, READING_COPY);
+  assert.equal(pattern.items.length, 0);
+  assert.equal(pattern.none, true);
+  assert.equal(pattern.noneText, READING_COPY['ASPECT.none'].text);
+});

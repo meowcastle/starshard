@@ -27,6 +27,7 @@
 
 import { mansionOf } from './astro.js';
 import { moonPhase, PLANETARY_HOUR_ORDER, WEEKDAY_RULER } from './sky.js';
+import { classifyAspect } from './transits.js';
 
 const STATIONS = 28, STEPS = 4, SEGMENTS = STATIONS * STEPS; // 112
 const STATION_WIDTH = 360 / STATIONS;   // 12.857...deg
@@ -174,6 +175,33 @@ export function movingLight(chart, { timeKnown }) {
     echo: candidates.filter(c => c.echoing).map(c => c.which),
     doubleDoor,
   };
+}
+
+/**
+ * The natal-to-natal aspects between a chart's four trusted points (sun,
+ * moon, rising, midheaven — PRODUCT.md §3), all six possible pairs, sorted
+ * tightest-orb-first. Reuses transits.js's classifyAspect() rather than a
+ * second copy of the orb table — the Deep Chart's PATTERN tab (this) and
+ * the daily's live transit (transits.js's natalContacts()) are the same
+ * geometry against two different sets of longitudes.
+ *
+ * Rising and midheaven are excluded without a birth time, same rule (and
+ * same reason — computeChart() never itself returns a null `asc`) as
+ * movingLight() above: the caller's `timeKnown` decides, not a null check.
+ */
+export function natalAspects(chart, { timeKnown }) {
+  const points = [['sun', chart.sunLon], ['moon', chart.moonLon]];
+  if (timeKnown) points.push(['rising', chart.asc], ['midheaven', chart.mc]);
+
+  const out = [];
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const [from, fromLon] = points[i], [to, toLon] = points[j];
+      const hit = classifyAspect(fromLon, toLon);
+      if (hit) out.push({ from, to, ...hit });
+    }
+  }
+  return out.sort((a, b) => a.orbUsed - b.orbUsed);
 }
 
 /**

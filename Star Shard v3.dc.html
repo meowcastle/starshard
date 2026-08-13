@@ -533,10 +533,28 @@ a{color:var(--ink-accent)}
   </sc-if>
 
   <sc-if value="{{ sigTabPattern }}">
-  <div class="needs-data">
-    <div class="eyebrow">pattern · needs bindings</div>
-    <p class="hint" style="margin:8px 0 0">five classical aspects over sun, moon, rising and midheaven. ~40 lines in sigil.js per PRODUCT.md §3; ten passages are written.</p>
-    <p class="mono-note" style="margin:10px 0 0">sigAspects [ pair · aspect · orb ]</p>
+  <div class="pad" style="padding-top:20px">
+    <p class="hint" style="margin:0 0 16px">the geometry between your lights — most charts have one to three real aspects.</p>
+    <sc-if value="{{ sigNoAspects }}">
+      <div class="card-panel" style="padding:20px">
+        <p style="margin:0">{{ sigAspectNoneText }}</p>
+      </div>
+    </sc-if>
+    <sc-for list="{{ sigAspects }}" as="asp">
+      <div class="card-panel" style="padding:20px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="h3">{{ asp.pair }}</span>
+          <span class="chip">{{ asp.plain }}</span>
+        </div>
+        <p class="hint" style="margin:6px 0 0">{{ asp.aspect }} · {{ asp.orbUsed }}° from exact · orb {{ asp.maxOrb }}°</p>
+        <sc-if value="{{ asp.hasPassage }}">
+          <p style="margin:14px 0 0">{{ asp.text }}</p>
+        </sc-if>
+        <sc-if value="{{ asp.missingIf }}">
+          <p class="mono-note" style="margin:14px 0 0">{{ asp.missing }}</p>
+        </sc-if>
+      </div>
+    </sc-for>
   </div>
   </sc-if>
 
@@ -1113,6 +1131,11 @@ class Component extends DCLogic {
       copy: this.readingCopy, skyOf: this.sigilMod.skyOf, name: s.sigName || 'traveler', birthPlace,
     });
 
+    // the Deep Chart's PATTERN tab (PRODUCT.md §3) — geometry from sigil.js,
+    // matched against the real corpus (or flagged missing) by reading.js.
+    const aspects = this.sigilMod.natalAspects(s.sigChart, { timeKnown: s.sigTimeKnown });
+    const pattern = this.reading.patternAspects(aspects, this.readingCopy);
+
     const jd = Date.now() / 86400000 + 2440587.5;
     const moonLon = this.astro.moonLongitude(jd), sunLon = this.astro.sunLongitude(jd);
     const cast = this.sky.castKind(moonLon, jd);
@@ -1122,7 +1145,7 @@ class Component extends DCLogic {
     const relation = this.sky.tarabala(birthNak.index, todayNak.index);
     const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy });
 
-    this.setState({ sigArrival: arrival, sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding });
+    this.setState({ sigArrival: arrival, sigPattern: pattern, sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding });
   };
 
   // -- Sounding navigation ----------------------------------------------------
@@ -1292,6 +1315,13 @@ class Component extends DCLogic {
       sigTabToShard: this.sigTabToShard, sigTabToHouses: this.sigTabToHouses,
       sigTabToPattern: this.sigTabToPattern, sigTabToDepth: this.sigTabToDepth,
       sigTabToBecoming: this.sigTabToBecoming,
+
+      // PATTERN tab (PRODUCT.md §3) — real geometry, real corpus where it
+      // exists; s.sigPattern is null until refreshArrivalAndTonight() has
+      // run once (needs a chart), same as sigArrival.
+      sigAspects: s.sigPattern ? s.sigPattern.items : [],
+      sigNoAspects: !!s.sigPattern && s.sigPattern.none,
+      sigAspectNoneText: s.sigPattern ? s.sigPattern.noneText : '',
       sigTypeRateLine: typeRate == null ? '' : (typeRate * 100).toFixed(1).replace(/\.0$/, '') + '% of travelers walk this way',
 
       // -- the nightly reminder (Design) ---------------------------------

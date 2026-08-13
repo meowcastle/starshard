@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**185 bindings, 168 top-level.**
+**197 bindings, 171 top-level.**
 
 ## Rule
 
@@ -28,6 +28,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `ringMarks` | `m` | `cls`, `cx`, `cy` |
 | `ringSegments` | `seg` | `cls`, `d` |
 | `ringTicks` | `t` | `x1`, `x2`, `y1`, `y2` |
+| `sigAspects` | `asp` | `aspect`, `hasPassage`, `maxOrb`, `missing`, `missingIf`, `orbUsed`, `pair`, `plain`, `text` |
 | `sigCityResults` | `r` | `name`, `pick`, `region` |
 | `sigComputeLines` | `cl` | `color`, `text` |
 | `sndCrossCultural` | `c` | `name`, `sky` |
@@ -56,6 +57,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigAdvanceArrival` | component state |
 | `sigAlreadyWalkedTonight` | component state |
 | `sigAnsweringLine` | component state |
+| `sigAspectNoneText` | component state |
+| `sigAspects` | component state |
 | `sigAuthOpen` | component state |
 | `sigAuthToggleLabel` | component state |
 | `sigBackToHow` | component state |
@@ -104,6 +107,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigManualMode` | component state |
 | `sigManualToggleLabel` | component state |
 | `sigName` | component state |
+| `sigNoAspects` | component state |
 | `sigNotManualMode` | component state |
 | `sigNotNewborn` | component state |
 | `sigOpenPush` | component state |
