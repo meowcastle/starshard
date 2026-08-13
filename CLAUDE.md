@@ -83,7 +83,11 @@ Explicitly deferred (on the record, Justin's call): new minigames, more
 easter eggs, community features, the Remembering endgame, paradox cards,
 Undertext rendering, event-foil curriculum, the Full Reading's page surface
 (`reading.js`'s `fullReading()` is built and tested; nothing renders it
-yet — no spec says where it lives in the UI).
+yet — no spec says where it lives in the UI), the daily/weekly generative
+pipeline itself (`transits.js` — the engine piece it needs — is built and
+tested per PRODUCT.md §11.1, but the LLM prompt/moderation/storage pipeline
+around it has open decisions per PRODUCT.md §12b — which model, where it
+runs — that aren't Code's to make silently).
 
 ## The one thing that will break this repo
 
@@ -95,7 +99,7 @@ You (Claude Code) own everything except the markup:
 
 | Yours | Claude Design's | Generated — never edit |
 |---|---|---|
-| `astro.js` `sky.js` `sigil.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `reading.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>` | `support.js` |
+| `astro.js` `sky.js` `sigil.js` `transits.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `reading.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>` | `support.js` |
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
@@ -121,6 +125,11 @@ Star Shard v3.dc.html
        ├─ astronomy-engine.js   vendored MIT build — FULL api (147 exports:
        │               Body, GeoVector, Ecliptic). Planets + retrograde
        │               work today; transits are unblocked (PRODUCT.md §0)
+       ├─ transits.js  aspect geometry (classifyAspect(), shared with the
+       │               future PATTERN tab) + planetPositions()/
+       │               natalContacts()/pickLiveTransit() — the daily's
+       │               "live transit" (PRODUCT.md §7). Built, tested, not
+       │               yet wired into reading.js or the page.
        ├─ format.js    degFmt, ordinal, place/birth lines
        ├─ tz.js        historical UTC offset + DST for a birth moment
        ├─ api.js       ALL network I/O

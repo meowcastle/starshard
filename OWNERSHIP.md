@@ -31,6 +31,7 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | `astro.js` | ephemeris, Placidus/Porphyry houses, lunar mansion, weekday |
 | `sky.js` | daily engine: moon phase, tārābala (sidereal-27/Lahiri), planetary hours, station/step cast kinds |
 | `sigil.js` | the Sigil: natal derivation, the 5 Traveler types, the arrival reading's 9-beat grammar (`readingPlan()`), ring SVG geometry |
+| `transits.js` | aspect geometry (`classifyAspect()`), planet positions + retrograde (`planetPositions()`), and the daily's live-transit picker (`natalContacts()`/`pickLiveTransit()`, PRODUCT.md §7). Built and tested; not yet consumed by `reading.js` or the page |
 | `sigil-copy.js` | placeholder prose for `reading.js`'s **Sounding** composer only — the arrival reading was re-pointed at `reading-copy.js`'s real corpus (PORT-SPEC.md); the nightly Sounding's counsel/question/claim text is a separate, still-unwritten pass. Content-authored stopgap, tier-0 vocabulary only |
 | `deck.js` | the collection game: claim windows, grace, "returns in N days" |
 | `events.js` | the event calendar: dated sky events (eclipses, supermoons, etc.), foil conditions |
@@ -108,8 +109,8 @@ table needs a manual update too.
    transform — and evaluates it inside `new Function(...)`. Modules must be
    pulled in with `await import()` from `componentDidMount`. This is why
    `renderVals()` guards on `ready`.
-6. **A design export must never include or reference `astro.js`, `sigil.js`
-   or `reading.js`.** Those are Claude Code's, they change most sessions,
+6. **A design export must never include or reference `astro.js`, `sigil.js`,
+   `transits.js`, or `reading.js`.** Those are Claude Code's, they change most sessions,
    and an export that `import()`s an engine module as a sibling has shipped
    a stale pre-refactor copy **four times** in this repo's history (the
    original instance, pre-reboot: `docs/archive/STATUS.md`'s `copy.fallbackWeave is not

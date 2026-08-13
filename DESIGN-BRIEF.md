@@ -239,7 +239,7 @@ share render need a design-tunable block, propose one in your handoff notes
 rather than assuming the old ones still apply.)
 
 **You must not touch or import:** `astro.js` · `sky.js` · `sigil.js` ·
-`deck.js` · `events.js` · `astronomy-engine.js` · `format.js` · `tz.js` ·
+`transits.js` · `deck.js` · `events.js` · `astronomy-engine.js` · `format.js` · `tz.js` ·
 `api.js` · `reading.js` · `starshard-api/**` · `test/**` · `tools/**` ·
 machine-generated `support.js`. **Never reference engine modules from an
 export — not even a sibling `import()`.** This shipped a stale crash four
