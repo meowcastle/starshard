@@ -127,6 +127,7 @@ a{color:var(--ink-accent)}
 .ring-seg-now{stroke:var(--pink-500)}
 .ring-tick{stroke:var(--edge-dark); stroke-width:2}
 .ring-mark{fill:var(--ink)}
+.ring-mark-becoming{fill:none; stroke:var(--ink-accent); stroke-width:1.5}
 .errline{color:var(--ink-warn); font-size:var(--text-xs)}
 .top-bar{display:flex; justify-content:space-between; padding:16px 24px 0}
 .auth-panel{margin:12px 24px 0; padding:12px; border-top:2px dashed var(--edge-dark)}
@@ -226,7 +227,7 @@ a{color:var(--ink-accent)}
         <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
       </sc-for>
       <sc-for list="{{ ringMarks }}" as="m">
-        <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="ring-mark"></circle>
+        <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="{{ m.cls }}"></circle>
       </sc-for>
     </svg>
   </div>
@@ -277,6 +278,14 @@ a{color:var(--ink-accent)}
     <p style="margin:0">{{ sigGaitLine }}</p>
     <p class="h3" style="margin:10px 0 0">{{ sigGaitPermission }}</p>
   </div>
+
+  <sc-if value="{{ sigHasBecoming }}">
+  <div class="card-panel">
+    <div class="eyebrow" style="margin-bottom:6px">◐ what you're becoming</div>
+    <div style="display:flex;gap:10px;align-items:baseline"><span class="h3">{{ sigBecomingEpithet }}</span><span class="muted">· {{ sigBecomingRegister }}</span></div>
+    <p style="margin:8px 0 0">{{ sigBecomingLine }}</p>
+  </div>
+  </sc-if>
 
   <sc-if value="{{ sigIsWalkedAlready }}">
   <div class="card-panel" style="background:var(--surface-sunken);display:flex;justify-content:space-between;align-items:center">
@@ -394,7 +403,7 @@ a{color:var(--ink-accent)}
         <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
       </sc-for>
       <sc-for list="{{ ringMarks }}" as="m">
-        <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="ring-mark"></circle>
+        <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="{{ m.cls }}"></circle>
       </sc-for>
     </svg>
   </div>
@@ -419,7 +428,7 @@ a{color:var(--ink-accent)}
       <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
     </sc-for>
     <sc-for list="{{ ringMarks }}" as="m">
-      <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="ring-mark"></circle>
+      <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="{{ m.cls }}"></circle>
     </sc-for>
   </svg>
   <div class="h1">{{ sigProfileName }}</div>
@@ -458,13 +467,18 @@ class Component extends DCLogic {
   };
 
   async componentDidMount() {
-    const [astro, sigilMod, sky, reading, stationsMod, copy, tz, api] = await Promise.all([
+    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api] = await Promise.all([
       import(`./astro.js?v=${BUILD_ID}`), import(`./sigil.js?v=${BUILD_ID}`),
       import(`./sky.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
-      import(`./stations.js?v=${BUILD_ID}`), import(`./sigil-copy.js?v=${BUILD_ID}`),
+      import(`./stations.js?v=${BUILD_ID}`), import(`./reading-copy.js?v=${BUILD_ID}`),
+      import(`./sigil-copy.js?v=${BUILD_ID}`),
       import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
     ]);
-    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, copy, tz, api });
+    // arrivalReading() (the real corpus, PORT-SPEC.md) and soundingReading()
+    // (still-placeholder Sounding content, sigil-copy.js) read from two
+    // different modules — see OWNERSHIP.md's note on sigil-copy.js's
+    // trimmed scope.
+    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api });
 
     let save = null;
     try { save = JSON.parse(localStorage.getItem('starshard.sigil-save') || 'null'); } catch (e) {}
@@ -557,8 +571,12 @@ class Component extends DCLogic {
 
   refreshArrivalAndTonight = () => {
     const s = this.state;
-    if (!s.sigil || !s.sigPlan) return;
-    const arrival = this.reading.arrivalReading({ sigil: s.sigil, plan: s.sigPlan, stations: this.stations, copy: this.copy, name: s.sigName || 'traveler' });
+    if (!s.sigil || !s.sigPlan || !s.sigChart) return;
+    const birthPlace = s.sigManualMode ? 'the coordinates you entered' : (s.sigPlace ? s.sigPlace.name : '');
+    const arrival = this.reading.arrivalReading({
+      sigil: s.sigil, chart: s.sigChart, plan: s.sigPlan, stations: this.stations,
+      copy: this.readingCopy, skyOf: this.sigilMod.skyOf, name: s.sigName || 'traveler', birthPlace,
+    });
 
     const jd = Date.now() / 86400000 + 2440587.5;
     const moonLon = this.astro.moonLongitude(jd), sunLon = this.astro.sunLongitude(jd);
@@ -677,7 +695,7 @@ class Component extends DCLogic {
       : { segments: [], skyTicks: [], natalMarks: [] };
     const ringSegments = ring.segments.map(seg => ({ d: seg.d, cls: 'ring-seg-' + seg.state }));
     const ringTicks = ring.skyTicks;
-    const ringMarks = ring.natalMarks;
+    const ringMarks = ring.natalMarks.map(m => ({ ...m, cls: 'ring-mark ring-mark-' + m.role }));
 
     const walkedCount = s.sigRecollection.length;
     const tonightAlreadyKindled = tonight ? this.alreadyKindled(tonight.station, tonight.step) : false;
@@ -721,6 +739,10 @@ class Component extends DCLogic {
       sigHasFacing: !!(arrival && !arrival.facing.skip), sigFacingLine: arrival && !arrival.facing.skip ? arrival.facing.line : '',
       sigAnsweringLine: arrival ? arrival.answering.line : '',
       sigGaitTypeLabel: arrival ? arrival.handle.typeLabel : '', sigGaitLine: arrival ? arrival.gait.gait : '', sigGaitPermission: arrival ? arrival.gait.permission : '',
+      sigHasBecoming: !!(arrival && arrival.becoming),
+      sigBecomingEpithet: arrival && arrival.becoming ? arrival.becoming.epithet : '',
+      sigBecomingRegister: arrival && arrival.becoming ? arrival.becoming.register : '',
+      sigBecomingLine: arrival && arrival.becoming ? arrival.becoming.lines[0] : '',
       sigIsWalkedAlready: tonightAlreadyKindled,
       sigCountdown: '', // live per-second countdown is a follow-up pass — see STATUS.md
       sigCanWalkTonight: !tonightAlreadyKindled,

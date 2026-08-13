@@ -47,7 +47,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "dog",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": {
+      "deity": "Aśvins",
+      "symbol": "horse's head"
+    },
+    "signSpan": "0°00' Ari – 12°51' Ari"
   },
   {
     "station": 1,
@@ -90,7 +97,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "pheasant",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": {
+      "deity": "Yama",
+      "symbol": "yoni"
+    },
+    "signSpan": "12°51' Ari – 25°43' Ari"
   },
   {
     "station": 2,
@@ -133,7 +147,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "rooster",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": {
+      "deity": "Agni",
+      "symbol": "knife/flame"
+    },
+    "signSpan": "25°43' Ari – 8°34' Tau"
   },
   {
     "station": 3,
@@ -176,7 +197,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "crow",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": {
+      "deity": "Brahmā",
+      "symbol": "chariot"
+    },
+    "signSpan": "8°34' Tau – 21°26' Tau"
   },
   {
     "station": 4,
@@ -219,7 +247,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "monkey",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": {
+      "deity": "Soma, the moon-draught",
+      "symbol": "deer's head"
+    },
+    "signSpan": "21°26' Tau – 4°17' Gem"
   },
   {
     "station": 5,
@@ -262,7 +297,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "ape",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": {
+      "deity": "Rudra, the howler in the storm",
+      "symbol": "teardrop · a head"
+    },
+    "signSpan": "4°17' Gem – 17°09' Gem"
   },
   {
     "station": 6,
@@ -305,7 +347,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "bian",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "Aditi, the boundless mother",
+      "symbol": "bow and quiver"
+    },
+    "signSpan": "17°09' Gem – 0°00' Cnc"
   },
   {
     "station": 7,
@@ -348,7 +397,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "goat",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "Bṛhaspati, priest of the gods",
+      "symbol": "cow's udder · lotus"
+    },
+    "signSpan": "0°00' Cnc – 12°51' Cnc"
   },
   {
     "station": 8,
@@ -391,7 +447,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "river-deer",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "the Nāgas, serpents of hidden knowledge",
+      "symbol": "coiled serpent"
+    },
+    "signSpan": "12°51' Cnc – 25°43' Cnc"
   },
   {
     "station": 9,
@@ -434,7 +497,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "horse",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "Pitṛs (ancestors)",
+      "symbol": "royal throne"
+    },
+    "signSpan": "25°43' Cnc – 8°34' Leo"
   },
   {
     "station": 10,
@@ -477,7 +547,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "deer",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "Bhaga, of allotted fortune",
+      "symbol": "front legs of a bed"
+    },
+    "signSpan": "8°34' Leo – 21°26' Leo"
   },
   {
     "station": 11,
@@ -520,7 +597,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "snake",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "Aryaman, of kinship and contract",
+      "symbol": "back legs of a bed"
+    },
+    "signSpan": "21°26' Leo – 4°17' Vir"
   },
   {
     "station": 12,
@@ -563,7 +647,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "earthworm",
+    "guardianSky": "Vermilion Bird (South/Summer)",
+    "hunger": {
+      "deity": "Savitṛ, the impeller who sets things moving",
+      "symbol": "an open hand"
+    },
+    "signSpan": "4°17' Vir – 17°09' Vir"
   },
   {
     "station": 13,
@@ -606,7 +697,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "flood-dragon",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Tvaṣṭṛ, the divine artisan",
+      "symbol": "a bright jewel"
+    },
+    "signSpan": "17°09' Vir – 0°00' Lib"
   },
   {
     "station": 14,
@@ -649,7 +747,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "dragon",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Vāyu, the wind",
+      "symbol": "a young shoot in wind"
+    },
+    "signSpan": "0°00' Lib – 12°51' Lib"
   },
   {
     "station": 15,
@@ -692,7 +797,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "raccoon-dog",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Indrāgnī, force and fire as one",
+      "symbol": "triumphal arch"
+    },
+    "signSpan": "12°51' Lib – 25°43' Lib"
   },
   {
     "station": 16,
@@ -735,7 +847,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "rabbit",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Mitra, god of friendship and sworn alliance",
+      "symbol": "archway · lotus"
+    },
+    "signSpan": "25°43' Lib – 8°34' Sco"
   },
   {
     "station": 17,
@@ -778,7 +897,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "fox",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Indra, king of the gods",
+      "symbol": "amulet · umbrella"
+    },
+    "signSpan": "8°34' Sco – 21°26' Sco"
   },
   {
     "station": 18,
@@ -821,7 +947,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "tiger",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Nirṛti in practice, Prajāpati in the oldest text (§4)",
+      "symbol": "a bundle of tied roots"
+    },
+    "signSpan": "21°26' Sco – 4°17' Sgr"
   },
   {
     "station": 19,
@@ -864,7 +997,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "leopard",
+    "guardianSky": "Azure Dragon (East/Spring)",
+    "hunger": {
+      "deity": "Āpas, the divine waters",
+      "symbol": "elephant tusk · fan"
+    },
+    "signSpan": "4°17' Sgr – 17°09' Sgr"
   },
   {
     "station": 20,
@@ -907,7 +1047,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "xiezhi",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "the Viśvedevas, the all-gods together",
+      "symbol": "elephant tusk"
+    },
+    "signSpan": "17°09' Sgr – 0°00' Cap"
   },
   {
     "station": 21,
@@ -950,7 +1097,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "ox",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "Viṣṇu, who crossed the worlds in three strides",
+      "symbol": "an ear · three footprints"
+    },
+    "signSpan": "0°00' Cap – 12°51' Cap"
   },
   {
     "station": 22,
@@ -993,7 +1147,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "bat",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "the eight Vasus, gods of abundance",
+      "symbol": "a drum"
+    },
+    "signSpan": "12°51' Cap – 25°43' Cap"
   },
   {
     "station": 23,
@@ -1036,7 +1197,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "rat",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "Varuṇa",
+      "symbol": "empty circle"
+    },
+    "signSpan": "25°43' Cap – 8°34' Aqr"
   },
   {
     "station": 24,
@@ -1079,7 +1247,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "swallow",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "Aja Ekapāda, the one-footed fire-pillar",
+      "symbol": "front legs of a cot"
+    },
+    "signSpan": "8°34' Aqr – 21°26' Aqr"
   },
   {
     "station": 25,
@@ -1122,7 +1297,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "pig",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "Ahirbudhnya, serpent of the deep foundation",
+      "symbol": "back legs of a cot"
+    },
+    "signSpan": "21°26' Aqr – 4°17' Psc"
   },
   {
     "station": 26,
@@ -1165,7 +1347,14 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "yayu",
+    "guardianSky": "Black Tortoise (North/Winter)",
+    "hunger": {
+      "deity": "Pūṣan",
+      "symbol": "fish"
+    },
+    "signSpan": "4°17' Psc – 17°09' Psc"
   },
   {
     "station": 27,
@@ -1208,6 +1397,10 @@ export const STATIONS = [
     ],
     "hasProse": true,
     "steps": null,
-    "fragment": null
+    "fragment": null,
+    "animal": "wolf",
+    "guardianSky": "White Tiger (West/Autumn)",
+    "hunger": null,
+    "signSpan": "17°09' Psc – 0°00' Ari"
   }
 ];

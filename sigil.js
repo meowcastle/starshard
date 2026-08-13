@@ -15,11 +15,15 @@
 //   station0=27 -> spec farlight1=14 -> farlight0=13 -> (27+14)%28=13 OK
 //
 // The per-station Keeper cycle (COSMOLOGY §3.1's "canonical xiù luminary
-// cycle", `[VERIFY]`-blocked research, used later for the "road-kin"
-// topology edge) is NOT built here — the arrival reading (SIGIL-READING.md)
-// only needs the birth-DAY Keeper (below), a different, already-resolvable
-// thing that happens to share the name "Keeper". Do not assume the two
-// share a numeric encoding when the station table lands.
+// cycle") is no longer research-blocked (INSTRUMENT.md §5.1/
+// research/hunger-axis.md: `keeper(station) = CYCLE[(xiu.native_number-1)
+// %7]`, CYCLE = [Jupiter,Venus,Saturn,Sun,Moon,Mars,Mercury]) but is still
+// NOT built here — neither composer this module currently serves
+// (arrivalReading's SIGIL-READING beats, fullReading's PORT-SPEC sections)
+// uses the per-station Keeper, only the birth-DAY Keeper below, a
+// different, already-resolvable thing that happens to share the name.
+// Build it when the "road-kin" topology feature actually needs it — don't
+// assume the two share a numeric encoding when that day comes.
 
 import { mansionOf } from './astro.js';
 import { moonPhase, PLANETARY_HOUR_ORDER, WEEKDAY_RULER } from './sky.js';
@@ -45,8 +49,30 @@ export function stepOf(lon) {
   return Math.min(3, Math.floor(residual / STEP_WIDTH));
 }
 
-/** Sky (0-3) — which quarter of the 28-station wheel a station falls in. */
-export const skyOf = station => Math.floor(station / 7);
+/**
+ * Sky (0-3) — the Four Symbols quadrant a station belongs to (INSTRUMENT.md
+ * §5): White Tiger (0) = stations 27,0-5 · Vermilion Bird (1) = 6-12 ·
+ * Azure Dragon (2) = 13-19 · Black Tortoise (3) = 20-26. This is a rotated
+ * boundary from a naive Math.floor(station/7) — White Tiger wraps around
+ * the 27/0 seam instead of starting cleanly at 0 — so the formula shifts
+ * the station forward by one before dividing: Math.floor(((station+1)%28)/7).
+ * Verified by hand at every quadrant edge:
+ *   station=27 -> (27+1)%28=0  -> floor(0/7)=0  (White Tiger, wraps in)
+ *   station=0  -> (0+1)%28=1   -> floor(1/7)=0  (White Tiger)
+ *   station=5  -> 6            -> floor(6/7)=0  (White Tiger, last)
+ *   station=6  -> 7            -> floor(7/7)=1  (Vermilion Bird, first)
+ *   station=12 -> 13           -> floor(13/7)=1 (Vermilion Bird, last)
+ *   station=13 -> 14           -> floor(14/7)=2 (Azure Dragon, first)
+ *   station=19 -> 20           -> floor(20/7)=2 (Azure Dragon, last)
+ *   station=20 -> 21           -> floor(21/7)=3 (Black Tortoise, first)
+ *   station=26 -> 27           -> floor(27/7)=3 (Black Tortoise, last)
+ * This changes deriveType()'s Sky arithmetic from the pre-Four-Symbols
+ * boundary — re-verified: the exhaustive 784-pair type test still holds
+ * (Seedborn is exactly S===M regardless of the Sky boundary), and the
+ * rate-sanity sweep still lands near the same ~3.6%/21%/25%/25%/25%
+ * distribution post-rotation (see test/sigil.test.mjs).
+ */
+export const skyOf = station => Math.floor(((station + 1) % 28) / 7);
 
 /** Flat 0-111 index for a (station, step) pair — the addressing scheme
  * both real Claude Design exports (Starshard V3) already use for their
@@ -80,6 +106,77 @@ export function deriveType(sunStation, moonStation) {
 export const farlightOf = sunStation => (sunStation + 14) % 28;
 
 /**
+ * The Becoming (INSTRUMENT.md §3): of the traveler's available lights
+ * (Sun and Moon always; Rising only when `timeKnown`, same rule as
+ * `risingStation` itself), whichever sits closest to its station's
+ * FORWARD edge is "moving" — the part of the sky that was, quite
+ * literally, about to become something else at the minute of arrival.
+ * Advancing that light one station gives the Becoming station: not a
+ * prediction, a tendency.
+ *
+ * Register thresholds (§3.3) — note the doc's "3.2deg"/"6.4deg" are
+ * rounded displays of exactly STEP_WIDTH and 2*STEP_WIDTH, used here at
+ * full precision rather than the rounded copy numbers: <1deg door,
+ * [1, STEP_WIDTH) ripening (precisely "in the Leaving step"),
+ * [STEP_WIDTH, 2*STEP_WIDTH) leaning, >=2*STEP_WIDTH rooted.
+ *
+ * Echo (§3.4) is checked independently per light, not just the moving
+ * one — a chart can have one light ripening toward its forward edge and a
+ * DIFFERENT light echoing (just past its own station's start) at the same
+ * time. A light echoes if it sits within the first eighth of its station
+ * (< STATION_WIDTH/8, ~1.607deg past the station's start).
+ *
+ * Double door (§3.6): the doc's own sentence ("two lights within 0.5deg
+ * of their edges") is ambiguous taken literally — the worked example in
+ * §3.7 resolves it (Sun at 2.74deg, Moon at 2.96deg from their OWN edges,
+ * neither within 0.5deg of its own edge, still called "a near-tie: double
+ * door"). The 0.5deg threshold is actually the GAP between the two
+ * smallest degToEdge values — it's ambiguous which light is "the" moving
+ * light, not that both happen to sit absolutely near a boundary.
+ * Implemented per the worked example, not the literal sentence.
+ */
+export function movingLight(chart, { timeKnown }) {
+  // Rising has no candidacy without a time (same rule as risingStation).
+  // The Moon is excluded too when !timeKnown — not just its discretized
+  // step (moonStep, already nulled elsewhere): movingLight needs the
+  // Moon's degree-level distance to an edge, and the Moon moves ~13deg/day,
+  // so a +/-12h time-unknown default makes that distance meaningless at
+  // the sub-degree precision a "door"/"ripening" register call needs — a
+  // stricter honesty bar than moonStation itself (which only needs
+  // station-level, not degree-level, precision, so it stays reliable and
+  // is kept as deriveSigil's always-shown moonStation). With no time, only
+  // the Sun is ever a candidate — its ~0.9856deg/day motion keeps a
+  // +/-12h default well inside a useful precision (see deriveSigil's own
+  // comment on sunStep for the same argument).
+  const candidates = [{ which: 'sun', lon: chart.sunLon }];
+  if (timeKnown) {
+    candidates.push({ which: 'moon', lon: chart.moonLon });
+    candidates.push({ which: 'rising', lon: chart.asc });
+  }
+
+  for (const c of candidates) {
+    const into = norm(c.lon) % STATION_WIDTH;
+    c.station = stationOf(c.lon);
+    c.degToEdge = STATION_WIDTH - into;
+    c.echoing = into < STATION_WIDTH / 8;
+  }
+  candidates.sort((a, b) => a.degToEdge - b.degToEdge);
+
+  const moving = candidates[0];
+  const registerOf = deg => deg < 1 ? 'door' : deg < STEP_WIDTH ? 'ripening' : deg < STEP_WIDTH * 2 ? 'leaning' : 'rooted';
+  const doubleDoor = candidates.length > 1 && (candidates[1].degToEdge - candidates[0].degToEdge) <= 0.5;
+
+  return {
+    which: moving.which,
+    degToEdge: moving.degToEdge,
+    register: registerOf(moving.degToEdge),
+    becomingStation: (moving.station + 1) % 28,
+    echo: candidates.filter(c => c.echoing).map(c => c.which),
+    doubleDoor,
+  };
+}
+
+/**
  * The seven natal parts of a Sigil (COSMOLOGY §3.3), computed once from a
  * chart (astro.js's computeChart() output) and a `timeKnown` flag the
  * caller controls — astro.js's computeChart() never itself returns a null
@@ -106,6 +203,11 @@ export const farlightOf = sunStation => (sunStation + 14) % 28;
  * convention, and risks a re-render silently producing a different
  * `createdAt` than what's stored. Whichever layer persists the record
  * stamps it — not built here.
+ *
+ * `becoming` (the Becoming station) and `moving` (movingLight()'s full
+ * result — which light, register, echo, doubleDoor) are appended here
+ * rather than left for a separate call, since deriveSigil already has
+ * everything movingLight() needs (the chart, timeKnown).
  */
 export function deriveSigil(chart, { timeKnown }) {
   const sunStation = stationOf(chart.sunLon);
@@ -117,7 +219,11 @@ export function deriveSigil(chart, { timeKnown }) {
   const keeper = PLANETARY_HOUR_ORDER.indexOf(WEEKDAY_RULER[chart.weekday]);
   const type = deriveType(sunStation, moonStation);
   const farlight = farlightOf(sunStation);
-  return { sunStation, sunStep, moonStation, moonStep, risingStation, natalLight, keeper, type, farlight };
+  const moving = movingLight(chart, { timeKnown });
+  return {
+    sunStation, sunStep, moonStation, moonStep, risingStation, natalLight, keeper, type, farlight,
+    becoming: moving.becomingStation, moving,
+  };
 }
 
 // -- the arrival reading's grammar (SIGIL-READING.md) --------------------
@@ -259,6 +365,12 @@ export function sigilRingData(sigil, { kindled = [], tonight = null } = {}) {
   addMark('moon', sigil.moonStation);
   addMark('rising', sigil.risingStation);
   addMark('farlight', sigil.farlight);
+  // The Becoming (INSTRUMENT.md §3): a hollow mark, one arc ahead of
+  // whichever light is moving — visually distinct from the four solid
+  // natal marks above via the `becoming` role, styled hollow (stroke only,
+  // no fill) by the consumer's CSS, same "geometry here, color there"
+  // split as every other mark.
+  addMark('becoming', sigil.becoming);
 
   return { segments, skyTicks, natalMarks };
 }

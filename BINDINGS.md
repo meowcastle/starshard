@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**122 bindings, 108 top-level.**
+**127 bindings, 112 top-level.**
 
 ## Rule
 
@@ -25,7 +25,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 
 | `sc-for` list | alias | properties read |
 |---|---|---|
-| `ringMarks` | `m` | `cx`, `cy` |
+| `ringMarks` | `m` | `cls`, `cx`, `cy` |
 | `ringSegments` | `seg` | `cls`, `d` |
 | `ringTicks` | `t` | `x1`, `x2`, `y1`, `y2` |
 | `sigCityResults` | `r` | `name`, `pick`, `region` |
@@ -56,6 +56,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigAnsweringLine` | component state |
 | `sigAuthOpen` | component state |
 | `sigAuthToggleLabel` | component state |
+| `sigBecomingEpithet` | component state |
+| `sigBecomingLine` | component state |
+| `sigBecomingRegister` | component state |
 | `sigCanWalkTonight` | component state |
 | `sigCityResults` | component state |
 | `sigCloseShare` | component state |
@@ -68,6 +71,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigGaitTypeLabel` | component state |
 | `sigGlowLine` | component state |
 | `sigHandLine` | component state |
+| `sigHasBecoming` | component state |
 | `sigHasFacing` | component state |
 | `sigHasResults` | component state |
 | `sigIsEntry` | component state |

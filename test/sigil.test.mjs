@@ -150,6 +150,101 @@ test('deriveSigil: type and farlight are consistent with deriveType/farlightOf o
   assert.equal('createdAt' in sigil, false, 'deriveSigil must not stamp createdAt — see sigil.js header comment');
 });
 
+// -- skyOf (the Four Symbols rotation) ---------------------------------------
+
+test('skyOf: the Four Symbols quadrant boundaries, verified at every edge (White Tiger wraps 27,0-5)', () => {
+  const whiteTiger = [27, 0, 1, 2, 3, 4, 5];
+  const vermilionBird = [6, 7, 8, 9, 10, 11, 12];
+  const azureDragon = [13, 14, 15, 16, 17, 18, 19];
+  const blackTortoise = [20, 21, 22, 23, 24, 25, 26];
+  for (const s of whiteTiger) assert.equal(G.skyOf(s), 0, `station ${s} should be White Tiger`);
+  for (const s of vermilionBird) assert.equal(G.skyOf(s), 1, `station ${s} should be Vermilion Bird`);
+  for (const s of azureDragon) assert.equal(G.skyOf(s), 2, `station ${s} should be Azure Dragon`);
+  for (const s of blackTortoise) assert.equal(G.skyOf(s), 3, `station ${s} should be Black Tortoise`);
+});
+
+// -- movingLight / the Becoming (INSTRUMENT.md §3) ---------------------------
+
+test('movingLight: matches INSTRUMENT.md §3.7\'s worked example exactly (Apr 12 1998, 9:14pm, Chicago)', () => {
+  const chart = A.computeChart({ year: 1998, month: 4, day: 12, hour: 21, minute: 14, lat: 41.8781, lon: -87.6298, tzOffset: -5 });
+  // Confirms the doc's own stated positions first (Sun ~23.0 Aries, Moon
+  // ~5.6 Scorpio, Rising ~14.4 Scorpio), so a failure below points at
+  // movingLight() itself, not a mismatched chart.
+  assert.ok(Math.abs((chart.sunLon % 30) - 23.0) < 0.1);
+  assert.ok(Math.abs((chart.moonLon % 30) - 5.6) < 0.1);
+  assert.ok(Math.abs((chart.asc % 30) - 14.4) < 0.1);
+
+  const sigil = G.deriveSigil(chart, { timeKnown: true });
+  assert.equal(sigil.moving.which, 'sun');
+  assert.ok(Math.abs(sigil.moving.degToEdge - 2.74) < 0.05, `degToEdge ${sigil.moving.degToEdge}`);
+  assert.equal(sigil.moving.register, 'ripening');
+  assert.equal(sigil.becoming, 2); // The Gathered Stars
+  assert.equal(sigil.moving.doubleDoor, true); // near-tie with the Moon
+});
+
+test('movingLight: register thresholds match the door/ripening/leaning/rooted table exactly at each boundary', () => {
+  const STATION_WIDTH = 360 / 28, STEP_WIDTH = 360 / 112;
+  // station 0 starts at 0deg; place the Sun `degIntoStation` past that, so
+  // degToEdge = STATION_WIDTH - degIntoStation. Moon/rising pinned 3deg
+  // into a station (degToEdge = STATION_WIDTH-3 ~= 9.86, bigger than every
+  // Sun degToEdge tested below, including the "rooted" case's ~7.43) so
+  // they never win the "moving" slot and never confound the Sun's register.
+  const ROOTED_DEG_INTO = 3;
+  const chartWithSunAt = degIntoStation => ({ sunLon: degIntoStation, moonLon: ROOTED_DEG_INTO, asc: ROOTED_DEG_INTO });
+  const cases = [
+    { deg: STATION_WIDTH - 0.5, want: 'door' },       // degToEdge = 0.5 < 1
+    { deg: STATION_WIDTH - 2, want: 'ripening' },      // degToEdge = 2, in [1, STEP_WIDTH)
+    { deg: STATION_WIDTH - (STEP_WIDTH + 1), want: 'leaning' }, // degToEdge = STEP_WIDTH+1, in [STEP_WIDTH, 2*STEP_WIDTH)
+    { deg: STATION_WIDTH - (STEP_WIDTH * 2 + 1), want: 'rooted' }, // degToEdge = 2*STEP_WIDTH+1
+  ];
+  for (const c of cases) {
+    const m = G.movingLight(chartWithSunAt(c.deg), { timeKnown: false });
+    assert.equal(m.which, 'sun', `deg=${c.deg}: expected the Sun to still be the moving light`);
+    assert.equal(m.register, c.want, `deg=${c.deg} degToEdge=${m.degToEdge}`);
+  }
+});
+
+test('movingLight: echo is detected independently of which light is moving, and can co-occur with a different ripening light', () => {
+  const STATION_WIDTH = 360 / 28;
+  // Sun deep in its station (rooted) but Moon just 1 deg past ITS station's
+  // start (echoing) — the moving light should still be whichever is
+  // genuinely closest to a forward edge; echo should list the Moon
+  // regardless of who "wins" moving.
+  const chart = { sunLon: 100, moonLon: STATION_WIDTH * 3 + 1, asc: 50 };
+  const m = G.movingLight(chart, { timeKnown: true });
+  assert.ok(m.echo.includes('moon'), `expected moon to echo, got ${JSON.stringify(m.echo)}`);
+});
+
+test('movingLight: rising is excluded from candidates when timeKnown is false', () => {
+  const STATION_WIDTH = 360 / 28;
+  // Sun/Moon rooted deep in their stations (degToEdge ~9.86); Rising
+  // placed 0.1deg from its own forward edge (degToEdge = 0.1) so it
+  // would unambiguously win as the moving light if it were considered.
+  const chart = { sunLon: 3, moonLon: 3, asc: STATION_WIDTH - 0.1 };
+  const withTime = G.movingLight(chart, { timeKnown: true });
+  const withoutTime = G.movingLight(chart, { timeKnown: false });
+  assert.equal(withTime.which, 'rising');
+  assert.notEqual(withoutTime.which, 'rising');
+});
+
+test('movingLight: with no birth time, only the Sun is ever a candidate (not just Rising excluded — the Moon too, per PORT-SPEC.md §4\'s fallback ladder)', () => {
+  const STATION_WIDTH = 360 / 28;
+  // Moon placed 0.05deg from its own edge — would trivially win as
+  // "moving" (and read as a door) if it were still a candidate.
+  const chart = { sunLon: 3, moonLon: STATION_WIDTH - 0.05, asc: 3 };
+  const m = G.movingLight(chart, { timeKnown: false });
+  assert.equal(m.which, 'sun');
+  assert.equal(m.echo.length, 0, 'echo should never include the moon or rising without a birth time');
+});
+
+test('movingLight: becomingStation wraps correctly at the top of the wheel (station 27 -> becoming 0)', () => {
+  const STATION_WIDTH = 360 / 28;
+  const chart = { sunLon: 27 * STATION_WIDTH + (STATION_WIDTH - 0.5), moonLon: 100, asc: 200 };
+  const m = G.movingLight(chart, { timeKnown: false });
+  assert.equal(m.which, 'sun');
+  assert.equal(m.becomingStation, 0);
+});
+
 // -- readingPlan --------------------------------------------------------------
 
 test('readingPlan: nine beats present, in order', () => {
@@ -213,15 +308,15 @@ test('sigilRingData: 112 segments, all dark except natal marks when nothing kind
   const ring = G.sigilRingData(sigil);
   assert.equal(ring.segments.length, 112);
   assert.ok(ring.segments.every(s => s.state === 'dark'));
-  assert.equal(ring.natalMarks.length, 4); // sun, moon, rising, farlight
+  assert.equal(ring.natalMarks.length, 5); // sun, moon, rising, farlight, becoming
   assert.equal(ring.skyTicks.length, 4);
 });
 
-test('sigilRingData: natalMarks has 3 entries (no rising) when risingStation is null', () => {
+test('sigilRingData: natalMarks has 4 entries (no rising) when risingStation is null', () => {
   const jd = A.julianDay(2026, 8, 12, 12);
   const sigil = G.deriveSigil(makeChart(jd), { timeKnown: false });
   const ring = G.sigilRingData(sigil);
-  assert.equal(ring.natalMarks.length, 3);
+  assert.equal(ring.natalMarks.length, 4);
   assert.ok(!ring.natalMarks.some(m => m.role === 'rising'));
 });
 

@@ -13,6 +13,7 @@ mansions/*.html          linguist-generated=true -diff
 mansions/og/*.jpg        binary
 sitemap.xml              linguist-generated=true -diff
 stations.js              linguist-generated=true -diff
+reading-copy.js          linguist-generated=true -diff
 
 # The single file both agents touch. Conflicts here are expected and must be
 # resolved by hand — see OWNERSHIP.md.

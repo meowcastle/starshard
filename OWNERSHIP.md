@@ -30,7 +30,7 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | `astro.js` | ephemeris, Placidus/Porphyry houses, lunar mansion, weekday |
 | `sky.js` | daily engine: moon phase, tārābala (sidereal-27/Lahiri), planetary hours, station/step cast kinds |
 | `sigil.js` | the Sigil: natal derivation, the 5 Traveler types, the arrival reading's 9-beat grammar (`readingPlan()`), ring SVG geometry |
-| `sigil-copy.js` | placeholder prose templates for `reading.js`'s arrival/Sounding composers — content-authored stopgap, tier-0 vocabulary only, pending SIGIL-READING.md §4's real ~60-piece pass |
+| `sigil-copy.js` | placeholder prose for `reading.js`'s **Sounding** composer only — the arrival reading was re-pointed at `reading-copy.js`'s real corpus (PORT-SPEC.md); the nightly Sounding's counsel/question/claim text is a separate, still-unwritten pass. Content-authored stopgap, tier-0 vocabulary only |
 | `deck.js` | the collection game: claim windows, grace, "returns in N days" |
 | `events.js` | the event calendar: dated sky events (eclipses, supermoons, etc.), foil conditions |
 | `astronomy-engine.js` | vendored third-party (MIT) — sunrise/sunset only, see `tools/vendor-astronomy.mjs` |
@@ -58,14 +58,18 @@ If you add a binding, add it to `BINDINGS.md` in the same commit.
 `support.js`, `image-slot.js`. Rebuilt by the dc-runtime; edits will be lost.
 
 `mansions/*.html`, `mansions/index.html`, `mansions/og/*.jpg`, `sitemap.xml`,
-`stations.js`. Rebuilt by `tools/build-mansions.mjs` /
-`tools/build-mansion-images.mjs`; hand-edits diverge silently on the next
-regeneration. The two build *scripts* are normal `tools/**`, Claude-Code-
-owned. `stations.js` is the browser-side copy of the same corpus (0-indexed,
-`station = id - 1`) that `sigil.js`/`reading.js` import at runtime — a stale
-copy fails silently (wrong epithet/kanji served into a real reading, no
-`{{ }}` tell), so `test/stations.test.mjs` diffs it against a fresh
-in-memory render the same way `npm run bindings` catches a stale
+`stations.js`, `reading-copy.js`. Rebuilt by `tools/build-mansions.mjs` /
+`tools/build-mansion-images.mjs` / `tools/build-reading-copy.mjs`;
+hand-edits diverge silently on the next regeneration. The build *scripts*
+are normal `tools/**`, Claude-Code-owned. `stations.js` is the browser-side
+copy of the same corpus (0-indexed, `station = id - 1`) that
+`sigil.js`/`reading.js` import at runtime; `reading-copy.js` is the
+browser-side copy of `research/corpus-spine.md` +
+`research/corpus-stations-*.md` (the real reading prose, per
+`PORT-SPEC.md`). A stale copy of either fails silently (wrong content
+served into a real reading, no `{{ }}` tell), so `test/stations.test.mjs`
+and `test/reading-copy.test.mjs` each diff their generated file against a
+fresh in-memory render, the same way `npm run bindings` catches a stale
 `BINDINGS.md`.
 
 **Known gap in the source content:** the parser's epithets for all 28

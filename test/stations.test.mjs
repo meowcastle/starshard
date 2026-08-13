@@ -41,3 +41,29 @@ test('stations.js has steps and fragment stubbed null (not yet written) and real
     assert.ok(s.dailyCrossing.length > 20, `#${s.station} dailyCrossing too short/empty`);
   }
 });
+
+// INSTRUMENT.md §4/§7's four-axis station grammar fields.
+test('stations.js has animal/guardianSky/signSpan on all 28, and hunger on all but station 27 (id 28, no nakshatra by construction)', async () => {
+  const { STATIONS } = await import('../stations.js');
+  for (const s of STATIONS) {
+    assert.ok(s.animal && s.animal.length > 0, `#${s.station} missing animal`);
+    assert.ok(s.guardianSky && s.guardianSky.length > 0, `#${s.station} missing guardianSky`);
+    assert.ok(s.signSpan && s.signSpan.length > 0, `#${s.station} missing signSpan`);
+    if (s.station === 27) {
+      assert.equal(s.hunger, null, 'station 27 (id 28) has no nakshatra by construction — hunger must stay null, not faked');
+    } else {
+      assert.ok(s.hunger && s.hunger.deity && s.hunger.symbol, `#${s.station} missing hunger deity/symbol`);
+    }
+  }
+});
+
+test('guardianSky values are exactly the four Four Symbols quadrant names, and match sigil.js\'s skyOf() grouping', async () => {
+  const { STATIONS } = await import('../stations.js');
+  const { skyOf } = await import('../sigil.js');
+  const QUADRANT_BY_SKY = ['White Tiger', 'Vermilion Bird', 'Azure Dragon', 'Black Tortoise'];
+  for (const s of STATIONS) {
+    const sky = skyOf(s.station);
+    assert.ok(s.guardianSky.startsWith(QUADRANT_BY_SKY[sky]),
+      `#${s.station}: skyOf()=${sky} (${QUADRANT_BY_SKY[sky]}) but guardianSky="${s.guardianSky}"`);
+  }
+});
