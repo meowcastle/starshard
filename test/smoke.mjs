@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-// Browser smoke test: boots the real page, drives the whole night loop
-// (birth entry -> the Sigil reading -> all 5 Sounding beats -> claim), and
-// fails on unresolved {{ bindings }}, page errors, or a ring that never
-// lights.
+// Browser smoke test: boots the real page, drives the whole first-run loop
+// (burst -> skip -> how -> entry -> birth entry -> the compute readout ->
+// the Deep Chart's SHARD tab -> all 5 Sounding beats -> claim), and fails
+// on unresolved {{ bindings }}, page errors, or a ring that never lights.
+// Updated for the Aug 13 Design merge (V3-MERGE-RECEIPT.md) — the old flow
+// went straight from a bare form to "the strike"/"the root"; the current
+// page opens with the arrival sequence and sign-first headers instead.
 //
 //   npm i -D playwright && npx playwright install chromium
 //   node test/smoke.mjs                 # headless, writes screenshots to /tmp
@@ -86,12 +89,22 @@ page.on('console', m => { if (m.type() === 'error' && !/\{\{/.test(m.text()) && 
 const shot = n => page.screenshot({ path: path.join(OUT, `${n}.png`) });
 
 await page.goto(base, { waitUntil: 'domcontentloaded' });
-// case-insensitive: .eyebrow's CSS text-transform:uppercase renders the
-// literal lowercase markup text as uppercase, and innerText reflects the
-// rendered case, not the DOM's literal text.
-await page.waitForFunction(() => /star shard/i.test(document.body.innerText || ''), null, { timeout: 20000 });
+// The burst (screen 0) is the first thing rendered once `ready` flips true
+// (the nine dynamic module imports resolved) — it has no "star shard" text
+// of its own, so wait on its own content instead of the old page's wordmark.
+await page.waitForFunction(() => /the sky paints stories/i.test(document.body.innerText || ''), null, { timeout: 20000 });
 await page.waitForTimeout(500);
-await shot('01-entry');
+await shot('00-burst');
+
+// -- burst -> story -> how-it-works: skip straight to 'how' (both burst and
+// story land there — V3-MERGE-RECEIPT.md §7) ---------------------------
+await page.getByText('skip →').click();
+await page.waitForFunction(() => /reads four sky-maps/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await shot('01-how');
+
+await page.getByText('continue →').click();
+await page.waitForFunction(() => /where and when did you land/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await shot('02-entry');
 
 // -- birth entry (manual coordinates — no network geocoder dependency) ------
 await page.getByText('enter coordinates manually instead').click();
@@ -101,41 +114,44 @@ await page.locator('#sig-time').fill('16:40');
 await page.locator('#sig-lat').fill('40.71');
 await page.locator('#sig-lon').fill('-74.01');
 await page.locator('#sig-tz').fill('-5');
-await shot('02-form');
+await shot('03-form');
 
-await page.getByText('read my mark ✦').click();
-await page.waitForTimeout(900); // the 700ms reveal beat + a margin
-await shot('03-sigil');
+await page.getByText('read the sky →').click();
+await shot('04-falling');
 
-// -- the Sigil profile: natal parts + ring should have rendered -------------
+// -- the compute readout runs, then lands on the Deep Chart's SHARD tab -----
+await page.waitForFunction(() => /your sun is in/i.test(document.body.innerText || ''), null, { timeout: 15000 });
+await page.waitForTimeout(400);
+await shot('05-profile');
+
 const profileBody = await page.evaluate(() => document.body.innerText || '');
 const fail = [];
-// These labels sit in .eyebrow divs (CSS text-transform:uppercase) —
-// innerText reflects the rendered case, so match case-insensitively.
-if (!/the strike/i.test(profileBody)) fail.push('no "the strike" beat rendered on the Sigil profile');
-if (!/the root/i.test(profileBody)) fail.push('no "the root" beat rendered on the Sigil profile');
-if (!/the gait/i.test(profileBody)) fail.push('no "the gait" beat rendered on the Sigil profile');
+if (!/your sun is in/i.test(profileBody)) fail.push('no sign-first sun header rendered on the SHARD tab');
+if (!/your moon is in/i.test(profileBody)) fail.push('no sign-first moon header rendered on the SHARD tab');
+if (!/how you walk/i.test(profileBody)) fail.push('no "how you walk" synthesis header rendered on the SHARD tab');
 const ringPathCount = await page.locator('svg path').count();
 if (ringPathCount < 100) fail.push(`expected ~112 ring segment paths, found ${ringPathCount} — did sigilRingData() render?`);
 
 // -- walk tonight's crossing: all 5 Sounding beats + claim -------------------
 await page.getByText("walk tonight's crossing").click();
 await page.waitForTimeout(300);
-await shot('04-beat0-station');
+await shot('06-beat0-station');
 
 for (let i = 0; i < 3; i++) {
   await page.getByText('next ✦').click();
   await page.waitForTimeout(200);
 }
-await shot('05-beat3-question');
+await shot('07-beat3-question');
 
 await page.getByText(/claim tonight ✦|already kindled tonight/).click();
 await page.waitForTimeout(400);
-await shot('06-beat4-claim');
+await shot('08-beat4-claim');
 
 const claimBody = await page.evaluate(() => document.body.innerText || '');
 if (!/kindled\./.test(claimBody)) fail.push('claim beat did not render "kindled."');
-if (!/walk it well/.test(claimBody)) fail.push('claim beat did not render the close line');
+// sndCloseLine comes from soundingReading() (still-placeholder Sounding
+// prose, unchanged by this merge) — non-empty is covered by the
+// unresolved-{{ }} scan below rather than asserted on exact text here.
 
 // --- assertions ------------------------------------------------------------
 

@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { COPY, COPY_VERSION, copyJs, KNOWN_TOKENS } from '../tools/build-reading-copy.mjs';
+import { COPY, COPY_VERSION, copyJs, KNOWN_TOKENS, ARRIVAL_UI_IDS } from '../tools/build-reading-copy.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
@@ -18,9 +18,9 @@ test('reading-copy.js is not stale relative to tools/build-reading-copy.mjs\'s c
   assert.equal(committed, copyJs(), 'reading-copy.js is stale — run node tools/build-reading-copy.mjs');
 });
 
-test('exactly 162 slots, exactly 112 STATION.* slots', () => {
+test('exactly 246 slots, exactly 112 STATION.* slots', () => {
   const ids = Object.keys(COPY);
-  assert.equal(ids.length, 162);
+  assert.equal(ids.length, 246);
   assert.equal(ids.filter(id => id.startsWith('STATION.')).length, 112);
 });
 
@@ -33,10 +33,10 @@ test('every STATION.NN has all four slots (strike, root, facing, answer)', () =>
   }
 });
 
-test('word-count floors hold, scoped per slot family (strike/root >=100, everything else >=15)', () => {
+test('word-count floors hold, scoped per slot family (strike/root >=100, arrival UI copy uncapped, everything else >=15)', () => {
   for (const [id, entry] of Object.entries(COPY)) {
     const words = entry.text.split(/\s+/).filter(Boolean).length;
-    const floor = /^STATION\.\d{2}\.(strike|root)$/.test(id) ? 100 : 15;
+    const floor = /^STATION\.\d{2}\.(strike|root)$/.test(id) ? 100 : (ARRIVAL_UI_IDS.has(id) ? 1 : 15);
     assert.ok(words >= floor, `${id} is ${words} words, below the ${floor}-word floor`);
   }
 });

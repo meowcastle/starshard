@@ -96,10 +96,11 @@ Rules, in force from the first prompt written:
    never freelances past it.
 6. **Audience floor:** 25% minors — the same content rules as everything
    else, plus generation-time moderation.
-7. **Engine prerequisite (Claude Code):** planet positions (Mars → Saturn
-   at minimum, Mercury retrograde detection) — the vendored
-   astronomy-engine build needs its planet functions restored (it was
-   tree-shaken to sunrise/sunset).
+7. ~~**Engine prerequisite:** planet positions need restoring.~~
+   **STRUCK, Aug 13** — verified false. The vendored
+   `astronomy-engine.js` exports the full API (147 symbols including
+   `Body`, `GeoVector`, `Ecliptic`); planet longitudes and retrograde
+   detection work today with no re-vendoring. See `PRODUCT.md` §0.
 
 ## 5. Order of work
 

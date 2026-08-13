@@ -34,6 +34,16 @@
 //     connectives run under 25w by design (all confirmed against the
 //     batch files' own stated word-count targets) — asserting a single
 //     "no slot under 40 words" floor is false against the real corpus.
+//
+// corpus-arrival.md (batch 6, Aug 13) and corpus-chart-daily.md (batch 7,
+// Aug 13) added under the same convention, no parser changes needed.
+// corpus-arrival.md is UI copy, not prose — 32 of its 49 slots are under
+// 15 words by design (CTAs, terminal readout fragments, toggle labels;
+// verified against every slot in the file, not assumed from WRITING.md's
+// general "terse" guidance), so it gets its own floor rather than being
+// forced through the prose-family scoping above. corpus-chart-daily.md's
+// 35 slots are real prose and clear the standard floor with no
+// exceptions needed.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -43,6 +53,8 @@ const RESEARCH = path.join(ROOT, 'research');
 
 const SOURCE_FILES = [
   'corpus-spine.md',
+  'corpus-arrival.md',
+  'corpus-chart-daily.md',
   'corpus-stations-01-07.md',
   'corpus-stations-08-14.md',
   'corpus-stations-15-21.md',
@@ -56,6 +68,9 @@ const SOURCE_FILES = [
 const KNOWN_TOKENS = new Set([
   'sunSign', 'moonSign', 'becomingEpithet', 'sunEpithet',
   'typeLabel', 'sky', 'birthPlace', 'echoEpithet',
+  // corpus-arrival.md (batch 6) + corpus-chart-daily.md (batch 7), Aug 13:
+  'risingSign', 'phaseName', 'weekday', 'birthDate', 'tonightEpithet',
+  'countdown', 'litCount', 'name',
 ]);
 
 // COSMOLOGY.md §2's lexicon ledger — tier-1+ terms must never appear in
@@ -158,14 +173,23 @@ for (const s of allSlots) {
 }
 
 const stationSlots = allSlots.filter(s => s.id.startsWith('STATION.'));
-if (allSlots.length !== 162) throw new Error(`expected 162 total slots, got ${allSlots.length}`);
+if (allSlots.length !== 246) throw new Error(`expected 246 total slots, got ${allSlots.length}`);
 if (stationSlots.length !== 112) throw new Error(`expected 112 STATION.* slots, got ${stationSlots.length}`);
+
+// corpus-arrival.md is UI copy (CTAs, terminal readout lines, toggle
+// labels) — 32 of its 49 slots are under 15 words by design, verified
+// against every slot in the file. Exported (not just used inline) so
+// test/reading-copy.test.mjs checks the floor against the same set this
+// file used, rather than re-deriving it and drifting out of sync — that
+// duplication is exactly how the test's own floor check went stale
+// before this batch landed.
+const ARRIVAL_UI_IDS = new Set(allSlots.filter(s => s.file === 'corpus-arrival.md').map(s => s.id));
 
 const COPY = {};
 for (const s of allSlots) {
   const wordCount = s.rawBody.split(/\s+/).filter(Boolean).length;
   const isStrikeOrRoot = /^STATION\.\d{2}\.(strike|root)$/.test(s.id);
-  const floor = isStrikeOrRoot ? 100 : 15;
+  const floor = isStrikeOrRoot ? 100 : (ARRIVAL_UI_IDS.has(s.id) ? 1 : 15);
   if (wordCount < floor) throw new Error(`${s.id} (${s.file}) is ${wordCount} words, below the ${floor}-word floor for its slot family`);
 
   const tokenNames = [...s.rawBody.matchAll(/\{([a-zA-Z]+)\}/g)].map(m => m[1]);
@@ -207,4 +231,4 @@ function writeAll() {
 
 if (import.meta.url === `file://${process.argv[1]}`) writeAll();
 
-export { COPY, COPY_VERSION, copyJs, writeAll, KNOWN_TOKENS };
+export { COPY, COPY_VERSION, copyJs, writeAll, KNOWN_TOKENS, ARRIVAL_UI_IDS };

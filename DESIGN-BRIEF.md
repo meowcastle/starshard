@@ -1,5 +1,14 @@
 # Star Shard — brief for Claude Design · v2 (the overhaul)
 
+> **⚠ Largely superseded, Aug 13 — kept as historical record.** The
+> actual packet now sent to Claude Design is `DESIGN-HANDOFF.md`.
+> `UX-FLOW.md` supersedes this file's §S1 (arrival); `PRODUCT.md` covers
+> everything after arrival that this file doesn't. The "Who it's for"
+> section below is void — see its own note. What still stands: the
+> voice/vocabulary law, the four laws, the ethics floor, "what stays
+> exactly as it is," and the seam mechanics (namespacing, the receipt
+> checklist) — `DESIGN-HANDOFF.md` doesn't restate those.
+
 **This supersedes the previous brief wholesale.** The front end is being
 rebuilt from scratch against the reboot. The database and engine stay; the
 markup, the surfaces, and the product frame are new.
@@ -50,22 +59,27 @@ birth chart.
 The one-sentence pitch for every screen you draw: *a beautiful nightly
 ritual that slowly reveals it was always about you.*
 
-## Who it's for — unchanged, and it still drives every decision
+## Who it's for — SUPERSEDED, Aug 13 (see `PLATFORM.md`)
 
-Web property for **Suyin (@suyinsama)**: daily Hatsune Miku / Vocaloid
-cosplay from Brooklyn, ~13M monthly views, 104K followers.
+This section described Suyin's channel (@suyinsama, ~13M monthly views,
+104K followers) as the acquisition engine, with her audience's own
+demographics as the design target. **That channel is not available** —
+Star Shard is now a standalone astrology product with no creator
+audience behind it, positioned astrology-app-first with the App Store
+as the discovery channel (`PLATFORM.md`, `MARKET.md`). The specific
+numbers below (62% female, 25.3% aged 13–17, 34% US, the YouTube Shorts
+funnel) were her channel's composition, not a researched profile of who
+actually installs an astrology app cold — treat them as void, not as a
+substitute audience profile. No replacement research exists yet.
 
-| | |
-|---|---|
-| Gender | 62% female |
-| Age | 25.3% are **13–17** · 74.7% are 18+ |
-| Geography | 34% US, then UK, Germany, Philippines, Indonesia |
-| **Where they come from** | **87% of views are from the YouTube Shorts feed** |
-
-**The audience is functionally phone-only.** Design phone-first; the desktop
-gets the chrome, the phone gets the flavour (`DESIGN-SYSTEM.md` §context).
-The Win95 desktop simulation is **no longer the product frame** — retro
-survives as homage in the tokens, not as windows to drag.
+**What still holds, stated plainly in `CLAUDE.md`:** phone-first, skews
+female, a meaningful share aged 13–17 — kept as a safe design floor
+(matches the category's general shape per `MARKET.md`'s comparables),
+not because Suyin's numbers still apply. Design phone-first regardless;
+the desktop gets the chrome, the phone gets the flavour
+(`DESIGN-SYSTEM.md` §context). The Win95 desktop simulation is **no
+longer the product frame** — retro survives as homage in the tokens, not
+as windows to drag.
 
 ## The voice — carried forward, plus two new laws
 

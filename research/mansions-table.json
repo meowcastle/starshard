@@ -15,7 +15,9 @@
       "deity": "Aśvins",
       "symbol": "horse's head",
       "stars": "β/γ Ari",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Ketu",
+      "gana": "deva"
     },
     "xiu": {
       "char": "婁",
@@ -50,7 +52,9 @@
       "deity": "Yama",
       "symbol": "yoni",
       "stars": "35/39/41 Ari",
-      "match": "PARTIAL"
+      "match": "PARTIAL",
+      "lord": "Venus",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "胃",
@@ -85,7 +89,9 @@
       "deity": "Agni",
       "symbol": "knife/flame",
       "stars": "Pleiades",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Sun",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "昴",
@@ -119,7 +125,9 @@
       "deity": "Brahmā",
       "symbol": "chariot",
       "stars": "Aldebaran",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Moon",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "畢",
@@ -154,7 +162,9 @@
       "deity": "Soma, the moon-draught",
       "symbol": "deer's head",
       "stars": "λ/φ Ori",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Mars",
+      "gana": "deva"
     },
     "xiu": {
       "char": "觜",
@@ -190,7 +200,9 @@
       "deity": "Rudra, the howler in the storm",
       "symbol": "teardrop · a head",
       "stars": "Betelgeuse",
-      "match": null
+      "match": null,
+      "lord": "Rahu",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "參",
@@ -226,7 +238,9 @@
       "deity": "Aditi, the boundless mother",
       "symbol": "bow and quiver",
       "stars": "Castor/Pollux",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Jupiter",
+      "gana": "deva"
     },
     "xiu": {
       "char": "井",
@@ -263,7 +277,9 @@
       "deity": "Bṛhaspati, priest of the gods",
       "symbol": "cow's udder · lotus",
       "stars": "γ/δ/θ Cnc",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Saturn",
+      "gana": "deva"
     },
     "xiu": {
       "char": "鬼",
@@ -299,7 +315,9 @@
       "deity": "the Nāgas, serpents of hidden knowledge",
       "symbol": "coiled serpent",
       "stars": "Hydra's head",
-      "match": "PARTIAL"
+      "match": "PARTIAL",
+      "lord": "Mercury",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "柳",
@@ -337,7 +355,9 @@
       "deity": "Pitṛs (ancestors)",
       "symbol": "royal throne",
       "stars": "Regulus",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Ketu",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "星",
@@ -373,7 +393,9 @@
       "deity": "Bhaga, of allotted fortune",
       "symbol": "front legs of a bed",
       "stars": "δ/θ Leo",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Venus",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "張",
@@ -408,7 +430,9 @@
       "deity": "Aryaman, of kinship and contract",
       "symbol": "back legs of a bed",
       "stars": "Denebola",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Sun",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "翼",
@@ -447,7 +471,9 @@
       "deity": "Savitṛ, the impeller who sets things moving",
       "symbol": "an open hand",
       "stars": "Corvus",
-      "match": "DIVERGENT"
+      "match": "DIVERGENT",
+      "lord": "Moon",
+      "gana": "deva"
     },
     "xiu": {
       "char": "軫",
@@ -482,7 +508,9 @@
       "deity": "Tvaṣṭṛ, the divine artisan",
       "symbol": "a bright jewel",
       "stars": "Spica",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Mars",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "角",
@@ -519,7 +547,9 @@
       "deity": "Vāyu, the wind",
       "symbol": "a young shoot in wind",
       "stars": "Arcturus",
-      "match": null
+      "match": null,
+      "lord": "Rahu",
+      "gana": "deva"
     },
     "xiu": {
       "char": "亢",
@@ -555,7 +585,9 @@
       "deity": "Indrāgnī, force and fire as one",
       "symbol": "triumphal arch",
       "stars": "α/β/γ Lib",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Jupiter",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "氐",
@@ -592,7 +624,9 @@
       "deity": "Mitra, god of friendship and sworn alliance",
       "symbol": "archway · lotus",
       "stars": "β/δ/π Sco",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Saturn",
+      "gana": "deva"
     },
     "xiu": {
       "char": "房",
@@ -627,7 +661,9 @@
       "deity": "Indra, king of the gods",
       "symbol": "amulet · umbrella",
       "stars": "Antares",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Mercury",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "心",
@@ -663,7 +699,9 @@
       "deity": "Nirṛti in practice, Prajāpati in the oldest text (§4)",
       "symbol": "a bundle of tied roots",
       "stars": "Scorpion's tail",
-      "match": "STRONG"
+      "match": "STRONG",
+      "lord": "Ketu",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "尾",
@@ -705,7 +743,9 @@
       "deity": "Āpas, the divine waters",
       "symbol": "elephant tusk · fan",
       "stars": "δ/ε Sgr",
-      "match": null
+      "match": null,
+      "lord": "Venus",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "箕",
@@ -740,7 +780,9 @@
       "deity": "the Viśvedevas, the all-gods together",
       "symbol": "elephant tusk",
       "stars": "ζ/σ Sgr",
-      "match": null
+      "match": null,
+      "lord": "Sun",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "斗",
@@ -776,7 +818,9 @@
       "deity": "Viṣṇu, who crossed the worlds in three strides",
       "symbol": "an ear · three footprints",
       "stars": "Altair",
-      "match": null
+      "match": null,
+      "lord": "Moon",
+      "gana": "deva"
     },
     "xiu": {
       "char": "牛",
@@ -813,7 +857,9 @@
       "deity": "the eight Vasus, gods of abundance",
       "symbol": "a drum",
       "stars": "Delphinus",
-      "match": null
+      "match": null,
+      "lord": "Mars",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "女",
@@ -849,7 +895,9 @@
       "deity": "Varuṇa",
       "symbol": "empty circle",
       "stars": "λ Aqr",
-      "match": "PARTIAL"
+      "match": "PARTIAL",
+      "lord": "Rahu",
+      "gana": "rākṣasa"
     },
     "xiu": {
       "char": "虛",
@@ -887,7 +935,9 @@
       "deity": "Aja Ekapāda, the one-footed fire-pillar",
       "symbol": "front legs of a cot",
       "stars": "α/β Peg",
-      "match": null
+      "match": null,
+      "lord": "Jupiter",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "危",
@@ -923,7 +973,9 @@
       "deity": "Ahirbudhnya, serpent of the deep foundation",
       "symbol": "back legs of a cot",
       "stars": "γ Peg/α And",
-      "match": null
+      "match": null,
+      "lord": "Saturn",
+      "gana": "manuṣya"
     },
     "xiu": {
       "char": "室",
@@ -959,7 +1011,9 @@
       "deity": "Pūṣan",
       "symbol": "fish",
       "stars": "ζ Psc",
-      "match": null
+      "match": null,
+      "lord": "Mercury",
+      "gana": "deva"
     },
     "xiu": {
       "char": "壁",

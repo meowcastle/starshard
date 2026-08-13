@@ -8,7 +8,10 @@ cycle. This document is the boundary; `BINDINGS.md` is the interface.
 | Doc | Audience | What it is |
 |---|---|---|
 | `CLAUDE.md` | Claude Code | Auto-loaded every session. Architecture, runtime constraints, invariants, verification commands. |
-| `DESIGN-BRIEF.md` | Claude Design | Self-contained, paste-ready. Product, audience, what it owns, the work queue. |
+| `DESIGN-BRIEF.md` | humans | Largely superseded (Aug 13) — historical. See its own banner. |
+| `DESIGN-HANDOFF.md` | Claude Design | The actual packet: what to send, in what order, the five things to get right. |
+| `UX-FLOW.md` / `PRODUCT.md` | Claude Design | The current spec: arrival screens, and everything after (Deep Chart, daily/weekly). |
+| `PLATFORM.md` / `MARKET.md` | humans | Web-vs-app decision and the business case behind it. Not sent to Design. |
 | `OWNERSHIP.md` | both / humans | This file. The per-file boundary and the workflow rules. |
 | `BINDINGS.md` | both | **Generated.** The names `Star Shard v3.dc.html`'s markup binds. Rebuild with `npm run bindings`. |
 | `docs/archive/AUDIT.md` | humans | Historical — the pre-reboot product audit and competitive analysis. |

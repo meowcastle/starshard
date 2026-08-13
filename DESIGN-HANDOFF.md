@@ -1,0 +1,122 @@
+# DESIGN-HANDOFF.md — what to give Claude Design
+
+**v2 · August 13, 2026.** Ten files. Not sixteen.
+
+> **⚠ Merge target: `Star Shard v3.dc.html`.** That's the live page.
+> There is no `Star Shard v2.dc.html` — the repo has
+> `Star Shard v2 (archived).dc.html`, the retired pre-reboot page kept
+> as reference only. Do not merge into it.
+
+## What this is (say this first, in the prompt)
+
+**Star Shard is a JavaScript game anchored in real astrology.** Not an
+astrology app with game elements — a game whose systems happen to be
+computed from the actual sky. Today it has one loop (arrive, get your
+shard, come back nightly); minigames that surface shards come later.
+Design decisions break toward *game*: motion, reward, a hero object on
+screen, an interface that behaves rather than a document that sits.
+
+The runner and the intro animation are the tonal reference. They're the
+only two things that already feel right.
+
+## The packet
+
+| # | File | Why |
+|---|---|---|
+| 1 | **`UX-FLOW.md`** | the screens, in order, with the visual direction (CRT/terminal, dark-first) |
+| 2 | **`PRODUCT.md`** | the two surfaces after arrival: the Deep Chart (five tabs) and the daily/weekly |
+| 3 | **`research/corpus-arrival.md`** | every word of the front door, final |
+| 4 | **`research/corpus-chart-daily.md`** | the Deep Chart and Daily copy — houses, aspects, special nights, fallbacks |
+| 5 | **`DESIGN-SYSTEM.md`** | palette, type, contrast floors — still the law, now applied dark-first |
+| 6 | **`research/mansions-table.json`** | card data: epithets, kanji, real asterisms, guardian animals |
+| 7 | **`OWNERSHIP.md` + `BINDINGS.md`** | the seam contract |
+| 8 | **`WRITING.md`** | the copy law — read before writing a single string |
+
+**Do not send:** COSMOLOGY, INSTRUMENT, ANCHORS, SIGIL-READING,
+BLUEPRINT, PORT-SPEC, the station corpus, the research reports. That's
+the writers' and engineers' layer. Design needs screens, copy, tokens,
+and the contract — sending the cosmology invites a mood board when what
+we need is an interface.
+
+## The five things to get right
+
+1. **The ring is the hero.** Every screen has it. It draws itself, it
+   accrues light, it's the share artifact at every stage.
+2. **Instrument, not journal.** Monospace for every number; Baloo 2 for
+   headlines. That pairing is the whole voice. No paper texture, no
+   serif body, no ruled lines.
+3. **The compute readout is a feature.** Real values printing as they
+   resolve, not a spinner.
+4. **Progressive disclosure everywhere.** Plain fact → the reading →
+   `where this comes from ▾`. The scholarship is opt-in, always.
+5. **Nothing fades in.** Things draw, type, ignite. Respect
+   `prefers-reduced-motion` with instant-draw fallbacks.
+
+## Money (decided — tell Design, it changes the UI)
+
+**One-time unlock, plus cosmetics. No microtransactions, ever.**
+
+- The **arrival and the Deep Chart are free** — they're the proof and
+  the share.
+- **One purchase** unlocks the ongoing game: the nightly loop's full
+  depth, the daily and weekly readings, the codex. One price, owned
+  forever, no subscription.
+- **Cosmetics are the only recurring surface**: ring skins, card backs,
+  art by Suyin, seasonal frames. Bought because they're beautiful,
+  never because they're an advantage.
+- **Nothing that affects collection is purchasable.** No paid pulls, no
+  currency, no timers to skip. The sky is the drop table and it can't
+  be bought. This isn't only ethics — a quarter of the audience is
+  13–17, and a one-time price with cosmetic extras is the model that
+  survives that scrutiny.
+
+**UI consequence:** there is no shop tab in the main loop. Cosmetics
+live in the codex, next to the thing they decorate. No prices in the
+reading flow, ever.
+
+## Copy is final; layout should fit it
+
+Every string for every screen now exists in the two corpus files. **Do
+not write placeholder copy** — use the real text, and if a slot looks
+empty in the manifest, it's because it doesn't exist yet and should be
+raised rather than filled. Copy may still be sharpened after handoff,
+but it will be **slot-stable**: same IDs, same count, lengths within
+±15%, so nothing reflows.
+
+## This ships as an app, not just a page
+
+`PLATFORM.md` has the reasoning; what it means for your layout:
+
+- **Design for standalone display mode.** No browser chrome means **no
+  browser back button** — every screen needs its own way back, in the
+  layout.
+- **Safe areas.** Respect `env(safe-area-inset-*)` top and bottom. The
+  ring must not sit under a notch, and the primary CTA must not sit
+  under the home indicator.
+- **No hover states.** Touch only. Every interactive element needs a
+  visible *active/pressed* state instead.
+- **The push-permission prompt is a designed moment.** It should be
+  asked *after* the shard is revealed — never on launch — with one
+  screen explaining what the nightly reminder is. Getting denied here
+  costs us the retention loop, so this screen matters as much as the
+  reading.
+- **Dark status bar** styling, and app icon + splash at the usual iOS
+  sizes.
+- 44px tap targets (already in the brief, now load-bearing).
+
+Nothing else changes. Same markup, same bindings, same corpus — the
+wrapper is a packaging step Code handles.
+
+## The writing law
+
+`WRITING.md` — one page, and it applies to every string in the export.
+Short version: **show it, don't introduce it.** If a line's job is to
+prepare the reader for the next line, cut it. Placeholder copy that
+explains itself will get rewritten, so leave copy slots empty rather
+than filling them with lorem that sets a wrong rhythm.
+
+## Handing back
+
+Binding manifest (every `{{ name }}`, per surface), confirmation the
+`<helmet>` meta survived, confirmation no engine module was imported.
+`npm run bindings` runs on receipt.

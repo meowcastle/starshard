@@ -12,12 +12,18 @@ own ring and files a relational paragraph into their codex. The story is
 revealed through play, never told up front. Single page, no framework of our
 own, no build step. The reference docs, in reading order: `BLUEPRINT.html`
 (the system map) → `COSMOLOGY.md` (canon + formal system + data model) →
-`SIGIL-READING.md` (the arrival grammar) → `DESIGN-BRIEF.md` v2 (what Design
-is building).
+`SIGIL-READING.md` (the arrival grammar). For the current build, not
+`DESIGN-BRIEF.md` v2 — it's superseded piecemeal and left as historical
+record: `UX-FLOW.md` (the arrival screens, replacing its §S1) →
+`PRODUCT.md` (everything after arrival: the Deep Chart, the daily/weekly)
+→ `PLATFORM.md` (web vs. app, decided) → `DESIGN-HANDOFF.md` (the actual
+packet sent to Claude Design) → `WRITING.md` (the house style).
 
-It is a web property for Suyin (@suyinsama) — Vocaloid/Hatsune Miku cosplay,
-~13M monthly views, audience 62% female, 25% aged 13–17, and overwhelmingly on
-phones. That last fact should inform most decisions.
+It is a standalone astrology product — **not** tied to a creator's
+brand (that pivot is on the record, Aug 13). Audience assumptions that
+still hold: phone-first, skews female, a meaningful share aged 13–17.
+Positioning is **astrology app first, game mechanics as the retention
+layer** — see `PLATFORM.md`.
 
 The **front end was rebuilt from scratch** against this reboot; the engine
 modules and the database carried forward. The old four-shard flip flow
@@ -53,6 +59,25 @@ lands** (still binding, nothing here is retired):
 5. Reconcile against the stopgap's own bindings (`BINDINGS.md`) rather than
    assuming a wholesale replacement is needed — the namespace was chosen
    specifically to make this a diff, not a rewrite.
+
+**Then, the app wrapper** (`PLATFORM.md` — decided Aug 13). Ships to the
+App Store as a **Capacitor wrapper around the existing web build, not a
+rewrite**. It must add native value beyond a web clipping or Apple
+rejects it under guideline 4.2.2:
+
+1. **Native push** — the whole reason. iOS web push only reaches users
+   who manually added to home screen (~10–15× smaller audience), and the
+   nightly loop depends on the reminder.
+2. **Native IAP** for the one-time unlock, with **server-side
+   entitlement** — a localStorage flag is forgeable, and Safari evicts
+   it under storage pressure.
+3. **Offline caching** of the Deep Chart — it never changes, so it's the
+   ideal offline artifact.
+4. Icon, splash, home-screen presence, safe-area handling.
+
+The web build stays live and free: the shareable chart, the
+Reddit-linkable demo, and the 28 station permalinks (an SEO asset we
+already own). One account, entitlement on both.
 
 Explicitly deferred (on the record, Justin's call): new minigames, more
 easter eggs, community features, the Remembering endgame, paradox cards,
@@ -93,7 +118,9 @@ Star Shard v3.dc.html
        ├─ deck.js      the collection game: claim windows, grace, returns —
        │               server-side claimability check for POST /api/recollection
        ├─ events.js    the event calendar: dated sky events, foil conditions
-       ├─ astronomy-engine.js   vendored third-party (sunrise/sunset only)
+       ├─ astronomy-engine.js   vendored MIT build — FULL api (147 exports:
+       │               Body, GeoVector, Ecliptic). Planets + retrograde
+       │               work today; transits are unblocked (PRODUCT.md §0)
        ├─ format.js    degFmt, ordinal, place/birth lines
        ├─ tz.js        historical UTC offset + DST for a birth moment
        ├─ api.js       ALL network I/O
