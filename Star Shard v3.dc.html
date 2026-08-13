@@ -525,10 +525,26 @@ a{color:var(--ink-accent)}
        Star Shard - Deep Chart (hi-fi).dc.html. What is missing is engine data
        through renderVals; each tab names exactly what it needs. -->
   <sc-if value="{{ sigTabHouses }}">
-  <div class="needs-data">
-    <div class="eyebrow">houses · needs bindings</div>
-    <p class="hint" style="margin:8px 0 0">the engine already returns these — PRODUCT.md §0. twelve passages and the empty-house note are written.</p>
-    <p class="mono-note" style="margin:10px 0 0">sigCusps · sigSunHouse · sigMoonHouse · sigRulerHouse · sigHouseSystem</p>
+  <div class="pad" style="padding-top:20px">
+    <p class="hint" style="margin:0 0 16px">where in your life it plays out — three placements, out of twelve rooms.</p>
+    <sc-if value="{{ sigIsPorphyry }}">
+      <div class="card-panel" style="padding:16px;margin-bottom:12px;border-color:var(--ink-warn)">
+        <p class="mono-note" style="margin:0">{{ sigHousePorphyryNote }}</p>
+      </div>
+    </sc-if>
+    <sc-for list="{{ sigHousePlacements }}" as="p">
+      <div class="card-panel" style="padding:20px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="h3">house {{ p.number }}</span>
+          <span class="chip">{{ p.which }}</span>
+        </div>
+        <p class="hint" style="margin:6px 0 0">{{ p.label }}</p>
+        <p style="margin:14px 0 0">{{ p.text }}</p>
+      </div>
+    </sc-for>
+    <div class="card-panel" style="padding:20px;background:var(--surface-sunken)">
+      <p class="muted" style="margin:0">{{ sigHouseEmptyNote }}</p>
+    </div>
   </div>
   </sc-if>
 
@@ -1122,7 +1138,7 @@ class Component extends DCLogic {
 
   // -- computed reading + tonight's cast --------------------------------------
 
-  refreshArrivalAndTonight = () => {
+  refreshArrivalAndTonight = async () => {
     const s = this.state;
     if (!s.sigil || !s.sigPlan || !s.sigChart) return;
     const birthPlace = s.sigManualMode ? 'the coordinates you entered' : (s.sigPlace ? s.sigPlace.name : '');
@@ -1136,6 +1152,11 @@ class Component extends DCLogic {
     const aspects = this.sigilMod.natalAspects(s.sigChart, { timeKnown: s.sigTimeKnown });
     const pattern = this.reading.patternAspects(aspects, this.readingCopy);
 
+    // the HOUSES tab (PRODUCT.md §2) — sunHouse/moonHouse are already on
+    // the chart; the ruler placement is async (natal planet position).
+    const ascRuler = await this.sigilMod.ascRulerHouse(s.sigChart);
+    const houses = this.reading.houseReading(s.sigChart, ascRuler, this.readingCopy);
+
     const jd = Date.now() / 86400000 + 2440587.5;
     const moonLon = this.astro.moonLongitude(jd), sunLon = this.astro.sunLongitude(jd);
     const cast = this.sky.castKind(moonLon, jd);
@@ -1145,7 +1166,10 @@ class Component extends DCLogic {
     const relation = this.sky.tarabala(birthNak.index, todayNak.index);
     const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy });
 
-    this.setState({ sigArrival: arrival, sigPattern: pattern, sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding });
+    this.setState({
+      sigArrival: arrival, sigPattern: pattern, sigHouses: houses,
+      sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding,
+    });
   };
 
   // -- Sounding navigation ----------------------------------------------------
@@ -1322,6 +1346,13 @@ class Component extends DCLogic {
       sigAspects: s.sigPattern ? s.sigPattern.items : [],
       sigNoAspects: !!s.sigPattern && s.sigPattern.none,
       sigAspectNoneText: s.sigPattern ? s.sigPattern.noneText : '',
+
+      // HOUSES tab (PRODUCT.md §2) — s.sigHouses is null until
+      // refreshArrivalAndTonight() has run once (needs a chart).
+      sigHousePlacements: s.sigHouses ? s.sigHouses.placements : [],
+      sigHouseEmptyNote: s.sigHouses ? s.sigHouses.emptyNote : '',
+      sigIsPorphyry: !!s.sigHouses && s.sigHouses.isPorphyry,
+      sigHousePorphyryNote: s.sigHouses ? s.sigHouses.porphyryNote : '',
       sigTypeRateLine: typeRate == null ? '' : (typeRate * 100).toFixed(1).replace(/\.0$/, '') + '% of travelers walk this way',
 
       // -- the nightly reminder (Design) ---------------------------------

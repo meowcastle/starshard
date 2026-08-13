@@ -25,9 +25,9 @@
 // Build it when the "road-kin" topology feature actually needs it — don't
 // assume the two share a numeric encoding when that day comes.
 
-import { mansionOf } from './astro.js';
+import { mansionOf, houseOf } from './astro.js';
 import { moonPhase, PLANETARY_HOUR_ORDER, WEEKDAY_RULER } from './sky.js';
-import { classifyAspect } from './transits.js';
+import { classifyAspect, planetPositions } from './transits.js';
 
 const STATIONS = 28, STEPS = 4, SEGMENTS = STATIONS * STEPS; // 112
 const STATION_WIDTH = 360 / STATIONS;   // 12.857...deg
@@ -202,6 +202,44 @@ export function natalAspects(chart, { timeKnown }) {
     }
   }
   return out.sort((a, b) => a.orbUsed - b.orbUsed);
+}
+
+// Classical/traditional sign rulerships (7 planets) — index 0=Aries..
+// 11=Pisces. Not the modern Uranus/Neptune/Pluto co-rulers: this codebase
+// has no ephemeris for any of the three (transits.js stops at Saturn,
+// deliberately, per PRODUCT.md §7 — the outer planets move too slowly to
+// matter for a nightly signal, and the same "what we can actually verify"
+// posture applies here).
+const SIGN_RULERS = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury',
+  'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'];
+
+/**
+ * Which house the ascendant's ruling planet natally occupies — PRODUCT.md
+ * §2's third HOUSES placement, alongside sunHouse/moonHouse (already
+ * computed by astro.js's computeChart()). Returns null without a birth
+ * time (no ascendant, so no ruler to place).
+ *
+ * async: the ruler's position is free when it's the Sun or Moon (already
+ * on `chart`); the other five need transits.js's planetPositions() —
+ * called against the BIRTH moment (chart.jd converted to a Date), not
+ * "now". This is a natal placement, not a transit, and reuses
+ * planetPositions() exactly because it takes a `date` parameter rather
+ * than assuming "now" — the same function serves both callers.
+ */
+export async function ascRulerHouse(chart) {
+  if (chart.asc == null) return null;
+  const ruler = SIGN_RULERS[Math.floor(norm(chart.asc) / 30)];
+  let rulerLon;
+  if (ruler === 'Sun') rulerLon = chart.sunLon;
+  else if (ruler === 'Moon') rulerLon = chart.moonLon;
+  else {
+    // JD 2440587.5 = 1970-01-01T00:00:00 UTC, the standard Julian-day-to-
+    // Unix-epoch offset (86400000 ms/day).
+    const birthDate = new Date((chart.jd - 2440587.5) * 86400000);
+    const positions = await planetPositions(birthDate);
+    rulerLon = positions[ruler].lon;
+  }
+  return { ruler, house: houseOf(rulerLon, chart.cusps) };
 }
 
 /**

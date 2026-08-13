@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as A from '../astro.js';
 import * as G from '../sigil.js';
+import * as T from '../transits.js';
 
 // -- deriveType -------------------------------------------------------------
 
@@ -290,6 +291,51 @@ test('natalAspects: reuses transits.js\'s classifyAspect (not a second orb table
   const chart2 = { sunLon: 0, moonLon: 8.01, asc: 0, mc: 0 }; // just past it
   const outOfOrb = G.natalAspects(chart2, { timeKnown: false });
   assert.equal(outOfOrb.find(a => a.from === 'sun' && a.to === 'moon'), undefined);
+});
+
+// -- ascRulerHouse ----------------------------------------------------------
+
+const EQUAL_CUSPS = Array.from({ length: 12 }, (_, i) => i * 30); // 0,30,60,...,330 — house N+1 = [30N, 30N+30)
+
+test('ascRulerHouse: null without a birth time (no ascendant, no ruler)', async () => {
+  const result = await G.ascRulerHouse({ asc: null });
+  assert.equal(result, null);
+});
+
+test('ascRulerHouse: Leo rising -> Sun rules -> uses chart.sunLon directly, no planet lookup needed', async () => {
+  const chart = { asc: 130, sunLon: 45, cusps: EQUAL_CUSPS }; // Leo is 120-150deg; sunLon 45 -> house 2
+  const result = await G.ascRulerHouse(chart);
+  assert.equal(result.ruler, 'Sun');
+  assert.equal(result.house, 2);
+});
+
+test('ascRulerHouse: Cancer rising -> Moon rules -> uses chart.moonLon directly', async () => {
+  const chart = { asc: 100, moonLon: 200, cusps: EQUAL_CUSPS }; // Cancer is 90-120deg; moonLon 200 -> house 7
+  const result = await G.ascRulerHouse(chart);
+  assert.equal(result.ruler, 'Moon');
+  assert.equal(result.house, 7);
+});
+
+test('ascRulerHouse: Aries rising -> Mars rules -> fetches Mars\'s NATAL position (birth date, not "now") via transits.js', async () => {
+  const jd = A.julianDay(1990, 6, 15, 12);
+  const birthDate = new Date((jd - 2440587.5) * 86400000);
+  const positions = await T.planetPositions(birthDate);
+  const expectedHouse = A.houseOf(positions.Mars.lon, EQUAL_CUSPS);
+
+  const chart = { asc: 15, jd, cusps: EQUAL_CUSPS }; // Aries is 0-30deg
+  const result = await G.ascRulerHouse(chart);
+  assert.equal(result.ruler, 'Mars');
+  assert.equal(result.house, expectedHouse);
+});
+
+test('ascRulerHouse: sign-ruler table is the classical/traditional 7-planet set at every boundary', async () => {
+  const expected = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'];
+  const jd = A.julianDay(1990, 6, 15, 12); // a real jd for every sign — the 5 non-luminary rulers need one to fetch a natal position
+  for (let sign = 0; sign < 12; sign++) {
+    const chart = { asc: sign * 30 + 15, sunLon: 0, moonLon: 0, jd, cusps: EQUAL_CUSPS };
+    const result = await G.ascRulerHouse(chart);
+    assert.equal(result.ruler, expected[sign], `sign ${sign}`);
+  }
 });
 
 // -- readingPlan --------------------------------------------------------------

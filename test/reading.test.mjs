@@ -275,3 +275,31 @@ test('patternAspects: no aspects in orb falls back to ASPECT.none, real corpus t
   assert.equal(pattern.none, true);
   assert.equal(pattern.noneText, READING_COPY['ASPECT.none'].text);
 });
+
+// -- houseReading (the Deep Chart's HOUSES tab) ----------------------------
+
+test('houseReading: sun and moon placements always present, real corpus text, ruler placement present only with a birth time', () => {
+  const chart = { sunHouse: 1, moonHouse: 7, houseSystem: 'placidus' };
+  const withRuler = R.houseReading(chart, { ruler: 'Mars', house: 4 }, READING_COPY);
+  assert.equal(withRuler.placements.length, 3);
+  assert.deepEqual(withRuler.placements.map(p => p.which), ['sun', 'moon', 'ruler']);
+  assert.equal(withRuler.placements[0].text, READING_COPY['HOUSE.01'].text);
+  assert.equal(withRuler.placements[1].text, READING_COPY['HOUSE.07'].text);
+  assert.equal(withRuler.placements[2].text, READING_COPY['HOUSE.04'].text);
+  assert.match(withRuler.placements[2].label, /Mars/);
+
+  const withoutTime = R.houseReading(chart, null, READING_COPY);
+  assert.equal(withoutTime.placements.length, 2);
+  assert.deepEqual(withoutTime.placements.map(p => p.which), ['sun', 'moon']);
+});
+
+test('houseReading: empty-house note is always real text; the Porphyry note only fires when houseSystem is porphyry', () => {
+  const placidus = R.houseReading({ sunHouse: 1, moonHouse: 1, houseSystem: 'placidus' }, null, READING_COPY);
+  assert.equal(placidus.emptyNote, READING_COPY['HOUSE.empty'].text);
+  assert.equal(placidus.isPorphyry, false);
+  assert.equal(placidus.porphyryNote, '');
+
+  const porphyry = R.houseReading({ sunHouse: 1, moonHouse: 1, houseSystem: 'porphyry' }, null, READING_COPY);
+  assert.equal(porphyry.isPorphyry, true);
+  assert.equal(porphyry.porphyryNote, READING_COPY['HOUSE.porphyry'].text);
+});

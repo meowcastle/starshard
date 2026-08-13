@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**197 bindings, 171 top-level.**
+**205 bindings, 175 top-level.**
 
 ## Rule
 
@@ -31,6 +31,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigAspects` | `asp` | `aspect`, `hasPassage`, `maxOrb`, `missing`, `missingIf`, `orbUsed`, `pair`, `plain`, `text` |
 | `sigCityResults` | `r` | `name`, `pick`, `region` |
 | `sigComputeLines` | `cl` | `color`, `text` |
+| `sigHousePlacements` | `p` | `label`, `number`, `text`, `which` |
 | `sndCrossCultural` | `c` | `name`, `sky` |
 
 ## Scalars and callbacks
@@ -92,11 +93,15 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigHdrHand` | component state |
 | `sigHdrRoot` | component state |
 | `sigHdrStrike` | component state |
+| `sigHouseEmptyNote` | component state |
+| `sigHousePlacements` | component state |
+| `sigHousePorphyryNote` | component state |
 | `sigIsBurst` | component state |
 | `sigIsEntry` | component state |
 | `sigIsFalling` | component state |
 | `sigIsHow` | component state |
 | `sigIsNewborn` | component state |
+| `sigIsPorphyry` | component state |
 | `sigIsProfile` | component state |
 | `sigIsPush` | component state |
 | `sigIsShare` | component state |

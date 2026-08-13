@@ -391,3 +391,36 @@ export function patternAspects(aspects, copy) {
   });
   return { items, none: items.length === 0, noneText: copy['ASPECT.none'].text };
 }
+
+/**
+ * The Deep Chart's HOUSES tab (PRODUCT.md §2): which house the sun, the
+ * moon, and the ascendant's ruler each fall in, framed as "this part of
+ * you plays out here" — plus the empty-house honesty note (most houses
+ * have nothing in them, and that's normal) and, above 66° latitude, the
+ * Porphyry-fallback note. All three passage families are corpus batch 7,
+ * every house/note slot written — unlike PATTERN there's no missing-copy
+ * case to flag here.
+ *
+ * `chart` is astro.js's computeChart() output (already carries sunHouse/
+ * moonHouse); `ascRuler` is sigil.js's ascRulerHouse(chart) output (null
+ * without a birth time); `copy` is reading-copy.js's COPY map.
+ */
+export function houseReading(chart, ascRuler, copy) {
+  const houseText = n => copy[`HOUSE.${String(n).padStart(2, '0')}`].text;
+  const placements = [
+    { which: 'sun', label: 'your sun plays out here', number: chart.sunHouse },
+    { which: 'moon', label: 'your moon lives here', number: chart.moonHouse },
+  ];
+  if (ascRuler) {
+    placements.push({
+      which: 'ruler', number: ascRuler.house,
+      label: `your rising's ruler, ${ascRuler.ruler}, lives here`,
+    });
+  }
+  return {
+    placements: placements.map(p => ({ ...p, text: houseText(p.number) })),
+    emptyNote: copy['HOUSE.empty'].text,
+    porphyryNote: chart.houseSystem === 'porphyry' ? copy['HOUSE.porphyry'].text : '',
+    isPorphyry: chart.houseSystem === 'porphyry',
+  };
+}
