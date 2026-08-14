@@ -157,6 +157,52 @@ test('soundingReading: all five beats present, becoming is null for a steady cas
   else assert.notEqual(sounding.cast.becoming, null);
 });
 
+test('soundingReading: liveTransit defaults to null (existing callers keep working unchanged) and stays null when explicitly passed null', () => {
+  const jd = A.julianDay(2026, 8, 12, 12);
+  const sigil = G.deriveSigil(makeChart(jd), { timeKnown: true });
+  const moonLon = A.moonLongitude(jd);
+  const cast = S.castKind(moonLon, jd);
+  const light = S.moonPhase(A.sunLongitude(jd), moonLon);
+  const relation = S.tarabala(0, 0);
+  const base = { sigil, cast, relation, light, stations: STATIONS, copy: SOUNDING_COPY };
+
+  const withoutParam = R.soundingReading(base);
+  assert.equal(withoutParam.liveTransit, null);
+  const withNull = R.soundingReading({ ...base, liveTransit: null });
+  assert.equal(withNull.liveTransit, null);
+});
+
+test('soundingReading: liveTransit formats a real pickLiveTransit() hit into a printed fact — the orb is the retention mechanic, so the exact number must survive', () => {
+  const jd = A.julianDay(2026, 8, 12, 12);
+  const sigil = G.deriveSigil(makeChart(jd), { timeKnown: true });
+  const moonLon = A.moonLongitude(jd);
+  const cast = S.castKind(moonLon, jd);
+  const light = S.moonPhase(A.sunLongitude(jd), moonLon);
+  const relation = S.tarabala(0, 0);
+  const hit = { planet: 'Saturn', point: 'sun', aspect: 'square', plain: 'grinding', orbUsed: 2.14, maxOrb: 6, retrograde: true };
+
+  const sounding = R.soundingReading({ sigil, cast, relation, light, stations: STATIONS, copy: SOUNDING_COPY, liveTransit: hit });
+  assert.equal(sounding.liveTransit.planet, 'Saturn');
+  assert.equal(sounding.liveTransit.point, 'sun');
+  assert.equal(sounding.liveTransit.orbUsed, 2.1); // rounded to one decimal, not truncated to an integer
+  assert.equal(sounding.liveTransit.retrograde, true);
+  assert.equal(sounding.liveTransit.line, 'Saturn 2.1° from square to your sun, retrograde');
+});
+
+test('soundingReading: liveTransit\'s point label matches natalAspects()/patternAspects() convention ("midheaven", not transits.js\'s raw "mc")', () => {
+  const jd = A.julianDay(2026, 8, 12, 12);
+  const sigil = G.deriveSigil(makeChart(jd), { timeKnown: true });
+  const moonLon = A.moonLongitude(jd);
+  const cast = S.castKind(moonLon, jd);
+  const light = S.moonPhase(A.sunLongitude(jd), moonLon);
+  const relation = S.tarabala(0, 0);
+  const hit = { planet: 'Jupiter', point: 'mc', aspect: 'trine', plain: 'easy', orbUsed: 0, maxOrb: 6, retrograde: false };
+
+  const sounding = R.soundingReading({ sigil, cast, relation, light, stations: STATIONS, copy: SOUNDING_COPY, liveTransit: hit });
+  assert.equal(sounding.liveTransit.point, 'midheaven');
+  assert.equal(sounding.liveTransit.line, 'Jupiter 0° from trine to your midheaven');
+});
+
 function full(chart, timeKnown = true, name = 'suyin') {
   const sigil = G.deriveSigil(chart, { timeKnown });
   return R.fullReading({ sigil, chart, stations: STATIONS, copy: READING_COPY, skyOf: G.skyOf, name, birthPlace: 'brooklyn, ny' });
@@ -252,24 +298,40 @@ test('patternAspects: a written combination returns real corpus text', () => {
 });
 
 test('patternAspects: a real aspect with no written passage is surfaced, not hidden — the tab must not lie about the chart\'s geometry', () => {
-  // rising-midheaven is real geometry with no written copy at all (batch
-  // 8's own production notes: this pair is mostly a coordinate-system
-  // artifact, not a chart fact — conjunction/opposition here are close to
-  // geometrically impossible in a real chart, but that's a real-world
-  // rarity, not something patternAspects() itself should assume; the
-  // fixture below constructs one directly, sidestepping real geometry,
-  // specifically to exercise the missing-copy path).
-  const chart = { sunLon: 30, moonLon: 68, asc: 0, mc: 0 };
-  const aspects = G.natalAspects(chart, { timeKnown: true });
-  const pattern = R.patternAspects(aspects, READING_COPY);
+  // Batch 8 filled all 25 real (pair, aspect) combinations (natalAspects()
+  // now excludes rising-midheaven entirely, so there's no longer a real
+  // chart that reaches an uncovered combo) — this test now exercises
+  // patternAspects()'s own missing-copy handling directly against a
+  // synthetic, deliberately incomplete copy map, rather than depending on
+  // the real corpus happening to have a gap. That's more robust anyway:
+  // this behavior must hold regardless of how complete the corpus gets.
+  const chart = { sunLon: 0, moonLon: 0 }; // exact sun-moon conjunction
+  const aspects = G.natalAspects(chart, { timeKnown: false });
+  const incompleteCopy = {}; // no ASPECT.sunmoon.conjunction entry at all
+  const pattern = R.patternAspects(aspects, incompleteCopy);
   assert.equal(pattern.items.length, 1);
   const item = pattern.items[0];
-  assert.equal(item.pair, 'rising + midheaven');
+  assert.equal(item.pair, 'sun + moon');
   assert.equal(item.aspect, 'conjunction');
   assert.equal(item.hasPassage, false);
   assert.equal(item.missingIf, true);
   assert.equal(item.text, '');
-  assert.equal(item.missing, 'ASPECT.risingmidheaven.conjunction — not in the corpus yet, raise it');
+  assert.equal(item.missing, 'ASPECT.sunmoon.conjunction — not in the corpus yet, raise it');
+});
+
+test('patternAspects: all 25 real (pair, aspect) combinations have written copy after batch 8 (rising-midheaven excluded by natalAspects() itself)', () => {
+  // Sweep every pair x aspect combination directly (not sampled from real
+  // charts) to confirm completeness against the actual COPY map, the same
+  // thing the "missing" dev flag exists to catch if it regresses.
+  const pairs = ['sunmoon', 'sunrising', 'sunmidheaven', 'moonrising', 'moonmidheaven'];
+  const aspectNames = ['conjunction', 'opposition', 'trine', 'square', 'sextile'];
+  const missing = [];
+  for (const pair of pairs) {
+    for (const aspect of aspectNames) {
+      if (!READING_COPY[`ASPECT.${pair}.${aspect}`]) missing.push(`${pair}.${aspect}`);
+    }
+  }
+  assert.deepEqual(missing, []);
 });
 
 test('patternAspects: no aspects in orb falls back to ASPECT.none, real corpus text', () => {

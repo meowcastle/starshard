@@ -18,8 +18,8 @@
 // -- the Sounding's cast-kind flavor (beat 2 of the nightly loop) -----------
 export const CAST_FLAVOR = {
   steady: 'a steady night: one card, read in place.',
-  turning: 'the lantern is in the last quarter of this step. tonight reads as a pair.',
-  threshold: 'the lantern stands right at a threshold, minutes wide. tonight is rare.',
+  turning: 'the moon is in the last quarter of this station. tonight reads as a pair.',
+  threshold: 'the moon stands right at a threshold, minutes wide. tonight is rare.',
 };
 
 // -- the Sounding's relational line (beat 3, "for you tonight") -------------

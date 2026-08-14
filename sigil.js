@@ -179,11 +179,19 @@ export function movingLight(chart, { timeKnown }) {
 
 /**
  * The natal-to-natal aspects between a chart's four trusted points (sun,
- * moon, rising, midheaven — PRODUCT.md §3), all six possible pairs, sorted
- * tightest-orb-first. Reuses transits.js's classifyAspect() rather than a
- * second copy of the orb table — the Deep Chart's PATTERN tab (this) and
- * the daily's live transit (transits.js's natalContacts()) are the same
- * geometry against two different sets of longitudes.
+ * moon, rising, midheaven — PRODUCT.md §3), five of the six possible pairs,
+ * sorted tightest-orb-first. Reuses transits.js's classifyAspect() rather
+ * than a second copy of the orb table — the Deep Chart's PATTERN tab (this)
+ * and the daily's live transit (transits.js's natalContacts()) are the
+ * same geometry against two different sets of longitudes.
+ *
+ * rising-midheaven is deliberately excluded: it's mostly a coordinate-
+ * system artifact, not a chart fact. Sampled across 20,000 synthetic
+ * charts (real placidusCusps(), varied RAMC and latitude): square ~42-48%
+ * of the time, no aspect ~47-50%, conjunction/opposition essentially
+ * geometrically impossible (~0.1%). corpus-chart-daily.md's batch 8
+ * production notes carry the full table; verified independently before
+ * cutting this pair, not taken on the corpus doc's word alone.
  *
  * Rising and midheaven are excluded without a birth time, same rule (and
  * same reason — computeChart() never itself returns a null `asc`) as
@@ -196,6 +204,7 @@ export function natalAspects(chart, { timeKnown }) {
   const out = [];
   for (let i = 0; i < points.length; i++) {
     for (let j = i + 1; j < points.length; j++) {
+      if (points[i][0] === 'rising' && points[j][0] === 'midheaven') continue;
       const [from, fromLon] = points[i], [to, toLon] = points[j];
       const hit = classifyAspect(fromLon, toLon);
       if (hit) out.push({ from, to, ...hit });

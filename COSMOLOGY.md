@@ -62,18 +62,37 @@ Earth"; the traveler is *currently* Earth.
 
 ### Locked (Justin-ratified, Aug 12) — with reveal tiers (§5)
 
+> **Amended Aug 14 (Justin).** The tier grading below is unchanged and
+> still governs *when* a term may appear. What it never bounded is **how
+> many land at once** — tier 0 holds roughly forty coined words, so a
+> first-night traveler could legitimately meet thirteen of them before
+> knowing what a rising sign is.
+>
+> The sorting rule is now: **does the term name something astrology has
+> no word for?** *shard*, *station*, *the Becoming* and the five Traveler
+> types do, and they stay. **The Lantern, Sigil, Sky, Sounding, Current,
+> Light, Keeper and Step do not — each renames something that already has
+> a free name, and is retired from every user-facing surface.** They
+> remain valid internal identifiers (`sigil.js`, `soundingReading()`,
+> `KEEPER.*` slot IDs); the retirement is about strings a traveler reads,
+> not symbols an engineer types.
+>
+> The budget, per surface: **one new noun, and it has to be something you
+> can point at.** `WRITING.md` §"The vocabulary budget" is the binding
+> version with the substitution table.
+
 | Term | Meaning | Tier |
 |---|---|---|
-| **Star Shard** | your Sigil — the piece of the first star you carry; also the product name, now with its full meaning | 0 |
-| **The Moonroad** | Earth's leg of the greater road; 28 stations | 0 |
-| **Steps** | the four positions within a station: Entering · Dwelling · Turning · Leaving | 0 |
+| **Star Shard** | your chart, as an object — the piece of the first star you carry; also the product name, now with its full meaning | 0 |
+| **The Moonroad** | Earth's leg of the greater road; 28 stations. **Never yet surfaced (0 occurrences in the corpus) — keep it that way until *station* is second nature**; it would be a second new noun on a surface that already spent its one | 0, unspent |
+| **Steps** | the four positions within a station: Entering · Dwelling · Turning · Leaving. **The four position words ship; the category label "Step" does not** — they are ordinary English, not names to learn | 0 (values only) |
 | **Seedborn / Homebound / Outbound / Emberwake / Farbank** | the five Traveler types | 0 |
 | The 28 epithets | The Gate … The Thread (the approved slate) | 0 |
-| **The Lantern** | the Moon on the road; keeps "moon" for astronomy, "Lantern" for story | 0 |
+| ~~**The Lantern**~~ | **retired Aug 14** — say *the moon*. The rename bought a translation step and nothing else | — |
 | **Recollection** | the collection mechanic — Plato's own translated word; *to re-collect = to remember* | 1 |
 | **The Silverway** | the greater road — the Chinese Silver River + the Maya white road, coined blend | 2 |
 | **The Great Sowing** | the primordial burst — Timaeus 41e "sown into the instruments of time" + literal nucleosynthesis | 3 |
-| **Currents / Lights / Keepers / Skies / Sigil / Sounding** | as in REBOOT.md | 0 |
+| ~~**Currents / Lights / Keepers / Skies / Sigil / Sounding**~~ | **retired Aug 14** as user-facing terms — internal identifiers only. Say *the moon's phase*, *the day's planet*, *this stretch of the road*, *your chart*, *tonight* | — |
 
 Grounding for the two new types: **Emberwake** carries the coal from the
 Maya first hearth (the fire whose smoke is the Orion Nebula) in the sun's

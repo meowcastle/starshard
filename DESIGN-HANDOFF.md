@@ -74,6 +74,46 @@ we need is an interface.
 live in the codex, next to the thing they decorate. No prices in the
 reading flow, ever.
 
+## The vocabulary retirement (Aug 14 — do this at merge)
+
+`WRITING.md` gained a **vocabulary budget**: one new noun per surface,
+everything else in free astrology vocabulary. Eight coined terms are
+retired from user-facing strings because each renames something that
+already has a free name. They stay valid as internal identifiers — this
+is about strings a traveler reads, not symbols in the code.
+
+**The corpus never leaked any of them.** Every occurrence is in markup,
+and it is seven strings total.
+
+`Star Shard v3.dc.html` — **live, 2 strings**:
+
+| line | from | to |
+|---|---|---|
+| 451 | `tonight the lantern stands in` | `tonight the moon stands in` |
+| 716 | `{{ sndStepName }} · the lantern stands here tonight` | `{{ sndStepName }} · the moon stands here tonight` |
+
+`Star Shard - Night Loop (hi-fi).dc.html` — **unmerged, 5 strings.**
+Catch these before the merge or they arrive as seventeen:
+
+| from | to |
+|---|---|
+| `☾ THE LANTERN, TONIGHT` | `☾ THE MOON, TONIGHT` |
+| `tonight the lantern stands in` | `tonight the moon stands in` |
+| `where the lantern came from, where it goes next` | `where the moon came from, where it goes next` |
+| `the lantern is in the last quarter of this step. tonight reads as a pair.` | `the moon is in the last quarter of this station. tonight reads as a pair.` |
+| `The Void · dwelling is lit on your ring. three steps left in this arc — the lantern comes back in 27 nights.` | `The Void is lit on your ring. three nights left in this stretch — the moon comes back in 27.` |
+
+**Keep the four position words** — *entering, dwelling, turning,
+leaving*. They're ordinary English describing where something is. The
+category label "Step" is the jargon; the values aren't. `sndStepName`
+keeps its name and keeps rendering.
+
+**The three nouns that survive, one per surface:** *shard* (arrival),
+*station* (night loop), *the Becoming* (Deep Chart). If a fourth coined
+word appears in a layout, it's a bug in the copy, not a gap — raise it.
+
+---
+
 ## Copy is final; layout should fit it
 
 Every string for every screen now exists in the two corpus files. **Do

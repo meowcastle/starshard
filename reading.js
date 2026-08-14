@@ -312,6 +312,25 @@ export function fullReading({ sigil, chart, stations, copy, skyOf, name, birthPl
   return { sections, meta: { wordCount } };
 }
 
+// PRODUCT.md §6b/§9: the live transit reads as a printed fact ("saturn
+// 2.1deg from square to your sun, retrograde"), not generated prose — the
+// orb itself is the retention mechanic (WRITING.md: "claimed rarity is
+// worthless; computed rarity is a gift"), so it has to be the real number.
+// point labels match sigil.js's natalAspects()/reading.js's PATTERN tab
+// (POINT_LABEL above) rather than transits.js's raw 'mc'.
+const TRANSIT_POINT_LABEL = { sun: 'sun', moon: 'moon', rising: 'rising', mc: 'midheaven' };
+
+function formatLiveTransit(hit) {
+  if (!hit) return null;
+  const point = TRANSIT_POINT_LABEL[hit.point];
+  const orbUsed = Math.round(hit.orbUsed * 10) / 10;
+  return {
+    planet: hit.planet, point, aspect: hit.aspect, plain: hit.plain,
+    orbUsed, maxOrb: hit.maxOrb, retrograde: hit.retrograde,
+    line: `${hit.planet} ${orbUsed}° from ${hit.aspect} to your ${point}${hit.retrograde ? ', retrograde' : ''}`,
+  };
+}
+
 /**
  * The nightly Sounding's five beats. `cast` is sky.js's castKind() output
  * for tonight's real moon position; `relation` is todayRelation()'s tārābala
@@ -320,8 +339,17 @@ export function fullReading({ sigil, chart, stations, copy, skyOf, name, birthPl
  * this): a re-visited Sounding for the SAME tonight (station, step, cast
  * kind) reads identically — the seed includes tonight's position and kind,
  * not just the natal sigil — a different night reads differently.
+ *
+ * `liveTransit` is transits.js's pickLiveTransit() output (or null — no
+ * transit in orb is common and honest, per its own docs), pre-computed by
+ * the caller. soundingReading() stays a pure sync function like every
+ * other composer here; the async pipeline (planetPositions() ->
+ * natalContacts() -> pickLiveTransit()) is the caller's job, not this
+ * function's — same separation as sigil.js's ascRulerHouse() being called
+ * before reading.js's houseReading() sees its result. Optional (defaults
+ * to null) so existing callers keep working unchanged until they're wired.
  */
-export function soundingReading({ sigil, cast, relation, light, stations, copy }) {
+export function soundingReading({ sigil, cast, relation, light, stations, copy, liveTransit = null }) {
   const seed = `${sigilSeed(sigil)}|${cast.current.station},${cast.current.step},${cast.kind}`;
   const now = stations.STATIONS[cast.current.station];
   const becomingSt = cast.becoming ? stations.STATIONS[cast.becoming.station] : null;
@@ -347,7 +375,7 @@ export function soundingReading({ sigil, cast, relation, light, stations, copy }
     stepName, closeLine: copy.CLAIM_CLOSE_LINE,
   };
 
-  return { station, cast: castBeat, counsel, question, claim };
+  return { station, cast: castBeat, counsel, question, claim, liveTransit: formatLiveTransit(liveTransit) };
 }
 
 // Plain-language point labels for the PATTERN tab — the ring/point-marker
@@ -359,9 +387,11 @@ const POINT_LABEL = { sun: 'sun', moon: 'moon', rising: 'rising', midheaven: 'mi
 
 /**
  * The Deep Chart's PATTERN tab: sigil.js's natalAspects() geometry, matched
- * against the real corpus (corpus-chart-daily.md batch 7's ASPECT.* — ten
- * of the eighteen possible pair+aspect combinations are written; MC pairs
- * and a few pair+aspect combinations aren't yet).
+ * against the real corpus (corpus-chart-daily.md's ASPECT.* — batch 7 wrote
+ * 10, batch 8 added the remaining 15; all 25 of the 25 real (pair, aspect)
+ * combinations are written now that natalAspects() excludes rising-
+ * midheaven, so the missing-copy path below is a regression guard, not an
+ * expected case).
  *
  * Mirrors Star Shard - Deep Chart (hi-fi).dc.html's own reference
  * implementation's choice on the missing-copy question deliberately, not
@@ -389,7 +419,8 @@ export function patternAspects(aspects, copy) {
       missing: entry ? '' : `${key} — not in the corpus yet, raise it`,
     };
   });
-  return { items, none: items.length === 0, noneText: copy['ASPECT.none'].text };
+  const none = items.length === 0;
+  return { items, none, noneText: none ? copy['ASPECT.none'].text : '' };
 }
 
 /**

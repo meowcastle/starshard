@@ -141,3 +141,39 @@ test('planetPositions: Saturn matches PRODUCT.md §0\'s published cross-check (A
   assert.ok(Math.abs(signDeg - 14.5) < 1, `expected ~14.5deg Aries, got ${signDeg.toFixed(2)}`);
   assert.equal(positions.Saturn.retrograde, true);
 });
+
+// -- outerPositions / standingWeather (the weekly's slow movers) ----------
+
+test('outerPositions: all three outers return a longitude in [0,360), no retrograde flag (unlike planetPositions)', async () => {
+  const positions = await T.outerPositions(new Date());
+  for (const name of ['Uranus', 'Neptune', 'Pluto']) {
+    assert.ok(name in positions, `missing ${name}`);
+    assert.ok(positions[name].lon >= 0 && positions[name].lon < 360, `${name} lon out of range: ${positions[name].lon}`);
+    assert.equal('retrograde' in positions[name], false);
+  }
+});
+
+test('outerPositions: deterministic for a fixed date', async () => {
+  const date = new Date('2026-04-12T21:14:00Z');
+  const a = await T.outerPositions(date);
+  const b = await T.outerPositions(date);
+  assert.deepEqual(a, b);
+});
+
+test('standingWeather: rising and MC excluded without a birth time, same rule as natalContacts', () => {
+  const positions = { Uranus: { lon: 14 } };
+  const chart = { sunLon: 10, moonLon: 200, asc: 14, mc: 14 };
+  const withTime = T.standingWeather(positions, chart, { timeKnown: true });
+  const withoutTime = T.standingWeather(positions, chart, { timeKnown: false });
+  assert.ok(withTime.some(c => c.point === 'rising'));
+  assert.ok(!withoutTime.some(c => c.point === 'rising' || c.point === 'mc'));
+});
+
+test('standingWeather: sorted tightest-orb-first, and never carries a retrograde field (unlike natalContacts)', () => {
+  const positions = { Uranus: { lon: 12 }, Neptune: { lon: 5 } }; // both conjunct sun@0, different orbs
+  const chart = { sunLon: 0, moonLon: 200, asc: 0, mc: 0 };
+  const contacts = T.standingWeather(positions, chart, { timeKnown: false });
+  const sunHits = contacts.filter(c => c.point === 'sun');
+  assert.ok(sunHits[0].orbUsed <= sunHits[sunHits.length - 1].orbUsed);
+  assert.ok(contacts.every(c => !('retrograde' in c)));
+});

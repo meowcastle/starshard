@@ -53,8 +53,9 @@ being the subject.
    doesn't have takes.
 4. **Name the tension; don't prescribe the virtue.** We say what's hard
    about being this way. We never say what they should become.
-5. **"We" is allowed only about method** — *we compute, we don't guess,
-   we won't guess your birth time.* Never *we believe.*
+5. **"We" appears nowhere** — not about belief, and (since the
+   fourth-wall law below) not about method either. The product has no
+   first person.
 6. **The universality test.** Would this line read identically to
    someone whose politics, faith and life look nothing like the
    writer's? If not, it's an opinion wearing a reading.
@@ -79,10 +80,11 @@ already have:
   Claimed rarity is worthless; computed rarity is a gift.
 - **Specificity nobody could have guessed** — the drafts folder, how
   people take their coffee, what they said they were afraid of in 2019.
-- **The recognition beat.** *"You probably already knew most of that.
-  That isn't a trick — it's the point."* Handing someone their own
-  knowledge back, in words they didn't have to find, is the feeling
-  we're selling.
+- **The recognition beat.** *"most people do."* · *"it's a strange
+  thing to see it from outside, in someone else's words."* Handing
+  someone their own knowledge back, in words they didn't have to find,
+  is the feeling we're selling — and it lands only if we don't announce
+  that we're doing it.
 
 ## Never break the fourth wall
 
@@ -127,3 +129,48 @@ version is the one that gets finished.**
 The named cost in a gait passage. The disagreement between traditions.
 The one uncanny verifiable fact. Those are the product. Everything
 around them is packaging, and packaging should be thin.
+
+## The vocabulary budget (Justin, Aug 14)
+
+**One new noun per surface, and it has to be something you can point at.**
+
+Everything else is **free vocabulary**: the planets, the twelve signs,
+sun / moon / rising, the houses, the five aspects, retrograde, new and
+full moon, orbs in degrees. These have Wikipedia pages. Use them densely
+and without apology — density in *shared* language reads as expertise;
+density in *private* language reads as a cult.
+
+Sort every coined term by one question: **does it name something
+astrology has no word for?**
+
+**Earns its slot — spend it:**
+
+| Term | Surface | Why |
+|---|---|---|
+| **shard** | arrival | the collectible. You cannot collect an unnamed object |
+| **station** | night loop | the 28 lunar mansions. Standard astrology genuinely doesn't use them — this is the differentiator |
+| **the Becoming** | Deep Chart | ours, computed, no equivalent anywhere |
+| **Seedborn / Emberwake / Farbank** *et al.* | arrival, once | a computed rarity with a real percentage. Rarity needs a name to be told |
+
+**Does not — it renames something already free:**
+
+| Cut | Say instead |
+|---|---|
+| the Lantern | **the moon** |
+| Sigil | **your chart** |
+| Sky *(as quadrant)* | **this stretch of the road** |
+| Sounding *(user-facing)* | **tonight** |
+| Current | *(don't surface it — it's a computed input, not a reading)* |
+| Light *(as phase-name)* | **new / waxing / full / waning moon** |
+| Keeper *(as label)* | **the day's planet** — "sunday, the sun's own day" |
+| Step *(as label)* | drop the label; the four position words survive |
+
+The four position words — *entering, dwelling, turning, leaving* — stay.
+They are ordinary English describing where something is, not names a
+reader has to learn. **The category label is the jargon; the values
+aren't.** Same rule retires "Keeper" while keeping *"tuesday — tyr's day
+in english, mars's day in french."*
+
+**The test:** would a stranger who has read one horoscope in their life
+know what this word means, or is it a word only this app uses? If it's
+ours, it had better be attached to something they now own.

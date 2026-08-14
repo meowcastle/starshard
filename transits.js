@@ -134,3 +134,62 @@ export function pickLiveTransit(contacts) {
     Number(big3(b)) - Number(big3(a))
   )[0];
 }
+
+// The three outers, kept fully separate from TRANSIT_PLANETS/
+// planetPositions()/pickLiveTransit() rather than added alongside them —
+// PRODUCT.md §7b measured median contact duration against this same orb
+// table (real ephemeris, 24 evenly-spaced natal points, four years):
+// Uranus 178 days, Neptune 849 days, Pluto never left orb at all. That's
+// not a nightly signal, it's the season, and the whole point is that they
+// must never be able to leak into pickLiveTransit()'s candidate pool — an
+// outer planet becoming "tonight's transit" would mean every night for
+// months says the same thing.
+const OUTER_PLANETS = ['Uranus', 'Neptune', 'Pluto'];
+
+/**
+ * Today's (or `date`'s) tropical ecliptic longitude for the three outers —
+ * no retrograde flag, unlike planetPositions(): PRODUCT.md §7b's weekly
+ * beats (the backdrop, the honest note) read the aspect and its slow
+ * persistence, not the outer's own direction, and a planet retrograde
+ * ~40% of any given year adds a fact nothing downstream asked for.
+ * async + dynamically imported, same lazy-load convention as
+ * planetPositions() and sky.js's planetaryHours().
+ */
+export async function outerPositions(date = new Date()) {
+  const AE = await import('./astronomy-engine.js');
+  const out = {};
+  for (const name of OUTER_PLANETS) {
+    out[name] = { lon: norm(AE.Ecliptic(AE.GeoVector(AE.Body[name], date, true)).elon) };
+  }
+  return out;
+}
+
+/**
+ * The weekly's "standing weather" (PRODUCT.md §7b beat 4 "the backdrop"
+ * and beat 7 "the honest note") — Uranus/Neptune/Pluto contacts against
+ * the four trusted natal points, sorted tightest-orb-first. Deliberately
+ * allowed to read identically for weeks; that persistence is the point,
+ * not a bug to fix with variety. Same natal-point/timeKnown shape as
+ * natalContacts() (rising/MC excluded without a birth time) but never
+ * merged with it — this never reaches pickLiveTransit() or PLANET_WEIGHT,
+ * both of which stay exactly as they were.
+ */
+export function standingWeather(positions, chart, { timeKnown }) {
+  const points = [
+    { point: 'sun', lon: chart.sunLon },
+    { point: 'moon', lon: chart.moonLon },
+  ];
+  if (timeKnown) {
+    points.push({ point: 'rising', lon: chart.asc });
+    points.push({ point: 'mc', lon: chart.mc });
+  }
+
+  const contacts = [];
+  for (const [planet, pos] of Object.entries(positions)) {
+    for (const p of points) {
+      const hit = classifyAspect(pos.lon, p.lon);
+      if (hit) contacts.push({ planet, point: p.point, ...hit });
+    }
+  }
+  return contacts.sort((a, b) => a.orbUsed - b.orbUsed);
+}

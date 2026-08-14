@@ -293,6 +293,12 @@ test('natalAspects: reuses transits.js\'s classifyAspect (not a second orb table
   assert.equal(outOfOrb.find(a => a.from === 'sun' && a.to === 'moon'), undefined);
 });
 
+test('natalAspects: rising-midheaven is never returned, even when exactly conjunct — mostly a coordinate-system artifact, not a chart fact (corpus-chart-daily.md batch 8)', () => {
+  const chart = { sunLon: 60, moonLon: 140, asc: 0, mc: 0 }; // asc===mc: exact conjunction, if it were checked
+  const aspects = G.natalAspects(chart, { timeKnown: true });
+  assert.ok(!aspects.some(a => (a.from === 'rising' && a.to === 'midheaven') || (a.from === 'midheaven' && a.to === 'rising')));
+});
+
 // -- ascRulerHouse ----------------------------------------------------------
 
 const EQUAL_CUSPS = Array.from({ length: 12 }, (_, i) => i * 30); // 0,30,60,...,330 — house N+1 = [30N, 30N+30)
