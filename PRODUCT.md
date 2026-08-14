@@ -171,6 +171,82 @@ horoscope has twelve possible readings per day. Ours has *your chart's*
 than for someone whose moon is elsewhere. **Say that out loud once, on
 the first daily**, then let it be true silently forever after.
 
+### 6b. The weekly's seven beats (Justin, Aug 14)
+
+Justin ran a weekly through Claude and liked it. Worth reading closely,
+because the thing that makes it work is **not** the astrology — it's the
+form, and the form is copyable. Seven beats, in order:
+
+| # | Beat | What it does |
+|---|---|---|
+| 1 | **The standout** | one thing, named, with a weekday. "New Moon Wednesday, on your Midheaven." |
+| 2 | **The exact one** | the orb, printed. *"Uranus sextile your Midheaven (0.0° — perfect)"* |
+| 3 | **The two-way** | one contact that can go either way, and the choice is handed over |
+| 4 | **The backdrop** | the slow movers, still holding. Doesn't change week to week — that's the point |
+| 5 | **The rhythm** | day by day, driven by the moon's sign. Monday inward, Tue–Wed visible, Thu–Fri detail |
+| 6 | **Best days** | an actual recommendation. "Tuesday through Thursday" |
+| 7 | **The honest note** | what's still hard, named, unresolved. The reading does not end on a high |
+
+Beat 2 is the retention mechanic and we already compute it:
+`transits.js` returns `orbUsed`. **Print the number.** A decimal degree
+that changes daily and hits 0.0° for one week only is checkable rarity —
+`WRITING.md`'s strongest lever — and it is free.
+
+Beat 7 is what stops the whole thing from reading as flattery. Co–Star
+gets screenshotted for being harsh; the sample earns its optimism by
+refusing to retract the hard part.
+
+**And the finding that matters most: the sample uses zero invented
+words.** Every term in it is either a planet, a sign, an angle, a house,
+or a named aspect — things with a Wikipedia page. It is dense, specific,
+and technical, and it costs a reader nothing to enter. That is the bar.
+
+---
+
+### 6c. The vocabulary budget (binding — supersedes the flat tier-0 list)
+
+`COSMOLOGY.md` §2 grades our coined terms by *reveal progress*. That
+grading is right and stays. What it does not do is bound how many land at
+once: **tier 0 currently holds around forty coined words**, so a
+first-night traveler can legitimately meet *shard, Moonroad, station,
+step, Lantern, Keeper, Sky, Sigil, Sounding, Current, Light, Farbank* and
+an Arabic epithet — thirteen new words before they know what a rising
+sign is.
+
+Sort every coined term by one question: **does it name something that has
+no standard name?**
+
+**KEEP — names a real thing astrology has no word for:**
+
+| Term | Why it earns its slot |
+|---|---|
+| **shard** | the collectible. You cannot collect an un-named object |
+| **station** | 28 lunar mansions. Standard astrology genuinely doesn't use them — this is the differentiator |
+| **the Becoming** | our mechanic, computed, no equivalent anywhere |
+| **Seedborn / Emberwake / Farbank** *et al.* | a computed rarity with a real percentage. Rarity needs a name to be told |
+
+**CUT OR DEFER — a rename of something that already has a free name:**
+
+| Term | What it renames | Cost |
+|---|---|---|
+| **the Lantern** | the moon | a translation step, for nothing. Nobody has two mental slots for the moon |
+| **Sky** | a quadrant / a season of the road | reader hears "sky" and thinks *sky* |
+| **Sigil** | your chart | "your chart" is already the more evocative phrase |
+| **Current, Light, Sounding, Keeper, Step** | tārābala relation, moon phase, the reveal beat, planetary ruler, decan-of-station | five internal system names for mechanics the reader has not met |
+
+**The budget, per surface: one new noun, and it must be something you can
+point at.** The arrival gets *shard*. The night loop gets *station*. The
+Deep Chart gets *the Becoming*. Nothing else, until the traveler has
+asked.
+
+**Everything else on every surface is free vocabulary** — planets, the
+twelve signs, houses, the five aspects, retrograde, new and full moon,
+orbs in degrees. Use them densely and without apology. Density in *shared*
+language reads as expertise; density in *private* language reads as a
+cult.
+
+---
+
 ### 7. What a daily is actually made of
 
 Three ingredients, computed before any prose exists:
@@ -193,6 +269,51 @@ Three ingredients, computed before any prose exists:
 That third one is the retention mechanic and it's free: **roughly once a
 month the moon crosses your own sun's station**, and that night's daily
 should say so and land differently.
+
+### 7b. The weekly needs three planets the engine doesn't have
+
+`transits.js` computes Mercury, Venus, Mars, Jupiter, Saturn. Uranus,
+Neptune and Pluto are excluded on the stated ground that they "move too
+slowly to produce a *nightly* signal." **That reasoning is correct for
+`pickLiveTransit()` and should not change.** It is also exactly why they
+are the only thing that can carry the weekly's beat 4 and beat 7.
+
+Measured against the vendored ephemeris — 24 evenly-spaced natal points,
+four years, our own orb table — here is how long one contact lasts:
+
+| planet | median contact | mean |
+|---|---|---|
+| Mercury | 8 days | 10d |
+| Venus | 10 days | 12d |
+| Mars | 18 days | 21d |
+| Jupiter | 56 days | 109d |
+| Saturn | 170 days | 201d |
+| **Uranus** | **178 days** | 298d |
+| **Neptune** | **849 days** | 777d |
+| **Pluto** | **never left orb in 4 years** | — |
+
+That is not a defect, it is the register. Mercury through Mars is *this
+week*. Jupiter and Saturn are *this season*. Uranus, Neptune and Pluto
+are *these years* — and "the foundation is still being rebuilt underneath
+you, and it will be for a while yet" is a true, checkable, unrepeatable-
+by-a-sign-horoscope sentence that we currently cannot write.
+
+`AE.Body` already exposes all three (verified). The change is additive:
+
+1. A second export — `standingWeather(positions, chart)` — over the three
+   outers only, returning contacts that are **deliberately allowed to be
+   identical for weeks**. Beat 4 renders it; beat 7 names the hardest one.
+2. `pickLiveTransit()` untouched. Outers never enter the nightly pick,
+   or every night says Pluto forever.
+3. `PLANET_WEIGHT` untouched — it is the nightly tiebreak, not a
+   significance ranking.
+
+Also: the outers belong on the **Deep Chart** as natal placements. A
+birth chart without Uranus, Neptune and Pluto reads as incomplete to
+anyone who has seen one elsewhere, and that is the surface where being
+recognisably a real chart matters most.
+
+---
 
 ### 8. The generative constitution (binding)
 

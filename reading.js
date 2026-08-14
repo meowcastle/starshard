@@ -386,7 +386,7 @@ export function patternAspects(aspects, copy) {
       text: entry ? entry.text : '',
       hasPassage: !!entry,
       missingIf: !entry,
-      missing: entry ? '' : `${key} — not in corpus batch 7, raise it`,
+      missing: entry ? '' : `${key} — not in the corpus yet, raise it`,
     };
   });
   return { items, none: items.length === 0, noneText: copy['ASPECT.none'].text };

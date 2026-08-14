@@ -173,7 +173,7 @@ for (const s of allSlots) {
 }
 
 const stationSlots = allSlots.filter(s => s.id.startsWith('STATION.'));
-if (allSlots.length !== 243) throw new Error(`expected 243 total slots, got ${allSlots.length}`);
+if (allSlots.length !== 258) throw new Error(`expected 258 total slots, got ${allSlots.length}`);
 if (stationSlots.length !== 112) throw new Error(`expected 112 STATION.* slots, got ${stationSlots.length}`);
 
 // corpus-arrival.md is UI copy (CTAs, terminal readout lines, toggle

@@ -1605,6 +1605,141 @@ export const COPY = {
       }
     ]
   },
+  "ASPECT.sunrising.sextile": {
+    "text": "your sun and your rising sign sit a sixth of the wheel apart — near enough to cooperate, far enough apart to be clearly two things. the way you come across is a usable version of what you are. not identical, and not a mask: a working translation. you can present yourself accurately without presenting yourself completely, and most people never notice the difference. this one only pays out when you use it, though. left alone, the door and the room behind it drift, and you end up with a reliable first impression that has quietly stopped describing anybody.",
+    "tokens": [
+      {
+        "text": "your sun and your rising sign sit a sixth of the wheel apart — near enough to cooperate, far enough apart to be clearly two things. the way you come across is a usable version of what you are. not identical, and not a mask: a working translation. you can present yourself accurately without presenting yourself completely, and most people never notice the difference. this one only pays out when you use it, though. left alone, the door and the room behind it drift, and you end up with a reliable first impression that has quietly stopped describing anybody.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.sunrising.opposition": {
+    "text": "your sun sits directly opposite your rising sign — the thing you are is on the far side of the sky from the door people come through. you get met as your own opposite. warm reads as cool, careful reads as reckless, and the correction never fully takes. what you end up with is a life spent among people who met the other version and stayed anyway, which is a filter, and a good one. you learned to argue for yourself early. arguing for yourself is a habit that outlives the need for it.",
+    "tokens": [
+      {
+        "text": "your sun sits directly opposite your rising sign — the thing you are is on the far side of the sky from the door people come through. you get met as your own opposite. warm reads as cool, careful reads as reckless, and the correction never fully takes. what you end up with is a life spent among people who met the other version and stayed anyway, which is a filter, and a good one. you learned to argue for yourself early. arguing for yourself is a habit that outlives the need for it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonrising.sextile": {
+    "text": "your moon and your rising sign are a sixth of the wheel apart. what you feel and what you show are on speaking terms. you can name a mood while you are still inside it, and then decide whether to bring it into the room. that is rarer than it sounds — most people get one or the other. it doesn't run by itself, though. under strain the connection is the first thing to go, and you'll recognise it as a day where you were perfectly pleasant and entirely absent.",
+    "tokens": [
+      {
+        "text": "your moon and your rising sign are a sixth of the wheel apart. what you feel and what you show are on speaking terms. you can name a mood while you are still inside it, and then decide whether to bring it into the room. that is rarer than it sounds — most people get one or the other. it doesn't run by itself, though. under strain the connection is the first thing to go, and you'll recognise it as a day where you were perfectly pleasant and entirely absent.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonrising.square": {
+    "text": "your moon sits at a right angle to your rising sign. what you feel and how you land keep grinding against each other. you arrive wrong. not badly — wrong: your face does something your insides never authorised, and you spend the first ten minutes of everything correcting an impression you didn't mean to make. people who have known you five years still occasionally ask if you're upset. you got very good at explaining yourself as a result, and the skill is real. it also means you have had far fewer conversations that started from being understood.",
+    "tokens": [
+      {
+        "text": "your moon sits at a right angle to your rising sign. what you feel and how you land keep grinding against each other. you arrive wrong. not badly — wrong: your face does something your insides never authorised, and you spend the first ten minutes of everything correcting an impression you didn't mean to make. people who have known you five years still occasionally ask if you're upset. you got very good at explaining yourself as a result, and the skill is real. it also means you have had far fewer conversations that started from being understood.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonrising.trine": {
+    "text": "your moon and your rising sign sit an easy third of the wheel apart. you show up as what you feel, with no translation step. rooms settle around you. people tell you things early. you have almost certainly been told you're easy to talk to by someone you had just met, and it isn't a technique — the door and the weather behind it are the same temperature. what it doesn't come with is a shut-off. easy access is access, and the people who take the most of it are rarely the ones who ask.",
+    "tokens": [
+      {
+        "text": "your moon and your rising sign sit an easy third of the wheel apart. you show up as what you feel, with no translation step. rooms settle around you. people tell you things early. you have almost certainly been told you're easy to talk to by someone you had just met, and it isn't a technique — the door and the weather behind it are the same temperature. what it doesn't come with is a shut-off. easy access is access, and the people who take the most of it are rarely the ones who ask.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.sunmidheaven.conjunction": {
+    "text": "your sun sits on the top of the chart — the point directly overhead at your minute. you were born near the middle of the day, with the sun as high as it was going to get. what you are and what you're known for are the same thing. there is no private version being kept back for later, which makes you legible, and unusually early to be taken seriously. the whole of you is in the shop window. when the work goes badly it isn't a bad quarter, it's a referendum, and you have never located the part of yourself that isn't on the record.",
+    "tokens": [
+      {
+        "text": "your sun sits on the top of the chart — the point directly overhead at your minute. you were born near the middle of the day, with the sun as high as it was going to get. what you are and what you're known for are the same thing. there is no private version being kept back for later, which makes you legible, and unusually early to be taken seriously. the whole of you is in the shop window. when the work goes badly it isn't a bad quarter, it's a referendum, and you have never located the part of yourself that isn't on the record.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.sunmidheaven.sextile": {
+    "text": "your sun and the top of your chart sit a sixth of the wheel apart — close enough to work together when you ask them to. what you're good at and what you're known for are adjacent rather than identical. the gap is small enough to close and wide enough that closing it has to be a decision. people in this position tend to arrive at the right work slightly late and then be very good at it. nothing forces the issue. you can spend a decade doing something next door to your actual work and never feel the friction that would have told you.",
+    "tokens": [
+      {
+        "text": "your sun and the top of your chart sit a sixth of the wheel apart — close enough to work together when you ask them to. what you're good at and what you're known for are adjacent rather than identical. the gap is small enough to close and wide enough that closing it has to be a decision. people in this position tend to arrive at the right work slightly late and then be very good at it. nothing forces the issue. you can spend a decade doing something next door to your actual work and never feel the friction that would have told you.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.sunmidheaven.square": {
+    "text": "your sun sits at a right angle to the top of your chart. what you are and what you get recognised for pull in different directions. you have been rewarded for the wrong thing. it started early, probably at school, and it worked — which is the trap. the competence that gets applauded is not the one you would choose to be measured by, and every promotion has moved you slightly further from the part you actually came to do. squares don't resolve, they produce. everyone with this angle who got where they meant to go did it by disappointing somebody on purpose.",
+    "tokens": [
+      {
+        "text": "your sun sits at a right angle to the top of your chart. what you are and what you get recognised for pull in different directions. you have been rewarded for the wrong thing. it started early, probably at school, and it worked — which is the trap. the competence that gets applauded is not the one you would choose to be measured by, and every promotion has moved you slightly further from the part you actually came to do. squares don't resolve, they produce. everyone with this angle who got where they meant to go did it by disappointing somebody on purpose.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.sunmidheaven.trine": {
+    "text": "your sun and the top of your chart sit an easy third of the wheel apart. what you are and what the world sees are the same shape. work suits you. not any work — the fit is specific, and either you found it early or it found you, and you have had the uncommon experience of being paid for something you would have done anyway. it also means you have never had to ask whether you'd still do this with nobody watching. one day something will ask.",
+    "tokens": [
+      {
+        "text": "your sun and the top of your chart sit an easy third of the wheel apart. what you are and what the world sees are the same shape. work suits you. not any work — the fit is specific, and either you found it early or it found you, and you have had the uncommon experience of being paid for something you would have done anyway. it also means you have never had to ask whether you'd still do this with nobody watching. one day something will ask.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.sunmidheaven.opposition": {
+    "text": "your sun sits at the bottom of the chart, directly opposite the overhead point. you were born near midnight, with the sun as far under your feet as it goes. your life happens indoors. the actual work, the real version of you, the hours that count — they are out of view, and the public building is smaller than people assume. anyone who only ever meets you at work will underestimate you, and you will let them, because correcting it would mean inviting them in.",
+    "tokens": [
+      {
+        "text": "your sun sits at the bottom of the chart, directly opposite the overhead point. you were born near midnight, with the sun as far under your feet as it goes. your life happens indoors. the actual work, the real version of you, the hours that count — they are out of view, and the public building is smaller than people assume. anyone who only ever meets you at work will underestimate you, and you will let them, because correcting it would mean inviting them in.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonmidheaven.conjunction": {
+    "text": "your moon sits on the top of the chart — your inner weather at the highest point in the sky. what you need is public. people know how you're doing before you tell them, your working life moves when your feelings do, and you have probably had at least one job end over a mood rather than a mistake. it also makes strangers trust you quickly, which has cost you time. a feeling that lives up that high is visible to people who have no business with it.",
+    "tokens": [
+      {
+        "text": "your moon sits on the top of the chart — your inner weather at the highest point in the sky. what you need is public. people know how you're doing before you tell them, your working life moves when your feelings do, and you have probably had at least one job end over a mood rather than a mistake. it also makes strangers trust you quickly, which has cost you time. a feeling that lives up that high is visible to people who have no business with it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonmidheaven.sextile": {
+    "text": "your moon and the top of your chart are a sixth of the wheel apart — available to each other whenever you use it. you can put what you care about into what you do, deliberately, on a day you choose. it doesn't happen on its own; it happens the year you decide it should. left unused the two simply run in parallel, and a decade of good work you didn't feel much about is the version of this nobody warns you about.",
+    "tokens": [
+      {
+        "text": "your moon and the top of your chart are a sixth of the wheel apart — available to each other whenever you use it. you can put what you care about into what you do, deliberately, on a day you choose. it doesn't happen on its own; it happens the year you decide it should. left unused the two simply run in parallel, and a decade of good work you didn't feel much about is the version of this nobody warns you about.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonmidheaven.square": {
+    "text": "your moon sits at a right angle to the top of your chart. what feeds you and what you're building keep interrupting each other. this is the one that shows up as a choice you are tired of making — the job or the house, the tour or the person, the year you got the thing and were miserable inside it. neither side is wrong and neither side will wait. most people with this angle stop trying to solve it and start scheduling it instead. it isn't elegant. it works.",
+    "tokens": [
+      {
+        "text": "your moon sits at a right angle to the top of your chart. what feeds you and what you're building keep interrupting each other. this is the one that shows up as a choice you are tired of making — the job or the house, the tour or the person, the year you got the thing and were miserable inside it. neither side is wrong and neither side will wait. most people with this angle stop trying to solve it and start scheduling it instead. it isn't elegant. it works.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonmidheaven.trine": {
+    "text": "your moon and the top of your chart sit an easy third of the wheel apart. what you need and what you're known for agree. you can be yourself in public and it doesn't cost anything. the work feeds you. people who meet you professionally end up actually knowing you. and because it was easy, you may never have built the wall — everyone in your working life has access to the soft part, and one of them will eventually use it.",
+    "tokens": [
+      {
+        "text": "your moon and the top of your chart sit an easy third of the wheel apart. what you need and what you're known for agree. you can be yourself in public and it doesn't cost anything. the work feeds you. people who meet you professionally end up actually knowing you. and because it was easy, you may never have built the wall — everyone in your working life has access to the soft part, and one of them will eventually use it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "ASPECT.moonmidheaven.opposition": {
+    "text": "your moon sits at the bottom of the chart, directly opposite the overhead point — as far from public view as it gets. your private life is the load-bearing one. home, the people in it, the room you go back to: that is where you live, and the career is scaffolding around it. you are unimpressed by ambition in a way that reads as modesty and isn't. you will be asked, repeatedly, why you aren't doing more with yourself, by people who have never seen the thing you are doing it all for.",
+    "tokens": [
+      {
+        "text": "your moon sits at the bottom of the chart, directly opposite the overhead point — as far from public view as it gets. your private life is the load-bearing one. home, the people in it, the room you go back to: that is where you live, and the career is scaffolding around it. you are unimpressed by ambition in a way that reads as modesty and isn't. you will be asked, repeatedly, why you aren't doing more with yourself, by people who have never seen the thing you are doing it all for.",
+        "emphasis": null
+      }
+    ]
+  },
   "ASPECT.none": {
     "text": "your lights sit at distances the old geometry never named. no fixed argument runs between them. you get to arrange them yourself.",
     "tokens": [
@@ -5275,4 +5410,4 @@ export const COPY = {
 };
 
 export const STATION_SLOTS = 112;
-export const COPY_VERSION = "eccff718";
+export const COPY_VERSION = "2512081b";

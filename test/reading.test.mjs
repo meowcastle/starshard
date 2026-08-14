@@ -252,19 +252,24 @@ test('patternAspects: a written combination returns real corpus text', () => {
 });
 
 test('patternAspects: a real aspect with no written passage is surfaced, not hidden — the tab must not lie about the chart\'s geometry', () => {
-  // sun-rising opposition is real geometry but not one of the ten written
-  // combinations (sunrising only has conjunction/square/trine).
-  const chart = { sunLon: 0, moonLon: 30, asc: 180, mc: 100 };
+  // rising-midheaven is real geometry with no written copy at all (batch
+  // 8's own production notes: this pair is mostly a coordinate-system
+  // artifact, not a chart fact — conjunction/opposition here are close to
+  // geometrically impossible in a real chart, but that's a real-world
+  // rarity, not something patternAspects() itself should assume; the
+  // fixture below constructs one directly, sidestepping real geometry,
+  // specifically to exercise the missing-copy path).
+  const chart = { sunLon: 30, moonLon: 68, asc: 0, mc: 0 };
   const aspects = G.natalAspects(chart, { timeKnown: true });
   const pattern = R.patternAspects(aspects, READING_COPY);
   assert.equal(pattern.items.length, 1);
   const item = pattern.items[0];
-  assert.equal(item.pair, 'sun + rising');
-  assert.equal(item.aspect, 'opposition');
+  assert.equal(item.pair, 'rising + midheaven');
+  assert.equal(item.aspect, 'conjunction');
   assert.equal(item.hasPassage, false);
   assert.equal(item.missingIf, true);
   assert.equal(item.text, '');
-  assert.equal(item.missing, 'ASPECT.sunrising.opposition — not in corpus batch 7, raise it');
+  assert.equal(item.missing, 'ASPECT.risingmidheaven.conjunction — not in the corpus yet, raise it');
 });
 
 test('patternAspects: no aspects in orb falls back to ASPECT.none, real corpus text', () => {
