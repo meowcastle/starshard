@@ -819,6 +819,9 @@ a{color:var(--ink-accent)}
   <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 2 · the cast</span><span class="pips">{{ sndPips }}</span></div>
   <h2 class="h2" style="margin-top:20px">{{ sndCastKindLabel }}</h2>
   <p class="muted" style="margin-top:8px">{{ sndCastFlavor }}</p>
+  <sc-if value="{{ sndHasLiveTransit }}">
+    <p class="mono-note" style="margin-top:10px">{{ sndLiveTransitLine }}</p>
+  </sc-if>
   <div style="display:flex;align-items:center;gap:10px;margin-top:18px">
     <div class="card-panel" style="flex:1;margin:0"><div class="eyebrow">now</div><div class="h3" style="margin-top:4px">{{ sndNowEpithet }}</div><div class="muted">{{ sndNowStepName }}</div></div>
     <sc-if value="{{ sndHasBecoming }}">
@@ -969,18 +972,19 @@ class Component extends DCLogic {
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.startBurst();
 
-    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api] = await Promise.all([
+    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api, transits] = await Promise.all([
       import(`./astro.js?v=${BUILD_ID}`), import(`./sigil.js?v=${BUILD_ID}`),
       import(`./sky.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
       import(`./stations.js?v=${BUILD_ID}`), import(`./reading-copy.js?v=${BUILD_ID}`),
       import(`./sigil-copy.js?v=${BUILD_ID}`),
       import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
+      import(`./transits.js?v=${BUILD_ID}`),
     ]);
     // arrivalReading() (the real corpus, PORT-SPEC.md) and soundingReading()
     // (still-placeholder Sounding content, sigil-copy.js) read from two
     // different modules — see OWNERSHIP.md's note on sigil-copy.js's
     // trimmed scope.
-    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api });
+    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api, transits });
 
     let save = null;
     try { save = JSON.parse(localStorage.getItem('starshard.sigil-save') || 'null'); } catch (e) {}
@@ -1313,7 +1317,15 @@ class Component extends DCLogic {
     const birthNak = this.sky.siderealNakshatra(s.sigChart.moonLon, s.sigChart.jd);
     const todayNak = this.sky.siderealNakshatra(moonLon, jd);
     const relation = this.sky.tarabala(birthNak.index, todayNak.index);
-    const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy });
+
+    // the live transit (PRODUCT.md §6b/§9) — the fact that makes tonight's
+    // reading actually about this chart, not every chart. Mercury-Saturn
+    // only (transits.js's own scope; the outers are the weekly's job).
+    const positions = await this.transits.planetPositions();
+    const contacts = this.transits.natalContacts(positions, s.sigChart, { timeKnown: s.sigTimeKnown });
+    const liveTransit = this.transits.pickLiveTransit(contacts);
+
+    const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy, liveTransit });
 
     this.setState({
       sigArrival: arrival, sigPattern: pattern, sigHouses: houses, sigDepth: depth,
@@ -1584,6 +1596,10 @@ class Component extends DCLogic {
       sndStepName: sounding ? sounding.station.stepName : '',
       sndCrossCultural: sounding ? sounding.station.crossCultural : [],
       sndCastKindLabel: sounding ? sounding.cast.kind : '', sndCastFlavor: sounding ? sounding.cast.flavor : '',
+      // the live transit — PRODUCT.md §6b/§9. null on most nights (no
+      // transit in orb is common and honest); sndHasLiveTransit gates it.
+      sndHasLiveTransit: !!(sounding && sounding.liveTransit),
+      sndLiveTransitLine: sounding && sounding.liveTransit ? sounding.liveTransit.line : '',
       sndNowEpithet: sounding ? sounding.cast.now.epithet : '', sndNowStepName: sounding ? sounding.cast.now.stepName : '',
       sndHasBecoming: !!(sounding && sounding.cast.becoming),
       sndBecomingEpithet: sounding && sounding.cast.becoming ? sounding.cast.becoming.epithet : '',

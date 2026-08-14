@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**244 bindings, 192 top-level.**
+**246 bindings, 194 top-level.**
 
 ## Rule
 
@@ -217,11 +217,13 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sndCounselBody` | component state |
 | `sndCrossCultural` | component state |
 | `sndHasBecoming` | component state |
+| `sndHasLiveTransit` | component state |
 | `sndIsBeat0` | component state |
 | `sndIsBeat1` | component state |
 | `sndIsBeat2` | component state |
 | `sndIsBeat3` | component state |
 | `sndIsBeat4` | component state |
+| `sndLiveTransitLine` | component state |
 | `sndNext` | component state |
 | `sndNowEpithet` | component state |
 | `sndNowStepName` | component state |
