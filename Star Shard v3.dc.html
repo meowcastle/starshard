@@ -575,10 +575,42 @@ a{color:var(--ink-accent)}
   </sc-if>
 
   <sc-if value="{{ sigTabDepth }}">
-  <div class="needs-data">
-    <div class="eyebrow">depth · needs bindings</div>
-    <p class="hint" style="margin:8px 0 0">the four traditions per station, with the match flags and the disagreements shown rather than smoothed. stations.js already holds it.</p>
-    <p class="mono-note" style="margin:10px 0 0">sigStrikeDepth · sigRootDepth [ arabic · nakshatra · xiu · stars · match · gaps ]</p>
+  <div class="pad" style="padding-top:20px">
+    <p class="hint" style="margin:0 0 16px">four traditions, the same stretch of sky — shown as they disagree, not smoothed into one.</p>
+
+    <div class="card-panel" style="padding:20px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span class="h3">{{ sigStrikeDepth.epithet }}</span>
+        <span class="chip">sun's station</span>
+      </div>
+      <p class="hint" style="margin:4px 0 0">{{ sigStrikeDepth.kanji }} · {{ sigStrikeDepth.span }} · {{ sigStrikeDepth.stars }}</p>
+      <sc-if value="{{ sigStrikeDepth.needsFlag }}">
+        <p class="mono-note" style="margin:8px 0 0">match: {{ sigStrikeDepth.match }}</p>
+      </sc-if>
+      <sc-for list="{{ sigStrikeDepth.traditions }}" as="td1">
+        <div class="map-row">
+          <span class="eyebrow">{{ td1.sky }}</span>
+          <p style="margin:4px 0 0"><em>{{ td1.name }}</em> — {{ td1.meaning }}</p>
+        </div>
+      </sc-for>
+    </div>
+
+    <div class="card-panel" style="padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span class="h3">{{ sigRootDepth.epithet }}</span>
+        <span class="chip">moon's station</span>
+      </div>
+      <p class="hint" style="margin:4px 0 0">{{ sigRootDepth.kanji }} · {{ sigRootDepth.span }} · {{ sigRootDepth.stars }}</p>
+      <sc-if value="{{ sigRootDepth.needsFlag }}">
+        <p class="mono-note" style="margin:8px 0 0">match: {{ sigRootDepth.match }}</p>
+      </sc-if>
+      <sc-for list="{{ sigRootDepth.traditions }}" as="td2">
+        <div class="map-row">
+          <span class="eyebrow">{{ td2.sky }}</span>
+          <p style="margin:4px 0 0"><em>{{ td2.name }}</em> — {{ td2.meaning }}</p>
+        </div>
+      </sc-for>
+    </div>
   </div>
   </sc-if>
 
@@ -1157,6 +1189,10 @@ class Component extends DCLogic {
     const ascRuler = await this.sigilMod.ascRulerHouse(s.sigChart);
     const houses = this.reading.houseReading(s.sigChart, ascRuler, this.readingCopy);
 
+    // the DEPTH tab (PRODUCT.md §4) — the four traditions per station,
+    // straight from stations.js.
+    const depth = this.reading.depthReading(s.sigil, this.stations);
+
     const jd = Date.now() / 86400000 + 2440587.5;
     const moonLon = this.astro.moonLongitude(jd), sunLon = this.astro.sunLongitude(jd);
     const cast = this.sky.castKind(moonLon, jd);
@@ -1167,7 +1203,7 @@ class Component extends DCLogic {
     const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy });
 
     this.setState({
-      sigArrival: arrival, sigPattern: pattern, sigHouses: houses,
+      sigArrival: arrival, sigPattern: pattern, sigHouses: houses, sigDepth: depth,
       sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding,
     });
   };
@@ -1353,6 +1389,11 @@ class Component extends DCLogic {
       sigHouseEmptyNote: s.sigHouses ? s.sigHouses.emptyNote : '',
       sigIsPorphyry: !!s.sigHouses && s.sigHouses.isPorphyry,
       sigHousePorphyryNote: s.sigHouses ? s.sigHouses.porphyryNote : '',
+
+      // DEPTH tab (PRODUCT.md §4) — s.sigDepth is null until
+      // refreshArrivalAndTonight() has run once (needs a sigil).
+      sigStrikeDepth: s.sigDepth ? s.sigDepth.strike : null,
+      sigRootDepth: s.sigDepth ? s.sigDepth.root : null,
       sigTypeRateLine: typeRate == null ? '' : (typeRate * 100).toFixed(1).replace(/\.0$/, '') + '% of travelers walk this way',
 
       // -- the nightly reminder (Design) ---------------------------------

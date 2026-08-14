@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**205 bindings, 175 top-level.**
+**225 bindings, 177 top-level.**
 
 ## Rule
 
@@ -32,6 +32,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigCityResults` | `r` | `name`, `pick`, `region` |
 | `sigComputeLines` | `cl` | `color`, `text` |
 | `sigHousePlacements` | `p` | `label`, `number`, `text`, `which` |
+| `sigRootDepth.traditions` | `td2` | `meaning`, `name`, `sky` |
+| `sigStrikeDepth.traditions` | `td1` | `meaning`, `name`, `sky` |
 | `sndCrossCultural` | `c` | `name`, `sky` |
 
 ## Scalars and callbacks
@@ -121,6 +123,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigPushAllow` | component state |
 | `sigPushDismiss` | component state |
 | `sigQuery` | component state |
+| `sigRootDepth` | component state |
 | `sigRootEpithet` | component state |
 | `sigRootHasStep` | component state |
 | `sigRootLine` | component state |
@@ -146,6 +149,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigStory4` | component state |
 | `sigStrangeLine` | component state |
 | `sigStrikeBody` | component state |
+| `sigStrikeDepth` | component state |
 | `sigStrikeEpithet` | component state |
 | `sigStrikeHeadline` | component state |
 | `sigStrikeStepName` | component state |

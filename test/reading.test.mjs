@@ -276,6 +276,38 @@ test('patternAspects: no aspects in orb falls back to ASPECT.none, real corpus t
   assert.equal(pattern.noneText, READING_COPY['ASPECT.none'].text);
 });
 
+// -- depthReading (the Deep Chart's DEPTH tab) -----------------------------
+
+test('depthReading: strike is the sun\'s station, root is the moon\'s, real stations.js data throughout', () => {
+  const sigil = { sunStation: 0, moonStation: 13 };
+  const depth = R.depthReading(sigil, STATIONS);
+  assert.equal(depth.strike.which, 'sun');
+  assert.equal(depth.strike.epithet, STATIONS.STATIONS[0].epithet);
+  assert.deepEqual(depth.strike.traditions, STATIONS.STATIONS[0].crossCultural);
+  assert.equal(depth.strike.traditions.length, 4); // Arabia, India, China, Japan
+
+  assert.equal(depth.root.which, 'moon');
+  assert.equal(depth.root.epithet, STATIONS.STATIONS[13].epithet);
+  assert.deepEqual(depth.root.traditions, STATIONS.STATIONS[13].crossCultural);
+});
+
+test('depthReading: needsFlag is true for anything short of a clean STRONG match (PARTIAL or unmarked)', () => {
+  const partialStation = STATIONS.STATIONS.findIndex(s => s.match === 'PARTIAL');
+  const strongStation = STATIONS.STATIONS.findIndex(s => s.match === 'STRONG');
+  const unmarkedStation = STATIONS.STATIONS.findIndex(s => !s.match);
+  assert.ok(partialStation >= 0 && strongStation >= 0 && unmarkedStation >= 0,
+    'fixture assumption: PARTIAL, STRONG and unmarked all exist in the real data');
+
+  const depth = R.depthReading({ sunStation: partialStation, moonStation: strongStation }, STATIONS);
+  assert.equal(depth.strike.needsFlag, true);
+  assert.equal(depth.strike.match, 'PARTIAL');
+  assert.equal(depth.root.needsFlag, false);
+
+  const unmarked = R.depthReading({ sunStation: unmarkedStation, moonStation: strongStation }, STATIONS);
+  assert.equal(unmarked.strike.needsFlag, true);
+  assert.equal(unmarked.strike.match, 'unmarked');
+});
+
 // -- houseReading (the Deep Chart's HOUSES tab) ----------------------------
 
 test('houseReading: sun and moon placements always present, real corpus text, ruler placement present only with a birth time', () => {

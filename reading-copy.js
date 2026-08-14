@@ -10,36 +10,36 @@
 
 export const COPY = {
   "OPEN.address.1": {
-    "text": "the sky kept a record of the minute you arrived, and this is what it says. read it slowly. none of it is filler and none of it is anyone else's — it was assembled from the exact way the sun, the moon, and the eastern horizon stood over {birthPlace} that minute, and from one more thing most charts never mention: the part of your sky that was about to change.",
+    "text": "at the minute you arrived, the sky over {birthPlace} stood one way and no other. the sun was somewhere in it. the moon was somewhere else. a third stretch of sky was climbing over the eastern horizon. and one of those three had nearly finished where it stood, and was already leaning into the next. read it slowly. all of it is yours.",
     "tokens": [
       {
-        "text": "the sky kept a record of the minute you arrived, and this is what it says. read it slowly. none of it is filler and none of it is anyone else's — it was assembled from the exact way the sun, the moon, and the eastern horizon stood over {birthPlace} that minute, and from one more thing most charts never mention: the part of your sky that was ",
+        "text": "at the minute you arrived, the sky over {birthPlace} stood one way and no other. the sun was somewhere in it. the moon was somewhere else. a third stretch of sky was climbing over the eastern horizon. and one of those three had nearly finished where it stood, and was already ",
         "emphasis": null
       },
       {
-        "text": "about to change",
+        "text": "leaning into the next",
         "emphasis": "italic"
       },
       {
-        "text": ".",
+        "text": ". read it slowly. all of it is yours.",
         "emphasis": null
       }
     ]
   },
   "OPEN.address.2": {
-    "text": "here is your shard. everyone knows their sign; almost nobody knows their sky within it. yours is written below — where you landed, what keeps that ground, what it wants from you, and the one place your chart was already in motion when you got here.",
+    "text": "here is your shard. everyone knows their sign; almost nobody knows their sky within it. a sign is thirty degrees wide and the sun takes a month to cross it. below is where inside yours you actually landed — and the one place your chart was already moving when you got here.",
     "tokens": [
       {
-        "text": "here is your shard. everyone knows their sign; almost nobody knows their sky within it. yours is written below — where you landed, what keeps that ground, what it wants from you, and the one place your chart was already in motion when you got here.",
+        "text": "here is your shard. everyone knows their sign; almost nobody knows their sky within it. a sign is thirty degrees wide and the sun takes a month to cross it. below is where inside yours you actually landed — and the one place your chart was already moving when you got here.",
         "emphasis": null
       }
     ]
   },
   "OPEN.address.3": {
-    "text": "this was assembled, not chosen. the positions are real, the reading follows from them, and where the traditions that mapped this sky disagree with each other, you'll see that too — disagreement is part of the picture, not a flaw in it.",
+    "text": "four sky-cultures divided this same band of stars and none of them agreed on where the borders fell. arab, chinese, indian, and the old european zodiac each named the stretch you were born under, and each named it something different. below is what all four saw standing there when you arrived.",
     "tokens": [
       {
-        "text": "this was assembled, not chosen. the positions are real, the reading follows from them, and where the traditions that mapped this sky disagree with each other, you'll see that too — disagreement is part of the picture, not a flaw in it.",
+        "text": "four sky-cultures divided this same band of stars and none of them agreed on where the borders fell. arab, chinese, indian, and the old european zodiac each named the stretch you were born under, and each named it something different. below is what all four saw standing there when you arrived.",
         "emphasis": null
       }
     ]
@@ -254,7 +254,7 @@ export const COPY = {
     ]
   },
   "LIGHT.last_quarter": {
-    "text": "a half moon, emptying: lit on one side, and this time the dark side is the one that's growing. you are a natural editor of your own life. what you keep, you keep on purpose. the cost is that you sometimes cut early, and call it clarity.",
+    "text": "a half moon, emptying: lit on one side, and this time the dark side is the one that's growing. you are a natural editor of your own life. what you keep, you keep on purpose. you sometimes cut early, and call it clarity.",
     "tokens": [
       {
         "text": "a ",
@@ -265,7 +265,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ": lit on one side, and this time the dark side is the one that's growing. you are a natural editor of your own life. what you keep, you keep on purpose. the cost is that you sometimes cut early, and call it clarity.",
+        "text": ": lit on one side, and this time the dark side is the one that's growing. you are a natural editor of your own life. what you keep, you keep on purpose. you sometimes cut early, and call it clarity.",
         "emphasis": null
       }
     ]
@@ -676,7 +676,7 @@ export const COPY = {
     ]
   },
   "GAIT.seedborn": {
-    "text": "your {sunSign} sun and your {moonSign} moon landed in the same sky — the same twelve-and-a-half degrees out of three hundred and sixty. about three travelers in a hundred arrive that way, and it has a consequence you can check against any calendar: you were born at a new moon. the two lights were too close together for the sky to hold any moon at all that night. that's not a coincidence layered on top of your chart; it's the same fact said twice.\n\non the road, that walk is called seedborn. what it means practically: there is no gap in you between what you want and what you're like. most people run a negotiation between their outside and their inside. you don't have the seam, and that's why you're hard to talk out of things.\n\nthe cost is exactly the same fact. you have no second opinion in the building. when you're right you're unstoppable, and when you're wrong there is nobody inside your own chart to say so — you have to go out and find that person, deliberately, and then actually listen. and you arrived unlit: you begin things in the dark, and you will keep meeting people who mistake unlit for nothing there yet. they're wrong, and correcting them is not your job. finishing is.",
+    "text": "your {sunSign} sun and your {moonSign} moon landed in the same sky — the same twelve-and-a-half degrees out of three hundred and sixty. about three travelers in a hundred arrive that way, and it has a consequence you can check against any calendar: you were born at a new moon. the two lights were too close together for the sky to hold any moon at all that night. that's not a coincidence layered on top of your chart; it's the same fact said twice.\n\non the road, that walk is called seedborn. what it means practically: there is no gap in you between what you want and what you're like. most people run a negotiation between their outside and their inside. you don't have the seam, and that's why you're hard to talk out of things.\n\nthe same fact runs the other way. you have no second opinion in the building. when you're right you're unstoppable, and when you're wrong there is nobody inside your own chart to say so — you have to go out and find that person, deliberately, and then actually listen. and you arrived unlit: you begin things in the dark, and you will keep meeting people who mistake unlit for nothing there yet. they're wrong, and correcting them is not your job. finishing is.",
     "tokens": [
       {
         "text": "your {sunSign} sun and your {moonSign} moon landed in the ",
@@ -703,7 +703,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". what it means practically: there is no gap in you between what you want and what you're like. most people run a negotiation between their outside and their inside. you don't have the seam, and that's why you're hard to talk out of things.\n\nthe cost is exactly the same fact. you have no second opinion in the building. when you're right you're unstoppable, and when you're wrong there is nobody inside your own chart to say so — you have to go out and find that person, deliberately, and then actually listen. and you arrived unlit: you begin things in the dark, and you will keep meeting people who mistake ",
+        "text": ". what it means practically: there is no gap in you between what you want and what you're like. most people run a negotiation between their outside and their inside. you don't have the seam, and that's why you're hard to talk out of things.\n\nthe same fact runs the other way. you have no second opinion in the building. when you're right you're unstoppable, and when you're wrong there is nobody inside your own chart to say so — you have to go out and find that person, deliberately, and then actually listen. and you arrived unlit: you begin things in the dark, and you will keep meeting people who mistake ",
         "emphasis": null
       },
       {
@@ -725,7 +725,7 @@ export const COPY = {
     ]
   },
   "GAIT.homebound": {
-    "text": "your {sunSign} sun and your {moonSign} moon landed under the same banner — {sky} — different skies, one country. your lights are neighbors, which means they mostly agree.\n\non the road, that walk is called homebound, and the gift is coherence. you are recognizably the same person in every room, your inside and your outside tell the same story, and people find you restful in a way most of them can't articulate. depth over distance was always the assignment.\n\nthe cost is that agreement is comfortable, and comfort is not the same as truth. with both lights facing the same direction, you can go a long way without ever being interrupted by yourself — and the travelers who have to argue with their own charts every morning get a kind of practice you don't. the ordinary version of this is realizing at thirty that a belief you'd held since childhood had simply never been challenged, by anyone, including you. the fix isn't to become someone else. it's to go and find your disagreement on purpose, since your chart won't hand it to you.",
+    "text": "your {sunSign} sun and your {moonSign} moon landed under the same banner — {sky} — different skies, one country. your lights are neighbors, which means they mostly agree.\n\non the road, that walk is called homebound, and the gift is coherence. you are recognizably the same person in every room, your inside and your outside tell the same story, and people find you restful in a way most of them can't articulate. depth over distance was always the assignment.\n\nagreement is comfortable, and comfort is not the same as truth. with both lights facing the same direction, you can go a long way without ever being interrupted by yourself — and the travelers who have to argue with their own charts every morning get a kind of practice you don't. the ordinary version of this is realizing at thirty that a belief you'd held since childhood had simply never been challenged, by anyone, including you. go and find your disagreement on purpose. your chart won't hand it to you.",
     "tokens": [
       {
         "text": "your {sunSign} sun and your {moonSign} moon landed under the same banner — ",
@@ -744,13 +744,13 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and the gift is coherence. you are recognizably the same person in every room, your inside and your outside tell the same story, and people find you restful in a way most of them can't articulate. depth over distance was always the assignment.\n\nthe cost is that agreement is comfortable, and comfort is not the same as truth. with both lights facing the same direction, you can go a long way without ever being interrupted by yourself — and the travelers who have to argue with their own charts every morning get a kind of practice you don't. the ordinary version of this is realizing at thirty that a belief you'd held since childhood had simply never been challenged, by anyone, including you. the fix isn't to become someone else. it's to go and find your disagreement on purpose, since your chart won't hand it to you.",
+        "text": ", and the gift is coherence. you are recognizably the same person in every room, your inside and your outside tell the same story, and people find you restful in a way most of them can't articulate. depth over distance was always the assignment.\n\nagreement is comfortable, and comfort is not the same as truth. with both lights facing the same direction, you can go a long way without ever being interrupted by yourself — and the travelers who have to argue with their own charts every morning get a kind of practice you don't. the ordinary version of this is realizing at thirty that a belief you'd held since childhood had simply never been challenged, by anyone, including you. go and find your disagreement on purpose. your chart won't hand it to you.",
         "emphasis": null
       }
     ]
   },
   "GAIT.outbound": {
-    "text": "your {moonSign} moon stood one banner ahead of your {sunSign} sun — out in front, on ground the sun hadn't reached yet. that also tells you the sky you were born under: your moon was waxing, filling toward full, because a moon ahead of its sun is a moon on its way up.\n\non the road, that walk is called outbound. your inner life runs scouting missions. you know how things are going to feel before you know what they are, you get bored at the exact moment other people get comfortable, and you have almost certainly been told you're restless by someone who meant it as a diagnosis.\n\nit isn't restlessness. it's that your inner light genuinely arrived at the next place first, and the rest of you is doing the honest work of catching up. the cost is real, though, and it's this: you are chronically early, and being early looks identical to being wrong — for a while. you'll leave rooms before anyone understands why, name problems before there's evidence, and lose arguments you were going to win in eighteen months. the discipline isn't slowing down. it's learning to say \"i can't prove this yet\" out loud, which buys you the room to be early without being alone.",
+    "text": "your {moonSign} moon stood one banner ahead of your {sunSign} sun — out in front, on ground the sun hadn't reached yet. that also tells you the sky you were born under: your moon was waxing, filling toward full, because a moon ahead of its sun is a moon on its way up.\n\non the road, that walk is called outbound. your inner life runs scouting missions. you know how things are going to feel before you know what they are, you get bored at the exact moment other people get comfortable, and you have almost certainly been told you're restless by someone who meant it as a diagnosis.\n\nit isn't restlessness. it's that your inner light genuinely arrived at the next place first, and the rest of you is doing the honest work of catching up. you are chronically early, and being early looks identical to being wrong — for a while. you'll leave rooms before anyone understands why, name problems before there's evidence, and lose arguments you were going to win in eighteen months. learning to say \"i can't prove this yet\" out loud buys you the room to be early without being alone.",
     "tokens": [
       {
         "text": "your {moonSign} moon stood one banner ",
@@ -777,7 +777,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". your inner life runs scouting missions. you know how things are going to feel before you know what they are, you get bored at the exact moment other people get comfortable, and you have almost certainly been told you're restless by someone who meant it as a diagnosis.\n\nit isn't restlessness. it's that your inner light genuinely arrived at the next place first, and the rest of you is doing the honest work of catching up. the cost is real, though, and it's this: ",
+        "text": ". your inner life runs scouting missions. you know how things are going to feel before you know what they are, you get bored at the exact moment other people get comfortable, and you have almost certainly been told you're restless by someone who meant it as a diagnosis.\n\nit isn't restlessness. it's that your inner light genuinely arrived at the next place first, and the rest of you is doing the honest work of catching up. ",
         "emphasis": null
       },
       {
@@ -785,7 +785,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — for a while. you'll leave rooms before anyone understands why, name problems before there's evidence, and lose arguments you were going to win in eighteen months. the discipline isn't slowing down. it's learning to say ",
+        "text": " — for a while. you'll leave rooms before anyone understands why, name problems before there's evidence, and lose arguments you were going to win in eighteen months. learning to say ",
         "emphasis": null
       },
       {
@@ -793,13 +793,13 @@ export const COPY = {
         "emphasis": "italic"
       },
       {
-        "text": " out loud, which buys you the room to be early without being alone.",
+        "text": " out loud buys you the room to be early without being alone.",
         "emphasis": null
       }
     ]
   },
   "GAIT.emberwake": {
-    "text": "your {moonSign} moon stood one banner behind your {sunSign} sun — on ground the sun had already crossed. which means the moon you were born under was waning: past its fullness, letting go of light. a moon behind its sun is a moon in the long exhale.\n\non the road, that walk is called emberwake — the one who carries the coal in the wake of the fire. what it means: you keep things. not hoarding — keeping. you remember how people take their coffee and what they said they were afraid of in 2019. you are the reason certain friendships still exist. institutions, families, and group chats all quietly run on someone with your chart, and they rarely notice.\n\nthe cost is that a keeper is always slightly out of step with a room that's already moved on. you'll be accused of living in the past. some of the time the accusation will even be fair — there is a version of this walk that turns into a museum of things that stopped mattering. the honest question isn't whether to let go; it's what the fire is for. a coal carried without a hearth in mind is just a burn. carried toward one, it's the reason anyone gets warm.",
+    "text": "your {moonSign} moon stood one banner behind your {sunSign} sun — on ground the sun had already crossed. which means the moon you were born under was waning: past its fullness, letting go of light. a moon behind its sun is a moon in the long exhale.\n\non the road, that walk is called emberwake — the one who carries the coal in the wake of the fire. what it means: you keep things. not hoarding — keeping. you remember how people take their coffee and what they said they were afraid of in 2019. you are the reason certain friendships still exist. institutions, families, and group chats all quietly run on someone with your chart, and they rarely notice.\n\na keeper is always slightly out of step with a room that's already moved on. you'll be accused of living in the past. some of the time the accusation will even be fair — there is a version of this walk that turns into a museum of things that stopped mattering. the question is what the fire is for. a coal carried without a hearth in mind is just a burn. carried toward one, it's the reason anyone gets warm.",
     "tokens": [
       {
         "text": "your {moonSign} moon stood one banner ",
@@ -834,7 +834,7 @@ export const COPY = {
         "emphasis": "italic"
       },
       {
-        "text": ". you remember how people take their coffee and what they said they were afraid of in 2019. you are the reason certain friendships still exist. institutions, families, and group chats all quietly run on someone with your chart, and they rarely notice.\n\nthe cost is that a keeper is always slightly out of step with a room that's already moved on. you'll be accused of living in the past. some of the time the accusation will even be fair — there is a version of this walk that turns into a museum of things that stopped mattering. the honest question isn't whether to let go; it's ",
+        "text": ". you remember how people take their coffee and what they said they were afraid of in 2019. you are the reason certain friendships still exist. institutions, families, and group chats all quietly run on someone with your chart, and they rarely notice.\n\na keeper is always slightly out of step with a room that's already moved on. you'll be accused of living in the past. some of the time the accusation will even be fair — there is a version of this walk that turns into a museum of things that stopped mattering. the question is ",
         "emphasis": null
       },
       {
@@ -1805,7 +1805,7 @@ export const COPY = {
     ]
   },
   "STATION.02.strike": {
-    "text": "you landed in late aries, and here the ram stops charging. the arabs looked at these three dim stars and saw the little belly — the soft underside where anything valuable gets carried, close and warm and out of sight. india named the same sky for the one who bears: its deity is yama, who meets people at the threshold and carries them across the one crossing nobody makes alone. so your hunger isn't conquest, whatever your sign's reputation promised. you want to get the precious thing to the other side. you have been handed responsibilities early and repeatedly, by people who could not have explained why they trusted you. the cost is the obvious one and it is worse than people think: a bearer is measured by what they carry, so you keep accepting weight as proof. some of what you've been handed was never yours. you've known that about one or two things for years.",
+    "text": "you landed in late aries, and here the ram stops charging. the arabs looked at these three dim stars and saw the little belly — the soft underside where anything valuable gets carried, close and warm and out of sight. india named the same sky for the one who bears: its deity is yama, who meets people at the threshold and carries them across the one crossing nobody makes alone. so your hunger isn't conquest, whatever your sign's reputation promised. you want to get the precious thing to the other side. you have been handed responsibilities early and repeatedly, by people who could not have explained why they trusted you. a bearer is measured by what they carry, so you keep accepting weight as proof. some of what you've been handed was never yours. you've known that about one or two things for years.",
     "tokens": [
       {
         "text": "you landed in ",
@@ -1840,7 +1840,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " you have been handed responsibilities early and repeatedly, by people who could not have explained why they trusted you. the cost is the obvious one and it is worse than people think: a bearer is measured by what they carry, so you keep accepting weight as proof. some of what you've been handed was never yours. you've known that about one or two things for years.",
+        "text": " you have been handed responsibilities early and repeatedly, by people who could not have explained why they trusted you. a bearer is measured by what they carry, so you keep accepting weight as proof. some of what you've been handed was never yours. you've known that about one or two things for years.",
         "emphasis": null
       }
     ]
@@ -2454,7 +2454,7 @@ export const COPY = {
     ]
   },
   "STATION.07.root": {
-    "text": "this sky is guarded by the wild dog and kept by jupiter, the biggest planet and the most generous of the seven — and it is the first station under a new banner, where the white tiger's sky hands over to the vermilion bird. so your inner life runs on pack logic and expansion: you don't do things alone, and whatever you touch gets larger. the room reads you as safe to come back to, which is the most undersold thing a person can be. people return to you after silences they assume they've ruined. the cost is that being the reliable door means you rarely get to be the one who leaves — and a return-rooted moon should check, once in a while, that they're staying because they chose to and not because they're the one everyone else navigates by.",
+    "text": "this sky is guarded by the wild dog and kept by jupiter, the biggest planet and the most generous of the seven — and it is the first station under a new banner, where the white tiger's sky hands over to the vermilion bird. so your inner life runs on pack logic and expansion: you don't do things alone, and whatever you touch gets larger. the room reads you as safe to come back to, which is the most undersold thing a person can be. people return to you after silences they assume they've ruined. being the reliable door means you rarely get to be the one who leaves — and a return-rooted moon should check, once in a while, that they're staying because they chose to and not because they're the one everyone else navigates by.",
     "tokens": [
       {
         "text": "this sky is guarded by ",
@@ -2489,7 +2489,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", which is the most undersold thing a person can be. people return to you after silences they assume they've ruined. the cost is that being the reliable door means you rarely get to be the one who leaves — and a return-rooted moon should check, once in a while, that they're staying because they chose to and not because they're the one everyone else navigates by.",
+        "text": ", which is the most undersold thing a person can be. people return to you after silences they assume they've ruined. being the reliable door means you rarely get to be the one who leaves — and a return-rooted moon should check, once in a while, that they're staying because they chose to and not because they're the one everyone else navigates by.",
         "emphasis": null
       }
     ]
@@ -2521,7 +2521,7 @@ export const COPY = {
     ]
   },
   "STATION.08.strike": {
-    "text": "you landed at 0° cancer — a hinge of the whole year — on a patch of sky that is not really a star at all. it's praesepe, a soft smudge of hundreds of stars too faint to separate by eye; today we call it the beehive. its older latin name is the manger, and the two dim stars flanking it were the two donkeys feeding there. china saw something ghostlier in the haze and named the station for spirits; the arabs called it the lion's nostril — the breath, the soft opening. india calls this sky puṣya, one of the most auspicious stations on the whole road, and gives it an emblem you can't misread: a cow's udder. so every tradition arrived at the same idea by a different door. this is the sky of feeding. your hunger is to nourish the thing that will outlast you — a person, a practice, a household, a body of work. the cost is that feeders eat last and call it a personality. you are not actually built to run empty; you have just gotten very good at it.",
+    "text": "you landed at 0° cancer — a hinge of the whole year — on a patch of sky that is not really a star at all. it's praesepe, a soft smudge of hundreds of stars too faint to separate by eye; today we call it the beehive. its older latin name is the manger, and the two dim stars flanking it were the two donkeys feeding there. china saw something ghostlier in the haze and named the station for spirits; the arabs called it the lion's nostril — the breath, the soft opening. india calls this sky puṣya, one of the most auspicious stations on the whole road, and gives it an emblem you can't misread: a cow's udder. so every tradition arrived at the same idea by a different door. this is the sky of feeding. your hunger is to nourish the thing that will outlast you — a person, a practice, a household, a body of work. feeders eat last and call it a personality. you are not actually built to run empty; you have just gotten very good at it.",
     "tokens": [
       {
         "text": "you landed at ",
@@ -2572,7 +2572,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". your hunger is to nourish the thing that will outlast you — a person, a practice, a household, a body of work. the cost is that feeders eat last and call it a personality. you are not actually built to run empty; you have just gotten very good at it.",
+        "text": ". your hunger is to nourish the thing that will outlast you — a person, a practice, a household, a body of work. feeders eat last and call it a personality. you are not actually built to run empty; you have just gotten very good at it.",
         "emphasis": null
       }
     ]
@@ -2637,7 +2637,7 @@ export const COPY = {
     ]
   },
   "STATION.09.strike": {
-    "text": "your sun landed on the lion's eye — that is what al-ṭarf means: the glance, the look itself. china put a willow here, the tree that bends and trails and never quite lets go of the water. and india named this sky āśleṣā, which means the embrace — the coiled serpent, the sky of the nāgas, who in that tradition keep the knowledge that isn't said out loud. the eye, the willow, the coil. what all three are describing is your hunger: you want to know the thing nobody announced. you read rooms at a resolution most people don't have — the pause before the answer, the name that stopped getting mentioned, who stopped being cc'd. the cost is in the third image, and it's the honest one. the coil holds. what you notice, you keep hold of; a glance can become a grip. the question that follows you is not whether you see clearly. it's when seeing turns into not letting go.",
+    "text": "your sun landed on the lion's eye — that is what al-ṭarf means: the glance, the look itself. china put a willow here, the tree that bends and trails and never quite lets go of the water. and india named this sky āśleṣā, which means the embrace — the coiled serpent, the sky of the nāgas, who in that tradition keep the knowledge that isn't said out loud. the eye, the willow, the coil. what all three are describing is your hunger: you want to know the thing nobody announced. you read rooms at a resolution most people don't have — the pause before the answer, the name that stopped getting mentioned, who stopped being cc'd. the third image is the honest one. the coil holds. what you notice, you keep hold of; a glance can become a grip. the question that follows you is not whether you see clearly. it's when seeing turns into not letting go.",
     "tokens": [
       {
         "text": "your sun landed on ",
@@ -2688,7 +2688,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " you read rooms at a resolution most people don't have — the pause before the answer, the name that stopped getting mentioned, who stopped being cc'd. the cost is in the third image, and it's the honest one. the coil holds. what you notice, you keep hold of; a glance can become a grip. the question that follows you is not whether you see clearly. it's when seeing turns into not letting go.",
+        "text": " you read rooms at a resolution most people don't have — the pause before the answer, the name that stopped getting mentioned, who stopped being cc'd. the third image is the honest one. the coil holds. what you notice, you keep hold of; a glance can become a grip. the question that follows you is not whether you see clearly. it's when seeing turns into not letting go.",
         "emphasis": null
       }
     ]
@@ -2885,7 +2885,7 @@ export const COPY = {
     ]
   },
   "STATION.11.strike": {
-    "text": "your sun landed on the lion's mane — al-zubra, the ruff, the volume, the part of the animal that arrives before the animal does. india's name for this sky is pūrva phālgunī, and its emblem is the front legs of a bed: rest, pleasure, the good half of the night. its deity is bhaga, who hands out the share of delight a life is allotted. the old station-lists gave this sky the release of captives, and that's the through-line worth keeping — mane energy is not vanity, it's liberation. your hunger is to be delighted in, and to hand delight around, and you have a talent for making other people feel unfastened. the cost arrives when the delight stops coming back. this sky needs to be enjoyed out loud by somebody, and it will keep performing to get there — the difference between being adored and being appreciated is a distinction you'll have to learn on purpose, usually the hard way, once.",
+    "text": "your sun landed on the lion's mane — al-zubra, the ruff, the volume, the part of the animal that arrives before the animal does. india's name for this sky is pūrva phālgunī, and its emblem is the front legs of a bed: rest, pleasure, the good half of the night. its deity is bhaga, who hands out the share of delight a life is allotted. the old station-lists gave this sky the release of captives. mane energy here is not vanity, it's liberation. your hunger is to be delighted in, and to hand delight around, and you have a talent for making other people feel unfastened. the cost arrives when the delight stops coming back. this sky needs to be enjoyed out loud by somebody, and it will keep performing to get there — the difference between being adored and being appreciated is a distinction you'll have to learn on purpose, usually the hard way, once.",
     "tokens": [
       {
         "text": "your sun landed on ",
@@ -2928,7 +2928,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and that's the through-line worth keeping — mane energy is not vanity, it's ",
+        "text": ". mane energy here is not vanity, it's ",
         "emphasis": null
       },
       {
@@ -3009,7 +3009,7 @@ export const COPY = {
     ]
   },
   "STATION.12.strike": {
-    "text": "your sun landed on denebola, the star at the end of the lion's tail — and the arabs named this station for what happens when it rises: al-ṣarfa, the turning, the point where the summer heat finally breaks. the whole station is named after a change in the weather. india pairs it deliberately with the sky before it: if the last station was the front of the bed, this is the foot of it, and where that one had bhaga handing out delight, this one has aryaman — the god of kinship, alliance, and the promise that has to hold after the party. that's your hunger. you want to be the one who keeps it going once the pleasant part is over. you are the hinge in every group: the one present when the mood turns, the plan changes, the season ends. the cost is that hinges take the strain from both sides. being the person who manages the turn means you are rarely allowed to simply have the feeling everyone else is having.",
+    "text": "your sun landed on denebola, the star at the end of the lion's tail — and the arabs named this station for what happens when it rises: al-ṣarfa, the turning, the point where the summer heat finally breaks. the whole station is named after a change in the weather. india pairs it deliberately with the sky before it: if the last station was the front of the bed, this is the foot of it, and where that one had bhaga handing out delight, this one has aryaman — the god of kinship, alliance, and the promise that has to hold after the party. that's your hunger. you want to be the one who keeps it going once the pleasant part is over. you are the hinge in every group: the one present when the mood turns, the plan changes, the season ends. hinges take the strain from both sides. being the person who manages the turn means you are rarely allowed to simply have the feeling everyone else is having.",
     "tokens": [
       {
         "text": "your sun landed on ",
@@ -3060,7 +3060,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " you are the hinge in every group: the one present when the mood turns, the plan changes, the season ends. the cost is that hinges take the strain from both sides. being the person who manages the turn means you are rarely allowed to simply ",
+        "text": " you are the hinge in every group: the one present when the mood turns, the plan changes, the season ends. hinges take the strain from both sides. being the person who manages the turn means you are rarely allowed to simply ",
         "emphasis": null
       },
       {
@@ -3389,7 +3389,7 @@ export const COPY = {
     ]
   },
   "STATION.15.strike": {
-    "text": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is al-ghafr, the cover: the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for forgiveness — because to forgive, in that language's logic, is to cover something over. the oldest books call al-ghafr the best of the twenty-eight mansions, and the reason is position, not poetry. the lion's dangerous end is teeth and claws, and this station has only its tail. the scorpion's dangerous end is the sting, and this station has only its claws. it is the one stretch of the road that is out of reach of both. the best station for ever, between the claws and the lion, went the old line. so your hunger is to find the safe gap and work in it. india's name here is svāti, given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of water underground. later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. the cost is that a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
+    "text": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is al-ghafr, the cover: the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for forgiveness — because to forgive, in that language's logic, is to cover something over. the oldest books call al-ghafr the best of the twenty-eight mansions, and the reason is position, not poetry. the lion's dangerous end is teeth and claws, and this station has only its tail. the scorpion's dangerous end is the sting, and this station has only its claws. it is the one stretch of the road that is out of reach of both. the best station for ever, between the claws and the lion, went the old line. so your hunger is to find the safe gap and work in it. india's name here is svāti, given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of water underground. later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
     "tokens": [
       {
         "text": "your sun landed at ",
@@ -3480,7 +3480,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ". later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. the cost is that a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
+        "text": ". later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
         "emphasis": null
       }
     ]
@@ -3673,7 +3673,7 @@ export const COPY = {
     ]
   },
   "STATION.17.strike": {
-    "text": "your sun landed on three stars in a clean row across the scorpion's brow — al-iklīl, the crown, and one of the very few stations every old sky-map agreed about completely. the election books give this sky one signature above all others: love of long duration. not the spark. the thing that is still there in year nine. india calls it anurādhā and gives it to mitra — and that word is worth stopping on. it began as covenant, the sworn contract, and only in later sanskrit did it simply become the word for friend. he is the god of the sworn alliance, the contract, the promise between equals. so this is not a crown of rank. it is a crown you are given by the people who chose to keep you. your hunger is to stay through the part that isn't fun — and you are unusual in that you are not actually bored by the maintenance. you like the ninth year. the cost is that loyalty this durable will occasionally be spent on something that stopped deserving it, and you will be the last to notice, because noticing feels like betrayal.",
+    "text": "your sun landed on three stars in a clean row across the scorpion's brow — al-iklīl, the crown, and one of the very few stations every old sky-map agreed about completely. the election books give this sky one signature above all others: love of long duration. not the spark. the thing that is still there in year nine. india calls it anurādhā and gives it to mitra — and that word is worth stopping on. it began as covenant, the sworn contract, and only in later sanskrit did it simply become the word for friend. he is the god of the sworn alliance, the contract, the promise between equals. so this is not a crown of rank. it is a crown you are given by the people who chose to keep you. your hunger is to stay through the part that isn't fun — and you are unusual in that you are not actually bored by the maintenance. you like the ninth year. loyalty this durable will occasionally be spent on something that stopped deserving it, and you will be the last to notice, because noticing feels like betrayal.",
     "tokens": [
       {
         "text": "your sun landed on ",
@@ -3748,7 +3748,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — and you are unusual in that you are not actually bored by the maintenance. you like the ninth year. the cost is that loyalty this durable will occasionally be spent on something that stopped deserving it, and you will be the last to notice, because noticing feels like betrayal.",
+        "text": " — and you are unusual in that you are not actually bored by the maintenance. you like the ninth year. loyalty this durable will occasionally be spent on something that stopped deserving it, and you will be the last to notice, because noticing feels like betrayal.",
         "emphasis": null
       }
     ]
@@ -3977,7 +3977,7 @@ export const COPY = {
     ]
   },
   "STATION.19.strike": {
-    "text": "your sun landed at the end of the scorpion's tail — and the two traditions named the same spot from opposite directions. the arabs saw al-shawla, the raised sting: the business end, lifted. india saw mūla, which means the root — its emblem a bundle of tied roots, because the tail's end is also where the tail begins. that is the reading, and it's unusually literal: you go to the bottom of things. where other people take the account they were given, you dig for the cause. the origin, the real reason, the first version of the story before it got tidy. the cost is what's at the bottom. digging to the root means handling the sting, every time — the true reason is frequently the one nobody wanted found, and you will be the person who found it. you have been thanked for this far less often than you have been right.",
+    "text": "your sun landed at the end of the scorpion's tail — and the two traditions named the same spot from opposite directions. the arabs saw al-shawla, the raised sting: the business end, lifted. india saw mūla, which means the root — its emblem a bundle of tied roots, because the tail's end is also where the tail begins. you go to the bottom of things. where other people take the account they were given, you dig for the cause. the origin, the real reason, the first version of the story before it got tidy. the cost is what's at the bottom. digging to the root means handling the sting, every time — the true reason is frequently the one nobody wanted found, and you will be the person who found it. you have been thanked for this far less often than you have been right.",
     "tokens": [
       {
         "text": "your sun landed at the ",
@@ -4020,7 +4020,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — its emblem a bundle of tied roots, because the tail's end is also where the tail begins. that is the reading, and it's unusually literal: ",
+        "text": " — its emblem a bundle of tied roots, because the tail's end is also where the tail begins. ",
         "emphasis": null
       },
       {
@@ -4101,7 +4101,7 @@ export const COPY = {
     ]
   },
   "STATION.20.strike": {
-    "text": "your sun landed on one of the loveliest pictures in the whole sky-map: eight stars at the bank of the milky way, which the arabs read as ostriches — four of them walking down to the river to drink, and four walking back. the same birds, on both sides of the water, and none of them missing. china's name for this station is the winnowing basket, and india's name for the sky, pūrva aṣāḍhā, belongs to the waters — with a winnowing fan among its emblems. two traditions independently put a basket for separating grain from chaff next to the river. so the hunger is double and it fits together: you keep the group together, and you can tell what's worth keeping. your instinct in any gathering is a headcount, and your gift is that you can do it without making it strange. the cost is that the person counting heads never quite gets to be at the river. you have been present at a great many good evenings and fully inside surprisingly few of them.",
+    "text": "your sun landed on one of the loveliest pictures in the whole sky-map: eight stars at the bank of the milky way, which the arabs read as ostriches — four of them walking down to the river to drink, and four walking back. the same birds, on both sides of the water, and none of them missing. china's name for this station is the winnowing basket, and india's name for the sky, pūrva aṣāḍhā, belongs to the waters — with a winnowing fan among its emblems. two traditions independently put a basket for separating grain from chaff next to the river. so the hunger is double and it fits together: you keep the group together, and you can tell what's worth keeping. your instinct in any gathering is a headcount, and your gift is that you can do it without making it strange. the person counting heads never quite gets to be at the river. you have been present at a great many good evenings and fully inside surprisingly few of them.",
     "tokens": [
       {
         "text": "your sun landed on one of the loveliest pictures in the whole sky-map: ",
@@ -4152,7 +4152,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " your instinct in any gathering is a headcount, and your gift is that you can do it without making it strange. the cost is that the person counting heads never quite gets to be at the river. you have been present at a great many good evenings and fully inside surprisingly few of them.",
+        "text": " your instinct in any gathering is a headcount, and your gift is that you can do it without making it strange. the person counting heads never quite gets to be at the river. you have been present at a great many good evenings and fully inside surprisingly few of them.",
         "emphasis": null
       }
     ]
@@ -4217,7 +4217,7 @@ export const COPY = {
     ]
   },
   "STATION.21.strike": {
-    "text": "your sun landed in the one station on the road with almost nothing in it. the old arab astronomers mapped twenty-eight stations across the sky, and this one — al-balda, the empty district — is the bare stretch between the archer's head and the goat's horns. al-bīrūnī described it by comparing it to the blank space between two eyebrows that don't meet. one modest star sits in the middle of all that room, and it still carries the station's name: albaldah. and here is the fact that makes this station the strangest and best on the whole wheel: the center of our galaxy lies in this direction. the hundreds of billions of stars we orbit are behind that patch — invisible, because the dust and gas between here and there is too thick to see through. the emptiest sky on the map is the way to the middle of everything. that is your hunger, and it is not what people assume when they hear \"empty\": you want the thing that stays won. india's name here is uttara aṣāḍhā, the sky of the all-gods, the undefeated victory. the pause is not the absence of the work. it's where the work is. the cost is that you will be read as unproductive during the exact periods when you are doing the most, and you will not always have the vocabulary to defend it — least of all to yourself, at 2am.",
+    "text": "your sun landed in the one station on the road with almost nothing in it. the old arab astronomers mapped twenty-eight stations across the sky, and this one — al-balda, the empty district — is the bare stretch between the archer's head and the goat's horns. al-bīrūnī described it by comparing it to the blank space between two eyebrows that don't meet. one modest star sits in the middle of all that room, and it still carries the station's name: albaldah. and here is the fact that makes this station the strangest and best on the whole wheel: the center of our galaxy lies in this direction. the hundreds of billions of stars we orbit are behind that patch — invisible, because the dust and gas between here and there is too thick to see through. the emptiest sky on the map is the way to the middle of everything. that is your hunger, and it is not what people assume when they hear \"empty\": you want the thing that stays won. india's name here is uttara aṣāḍhā, the sky of the all-gods, the undefeated victory. the pause is not the absence of the work. it's where the work is. you will be read as unproductive during the exact periods when you are doing the most, and you will not always have the vocabulary to defend it — least of all to yourself, at 2am.",
     "tokens": [
       {
         "text": "your sun landed in the one station on the road with ",
@@ -4260,7 +4260,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " india's name here is uttara aṣāḍhā, the sky of the all-gods, the undefeated victory. the pause is not the absence of the work. it's where the work is. the cost is that you will be read as unproductive during the exact periods when you are doing the most, and you will not always have the vocabulary to defend it — least of all to yourself, at 2am.",
+        "text": " india's name here is uttara aṣāḍhā, the sky of the all-gods, the undefeated victory. the pause is not the absence of the work. it's where the work is. you will be read as unproductive during the exact periods when you are doing the most, and you will not always have the vocabulary to defend it — least of all to yourself, at 2am.",
         "emphasis": null
       }
     ]
@@ -4341,7 +4341,7 @@ export const COPY = {
     ]
   },
   "STATION.22.strike": {
-    "text": "you landed at 0° capricorn — the winter solstice point, the hinge where the year turns back toward light. a saying still current in the levant marks these nights by how cold they get: cold enough that saʿd al-dhābiḥ left no barking dog outdoors. what that leaves is silence. and india hung its name for this sky on exactly that: śravaṇa, which means the hearing — the ear of the sky. its deity is viṣṇu, who crossed the whole world in three strides, so the listening here isn't passive; it's how you cover ground. your hunger is to listen until the pattern shows itself. you are the one who has actually heard what was said — the phrasing, the hesitation, the thing repeated twice — and you can usually reconstruct a situation from evidence other people threw away. the cost is old and simple: the listener is rarely the one heard. you have built a life where people talk to you, and it is entirely possible to reach forty inside that arrangement without anyone having asked you a second question.",
+    "text": "you landed at 0° capricorn — the winter solstice point, the hinge where the year turns back toward light. a saying still current in the levant marks these nights by how cold they get: cold enough that saʿd al-dhābiḥ left no barking dog outdoors. what that leaves is silence. and india hung its name for this sky on exactly that: śravaṇa, which means the hearing — the ear of the sky. its deity is viṣṇu, who crossed the whole world in three strides, so the listening here isn't passive; it's how you cover ground. your hunger is to listen until the pattern shows itself. you are the one who has actually heard what was said — the phrasing, the hesitation, the thing repeated twice — and you can usually reconstruct a situation from evidence other people threw away. the listener is rarely the one heard. you have built a life where people talk to you, and it is entirely possible to reach forty inside that arrangement without anyone having asked you a second question.",
     "tokens": [
       {
         "text": "you landed at ",
@@ -4384,7 +4384,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " you are the one who has actually heard what was said — the phrasing, the hesitation, the thing repeated twice — and you can usually reconstruct a situation from evidence other people threw away. the cost is old and simple: the listener is rarely the one heard. you have built a life where people talk to you, and it is entirely possible to reach forty inside that arrangement without anyone having asked you a second question.",
+        "text": " you are the one who has actually heard what was said — the phrasing, the hesitation, the thing repeated twice — and you can usually reconstruct a situation from evidence other people threw away. the listener is rarely the one heard. you have built a life where people talk to you, and it is entirely possible to reach forty inside that arrangement without anyone having asked you a second question.",
         "emphasis": null
       }
     ]
@@ -4457,7 +4457,7 @@ export const COPY = {
     ]
   },
   "STATION.23.strike": {
-    "text": "india heard percussion at this station — dhaniṣṭhā, whose emblem is a drum and whose deities are the eight vasus, the gods of elemental abundance. the arabs called it the luck of the swallower, one of the four lucky stations, and hung it on faint stars in the water-carrier's stream. so the hunger is rhythm: you set the tempo of the room you're in. not the loudest person, not necessarily the leader — the one everyone unconsciously syncs to. groups organize their pace around you, and most of them have never noticed they're doing it. the cost is that a drummer doesn't get to be off-beat. you keep the time for other people, which means your own irregularity — the slow week, the month you were not okay — registers to everyone else as the whole system faltering. you have almost certainly held a rhythm past the point where you wanted to, because stopping felt like it would take a group down with you.",
+    "text": "india heard percussion at this station — dhaniṣṭhā, whose emblem is a drum and whose deities are the eight vasus, the gods of elemental abundance. the arabs called it the luck of the swallower, one of the four lucky stations, and hung it on faint stars in the water-carrier's stream. so the hunger is rhythm: you set the tempo of the room you're in. not the loudest person, not necessarily the leader — the one everyone unconsciously syncs to. groups organize their pace around you, and most of them have never noticed they're doing it. a drummer doesn't get to be off-beat. you keep the time for other people, which means your own irregularity — the slow week, the month you were not okay — registers to everyone else as the whole system faltering. you have almost certainly held a rhythm past the point where you wanted to, because stopping felt like it would take a group down with you.",
     "tokens": [
       {
         "text": "india heard ",
@@ -4492,7 +4492,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " not the loudest person, not necessarily the leader — the one everyone unconsciously syncs to. groups organize their pace around you, and most of them have never noticed they're doing it. the cost is that a drummer doesn't get to be off-beat. you keep the time for other people, which means your own irregularity — the slow week, the month you were not okay — registers to everyone else as ",
+        "text": " not the loudest person, not necessarily the leader — the one everyone unconsciously syncs to. groups organize their pace around you, and most of them have never noticed they're doing it. a drummer doesn't get to be off-beat. you keep the time for other people, which means your own irregularity — the slow week, the month you were not okay — registers to everyone else as ",
         "emphasis": null
       },
       {
@@ -4845,7 +4845,7 @@ export const COPY = {
     ]
   },
   "STATION.26.strike": {
-    "text": "your sun landed on the first wall of the great square of pegasus — four bright stars that make the most obviously built shape in the autumn sky. china saw exactly that and called this station 室, the chamber: a room. the arabs saw the same stars as the fore-spout of an enormous bucket — the lip that the spring rain pours out of. a room, and a spout. both of them are about holding something and then giving it out, and india's name completes the thought: uttara bhādrapadā, whose deity is ahirbudhnya, the serpent of the deep foundation — the thing coiled underneath that makes the structure possible. your hunger is to go still and deep enough to hold weight. you build the room. you are the reason a group has somewhere to be. the cost is architectural and unglamorous: foundations are under the house. the people enjoying the room are not thinking about what's holding it up, and you will occasionally resent that, and then feel small for resenting it — which is its own second weight.",
+    "text": "your sun landed on the first wall of the great square of pegasus — four bright stars that make the most obviously built shape in the autumn sky. china saw exactly that and called this station 室, the chamber: a room. the arabs saw the same stars as the fore-spout of an enormous bucket — the lip that the spring rain pours out of. a room, and a spout. both of them are about holding something and then giving it out, and india's name completes the thought: uttara bhādrapadā, whose deity is ahirbudhnya, the serpent of the deep foundation — the thing coiled underneath that makes the structure possible. your hunger is to go still and deep enough to hold weight. you build the room. you are the reason a group has somewhere to be. foundations are under the house. the people enjoying the room are not thinking about what's holding it up, and you will occasionally resent that, and then feel small for resenting it — which is its own second weight.",
     "tokens": [
       {
         "text": "your sun landed on the ",
@@ -4904,7 +4904,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " you build the room. you are the reason a group has somewhere to be. the cost is architectural and unglamorous: foundations are under the house. the people enjoying the room are not thinking about what's holding it up, and you will occasionally resent that, and then feel small for resenting it — which is its own second weight.",
+        "text": " you build the room. you are the reason a group has somewhere to be. foundations are under the house. the people enjoying the room are not thinking about what's holding it up, and you will occasionally resent that, and then feel small for resenting it — which is its own second weight.",
         "emphasis": null
       }
     ]
@@ -5117,7 +5117,7 @@ export const COPY = {
     ]
   },
   "STATION.28.strike": {
-    "text": "your sun landed in the last station on the road, and it is the only one that has two arabic names at once: baṭn al-ḥūt, the belly of the fish, and al-rishāʾ, the cord — the well-rope, the tie. the astronomers of that sky could not settle on one image, so both were kept. and there is something here no other station has. the indian sky-map counts twenty-seven stations where ours counts twenty-eight, so this one has no indian name at all. you did not land in a station that four traditions argued over. you landed in the seam between two ways of counting, and that is not a gap in the data — it is a real feature of the sky, and it is yours. your hunger is the cord's: you want to tie the ends together. you are the person who connects the two groups that should have met, the one who notices that the beginning of one thing is the end of another. and this station's own position says it plainly — it runs right up to 0° aries, where the gate, station one, begins again. you are the knot that closes the wheel and the reason it can start over. the cost of living in a seam: you belong to both sides and are counted by neither. you have been the connector in rooms where nobody thought to count you as a member.",
+    "text": "your sun landed in the last station on the road, and it is the only one that has two arabic names at once: baṭn al-ḥūt, the belly of the fish, and al-rishāʾ, the cord — the well-rope, the tie. the astronomers of that sky could not settle on one image, so both were kept. and there is something here no other station has. the indian sky-map counts twenty-seven stations where ours counts twenty-eight, so this one has no indian name at all. you did not land in a station that four traditions argued over. you landed in the seam between two ways of counting. it is a real feature of the sky, and it is yours. your hunger is the cord's: you want to tie the ends together. you are the person who connects the two groups that should have met, the one who notices that the beginning of one thing is the end of another. and this station's own position says it plainly — it runs right up to 0° aries, where the gate, station one, begins again. you are the knot that closes the wheel and the reason it can start over. the cost of living in a seam: you belong to both sides and are counted by neither. you have been the connector in rooms where nobody thought to count you as a member.",
     "tokens": [
       {
         "text": "your sun landed in the ",
@@ -5176,7 +5176,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and that is not a gap in the data — it is a real feature of the sky, and it is yours. your hunger is the cord's: ",
+        "text": ". it is a real feature of the sky, and it is yours. your hunger is the cord's: ",
         "emphasis": null
       },
       {
@@ -5275,4 +5275,4 @@ export const COPY = {
 };
 
 export const STATION_SLOTS = 112;
-export const COPY_VERSION = "c96cb694";
+export const COPY_VERSION = "3a4deea0";

@@ -393,6 +393,35 @@ export function patternAspects(aspects, copy) {
 }
 
 /**
+ * The Deep Chart's DEPTH tab (PRODUCT.md §4): the four traditions' names
+ * for the sun's and moon's stations, disagreements shown rather than
+ * smoothed. Straight from stations.js's own crossCultural array (already
+ * four traditions per station, already real prose) — no second parse of
+ * mansions-table.json here; that's Star Shard - Deep Chart (hi-fi).dc.html's
+ * own mansion-depth.js, a different (richer, per-tradition-match-flagged)
+ * shape this codebase also has, but the live page's own DEPTH placeholder
+ * says plainly "stations.js already holds it," and it does.
+ *
+ * sunStation/moonStation are never null (unlike risingStation) — Sun and
+ * Moon longitude are always known regardless of birth time.
+ */
+export function depthReading(sigil, stations) {
+  const pick = (station, which) => {
+    const s = stations.STATIONS[station];
+    return {
+      which, epithet: s.epithet, kanji: s.kanji, span: s.signSpan,
+      stars: s.stars, traditions: s.crossCultural, match: s.match || 'unmarked',
+      // stations.js's real match values are STRONG/PARTIAL/null (verified —
+      // not the fuller STRONG/PARTIAL/DIVERGENT range mansions-table.json's
+      // raw data can carry); anything short of a clean STRONG match is
+      // exactly the "disagreement" PRODUCT.md §4 wants shown, not smoothed.
+      needsFlag: s.match !== 'STRONG',
+    };
+  };
+  return { strike: pick(sigil.sunStation, 'sun'), root: pick(sigil.moonStation, 'moon') };
+}
+
+/**
  * The Deep Chart's HOUSES tab (PRODUCT.md §2): which house the sun, the
  * moon, and the ascendant's ruler each fall in, framed as "this part of
  * you plays out here" — plus the empty-house honesty note (most houses
