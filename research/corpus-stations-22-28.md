@@ -33,7 +33,7 @@ your hunger is **to listen until the pattern shows itself.** you are the
 one who has actually heard what was said — the phrasing, the hesitation,
 the thing repeated twice — and you can usually reconstruct a situation
 from evidence other people threw away.
-the cost is old and simple: the listener is rarely the one heard. you
+the listener is rarely the one heard. you
 have built a life where people talk to you, and it is entirely possible
 to reach forty inside that arrangement without anyone having asked you a
 second question.
@@ -84,7 +84,7 @@ so the hunger is rhythm: **you set the tempo of the room you're in.** not
 the loudest person, not necessarily the leader — the one everyone
 unconsciously syncs to. groups organize their pace around you, and most
 of them have never noticed they're doing it.
-the cost is that a drummer doesn't get to be off-beat. you keep the time
+a drummer doesn't get to be off-beat. you keep the time
 for other people, which means your own irregularity — the slow week, the
 month you were not okay — registers to everyone else as *the whole system
 faltering.* you have almost certainly held a rhythm past the point where
@@ -236,8 +236,8 @@ foundation — the thing coiled underneath that makes the structure
 possible.
 your hunger is **to go still and deep enough to hold weight.** you build
 the room. you are the reason a group has somewhere to be.
-the cost is architectural and unglamorous: foundations are under the
-house. the people enjoying the room are not thinking about what's holding
+foundations are under the house. the people enjoying the room are not
+thinking about what's holding
 it up, and you will occasionally resent that, and then feel small for
 resenting it — which is its own second weight.
 
@@ -332,8 +332,7 @@ and there is something here no other station has. **the indian sky-map
 counts twenty-seven stations where ours counts twenty-eight, so this one
 has no indian name at all.** you did not land in a station that four
 traditions argued over. you landed in the **seam between two ways of
-counting**, and that is not a gap in the data — it is a real feature of
-the sky, and it is yours.
+counting**. it is a real feature of the sky, and it is yours.
 your hunger is the cord's: **you want to tie the ends together.** you are
 the person who connects the two groups that should have met, the one who
 notices that the beginning of one thing is the end of another. and this

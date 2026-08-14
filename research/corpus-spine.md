@@ -19,8 +19,9 @@ readings; the station bodies then deepen them.
 `{weekday}` · `{degToEdge}`
 
 **Voice law:** lowercase · second person · anchors lead, coined words
-nickname · name a tension with a real cost · show the work at least twice
-per reading · counsel, never prophecy · no emoji (that voice belongs to
+nickname · name a tension with a real cost · counsel, never prophecy ·
+never describe the method to
+be believed · no emoji (that voice belongs to
 the card faces) · tier-0 vocabulary only.
 
 ---
@@ -28,23 +29,24 @@ the card faces) · tier-0 vocabulary only.
 ## OPEN.address — the opening (pick 1, seeded)
 
 **OPEN.address.1**
-the sky kept a record of the minute you arrived, and this is what it says.
-read it slowly. none of it is filler and none of it is anyone else's — it
-was assembled from the exact way the sun, the moon, and the eastern
-horizon stood over {birthPlace} that minute, and from one more thing most
-charts never mention: the part of your sky that was *about to change*.
+at the minute you arrived, the sky over {birthPlace} stood one way and
+no other. the sun was somewhere in it. the moon was somewhere else. a
+third stretch of sky was climbing over the eastern horizon. and one of
+those three had nearly finished where it stood, and was already
+*leaning into the next*. read it slowly. all of it is yours.
 
 **OPEN.address.2**
-here is your shard. everyone knows their sign; almost nobody knows their
-sky within it. yours is written below — where you landed, what keeps that
-ground, what it wants from you, and the one place your chart was already
-in motion when you got here.
+here is your shard. everyone knows their sign; almost nobody knows
+their sky within it. a sign is thirty degrees wide and the sun takes a
+month to cross it. below is where inside yours you actually landed —
+and the one place your chart was already moving when you got here.
 
 **OPEN.address.3**
-this was assembled, not chosen. the positions are real, the reading
-follows from them, and where the traditions that mapped this sky disagree
-with each other, you'll see that too — disagreement is part of the
-picture, not a flaw in it.
+four sky-cultures divided this same band of stars and none of them
+agreed on where the borders fell. arab, chinese, indian, and the old
+european zodiac each named the stretch you were born under, and each
+named it something different. below is what all four saw standing
+there when you arrived.
 
 ---
 
@@ -108,7 +110,7 @@ two weathers at once and be asked, all their lives, to pick one. you
 don't have to. the sky didn't.
 
 **FACING.unknown** — the horizon needs a clock. without a birth time
-there is no honest way to say which sky was rising when you arrived —
+there is no way to say which sky was rising when you arrived —
 it changes completely every four minutes — a different door for
 someone born ten minutes after you, in the same room. nothing else on
 your shard depends on it.
@@ -157,8 +159,8 @@ ending clearly and still have to wait for everyone to catch up.
 
 **LIGHT.last_quarter** — a **half moon, emptying**: lit on one side, and
 this time the dark side is the one that's growing. you are a natural
-editor of your own life. what you keep, you keep on purpose. the cost is
-that you sometimes cut early, and call it clarity.
+editor of your own life. what you keep, you keep on purpose. you
+sometimes cut early, and call it clarity.
 
 **LIGHT.waning_crescent** — a **thin old moon**, the last light before the
 dark. you arrived good at endings — the packing-up, the last conversation,
@@ -347,7 +349,7 @@ there is no gap in you between what you want and what you're like. most
 people run a negotiation between their outside and their inside. you
 don't have the seam, and that's why you're hard to talk out of things.
 
-the cost is exactly the same fact. you have no second opinion in the
+the same fact runs the other way. you have no second opinion in the
 building. when you're right you're unstoppable, and when you're wrong
 there is nobody inside your own chart to say so — you have to go out and
 find that person, deliberately, and then actually listen. and you arrived
@@ -366,14 +368,14 @@ you are recognizably the same person in every room, your inside and your
 outside tell the same story, and people find you restful in a way most of
 them can't articulate. depth over distance was always the assignment.
 
-the cost is that agreement is comfortable, and comfort is not the same as
-truth. with both lights facing the same direction, you can go a long way
+agreement is comfortable, and comfort is not the same as truth. with
+both lights facing the same direction, you can go a long way
 without ever being interrupted by yourself — and the travelers who have to
 argue with their own charts every morning get a kind of practice you don't.
 the ordinary version of this is realizing at thirty that a belief you'd
 held since childhood had simply never been challenged, by anyone, including
-you. the fix isn't to become someone else. it's to go and find your
-disagreement on purpose, since your chart won't hand it to you.
+you. go and find your disagreement on purpose. your chart won't hand
+it to you.
 
 ### GAIT.outbound *(the moon one banner ahead of the sun)*
 
@@ -390,12 +392,12 @@ someone who meant it as a diagnosis.
 
 it isn't restlessness. it's that your inner light genuinely arrived at the
 next place first, and the rest of you is doing the honest work of catching
-up. the cost is real, though, and it's this: **you are chronically early,
+up. **you are chronically early,
 and being early looks identical to being wrong** — for a while. you'll
 leave rooms before anyone understands why, name problems before there's
-evidence, and lose arguments you were going to win in eighteen months. the
-discipline isn't slowing down. it's learning to say *"i can't prove this
-yet"* out loud, which buys you the room to be early without being alone.
+evidence, and lose arguments you were going to win in eighteen months.
+learning to say *"i can't prove this yet"* out loud buys you the room
+to be early without being alone.
 
 ### GAIT.emberwake *(the moon one banner behind the sun)*
 
@@ -411,11 +413,11 @@ they said they were afraid of in 2019. you are the reason certain
 friendships still exist. institutions, families, and group chats all
 quietly run on someone with your chart, and they rarely notice.
 
-the cost is that a keeper is always slightly out of step with a room
-that's already moved on. you'll be accused of living in the past. some of
+a keeper is always slightly out of step with a room that's already
+moved on. you'll be accused of living in the past. some of
 the time the accusation will even be fair — there is a version of this
-walk that turns into a museum of things that stopped mattering. the honest
-question isn't whether to let go; it's *what the fire is for.* a coal
+walk that turns into a museum of things that stopped mattering. the
+question is *what the fire is for.* a coal
 carried without a hearth in mind is just a burn. carried toward one, it's
 the reason anyone gets warm.
 
@@ -431,15 +433,14 @@ on the road, that walk is called **farbank**. you were born whole and
 opposite ends of the same river, and everything you love ends up strung
 across it like a bridge.
 
-the tension is real, so it gets its real name: what your sun wants and
-what your moon needs were never going to be satisfied by the same
-afternoon. on bad weeks that lands as two opposite accusations at once —
+what your sun wants and what your moon needs were never going to be
+satisfied by the same afternoon. on bad weeks that lands as two
+opposite accusations at once —
 too much and too withholding, too quick to move on and too slow to let go.
 both are wrong, and for the same reason: each one is only reading one
-bank. the true thing is simpler, and it's the instruction for your whole
-life: **everything worth keeping gets built on the crossing** — decided in
-the open, in full light, with both banks in view. that's not a compromise
-between your two halves. it's the only place they were ever going to meet.
+bank. **everything worth keeping gets built on the crossing** —
+decided in the open, in full light, with both banks in view. it is the
+only place your two halves were ever going to meet.
 
 ---
 

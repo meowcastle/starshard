@@ -82,8 +82,8 @@ crossing nobody makes alone. so your hunger isn't conquest, whatever your
 sign's reputation promised. **you want to get the precious thing to the
 other side.** you have been handed responsibilities early and repeatedly,
 by people who could not have explained why they trusted you.
-the cost is the obvious one and it is worse than people think: a bearer
-is measured by what they carry, so you keep accepting weight as proof.
+a bearer is measured by what they carry, so you keep accepting weight
+as proof.
 some of what you've been handed was never yours. you've known that about
 one or two things for years.
 
@@ -338,8 +338,8 @@ station under a new banner, where the white tiger's sky hands over to the
 you don't do things alone, and whatever you touch gets larger.
 the room reads you as **safe to come back to**, which is the most
 undersold thing a person can be. people return to you after silences they
-assume they've ruined. the cost is that being the reliable door means you
-rarely get to be the one who leaves — and a return-rooted moon should
+assume they've ruined. being the reliable door means you rarely get to
+be the one who leaves — and a return-rooted moon should
 check, once in a while, that they're staying because they chose to and
 not because they're the one everyone else navigates by.
 

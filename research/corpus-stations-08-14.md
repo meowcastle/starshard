@@ -32,7 +32,7 @@ the whole road, and gives it an emblem you can't misread: **a cow's
 udder**. so every tradition arrived at the same idea by a different door.
 this is the sky of **feeding**. your hunger is to nourish the thing that
 will outlast you — a person, a practice, a household, a body of work.
-the cost is that feeders eat last and call it a personality. you are not
+feeders eat last and call it a personality. you are not
 actually built to run empty; you have just gotten very good at it.
 
 **STATION.08.root**
@@ -77,7 +77,7 @@ the eye, the willow, the coil. what all three are describing is your
 hunger: **you want to know the thing nobody announced.** you read rooms
 at a resolution most people don't have — the pause before the answer, the
 name that stopped getting mentioned, who stopped being cc'd.
-the cost is in the third image, and it's the honest one. the coil holds.
+the third image is the honest one. the coil holds.
 what you notice, you keep hold of; a glance can become a grip. the
 question that follows you is not whether you see clearly. it's when
 seeing turns into not letting go.
@@ -167,9 +167,9 @@ volume, the part of the animal that arrives before the animal does.
 india's name for this sky is **pūrva phālgunī**, and its emblem is the
 **front legs of a bed**: rest, pleasure, the good half of the night. its
 deity is bhaga, who hands out the share of delight a life is allotted.
-the old station-lists gave this sky the **release of captives**, and
-that's the through-line worth keeping — mane energy is not vanity, it's
-*liberation*. your hunger is **to be delighted in, and to hand delight
+the old station-lists gave this sky the **release of captives**. mane
+energy here is not vanity, it's *liberation*. your hunger is **to be
+delighted in, and to hand delight
 around**, and you have a talent for making other people feel unfastened.
 the cost arrives when the delight stops coming back. this sky needs to be
 enjoyed out loud by somebody, and it will keep performing to get there —
@@ -218,7 +218,7 @@ kinship, alliance, and the promise that has to hold after the party.
 that's your hunger. **you want to be the one who keeps it going once the
 pleasant part is over.** you are the hinge in every group: the one
 present when the mood turns, the plan changes, the season ends.
-the cost is that hinges take the strain from both sides. being the person
+hinges take the strain from both sides. being the person
 who manages the turn means you are rarely allowed to simply *have* the
 feeling everyone else is having.
 

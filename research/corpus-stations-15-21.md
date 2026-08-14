@@ -43,8 +43,8 @@ the oldest books also give this sky one job above all: the finding of
 **water underground**. later magicians in europe upgraded that to buried
 treasure. keep the older version — you are the one who knows where the
 water is.
-the cost is that a cover works on everyone, including the people who
-would have helped. the drafts folder, the private practice, the version
+a cover works on everyone, including the people who would have helped.
+the drafts folder, the private practice, the version
 of the work nobody has seen: the habit of staying out of reach stops
 being protection at some point and becomes the reason nobody found you.
 
@@ -145,8 +145,8 @@ the people who chose to keep you.
 your hunger is **to stay through the part that isn't fun** — and you are
 unusual in that you are not actually bored by the maintenance. you like
 the ninth year.
-the cost is that loyalty this durable will occasionally be spent on
-something that stopped deserving it, and you will be the last to notice,
+loyalty this durable will occasionally be spent on something that
+stopped deserving it, and you will be the last to notice,
 because noticing feels like betrayal.
 
 **STATION.17.root**
@@ -236,8 +236,8 @@ traditions named the same spot from opposite directions. the arabs saw
 *al-shawla*, **the raised sting**: the business end, lifted. india saw
 **mūla**, which means **the root** — its emblem a bundle of tied roots,
 because the tail's end is also where the tail begins.
-that is the reading, and it's unusually literal: **you go to the bottom
-of things.** where other people take the account they were given, you dig
+**you go to the bottom of things.** where other people take the
+account they were given, you dig
 for the cause. the origin, the real reason, the first version of the
 story before it got tidy.
 the cost is what's at the bottom. digging to the root means handling the
@@ -252,8 +252,8 @@ it doesn't read as aggression — it reads as **certainty**. when you know,
 you know all the way down, and you do not experience your own conviction
 as an opinion.
 the room reads you as **formidable**, and adjusts before you've done
-anything. the honest difficulty: certainty that deep is very hard to
-update in public, so you will occasionally defend a position past the
+anything. certainty that deep is very hard to update in public, so you
+will occasionally defend a position past the
 moment you stopped believing it, purely because reversing in front of
 people costs more than you can spend that day. a root-rooted moon does
 its changing in private, and should tell at least one person when it's
@@ -291,8 +291,8 @@ so the hunger is double and it fits together: **you keep the group
 together, and you can tell what's worth keeping.** your instinct in any
 gathering is a headcount, and your gift is that you can do it without
 making it strange.
-the cost is that the person counting heads never quite gets to be at the
-river. you have been present at a great many good evenings and fully
+the person counting heads never quite gets to be at the river. you
+have been present at a great many good evenings and fully
 inside surprisingly few of them.
 
 **STATION.20.root**
@@ -345,8 +345,8 @@ that is your hunger, and it is not what people assume when they hear
 "empty": **you want the thing that stays won.** india's name here is
 uttara aṣāḍhā, the sky of the all-gods, the undefeated victory. the pause
 is not the absence of the work. it's where the work is.
-the cost is that you will be read as unproductive during the exact
-periods when you are doing the most, and you will not always have the
+you will be read as unproductive during the exact periods when you are
+doing the most, and you will not always have the
 vocabulary to defend it — least of all to yourself, at 2am.
 
 **STATION.21.root**

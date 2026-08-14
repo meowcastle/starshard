@@ -143,10 +143,10 @@ export const COPY = {
     ]
   },
   "FACING.unknown": {
-    "text": "the horizon needs a clock. without a birth time there is no honest way to say which sky was rising when you arrived — it changes completely every four minutes — a different door for someone born ten minutes after you, in the same room. nothing else on your shard depends on it.",
+    "text": "the horizon needs a clock. without a birth time there is no way to say which sky was rising when you arrived — it changes completely every four minutes — a different door for someone born ten minutes after you, in the same room. nothing else on your shard depends on it.",
     "tokens": [
       {
-        "text": "the horizon needs a clock. without a birth time there is no honest way to say which sky was rising when you arrived — it changes completely every four minutes — a different door for someone born ten minutes after you, in the same room. nothing else on your shard depends on it.",
+        "text": "the horizon needs a clock. without a birth time there is no way to say which sky was rising when you arrived — it changes completely every four minutes — a different door for someone born ten minutes after you, in the same room. nothing else on your shard depends on it.",
         "emphasis": null
       }
     ]
@@ -848,7 +848,7 @@ export const COPY = {
     ]
   },
   "GAIT.farbank": {
-    "text": "your {sunSign} sun stood on one bank; your {moonSign} moon on the far one — opposite banners, the full width of the wheel between them. and that distance is why the sky was bright the night you arrived: a moon only stands full when it faces its sun across everything.\n\non the road, that walk is called farbank. you were born whole and wide. the two halves of you are not missing each other — they're holding opposite ends of the same river, and everything you love ends up strung across it like a bridge.\n\nthe tension is real, so it gets its real name: what your sun wants and what your moon needs were never going to be satisfied by the same afternoon. on bad weeks that lands as two opposite accusations at once — too much and too withholding, too quick to move on and too slow to let go. both are wrong, and for the same reason: each one is only reading one bank. the true thing is simpler, and it's the instruction for your whole life: everything worth keeping gets built on the crossing — decided in the open, in full light, with both banks in view. that's not a compromise between your two halves. it's the only place they were ever going to meet.",
+    "text": "your {sunSign} sun stood on one bank; your {moonSign} moon on the far one — opposite banners, the full width of the wheel between them. and that distance is why the sky was bright the night you arrived: a moon only stands full when it faces its sun across everything.\n\non the road, that walk is called farbank. you were born whole and wide. the two halves of you are not missing each other — they're holding opposite ends of the same river, and everything you love ends up strung across it like a bridge.\n\nwhat your sun wants and what your moon needs were never going to be satisfied by the same afternoon. on bad weeks that lands as two opposite accusations at once — too much and too withholding, too quick to move on and too slow to let go. both are wrong, and for the same reason: each one is only reading one bank. everything worth keeping gets built on the crossing — decided in the open, in full light, with both banks in view. it is the only place your two halves were ever going to meet.",
     "tokens": [
       {
         "text": "your {sunSign} sun stood on one bank; your {moonSign} moon on the far one — opposite banners, the full width of the wheel between them. and that distance is why the sky was bright the night you arrived: ",
@@ -875,7 +875,7 @@ export const COPY = {
         "emphasis": "italic"
       },
       {
-        "text": ". the two halves of you are not missing each other — they're holding opposite ends of the same river, and everything you love ends up strung across it like a bridge.\n\nthe tension is real, so it gets its real name: what your sun wants and what your moon needs were never going to be satisfied by the same afternoon. on bad weeks that lands as two opposite accusations at once — too much and too withholding, too quick to move on and too slow to let go. both are wrong, and for the same reason: each one is only reading one bank. the true thing is simpler, and it's the instruction for your whole life: ",
+        "text": ". the two halves of you are not missing each other — they're holding opposite ends of the same river, and everything you love ends up strung across it like a bridge.\n\nwhat your sun wants and what your moon needs were never going to be satisfied by the same afternoon. on bad weeks that lands as two opposite accusations at once — too much and too withholding, too quick to move on and too slow to let go. both are wrong, and for the same reason: each one is only reading one bank. ",
         "emphasis": null
       },
       {
@@ -883,7 +883,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": " — decided in the open, in full light, with both banks in view. that's not a compromise between your two halves. it's the only place they were ever going to meet.",
+        "text": " — decided in the open, in full light, with both banks in view. it is the only place your two halves were ever going to meet.",
         "emphasis": null
       }
     ]
@@ -4034,7 +4034,7 @@ export const COPY = {
     ]
   },
   "STATION.19.root": {
-    "text": "this sky is guarded by the tiger and kept by mars. that is the most straightforwardly fierce pairing on the road, and in an inner life it doesn't read as aggression — it reads as certainty. when you know, you know all the way down, and you do not experience your own conviction as an opinion. the room reads you as formidable, and adjusts before you've done anything. the honest difficulty: certainty that deep is very hard to update in public, so you will occasionally defend a position past the moment you stopped believing it, purely because reversing in front of people costs more than you can spend that day. a root-rooted moon does its changing in private, and should tell at least one person when it's happening.",
+    "text": "this sky is guarded by the tiger and kept by mars. that is the most straightforwardly fierce pairing on the road, and in an inner life it doesn't read as aggression — it reads as certainty. when you know, you know all the way down, and you do not experience your own conviction as an opinion. the room reads you as formidable, and adjusts before you've done anything. certainty that deep is very hard to update in public, so you will occasionally defend a position past the moment you stopped believing it, purely because reversing in front of people costs more than you can spend that day. a root-rooted moon does its changing in private, and should tell at least one person when it's happening.",
     "tokens": [
       {
         "text": "this sky is guarded by ",
@@ -4069,7 +4069,7 @@ export const COPY = {
         "emphasis": "bold"
       },
       {
-        "text": ", and adjusts before you've done anything. the honest difficulty: certainty that deep is very hard to update in public, so you will occasionally defend a position past the moment you stopped believing it, purely because reversing in front of people costs more than you can spend that day. a root-rooted moon does its changing in private, and should tell at least one person when it's happening.",
+        "text": ", and adjusts before you've done anything. certainty that deep is very hard to update in public, so you will occasionally defend a position past the moment you stopped believing it, purely because reversing in front of people costs more than you can spend that day. a root-rooted moon does its changing in private, and should tell at least one person when it's happening.",
         "emphasis": null
       }
     ]
@@ -5275,4 +5275,4 @@ export const COPY = {
 };
 
 export const STATION_SLOTS = 112;
-export const COPY_VERSION = "3a4deea0";
+export const COPY_VERSION = "eccff718";
