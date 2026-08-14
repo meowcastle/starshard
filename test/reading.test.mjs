@@ -343,6 +343,49 @@ test('patternAspects: no aspects in orb falls back to ASPECT.none, real corpus t
   assert.equal(pattern.noneText, READING_COPY['ASPECT.none'].text);
 });
 
+// -- weeklyReading (the weekly's seven beats) -------------------------------
+
+test('weeklyReading: standout and exact describe the same contact, named two ways, with a real weekday', () => {
+  const standout = { planet: 'Uranus', point: 'mc', aspect: 'sextile', orbUsed: 0, retrograde: false, weekday: 2 };
+  const result = R.weeklyReading({ standout, backdrop: [], days: [] });
+  assert.equal(result.standout, 'Wednesday: Uranus sextile your midheaven');
+  assert.equal(result.exact, 'Uranus sextile your midheaven');
+  assert.equal(result.orb, 0);
+});
+
+test('weeklyReading: retrograde is named in the exact text when true', () => {
+  const standout = { planet: 'Saturn', point: 'sun', aspect: 'square', orbUsed: 2.1, retrograde: true, weekday: 0 };
+  const result = R.weeklyReading({ standout, backdrop: [], days: [] });
+  assert.match(result.exact, /, retrograde$/);
+});
+
+test('weeklyReading: standout/exact/orb are all null when nothing is in orb this week', () => {
+  const result = R.weeklyReading({ standout: null, backdrop: [], days: [] });
+  assert.equal(result.standout, null);
+  assert.equal(result.exact, null);
+  assert.equal(result.orb, null);
+});
+
+test('weeklyReading: backdrop contacts format as plain facts, same point-label convention as the nightly transit', () => {
+  const backdrop = [{ planet: 'Neptune', point: 'moon', aspect: 'trine', orbUsed: 3.2 }];
+  const result = R.weeklyReading({ standout: null, backdrop, days: [] });
+  assert.deepEqual(result.backdrop, [{ text: 'Neptune trine your moon' }]);
+});
+
+test('weeklyReading: days pass through unchanged — computing "today" is the caller\'s job, not this composer\'s', () => {
+  const days = [{ key: 'mon', sign: 'Leo', on: '1' }];
+  const result = R.weeklyReading({ standout: null, backdrop: [], days });
+  assert.equal(result.days, days);
+});
+
+test('weeklyReading: the two-way, best days and the honest note are null — no written content exists yet, and this must not fabricate a plausible-sounding line', () => {
+  const result = R.weeklyReading({ standout: null, backdrop: [], days: [] });
+  assert.equal(result.twoWay, null);
+  assert.equal(result.rhythm, null);
+  assert.equal(result.bestDays, null);
+  assert.equal(result.honest, null);
+});
+
 // -- depthReading (the Deep Chart's DEPTH tab) -----------------------------
 
 test('depthReading: strike is the sun\'s station, root is the moon\'s, real stations.js data throughout', () => {

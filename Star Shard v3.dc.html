@@ -505,24 +505,24 @@ a{color:var(--ink-accent)}
       <div class="card-panel" style="margin:12px 0 0">
         <div class="eyebrow" style="margin-bottom:6px">01 · the standout</div>
         <sc-if value="{{ sigWkStandout }}"><p class="h3" style="margin:0">{{ sigWkStandout }}</p></sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkStandout — one event, named, with its weekday</p></sc-if>
+        <sc-if value="{{ sigWkStandoutNeeds }}"><p class="hint">nothing exact this week.</p></sc-if>
       </div>
 
       <div class="card-panel panel-accent" style="margin:0 0 14px">
         <div class="eyebrow" style="margin-bottom:6px">02 · the exact one</div>
         <div class="orb-line">
           <sc-if value="{{ sigWkOrbText }}"><span class="orb-num">{{ sigWkOrbText }}</span></sc-if>
-          <sc-if value="{{ sigWkNeeds }}"><span class="orb-num orb-num-empty">0.0°</span></sc-if>
+          <sc-if value="{{ sigWkExactNeeds }}"><span class="orb-num orb-num-empty">0.0°</span></sc-if>
           <span class="hint">{{ sigWkOrbLabel }}</span>
         </div>
         <sc-if value="{{ sigWkExact }}"><p style="margin:10px 0 0">{{ sigWkExact }}</p></sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot" style="margin-top:10px">sigWkExact · sigWkOrb — transits.js already returns orbUsed. print the number.</p></sc-if>
+        <sc-if value="{{ sigWkExactNeeds }}"><p class="hint" style="margin-top:10px">no contact tight enough to name this week.</p></sc-if>
       </div>
 
       <div class="card-panel" style="margin:0 0 14px">
         <div class="eyebrow" style="margin-bottom:6px">03 · the two-way</div>
         <sc-if value="{{ sigWkTwoWay }}"><p style="margin:0">{{ sigWkTwoWay }}</p></sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkTwoWay — the contact that can go either way, choice handed over</p></sc-if>
+        <sc-if value="{{ sigWkTwoWayNeeds }}"><p class="slot">sigWkTwoWay — the contact that can go either way, choice handed over. no written copy yet (no WEEKLY.* corpus slot for this).</p></sc-if>
       </div>
 
       <div class="card-panel" style="margin:0 0 14px; background:var(--surface-sunken)">
@@ -533,7 +533,7 @@ a{color:var(--ink-accent)}
             <p style="margin:6px 0 0">{{ line.text }}</p>
           </sc-for>
         </sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkBackdropLines — uranus, neptune, pluto with their houses (PRODUCT.md §7b)</p></sc-if>
+        <sc-if value="{{ sigWkBackdropNeeds }}"><p class="hint">nothing from the outers this week.</p></sc-if>
       </div>
 
       <div class="card-panel" style="margin:0 0 14px">
@@ -547,23 +547,23 @@ a{color:var(--ink-accent)}
           </sc-for>
         </div>
         <sc-if value="{{ sigWkRhythm }}"><p style="margin:12px 0 0">{{ sigWkRhythm }}</p></sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot" style="margin-top:12px">sigWkDays [ key · sign · tone ] · sigWkRhythm — the moon's sign per day</p></sc-if>
+        <sc-if value="{{ sigWkRhythmNeeds }}"><p class="slot" style="margin-top:12px">sigWkRhythm — the interpretive line (Monday inward, Tue–Wed visible, Thu–Fri detail). no written copy yet.</p></sc-if>
       </div>
 
       <div class="card-panel" style="margin:0 0 14px">
         <div class="eyebrow" style="margin-bottom:6px">06 · best days</div>
         <sc-if value="{{ sigWkBestDays }}"><p class="h3" style="margin:0">{{ sigWkBestDays }}</p></sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkBestDays — an actual recommendation, named weekdays</p></sc-if>
+        <sc-if value="{{ sigWkBestDaysNeeds }}"><p class="slot">sigWkBestDays — an actual recommendation, named weekdays. no written copy yet.</p></sc-if>
       </div>
 
       <div class="card-panel" style="margin:0 0 14px; border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark)">
         <div class="eyebrow" style="margin-bottom:6px">07 · the honest note</div>
         <sc-if value="{{ sigWkHonest }}"><p style="margin:0">{{ sigWkHonest }}</p></sc-if>
-        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkHonest — what's still hard, unresolved. the reading does not end high.</p></sc-if>
+        <sc-if value="{{ sigWkHonestNeeds }}"><p class="slot">sigWkHonest — what's still hard, unresolved. the reading does not end high. no written copy yet.</p></sc-if>
       </div>
 
-      <sc-if value="{{ sigWkNeeds }}">
-        <p class="mono-note" style="margin:2px 0 0">seven beats wired; waits on transits.js (PRODUCT.md §11.1, §7b).</p>
+      <sc-if value="{{ sigWkPartial }}">
+        <p class="mono-note" style="margin:2px 0 0">the standout, the exact orb, the outers, and the day-by-day rhythm are real. the two-way, best days, and the honest note still need written copy.</p>
       </sc-if>
     </div>
   </sc-if>
@@ -1198,6 +1198,14 @@ class Component extends DCLogic {
 
   // the weekly's seven beats. transits.js is not merged, so every beat is
   // unbound; the surface prints its binding names rather than invented copy.
+  // Per-field "needs" flags rather than one global sigWkNeeds — once
+  // sigWeek exists (transits.js is merged and wired), the four data-backed
+  // beats (standout/exact, backdrop, days) always have real content, but
+  // three beats (two-way, best days, the honest note) still have no
+  // written copy behind them at all (weeklyReading()'s own note). A single
+  // global flag would either show dev slots for beats that ARE done, or
+  // render nothing at all for the three that aren't — this keeps each
+  // beat honest about its own state independent of the others.
   weeklyVals() {
     const s = this.state, wk = s.sigWeek || null;
     const keys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -1205,16 +1213,19 @@ class Component extends DCLogic {
     return {
       sigWkNeeds: !wk,
       sigWkRange: (wk && wk.range) || 'this week',
-      sigWkStandout: wk && wk.standout,
-      sigWkExact: wk && wk.exact,
+      sigWkStandout: wk && wk.standout, sigWkStandoutNeeds: !(wk && wk.standout),
+      sigWkExact: wk && wk.exact, sigWkExactNeeds: !(wk && wk.exact),
       sigWkOrbText: wk && wk.orb != null ? wk.orb.toFixed(1) + '°' : null,
       sigWkOrbLabel: wk && wk.orb === 0 ? 'perfect' : 'orb',
-      sigWkTwoWay: wk && wk.twoWay,
-      sigWkBackdropLines: wk && wk.backdrop,
-      sigWkDays: days,
-      sigWkRhythm: wk && wk.rhythm,
-      sigWkBestDays: wk && wk.bestDays,
-      sigWkHonest: wk && wk.honest,
+      sigWkTwoWay: wk && wk.twoWay, sigWkTwoWayNeeds: !(wk && wk.twoWay),
+      sigWkBackdropLines: wk && wk.backdrop, sigWkBackdropNeeds: !(wk && wk.backdrop && wk.backdrop.length),
+      sigWkDays: days, sigWkDaysNeeds: !wk,
+      sigWkRhythm: wk && wk.rhythm, sigWkRhythmNeeds: !(wk && wk.rhythm),
+      sigWkBestDays: wk && wk.bestDays, sigWkBestDaysNeeds: !(wk && wk.bestDays),
+      sigWkHonest: wk && wk.honest, sigWkHonestNeeds: !(wk && wk.honest),
+      // three of seven beats still have no written copy at all — an honest
+      // status line, not the old "waiting on transits.js" note (it's merged).
+      sigWkPartial: !!wk && [wk.twoWay, wk.bestDays, wk.honest].some(x => !x),
     };
   }
 
@@ -1513,8 +1524,29 @@ class Component extends DCLogic {
 
     const sounding = this.reading.soundingReading({ sigil: s.sigil, cast, relation, light, stations: this.stations, copy: this.copy, liveTransit });
 
+    // the weekly (PRODUCT.md §6b) — the week's tightest transit (beats 1+2),
+    // the outers' standing weather (beat 4), and the day-by-day moon sign
+    // (beat 5's structural strip). Beats 3/6/7 stay unwired — no written
+    // content exists for them yet (weeklyReading()'s own note).
+    const weekday = t => (t.getUTCDay() === 0 ? 6 : t.getUTCDay() - 1); // Monday=0..Sunday=6
+    const today = new Date();
+    const monday = new Date(today.getTime() - weekday(today) * 86400000);
+    monday.setUTCHours(0, 0, 0, 0);
+    const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const todayIdx = weekday(today);
+    const days = DAY_KEYS.map((key, i) => {
+      const d = new Date(monday.getTime() + i * 86400000);
+      const jd = d.getTime() / 86400000 + 2440587.5;
+      return { key, sign: this.astro.SIGNS[this.astro.signOf(this.astro.moonLongitude(jd))], on: i === todayIdx ? '1' : '0' };
+    });
+    const standout = await this.transits.weekTightestContact(s.sigChart, { timeKnown: s.sigTimeKnown }, monday);
+    const outer = await this.transits.outerPositions();
+    const backdrop = this.transits.standingWeather(outer, s.sigChart, { timeKnown: s.sigTimeKnown });
+    const week = this.reading.weeklyReading({ standout, backdrop, days });
+
     this.setState({
       sigArrival: arrival, sigPattern: pattern, sigHouses: houses, sigDepth: depth,
+      sigWeek: week,
       sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding,
     });
   };

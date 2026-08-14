@@ -177,3 +177,43 @@ test('standingWeather: sorted tightest-orb-first, and never carries a retrograde
   assert.ok(sunHits[0].orbUsed <= sunHits[sunHits.length - 1].orbUsed);
   assert.ok(contacts.every(c => !('retrograde' in c)));
 });
+
+// -- weekTightestContact (the weekly's beats 1 + 2) ------------------------
+
+test('weekTightestContact: matches an independent day-by-day scan of the same week — the aggregation/selection logic, not the ephemeris', async () => {
+  const chart = { sunLon: 45, moonLon: 200, asc: 300, mc: 30 };
+  const weekStart = new Date('2026-08-10T00:00:00Z'); // a Monday
+  const result = await T.weekTightestContact(chart, { timeKnown: true }, weekStart);
+
+  // independently re-derive "the tightest of the week" from the same
+  // primitives, rather than trusting weekTightestContact's own arithmetic
+  let best = null;
+  for (let weekday = 0; weekday < 7; weekday++) {
+    const date = new Date(weekStart.getTime() + weekday * 86400000);
+    const positions = await T.planetPositions(date);
+    const hit = T.pickLiveTransit(T.natalContacts(positions, chart, { timeKnown: true }));
+    if (hit && (!best || hit.orbUsed < best.hit.orbUsed)) best = { hit, weekday };
+  }
+
+  if (!best) { assert.equal(result, null); return; }
+  assert.ok(result != null, 'expected a contact, got null');
+  assert.equal(result.weekday, best.weekday);
+  assert.equal(result.planet, best.hit.planet);
+  assert.equal(result.orbUsed, best.hit.orbUsed);
+});
+
+test('weekTightestContact: weekStart is snapped to that week\'s Monday regardless of what day of the week is passed in', async () => {
+  const chart = { sunLon: 45, moonLon: 200, asc: 300, mc: 30 };
+  const monday = new Date('2026-08-10T00:00:00Z');
+  const midWeekWednesday = new Date('2026-08-12T15:00:00Z'); // same week, different day/time
+  const fromMonday = await T.weekTightestContact(chart, { timeKnown: true }, monday);
+  const fromWednesday = await T.weekTightestContact(chart, { timeKnown: true }, midWeekWednesday);
+  assert.deepEqual(fromMonday, fromWednesday);
+});
+
+test('weekTightestContact: rising and MC excluded without a birth time', async () => {
+  const chart = { sunLon: 45, moonLon: 200, asc: 300, mc: 30 };
+  const weekStart = new Date('2026-08-10T00:00:00Z');
+  const result = await T.weekTightestContact(chart, { timeKnown: false }, weekStart);
+  if (result) assert.ok(result.point !== 'rising' && result.point !== 'mc');
+});

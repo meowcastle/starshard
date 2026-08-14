@@ -193,3 +193,45 @@ export function standingWeather(positions, chart, { timeKnown }) {
   }
   return contacts.sort((a, b) => a.orbUsed - b.orbUsed);
 }
+
+/** The Monday (UTC midnight) of the week containing `date` — matching
+ * this codebase's existing "today" convention (Date.now()-based UTC,
+ * same as refreshArrivalAndTonight's own jd computation), not a local-
+ * timezone-aware week boundary. A known simplification, not a precision
+ * claim beyond what the rest of the daily/weekly surfaces already make. */
+function mondayOf(date) {
+  const d = new Date(date);
+  const day = d.getUTCDay(); // 0=Sun..6=Sat
+  d.setUTCDate(d.getUTCDate() + (day === 0 ? -6 : 1 - day));
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+}
+
+/**
+ * The week's single tightest transit-to-natal contact — PRODUCT.md §6b's
+ * beats 1 ("the standout") and 2 ("the exact one") are the same underlying
+ * event, named two ways. Sampled once per day across the Monday-Sunday
+ * week containing `weekStart` (defaults to the current week); returns the
+ * tightest-orb day's contact plus which weekday (0=Monday..6=Sunday) it
+ * falls on.
+ *
+ * Daily sampling is coarse for fast movers (Mercury/Venus/Mars can cross
+ * an orb boundary within a day) — honest about that rather than claiming
+ * tonight's-reading precision. PRODUCT.md §6b's own "perfect" framing
+ * already operates at day-level granularity, not sub-day.
+ *
+ * Returns null if nothing is in orb on any day this week — real and
+ * common, same honesty rule as pickLiveTransit().
+ */
+export async function weekTightestContact(chart, { timeKnown }, weekStart) {
+  const start = mondayOf(weekStart || new Date());
+  let best = null;
+  for (let weekday = 0; weekday < 7; weekday++) {
+    const date = new Date(start.getTime() + weekday * 86400000);
+    const positions = await planetPositions(date);
+    const contacts = natalContacts(positions, chart, { timeKnown });
+    const hit = pickLiveTransit(contacts);
+    if (hit && (!best || hit.orbUsed < best.orbUsed)) best = { ...hit, date, weekday };
+  }
+  return best;
+}

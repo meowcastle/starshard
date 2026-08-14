@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**278 bindings, 220 top-level.**
+**285 bindings, 227 top-level.**
 
 ## Rule
 
@@ -219,17 +219,24 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigWalkTonight` | component state |
 | `sigWalkedLabel` | component state |
 | `sigWkBackdropLines` | component state |
+| `sigWkBackdropNeeds` | component state |
 | `sigWkBestDays` | component state |
+| `sigWkBestDaysNeeds` | component state |
 | `sigWkDays` | component state |
 | `sigWkExact` | component state |
+| `sigWkExactNeeds` | component state |
 | `sigWkHonest` | component state |
-| `sigWkNeeds` | component state |
+| `sigWkHonestNeeds` | component state |
 | `sigWkOrbLabel` | component state |
 | `sigWkOrbText` | component state |
+| `sigWkPartial` | component state |
 | `sigWkRange` | component state |
 | `sigWkRhythm` | component state |
+| `sigWkRhythmNeeds` | component state |
 | `sigWkStandout` | component state |
+| `sigWkStandoutNeeds` | component state |
 | `sigWkTwoWay` | component state |
+| `sigWkTwoWayNeeds` | component state |
 | `sndBecomingEpithet` | component state |
 | `sndBecomingStepName` | component state |
 | `sndCastFlavor` | component state |

@@ -332,6 +332,48 @@ function formatLiveTransit(hit) {
 }
 
 /**
+ * The weekly's seven beats (PRODUCT.md §6b), as far as real data can carry
+ * them. Beats 1 ("the standout") and 2 ("the exact one") are transits.js's
+ * weekTightestContact() — the same underlying event, named two ways.
+ * Beat 4 ("the backdrop") is standingWeather()'s contacts, formatted as
+ * plain facts, same shape as the nightly live-transit line. Beat 5's
+ * day-strip is passed through as given — computing "which day is today"
+ * is the caller's job (it needs a `Date`, not chart data).
+ *
+ * Beats 3 ("the two-way"), 6 ("best days") and 7 ("the honest note") stay
+ * null: each needs real interpretive copy — a specific ambiguous contact
+ * named as a choice, an actual recommendation, a named hard truth — and
+ * none of that exists in the corpus yet (verified: no WEEKLY.* markers
+ * anywhere in research/). Returning null rather than fabricating a
+ * plausible-sounding line; the page renders a "needs" state per field,
+ * not a blanket placeholder, so these three stay visibly unfinished
+ * instead of silently wrong.
+ */
+export function weeklyReading({ standout, backdrop, days }) {
+  const standoutText = standout
+    ? `${WEEKDAY_NAMES[standout.weekday]}: ${standout.planet} ${standout.aspect} your ${TRANSIT_POINT_LABEL[standout.point]}`
+    : null;
+  const exactText = standout
+    ? `${standout.planet} ${standout.aspect} your ${TRANSIT_POINT_LABEL[standout.point]}${standout.retrograde ? ', retrograde' : ''}`
+    : null;
+
+  return {
+    range: 'this week',
+    standout: standoutText,
+    exact: exactText,
+    orb: standout ? standout.orbUsed : null,
+    twoWay: null,
+    backdrop: backdrop.map(c => ({ text: `${c.planet} ${c.aspect} your ${TRANSIT_POINT_LABEL[c.point]}` })),
+    days,
+    rhythm: null,
+    bestDays: null,
+    honest: null,
+  };
+}
+
+const WEEKDAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+/**
  * The nightly Sounding's five beats. `cast` is sky.js's castKind() output
  * for tonight's real moon position; `relation` is todayRelation()'s tārābala
  * result (Current); `light` is sky.js's moonPhase() output for tonight
