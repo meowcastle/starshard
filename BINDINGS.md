@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**225 bindings, 177 top-level.**
+**244 bindings, 192 top-level.**
 
 ## Rule
 
@@ -34,6 +34,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigHousePlacements` | `p` | `label`, `number`, `text`, `which` |
 | `sigRootDepth.traditions` | `td2` | `meaning`, `name`, `sky` |
 | `sigStrikeDepth.traditions` | `td1` | `meaning`, `name`, `sky` |
+| `sigWkBackdropLines` | `line` | `text` |
+| `sigWkDays` | `d` | `key`, `on`, `sign` |
 | `sndCrossCultural` | `c` | `name`, `sky` |
 
 ## Scalars and callbacks
@@ -98,6 +100,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigHouseEmptyNote` | component state |
 | `sigHousePlacements` | component state |
 | `sigHousePorphyryNote` | component state |
+| `sigHowOpen` | component state |
+| `sigHowOpenFlag` | component state |
 | `sigIsBurst` | component state |
 | `sigIsEntry` | component state |
 | `sigIsFalling` | component state |
@@ -175,6 +179,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigToChart` | component state |
 | `sigToTonight` | component state |
 | `sigToggleAuth` | component state |
+| `sigToggleHow` | component state |
 | `sigToggleManual` | component state |
 | `sigToggleTime` | component state |
 | `sigTypeRateLine` | component state |
@@ -187,6 +192,18 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigViewWeekOn` | component state |
 | `sigWalkTonight` | component state |
 | `sigWalkedLabel` | component state |
+| `sigWkBackdropLines` | component state |
+| `sigWkBestDays` | component state |
+| `sigWkDays` | component state |
+| `sigWkExact` | component state |
+| `sigWkHonest` | component state |
+| `sigWkNeeds` | component state |
+| `sigWkOrbLabel` | component state |
+| `sigWkOrbText` | component state |
+| `sigWkRange` | component state |
+| `sigWkRhythm` | component state |
+| `sigWkStandout` | component state |
+| `sigWkTwoWay` | component state |
 | `sndBecomingEpithet` | component state |
 | `sndBecomingStepName` | component state |
 | `sndCastFlavor` | component state |

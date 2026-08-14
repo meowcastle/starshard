@@ -178,6 +178,21 @@ a{color:var(--ink-accent)}
 .tab-btn:active{color:var(--ink)}
 .tab-btn[data-on="1"]{color:var(--ink); border-bottom-color:var(--action)}
 .needs-data{margin:14px 24px; padding:16px; border:2px dashed var(--edge-dark); background:var(--surface-sunken)}
+.disc{display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:44px; margin-top:18px;
+  background:var(--surface-raised); border:3px solid; border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
+  padding:10px 14px; cursor:pointer; text-align:left; color:var(--ink); font-family:'Varela Round',sans-serif; font-size:var(--text-sm)}
+.disc:active{border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark)}
+.disc-caret{font-family:'Pixelify Sans',monospace; color:var(--accent); transition:transform .18s ease}
+.disc[data-open="1"] .disc-caret{transform:rotate(180deg)}
+.orb-line{display:flex; align-items:baseline; gap:10px}
+.orb-num{font-family:'Pixelify Sans',monospace; font-size:var(--text-3xl); line-height:1; color:var(--ink-accent)}
+.orb-num-empty{opacity:.35}
+.day-strip{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-top:4px}
+.day-cell{display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 2px;
+  border:2px solid var(--edge-dark); background:var(--surface-sunken)}
+.day-cell[data-on="1"]{border-color:var(--action); background:var(--surface-raised)}
+.day-key{font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs); letter-spacing:.08em; color:var(--ink-muted)}
+.day-sign{font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs); color:var(--ink)}
 @keyframes ss-blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 .caret{display:inline-block;width:8px;height:14px;margin-top:8px;background:var(--accent);animation:ss-blink 1s step-end infinite}
 @keyframes ss-in{from{opacity:0}to{opacity:1}}
@@ -238,7 +253,13 @@ a{color:var(--ink-accent)}
   <div class="eyebrow" style="margin-top:6px">how this works</div>
   <h1 class="h2" style="margin-top:10px">star shard reads four sky-maps at once.</h1>
 
-  <div style="margin-top:20px">
+  <button type="button" class="disc" data-open="{{ sigHowOpenFlag }}" onClick="{{ sigToggleHow }}" aria-expanded="{{ sigHowOpenFlag }}">
+    <span>which four, and the one thing that isn't a map</span>
+    <span class="disc-caret">▾</span>
+  </button>
+
+  <sc-if value="{{ sigHowOpen }}">
+  <div style="margin-top:14px">
     <div class="map-row">
       <div class="eyebrow" style="color:var(--accent)">ARABIA</div>
       <p class="hint" style="margin:6px 0 0">twenty-eight waystations, mapped by people who steered by them. the moon crosses one a night, forever.</p>
@@ -260,6 +281,7 @@ a{color:var(--ink-accent)}
   <div class="card-panel" style="margin:8px 0 0; background:var(--surface-sunken)">
     <p style="margin:0">and one thing that isn't a sky-map: <strong>the changes model</strong>. anything real already carries the seed of what it's turning into. that's why your reading has a second half.</p>
   </div>
+  </sc-if>
 
   <p class="hint" style="margin:16px 0 0">no quizzes. we compute where the sun and moon stood at your minute, and read all four maps at that spot.</p>
   <p class="mono-note" style="margin:14px 0 0">your birth details are computed on this device and never uploaded.</p>
@@ -412,10 +434,76 @@ a{color:var(--ink-accent)}
   </sc-if>
 
   <sc-if value="{{ sigViewIsWeek }}">
-    <div class="needs-data" style="margin-left:0; margin-right:0">
-      <div class="eyebrow">this week · needs bindings</div>
-      <p class="hint" style="margin:8px 0 0">the lunation, the two slow movers with their houses, and up to three contacts. layout is built in Star Shard - The Daily (hi-fi).dc.html; this waits on transits.js (PRODUCT.md §11.1).</p>
-      <p class="mono-note" style="margin:10px 0 0">sigLunation · sigSlowMovers · sigWeekContacts</p>
+    <!-- the weekly, seven beats in PRODUCT.md §6b order. Beat 2 prints orbUsed as
+         a number (the retention mechanic); beat 5 is a day-by-day strip driven by
+         the moon's sign. Every beat names its binding; unbound slots print the
+         name rather than placeholder copy. -->
+    <div style="padding-top:16px">
+      <div class="eyebrow">{{ sigWkRange }}</div>
+
+      <div class="card-panel" style="margin:12px 0 0">
+        <div class="eyebrow" style="margin-bottom:6px">01 · the standout</div>
+        <sc-if value="{{ sigWkStandout }}"><p class="h3" style="margin:0">{{ sigWkStandout }}</p></sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkStandout — one event, named, with its weekday</p></sc-if>
+      </div>
+
+      <div class="card-panel panel-accent" style="margin:0 0 14px">
+        <div class="eyebrow" style="margin-bottom:6px">02 · the exact one</div>
+        <div class="orb-line">
+          <sc-if value="{{ sigWkOrbText }}"><span class="orb-num">{{ sigWkOrbText }}</span></sc-if>
+          <sc-if value="{{ sigWkNeeds }}"><span class="orb-num orb-num-empty">0.0°</span></sc-if>
+          <span class="hint">{{ sigWkOrbLabel }}</span>
+        </div>
+        <sc-if value="{{ sigWkExact }}"><p style="margin:10px 0 0">{{ sigWkExact }}</p></sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot" style="margin-top:10px">sigWkExact · sigWkOrb — transits.js already returns orbUsed. print the number.</p></sc-if>
+      </div>
+
+      <div class="card-panel" style="margin:0 0 14px">
+        <div class="eyebrow" style="margin-bottom:6px">03 · the two-way</div>
+        <sc-if value="{{ sigWkTwoWay }}"><p style="margin:0">{{ sigWkTwoWay }}</p></sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkTwoWay — the contact that can go either way, choice handed over</p></sc-if>
+      </div>
+
+      <div class="card-panel" style="margin:0 0 14px; background:var(--surface-sunken)">
+        <div class="eyebrow" style="margin-bottom:6px">04 · the backdrop</div>
+        <p class="hint" style="margin:0 0 8px">the slow movers, still holding. this one doesn't change week to week.</p>
+        <sc-if value="{{ sigWkBackdropLines }}">
+          <sc-for list="{{ sigWkBackdropLines }}" as="line" hint-placeholder-count="2">
+            <p style="margin:6px 0 0">{{ line.text }}</p>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkBackdropLines — uranus, neptune, pluto with their houses (PRODUCT.md §7b)</p></sc-if>
+      </div>
+
+      <div class="card-panel" style="margin:0 0 14px">
+        <div class="eyebrow" style="margin-bottom:6px">05 · the rhythm</div>
+        <div class="day-strip">
+          <sc-for list="{{ sigWkDays }}" as="d" hint-placeholder-count="7">
+            <div class="day-cell" data-on="{{ d.on }}">
+              <span class="day-key">{{ d.key }}</span>
+              <span class="day-sign">{{ d.sign }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ sigWkRhythm }}"><p style="margin:12px 0 0">{{ sigWkRhythm }}</p></sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot" style="margin-top:12px">sigWkDays [ key · sign · tone ] · sigWkRhythm — the moon's sign per day</p></sc-if>
+      </div>
+
+      <div class="card-panel" style="margin:0 0 14px">
+        <div class="eyebrow" style="margin-bottom:6px">06 · best days</div>
+        <sc-if value="{{ sigWkBestDays }}"><p class="h3" style="margin:0">{{ sigWkBestDays }}</p></sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkBestDays — an actual recommendation, named weekdays</p></sc-if>
+      </div>
+
+      <div class="card-panel" style="margin:0 0 14px; border-color:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark)">
+        <div class="eyebrow" style="margin-bottom:6px">07 · the honest note</div>
+        <sc-if value="{{ sigWkHonest }}"><p style="margin:0">{{ sigWkHonest }}</p></sc-if>
+        <sc-if value="{{ sigWkNeeds }}"><p class="slot">sigWkHonest — what's still hard, unresolved. the reading does not end high.</p></sc-if>
+      </div>
+
+      <sc-if value="{{ sigWkNeeds }}">
+        <p class="mono-note" style="margin:2px 0 0">seven beats wired; waits on transits.js (PRODUCT.md §11.1, §7b).</p>
+      </sc-if>
     </div>
   </sc-if>
 </div>
@@ -448,7 +536,7 @@ a{color:var(--ink-accent)}
 
   <sc-if value="{{ sigIsNewborn }}">
     <p class="h3" style="padding:0 24px;margin-top:10px">{{ sigStrangeLine }}</p>
-    <p class="muted pad" style="margin-top:8px">tonight the lantern stands in <strong style="color:var(--ink)">{{ sndStationEpithet }}</strong>, one of the twenty-eight. your ring is dark. it lights one segment at a time, and only by walking.</p>
+    <p class="muted pad" style="margin-top:8px">tonight the moon stands in <strong style="color:var(--ink)">{{ sndStationEpithet }}</strong>, one of the twenty-eight. your ring is dark. it lights one segment at a time, and only by walking.</p>
   </sc-if>
 
   <div class="tab-bar">
@@ -713,7 +801,7 @@ a{color:var(--ink-accent)}
   <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 1 · the station</span><span class="pips">{{ sndPips }}</span></div>
   <div class="card-panel" style="margin:18px 0 0;padding:20px">
     <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="h2">{{ sndStationEpithet }}</span><span class="muted">{{ sndStationKanji }}</span></div>
-    <p class="muted" style="margin:6px 0 0">{{ sndStepName }} · the lantern stands here tonight</p>
+    <p class="muted" style="margin:6px 0 0">{{ sndStepName }} · the moon stands here tonight</p>
     <div class="chip-row" style="margin-top:14px">
       <sc-for list="{{ sndCrossCultural }}" as="c">
         <span class="chip">{{ c.name }} · {{ c.sky }}</span>
@@ -852,6 +940,7 @@ class Component extends DCLogic {
 
     // arrival, screens 0–2 (Design)
     sigBurstLine: 0, sigStoryBeat: 1, sigPushAsked: false,
+    sigHowOpen: false, // the four sky-maps are opt-in scholarship, not a wall
     sigTab: 'shard', // shard | houses | pattern | depth | becoming
     sigTonightView: 'tonight', // tonight | week
     sigReturnTo: 'profile',    // where the Sounding and share overlays go back to
@@ -968,6 +1057,30 @@ class Component extends DCLogic {
   sigTabToPattern = this.sigSetTab('pattern');
   sigTabToDepth = this.sigSetTab('depth');
   sigTabToBecoming = this.sigSetTab('becoming');
+
+  sigToggleHow = () => this.setState(s => ({ sigHowOpen: !s.sigHowOpen }));
+
+  // the weekly's seven beats. transits.js is not merged, so every beat is
+  // unbound; the surface prints its binding names rather than invented copy.
+  weeklyVals() {
+    const s = this.state, wk = s.sigWeek || null;
+    const keys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const days = (wk && wk.days) || keys.map(k => ({ key: k, sign: '—', on: '0' }));
+    return {
+      sigWkNeeds: !wk,
+      sigWkRange: (wk && wk.range) || 'this week',
+      sigWkStandout: wk && wk.standout,
+      sigWkExact: wk && wk.exact,
+      sigWkOrbText: wk && wk.orb != null ? wk.orb.toFixed(1) + '°' : null,
+      sigWkOrbLabel: wk && wk.orb === 0 ? 'perfect' : 'orb',
+      sigWkTwoWay: wk && wk.twoWay,
+      sigWkBackdropLines: wk && wk.backdrop,
+      sigWkDays: days,
+      sigWkRhythm: wk && wk.rhythm,
+      sigWkBestDays: wk && wk.bestDays,
+      sigWkHonest: wk && wk.honest,
+    };
+  }
 
   // tonight is home for a returning traveler; the chart is a destination
   sigToChart = () => this.setState({ sigStep: 'profile' });
@@ -1316,7 +1429,8 @@ class Component extends DCLogic {
       sigScanlines: true, sigSkyRef: this.sigSkyRef,
       sigAdvanceArrival: this.sigAdvanceArrival, sigSkipArrival: this.sigSkipArrival,
       sigBackToStory: this.sigBackToStory, sigBackToHow: this.sigBackToHow,
-      sigIsEntry: s.sigStep === 'entry', sigTimeKnown: true, sigManualMode: false, sigTimeToggleLabel: '', sigSearchLabel: '', sigManualToggleLabel: '', sigNotManualMode: true, sigHasResults: false
+      sigIsEntry: s.sigStep === 'entry', sigTimeKnown: true, sigManualMode: false, sigTimeToggleLabel: '', sigSearchLabel: '', sigManualToggleLabel: '', sigNotManualMode: true, sigHasResults: false,
+      sigHowOpen: s.sigHowOpen, sigHowOpenFlag: s.sigHowOpen ? '1' : '0', sigToggleHow: this.sigToggleHow,
     };
 
     const sigil = s.sigil, plan = s.sigPlan, arrival = s.sigArrival, sounding = s.sndSounding, cast = s.sndCast;
@@ -1375,6 +1489,8 @@ class Component extends DCLogic {
       sigTabToShard: this.sigTabToShard, sigTabToHouses: this.sigTabToHouses,
       sigTabToPattern: this.sigTabToPattern, sigTabToDepth: this.sigTabToDepth,
       sigTabToBecoming: this.sigTabToBecoming,
+      sigHowOpen: s.sigHowOpen, sigHowOpenFlag: s.sigHowOpen ? '1' : '0', sigToggleHow: this.sigToggleHow,
+      ...this.weeklyVals(),
 
       // PATTERN tab (PRODUCT.md §3) — real geometry, real corpus where it
       // exists; s.sigPattern is null until refreshArrivalAndTonight() has
