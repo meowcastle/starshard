@@ -7,6 +7,28 @@
 > `Star Shard v2 (archived).dc.html`, the retired pre-reboot page kept
 > as reference only. Do not merge into it.
 
+## Read order (Aug 14 — this changed)
+
+**`APP-FRAMEWORK.md` first, then `UI-PRINCIPLES.md`, then everything else.**
+The navigation model changed: the app is moving from twelve full-page
+state gates to **three persistent tabs**. Every other file in the packet
+describes screens; those two describe the shell the screens now live in,
+and a screen designed against the old shell will have to be redone.
+
+**Build from `Star Shard v3.dc.html`. Do not start a new file.** The
+numbers, so this isn't a matter of taste: the file is 1,638 lines —
+915 of screen markup, 721 of seam, 207 live bindings, plus the helmet and
+the token layer. **The broken part is 14 lines.** That is the whole
+screen-state machine. Starting fresh would discard 207 binding names and
+every merged screen body in order to replace fourteen lines.
+
+**Do the tab bar first, before any screen work.** Not because it's the
+biggest change — because once three persistent destinations exist, every
+later decision is forced into the new model. Left until last, the wizard
+survives the redesign.
+
+---
+
 ## What this is (say this first, in the prompt)
 
 **Star Shard is a JavaScript game anchored in real astrology.** Not an
@@ -31,6 +53,8 @@ only two things that already feel right.
 | 6 | **`research/mansions-table.json`** | card data: epithets, kanji, real asterisms, guardian animals |
 | 7 | **`OWNERSHIP.md` + `BINDINGS.md`** | the seam contract |
 | 8 | **`WRITING.md`** | the copy law — read before writing a single string |
+| 9 | **`UI-PRINCIPLES.md`** | **new Aug 14** — the object model, the tonight diagnosis, Apple's current rules. The *why* |
+| 10 | **`APP-FRAMEWORK.md`** | **new Aug 14** — the map, the three screen archetypes, the eleven components. The *what to build* |
 
 **Do not send:** COSMOLOGY, INSTRUMENT, ANCHORS, SIGIL-READING,
 BLUEPRINT, PORT-SPEC, the station corpus, the research reports. That's

@@ -1,5 +1,15 @@
 # UX-FLOW.md — the arrival overhaul
 
+> **⚠ Scope narrowed Aug 14.** This document is now **the first-run flow
+> only** — burst → story → entry → compute → the shard, revealed. That
+> part still stands, and a paced wizard is correct there because it
+> happens once.
+>
+> **Everything after the first run is superseded by `APP-FRAMEWORK.md`.**
+> The returning app is three persistent tabs, not a continuation of this
+> sequence. Where this file and APP-FRAMEWORK disagree about a screen a
+> returning traveler sees, APP-FRAMEWORK wins.
+
 **v1 · August 13, 2026 · supersedes SIGIL-READING §2's nine-beat
 choreography and the arrival half of DESIGN-BRIEF v2 §S1.** For Claude
 Design and Claude Code. Everything else — the corpus, the engine, the
