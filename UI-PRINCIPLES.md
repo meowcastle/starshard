@@ -276,8 +276,21 @@ TIER 3 — the numbers                       (opt-in, one level, never two)
    sunrise — makes the text the screen. So does Co–Star, whose *only*
    undisputed success is tone.
 2. **Exactly one affordance downward, and it must be specific.** Not
-   "view your chart." *"this came from your moon in the 8th"*, tapping
-   straight to that section. This is the fix for The Pattern's most-
+   "view your chart" — name the placement: *"your moon in the 8th →"*.
+
+   **Correction, Aug 14: it is a push, not a tab switch.** My original
+   wording ("tapping straight to that section") sent it into the chart
+   tab, which collides with Apple's rule — *"transporting someone to
+   another tab by tapping on an element within a view is jarring and
+   disorienting."* The link **pushes a single-placement view onto
+   tonight's own stack**; that pushed view may offer *see the whole
+   chart →* at its foot. Drill-down preserves the destination the
+   traveler chose. Duplicating one house passage across two contexts is
+   normal and costs nothing.
+
+   And the label itself: *"this came from…"* is the labelling tic
+   `WRITING.md` bans. The line is **`your moon in the 8th →`**, no
+   preamble. This is the fix for The Pattern's most-
    repeated complaint (*"there's no way to see the astrological info"*)
    and it is the highest-value single link in the product — it converts a
    90-word reading from a dead end into the front door of a document.

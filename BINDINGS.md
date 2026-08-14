@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**246 bindings, 194 top-level.**
+**278 bindings, 220 top-level.**
 
 ## Rule
 
@@ -33,10 +33,11 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigComputeLines` | `cl` | `color`, `text` |
 | `sigHousePlacements` | `p` | `label`, `number`, `text`, `which` |
 | `sigRootDepth.traditions` | `td2` | `meaning`, `name`, `sky` |
+| `sigShardCells` | `c` | `aria`, `glyph`, `lit`, `n`, `name`, `now`, `open`, `sky` |
 | `sigStrikeDepth.traditions` | `td1` | `meaning`, `name`, `sky` |
 | `sigWkBackdropLines` | `line` | `text` |
 | `sigWkDays` | `d` | `key`, `on`, `sign` |
-| `sndCrossCultural` | `c` | `name`, `sky` |
+| `sndCrossCultural` | `c` | `aria`, `glyph`, `lit`, `n`, `name`, `now`, `open`, `sky` |
 
 ## Scalars and callbacks
 
@@ -81,6 +82,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigComputeLines` | component state |
 | `sigCountdown` | component state |
 | `sigDate` | component state |
+| `sigDrewOnLine` | component state |
 | `sigFacingLine` | component state |
 | `sigFormError` | component state |
 | `sigGaitLine` | component state |
@@ -110,6 +112,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigIsPorphyry` | component state |
 | `sigIsProfile` | component state |
 | `sigIsPush` | component state |
+| `sigIsShardTab` | component state |
 | `sigIsShare` | component state |
 | `sigIsStory` | component state |
 | `sigIsTonight` | component state |
@@ -121,8 +124,14 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigNoAspects` | component state |
 | `sigNotManualMode` | component state |
 | `sigNotNewborn` | component state |
+| `sigNumbersOpen` | component state |
+| `sigNumbersOpenFlag` | component state |
+| `sigOnChart` | component state |
+| `sigOnShard` | component state |
+| `sigOnTonight` | component state |
 | `sigOpenPush` | component state |
 | `sigOpenShare` | component state |
+| `sigOrdinaryClaim` | component state |
 | `sigProfileName` | component state |
 | `sigPushAllow` | component state |
 | `sigPushDismiss` | component state |
@@ -142,11 +151,25 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigSetQuery` | component state |
 | `sigSetTime` | component state |
 | `sigSetTz` | component state |
+| `sigShardCells` | component state |
+| `sigShardClose` | component state |
+| `sigShardDetailClosed` | component state |
+| `sigShardDetailOpen` | component state |
+| `sigShardGridHint` | component state |
+| `sigShardOpenDark` | component state |
+| `sigShardOpenN` | component state |
+| `sigShardOpenTitle` | component state |
+| `sigShardOpenWalked` | component state |
+| `sigShardProgress` | component state |
 | `sigShareStat` | component state |
 | `sigShowCountdown` | component state |
 | `sigShowPushPrompt` | component state |
+| `sigShowTabs` | component state |
 | `sigSkipArrival` | component state |
 | `sigSkyRef` | component state |
+| `sigSpecialCta` | component state |
+| `sigSpecialLabel` | component state |
+| `sigSpecialNight` | component state |
 | `sigStory1` | component state |
 | `sigStory2` | component state |
 | `sigStory3` | component state |
@@ -177,11 +200,14 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigTimeKnown` | component state |
 | `sigTimeToggleLabel` | component state |
 | `sigToChart` | component state |
+| `sigToShard` | component state |
 | `sigToTonight` | component state |
 | `sigToggleAuth` | component state |
 | `sigToggleHow` | component state |
 | `sigToggleManual` | component state |
+| `sigToggleNumbers` | component state |
 | `sigToggleTime` | component state |
+| `sigTonightEyebrow` | component state |
 | `sigTypeRateLine` | component state |
 | `sigTz` | component state |
 | `sigViewIsTonight` | component state |
@@ -225,6 +251,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sndIsBeat4` | component state |
 | `sndLiveTransitLine` | component state |
 | `sndNext` | component state |
+| `sndNoLiveTransit` | component state |
 | `sndNowEpithet` | component state |
 | `sndNowStepName` | component state |
 | `sndPips` | component state |

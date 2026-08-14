@@ -178,6 +178,32 @@ a{color:var(--ink-accent)}
 .tab-btn:active{color:var(--ink)}
 .tab-btn[data-on="1"]{color:var(--ink); border-bottom-color:var(--action)}
 .needs-data{margin:14px 24px; padding:16px; border:2px dashed var(--edge-dark); background:var(--surface-sunken)}
+/* the three persistent destinations. Content-layer identity, chrome kept plain:
+   no gloss, no custom effects — APP-FRAMEWORK §7. */
+.tab-nav{position:fixed; left:0; right:0; bottom:0; z-index:40; display:grid; grid-template-columns:repeat(3,1fr);
+  background:var(--surface); border-top:2px solid var(--edge-dark); padding-bottom:env(safe-area-inset-bottom)}
+.tab-nav button{min-height:52px; padding:8px 2px; background:none; border:0; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs); letter-spacing:.08em; color:var(--ink-muted)}
+.tab-nav button[data-on="1"]{color:var(--ink)}
+.tab-nav button:active{color:var(--ink-accent)}
+.tab-nav .glyph{font-size:var(--text-md); line-height:1}
+.st-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px}
+.st-cell{min-height:44px; padding:4px 2px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  border:2px solid var(--edge-dark); background:var(--surface-sunken); color:var(--ink-muted); cursor:pointer;
+  font-family:'Pixelify Sans',monospace; font-size:var(--text-2xs)}
+.st-cell[data-lit="1"]{border-color:var(--accent); background:var(--surface-raised); color:var(--ink)}
+.st-cell[data-now="1"]{border-color:var(--action)}
+.st-cell:active{border-color:var(--edge-light)}
+.progress-line{font-family:'Pixelify Sans',monospace; font-size:var(--text-sm); letter-spacing:.1em; color:var(--ink-accent)}
+/* archetype A. The reading is the page: one measure, no container, first. */
+.reading{font-size:var(--text-lg); line-height:1.6; margin:0 0 14px; max-width:34em; text-wrap:pretty}
+.sep{height:2px; background:var(--edge-dark); margin:24px 0 0; border:0}
+.link-down{display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:44px;
+  background:none; border:0; border-top:2px solid var(--edge-dark); padding:14px 0 0; margin-top:4px; cursor:pointer;
+  text-align:left; color:var(--ink-accent); font-family:'Varela Round',sans-serif; font-size:var(--text-sm)}
+.link-down:active{color:var(--ink)}
+.receipt{display:flex; align-items:baseline; gap:8px; margin-top:18px; color:var(--ink-muted); font-size:var(--text-sm)}
 .disc{display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:44px; margin-top:18px;
   background:var(--surface-raised); border:3px solid; border-color:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
   padding:10px 14px; cursor:pointer; text-align:left; color:var(--ink); font-family:'Varela Round',sans-serif; font-size:var(--text-sm)}
@@ -393,8 +419,24 @@ a{color:var(--ink-accent)}
   </div>
 
   <sc-if value="{{ sigViewIsTonight }}" hint-placeholder-val="{{ true }}">
-    <div style="display:flex; justify-content:center; padding:14px 0 4px">
-      <svg viewBox="0 0 200 200" width="210" height="210" role="img" aria-label="your ring, with tonight's crossing lit">
+    <div class="eyebrow" style="padding:0 0 6px">{{ sigTonightEyebrow }}</div>
+
+    <!-- TIER 1 · the answer. The reading is the page, not a card, and nothing
+         sits above it — UI-PRINCIPLES §2c. -->
+    <p class="reading" style="margin-top:8px">{{ sndCounselBody }}</p>
+    <sc-if value="{{ sndRelational }}">
+      <p class="reading">{{ sndRelational }}</p>
+    </sc-if>
+
+    <!-- exactly one affordance downward, and it names its source -->
+    <button type="button" class="link-down" onClick="{{ sigToChart }}">
+      <span>{{ sigDrewOnLine }}</span><span aria-hidden="true">→</span>
+    </button>
+
+    <!-- TIER 2 · tonight's sky -->
+    <div class="eyebrow" style="margin-top:26px">tonight's sky</div>
+    <div style="display:flex; align-items:center; gap:16px; margin-top:12px">
+      <svg viewBox="0 0 200 200" width="112" height="112" role="img" aria-label="your star shard, with tonight's station lit">
         <sc-for list="{{ ringSegments }}" as="seg">
           <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
         </sc-for>
@@ -402,33 +444,52 @@ a{color:var(--ink-accent)}
           <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
         </sc-for>
       </svg>
+      <div>
+        <p class="h3" style="margin:0">{{ sndStationEpithet }}</p>
+        <p class="muted" style="margin:4px 0 0">{{ sndStepName }} · the moon stands here tonight</p>
+        <p class="muted" style="margin:6px 0 0">{{ sndCastFlavor }}</p>
+      </div>
     </div>
-
-    <div style="text-align:center">
-      <div class="eyebrow">{{ sndStepName }}</div>
-      <p class="h1" style="margin-top:6px">{{ sndStationEpithet }}</p>
-      <p class="muted" style="margin:8px 0 0">{{ sndCastFlavor }}</p>
-    </div>
-
+    <sc-if value="{{ sndHasBecoming }}">
+      <p class="muted" style="margin:14px 0 0">{{ sndNowEpithet }} → {{ sndBecomingEpithet }}</p>
+    </sc-if>
     <sc-if value="{{ sigHasCountdown }}">
-      <p class="mono-note" style="text-align:center; margin:14px 0 0">next crossing in {{ sigCountdown }}</p>
+      <p class="mono-note" style="margin:14px 0 0">next station in {{ sigCountdown }}</p>
     </sc-if>
 
-    <div class="card-panel" style="margin:18px 0 0">
-      <div class="eyebrow" style="margin-bottom:6px">the counsel</div>
-      <p style="margin:0">{{ sndCounselBody }}</p>
-    </div>
+    <!-- TIER 3 · the numbers, opt-in, one level (never two) -->
+    <button type="button" class="disc" data-open="{{ sigNumbersOpenFlag }}" onClick="{{ sigToggleNumbers }}" aria-expanded="{{ sigNumbersOpenFlag }}">
+      <span>the numbers</span><span class="disc-caret">▾</span>
+    </button>
+    <sc-if value="{{ sigNumbersOpen }}">
+      <sc-if value="{{ sndHasLiveTransit }}">
+        <p class="mono-note" style="margin-top:10px">{{ sndLiveTransitLine }}</p>
+      </sc-if>
+      <sc-if value="{{ sndNoLiveTransit }}">
+        <p class="hint" style="margin-top:10px">nothing exact tonight — no live transit in orb.</p>
+      </sc-if>
+    </sc-if>
 
-    <div style="margin-top:auto; display:flex; flex-direction:column; gap:10px; padding-top:22px">
-      <sc-if value="{{ sigCanWalkTonight }}">
-        <button type="button" class="btn btn-primary" onClick="{{ sigWalkTonight }}">walk tonight's crossing ☾</button>
+    <div style="margin-top:auto; display:flex; flex-direction:column; gap:10px; padding-top:24px">
+      <!-- the paced reveal is kept for the four special crossings only, and its
+           appearance is the signal that tonight is different — §2 rule. -->
+      <sc-if value="{{ sigSpecialNight }}">
+        <p class="mono-note" style="margin:0">{{ sigSpecialLabel }}</p>
+        <button type="button" class="btn btn-primary" onClick="{{ sigWalkTonight }}">{{ sigSpecialCta }}</button>
+      </sc-if>
+      <sc-if value="{{ sigOrdinaryClaim }}">
+        <button type="button" class="btn btn-primary" onClick="{{ sndClaim }}" disabled="{{ sndClaiming }}">{{ sndClaimLabel }}</button>
       </sc-if>
       <sc-if value="{{ sigAlreadyWalkedTonight }}">
-        <div class="card-panel" style="margin:0; background:var(--surface-sunken); text-align:center">
-          <div class="eyebrow">✦ kindled tonight</div>
-          <p class="muted" style="margin:6px 0 0">{{ sndStationEpithet }} · {{ sndStepName }}</p>
+        <!-- the claim is a receipt: subordinate type, no enclosure -->
+        <div class="receipt">
+          <span aria-hidden="true">✦</span>
+          <span>{{ sndStationEpithet }} · {{ sndStepName }} is lit on your shard.</span>
         </div>
         <button type="button" class="btn" onClick="{{ sigOpenShare }}">share my shard</button>
+        <sc-if value="{{ sigHasCountdown }}">
+          <p class="mono-note" style="margin:0">next station in {{ sigCountdown }}</p>
+        </sc-if>
       </sc-if>
     </div>
   </sc-if>
@@ -536,14 +597,14 @@ a{color:var(--ink-accent)}
 
   <sc-if value="{{ sigIsNewborn }}">
     <p class="h3" style="padding:0 24px;margin-top:10px">{{ sigStrangeLine }}</p>
-    <p class="muted pad" style="margin-top:8px">tonight the moon stands in <strong style="color:var(--ink)">{{ sndStationEpithet }}</strong>, one of the twenty-eight. your ring is dark. it lights one segment at a time, and only by walking.</p>
+    <p class="muted pad" style="margin-top:8px">tonight the moon stands in <strong style="color:var(--ink)">{{ sndStationEpithet }}</strong>, one of the twenty-eight. your shard is dark. it lights one station at a time, and only by walking.</p>
   </sc-if>
 
   <div class="tab-bar">
-    <button type="button" class="tab-btn" data-on="{{ sigTabShardOn }}" onClick="{{ sigTabToShard }}">shard</button>
+    <button type="button" class="tab-btn" data-on="{{ sigTabShardOn }}" onClick="{{ sigTabToShard }}">sky</button>
     <button type="button" class="tab-btn" data-on="{{ sigTabHousesOn }}" onClick="{{ sigTabToHouses }}">houses</button>
     <button type="button" class="tab-btn" data-on="{{ sigTabPatternOn }}" onClick="{{ sigTabToPattern }}">pattern</button>
-    <button type="button" class="tab-btn" data-on="{{ sigTabDepthOn }}" onClick="{{ sigTabToDepth }}">depth</button>
+    <button type="button" class="tab-btn" data-on="{{ sigTabDepthOn }}" onClick="{{ sigTabToDepth }}">traditions</button>
     <button type="button" class="tab-btn" data-on="{{ sigTabBecomingOn }}" onClick="{{ sigTabToBecoming }}">becoming</button>
   </div>
 
@@ -798,7 +859,7 @@ a{color:var(--ink-accent)}
 <!-- ============================= S3 · THE SOUNDING ========================= -->
 <sc-if value="{{ sndIsBeat0 }}">
 <div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
-  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 1 · the station</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">tonight's station</span><span class="pips">{{ sndPips }}</span></div>
   <div class="card-panel" style="margin:18px 0 0;padding:20px">
     <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="h2">{{ sndStationEpithet }}</span><span class="muted">{{ sndStationKanji }}</span></div>
     <p class="muted" style="margin:6px 0 0">{{ sndStepName }} · the moon stands here tonight</p>
@@ -816,7 +877,7 @@ a{color:var(--ink-accent)}
 
 <sc-if value="{{ sndIsBeat1 }}">
 <div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
-  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 2 · the cast</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">the cast</span><span class="pips">{{ sndPips }}</span></div>
   <h2 class="h2" style="margin-top:20px">{{ sndCastKindLabel }}</h2>
   <p class="muted" style="margin-top:8px">{{ sndCastFlavor }}</p>
   <sc-if value="{{ sndHasLiveTransit }}">
@@ -837,7 +898,7 @@ a{color:var(--ink-accent)}
 
 <sc-if value="{{ sndIsBeat2 }}">
 <div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
-  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 3 · the counsel</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">tonight's reading</span><span class="pips">{{ sndPips }}</span></div>
   <div class="card-panel" style="margin:18px 0 0;padding:20px">
     <div class="eyebrow" style="color:var(--ink-accent);margin-bottom:10px">tonight favors</div>
     <p class="h3" style="margin:0;line-height:1.4">{{ sndCounselBody }}</p>
@@ -854,7 +915,7 @@ a{color:var(--ink-accent)}
 
 <sc-if value="{{ sndIsBeat3 }}">
 <div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh" data-context="card">
-  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 4 · the question</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">the question</span><span class="pips">{{ sndPips }}</span></div>
   <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
     <p class="h1" style="line-height:1.25">{{ sndQuestion }}</p>
   </div>
@@ -865,7 +926,7 @@ a{color:var(--ink-accent)}
 
 <sc-if value="{{ sndIsBeat4 }}">
 <div class="screen-in pad" style="padding-top:20px;padding-bottom:26px;display:flex;flex-direction:column;min-height:100vh">
-  <div style="display:flex;justify-content:space-between"><span class="eyebrow">beat 5 · the claim</span><span class="pips">{{ sndPips }}</span></div>
+  <div style="display:flex;justify-content:space-between"><span class="eyebrow">kindled</span><span class="pips">{{ sndPips }}</span></div>
   <div style="display:flex;justify-content:center;padding:16px 0 0">
     <svg viewBox="0 0 200 200" width="240" height="240" role="img" aria-label="your star shard ring">
       <sc-for list="{{ ringSegments }}" as="seg">
@@ -880,13 +941,82 @@ a{color:var(--ink-accent)}
     </svg>
   </div>
   <p class="h2" style="text-align:center;margin-top:14px">kindled.</p>
-  <p class="muted" style="text-align:center;margin-top:8px">{{ sndClaimEpithet }} · {{ sndClaimStepName }} is lit on your ring.</p>
+  <p class="muted" style="text-align:center;margin-top:8px">{{ sndClaimEpithet }} · {{ sndClaimStepName }} is lit on your shard.</p>
   <p class="h3" style="text-align:center;margin-top:20px">{{ sndCloseLine }}</p>
   <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:16px">
     <button type="button" class="btn btn-primary" onClick="{{ sndToShare }}">share my shard</button>
-    <button type="button" class="link-btn" onClick="{{ sndToChart }}">see my ring →</button>
+    <button type="button" class="link-btn" onClick="{{ sndToChart }}">see my shard →</button>
     <button type="button" class="link-btn" onClick="{{ sndToProfile }}">done</button>  </div>
 </div>
+</sc-if>
+
+<!-- ===================== S4 · YOUR SHARD (archetype C) ===================
+     The third destination. The hero object is the shard itself; the 28 are
+     visible whether lit or dark, because the incompleteness is the mechanic.
+     A lit station pushes to the night it was walked — that push is what
+     replaces a fourth "past readings" tab (APP-FRAMEWORK §3). -->
+<sc-if value="{{ sigIsShardTab }}">
+<div class="screen-in pad" style="padding-top:20px; padding-bottom:26px; display:flex; flex-direction:column; flex:1; min-height:100vh">
+
+  <sc-if value="{{ sigShardDetailClosed }}">
+    <div class="eyebrow">your star shard</div>
+    <div style="display:flex; justify-content:center; padding:14px 0 2px">
+      <svg viewBox="0 0 200 200" width="250" height="250" role="img" aria-label="your star shard, with tonight's station lit">
+        <sc-for list="{{ ringSegments }}" as="seg">
+          <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
+        </sc-for>
+        <sc-for list="{{ ringTicks }}" as="t">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" class="ring-tick"></line>
+        </sc-for>
+        <sc-for list="{{ ringMarks }}" as="m">
+          <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="{{ m.cls }}"></circle>
+        </sc-for>
+      </svg>
+    </div>
+    <p class="progress-line" style="text-align:center; margin:0">{{ sigShardProgress }}</p>
+
+    <sc-if value="{{ sigIsNewborn }}">
+      <p class="hint" style="margin:16px 0 0">your shard is dark. it lights one station at a time, and only by walking.</p>
+    </sc-if>
+
+    <div style="margin-top:22px">
+      <div class="eyebrow" style="margin-bottom:10px">the twenty-eight</div>
+      <div class="st-grid">
+        <sc-for list="{{ sigShardCells }}" as="c" hint-placeholder-count="28">
+          <button type="button" class="st-cell" data-lit="{{ c.lit }}" data-now="{{ c.now }}" onClick="{{ c.open }}" aria-label="{{ c.aria }}">
+            <span>{{ c.n }}</span>
+            <span>{{ c.glyph }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <p class="hint" style="margin:12px 0 0">{{ sigShardGridHint }}</p>
+    </div>
+  </sc-if>
+
+  <!-- the push: one station, the night you walked it -->
+  <sc-if value="{{ sigShardDetailOpen }}">
+    <button type="button" class="back-btn" onClick="{{ sigShardClose }}">← the twenty-eight</button>
+    <div class="eyebrow" style="margin-top:6px">station {{ sigShardOpenN }}</div>
+    <h1 class="h2" style="margin-top:8px">{{ sigShardOpenTitle }}</h1>
+    <sc-if value="{{ sigShardOpenWalked }}">
+      <p class="slot" style="margin-top:16px">sigNightOf[{{ sigShardOpenN }}] — date walked · the step · the reading as it read that night</p>
+    </sc-if>
+    <sc-if value="{{ sigShardOpenDark }}">
+      <p style="margin:16px 0 0">a station you aren't there for stays dark — the shard only lights by being walked.</p>
+    </sc-if>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- the three destinations, persistent. Hidden only under a sheet or the
+     paced reveal — APP-FRAMEWORK §3. Never switched programmatically. -->
+<sc-if value="{{ sigShowTabs }}">
+<div style="height:78px" aria-hidden="true"></div>
+<nav class="tab-nav" aria-label="destinations">
+  <button type="button" data-on="{{ sigOnTonight }}" onClick="{{ sigToTonight }}"><span class="glyph">☾</span><span>tonight</span></button>
+  <button type="button" data-on="{{ sigOnChart }}" onClick="{{ sigToChart }}"><span class="glyph">☉</span><span>your chart</span></button>
+  <button type="button" data-on="{{ sigOnShard }}" onClick="{{ sigToShard }}"><span class="glyph">✦</span><span>your shard</span></button>
+</nav>
 </sc-if>
 
 <!-- ============================= S2b · SHARE =============================== -->
@@ -948,6 +1078,8 @@ class Component extends DCLogic {
     sigTonightView: 'tonight', // tonight | week
     sigReturnTo: 'profile',    // where the Sounding and share overlays go back to
     sigComputeCount: 0,        // lines revealed on the compute readout
+    sigShardOpen: null,        // the station pushed to inside your shard
+    sigNumbersOpen: false,     // tier 3 on tonight, opt-in
 
     sigName: '', sigDate: '1999-07-15', sigTime: '23:40', sigTimeKnown: true,
     sigQuery: '', sigCityResults: [], sigPlace: null, sigSearching: false,
@@ -1091,6 +1223,60 @@ class Component extends DCLogic {
   sigToTonight = () => this.setState({ sigStep: 'tonight' });
   sigViewTonight = () => this.setState({ sigTonightView: 'tonight' });
   sigViewWeek = () => this.setState({ sigTonightView: 'week' });
+
+  // the third destination, and the push inside it
+  sigToShard = () => this.setState({ sigStep: 'shard' });
+  sigToggleNumbers = () => this.setState(s => ({ sigNumbersOpen: !s.sigNumbersOpen }));
+
+  // ceremony scales inversely with frequency: the paced five-beat reveal fires
+  // only on a threshold night. Ordinary nights claim in place, on tonight.
+  isSpecialNight(tonight) {
+    const s = this.state;
+    if (!tonight || !s.sigil) return false;
+    const idx = tonight.station != null ? tonight.station : tonight.stationIndex;
+    const nat = s.sigil;
+    const marks = [nat.strike, nat.root, nat.rising, nat.becoming]
+      .map(m => (m && (m.station != null ? m.station : m.index)))
+      .filter(i => i != null);
+    return marks.indexOf(idx) !== -1 || (s.sndCast && s.sndCast.kind === 'threshold');
+  }
+  sigShardOpenAt = n => () => this.setState({ sigShardOpen: n });
+  sigShardClose = () => this.setState({ sigShardOpen: null });
+
+  // archetype C. The 28 are always all present; lit state comes from the
+  // recollection, tonight's station is marked separately. Station names come
+  // from stations.js when it is merged; until then the cells carry numbers.
+  shardVals(tonight) {
+    const s = this.state, rec = s.sigRecollection || [];
+    const idxOf = e => (e && (e.station != null ? e.station : (e.stationIndex != null ? e.stationIndex : e.i)));
+    const walked = new Set(rec.map(idxOf).filter(i => i != null));
+    const nowIdx = tonight ? idxOf(tonight) : null;
+    const named = (this.stations && (this.stations.STATIONS || this.stations.all)) || null;
+    const cells = Array.from({ length: 28 }, (_, i) => {
+      const lit = walked.has(i);
+      const ep = named && named[i] ? (named[i].epithet || named[i].name || '') : '';
+      return {
+        n: i + 1, glyph: lit ? '✦' : '·', lit: lit ? '1' : '0', now: i === nowIdx ? '1' : '0',
+        aria: (ep || 'station ' + (i + 1)) + (lit ? ', walked' : ', dark'),
+        epithet: ep, open: this.sigShardOpenAt(i)
+      };
+    });
+    const openN = s.sigShardOpen;
+    const openCell = openN != null ? cells[openN] : null;
+    return {
+      sigShardCells: cells,
+      sigShardProgress: walked.size + ' of 28',
+      sigShardGridHint: walked.size === 0
+        ? 'twenty-eight stations. the moon crosses one a night.'
+        : 'tap a lit station to re-read the night you walked it.',
+      sigShardDetailOpen: openCell != null, sigShardDetailClosed: openCell == null,
+      sigShardOpenN: openCell ? openCell.n : '',
+      sigShardOpenTitle: openCell ? (openCell.epithet || 'the ' + openCell.n + 'th station') : '',
+      sigShardOpenWalked: openCell ? openCell.lit === '1' : false,
+      sigShardOpenDark: openCell ? openCell.lit === '0' : false,
+      sigShardClose: this.sigShardClose
+    };
+  }
 
   sigOpenPush = () => this.setState({ sigStep: 'push' });  sigPushAllow = () => {
     // the permission call itself is Code's — this only closes the screen
@@ -1504,6 +1690,30 @@ class Component extends DCLogic {
       sigHowOpen: s.sigHowOpen, sigHowOpenFlag: s.sigHowOpen ? '1' : '0', sigToggleHow: this.sigToggleHow,
       ...this.weeklyVals(),
 
+      // -- tonight as archetype A (UI-PRINCIPLES §2c) ----------------------
+      sigTonightEyebrow: 'tonight',
+      // label fixed per UI-PRINCIPLES.md's own Aug 14 correction (the
+      // labelling tic WRITING.md bans — name the placement, don't announce
+      // it). The tab-switch -> push fix (same correction) is not done here;
+      // it needs a new pushed single-placement view, real scope, flagged
+      // separately rather than built silently inside this merge.
+      sigDrewOnLine: moonSign ? 'your moon in ' + moonSign : 'your chart',
+      sigNumbersOpen: s.sigNumbersOpen, sigNumbersOpenFlag: s.sigNumbersOpen ? '1' : '0',
+      sigToggleNumbers: this.sigToggleNumbers,
+      sigSpecialNight: !tonightAlreadyKindled && this.isSpecialNight(tonight),
+      sigOrdinaryClaim: !tonightAlreadyKindled && !this.isSpecialNight(tonight),
+      sigSpecialLabel: 'a threshold crossing — this one is yours',
+      sigSpecialCta: 'begin the sounding ✦',
+
+      // -- the three destinations (APP-FRAMEWORK §3) -----------------------
+      sigIsShardTab: s.sigStep === 'shard' && sndBeatIdx == null,
+      sigShowTabs: ['tonight', 'profile', 'shard'].indexOf(s.sigStep) !== -1 && sndBeatIdx == null,
+      sigOnTonight: s.sigStep === 'tonight' ? '1' : '0',
+      sigOnChart: s.sigStep === 'profile' ? '1' : '0',
+      sigOnShard: s.sigStep === 'shard' ? '1' : '0',
+      sigToShard: this.sigToShard,
+      ...this.shardVals(tonight),
+
       // PATTERN tab (PRODUCT.md §3) — real geometry, real corpus where it
       // exists; s.sigPattern is null until refreshArrivalAndTonight() has
       // run once (needs a chart), same as sigArrival.
@@ -1599,6 +1809,7 @@ class Component extends DCLogic {
       // the live transit — PRODUCT.md §6b/§9. null on most nights (no
       // transit in orb is common and honest); sndHasLiveTransit gates it.
       sndHasLiveTransit: !!(sounding && sounding.liveTransit),
+      sndNoLiveTransit: !!(sounding && !sounding.liveTransit),
       sndLiveTransitLine: sounding && sounding.liveTransit ? sounding.liveTransit.line : '',
       sndNowEpithet: sounding ? sounding.cast.now.epithet : '', sndNowStepName: sounding ? sounding.cast.now.stepName : '',
       sndHasBecoming: !!(sounding && sounding.cast.becoming),

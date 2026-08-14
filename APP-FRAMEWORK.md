@@ -152,7 +152,10 @@ Three more rules, all from Apple:
 
 - **Never name a tab "Home."** Name it the content. Oura named it *Today*;
   Flighty named it *My Flights*.
-- **Never switch tabs programmatically.** *"Transporting someone to
+- **Never switch tabs programmatically.** This has one live violation:
+  tonight's drew-on link binds `sigToChart`, the same handler as the tab
+  bar. It must become a **push** onto tonight's stack instead.
+  **Never switch tabs programmatically.** *"Transporting someone to
   another tab by tapping on an element within a view is jarring and
   disorienting."*
 - **The tab bar is persistent** — except under a modal, which is the one
