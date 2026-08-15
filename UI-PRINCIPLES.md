@@ -33,50 +33,98 @@ communicate directly with users, the entire burden of communication is on
 the system image."* A user cannot build a working model out of that, and
 we have no second channel to correct it with.
 
-### The resolution — three nouns, and no more
+### The resolution — corrected by Justin, Aug 14
 
-**1. Your Star Shard.** The object the app makes for you. **The ring is
-not a second object; it is the shard's shape.** A shard of a star, drawn
-as twenty-eight segments, dark at first, lighting one station at a time.
-The word *ring* never appears in a user-facing string again — it survives
-only as geometry vocabulary in code (`ringSegments`, `ringTicks`).
+> *"we really need the shard to be the natal chart. do you understand…
+> a user has a star shard. that can be the archetype or something new.
+> all the astrology stuff can live within it, sun sign / rising / etc.
+> **the fragments are the 28.**"*
 
-**2. Your chart.** The reference document underneath the shard. A
-destination, titled **your chart**, reached by a control labelled **your
-chart**. (Smith & Mosier 2.0/14, 1986: *"The title of a display should be
-identical to the menu option used to request that display."*)
+His model is better than mine. Mine said *the ring is the shard's shape*,
+which made the shard a picture. His makes it **the thing itself**.
 
-**3. Tonight's station.** The collectible.
+| noun | what it is | coined? |
+|---|---|---|
+| **your Star Shard** | **your natal chart, as an object.** Your archetype. Everything astrological lives *inside* it — sun, moon, rising, houses, aspects | ours |
+| **a fragment** | one of the 28. Gathered one a night. They are pieces **of your shard**, not a separate collection | ours |
+| **a lunar mansion** | the division of sky a fragment comes from | **astrology's own word** |
 
-That is the entire noun inventory. It matches `WRITING.md`'s vocabulary
-budget exactly — one new noun per surface — and it survives the recall
-test: ask a user what the thing is called *after* they've used it, and if
-they produce a word our UI doesn't use, our system image is teaching the
-wrong model.
+Everything else on every surface is ordinary astrology.
+
+### The sentence the app has never said
+
+Justin: *"when put next to my astrology natal chart they look different
+and there is no way for the user to understand why. **this is the
+fundamental problem with the app so far.**"*
+
+He is right, and the fix is one line of copy that has never existed:
+
+> **your chart is a wheel of twelve. your shard is a ring of
+> twenty-eight. same sky, cut two ways — the twelve are the sun's
+> divisions, the twenty-eight are the moon's.**
+
+That is true, checkable, and it is the entire product proposition in
+twenty-eight words. The twelve signs are the **solar** zodiac, 30° each,
+the sun crossing one a month. The twenty-eight mansions are the **lunar**
+zodiac, 12°51′ each — **the moon crosses one a night, which is why there
+are twenty-eight.** Four traditions divided the sky this way (al-manāzil,
+nakṣatra, 宿, and the European lunar mansions) and Western astrology
+quietly dropped it.
+
+**We are not an alternative to a natal chart. We are the half of it that
+went missing.** Say that on arrival, once, and the ring stops being a
+mystery object sitting next to a familiar one.
+
+### "It needs to behave like an initiation, not a manual"
+
+A manual explains the system before you use it. An initiation **gives you
+a name, shows you one thing about yourself you did not know, and withholds
+the rest until you have walked.** Three copy consequences:
+
+1. **The archetype is named on arrival, not earned.** It comes from the
+   chart, which exists on day one. The fragments deepen it; they do not
+   unlock it.
+2. **The darkness is the invitation, not a progress bar.** *"0 of 28"*
+   reads as a chore. *"your shard is in twenty-eight pieces. one comes
+   back each night"* reads as a summons — and it is the literal truth of
+   the mechanic.
+3. **Nothing is explained before it is shown.** The definition rides
+   *alongside* its first use, in four words, never in a preamble.
+
+### Every element on the ring must be nameable
+
+The shipped shard shows four filled marks, one hollow mark, one lit
+segment and four long ticks — **and names none of them.** Justin: *"either
+we replace that ring or we have each element on it be clickable and
+defined."* Each already has a name, and it is astrology's:
+
+| on the ring | what it is |
+|---|---|
+| four filled marks | **your sun · your moon · your rising · your farlight** |
+| one hollow mark | **your becoming** — the one light already moving when you were born |
+| one lit segment | **tonight** |
+| four long ticks | the quarters of the road |
+
+Tapping any of them says what it is and where it sits. **A mark you
+cannot name is decoration**, and decoration next to a real natal chart
+reads as invention.
 
 ### The substitutions
 
 | # | from | to |
 |---|---|---|
-| 1 | `your ring is dark. it lights one segment at a time, and only by walking.` | `your shard is dark. it lights one station at a time, and only by walking.` |
-| 2 | `see my ring →` | `see my shard →` |
-| 3 | `{{ sndClaimEpithet }} · {{ sndClaimStepName }} is lit on your ring.` | `… is lit on your shard.` |
-| 4 | `a station you aren't there for stays dark — the ring only lights by being walked.` | `… — the shard only lights by being walked.` |
-| 5 | `aria-label="your ring, with tonight's crossing lit"` | `aria-label="your star shard, with tonight's station lit"` |
+| 1 | `your shard is dark. it lights one station at a time, and only by walking.` | `your shard is in twenty-eight pieces, scattered along the moon's road. one comes back each night.` |
+| 2 | `0 of 28` | `0 of 28 fragments` |
+| 3 | `THE TWENTY-EIGHT` | `THE TWENTY-EIGHT FRAGMENTS` |
+| 4 | `twenty-eight stations. the moon crosses one a night.` | `twenty-eight lunar mansions — the moon crosses one a night. your chart's twelve signs are the sun's divisions; these are the moon's.` |
+| 5 | *(missing)* | a label on every ring mark |
 
-And two tab renames, because a tab may not be named after the object that
-contains it, and because `depth` describes our filing system rather than
-its contents:
-
-| tab | from | to | why |
-|---|---|---|---|
-| 1 | `shard` | **`sky`** | it is the sun / moon / rising summary. The shard is the whole thing, not this tab |
-| 4 | `depth` | **`traditions`** | it holds what Arabia, India, China and Europe each saw. Say so |
-
-`houses` · `pattern` · `becoming` stay. Free vocabulary, plus our one
-spent coined noun.
-
----
+**One open decision for Justin: retire `station` for `mansion`.**
+*Station* is our rename of *lunar mansion* — the same tic as *lantern* for
+*moon*, and it fails his own test. *Mansion* is the term all four
+traditions translate to, it is googleable, and it is what makes us
+checkable against the literature. The cost is a copy sweep only: the 112
+`STATION.*` slot IDs are internal and do not move.
 
 ## 1. The laws, ranked by what is currently broken
 

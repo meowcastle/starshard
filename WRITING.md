@@ -130,6 +130,55 @@ The named cost in a gait passage. The disagreement between traditions.
 The one uncanny verifiable fact. Those are the product. Everything
 around them is packaging, and packaging should be thin.
 
+## Say the astrology word (Justin, Aug 14 — this one is on me)
+
+> *"our language just gets confusing — angles opening, closing, etc. it's
+> foreign and I'm not sure where to place it for it to make sense… the
+> astro stuff is already agreed on. if we want to innovate we should
+> innovate, not replace words with ones that are confusing."*
+
+He is describing my own weekly draft, and he is right. I wrote:
+
+| I wrote | the word that already exists |
+|---|---|
+| "the top of your chart" | **your midheaven** |
+| "uranus has never stood at this angle" | **uranus has never been sextile your midheaven** |
+| "a working angle to your sun" | **sextile your sun** |
+| "the opening holds until november" | **it stays in orb until november** |
+| "one degree doing both jobs" | *(delete — say the two aspects)* |
+
+**The error has a name: I confused *plain* with *vague*.** Plain language
+means short common words for the **connective tissue**. It does not mean
+paraphrasing a technical term into a description of itself. *Sextile* is
+one word. *"Stood at this angle"* is four, and it is less precise. The
+paraphrase is not easier — it is the same difficulty with the handle
+filed off, so the reader can never look it up, never repeat it, and never
+get fluent.
+
+**The law:**
+
+> **Use the astrology term. Define it once, in four words, on first
+> contact. Then use it forever without apology.**
+
+*"your midheaven — the point overhead at your birth"* costs six words,
+once. After that, **midheaven** is a word the reader owns. Six months in
+they are reading their own chart on someone else's site, which is the
+whole ambition.
+
+**And the corollary, which is where the innovation budget actually goes:**
+coined words are for things astrology has **no word for** — the fragments,
+the Becoming, the traveler types. Never for things it already names. A
+coined synonym costs the reader a translation and returns nothing.
+
+This is the same failure as *lantern* for *moon*, one level up: last time
+we invented nouns, this time we dissolved real ones into fog. Both make
+the reader carry our vocabulary instead of the sky's.
+
+**The tell:** if a phrase could be replaced by one italicised astrology
+term with no loss, it is paraphrase. Replace it.
+
+---
+
 ## The vocabulary budget (Justin, Aug 14)
 
 **One new noun per surface, and it has to be something you can point at.**

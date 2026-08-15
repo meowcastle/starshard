@@ -247,6 +247,74 @@ cult.
 
 ---
 
+### 6d. The weekly's four content laws (Justin, Aug 14)
+
+§6b fixed the *form* — seven beats. This fixes the *content*, and it
+exists because Justin handed over a Claude-written weekly and said:
+**"it needs to be better than these in every way. I want to replace
+them."**
+
+That reading is good, and it is worth being precise about why, because
+the temptation is to copy it. It names exact orbs. It gives timing —
+*"peaks Sunday/Monday when Mars-opposite-Uranus goes exact."* It hands
+over one genuinely pointed instruction: **"make something, don't decide
+something."** And it carries personal context.
+
+**Its ceiling is that it has no memory and no rarity.** Four things it
+cannot structurally do, all of which we can:
+
+**Law 1 — Rarity, computed across a lifetime, not asserted.**
+The reading says *"Uranus is exactly sextile your Midheaven (0.1°)"* and
+calls it *"the genuinely notable one"* — then never says how notable.
+Run it: **Uranus makes that angle to a fixed point in 11 windows per 200
+years**, clustered ~27 and ~56 years apart. For that chart the previous
+window closed in **August 1970** and the next opens in **2053**. So the
+true sentence is *"this has never happened in your life, and it happens
+three more times before spring 2028, then not again until you are
+sixty-four."* Nobody screenshots "notable." They screenshot that.
+
+**Every slow transit gets this treatment.** The number is free — we own
+the ephemeris — and it is the single highest-value line in the product,
+because it is the one claim a competitor cannot fake and a sign-based
+horoscope cannot make.
+
+**Law 2 — Recall. The sky has a memory and so do we.**
+The reading's most personal beat is *"given you told me the WIMB format
+is the one thing that lights you up"* — borrowed, not computed. It is a
+mirror held up to something the reader said five minutes ago.
+
+We store every night. So: **Mars last crossed that Venus 27 Aug – 22 Sep
+2024, and before that 13 Mar – 14 Apr 2023.** The line is *"last time
+Mars stood here you wrote ___"* — a database query, not a model call.
+`RETENTION.md` §4: recall beats intelligence, and it beats it by a lot.
+This is also why `sigNightOf[n]` is load-bearing rather than a
+nice-to-have.
+
+**Law 3 — Name one cost, every week, without fail.**
+Scan that reading for a single unwelcome true thing about the reader.
+There isn't one. It is *"good fuel," "supports," "worth taking
+seriously," "decent support"* — the language of a briefing that likes
+you. `WRITING.md`: nobody screenshots a compliment; they screenshot being
+caught. **Beat 7 is not "the risks this week." It is the one thing that
+is hard about being this person, attributed to the geometry.**
+
+**Law 4 — Compress. 250–300 words, not 600.**
+The source runs ~600 words of undifferentiated paragraphs, each opening
+with its own function label — *"Steady underneath:", "Day by day:",
+"Short version:"*. That is the labelling tic at scale, and it is what
+makes it read as a memo rather than a reading. It describes the weather
+*around* the reader and never lands *on* them. Ours is denser and
+shorter, and beat 7 is the only place it is allowed to sting.
+
+**One thing we must keep from it, because it is better than what we
+have:** it tells you **when**. Exact-to-the-day timing, and *"the opening
+is holding until November, the pressure isn't"* is only sayable because
+the engine knows both windows. `standingWeather()` already returns the
+slow ones; the weekly composer must pass the window edges, not just the
+current orb.
+
+---
+
 ### 7. What a daily is actually made of
 
 Three ingredients, computed before any prose exists:

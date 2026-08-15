@@ -268,15 +268,15 @@ brand" · associated in India with Ārdrā, Rudra's storm-star · guardian:
 the gibbon · kept by Mercury · White Tiger*
 
 **STATION.06.strike**
-this is one of the places where **the sky-maps genuinely disagree**, and
-that turns out to be the reading. the arabs looked at these stars in
-gemini and saw *al-han'a* — **the brand**, the mark burned into a camel's
-neck to say whose it is. india's storm-star, **ārdrā** — rudra's sky,
-the howler, whose emblem is a teardrop — sits nearby in orion, and the
-traditions never fully reconciled the two. a mark of belonging, and a
-storm. we didn't pick one, because your sun landed in the seam.
-the hunger of this sky is to **break the surface of a thing and find out
-what it actually cost** — the question nobody at the table wants asked,
+your sun landed on **alhena**, the bright star in the twins' foot. the
+arabs called this stretch *al-hanʿa* — **the brand**, the mark burned
+into a camel's neck to say whose it is. india called it **ārdrā**, the
+moist one: rudra's star, the howler, and its emblem is a teardrop.
+china saw **參 shēn** — orion entire — and set the ape over it, the
+long-armed caller of the canopy, heard across miles before anything
+sees it. a mark of ownership, a storm, and a voice that carries. you
+want to **break the surface of a thing and find out what it actually
+cost** — the question nobody at the table wants asked,
 asked anyway, usually by you, usually correctly.
 the cost is amplitude. you feel at full volume, and full volume is
 routinely misfiled as too much. it isn't damage. it's voltage, and

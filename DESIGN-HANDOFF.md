@@ -7,7 +7,20 @@
 > `Star Shard v2 (archived).dc.html`, the retired pre-reboot page kept
 > as reference only. Do not merge into it.
 
-## Read order (Aug 14 — this changed)
+## Read order (Aug 15)
+
+**`CHART-BUILDER.md` first now.** The Star Shard reading is the product's
+centrepiece and its layout is specified there, along with the three new
+components. Then `APP-FRAMEWORK.md` for the shell it sits in, then
+`UI-PRINCIPLES.md` for the laws.
+
+Eight worked example readings ship alongside as HTML. **They are the
+spec.** Where a document and an example disagree, the example wins — it
+was built from real charts through the shipped modules.
+
+---
+
+## Read order (Aug 14 — superseded above)
 
 **`APP-FRAMEWORK.md` first, then `UI-PRINCIPLES.md`, then everything else.**
 The navigation model changed: the app is moving from twelve full-page
@@ -55,6 +68,7 @@ only two things that already feel right.
 | 8 | **`WRITING.md`** | the copy law — read before writing a single string |
 | 9 | **`UI-PRINCIPLES.md`** | **new Aug 14** — the object model, the tonight diagnosis, Apple's current rules. The *why* |
 | 10 | **`APP-FRAMEWORK.md`** | **new Aug 14** — the map, the three screen archetypes, the eleven components. The *what to build* |
+| 11 | **`CHART-BUILDER.md`** | **new Aug 15** — the Star Shard blueprint. Five components, three of them new. **The centrepiece surface** |
 
 **Do not send:** COSMOLOGY, INSTRUMENT, ANCHORS, SIGIL-READING,
 BLUEPRINT, PORT-SPEC, the station corpus, the research reports. That's
