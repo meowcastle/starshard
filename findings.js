@@ -17,30 +17,33 @@
 // same output.
 //
 // rate/bits come from rates.js's measured table — never recomputed here.
-// Two candidate kinds from CHART-BUILDER.md §3.1's own list, `dissent` and
-// `seam`, are NOT implemented below. Both are blocked on data this
-// codebase doesn't have yet, not on missing code:
-//   - dissent needs the four-tradition concordance/match-flag table
-//     (stations.js's `match` field) COMPLETE. SHARD-MODEL.md §3(d) is
-//     explicit that only 12 of 28 mansions carry a flag today (10 STRONG,
-//     2 PARTIAL) and that finishing it is "a research pass, not an
-//     engineering one." Scoring a dissent finding against 16 missing
-//     flags would silently favor whichever mansions happen to be filled.
-//   - seam needs the 27-vs-28 nakshatra framing SHARD-MODEL.md §4 flags
-//     as still unresolved ("the seam is intra-Indian first") — there is
-//     no rate for it in rates.js's §3.2 table, and inventing one here
-//     would be exactly the "recomputed at runtime, not shipped as a
-//     table" failure rates.js's own header warns against.
-// Both kinds are honored as no-ops (never appear in the returned array)
-// rather than silently dropped from the switch — see the two guard
-// comments below at the point each would otherwise have gone.
+// One candidate kind from CHART-BUILDER.md §3.1's own list, `seam`, is NOT
+// implemented below — it's blocked on data this codebase doesn't have yet,
+// not on missing code: it needs the 27-vs-28 nakshatra alignment question
+// SHARD-MODEL.md §4 / research/corpus-mansions.md's own escalation section
+// flag as still undecided (ordinal pairing vs the classical Sino-Indian
+// correspondence). `research/mansions-patch-aug15.json`'s `hunger_28` entry
+// is explicit: "BLOCKED — do not ship a code contract on this until the
+// alignment question is decided." There is no rate for it in rates.js
+// either, and inventing one here would be exactly the "recomputed at
+// runtime, not shipped as a table" failure rates.js's own header warns
+// against. It's a no-op (never appears in the returned array) rather than
+// silently dropped from the switch — see the guard comment below at the
+// point it would otherwise have gone.
+//
+// `dissent` WAS blocked the same way (the concordance/match-flag table was
+// only 12/28 complete) but the Aug 15 research pass
+// (research/mansions-patch-aug15.json) finished it — 14 STRONG, 10
+// PARTIAL, 4 DIVERGENT — so it's implemented below.
 
 import { mansionOf, signOf, SIGNS } from './astro.js';
 import { planetPositions, outerPositions } from './transits.js';
 import { degFmt } from './format.js';
+import { STATIONS } from './stations.js';
 import {
   COLOCATION_RATES,
   DISAGREEMENT_RATES,
+  DISSENT_RATES,
   PILE_RATES,
   BOUNDARY_RATES,
   TYPE_RATES,
@@ -265,6 +268,29 @@ export function findType(tenPoints) {
   })];
 }
 
+/** The four DIVERGENT mansions, read once from stations.js's real data
+ * rather than hardcoded — if the concordance research pass ever revises a
+ * flag, this list moves with it instead of drifting out of sync. */
+const DIVERGENT_MANSIONS = STATIONS
+  .map((s, i) => (s.match === 'DIVERGENT' ? i : -1))
+  .filter(i => i >= 0);
+
+export function findDissent(points) {
+  const found = [];
+  for (const mansion of DIVERGENT_MANSIONS) {
+    const occupants = points.filter(p => p.mansion === mansion);
+    if (!occupants.length) continue;
+    found.push(makeFinding({
+      kind: 'dissent',
+      points: occupants,
+      mansion,
+      detail: `${occupants.map(p => p.name).join(', ')} in mansion ${mansion + 1} (${STATIONS[mansion].epithet}) — the four traditions genuinely disagree here`,
+      rate: DISSENT_RATES.pointInDivergentMansion,
+    }));
+  }
+  return found;
+}
+
 /**
  * Enumerate every candidate finding, score, and sort (highest first).
  * "A finding involving only outer planets is generational, not personal,
@@ -282,7 +308,8 @@ export async function enumerateFindings(chart, sigil, { timeKnown }) {
     ...findBoundary(points),
     ...findQuiet(tenPoints),
     ...findType(tenPoints),
-    // `dissent` and `seam`: intentionally no-ops. See module header.
+    ...findDissent(points),
+    // `seam`: intentionally a no-op. See module header.
   ];
 
   all.sort((a, b) => Number(a.personalless) - Number(b.personalless) || b.score - a.score);

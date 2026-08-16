@@ -1,0 +1,212 @@
+{
+  "_": "Star Shard — data corrections for research/mansions-table.json, 15 Aug 2026.",
+  "_owner": "Written by Claude Design. Apply to research/mansions-table.json (the source of truth) and regenerate stations.js. Do not hand-edit stations.js — OWNERSHIP.md.",
+  "_companion": "research/corpus-mansions.md — 140 MANSION.nn slots, verified against tools/build-reading-copy.mjs with zero parser changes.",
+  "match_overall": {
+    "_rule": "The flag is set on MEANING, not on stars. Two traditions can share a determinant star and still describe different places — mansion 24 is the proof. STRONG = same thing. PARTIAL = related, different emphasis, or one tradition elsewhere. DIVERGENT = genuinely different or opposed.",
+    "_before": "10 STRONG · 2 PARTIAL · 16 null",
+    "_after": "14 STRONG · 10 PARTIAL · 4 DIVERGENT",
+    "6": {
+      "flag": "PARTIAL",
+      "why": "brand, teardrop, carrying voice — one theme across three constellations"
+    },
+    "7": {
+      "flag": "STRONG",
+      "why": "forearm, well, returning light — one gesture"
+    },
+    "10": {
+      "flag": "DIVERGENT",
+      "why": "Regulus vs Alphard; the king's seat vs the serpent's heart"
+    },
+    "11": {
+      "flag": "STRONG",
+      "why": "mane, bed, drawn net — all spread things"
+    },
+    "12": {
+      "flag": "PARTIAL",
+      "why": "a change, a contract, a pair of wings"
+    },
+    "13": {
+      "flag": "PARTIAL",
+      "why": "hand and chariot-board converge; Arabia's bend does not"
+    },
+    "15": {
+      "flag": "DIVERGENT",
+      "why": "cover vs the one that stands apart; India is on Arcturus, off the road"
+    },
+    "20": {
+      "flag": "STRONG",
+      "why": "ostriches at the river, the divine waters, the winnowing basket"
+    },
+    "21": {
+      "flag": "DIVERGENT",
+      "why": "an empty district vs every god in the pantheon at once"
+    },
+    "22": {
+      "flag": "PARTIAL",
+      "why": "Arabia and China agree (slaughterer / ox); India is on Altair"
+    },
+    "23": {
+      "flag": "PARTIAL",
+      "why": "drum, swallower-of-rain, weaving girl"
+    },
+    "24": {
+      "flag": "DIVERGENT",
+      "why": "emptiness vs the luckiest of the lucky vs a hundred healers — widest spread on the road"
+    },
+    "25": {
+      "flag": "STRONG",
+      "why": "tent, rooftop, one-footed pillar — a shelter and its single upright"
+    },
+    "26": {
+      "flag": "PARTIAL",
+      "why": "room and foundation-serpent converge; the bucket-spout does not"
+    },
+    "27": {
+      "flag": "PARTIAL",
+      "why": "guide and fish vs wall and completed pour"
+    },
+    "28": {
+      "flag": "PARTIAL",
+      "why": "fish-belly and cord vs stride — and India is absent"
+    }
+  },
+  "dissent_unblocked": {
+    "_": "findings.js:285 — `dissent` can stop being a no-op.",
+    "fires_on": [
+      10,
+      15,
+      21,
+      24
+    ],
+    "rate": "4 of 28 = 14.3% of mansions. Non-uniform across a chart because it depends which mansions a chart occupies — so rates.js MAY emit a rarity for it.",
+    "note": "Justin's own shard is 6·10 and his moon is in mansion 10. Suyin's signature sits in 24. Both worked readings already lean on this."
+  },
+  "crossCultural_thin": {
+    "_diagnosis": "NOT a research gap. The deity and symbol are ALREADY in mansions-table.json for all nine rows. The generator falls back to `nakshatra.stars` instead of composing `deity + symbol`, and it does so exactly where `nakshatra.name` is stored abbreviated ('P. Phālgunī', 'U. Aṣāḍhā'). One composer fix clears all nine.",
+    "_action": "Compose India's meaning as `deity · symbol` the way rows 4, 8, 10 already do. Expand the abbreviated names while you are in there.",
+    "11": {
+      "name_is": "P. Phālgunī",
+      "name_should_be": "Pūrva Phalgunī",
+      "meaning": "deity Bhaga, god of the allotted share · symbol: the front legs of a bed",
+      "shakti": "prajanana śakti — the power of procreation"
+    },
+    "12": {
+      "name_is": "U. Phālgunī",
+      "name_should_be": "Uttara Phalgunī",
+      "meaning": "deity Aryaman, of kinship and the kept contract · symbol: the back legs of a bed",
+      "shakti": "chayani śakti — prosperity gathered through union"
+    },
+    "16": {
+      "name_is": "Viśākhā",
+      "name_should_be": "Viśākhā",
+      "meaning": "the forked one · deity Indrāgnī, force and fire as one god · symbol: the triumphal arch",
+      "shakti": "vyāpana śakti — to achieve many and various fruits"
+    },
+    "17": {
+      "name_is": "Anurādhā",
+      "name_should_be": "Anurādhā",
+      "meaning": "deity Mitra, god of friendship and the sworn oath between equals · symbol: the archway",
+      "shakti": "rādhana śakti — the power of worship"
+    },
+    "18": {
+      "name_is": "Jyeṣṭhā",
+      "name_should_be": "Jyeṣṭhā",
+      "meaning": "the eldest, the senior-most · deity Indra, king of the gods · symbol: the circular amulet",
+      "shakti": "ārohana śakti — the power to rise"
+    },
+    "20": {
+      "name_is": "P. Aṣāḍhā",
+      "name_should_be": "Pūrva Aṣāḍhā",
+      "meaning": "the former unconquered · deity Āpas, the divine waters · symbol: the elephant tusk",
+      "shakti": "varchagrahana śakti — the power of invigoration"
+    },
+    "21": {
+      "name_is": "U. Aṣāḍhā",
+      "name_should_be": "Uttara Aṣāḍhā",
+      "meaning": "the latter unconquered · deity the Viśvedevas, the ten all-gods worshipped only together · symbol: the elephant tusk",
+      "shakti": "apradhṛṣya śakti — to grant an unchallengeable victory"
+    },
+    "25": {
+      "name_is": "P. Bhādrapadā",
+      "name_should_be": "Pūrva Bhādrapadā",
+      "meaning": "deity Aja Ekapāda, the one-footed — read as a pillar of fire · symbol: the front legs of a cot",
+      "shakti": "yajamana udyamana śakti — the fire that raises a person up"
+    },
+    "26": {
+      "name_is": "U. Bhādrapadā",
+      "name_should_be": "Uttara Bhādrapadā",
+      "meaning": "deity Ahirbudhnya, the serpent of the deep foundation · symbol: the back legs of a cot",
+      "shakti": "varshodyamana śakti — the bringing of the rain"
+    }
+  },
+  "japan_thin": {
+    "_": "Row 2 is the only empty Japan entry. gaps: ['THIN'], fy_warrior: null.",
+    "2": {
+      "sukuyo_kanji": "胃宿",
+      "reading": "いしゅく Ishuku",
+      "native_star_name": "えきえぼし Ekie-boshi",
+      "variants": [
+        "えきへぼし",
+        "こえきぼし Kokie-boshi"
+      ],
+      "fy_warrior": "Kokie",
+      "position": "the third mansion of the White Tiger's seven",
+      "determinant": "35 Arietis",
+      "clears": "gaps: ['THIN'] → []"
+    }
+  },
+  "sukuyo_native_names": {
+    "_": "The Japanese star-names are the traditional 和名 for the 28, and Fushigi Yūgi took its 28 celestial warriors from them UNALTERED. Verified against ja.wikipedia and kotonohaweb's full table. These are attested, free, and belong in the depth layer — for a large share of the audience under forty this is the only place they have met the 28.",
+    "1": "たたらぼし Tatara",
+    "2": "えきえぼし Ekie",
+    "3": "すばる Subaru",
+    "4": "あめふりぼし Amefuri",
+    "5": "とろきぼし Toroki",
+    "6": "からすきぼし Karasuki",
+    "7": "ちちりぼし Chichiri",
+    "8": "たまおのぼし Tamahome",
+    "9": "ぬりこぼし Nuriko",
+    "10": "ほとおりぼし Hotohori",
+    "11": "ちりこぼし Chiriko",
+    "12": "たすきぼし Tasuki",
+    "13": "みつかけぼし Mitsukake",
+    "14": "すぼし Suboshi",
+    "15": "あみぼし Amiboshi",
+    "16": "ともぼし Tomo",
+    "17": "そいぼし Soi",
+    "18": "なかごぼし Nakago",
+    "19": "あしたれぼし Ashitare",
+    "20": "みぼし Miboshi",
+    "21": "ひきつぼし Hikitsu",
+    "22": "いなみぼし Inami",
+    "23": "うるきぼし Uruki",
+    "24": "とみてぼし Tomite",
+    "25": "うみやめぼし Urumiya",
+    "26": "はついぼし Hatsui",
+    "27": "なまめぼし Namame",
+    "28": "とかきぼし Tokaki"
+  },
+  "hunger_28": {
+    "_": "stations.js `hunger` is 27/28. Mansion 28 has none.",
+    "STATUS": "BLOCKED — do not ship a code contract on this until the alignment question is decided.",
+    "reason": "`hunger` carries India's deity and symbol. Under this corpus's ordinal alignment India's wheel closes at 27 and mansion 28 has no nakshatra. Under the CLASSICAL Sino-Indian correspondence, 奎宿 IS Revatī and the null disappears.",
+    "downstream": "findings.js `seam` was going to read this null as its signal. Hold it. See the escalation at the foot of research/corpus-mansions.md.",
+    "if_ordinal_kept": "Change the field contract from 'missing' to 'null by construction' and ship `seam`.",
+    "if_classical_adopted": "Mansion 28 gets Revatī / Pūṣan / the fish; `seam` needs a different signal — mansion 22 (Abhijit) is the honest one."
+  },
+  "the_27_vs_28_correction": {
+    "_": "The old framing — 'India counts 27, everyone else counts 28' — is wrong. Corrected in MANSION.21 and MANSION.22.",
+    "india": "The older Indian lists counted TWENTY-EIGHT, including Abhijit (Vega), standing after Uttara Aṣāḍhā and before Śravaṇa. It was dropped so 27 equal divisions would come out at exactly 13°20'. The seam is intra-Indian first: India had 28 and chose the arithmetic.",
+    "japan": "NOT a second, independent cut. In the Buddhist correspondence (Amoghavajra's Xiuyao jing to sukuyodo) 斗 = Uttara Aṣāḍhā, 牛 = Abhijit, 女 = Śravaṇa. Dropping 牛宿 dropped the Chinese slot for the nakshatra India had already removed.",
+    "the_fact_worth_shipping": "One seam, transmitted — not two cuts that coincidentally land near each other. Checkable, and a better story."
+  },
+  "ALIGNMENT_ESCALATION": {
+    "_": "The one decision Design will not make alone. Full argument at the foot of research/corpus-mansions.md.",
+    "problem": "mansions-table.json pairs nakshatra n with mansion n by ordinal index. The classical Sino-Indian correspondence does not: 牛宿 = Abhijit, so pairings from mansion 22 onward run one step later than ours.",
+    "independent_proof": "Star identifications settle it without appeal to convention. Purva Bhadrapada's stars ARE α/β Pegasi (Markab, Scheat) — filed here on mansion 26 as Uttara Bhadrapada. Uttara Bhadrapada's ARE γ Peg + α And — filed here on 27 as Revati.",
+    "unaffected": "Mansions 1–21. All eight worked readings' sun/moon mansions.",
+    "recommendation": "Adopt the classical correspondence. INNOVATION.md's whole positioning is recovery-not-invention, and a mapping a practitioner can falsify in ten minutes is the most expensive error that argument can carry. Costs one afternoon of re-keying now; mansion 28 gains Revati instead of an absence.",
+    "decision_owner": "Justin"
+  }
+}

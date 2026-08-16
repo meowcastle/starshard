@@ -484,10 +484,12 @@ export function depthReading(sigil, stations) {
     return {
       which, epithet: s.epithet, kanji: s.kanji, span: s.signSpan,
       stars: s.stars, traditions: s.crossCultural, match: s.match || 'unmarked',
-      // stations.js's real match values are STRONG/PARTIAL/null (verified —
-      // not the fuller STRONG/PARTIAL/DIVERGENT range mansions-table.json's
-      // raw data can carry); anything short of a clean STRONG match is
-      // exactly the "disagreement" PRODUCT.md §4 wants shown, not smoothed.
+      // stations.js's real match values are STRONG/PARTIAL/DIVERGENT as of
+      // the Aug 15 concordance pass (research/mansions-patch-aug15.json) —
+      // 'unmarked' (null) is now a should-never-happen fallback, not a real
+      // case, but kept honest rather than assumed impossible. Anything
+      // short of a clean STRONG match is exactly the "disagreement"
+      // PRODUCT.md §4 wants shown, not smoothed.
       needsFlag: s.match !== 'STRONG',
     };
   };

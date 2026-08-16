@@ -126,6 +126,33 @@ test('findType: Seedborn only when Sun and Moon share a mansion', () => {
   assert.equal(F.findType(differentMansion).length, 0);
 });
 
+test('findDissent: fires only for points in a DIVERGENT mansion, using the real stations.js flag data', () => {
+  // Mansion 10 (index 9) is DIVERGENT per research/mansions-patch-aug15.json.
+  // 9*STATION_WIDTH = 115.71deg.
+  const inDivergent = F.pointAt('Moon', 116);
+  assert.equal(inDivergent.mansion, 9);
+  const found = F.findDissent([inDivergent]);
+  assert.equal(found.length, 1);
+  assert.equal(found[0].kind, 'dissent');
+  assert.equal(found[0].mansion, 9);
+  assert.equal(found[0].rate, R.DISSENT_RATES.pointInDivergentMansion.p);
+});
+
+test('findDissent: a point outside any DIVERGENT mansion produces no finding', () => {
+  // Mansion 1 (index 0) is STRONG, not DIVERGENT.
+  const point = F.pointAt('Sun', 5);
+  assert.equal(point.mansion, 0);
+  assert.equal(F.findDissent([point]).length, 0);
+});
+
+test('findDissent: multiple occupied DIVERGENT mansions each produce their own finding', () => {
+  const inMansion10 = F.pointAt('Moon', 116); // mansion index 9 (1-idx 10), DIVERGENT
+  const inMansion15 = F.pointAt('Sun', 185);  // mansion index 14 (1-idx 15), DIVERGENT
+  const found = F.findDissent([inMansion10, inMansion15]);
+  assert.equal(found.length, 2);
+  assert.deepEqual(found.map(f => f.mansion).sort((a, b) => a - b), [9, 14]);
+});
+
 // -- enumerateFindings(): real chart, real ephemeris ----------------------
 
 // Same worked example the Becoming mechanic's plan uses: Apr 12 1998,
@@ -136,7 +163,7 @@ test('enumerateFindings: returns a sorted, well-formed array for a real chart', 
   const found = await F.enumerateFindings(CHART, {}, { timeKnown: true });
   assert.ok(Array.isArray(found));
   for (const f of found) {
-    assert.ok(['colocation', 'pile', 'boundary', 'quiet', 'type'].includes(f.kind));
+    assert.ok(['colocation', 'pile', 'boundary', 'quiet', 'type', 'dissent'].includes(f.kind));
     assert.ok(Array.isArray(f.points) && f.points.length > 0);
     assert.ok(typeof f.rate === 'number' && f.rate > 0 && f.rate <= 1);
     assert.ok(typeof f.bits === 'number' && f.bits > 0);

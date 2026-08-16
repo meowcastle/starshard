@@ -44,6 +44,19 @@ export const COLOCATION_RATES = {
   sameMansionDifferentSign: rate(0.0044), // the "uncanny direction" — the flagship finding
 };
 
+// research/mansions-patch-aug15.json's concordance pass: 4 of 28 mansions
+// (10, 15, 21, 24) carry a DIVERGENT match flag — the traditions describe
+// genuinely different things there, not just different emphasis. This is
+// a curated subset, not a natural partition boundary, but the patch is
+// explicit that it's still fair game for a rarity: "non-uniform across a
+// chart because it depends which mansions a chart occupies." The rate is
+// one point's chance of landing in any of the four (mansions are ~uniform
+// width, so 4/28 stands without a Monte Carlo pass the way COLOCATION_RATES
+// needed one).
+export const DISSENT_RATES = {
+  pointInDivergentMansion: rate(4 / 28),
+};
+
 // SHARD-MODEL.md §3.2 / CHART-BUILDER.md §3.2 — measured over 9,477 sampled
 // nativities, 1975-2015, ten planets, 45 pairs each.
 export const DISAGREEMENT_RATES = {

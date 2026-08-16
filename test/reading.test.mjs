@@ -401,21 +401,29 @@ test('depthReading: strike is the sun\'s station, root is the moon\'s, real stat
   assert.deepEqual(depth.root.traditions, STATIONS.STATIONS[13].crossCultural);
 });
 
-test('depthReading: needsFlag is true for anything short of a clean STRONG match (PARTIAL or unmarked)', () => {
+test('depthReading: needsFlag is true for anything short of a clean STRONG match (PARTIAL or DIVERGENT)', () => {
   const partialStation = STATIONS.STATIONS.findIndex(s => s.match === 'PARTIAL');
   const strongStation = STATIONS.STATIONS.findIndex(s => s.match === 'STRONG');
-  const unmarkedStation = STATIONS.STATIONS.findIndex(s => !s.match);
-  assert.ok(partialStation >= 0 && strongStation >= 0 && unmarkedStation >= 0,
-    'fixture assumption: PARTIAL, STRONG and unmarked all exist in the real data');
+  const divergentStation = STATIONS.STATIONS.findIndex(s => s.match === 'DIVERGENT');
+  assert.ok(partialStation >= 0 && strongStation >= 0 && divergentStation >= 0,
+    'fixture assumption: PARTIAL, STRONG and DIVERGENT all exist in the real data');
 
   const depth = R.depthReading({ sunStation: partialStation, moonStation: strongStation }, STATIONS);
   assert.equal(depth.strike.needsFlag, true);
   assert.equal(depth.strike.match, 'PARTIAL');
   assert.equal(depth.root.needsFlag, false);
 
-  const unmarked = R.depthReading({ sunStation: unmarkedStation, moonStation: strongStation }, STATIONS);
-  assert.equal(unmarked.strike.needsFlag, true);
-  assert.equal(unmarked.strike.match, 'unmarked');
+  const divergent = R.depthReading({ sunStation: divergentStation, moonStation: strongStation }, STATIONS);
+  assert.equal(divergent.strike.needsFlag, true);
+  assert.equal(divergent.strike.match, 'DIVERGENT');
+});
+
+test('depthReading: falls back to "unmarked" for a station with no match flag at all (not currently real data, but the code path is real)', () => {
+  const fake = { STATIONS: STATIONS.STATIONS.map((s, i) => i === 0 ? { ...s, match: null } : s) };
+  const strongStation = STATIONS.STATIONS.findIndex(s => s.match === 'STRONG');
+  const depth = R.depthReading({ sunStation: 0, moonStation: strongStation }, fake);
+  assert.equal(depth.strike.needsFlag, true);
+  assert.equal(depth.strike.match, 'unmarked');
 });
 
 // -- houseReading (the Deep Chart's HOUSES tab) ----------------------------

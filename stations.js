@@ -263,7 +263,7 @@ export const STATIONS = [
     "kanji": "參宿",
     "position": "4°17′ Gemini – 17°09′ Gemini",
     "stars": "γ, ξ Gem (Alhena)",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -313,7 +313,7 @@ export const STATIONS = [
     "kanji": "井宿",
     "position": "17°09′ Gemini – 0°00′ Cancer",
     "stars": "Castor & Pollux",
-    "match": null,
+    "match": "STRONG",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -463,7 +463,7 @@ export const STATIONS = [
     "kanji": "星宿",
     "position": "25°43′ Cancer – 8°34′ Leo",
     "stars": "the Lion's brow — ζ, γ, η, α Leonis, including Regulus, the Little King · determinant η Leo",
-    "match": null,
+    "match": "DIVERGENT",
     "crossCultural": [
       {
         "sky": "Japan",
@@ -513,7 +513,7 @@ export const STATIONS = [
     "kanji": "張宿",
     "position": "8°34′ Leo – 21°26′ Leo",
     "stars": "δ, θ Leo (Zosma)",
-    "match": null,
+    "match": "STRONG",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -563,7 +563,7 @@ export const STATIONS = [
     "kanji": "翼宿",
     "position": "21°26′ Leo – 4°17′ Virgo",
     "stars": "Denebola (β Leo)",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -613,7 +613,7 @@ export const STATIONS = [
     "kanji": "軫宿",
     "position": "4°17′ Virgo – 17°09′ Virgo",
     "stars": "β, η, γ, δ, ε Vir",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "India",
@@ -713,7 +713,7 @@ export const STATIONS = [
     "kanji": "亢宿",
     "position": "0°00′ Libra – 12°51′ Libra",
     "stars": "ι, κ, λ Vir",
-    "match": null,
+    "match": "DIVERGENT",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -963,7 +963,7 @@ export const STATIONS = [
     "kanji": "箕宿",
     "position": "4°17′ Sagittarius – 17°09′ Sagittarius",
     "stars": "eight stars in Sgr, two groups of four",
-    "match": null,
+    "match": "STRONG",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -1013,7 +1013,7 @@ export const STATIONS = [
     "kanji": "斗宿",
     "position": "17°09′ Sagittarius – 0°00′ Capricorn",
     "stars": "none. The famous starless stretch of sky; π Sgr stands at its edge as a marker.",
-    "match": null,
+    "match": "DIVERGENT",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -1063,7 +1063,7 @@ export const STATIONS = [
     "kanji": "牛宿",
     "position": "0°00′ Capricorn – 12°51′ Capricorn",
     "stars": "α, β Cap (Giedi, Dabih)",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "India",
@@ -1113,7 +1113,7 @@ export const STATIONS = [
     "kanji": "女宿",
     "position": "12°51′ Capricorn – 25°43′ Capricorn",
     "stars": "ε, μ, ν Aqr (Albali)",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "India",
@@ -1163,7 +1163,7 @@ export const STATIONS = [
     "kanji": "虛宿",
     "position": "25°43′ Capricorn – 8°34′ Aquarius",
     "stars": "β Aqr — still named Sadalsuud — + ξ Aqr",
-    "match": null,
+    "match": "DIVERGENT",
     "crossCultural": [
       {
         "sky": "Japan",
@@ -1213,7 +1213,7 @@ export const STATIONS = [
     "kanji": "危宿",
     "position": "8°34′ Aquarius – 21°26′ Aquarius",
     "stars": "γ, π, ζ, η Aqr — the little \"tent\" asterism (Sadachbia)",
-    "match": null,
+    "match": "STRONG",
     "crossCultural": [
       {
         "sky": "Arabia",
@@ -1263,7 +1263,7 @@ export const STATIONS = [
     "kanji": "室宿",
     "position": "21°26′ Aquarius – 4°17′ Pisces",
     "stars": "α, β Peg (Markab, Scheat) — the first wall of the Great Square of Pegasus",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "China",
@@ -1313,7 +1313,7 @@ export const STATIONS = [
     "kanji": "壁宿",
     "position": "4°17′ Pisces – 17°09′ Pisces",
     "stars": "γ Peg + α And (Algenib, Alpheratz) — the Square's far wall",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "India",
@@ -1363,7 +1363,7 @@ export const STATIONS = [
     "kanji": "奎宿",
     "position": "17°09′ Pisces – 0°00′ Aries",
     "stars": "β And (Mirach)",
-    "match": null,
+    "match": "PARTIAL",
     "crossCultural": [
       {
         "sky": "Arabia",

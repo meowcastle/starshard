@@ -215,7 +215,7 @@
     },
     "sukuyo_kanji": "參宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Karasuki",
     "fy_god": "Byakko",
     "gaps": [
@@ -253,7 +253,7 @@
     },
     "sukuyo_kanji": "井宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "STRONG",
     "fy_warrior": "Chichiri",
     "fy_god": "Suzaku",
     "gaps": [
@@ -370,7 +370,7 @@
     },
     "sukuyo_kanji": "星宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "DIVERGENT",
     "fy_warrior": "Hotohori",
     "fy_god": "Suzaku",
     "gaps": [
@@ -408,7 +408,7 @@
     },
     "sukuyo_kanji": "張宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "STRONG",
     "fy_warrior": "Chiriko",
     "fy_god": "Suzaku",
     "gaps": [
@@ -445,7 +445,7 @@
     },
     "sukuyo_kanji": "翼宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Tasuki",
     "fy_god": "Suzaku",
     "gaps": [
@@ -486,7 +486,7 @@
     },
     "sukuyo_kanji": "軫宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Mitsukake",
     "fy_god": "Suzaku",
     "gaps": [
@@ -562,7 +562,7 @@
     },
     "sukuyo_kanji": "亢宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "DIVERGENT",
     "fy_warrior": "Amiboshi",
     "fy_god": "Seiryuu",
     "gaps": [
@@ -758,7 +758,7 @@
     },
     "sukuyo_kanji": "箕宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "STRONG",
     "fy_warrior": "Miboshi",
     "fy_god": "Seiryuu",
     "gaps": [
@@ -795,7 +795,7 @@
     },
     "sukuyo_kanji": "斗宿",
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "DIVERGENT",
     "fy_warrior": "Hikitsu",
     "fy_god": "Genbu",
     "gaps": [
@@ -833,7 +833,7 @@
     },
     "sukuyo_kanji": "牛宿",
     "offset_note": "牛宿 ← Śravaṇa",
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Inami",
     "fy_god": "Genbu",
     "gaps": [
@@ -872,7 +872,7 @@
     },
     "sukuyo_kanji": "女宿",
     "offset_note": "女宿 ← Dhaniṣṭhā",
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Uruki",
     "fy_god": "Genbu",
     "gaps": [
@@ -910,7 +910,7 @@
     },
     "sukuyo_kanji": "虛宿",
     "offset_note": "虛宿 ← Śatabhiṣā",
-    "match_overall": null,
+    "match_overall": "DIVERGENT",
     "fy_warrior": "Tomite",
     "fy_god": "Genbu",
     "gaps": [
@@ -950,7 +950,7 @@
     },
     "sukuyo_kanji": "危宿",
     "offset_note": "危宿 ← P.Bhādrapadā",
-    "match_overall": null,
+    "match_overall": "STRONG",
     "fy_warrior": "Urumiya (Hagas & Tegu)",
     "fy_god": "Genbu",
     "gaps": [
@@ -988,7 +988,7 @@
     },
     "sukuyo_kanji": "室宿",
     "offset_note": "室宿 ← U.Bhādrapadā",
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Hatsui",
     "fy_god": "Genbu",
     "gaps": [
@@ -1026,7 +1026,7 @@
     },
     "sukuyo_kanji": "壁宿",
     "offset_note": "壁宿 ← Revatī",
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Namame",
     "fy_god": "Genbu",
     "gaps": [
@@ -1061,7 +1061,7 @@
     },
     "sukuyo_kanji": null,
     "offset_note": null,
-    "match_overall": null,
+    "match_overall": "PARTIAL",
     "fy_warrior": "Tokaki",
     "fy_god": "Byakko",
     "gaps": [
