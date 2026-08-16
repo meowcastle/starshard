@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Storm of the Throne</title>
+<style>
+  :root{
+    --ground:#020606;--panel:#08110f;--edge:#12201f;--edge-hi:#1d3532;
+    --ink:#e8e4d9;--muted:#98a2a0;--dim:#5d6a68;
+    --lit:#f0c674;--rose:#e0879a;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+       line-height:1.66;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:620px;margin:0 auto;padding:52px 24px 110px}
+
+  .hero{text-align:center;padding:6px 0 40px}
+  .addr{font-family:var(--mono);font-size:12px;letter-spacing:.34em;color:var(--lit);margin-bottom:14px}
+  .name{font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1.06;margin:0 0 18px}
+  .sub{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:2}
+  .sub .d{color:var(--dim)}
+
+  .rule{border:0;height:1px;background:var(--edge);margin:44px 0}
+  .star{text-align:center;color:var(--edge-hi);font-size:13px;letter-spacing:1.4em;margin:44px 0}
+
+  h2{font-size:10.5px;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;
+     color:var(--dim);margin:0 0 20px;font-weight:400;text-align:center}
+
+  p{margin:0 0 17px;font-size:17px;letter-spacing:-.003em}
+  p strong{color:#fff;font-weight:600}
+  p em{color:var(--muted)}
+  .lead{font-size:20px;line-height:1.55}
+
+  .glyphline{text-align:center;margin:0 0 26px}
+  .glyphline .g{font-size:30px;color:var(--lit);letter-spacing:.1em}
+  .glyphline .t{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+                color:var(--dim);margin-top:8px}
+
+  .mname{text-align:center;font-size:31px;font-weight:600;letter-spacing:-.025em;margin:0 0 6px}
+  .mcoord{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim);
+          letter-spacing:.05em;margin-bottom:26px;line-height:1.9}
+
+  .said{display:grid;grid-template-columns:64px 1fr;gap:5px 15px;margin:0 0 24px}
+  .said .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+            color:var(--dim);padding-top:6px}
+  .said .tx{font-size:15px;color:var(--muted);padding-top:2px}
+  .said .tx b{color:var(--ink);font-weight:600}
+  .said .tx.dis b{color:var(--rose)}
+
+  .pull{border-left:2px solid #3a3320;padding:4px 0 4px 20px;margin:26px 0;
+        font-size:19px;line-height:1.5;color:var(--ink)}
+  .pull b{color:#fff}
+
+  .sig{border:1px solid #3a3320;border-radius:12px;background:#0c0a05;padding:24px 22px;margin:0 0 26px;
+       text-align:center}
+  .sig .n{font-family:var(--mono);font-size:28px;color:var(--lit);line-height:1;margin-bottom:12px}
+  .sig .h{font-size:19px;font-weight:600;line-height:1.42;margin-bottom:12px}
+  .sig .d{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.9}
+
+  .close{text-align:center;color:var(--dim);font-size:13.5px;font-style:italic;margin-top:8px}
+  .foot{margin-top:60px;padding-top:18px;border-top:1px solid var(--edge);
+        font-family:var(--mono);font-size:10px;color:var(--dim);line-height:2;text-align:center}
+  .foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--edge-hi)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="addr">6 &middot; 10</div>
+    <h1 class="name">The Storm<br>of the Throne</h1>
+    <div class="sub">
+      sun in The Storm &nbsp;&middot;&nbsp; moon in The Throne<br>
+      libra rising &nbsp;&middot;&nbsp; outbound &nbsp;&middot;&nbsp; waxing crescent<br>
+      <span class="d">6 june 1989, 4:42 pm &middot; portland, oregon</span>
+    </div>
+  </div>
+
+  <h2>the combination</h2>
+
+  <p class="lead">a storm is a thing that has to break. a throne is a thing that has to hold.
+    <strong>you are one being asked to be the other</strong>, and that is the whole architecture of
+    your life.</p>
+
+  <p>your sun sits in the sixth mansion, where the old sky-watchers put the fierce work — the hunt,
+    the siege, the star of the howling god. it is the part of you that has to <em>break the surface
+    of a thing and find out what it actually cost.</em> you ask the question nobody at the table
+    wants asked, and you ask it at full volume, and you are usually right.</p>
+
+  <p>your moon sits in the tenth, on the brow of a lion and the seat of a king. that is the part of
+    you that has to keep its bearing. even at rest there is a carriage to you, a straightened spine,
+    an instinct not to be seen flinching. <strong>people bring you their best behaviour and save
+    their mess for someone else, because you have always looked fine.</strong></p>
+
+  <div class="pull">
+    so the storm has to be conducted from a chair. <b>you were built to break things open and
+    built to look composed while doing it</b> &mdash; and neither one will let the other go.
+  </div>
+
+  <p>this is why the two most common things said about you contradict each other. that you are
+    <em>too much</em>, and that you are <em>hard to read</em>. both are true. the voltage is real and
+    so is the composure, and you have spent a long time running one through the other, which is
+    exhausting in a way that does not show — because <strong>not showing is the other half of the
+    machine.</strong></p>
+
+  <p>what it makes you unusually good at: walking into a difficult room and being the only person
+    who both names the problem and does not seem frightened by it. that is a rare pairing and people
+    build things around it. what it costs you is that <strong>nobody checks on the person who never
+    looks like they need checking on.</strong></p>
+
+  <div class="star">✦ ✦ ✦</div>
+
+  <h2>the sixth mansion</h2>
+  <div class="glyphline"><div class="g">參宿</div><div class="t">alhena &middot; the twins' foot</div></div>
+  <div class="mname">The Storm</div>
+  <div class="mcoord">4&deg;17&prime; &ndash; 17&deg;09&prime; gemini<br>your sun stands here</div>
+
+  <p>every tradition that looked at this stretch of sky saw something that <strong>cannot be taken
+    back.</strong></p>
+
+  <div class="said">
+    <div class="sk">arabia</div><div class="tx"><b>al-Hanʿa</b> &mdash; the brand. the mark burned
+      into a camel's neck to say whose it is. permanent by design.</div>
+    <div class="sk">india</div><div class="tx"><b>Ārdrā</b> &mdash; the moist one. the star of Rudra
+      the howler, the storm god, and its emblem is a teardrop.</div>
+    <div class="sk">china</div><div class="tx"><b>參 Shēn</b> &mdash; Orion entire, in the quarter of
+      the White Tiger. its animal is the ape: the long-armed caller of the canopy,
+      <em>heard across miles before anything sees it.</em></div>
+  </div>
+
+  <p>a brand, a storm, and a voice that arrives before the body. the medieval election books gave
+    this mansion the fierce jobs — hunting, sieges, the work done at full force — and their reasoning
+    was simple: <strong>this is the stretch of sky for things that do not have an undo.</strong></p>
+
+  <p>to be born under it is to be built for irreversibility. you go all the way in. you say the thing
+    out loud. and the mark you leave on a room stays on it after you have gone, which is a gift when
+    you meant it and a debt when you did not.</p>
+
+  <div class="star">✦ ✦ ✦</div>
+
+  <h2>the tenth mansion</h2>
+  <div class="glyphline"><div class="g">星宿</div><div class="t">regulus &middot; the little king</div></div>
+  <div class="mname">The Throne</div>
+  <div class="mcoord">25&deg;43&prime; cancer &ndash; 8&deg;34&prime; leo<br>your moon stands here</div>
+
+  <p>regulus is one of the four stars the ancient world called royal, and it sits almost exactly on
+    the ecliptic — so <strong>the moon and the planets pass over it in a procession, endlessly,
+    the way a court files past a chair.</strong></p>
+
+  <div class="said">
+    <div class="sk">arabia</div><div class="tx"><b>al-Jabha</b> &mdash; the forehead of the lion.
+      the brow of a beast so large it sprawled across a third of the sky.</div>
+    <div class="sk">india</div><div class="tx"><b>Maghā</b> &mdash; the mighty. its symbol is the
+      royal throne. but its deity is <b>not a king</b> &mdash; it is the ancestors, the dead who are
+      owed offerings.</div>
+    <div class="sk">china</div><div class="tx dis"><b>星 Xīng</b> &mdash; the star mansion, of the
+      Vermilion Bird. and here they part ways: china fixes it not on the lion but on
+      <b>Alphard, the serpent's heart</b>, in Hydra.</div>
+  </div>
+
+  <p>two civilisations looked at these degrees and saw the seat of a king. one looked at the same
+    degrees and saw the heart of a water-snake. <strong>the disagreement is old and nobody has ever
+    settled it</strong>, and you were born on the ground they were arguing over.</p>
+
+  <p>but the Indian reading is the one that turns the whole mansion, because it refuses the obvious.
+    the seat is real — and its god is <em>the ancestors</em>. <strong>the chair was carved before you
+    arrived.</strong> that is what a throne-born moon carries: authority handed over rather than
+    taken, and the private, unending question of whether you are worthy of a thing you did not build.</p>
+
+  <div class="pull">
+    the old books gave this mansion trade, alliance, and building. agrippa says it
+    <b>&ldquo;strengthens buildings.&rdquo;</b> it is the sky of the things meant to outlast the
+    person who made them.
+  </div>
+
+  <div class="star">✦ ✦ ✦</div>
+
+  <h2>your signature</h2>
+
+  <div class="sig">
+    <div class="n">1 in 221</div>
+    <div class="h">your moon and your midheaven are standing<br>in the same mansion.</div>
+    <div class="d">
+      moon &nbsp;26&deg;51&prime; cancer &nbsp;&middot;&nbsp; midheaven &nbsp;5&deg;48&prime; leo<br>
+      different signs &middot; 8&deg;55&prime; apart &middot; one stretch of sky
+    </div>
+  </div>
+
+  <p>your midheaven is the point that stood directly overhead at 4:42 that afternoon — the highest
+    place in your chart, and the one that describes what you are known for.</p>
+
+  <p>on every chart you will ever be handed, it lives in Leo and your moon lives in Cancer: two signs,
+    two houses, two separate pages. <strong>in the older sky they are in one place</strong>, and they
+    have been the whole time.</p>
+
+  <p>which means the composure is not a skill you developed for public life. <strong>it is the same
+    thing as your public life.</strong> the part of you that will not be seen to falter and the part
+    of you the world asks for are not two rooms with a door between them — they are one room, and it
+    is the room you keep tidy for visitors.</p>
+
+  <p>most people can come apart privately and hold steady in public, or the reverse, and rest in one
+    from the other. <strong>you have one weather system.</strong> when it turns it turns everywhere,
+    and the people who only ever see the outside will keep telling you the inside is a separate
+    problem.</p>
+
+  <p>this is the rarest thing in your chart and it is the reason the other two mansions land the way
+    they do. <strong>a storm, a throne, and no wall between the throne room and the private one.</strong></p>
+
+  <hr class="rule">
+
+  <div class="close">
+    the sky writes this once, at the minute you arrive, and never revises it.<br>
+    what moves across it is another matter &mdash; and that is what tonight is for.
+  </div>
+
+  <div class="foot">
+    the storm of the throne &nbsp;·&nbsp; 6 &middot; 10<br>
+    one of 784 &nbsp;·&nbsp; <a href="#">what the twenty-eight are &rarr;</a>
+  </div>
+
+</div>
+</body>
+</html>

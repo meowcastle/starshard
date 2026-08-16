@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Pixelify+Sans:wght@400;600&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#040302;font-family:'Varela Round',sans-serif}
+  a{color:#FFB000;text-decoration:none}
+  a:hover{color:#F0D89A}
+</style>
+</helmet>
+<div style="height:100vh;overflow:hidden;background:#040302;display:flex;justify-content:center;align-items:center">
+<div style="{{ frameScaleStyle }}">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="430px,900px">
+<div style="height:100%;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);color:#F2EAD6;font-family:'Varela Round',sans-serif;position:relative;overflow:hidden">
+  <sc-if value="{{ starfieldOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 12% 4%, rgba(240,216,154,.85), transparent),radial-gradient(1px 1px at 68% 2%, rgba(248,244,230,.7), transparent),radial-gradient(2px 2px at 88% 8%, rgba(255,176,0,.65), transparent),radial-gradient(1px 1px at 30% 11%, rgba(248,244,230,.5), transparent),radial-gradient(1.5px 1.5px at 52% 6%, rgba(240,216,154,.6), transparent),radial-gradient(1px 1px at 79% 16%, rgba(248,244,230,.45), transparent)"></div>
+  </sc-if>
+
+  <sc-if value="{{ onTonight }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column">
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">saturday 15 august · waxing crescent</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">tonight</h1>
+    <div style="display:flex;gap:2px;margin-top:20px;border:1px solid rgba(240,216,154,.2);align-self:flex-start">
+      <button onClick="{{ toTonightView }}" style="{{ segTonightStyle }}">tonight</button>
+      <button onClick="{{ toWeekView }}" style="{{ segWeekStyle }}">this week</button>
+    </div>
+    <sc-if value="{{ showTonightView }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column">
+        <div style="font-size:18px;line-height:1.85;color:rgba(244,236,214,.94);margin-top:28px;display:flex;flex-direction:column;gap:16px">
+          <p style="margin:0">the moon is three steps into The Veil, the station the old election books saved for work meant to disappear — wells, foundations, the seed under the cover.</p>
+          <p style="margin:0">saturn is sextile your sun — 60°, the easy angle — and has been all month. what you build in the covered hours right now is load-bearing later, and it does not need a witness to count. <strong style="color:#FFFDF5">tonight favors the unwitnessed version of the work.</strong></p>
+        </div>
+        <button onClick="{{ pushMC }}" style="background:none;border:none;padding:0;margin:24px 0 0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.08em;color:#FFB000">your midheaven 5°48′ leo →</button>
+        <div style="height:1px;background:rgba(240,216,154,.16);margin:36px 0"></div>
+        <div style="align-self:center;filter:drop-shadow(0 0 16px rgba(240,216,154,.22))">
+          <svg viewBox="0 0 200 200" style="width:200px;height:200px;display:block">
+            <sc-for list="{{ tRingSegs }}" as="seg" hint-placeholder-count="12">
+              <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
+            </sc-for>
+            <text x="100" y="96" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:17px;fill:#F0D89A;font-weight:600">☾ 15 · 3</text>
+            <text x="100" y="111" text-anchor="middle" style="font-family:'Pixelify Sans',monospace;font-size:6.5px;letter-spacing:.2em;fill:#9A8A5E">TONIGHT'S STATION</text>
+          </svg>
+        </div>
+        <div style="text-align:center;margin-top:18px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E">the fifteenth mansion</div>
+        <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;margin-top:6px">The Veil</div>
+        <p style="font-size:15px;line-height:1.8;color:rgba(244,236,214,.85);margin:14px 0 0;text-align:center">arabia called it al-ghafr, the cover; china saw 亢 Kàng, the neck of the dragon. the election books favored it for laying foundations and digging wells — <em style="color:#D8C89C">work that disappears under what it holds up.</em></p>
+        <div style="text-align:center;margin-top:16px;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E">moon 7°34′ libra · step 3 of 4</div>
+        <sc-if value="{{ notWalked }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ walk }}" style="margin:30px auto 0;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:14px 28px;cursor:pointer">light tonight's station</button>
+        </sc-if>
+        <sc-if value="{{ isWalked }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:30px;text-align:center;display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#FFB000">✦ the veil, lit · 12 of 28</div>
+            <div style="font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9">next — the moon crosses The Crown,<br>your rising's station · monday, 6:40 am</div>
+          </div>
+        </sc-if>
+        <div style="height:1px;background:rgba(240,216,154,.16);margin:36px 0 0"></div>
+        <button onClick="{{ toggleNumbers }}" style="background:none;border:none;padding:16px 0;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E"><span>the numbers</span><span style="color:#F0D89A">{{ numbersChevron }}</span></button>
+        <sc-if value="{{ numbersOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.05em;color:#D8C89C">
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>☽ moon</span><span style="color:#9A8A5E;text-align:right">7°34′ libra · the veil · step 3 of 4</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>♄ saturn ℞</span><span style="color:#9A8A5E;text-align:right">14°29′ aries · sextile your sun · orb 1°45′</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0"><span>next crossing</span><span style="color:#9A8A5E;text-align:right">the crown · your rising's · monday 6:40 am</span></div>
+          </div>
+        </sc-if>
+        <div style="height:1px;background:rgba(240,216,154,.16)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 0;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9A8A5E"><span>☾ nightly reminder, at the crossing</span><button onClick="{{ toggleRemind }}" style="{{ remindStyle }}">{{ remindLabel }}</button></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ showWeekView }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column">
+        <div style="font-size:17px;line-height:1.85;color:rgba(244,236,214,.94);margin-top:28px;display:flex;flex-direction:column;gap:16px">
+          <p style="margin:0">the week tips forward from quiet. tomorrow night the moon stands in The Claws — <strong style="color:#FFFDF5">your rising's station, the one night a month the sky stands where the world meets you.</strong> what gets said to your face this week gets said early.</p>
+          <p style="margin:0">wednesday's eclipse at 20° leo is three days behind you, one door past The Throne. eclipses seed slowly; give it the month.</p>
+          <p style="margin:0">saturn holds its trine to your midheaven all week, inside a degree and a half — the long, unglamorous angle that pays out in standing. keep the week's promises small and structural.</p>
+        </div>
+        <div style="height:1px;background:rgba(240,216,154,.16);margin:32px 0 0"></div>
+        <div style="display:flex;flex-direction:column;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.05em;color:#D8C89C;margin-top:8px">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>sun 16 aug</span><span style="color:#9A8A5E;text-align:right">moon enters the claws · your rising's station</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>thu 20 aug</span><span style="color:#9A8A5E;text-align:right">saturn–midheaven trine tightest · 1°02′</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0"><span>fri 28 aug</span><span style="color:#9A8A5E;text-align:right">full moon · the month's answer to the eclipse</span></div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ mcPushed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:56px 26px 130px;display:flex;flex-direction:column">
+      <button onClick="{{ popMC }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.1em;color:#FFB000">‹ tonight</button>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:28px">your chart · one placement</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1.1;margin:8px 0 0;color:#F2EAD6">your midheaven<br><em style="color:#F0D89A">5°48′ leo</em></h2>
+      <div style="font-size:16.5px;line-height:1.85;color:rgba(244,236,214,.92);margin-top:24px;display:flex;flex-direction:column;gap:16px">
+        <p style="margin:0">your midheaven — the point directly overhead at 4:42 that afternoon — is the mark of what you are known for. yours stands in leo, on the sign of the chart's own king.</p>
+        <p style="margin:0">and it stands in The Throne, the tenth mansion, in the same stretch of sky as your moon. <strong style="color:#FFFDF5">the composure is not a skill you developed for public life. it is the same thing as your public life.</strong> one room, kept tidy for visitors.</p>
+        <p style="margin:0">when a passing planet touches this point — as saturn is doing now, from the easy angle — it is touching the public room and the private one at once. that is why these transits land on you harder, and quieter, than the books say they should.</p>
+      </div>
+    </div>
+  </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ onChart }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column">
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">6 june 1989, 4:42 pm · portland · placidus</div>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">your chart</h1>
+    <p style="font-size:14px;line-height:1.6;color:#9A8A5E;margin:10px 0 0">the classic wheel, hung from your ascendant — twelve signs, twelve houses, your lights. the outer ring is the twenty-eight mansions and their steps, laid over the same sky. your shard is that ring, read alone.</p>
+    <div style="align-self:center;margin-top:16px;filter:drop-shadow(0 0 18px rgba(240,216,154,.22))">
+      <svg viewBox="0 0 200 200" style="width:310px;height:310px;display:block">
+        <sc-for list="{{ chartRing }}" as="seg" hint-placeholder-count="12">
+          <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
+        </sc-for>
+        <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(240,216,154,.22)" stroke-width="0.6"></circle>
+        <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(240,216,154,.22)" stroke-width="0.6"></circle>
+        <sc-for list="{{ signLines }}" as="t" hint-placeholder-count="6">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(240,216,154,.3)" stroke-width="0.7"></line>
+        </sc-for>
+        <sc-for list="{{ signGlyphs }}" as="g" hint-placeholder-count="6">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-size:8px;fill:#D8C89C">{{ g.t }}</text>
+        </sc-for>
+        <circle cx="100" cy="100" r="46" fill="none" stroke="rgba(154,138,94,.3)" stroke-width="0.6"></circle>
+        <sc-for list="{{ houseLines }}" as="t" hint-placeholder-count="6">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(154,138,94,.4)" stroke-width="0.6"></line>
+        </sc-for>
+        <sc-for list="{{ houseNums }}" as="g" hint-placeholder-count="6">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:5.5px;fill:#9A8A5E">{{ g.t }}</text>
+        </sc-for>
+        <sc-for list="{{ angleLines }}" as="t" hint-placeholder-count="2">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(255,176,0,.6)" stroke-width="1"></line>
+        </sc-for>
+        <sc-for list="{{ angleLabels }}" as="g" hint-placeholder-count="2">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:6px;letter-spacing:.1em;fill:#FFB000">{{ g.t }}</text>
+        </sc-for>
+        <sc-for list="{{ wheelMarks }}" as="m" hint-placeholder-count="4">
+          <g onClick="{{ m.onTap }}" style="cursor:pointer">
+            <text x="{{ m.cx }}" y="{{ m.cy }}" text-anchor="middle" dominant-baseline="central" style="font-size:9px;fill:{{ m.color }}">{{ m.glyph }}</text>
+            <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="10" fill="rgba(0,0,0,0)"></circle>
+          </g>
+        </sc-for>
+      </svg>
+    </div>
+    <div style="display:flex;justify-content:center;gap:14px;margin-top:8px;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9A8A5E;flex-wrap:wrap"><span>outer · the 28 mansions</span><span>middle · the 12 signs</span><span>inner · the houses</span></div>
+    <div style="text-align:center;margin-top:8px;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#F0D89A;min-height:14px">{{ selLabel }}</div>
+    <div style="margin-top:26px">
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the angles</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">↑ ascendant</span><span style="font-size:13.5px;color:#D8C89C">28°46′ libra <span style="color:#9A8A5E">›</span></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">mc midheaven</span><span style="font-size:13.5px;color:#D8C89C">5°48′ leo <span style="color:#9A8A5E">›</span></span></div>
+      </div>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:16px 0 0">libra rising sets the whole wheel: the mask is even-handed, the first move is always to weigh. it puts venus in charge of the chart — she is your ruler, and where she sits is where the balance actually gets kept.</p>
+    </div>
+    <div style="margin-top:32px">
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the lights</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">☉ sun</span><span style="font-size:13.5px;color:#D8C89C">16°14′ gemini · 8th house <span style="color:#9A8A5E">›</span></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">☽ moon</span><span style="font-size:13.5px;color:#D8C89C">26°49′ cancer · 9th house <span style="color:#9A8A5E">›</span></span></div>
+      </div>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:16px 0 0">a gemini sun in the eighth asks its many questions where things are buried; a cancer moon riding just under the midheaven keeps the private tide near the top of the chart, in plain sight. mind that digs, feeling that leads.</p>
+    </div>
+    <div style="margin-top:32px">
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">chart ruler</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">♀ venus</span><span style="font-size:13.5px;color:#D8C89C">2°47′ cancer · 9th house <span style="color:#9A8A5E">›</span></span></div>
+      </div>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:16px 0 0">the ruler of a libra chart in cancer, in the ninth: the balance is kept through care, and at a distance. she likes the harmony of far places and honest belief more than the harmony of the room.</p>
+    </div>
+    <div style="margin-top:32px">
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">aspects</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15px;color:#F2EAD6">☉ sun ☌ jupiter</span><span style="font-size:13px;color:#9A8A5E">conjunction · 2°</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15px;color:#F2EAD6">☽ moon ☌ mars</span><span style="font-size:13px;color:#9A8A5E">conjunction · 3°</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0"><span style="font-size:15px;color:#F2EAD6">♀ venus △ ascendant</span><span style="font-size:13px;color:#9A8A5E">trine · 4°</span></div>
+      </div>
+    </div>
+    <div style="margin-top:32px">
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the frame</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">zodiac</span><span style="font-size:13.5px;color:#D8C89C">tropical <span style="color:#9A8A5E">›</span></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">houses</span><span style="font-size:13.5px;color:#D8C89C">placidus <span style="color:#9A8A5E">›</span></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">orbs</span><span style="font-size:13.5px;color:#D8C89C">8° lights · 6° planets <span style="color:#9A8A5E">›</span></span></div>
+      </div>
+    </div>
+    <div style="margin-top:30px;padding:20px;border:1px solid rgba(240,216,154,.15);background:rgba(240,216,154,.03)">
+      <p style="font-size:14px;line-height:1.7;color:#D8C89C;margin:0">this is the classic reading. the finer weather — the twenty-eight mansions your lights actually fall in, and how they combine — lives on <a href="#shard">your shard</a>.</p>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ onShard }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column">
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;text-align:center">✦ your shard ✦</div>
+    <div style="align-self:center;margin-top:18px;filter:drop-shadow(0 0 20px rgba(240,216,154,.28))">
+      <svg viewBox="0 0 200 200" style="width:290px;height:290px;display:block">
+        <sc-for list="{{ sRingSegs }}" as="seg" hint-placeholder-count="12">
+          <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
+        </sc-for>
+        <sc-for list="{{ sRingTicks }}" as="t" hint-placeholder-count="4">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(240,216,154,.3)" stroke-width="0.8"></line>
+        </sc-for>
+        <sc-for list="{{ sRingMarks }}" as="m" hint-placeholder-count="4">
+          <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="{{ m.r }}" fill="{{ m.fill }}" stroke="{{ m.stroke }}" stroke-width="1"></circle>
+        </sc-for>
+        <text x="100" y="97" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:20px;fill:#F0D89A;font-weight:600">6 · 10</text>
+        <text x="100" y="112" text-anchor="middle" style="font-family:'Pixelify Sans',monospace;font-size:6.5px;letter-spacing:.2em;fill:#9A8A5E">YOUR STAR SHARD</text>
+      </svg>
+    </div>
+    <div style="text-align:center;margin-top:20px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:36px;line-height:1.1;color:#F2EAD6">The Storm<br><em style="color:#F0D89A">of the Throne</em></div>
+    <div style="text-align:center;margin-top:14px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;line-height:2.1;color:#D8C89C">sun in the storm · moon in the throne<br>libra rising · outbound · waxing crescent</div>
+    <div style="display:flex;align-items:center;gap:12px;margin:38px 0 26px"><span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(240,216,154,.4))"></span><span style="color:#F0D89A;font-size:12px">✦</span><span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(240,216,154,.4),transparent)"></span></div>
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center;margin-bottom:22px">the combination</div>
+    <div style="font-size:16.5px;line-height:1.82;color:rgba(244,236,214,.94);display:flex;flex-direction:column;gap:18px">
+      <p style="margin:0;font-size:19px;line-height:1.6">a storm is a thing that has to break. a throne is a thing that has to hold. <strong style="color:#FFFDF5">you are one being asked to be the other</strong>, and that is the whole architecture of your life.</p>
+      <p style="margin:0">your sun sits in the sixth mansion, where the old sky-watchers put the fierce work — the hunt, the siege, the star of the howling god. it is the part of you that has to <em style="color:#D8C89C">break the surface of a thing and find out what it actually cost.</em> you ask the question nobody at the table wants asked, and you ask it at full volume, and you are usually right.</p>
+      <p style="margin:0">your moon sits in the tenth, on the brow of a lion and the seat of a king. that is the part of you that has to keep its bearing. even at rest there is a carriage to you, a straightened spine, an instinct not to be seen flinching. <strong style="color:#FFFDF5">people bring you their best behaviour and save their mess for someone else, because you have always looked fine.</strong></p>
+      <div style="border-left:2px solid #F0D89A;padding:4px 0 4px 18px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.5;color:#F0D89A">so the storm has to be conducted from a chair. you were built to break things open and built to look composed while doing it — and neither one will let the other go.</div>
+      <p style="margin:0">this is why the two most common things said about you contradict each other. that you are <em style="color:#D8C89C">too much</em>, and that you are <em style="color:#D8C89C">hard to read</em>. both are true. the voltage is real and so is the composure, and you have spent a long time running one through the other, which is exhausting in a way that does not show — because <strong style="color:#FFFDF5">not showing is the other half of the machine.</strong></p>
+      <p style="margin:0">what it makes you unusually good at: walking into a difficult room and being the only person who both names the problem and does not seem frightened by it. that is a rare pairing and people build things around it. what it costs you is that <strong style="color:#FFFDF5">nobody checks on the person who never looks like they need checking on.</strong></p>
+    </div>
+    <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">the sixth mansion</div>
+    <div style="text-align:center;margin-top:16px"><div style="font-size:32px;color:#F0D89A;letter-spacing:.1em;font-family:serif">參宿</div><div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:8px">alhena · the twins' foot</div></div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;margin:14px 0 6px;color:#F2EAD6;text-align:center">The Storm</h2>
+    <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9;margin-bottom:24px">4°17′ – 17°09′ gemini<br>your sun stands here</div>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0 0 22px">every tradition that looked at this stretch of sky saw something that <strong style="color:#FFFDF5">cannot be taken back.</strong></p>
+    <div style="display:flex;flex-direction:column;gap:12px;font-size:14.5px;line-height:1.6">
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#FFB000;padding-top:4px">arabia</span><span style="color:#C9BC96"><b style="color:#F2EAD6">al-Hanʿa</b> — the brand. the mark burned into a camel's neck to say whose it is. permanent by design.</span></div>
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#FFB000;padding-top:4px">india</span><span style="color:#C9BC96"><b style="color:#F2EAD6">Ārdrā</b> — the moist one. the star of Rudra the howler, the storm god, and its emblem is a teardrop.</span></div>
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#FFB000;padding-top:4px">china</span><span style="color:#C9BC96"><b style="color:#F2EAD6">參 Shēn</b> — Orion entire, in the quarter of the White Tiger. its animal is the ape: the long-armed caller of the canopy, <em>heard across miles before anything sees it.</em></span></div>
+    </div>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:24px 0 0">a brand, a storm, and a voice that arrives before the body. the medieval election books gave this mansion the fierce jobs — hunting, sieges, the work done at full force — and their reasoning was simple: <strong style="color:#FFFDF5">this is the stretch of sky for things that do not have an undo.</strong></p>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">to be born under it is to be built for irreversibility. you go all the way in. you say the thing out loud. and the mark you leave on a room stays on it after you have gone, which is a gift when you meant it and a debt when you did not.</p>
+    <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">the tenth mansion</div>
+    <div style="text-align:center;margin-top:16px"><div style="font-size:32px;color:#F0D89A;letter-spacing:.1em;font-family:serif">星宿</div><div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:8px">regulus · the little king</div></div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;margin:14px 0 6px;color:#F2EAD6;text-align:center">The Throne</h2>
+    <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9;margin-bottom:24px">25°43′ cancer – 8°34′ leo<br>your moon stands here</div>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0 0 22px">regulus is one of the four stars the ancient world called royal, and it sits almost exactly on the ecliptic — so <strong style="color:#FFFDF5">the moon and the planets pass over it in a procession, endlessly, the way a court files past a chair.</strong></p>
+    <div style="display:flex;flex-direction:column;gap:12px;font-size:14.5px;line-height:1.6">
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#FFB000;padding-top:4px">arabia</span><span style="color:#C9BC96"><b style="color:#F2EAD6">al-Jabha</b> — the forehead of the lion. the brow of a beast so large it sprawled across a third of the sky.</span></div>
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#FFB000;padding-top:4px">india</span><span style="color:#C9BC96"><b style="color:#F2EAD6">Maghā</b> — the mighty. its symbol is the royal throne. but its deity is <b style="color:#F2EAD6">not a king</b> — it is the ancestors, the dead who are owed offerings.</span></div>
+      <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#F878A8;padding-top:4px">china</span><span style="color:#C9BC96"><b style="color:#F878A8">星 Xīng</b> — the star mansion, of the Vermilion Bird. and here they part ways: china fixes it not on the lion but on <b style="color:#F878A8">Alphard, the serpent's heart</b>, in Hydra.</span></div>
+    </div>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:24px 0 0">two civilisations looked at these degrees and saw the seat of a king. one looked at the same degrees and saw the heart of a water-snake. <strong style="color:#FFFDF5">the disagreement is old and nobody has ever settled it</strong>, and you were born on the ground they were arguing over.</p>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">but the Indian reading is the one that turns the whole mansion, because it refuses the obvious. the seat is real — and its god is <em style="color:#D8C89C">the ancestors</em>. <strong style="color:#FFFDF5">the chair was carved before you arrived.</strong> that is what a throne-born moon carries: authority handed over rather than taken, and the private, unending question of whether you are worthy of a thing you did not build.</p>
+    <div style="border-left:2px solid #F0D89A;padding:4px 0 4px 18px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;line-height:1.5;color:#F0D89A;margin-top:24px">the old books gave this mansion trade, alliance, and building. agrippa says it "strengthens buildings." it is the sky of the things meant to outlast the person who made them.</div>
+    <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center;margin-bottom:22px">your signature</div>
+    <div style="position:relative;border:1px solid rgba(255,176,0,.5);padding:26px 22px;background:rgba(24,18,6,.75);box-shadow:0 0 40px rgba(255,176,0,.18), inset 0 0 40px rgba(8,5,2,.6);text-align:center">
+      <span style="position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid #FFB000;border-left:2px solid #FFB000"></span>
+      <span style="position:absolute;top:-1px;right:-1px;width:10px;height:10px;border-top:2px solid #FFB000;border-right:2px solid #FFB000"></span>
+      <span style="position:absolute;bottom:-1px;left:-1px;width:10px;height:10px;border-bottom:2px solid #FFB000;border-left:2px solid #FFB000"></span>
+      <span style="position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-bottom:2px solid #FFB000;border-right:2px solid #FFB000"></span>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:26px;color:#FFB000;line-height:1;text-shadow:0 0 16px rgba(255,176,0,.5)">1 in 221</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.42;color:#F2EAD6;margin-top:12px">your moon and your midheaven are standing<br>in the same mansion.</div>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.06em;color:#9A8A5E;line-height:1.9;margin-top:12px">moon 26°49′ cancer · midheaven 5°48′ leo<br>different signs · 8°59′ apart · one stretch of sky</div>
+    </div>
+    <div style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);display:flex;flex-direction:column;gap:17px;margin-top:26px">
+      <p style="margin:0">your midheaven is the point that stood directly overhead at 4:42 that afternoon — the highest place in your chart, and the one that describes what you are known for.</p>
+      <p style="margin:0">on every chart you will ever be handed, it lives in Leo and your moon lives in Cancer: two signs, two houses, two separate pages. <strong style="color:#FFFDF5">in the older sky they are in one place</strong>, and they have been the whole time.</p>
+      <p style="margin:0">which means the composure is not a skill you developed for public life. <strong style="color:#FFFDF5">it is the same thing as your public life.</strong> the part of you that will not be seen to falter and the part of you the world asks for are not two rooms with a door between them — they are one room, and it is the room you keep tidy for visitors.</p>
+      <p style="margin:0">most people can come apart privately and hold steady in public, or the reverse, and rest in one from the other. <strong style="color:#FFFDF5">you have one weather system.</strong> when it turns it turns everywhere, and the people who only ever see the outside will keep telling you the inside is a separate problem.</p>
+      <p style="margin:0">this is the rarest thing in your chart and it is the reason the other two mansions land the way they do. <strong style="color:#FFFDF5">a storm, a throne, and no wall between the throne room and the private one.</strong></p>
+    </div>
+    <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
+    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">your farlight</div>
+    <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9;margin:14px 0 22px">mansion 20 · directly opposite your sun</div>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0">fourteen mansions from your sun — as far from The Storm as the road goes — sits your farlight. once a year, the full moon nearest your birthday rises there: your sun in its mansion, the full moon in this one, facing each other across the whole sky.</p>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">it is the one night a year the sky reads your storm from the opposite bank. the hollow mark on your ring holds its place; the night it rises, tonight will say so.</p>
+    <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:40px 0 0;text-align:center;font-style:italic">the sky writes this once, at the minute you arrive, and never revises it.<br>what moves across it is another matter — and that is what tonight is for.</p>
+    <div style="height:1px;background:rgba(240,216,154,.16);margin:34px 0 0"></div>
+    <button onClick="{{ pushArch }}" style="background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;padding:20px 0;text-align:left"><span style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#F0D89A">learn the archetypes →</span><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.08em;color:#9A8A5E">28 mansions · {{ litCount }} yours</span></button>
+  </div>
+  <sc-if value="{{ archPushed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:56px 26px 130px;display:flex;flex-direction:column">
+      <button onClick="{{ popArch }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.1em;color:#FFB000">‹ your shard</button>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:28px"><div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">learn the archetypes</div><div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.08em;color:#9A8A5E">28 mansions · yours in gold</div></div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <sc-for list="{{ stationRows }}" as="row" hint-placeholder-count="8">
+          <div onClick="{{ row.onTap }}" style="{{ row.style }}">
+            <span style="font-family:'Pixelify Sans',monospace;font-size:11px;color:{{ row.numColor }};width:22px">{{ row.num }}</span>
+            <span style="font-size:15px;color:{{ row.nameColor }};flex:1">{{ row.name }}</span>
+            <span style="font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.06em;color:#9A8A5E;text-align:right">{{ row.trail }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ nightPushed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:56px 26px 130px;display:flex;flex-direction:column">
+      <button onClick="{{ popNight }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.1em;color:#FFB000">‹ your shard</button>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:28px">the night you walked it · {{ nightDate }}</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1.1;margin:8px 0 0;color:#F2EAD6">{{ nightName }}</h2>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;margin-top:10px">{{ nightMeta }}</div>
+      <sc-if value="{{ nightSpecial }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#FFB000">✦ {{ nightSpecialLabel }}</div>
+      </sc-if>
+      <p style="font-size:17px;line-height:1.85;color:rgba(244,236,214,.94);margin:24px 0 0">{{ nightText }}</p>
+    </div>
+  </sc-if>
+  </sc-if>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;background:rgba(8,5,2,.92);backdrop-filter:blur(8px);border-top:1px solid rgba(240,216,154,.15);display:grid;grid-template-columns:1fr 1fr 1fr;padding:10px 0 24px">
+    <button onClick="{{ tabShard }}" style="{{ tabShardStyle }}">✦<br>your shard</button>
+    <button onClick="{{ tabTonight }}" style="{{ tabTonightStyle }}">☾<br>tonight</button>
+    <button onClick="{{ tabChart }}" style="{{ tabChartStyle }}">☉<br>your chart</button>
+  </div>
+</div>
+</x-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:960},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;tonight&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;tonight&quot;,&quot;chart&quot;,&quot;shard&quot;],&quot;section&quot;:&quot;preview&quot;},&quot;starfield&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;backdrop&quot;},&quot;walked&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;state&quot;}}">
+class Component extends DCLogic {
+  state = { tab: null, view: "tonight", mcPushed: false, night: null, walked: null, numbersOpen: false, remind: false, sel: null, arch: false };
+  componentDidMount() {
+    this._onResize = () => this.forceUpdate();
+    window.addEventListener("resize", this._onResize);
+    this._onHash = () => {
+      const h = (location.hash || "").replace("#", "");
+      if (["tonight", "chart", "shard"].includes(h)) this.setState({ tab: h });
+    };
+    this._onHash();
+    window.addEventListener("hashchange", this._onHash);
+  }
+  componentWillUnmount() { window.removeEventListener("hashchange", this._onHash); }
+  renderVals() {
+    const C = 100;
+    const polar = (r, deg) => {
+      const t = (deg - 90) * Math.PI / 180;
+      return [+(C + r * Math.cos(t)).toFixed(2), +(C + r * Math.sin(t)).toFixed(2)];
+    };
+    const arcPath = (r, a0, a1) => {
+      const [x0, y0] = polar(r, a0), [x1, y1] = polar(r, a1);
+      return `M ${x0} ${y0} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}`;
+    };
+    // shared orientation: ascendant at 9 o'clock, longitudes counterclockwise — all wheels agree
+    const ASC0 = 208.77;
+    const toScreen = (lon) => 270 - (lon - ASC0);
+    const lonArc = (r, lon0, lon1) => arcPath(r, toScreen(lon1), toScreen(lon1) + (lon1 - lon0));
+    const tab = this.state.tab ?? (this.props.startTab ?? "shard");
+    const walked = this.state.walked ?? (this.props.walked ?? false);
+    const STATIONS = 28, STEPS = 4, SEGMENTS = 112, SW = 360 / STATIONS, PW = 360 / SEGMENTS;
+    const SUN = 5, MOON_MC = 9, RISING = 16, FARLIGHT = 19, TONIGHT_ST = 14, TONIGHT_SEG = Math.floor(187.57 / PW);
+    const ASC_LON = 208.77, MC_LON = 125.81;           // 28°46′ libra rising · 5°48′ leo mc
+    const L2deg = (L) => 270 - (L - ASC_LON);          // ecliptic longitude → svg deg, ascendant pinned left, zodiac counterclockwise
+    const NAMES = ["The Horns","The Thread","The Gathered Stars","The Eye","The Brand","The Storm","The Reach","The Ghost","The Glance","The Throne","The Mane","The Turn","The Watchers","The Sheaf","The Veil","The Claws","The Crown","The Heart","The Sting","The Root","The Clearing","The Sacrifice","The Swallow","The Fortune","The Tents","The Jar","The Deep","The Fish"];
+    const NIGHTS = {
+      3: { date: "aug 4", step: 2, text: "the gathered stars — the small flock the whole sky counts by. little things, kept together, read as one bright thing. tonight was for tending the pile." },
+      4: { date: "aug 5", step: 2, text: "the eye follows; it does not chase. you already knew which thing you were watching this month. tonight was for admitting it." },
+      5: { date: "aug 6", step: 3, text: "a brand is a small permanent mark made on purpose. one sentence, said once, that you don't take back." },
+      6: { date: "aug 7", step: 3, special: "your sun's station", text: "the moon crossed your storm tonight — the fierce work read by the soft light. whatever breaks open this week was named tonight, quietly, by you." },
+      7: { date: "aug 8", step: 4, text: "the outstretched paw. reach costs balance; tonight favored the ask that leaves you leaning." },
+      8: { date: "aug 9", step: 4, text: "china saw a ghost in this one — the pale cluster over the carriage of the dead. unfinished things get louder at night. answer one." },
+      10: { date: "aug 10", step: 1, special: "your moon's station", text: "once a month the sky sits where your weather lives. the composure and the current in one seat tonight — let someone see the second one. the moon ran fast and skipped the glance entirely to get here." },
+      11: { date: "aug 11", step: 1, text: "the mane. what people recognize you by is not what carries you. groom it anyway." },
+      12: { date: "aug 12", step: 2, text: "the old books mark this station for the weather turning — and tonight the sun went dark at 20° leo on your way through it. the plan survives if it bends." },
+      13: { date: "aug 13", step: 2, text: "the barking stars. attention is cheap tonight; give yours to the one thing that doesn't ask for it." },
+      14: { date: "aug 14", step: 3, text: "spica — the ear of wheat, cut and held. finish one thing small enough to actually finish." },
+    };
+    if (walked) NIGHTS[15] = { date: "tonight", step: 3, text: "the moon is three steps into The Veil, the station the old election books saved for work meant to disappear. tonight favors the unwitnessed version of the work." };
+    const litCount = Object.keys(NIGHTS).length;
+    const tRingSegs = [];
+    for (let i = 0; i < SEGMENTS; i++) {
+      const station = Math.floor(i / STEPS), step = i % STEPS;
+      const lon0 = i * PW + (step === 0 ? 1.0 : 0.4), lon1 = (i + 1) * PW - 0.4;
+      let color = "rgba(240,216,154,.13)", w = 2.5;
+      if (station === SUN || station === MOON_MC) color = "rgba(240,216,154,.4)";
+      if (i === TONIGHT_SEG) { color = "#FFB000"; w = 3.4; }
+      tRingSegs.push({ d: lonArc(72, lon0, lon1), color, w });
+    }
+    const sRingSegs = [];
+    for (let i = 0; i < SEGMENTS; i++) {
+      const station = Math.floor(i / STEPS), step = i % STEPS;
+      const lon0 = i * PW + (step === 0 ? 1.0 : 0.4), lon1 = (i + 1) * PW - 0.4;
+      const lit = NIGHTS[station + 1];
+      let color = lit ? "#F0D89A" : "rgba(240,216,154,.13)", w = lit ? 3 : 2.5;
+      if (station === TONIGHT_ST && walked) { color = "#FFB000"; w = 3.4; }
+      sRingSegs.push({ d: lonArc(72, lon0, lon1), color, w });
+    }
+    const sRingTicks = [];
+    for (let s = 0; s < STATIONS; s += 7) {
+      const [x1, y1] = polar(60, L2deg(s * SW)), [x2, y2] = polar(67, L2deg(s * SW));
+      sRingTicks.push({ x1, y1, x2, y2 });
+    }
+    const mkLon = (lon, r, fill, stroke, rad) => {
+      const [cx, cy] = polar(rad, L2deg(lon));
+      return { cx, cy, r, fill, stroke };
+    };
+    const sRingMarks = [
+      mkLon(75.88, 3, "#FFB000", "none", 85),
+      mkLon(116.85, 3, "#F0D89A", "none", 85),
+      mkLon(ASC_LON, 2.4, "#D8C89C", "none", 85),
+      mkLon(19 * SW + SW / 2, 2.2, "none", "#9A8A5E", 85),
+    ];
+    const rowBase = "display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.1);";
+    const stationRows = NAMES.map((name, idx) => {
+      const n = idx + 1, night = NIGHTS[n];
+      let trail = "";
+      if (night) trail = night.date + " ›";
+      else if (n === 15 && !walked) trail = "tonight";
+      const own = n === 6 ? "☉ " : n === 10 ? "☽ " : n === 17 ? "↑ " : n === 20 ? "✧ " : "";
+      return {
+        num: String(n).padStart(2, "0"),
+        name: own + name,
+        numColor: own ? "#FFB000" : night ? "#F0D89A" : "rgba(154,138,94,.5)",
+        nameColor: own ? "#FFB000" : night ? "#F2EAD6" : "rgba(244,236,214,.38)",
+        trail,
+        style: rowBase + (night ? "cursor:pointer" : ""),
+        onTap: night ? () => this.setState({ night: n }) : () => {},
+      };
+    });
+    const ASC = ASC0;
+    const signLines = [], signGlyphs = [], houseLines = [], houseNums = [], chartRing = [];
+    const GLYPHS = ["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
+    for (let i = 0; i < 12; i++) {
+      const a = toScreen(i * 30);
+      const [x1, y1] = polar(72, a), [x2, y2] = polar(86, a);
+      signLines.push({ x1, y1, x2, y2 });
+      const [gx, gy] = polar(79, toScreen(i * 30 + 15));
+      signGlyphs.push({ x: gx, y: gy, t: GLYPHS[i] });
+    }
+    // full 112-step mansion ring on the rim, true longitudes — same ring as the shard
+    for (let i = 0; i < SEGMENTS; i++) {
+      const station = Math.floor(i / STEPS), step = i % STEPS;
+      const lon0 = i * PW + (step === 0 ? 0.9 : 0.35), lon1 = (i + 1) * PW - 0.35;
+      let color = "rgba(240,216,154,.16)", w = 2.4;
+      if (station === SUN || station === MOON_MC) { color = "rgba(240,216,154,.5)"; }
+      if (station === RISING) { color = "rgba(255,176,0,.55)"; }
+      chartRing.push({ d: lonArc(94, lon0, lon1), color, w });
+    }
+    for (let i = 0; i < 12; i++) {
+      const lon = ASC + i * 30;
+      const a = toScreen(lon);
+      const [x1, y1] = polar(46, a), [x2, y2] = polar(66, a);
+      houseLines.push({ x1, y1, x2, y2 });
+      const [nx, ny] = polar(56, toScreen(lon + 15));
+      houseNums.push({ x: nx, y: ny, t: String(i + 1) });
+    }
+    const angleLines = [], angleLabels = [];
+    [[ASC, "ASC", "DSC"], [125.8, "MC", "IC"]].forEach(([lon, a, b]) => {
+      const s = toScreen(lon);
+      const [x1, y1] = polar(38, s), [x2, y2] = polar(86, s);
+      angleLines.push({ x1, y1, x2, y2 });
+      const [lx, ly] = polar(91, s); angleLabels.push({ x: lx, y: ly, t: a });
+      const [ox, oy] = polar(91, s + 180); angleLabels.push({ x: ox, y: oy, t: b });
+    });
+    const LABELS = {
+      sun: "☉ sun · 16°14′ gemini · 8th house",
+      moon: "☽ moon · 26°49′ cancer · 9th house",
+      venus: "♀ venus · 2°47′ cancer · chart ruler",
+      asc: "↑ ascendant · 28°46′ libra",
+    };
+    const tapSel = (id) => () => this.setState({ sel: id });
+    const mk = (lon, glyph, color, rad, id) => {
+      const [cx, cy] = polar(rad, toScreen(lon));
+      return { cx, cy, glyph, color, onTap: tapSel(id) };
+    };
+    const wheelMarks = [
+      mk(76.23, "☉", "#FFB000", 68, "sun"),
+      mk(116.82, "☽", "#F0D89A", 68, "moon"),
+      mk(92.78, "♀", "#F2EAD6", 68, "venus"),
+    ];
+    const night = this.state.night ? NIGHTS[this.state.night] : null;
+    const tabBase = "background:none;border:none;cursor:pointer;text-align:center;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;line-height:1.8;padding:2px 0;";
+    const tabStyle = (t) => tabBase + (tab === t ? "color:#FFB000" : "color:#9A8A5E");
+    const segBase = "background:none;border:none;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;";
+    const view = this.state.view;
+    const setTab = (t) => () => this.setState({ tab: t, arch: false });
+    return {
+      starfieldOn: this.props.starfield ?? true,
+      frameScaleStyle: "transform:scale(" + Math.min(1, (window.innerHeight - 24) / 940, (window.innerWidth - 24) / 450).toFixed(3) + ");transform-origin:center center",
+      onTonight: tab === "tonight", onChart: tab === "chart", onShard: tab === "shard",
+      archPushed: this.state.arch,
+      pushArch: () => this.setState({ arch: true }),
+      popArch: () => this.setState({ arch: false }),
+      tabTonight: setTab("tonight"), tabChart: setTab("chart"), tabShard: setTab("shard"),
+      tabTonightStyle: tabStyle("tonight"), tabChartStyle: tabStyle("chart"), tabShardStyle: tabStyle("shard"),
+      showTonightView: view === "tonight", showWeekView: view === "week",
+      toTonightView: () => this.setState({ view: "tonight" }),
+      toWeekView: () => this.setState({ view: "week" }),
+      segTonightStyle: segBase + (view === "tonight" ? "background:rgba(255,176,0,.12);color:#FFB000" : "color:#9A8A5E"),
+      segWeekStyle: segBase + (view === "week" ? "background:rgba(255,176,0,.12);color:#FFB000" : "color:#9A8A5E"),
+      tRingSegs,
+      mcPushed: this.state.mcPushed,
+      pushMC: () => this.setState({ mcPushed: true }),
+      popMC: () => this.setState({ mcPushed: false }),
+      isWalked: walked, notWalked: !walked,
+      walk: () => this.setState({ walked: true }),
+      numbersOpen: this.state.numbersOpen,
+      numbersChevron: this.state.numbersOpen ? "−" : "+",
+      toggleNumbers: () => this.setState(s => ({ numbersOpen: !s.numbersOpen })),
+      remindLabel: this.state.remind ? "on" : "off",
+      remindStyle: "background:none;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 14px;border:1px solid " + (this.state.remind ? "#FFB000;color:#FFB000" : "rgba(240,216,154,.3);color:#9A8A5E"),
+      toggleRemind: () => this.setState(s => ({ remind: !s.remind })),
+      signLines, signGlyphs, houseLines, houseNums, chartRing, angleLines, angleLabels, wheelMarks,
+      selLabel: this.state.sel ? LABELS[this.state.sel] : "tap a light to name it",
+      sRingSegs, sRingTicks, sRingMarks, litCount, stationRows,
+      nightPushed: !!night,
+      popNight: () => this.setState({ night: null }),
+      nightDate: night ? night.date : "",
+      nightName: night ? NAMES[this.state.night - 1] : "",
+      nightMeta: night ? `mansion ${this.state.night} · step ${night.step} of 4` : "",
+      nightSpecial: !!(night && night.special),
+      nightSpecialLabel: night && night.special ? night.special : "",
+      nightText: night ? night.text : "",
+    };
+  }
+}
+</script>
+</body>
+</html>

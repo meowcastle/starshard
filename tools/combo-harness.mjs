@@ -90,7 +90,10 @@ export function packet(sun, moon) {
     address: `${pad(sun)}·${pad(moon)}`,
     sun: side(sun),
     moon: side(moon),
-    relation: relation(sun, moon),
+    // `relation` is deliberately NOT in the packet — GENERATION.md §4b.
+    // Three generators ignored it; the fourth hallucinated "aversion" from a
+    // `none`. Kept internal for the diagonal gate only.
+    _rel: relation(sun, moon),
     banned: [...new Set([...bannedFor(sun), ...bannedFor(moon)])],
   };
 }
@@ -116,6 +119,9 @@ const STYLE = [
   // added after the pilot — 7 of 8 cells failed these. GENERATION.md §4a.
   ['fabricated attribution',
     /\b(the old books|the older readings|the old electors|the tradition is|the traditions? (say|says|gave|give|call|calls|treat)|classical sources?|every tradition)\b/i],
+  // the hero already prints "sun in the storm · moon in the throne" directly
+  // above. A lead that restates it is the most visible template tell available.
+  ['lead restates the hero', /^\s*sun in\b/i, 'lead'],
   ['off-vocabulary term',
     /\b(significator|aversion|antiscia|almuten|dispositor|peregrine|combust|cazimi|triplicity|decanate)\b/i],
 ];
@@ -145,14 +151,17 @@ export function checkCell(cell, pk) {
   const all = Object.values(SLOTS).map(([]) => 0) && Object.keys(SLOTS)
     .map(k => cell[k] || '').join(' \n ');
 
-  for (const [name, re] of STYLE) if (re.test(all)) errs.push(`style — ${name}`);
+  for (const [name, re, slot] of STYLE) {
+    const target = slot ? (cell[slot] || '') : all;
+    if (re.test(target)) errs.push(`style — ${name}`);
+  }
   for (const [name, re] of LEAK)  if (re.test(all)) errs.push(`leak — ${name}`);
 
   if (pk) {
     const words = new Set(all.toLowerCase().split(/[^\p{L}\p{M}ʿʾ'-]+/u));
     const borrowed = pk.banned.filter(b => words.has(b));
     if (borrowed.length) errs.push(`borrowed-fact — ${borrowed.slice(0, 6).join(', ')}`);
-    if (pk.relation === 'same' && !/\b(no counterweight|nothing opposite|doubled|both at once|twice over|undiluted|no second)\b/i.test(all))
+    if (pk._rel === 'same' && !/\b(no counterweight|nothing opposite|doubled|both at once|twice over|undiluted|no second)\b/i.test(all))
       errs.push('diagonal — no doubled-template marker');
   }
   return errs;
@@ -181,6 +190,30 @@ export function collisions(cells, n = 8) {
   return hits;
 }
 
+/** Frame gate: a 4-gram may not recur across more than `pct` of the set.
+ *  The 8-gram collision gate cannot see this — GENERATION.md §4c. */
+// pct was 0.10. That is WRONG as the set grows: at 30 cells the limit was 3, at
+// 58 it is 6, at 784 it would be 79 — the gate loosens exactly where repetition
+// gets more visible. A reader comparing two shards does not care about the
+// denominator. Flat 3%, floor 2. GENERATION.md §4d.
+export function frames(cells, pct = 0.03, n = 5) {
+  const slots = Object.keys(SLOTS);
+  const count = new Map(), where = new Map();
+  for (const c of cells) {
+    const txt = slots.map(k => c[k] || '').join(' ');
+    for (const g of ngrams(txt, n)) {
+      count.set(g, (count.get(g) || 0) + 1);
+      if (!where.has(g)) where.set(g, []);
+      where.get(g).push(c.address);
+    }
+  }
+  const limit = Math.max(2, Math.ceil(cells.length * pct));
+  return [...count.entries()]
+    .filter(([, n2]) => n2 > limit)
+    .sort((a, b) => b[1] - a[1])
+    .map(([g, n2]) => ({ frame: g, n: n2, limit, cells: [...new Set(where.get(g))] }));
+}
+
 // ── cli ─────────────────────────────────────────────────────────────────────
 const [, , cmd, a, b] = process.argv;
 if (cmd === 'packet') {
@@ -195,8 +228,11 @@ if (cmd === 'packet') {
     else console.log(`✓ ${c.address}`);
   }
   const hits = collisions(cells);
-  console.log(`\n${cells.length - bad}/${cells.length} cells clean · ${hits.length} collisions`);
+  const frs = frames(cells);
+  console.log(`\n${cells.length - bad}/${cells.length} cells clean · ${hits.length} collisions · ${frs.length} over-used frames`);
+  for (const f of frs.slice(0, 8))
+    console.log(`  ⚠ frame ${f.n}/${cells.length} (limit ${f.limit}): "${f.frame}"`);
   for (const h of hits.slice(0, 10))
     console.log(`  ⚠ mansion ${h.mansion}: ${h.a} ↔ ${h.b}\n      "${h.shared[0]}"`);
-  process.exit(bad || hits.length ? 1 : 0);
+  process.exit(bad || hits.length || frames(cells).length ? 1 : 0);
 }
