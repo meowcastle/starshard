@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**285 bindings, 227 top-level.**
+**330 bindings, 271 top-level.**
 
 ## Rule
 
@@ -27,17 +27,19 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 |---|---|---|
 | `ringMarks` | `m` | `cls`, `cx`, `cy` |
 | `ringSegments` | `seg` | `cls`, `d` |
-| `ringTicks` | `t` | `x1`, `x2`, `y1`, `y2` |
+| `ringTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `sigAspects` | `asp` | `aspect`, `hasPassage`, `maxOrb`, `missing`, `missingIf`, `orbUsed`, `pair`, `plain`, `text` |
 | `sigCityResults` | `r` | `name`, `pick`, `region` |
 | `sigComputeLines` | `cl` | `color`, `text` |
 | `sigHousePlacements` | `p` | `label`, `number`, `text`, `which` |
 | `sigRootDepth.traditions` | `td2` | `meaning`, `name`, `sky` |
-| `sigShardCells` | `c` | `aria`, `glyph`, `lit`, `n`, `name`, `now`, `open`, `sky` |
+| `sigShardMoonTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `sigShardSunTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `sigStrikeDepth.traditions` | `td1` | `meaning`, `name`, `sky` |
 | `sigWkBackdropLines` | `line` | `text` |
 | `sigWkDays` | `d` | `key`, `on`, `sign` |
-| `sndCrossCultural` | `c` | `aria`, `glyph`, `lit`, `n`, `name`, `now`, `open`, `sky` |
+| `sndCrossCultural` | `c` | `name`, `sky` |
+| `stationRows` | `row` | `n`, `name`, `open`, `trail` |
 
 ## Scalars and callbacks
 
@@ -55,6 +57,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `doLogout` | api.js |
 | `isLoggedIn` | component state |
 | `isNotLoggedIn` | component state |
+| `popArch` | component state |
+| `pushArch` | component state |
 | `ringMarks` | component state |
 | `ringSegments` | component state |
 | `ringTicks` | component state |
@@ -79,11 +83,27 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigCanWalkTonight` | component state |
 | `sigCityResults` | component state |
 | `sigCloseShare` | component state |
+| `sigComboCost` | component state |
+| `sigComboLead` | component state |
+| `sigComboMoon` | component state |
+| `sigComboPending` | component state |
+| `sigComboPull` | component state |
+| `sigComboReady` | component state |
+| `sigComboSun` | component state |
+| `sigComboTension` | component state |
 | `sigComputeLines` | component state |
 | `sigCountdown` | component state |
 | `sigDate` | component state |
 | `sigDrewOnLine` | component state |
 | `sigFacingLine` | component state |
+| `sigFarlightN` | component state |
+| `sigFarlightText` | component state |
+| `sigFindingBodyPending` | component state |
+| `sigFindingDetail` | component state |
+| `sigFindingHeadline` | component state |
+| `sigFindingNone` | component state |
+| `sigFindingRateLabel` | component state |
+| `sigFindingReady` | component state |
 | `sigFormError` | component state |
 | `sigGaitLine` | component state |
 | `sigGaitPermission` | component state |
@@ -151,16 +171,41 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigSetQuery` | component state |
 | `sigSetTime` | component state |
 | `sigSetTz` | component state |
-| `sigShardCells` | component state |
+| `sigShardAddress` | component state |
+| `sigShardArchList` | component state |
 | `sigShardClose` | component state |
-| `sigShardDetailClosed` | component state |
 | `sigShardDetailOpen` | component state |
-| `sigShardGridHint` | component state |
+| `sigShardHeroName` | component state |
+| `sigShardHome` | component state |
+| `sigShardMetaLine` | component state |
+| `sigShardMoonArchetype` | component state |
+| `sigShardMoonClaim` | component state |
+| `sigShardMoonElection` | component state |
+| `sigShardMoonEpithet` | component state |
+| `sigShardMoonKanji` | component state |
+| `sigShardMoonOrd` | component state |
+| `sigShardMoonPortraitOn` | component state |
+| `sigShardMoonPosition` | component state |
+| `sigShardMoonSynthesis` | component state |
+| `sigShardMoonTraditions` | component state |
+| `sigShardNotReady` | component state |
 | `sigShardOpenDark` | component state |
+| `sigShardOpenDate` | component state |
 | `sigShardOpenN` | component state |
+| `sigShardOpenText` | component state |
 | `sigShardOpenTitle` | component state |
 | `sigShardOpenWalked` | component state |
 | `sigShardProgress` | component state |
+| `sigShardReady` | component state |
+| `sigShardSunArchetype` | component state |
+| `sigShardSunClaim` | component state |
+| `sigShardSunElection` | component state |
+| `sigShardSunEpithet` | component state |
+| `sigShardSunKanji` | component state |
+| `sigShardSunOrd` | component state |
+| `sigShardSunPosition` | component state |
+| `sigShardSunSynthesis` | component state |
+| `sigShardSunTraditions` | component state |
 | `sigShareStat` | component state |
 | `sigShowCountdown` | component state |
 | `sigShowPushPrompt` | component state |
@@ -270,3 +315,4 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sndToChart` | component state |
 | `sndToProfile` | component state |
 | `sndToShare` | component state |
+| `stationRows` | component state |

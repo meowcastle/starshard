@@ -8,11 +8,21 @@
 <body>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Pixelify+Sans:wght@400;600&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Pixelify+Sans:wght@400;600&amp;family=Cormorant+Garamond:wght@500;600;700&amp;family=Noto+Sans+Symbols&amp;family=Noto+Sans+Symbols+2&amp;display=swap" rel="stylesheet">
 <style>
   body{margin:0;background:#040302;font-family:'Varela Round',sans-serif}
   a{color:#FFB000;text-decoration:none}
   a:hover{color:#F0D89A}
+  @keyframes ssRingIn{from{opacity:0;transform:rotate(-16deg) scale(.94)}to{opacity:1;transform:none}}
+  @keyframes ssFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes ssPulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes ssSpin{to{transform:rotate(360deg)}}
+  @keyframes ssFromSmall{from{opacity:.3;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  @keyframes ssFromLarge{from{opacity:.3;transform:scale(1.5)}to{opacity:1;transform:scale(1)}}
+  @keyframes ssSettle{from{opacity:.5;transform:scale(1.08)}to{opacity:1;transform:scale(1)}}
+  @keyframes ssSweep{0%{stroke-dashoffset:148;opacity:0}8%{opacity:1}100%{stroke-dashoffset:48;opacity:1}}
+  @keyframes ssFlare{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+  @keyframes ssPart{0%{opacity:0;transform:translate(0,0) scale(1)}15%{opacity:1}100%{opacity:0;transform:translate(12px,0) scale(.3)}}
 </style>
 </helmet>
 <div style="height:100vh;overflow:hidden;background:#040302;display:flex;justify-content:center;align-items:center">
@@ -23,14 +33,81 @@
     <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 12% 4%, rgba(240,216,154,.85), transparent),radial-gradient(1px 1px at 68% 2%, rgba(248,244,230,.7), transparent),radial-gradient(2px 2px at 88% 8%, rgba(255,176,0,.65), transparent),radial-gradient(1px 1px at 30% 11%, rgba(248,244,230,.5), transparent),radial-gradient(1.5px 1.5px at 52% 6%, rgba(240,216,154,.6), transparent),radial-gradient(1px 1px at 79% 16%, rgba(248,244,230,.45), transparent)"></div>
   </sc-if>
 
+  <sc-if value="{{ onboardOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:5;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:70px 30px 60px;display:flex;flex-direction:column">
+    <sc-if value="{{ obFormOn }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;animation:ssFadeUp .45s ease both">
+      <div style="align-self:center;filter:drop-shadow(0 0 14px rgba(240,216,154,.25))">
+        <svg viewBox="0 0 80 80" style="width:104px;height:104px;display:block">
+          <sc-for list="{{ obRingSegs }}" as="seg" hint-placeholder-count="8">
+            <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="2.4" fill="none" style="transition:stroke .6s ease"></path>
+          </sc-for>
+          <text x="40" y="40.5" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:5.5px;letter-spacing:.18em;fill:#9A8A5E">{{ obRingCount }}</text>
+        </svg>
+      </div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;text-align:center;margin:12px 0 0;color:#F2EAD6">star shard</h1>
+      <p style="font-size:14.5px;line-height:1.7;color:#9A8A5E;text-align:center;margin:12px 0 0">the sky wrote something the minute you arrived.<br>tell us the minute.</p>
+      <div style="display:flex;flex-direction:column;gap:30px;margin-top:44px">
+        <label style="display:flex;flex-direction:column;gap:8px;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;animation:ssFadeUp .5s ease .08s both">born on
+          <input placeholder="6 june 1989" value="{{ obDateVal }}" onChange="{{ obSetDate }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+        </label>
+        <div style="display:flex;flex-direction:column;gap:10px;animation:ssFadeUp .5s ease .16s both">
+          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">at
+            <input placeholder="4:42 pm" value="{{ obTimeVal }}" onChange="{{ obSetTime }}" style="{{ obTimeInputStyle }}">
+          </label>
+          <button onClick="{{ obToggleTime }}" style="{{ obTimeStyle }}">{{ obTimeMark }} i don't know my birth time</button>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:8px;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;animation:ssFadeUp .5s ease .24s both">in
+          <input placeholder="portland, oregon" value="{{ obPlaceVal }}" onChange="{{ obSetPlace }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+        </label>
+      </div>
+      <button onClick="{{ castChart }}" style="{{ obCastStyle }}">cast your chart</button>
+      <p style="font-size:11.5px;line-height:1.7;color:rgba(154,138,94,.7);text-align:center;margin:24px 0 0">no account · the chart is cast on your device<br>and never leaves it</p>
+    </div>
+    </sc-if>
+    <sc-if value="{{ obCastingOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:40px;padding:0 30px;animation:ssFadeUp .4s ease both">
+      <div style="animation:ssSpin 16s linear infinite;filter:drop-shadow(0 0 24px rgba(255,176,0,.3))">
+        <svg viewBox="0 0 80 80" style="width:190px;height:190px;display:block">
+          <sc-for list="{{ obCastSegs }}" as="seg" hint-placeholder-count="8">
+            <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none" style="transition:stroke .5s ease"></path>
+          </sc-for>
+        </svg>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ obCastLines }}" as="l" hint-placeholder-count="3">
+          <div style="{{ l.style }}">{{ l.t }}</div>
+        </sc-for>
+      </div>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(154,138,94,.6);animation:ssPulse 1.4s ease-in-out infinite">casting your chart</div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
   <sc-if value="{{ onTonight }}" hint-placeholder-val="{{ true }}">
-  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both" data-ss-screen="1">
     <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">saturday 15 august · waxing crescent</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">tonight</h1>
+    <sc-if value="{{ locOff }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:88px;animation:ssFadeUp .45s ease both">
+        <div style="font-size:42px;color:rgba(240,216,154,.5)">☾</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;margin-top:16px">the sky is somewhere</div>
+        <p style="font-size:14.5px;line-height:1.75;color:#9A8A5E;margin:12px 0 0;max-width:280px">tonight is read from where you stand. the moon's station is the same everywhere — its hours are yours.</p>
+        <sc-if value="{{ locIdle }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ askLoc }}" style="margin-top:30px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:14px 28px;cursor:pointer">use my location</button>
+        </sc-if>
+        <sc-if value="{{ locLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:34px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#F0D89A;animation:ssPulse 1.2s ease-in-out infinite">☾ finding your sky…</div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <sc-if value="{{ locOn }}" hint-placeholder-val="{{ true }}">
     <div style="display:flex;gap:2px;margin-top:20px;border:1px solid rgba(240,216,154,.2);align-self:flex-start">
       <button onClick="{{ toTonightView }}" style="{{ segTonightStyle }}">tonight</button>
       <button onClick="{{ toWeekView }}" style="{{ segWeekStyle }}">this week</button>
     </div>
+    </sc-if>
     <sc-if value="{{ showTonightView }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column">
         <div style="font-size:18px;line-height:1.85;color:rgba(244,236,214,.94);margin-top:28px;display:flex;flex-direction:column;gap:16px">
@@ -39,11 +116,18 @@
         </div>
         <button onClick="{{ pushMC }}" style="background:none;border:none;padding:0;margin:24px 0 0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.08em;color:#FFB000">your midheaven 5°48′ leo →</button>
         <div style="height:1px;background:rgba(240,216,154,.16);margin:36px 0"></div>
-        <div style="align-self:center;filter:drop-shadow(0 0 16px rgba(240,216,154,.22))">
+        <div onClick="{{ tabShard }}" title="open your shard" style="{{ tRingWrapStyle }}">
           <svg viewBox="0 0 200 200" style="width:200px;height:200px;display:block">
             <sc-for list="{{ tRingSegs }}" as="seg" hint-placeholder-count="12">
               <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
             </sc-for>
+            <sc-if value="{{ walkSweepOn }}" hint-placeholder-val="{{ false }}">
+              <circle cx="100" cy="100" r="72" pathLength="100" fill="none" stroke="#FFB000" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 92" style="animation:ssSweep 1.25s cubic-bezier(.45,.05,.55,.95) both;filter:drop-shadow(0 0 6px rgba(255,176,0,.85))"></circle>
+            </sc-if>
+            <sc-if value="{{ walkBurstOn }}" hint-placeholder-val="{{ false }}">
+              <path d="{{ tonightSegD }}" stroke="#FFFDF5" stroke-width="6" fill="none" style="animation:ssFlare 1.1s ease-out both;filter:blur(2px)"></path>
+              <g transform="translate(32.6,74.6)"><g transform="rotate(0)"><circle r="1.5" fill="#FFB000" style="animation:ssPart .9s ease-out both"></circle></g><g transform="rotate(60)"><circle r="1.2" fill="#F0D89A" style="animation:ssPart .9s ease-out .05s both"></circle></g><g transform="rotate(120)"><circle r="1.5" fill="#FFB000" style="animation:ssPart .9s ease-out .1s both"></circle></g><g transform="rotate(180)"><circle r="1.2" fill="#F0D89A" style="animation:ssPart .9s ease-out .05s both"></circle></g><g transform="rotate(240)"><circle r="1.5" fill="#FFB000" style="animation:ssPart .9s ease-out both"></circle></g><g transform="rotate(300)"><circle r="1.2" fill="#F0D89A" style="animation:ssPart .9s ease-out .08s both"></circle></g></g>
+            </sc-if>
             <text x="100" y="96" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:17px;fill:#F0D89A;font-weight:600">☾ 15 · 3</text>
             <text x="100" y="111" text-anchor="middle" style="font-family:'Pixelify Sans',monospace;font-size:6.5px;letter-spacing:.2em;fill:#9A8A5E">TONIGHT'S STATION</text>
           </svg>
@@ -51,7 +135,7 @@
         <div style="text-align:center;margin-top:18px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E">the fifteenth mansion</div>
         <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;margin-top:6px">The Veil</div>
         <p style="font-size:15px;line-height:1.8;color:rgba(244,236,214,.85);margin:14px 0 0;text-align:center">arabia called it al-ghafr, the cover; china saw 亢 Kàng, the neck of the dragon. the election books favored it for laying foundations and digging wells — <em style="color:#D8C89C">work that disappears under what it holds up.</em></p>
-        <div style="text-align:center;margin-top:16px;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E">moon 7°34′ libra · step 3 of 4</div>
+        <div style="text-align:center;margin-top:16px;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:2">moon 7°34′ libra · step 3 of 4<br><span style="color:#D8C89C">step 4 at 11:52 pm · the claws at dawn</span></div>
         <sc-if value="{{ notWalked }}" hint-placeholder-val="{{ true }}">
           <button onClick="{{ walk }}" style="margin:30px auto 0;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:14px 28px;cursor:pointer">light tonight's station</button>
         </sc-if>
@@ -77,13 +161,14 @@
     <sc-if value="{{ showWeekView }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column">
         <div style="font-size:17px;line-height:1.85;color:rgba(244,236,214,.94);margin-top:28px;display:flex;flex-direction:column;gap:16px">
-          <p style="margin:0">the week tips forward from quiet. tomorrow night the moon stands in The Claws — <strong style="color:#FFFDF5">your rising's station, the one night a month the sky stands where the world meets you.</strong> what gets said to your face this week gets said early.</p>
+          <p style="margin:0">the week tips forward from quiet. tomorrow night the moon stands in The Claws, where prices get named — and monday it crosses The Crown, <strong style="color:#FFFDF5">your rising's station, the one night a month the sky stands where the world meets you.</strong> what gets said to your face this week gets said early.</p>
           <p style="margin:0">wednesday's eclipse at 20° leo is three days behind you, one door past The Throne. eclipses seed slowly; give it the month.</p>
           <p style="margin:0">saturn holds its trine to your midheaven all week, inside a degree and a half — the long, unglamorous angle that pays out in standing. keep the week's promises small and structural.</p>
         </div>
         <div style="height:1px;background:rgba(240,216,154,.16);margin:32px 0 0"></div>
         <div style="display:flex;flex-direction:column;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.05em;color:#D8C89C;margin-top:8px">
-          <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>sun 16 aug</span><span style="color:#9A8A5E;text-align:right">moon enters the claws · your rising's station</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>sun 16 aug</span><span style="color:#9A8A5E;text-align:right">moon enters the claws</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>mon 17 aug</span><span style="color:#9A8A5E;text-align:right">moon crosses the crown · your rising's station</span></div>
           <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(240,216,154,.1)"><span>thu 20 aug</span><span style="color:#9A8A5E;text-align:right">saturn–midheaven trine tightest · 1°02′</span></div>
           <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0"><span>fri 28 aug</span><span style="color:#9A8A5E;text-align:right">full moon · the month's answer to the eclipse</span></div>
         </div>
@@ -105,14 +190,26 @@
   </sc-if>
 
   <sc-if value="{{ onChart }}" hint-placeholder-val="{{ false }}">
-  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column">
+  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both" data-ss-screen="1">
     <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">6 june 1989, 4:42 pm · portland · placidus</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">your chart</h1>
     <p style="font-size:14px;line-height:1.6;color:#9A8A5E;margin:10px 0 0">the classic wheel, hung from your ascendant — twelve signs, twelve houses, your lights. the outer ring is the twenty-eight mansions and their steps, laid over the same sky. your shard is that ring, read alone.</p>
-    <div style="align-self:center;margin-top:16px;filter:drop-shadow(0 0 18px rgba(240,216,154,.22))">
+    <sc-if value="{{ timeOff }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:16px;border:1px dashed rgba(255,176,0,.4);padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <span style="font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#D8C89C;line-height:1.6">no birth time — rising, houses and midheaven are approximate</span>
+        <button onClick="{{ addTime }}" style="background:none;border:none;color:#FFB000;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;cursor:pointer;white-space:nowrap;padding:0">add ›</button>
+      </div>
+    </sc-if>
+    <div style="{{ cRingWrapStyle }}">
       <svg viewBox="0 0 200 200" style="width:310px;height:310px;display:block">
         <sc-for list="{{ chartRing }}" as="seg" hint-placeholder-count="12">
           <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
+        </sc-for>
+        <sc-for list="{{ mTicks }}" as="t" hint-placeholder-count="8">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(240,216,154,.3)" stroke-width="0.5"></line>
+        </sc-for>
+        <sc-for list="{{ mNums }}" as="g" hint-placeholder-count="8">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:4.2px;fill:{{ g.fill }}">{{ g.t }}</text>
         </sc-for>
         <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(240,216,154,.22)" stroke-width="0.6"></circle>
         <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(240,216,154,.22)" stroke-width="0.6"></circle>
@@ -120,11 +217,11 @@
           <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(240,216,154,.3)" stroke-width="0.7"></line>
         </sc-for>
         <sc-for list="{{ signGlyphs }}" as="g" hint-placeholder-count="6">
-          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-size:8px;fill:#D8C89C">{{ g.t }}</text>
+          <path transform="{{ g.tf }}" d="{{ g.d }}" fill="none" stroke="#D8C89C" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"></path>
         </sc-for>
         <circle cx="100" cy="100" r="46" fill="none" stroke="rgba(154,138,94,.3)" stroke-width="0.6"></circle>
         <sc-for list="{{ houseLines }}" as="t" hint-placeholder-count="6">
-          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(154,138,94,.4)" stroke-width="0.6"></line>
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(154,138,94,.55)" stroke-width="0.7"></line>
         </sc-for>
         <sc-for list="{{ houseNums }}" as="g" hint-placeholder-count="6">
           <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:5.5px;fill:#9A8A5E">{{ g.t }}</text>
@@ -137,63 +234,120 @@
         </sc-for>
         <sc-for list="{{ wheelMarks }}" as="m" hint-placeholder-count="4">
           <g onClick="{{ m.onTap }}" style="cursor:pointer">
-            <text x="{{ m.cx }}" y="{{ m.cy }}" text-anchor="middle" dominant-baseline="central" style="font-size:9px;fill:{{ m.color }}">{{ m.glyph }}</text>
+            <path transform="{{ m.tf }}" d="{{ m.d }}" fill="none" stroke="{{ m.color }}" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"></path>
             <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="10" fill="rgba(0,0,0,0)"></circle>
           </g>
+        </sc-for>
+        <sc-for list="{{ hitArcs }}" as="h" hint-placeholder-count="8">
+          <path d="{{ h.d }}" stroke="rgba(0,0,0,0)" stroke-width="11" fill="none" onClick="{{ h.onTap }}" style="cursor:pointer"></path>
         </sc-for>
       </svg>
     </div>
     <div style="display:flex;justify-content:center;gap:14px;margin-top:8px;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9A8A5E;flex-wrap:wrap"><span>outer · the 28 mansions</span><span>middle · the 12 signs</span><span>inner · the houses</span></div>
     <div style="text-align:center;margin-top:8px;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#F0D89A;min-height:14px">{{ selLabel }}</div>
+    <sc-if value="{{ mSelOn }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:14px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.04);padding:16px 18px;text-align:center;animation:ssFadeUp .35s ease both">
+        <div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the {{ mSelOrd }} mansion</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;margin-top:4px">{{ mSelName }}</div>
+        <sc-if value="{{ mSelOwnOn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#FFB000;margin-top:6px">✦ {{ mSelOwn }}</div>
+        </sc-if>
+        <p style="font-size:14px;line-height:1.7;color:#D8C89C;margin:8px 0 0">{{ mSelLine }}</p>
+        <div style="margin-top:14px;border-top:1px solid rgba(240,216,154,.14);padding-top:12px">
+          <div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#9A8A5E">spans {{ mSelSpan }}</div>
+          <sc-if value="{{ mSelHasBodies }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:11px">
+              <sc-for list="{{ mSelBodies }}" as="b" hint-placeholder-count="2">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13.5px"><span style="color:#F2EAD6">{{ b.name }}</span><span style="color:#D8C89C">{{ b.pos }}</span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ mSelEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:13px;color:#9A8A5E;margin-top:11px;font-style:italic">nothing of yours stands here — the moon passes through once a month</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
     <div style="margin-top:26px">
       <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the angles</div>
       <div style="display:flex;flex-direction:column;margin-top:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">↑ ascendant</span><span style="font-size:13.5px;color:#D8C89C">28°46′ libra <span style="color:#9A8A5E">›</span></span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">mc midheaven</span><span style="font-size:13.5px;color:#D8C89C">5°48′ leo <span style="color:#9A8A5E">›</span></span></div>
+        <div onClick="{{ cdAsc }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12);cursor:pointer"><span style="font-size:15.5px;color:#F2EAD6">↑ ascendant</span><span style="font-size:13.5px;color:#D8C89C">28°46′ libra <span style="color:#9A8A5E">›</span></span></div>
+        <div onClick="{{ cdMc }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;cursor:pointer"><span style="font-size:15.5px;color:#F2EAD6">mc midheaven</span><span style="font-size:13.5px;color:#D8C89C">5°48′ leo <span style="color:#9A8A5E">›</span></span></div>
       </div>
       <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:16px 0 0">libra rising sets the whole wheel: the mask is even-handed, the first move is always to weigh. it puts venus in charge of the chart — she is your ruler, and where she sits is where the balance actually gets kept.</p>
     </div>
     <div style="margin-top:32px">
       <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the lights</div>
       <div style="display:flex;flex-direction:column;margin-top:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">☉ sun</span><span style="font-size:13.5px;color:#D8C89C">16°14′ gemini · 8th house <span style="color:#9A8A5E">›</span></span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">☽ moon</span><span style="font-size:13.5px;color:#D8C89C">26°49′ cancer · 9th house <span style="color:#9A8A5E">›</span></span></div>
+        <div onClick="{{ cdSun }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12);cursor:pointer"><span style="font-size:15.5px;color:#F2EAD6;display:flex;align-items:center;gap:9px"><svg viewBox="-4.6 -4.6 9.2 9.2" style="width:14px;height:14px;flex:none;overflow:visible;color:#FFB000"><path d="M3.2,0 a3.2,3.2 0 1 1 -6.4,0 a3.2,3.2 0 1 1 6.4,0 M0.8,0 a0.8,0.8 0 1 1 -1.6,0 a0.8,0.8 0 1 1 1.6,0" fill="none" stroke="currentColor" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>sun</span><span style="font-size:13.5px;color:#D8C89C">16°14′ gemini · 8th house <span style="color:#9A8A5E">›</span></span></div>
+        <div onClick="{{ cdMoon }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;cursor:pointer"><span style="font-size:15.5px;color:#F2EAD6;display:flex;align-items:center;gap:9px"><svg viewBox="-4.6 -4.6 9.2 9.2" style="width:14px;height:14px;flex:none;overflow:visible;color:#F0D89A"><path d="M1,-3.2 A3.3,3.3 0 1 0 1,3.2 A2.5,2.5 0 1 1 1,-3.2" fill="none" stroke="currentColor" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>moon</span><span style="font-size:13.5px;color:#D8C89C">26°49′ cancer · 9th house <span style="color:#9A8A5E">›</span></span></div>
       </div>
       <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:16px 0 0">a gemini sun in the eighth asks its many questions where things are buried; a cancer moon riding just under the midheaven keeps the private tide near the top of the chart, in plain sight. mind that digs, feeling that leads.</p>
     </div>
     <div style="margin-top:32px">
       <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">chart ruler</div>
       <div style="display:flex;flex-direction:column;margin-top:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">♀ venus</span><span style="font-size:13.5px;color:#D8C89C">2°47′ cancer · 9th house <span style="color:#9A8A5E">›</span></span></div>
+        <div onClick="{{ cdVenus }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;cursor:pointer"><span style="font-size:15.5px;color:#F2EAD6;display:flex;align-items:center;gap:9px"><svg viewBox="-4.6 -4.6 9.2 9.2" style="width:14px;height:14px;flex:none;overflow:visible;color:#F2EAD6"><path d="M2.1,-1.6 a2.1,2.1 0 1 0 -4.2,0 a2.1,2.1 0 1 0 4.2,0 M0,0.5 L0,3.4 M-1.3,2 L1.3,2" fill="none" stroke="currentColor" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>venus</span><span style="font-size:13.5px;color:#D8C89C">2°47′ cancer · 9th house <span style="color:#9A8A5E">›</span></span></div>
       </div>
       <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:16px 0 0">the ruler of a libra chart in cancer, in the ninth: the balance is kept through care, and at a distance. she likes the harmony of far places and honest belief more than the harmony of the room.</p>
     </div>
     <div style="margin-top:32px">
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the planets</div>
+      <div style="display:flex;flex-direction:column;margin-top:8px">
+        <sc-for list="{{ planetRows }}" as="p" hint-placeholder-count="7">
+          <div onClick="{{ p.onTap }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12);cursor:pointer">
+            <span style="font-size:15px;color:#F2EAD6;display:flex;align-items:center;gap:9px"><svg viewBox="-4.6 -4.6 9.2 9.2" style="width:14px;height:14px;flex:none;overflow:visible;color:#B8A97E"><path d="{{ p.d }}" fill="none" stroke="currentColor" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ p.name }}</span>
+            <span style="font-size:13px;color:#D8C89C">{{ p.pos }} <span style="color:#9A8A5E">›</span></span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="margin-top:32px">
       <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">aspects</div>
       <div style="display:flex;flex-direction:column;margin-top:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15px;color:#F2EAD6">☉ sun ☌ jupiter</span><span style="font-size:13px;color:#9A8A5E">conjunction · 2°</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15px;color:#F2EAD6">☽ moon ☌ mars</span><span style="font-size:13px;color:#9A8A5E">conjunction · 3°</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0"><span style="font-size:15px;color:#F2EAD6">♀ venus △ ascendant</span><span style="font-size:13px;color:#9A8A5E">trine · 4°</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15px;color:#F2EAD6">sun + jupiter</span><span style="font-size:13px;color:#9A8A5E">conjunction · 2°</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15px;color:#F2EAD6">moon + mars</span><span style="font-size:13px;color:#9A8A5E">conjunction · 3°</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0"><span style="font-size:15px;color:#F2EAD6">venus + ascendant</span><span style="font-size:13px;color:#9A8A5E">trine · 4°</span></div>
       </div>
     </div>
     <div style="margin-top:32px">
       <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the frame</div>
       <div style="display:flex;flex-direction:column;margin-top:8px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">zodiac</span><span style="font-size:13.5px;color:#D8C89C">tropical <span style="color:#9A8A5E">›</span></span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">houses</span><span style="font-size:13.5px;color:#D8C89C">placidus <span style="color:#9A8A5E">›</span></span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">orbs</span><span style="font-size:13.5px;color:#D8C89C">8° lights · 6° planets <span style="color:#9A8A5E">›</span></span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">zodiac</span><span style="font-size:13.5px;color:#D8C89C">tropical</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:15.5px;color:#F2EAD6">houses</span><span style="font-size:13.5px;color:#D8C89C">placidus</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0"><span style="font-size:15.5px;color:#F2EAD6">orbs</span><span style="font-size:13.5px;color:#D8C89C">8° lights · 6° planets</span></div>
       </div>
     </div>
     <div style="margin-top:30px;padding:20px;border:1px solid rgba(240,216,154,.15);background:rgba(240,216,154,.03)">
       <p style="font-size:14px;line-height:1.7;color:#D8C89C;margin:0">this is the classic reading. the finer weather — the twenty-eight mansions your lights actually fall in, and how they combine — lives on <a href="#shard">your shard</a>.</p>
     </div>
   </div>
+  <sc-if value="{{ cdOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:56px 26px 130px;display:flex;flex-direction:column;animation:ssFadeUp .35s ease both">
+      <button onClick="{{ popCD }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.1em;color:#FFB000">‹ your chart</button>
+      <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:28px">your chart · one placement</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1.1;margin:8px 0 0;color:#F2EAD6">{{ cdTitle }}<br><em style="color:#F0D89A;font-size:24px">{{ cdSub }}</em></h2>
+      <div style="font-size:16.5px;line-height:1.85;color:rgba(244,236,214,.92);margin-top:24px;display:flex;flex-direction:column;gap:16px">
+        <sc-for list="{{ cdParas }}" as="p" hint-placeholder-count="3">
+          <p style="margin:0">{{ p.t }}</p>
+        </sc-for>
+      </div>
+      <sc-if value="{{ cdMOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:28px;border:1px solid rgba(240,216,154,.22);background:rgba(240,216,154,.045);padding:20px 22px;animation:ssFadeUp .45s ease both">
+          <div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E">the older sky · the {{ cdMOrd }} mansion</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F0D89A;margin-top:6px">{{ cdMName }}</div>
+          <p style="font-size:14.5px;line-height:1.75;color:#D8C89C;margin:10px 0 0">{{ cdMText }}</p>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
   </sc-if>
 
   <sc-if value="{{ onShard }}" hint-placeholder-val="{{ false }}">
-  <div style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column">
+  <div onScroll="{{ shardScroll }}" style="position:absolute;inset:0;overflow-y:auto;padding:60px 26px 130px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both" data-ss-screen="1">
     <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;text-align:center">✦ your shard ✦</div>
-    <div style="align-self:center;margin-top:18px;filter:drop-shadow(0 0 20px rgba(240,216,154,.28))">
+    <div style="{{ shardHeroStyle }}">
+    <div style="{{ shardHeroInnerStyle }}">
       <svg viewBox="0 0 200 200" style="width:290px;height:290px;display:block">
         <sc-for list="{{ sRingSegs }}" as="seg" hint-placeholder-count="12">
           <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
@@ -204,12 +358,14 @@
         <sc-for list="{{ sRingMarks }}" as="m" hint-placeholder-count="4">
           <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="{{ m.r }}" fill="{{ m.fill }}" stroke="{{ m.stroke }}" stroke-width="1"></circle>
         </sc-for>
+        <path d="{{ sChordD }}" pathLength="200" stroke="#FFB000" stroke-width="1.2" fill="none" stroke-linecap="round" style="{{ sChordStyle }}"></path>
         <text x="100" y="97" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:20px;fill:#F0D89A;font-weight:600">6 · 10</text>
         <text x="100" y="112" text-anchor="middle" style="font-family:'Pixelify Sans',monospace;font-size:6.5px;letter-spacing:.2em;fill:#9A8A5E">YOUR STAR SHARD</text>
       </svg>
     </div>
+    </div>
     <div style="text-align:center;margin-top:20px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:36px;line-height:1.1;color:#F2EAD6">The Storm<br><em style="color:#F0D89A">of the Throne</em></div>
-    <div style="text-align:center;margin-top:14px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;line-height:2.1;color:#D8C89C">sun in the storm · moon in the throne<br>libra rising · outbound · waxing crescent</div>
+    <div style="text-align:center;margin-top:14px;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;line-height:2.1;color:#D8C89C">sun in the storm · moon in the throne<br>{{ shardMetaLine2 }}</div>
     <div style="display:flex;align-items:center;gap:12px;margin:38px 0 26px"><span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(240,216,154,.4))"></span><span style="color:#F0D89A;font-size:12px">✦</span><span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(240,216,154,.4),transparent)"></span></div>
     <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center;margin-bottom:22px">the combination</div>
     <div style="font-size:16.5px;line-height:1.82;color:rgba(244,236,214,.94);display:flex;flex-direction:column;gap:18px">
@@ -221,7 +377,7 @@
       <p style="margin:0">what it makes you unusually good at: walking into a difficult room and being the only person who both names the problem and does not seem frightened by it. that is a rare pairing and people build things around it. what it costs you is that <strong style="color:#FFFDF5">nobody checks on the person who never looks like they need checking on.</strong></p>
     </div>
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
-    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">the sixth mansion</div>
+    <div data-ss-mark="storm" style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">the sixth mansion</div>
     <div style="text-align:center;margin-top:16px"><div style="font-size:32px;color:#F0D89A;letter-spacing:.1em;font-family:serif">參宿</div><div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:8px">alhena · the twins' foot</div></div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;margin:14px 0 6px;color:#F2EAD6;text-align:center">The Storm</h2>
     <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9;margin-bottom:24px">4°17′ – 17°09′ gemini<br>your sun stands here</div>
@@ -234,7 +390,7 @@
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:24px 0 0">a brand, a storm, and a voice that arrives before the body. the medieval election books gave this mansion the fierce jobs — hunting, sieges, the work done at full force — and their reasoning was simple: <strong style="color:#FFFDF5">this is the stretch of sky for things that do not have an undo.</strong></p>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">to be born under it is to be built for irreversibility. you go all the way in. you say the thing out loud. and the mark you leave on a room stays on it after you have gone, which is a gift when you meant it and a debt when you did not.</p>
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
-    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">the tenth mansion</div>
+    <div data-ss-mark="throne" style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">the tenth mansion</div>
     <div style="text-align:center;margin-top:16px"><div style="font-size:32px;color:#F0D89A;letter-spacing:.1em;font-family:serif">星宿</div><div style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9A8A5E;margin-top:8px">regulus · the little king</div></div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;margin:14px 0 6px;color:#F2EAD6;text-align:center">The Throne</h2>
     <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9;margin-bottom:24px">25°43′ cancer – 8°34′ leo<br>your moon stands here</div>
@@ -248,7 +404,15 @@
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">but the Indian reading is the one that turns the whole mansion, because it refuses the obvious. the seat is real — and its god is <em style="color:#D8C89C">the ancestors</em>. <strong style="color:#FFFDF5">the chair was carved before you arrived.</strong> that is what a throne-born moon carries: authority handed over rather than taken, and the private, unending question of whether you are worthy of a thing you did not build.</p>
     <div style="border-left:2px solid #F0D89A;padding:4px 0 4px 18px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;line-height:1.5;color:#F0D89A;margin-top:24px">the old books gave this mansion trade, alliance, and building. agrippa says it "strengthens buildings." it is the sky of the things meant to outlast the person who made them.</div>
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
-    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center;margin-bottom:22px">your signature</div>
+    <div data-ss-mark="signature" style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center;margin-bottom:22px">your signature</div>
+    <sc-if value="{{ timeOff }}" hint-placeholder-val="{{ false }}">
+      <div style="border:1px dashed rgba(240,216,154,.3);padding:30px 22px;text-align:center">
+        <div style="font-size:22px;color:rgba(240,216,154,.35)">◌</div>
+        <p style="font-size:14px;line-height:1.75;color:#9A8A5E;margin:12px 0 0">the signature is read from your midheaven, and the midheaven moves a degree every four minutes. without a birth time it stays dark.</p>
+        <button onClick="{{ addTime }}" style="margin-top:22px;background:none;border:1px solid rgba(255,176,0,.6);color:#FFB000;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:11px 22px;cursor:pointer">add a birth time</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ timeOn }}" hint-placeholder-val="{{ true }}">
     <div style="position:relative;border:1px solid rgba(255,176,0,.5);padding:26px 22px;background:rgba(24,18,6,.75);box-shadow:0 0 40px rgba(255,176,0,.18), inset 0 0 40px rgba(8,5,2,.6);text-align:center">
       <span style="position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid #FFB000;border-left:2px solid #FFB000"></span>
       <span style="position:absolute;top:-1px;right:-1px;width:10px;height:10px;border-top:2px solid #FFB000;border-right:2px solid #FFB000"></span>
@@ -265,11 +429,13 @@
       <p style="margin:0">most people can come apart privately and hold steady in public, or the reverse, and rest in one from the other. <strong style="color:#FFFDF5">you have one weather system.</strong> when it turns it turns everywhere, and the people who only ever see the outside will keep telling you the inside is a separate problem.</p>
       <p style="margin:0">this is the rarest thing in your chart and it is the reason the other two mansions land the way they do. <strong style="color:#FFFDF5">a storm, a throne, and no wall between the throne room and the private one.</strong></p>
     </div>
+    </sc-if>
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:44px 0;padding-left:1.4em">✦ ✦ ✦</div>
-    <div style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">your farlight</div>
+    <div data-ss-mark="farlight" style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A8A5E;text-align:center">your farlight</div>
     <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;color:#9A8A5E;line-height:1.9;margin:14px 0 22px">mansion 20 · directly opposite your sun</div>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0">fourteen mansions from your sun — as far from The Storm as the road goes — sits your farlight. once a year, the full moon nearest your birthday rises there: your sun in its mansion, the full moon in this one, facing each other across the whole sky.</p>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">it is the one night a year the sky reads your storm from the opposite bank. the hollow mark on your ring holds its place; the night it rises, tonight will say so.</p>
+    <div style="text-align:center;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;line-height:2.1;margin-top:22px;color:#9A8A5E">it last rose 31 may · 77 nights ago<br><span style="color:#F0D89A">next rising · 18 june 2027 · 306 nights away</span></div>
     <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:40px 0 0;text-align:center;font-style:italic">the sky writes this once, at the minute you arrive, and never revises it.<br>what moves across it is another matter — and that is what tonight is for.</p>
     <div style="height:1px;background:rgba(240,216,154,.16);margin:34px 0 0"></div>
     <button onClick="{{ pushArch }}" style="background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;padding:20px 0;text-align:left"><span style="font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#F0D89A">learn the archetypes →</span><span style="font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.08em;color:#9A8A5E">28 mansions · {{ litCount }} yours</span></button>
@@ -303,19 +469,21 @@
   </sc-if>
   </sc-if>
 
+  <sc-if value="{{ navOn }}" hint-placeholder-val="{{ true }}">
   <div style="position:absolute;left:0;right:0;bottom:0;background:rgba(8,5,2,.92);backdrop-filter:blur(8px);border-top:1px solid rgba(240,216,154,.15);display:grid;grid-template-columns:1fr 1fr 1fr;padding:10px 0 24px">
     <button onClick="{{ tabShard }}" style="{{ tabShardStyle }}">✦<br>your shard</button>
     <button onClick="{{ tabTonight }}" style="{{ tabTonightStyle }}">☾<br>tonight</button>
     <button onClick="{{ tabChart }}" style="{{ tabChartStyle }}">☉<br>your chart</button>
   </div>
+  </sc-if>
 </div>
 </x-import>
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:960},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;tonight&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;tonight&quot;,&quot;chart&quot;,&quot;shard&quot;],&quot;section&quot;:&quot;preview&quot;},&quot;starfield&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;backdrop&quot;},&quot;walked&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;state&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:960},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;tonight&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;tonight&quot;,&quot;chart&quot;,&quot;shard&quot;],&quot;section&quot;:&quot;preview&quot;},&quot;starfield&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;backdrop&quot;},&quot;walked&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;state&quot;},&quot;showOnboarding&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;state&quot;},&quot;locationKnown&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;state&quot;},&quot;birthTimeKnown&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;state&quot;}}">
 class Component extends DCLogic {
-  state = { tab: null, view: "tonight", mcPushed: false, night: null, walked: null, numbersOpen: false, remind: false, sel: null, arch: false };
+  state = { tab: null, view: "tonight", mcPushed: false, night: null, walked: null, numbersOpen: false, remind: false, sel: null, arch: false, selM: null, onboardDone: false, obTimeUnknown: false, timeKnown: null, locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "", obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0 };
   componentDidMount() {
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
@@ -347,6 +515,36 @@ class Component extends DCLogic {
     const SUN = 5, MOON_MC = 9, RISING = 16, FARLIGHT = 19, TONIGHT_ST = 14, TONIGHT_SEG = Math.floor(187.57 / PW);
     const ASC_LON = 208.77, MC_LON = 125.81;           // 28°46′ libra rising · 5°48′ leo mc
     const L2deg = (L) => 270 - (L - ASC_LON);          // ecliptic longitude → svg deg, ascendant pinned left, zodiac counterclockwise
+    const ARCH = [
+      "the first push out. beginnings taken at a run, before the doubt arrives.",
+      "the little belly. what is fed quietly, grows — appetite as a form of faith.",
+      "small things kept together and read as one bright thing.",
+      "the follower's eye. patient pursuit; it does not chase, it keeps looking.",
+      "the mark made on purpose. the said thing, permanent by design.",
+      "the fierce work. what breaks open and cannot be taken back.",
+      "the outstretched paw. the ask that costs you your balance.",
+      "the pale cluster over the carriage of the dead. unfinished things, heard at night.",
+      "the lion's look away. refusal, and the price of it.",
+      "the seat carved before you arrived. authority handed over, not taken.",
+      "what people recognize you by — which is not what carries you.",
+      "the weather turning. the plan survives if it bends.",
+      "the barking stars. attention is cheap here; placement of it is everything.",
+      "the cut wheat, held. the finished thing, small enough to actually finish.",
+      "the cover. work meant to disappear under what it holds up.",
+      "the scales' pans. the price named out loud before the deal.",
+      "the wreath above the scales. how the world meets you at the door.",
+      "the red heart of the scorpion. loyalty tested under pressure.",
+      "the raised tail. the counterstrike, and what it costs the striker.",
+      "the oldest reason you do anything, buried where the road begins.",
+      "the empty road. passage without baggage; luck through absence.",
+      "the goat's horn. what is given up so the rest can go on.",
+      "the gulp of water. the small mercy that turns a whole day.",
+      "the luckiest star in the sky. the yes that arrives unearned.",
+      "the canopies. shelter made of cloth, carried, pitched again elsewhere.",
+      "the poured water. what you carry so someone else can drink.",
+      "the long dive. depth as a habit; surfacing as an event.",
+      "the cord between the fishes. the tie that binds the year shut.",
+    ];
     const NAMES = ["The Horns","The Thread","The Gathered Stars","The Eye","The Brand","The Storm","The Reach","The Ghost","The Glance","The Throne","The Mane","The Turn","The Watchers","The Sheaf","The Veil","The Claws","The Crown","The Heart","The Sting","The Root","The Clearing","The Sacrifice","The Swallow","The Fortune","The Tents","The Jar","The Deep","The Fish"];
     const NIGHTS = {
       3: { date: "aug 4", step: 2, text: "the gathered stars — the small flock the whole sky counts by. little things, kept together, read as one bright thing. tonight was for tending the pile." },
@@ -372,6 +570,7 @@ class Component extends DCLogic {
       if (i === TONIGHT_SEG) { color = "#FFB000"; w = 3.4; }
       tRingSegs.push({ d: lonArc(72, lon0, lon1), color, w });
     }
+    const stg = this.state.shardStage;
     const sRingSegs = [];
     for (let i = 0; i < SEGMENTS; i++) {
       const station = Math.floor(i / STEPS), step = i % STEPS;
@@ -379,6 +578,7 @@ class Component extends DCLogic {
       const lit = NIGHTS[station + 1];
       let color = lit ? "#F0D89A" : "rgba(240,216,154,.13)", w = lit ? 3 : 2.5;
       if (station === TONIGHT_ST && walked) { color = "#FFB000"; w = 3.4; }
+      if ((stg >= 1 && station === SUN) || (stg >= 2 && station === MOON_MC)) { color = "#FFB000"; w = 3.4; }
       sRingSegs.push({ d: lonArc(72, lon0, lon1), color, w });
     }
     const sRingTicks = [];
@@ -394,8 +594,18 @@ class Component extends DCLogic {
       mkLon(75.88, 3, "#FFB000", "none", 85),
       mkLon(116.85, 3, "#F0D89A", "none", 85),
       mkLon(ASC_LON, 2.4, "#D8C89C", "none", 85),
-      mkLon(19 * SW + SW / 2, 2.2, "none", "#9A8A5E", 85),
+      stg >= 4 ? mkLon(19 * SW + SW / 2, 3, "none", "#FFB000", 85) : mkLon(19 * SW + SW / 2, 2.2, "none", "#9A8A5E", 85),
     ];
+    const sChordD = lonArc(62, 116.85, 125.81);
+    const sChordStyle = "transition:stroke-dashoffset .9s cubic-bezier(.22,1,.36,1),opacity .4s ease;stroke-dasharray:200;stroke-dashoffset:" + (stg >= 3 ? "0" : "200") + ";opacity:" + (stg >= 3 ? "1" : "0");
+    const RSIZE = { tonight: 200, chart: 310, shard: 290 };
+    const morph = (t) => {
+      const p = this.state.prevTab;
+      if (!p || p === t) return "ssRingIn .8s cubic-bezier(.22,1,.36,1) both";
+      const r = RSIZE[p] / RSIZE[t];
+      return (r < .85 ? "ssFromSmall" : r > 1.15 ? "ssFromLarge" : "ssSettle") + " .55s cubic-bezier(.22,1,.36,1) both";
+    };
+    const shs = Math.max(.3, 1 - this.state.shardSt / 420);
     const rowBase = "display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.1);";
     const stationRows = NAMES.map((name, idx) => {
       const n = idx + 1, night = NIGHTS[n];
@@ -415,13 +625,27 @@ class Component extends DCLogic {
     });
     const ASC = ASC0;
     const signLines = [], signGlyphs = [], houseLines = [], houseNums = [], chartRing = [];
-    const GLYPHS = ["♈︎","♉︎","♊︎","♋︎","♌︎","♍︎","♎︎","♏︎","♐︎","♑︎","♒︎","♓︎"];
+    // zodiac symbols as stroke paths (no system font in this env renders U+2648-53)
+    const GLYPHS = [
+      "M-3.2,-1.3 A1.6,1.6 0 1 1 0,-1.3 L0,3.2 M3.2,-1.3 A1.6,1.6 0 1 0 0,-1.3",
+      "M-2.6,-3.2 A2.6,2.6 0 0 0 2.6,-3.2 M2,1 a2,2 0 1 1 -4,0 a2,2 0 1 1 4,0",
+      "M-2.8,-3.2 C-1,-2.4 1,-2.4 2.8,-3.2 M-2.8,3.2 C-1,2.4 1,2.4 2.8,3.2 M-1.4,-2.7 L-1.4,2.7 M1.4,-2.7 L1.4,2.7",
+      "M-1.6,-1 a1.4,1.4 0 1 0 2.8,0 a1.4,1.4 0 1 0 -2.8,0 M1.6,1 a1.4,1.4 0 1 0 -2.8,0 a1.4,1.4 0 1 0 2.8,0 M-3,-1 C-3,-3 0,-3.4 2.6,-2.7 M3,1 C3,3 0,3.4 -2.6,2.7",
+      "M-2.4,0.5 a1.3,1.3 0 1 0 2.6,0 a1.3,1.3 0 1 0 -2.6,0 M0.2,0.5 C0.2,-2.6 3,-3 3,-1.1 C3,0.4 1.5,1.9 1.5,2.9 C1.5,3.7 2.6,3.7 3,3.1",
+      "M-3,3 L-3,-1.5 C-3,-3 -1.5,-3 -1.5,-1.5 L-1.5,3 M-1.5,-1.5 C-1.5,-3 0,-3 0,-1.5 L0,3 M0,-1.5 C0,-3 1.5,-3 1.5,-1.5 L1.5,1.8 C1.5,3.4 3,3.4 3.2,2.2 M1.5,1.8 C1.5,3 0.6,3.7 -0.2,3.7",
+      "M-3.2,1.2 L-1.4,1.2 M1.4,1.2 L3.2,1.2 M-1.4,1.2 A2.1,2.1 0 1 1 1.4,1.2 M-3.2,3 L3.2,3",
+      "M-3,3 L-3,-1.5 C-3,-3 -1.5,-3 -1.5,-1.5 L-1.5,3 M-1.5,-1.5 C-1.5,-3 0,-3 0,-1.5 L0,3 M0,-1.5 C0,-3 1.5,-3 1.5,-1.5 L1.5,1.9 C1.5,3.3 2.3,3.3 3.4,2.9 M3.4,2.9 L2.7,2.1 M3.4,2.9 L2.6,3.6",
+      "M-3,3 L3,-3 M0.9,-3 L3,-3 L3,-0.9 M-1.9,0 L0.5,2.4",
+      "M-3.2,-2.5 C-2.4,-3.4 -1.6,-3 -1.6,-2 L-1.6,1 M-1.6,-2 C-1.6,-3.2 0,-3.2 0,-2 L0,1.6 C0,3 1.2,3.6 2.2,3 C3.2,2.4 3,0.9 1.9,0.9 C1,0.9 0.7,1.9 1.3,2.5",
+      "M-3.2,-1.3 L-1.6,-2.5 L0,-1.3 L1.6,-2.5 L3.2,-1.3 M-3.2,1.7 L-1.6,0.5 L0,1.7 L1.6,0.5 L3.2,1.7",
+      "M-1.6,-3.2 C-3.2,-1.6 -3.2,1.6 -1.6,3.2 M1.6,-3.2 C3.2,-1.6 3.2,1.6 1.6,3.2 M-2.7,0 L2.7,0",
+    ];
     for (let i = 0; i < 12; i++) {
       const a = toScreen(i * 30);
       const [x1, y1] = polar(72, a), [x2, y2] = polar(86, a);
       signLines.push({ x1, y1, x2, y2 });
       const [gx, gy] = polar(79, toScreen(i * 30 + 15));
-      signGlyphs.push({ x: gx, y: gy, t: GLYPHS[i] });
+      signGlyphs.push({ tf: "translate(" + gx + "," + gy + ")", d: GLYPHS[i] });
     }
     // full 112-step mansion ring on the rim, true longitudes — same ring as the shard
     for (let i = 0; i < SEGMENTS; i++) {
@@ -430,7 +654,36 @@ class Component extends DCLogic {
       let color = "rgba(240,216,154,.16)", w = 2.4;
       if (station === SUN || station === MOON_MC) { color = "rgba(240,216,154,.5)"; }
       if (station === RISING) { color = "rgba(255,176,0,.55)"; }
+      if (station === this.state.selM) { color = "#FFB000"; w = 3; }
       chartRing.push({ d: lonArc(94, lon0, lon1), color, w });
+    }
+    const mTicks = [], mNums = [];
+    const OWN_ST = { [SUN]: "#FFB000", [MOON_MC]: "#F0D89A", [RISING]: "#FFB000", [FARLIGHT]: "rgba(240,216,154,.7)" };
+    for (let s = 0; s < STATIONS; s++) {
+      const a = toScreen(s * SW);
+      const [x1, y1] = polar(91, a), [x2, y2] = polar(97, a);
+      mTicks.push({ x1, y1, x2, y2 });
+      const [nx, ny] = polar(90, toScreen(s * SW + SW / 2));
+      mNums.push({ x: nx, y: ny, t: String(s + 1), fill: OWN_ST[s] || (s === this.state.selM ? "#FFB000" : "rgba(216,200,156,.55)") });
+    }
+    const hitArcs = [];
+    for (let s = 0; s < STATIONS; s++) {
+      hitArcs.push({
+        d: lonArc(94, s * SW + 0.5, (s + 1) * SW - 0.5),
+        onTap: () => this.setState(st => ({ selM: st.selM === s ? null : s })),
+      });
+    }
+    const ORDS = ["first","second","third","fourth","fifth","sixth","seventh","eighth","ninth","tenth","eleventh","twelfth","thirteenth","fourteenth","fifteenth","sixteenth","seventeenth","eighteenth","nineteenth","twentieth","twenty-first","twenty-second","twenty-third","twenty-fourth","twenty-fifth","twenty-sixth","twenty-seventh","twenty-eighth"];
+    const OWN = { [SUN]: "your sun stands here", [MOON_MC]: "your moon and midheaven stand here", [RISING]: "your rising's station", [FARLIGHT]: "your farlight" };
+    const selM = this.state.selM;
+    const SIGNSN = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"];
+    const fmtLon = (lon) => { lon = ((lon % 360) + 360) % 360; const d = lon % 30, dd = Math.floor(d), mm = Math.round((d - dd) * 60); return dd + "°" + String(mm).padStart(2, "0") + "′ " + SIGNSN[Math.floor(lon / 30) % 12]; };
+    const CHART_BODIES = [["☉ sun", 76.23], ["☽ moon", 116.82], ["mercury", 62.97], ["venus", 92.78], ["mars", 119.88], ["jupiter", 78.23], ["saturn rx", 279.73], ["uranus rx", 274.1], ["neptune rx", 281.82], ["pluto rx", 222.82], ["↑ ascendant", ASC], ["mc midheaven", 125.8]];
+    let mSelSpan = "", mSelBodies = [];
+    if (selM !== null) {
+      const lo = selM * SW, hi = (selM + 1) * SW;
+      mSelSpan = fmtLon(lo) + " — " + fmtLon(hi);
+      mSelBodies = CHART_BODIES.filter(([n, l]) => l >= lo && l < hi).map(([n, l]) => ({ name: n, pos: fmtLon(l) }));
     }
     for (let i = 0; i < 12; i++) {
       const lon = ASC + i * 30;
@@ -449,27 +702,143 @@ class Component extends DCLogic {
       const [ox, oy] = polar(91, s + 180); angleLabels.push({ x: ox, y: oy, t: b });
     });
     const LABELS = {
-      sun: "☉ sun · 16°14′ gemini · 8th house",
-      moon: "☽ moon · 26°49′ cancer · 9th house",
-      venus: "♀ venus · 2°47′ cancer · chart ruler",
-      asc: "↑ ascendant · 28°46′ libra",
+      sun: "sun · 16°14′ gemini · 8th house",
+      moon: "moon · 26°49′ cancer · 9th house",
+      venus: "venus · 2°47′ cancer · chart ruler",
+      asc: "ascendant · 28°46′ libra",
+      mercury: "mercury · 2°58′ gemini · 8th house",
+      jupiter: "jupiter · 18°14′ gemini · 8th house",
+      mars: "mars · 29°53′ cancer · 9th house",
+      saturn: "saturn rx · 9°44′ capricorn · 3rd house",
+      uranus: "uranus rx · 4°06′ capricorn · 3rd house",
+      neptune: "neptune rx · 11°49′ capricorn · 3rd house",
+      pluto: "pluto rx · 12°49′ scorpio · 1st house",
     };
-    const tapSel = (id) => () => this.setState({ sel: id });
-    const mk = (lon, glyph, color, rad, id) => {
+    const tapSel = (id) => () => this.setState({ sel: id, cd: id });
+    const PLANET_PATHS = {
+      sun: "M3.2,0 a3.2,3.2 0 1 1 -6.4,0 a3.2,3.2 0 1 1 6.4,0 M0.8,0 a0.8,0.8 0 1 1 -1.6,0 a0.8,0.8 0 1 1 1.6,0",
+      moon: "M1,-3.2 A3.3,3.3 0 1 0 1,3.2 A2.5,2.5 0 1 1 1,-3.2",
+      venus: "M2.1,-1.6 a2.1,2.1 0 1 0 -4.2,0 a2.1,2.1 0 1 0 4.2,0 M0,0.5 L0,3.4 M-1.3,2 L1.3,2",
+      mercury: "M1.8,-0.2 a1.8,1.8 0 1 0 -3.6,0 a1.8,1.8 0 1 0 3.6,0 M0,1.6 L0,3.6 M-1.2,2.6 L1.2,2.6 M-1.7,-3.7 A1.9,1.9 0 0 0 1.7,-3.7",
+      mars: "M-0.7,0.7 m2.1,0 a2.1,2.1 0 1 1 -4.2,0 a2.1,2.1 0 1 1 4.2,0 M0.8,-0.8 L3.3,-3.3 M1.5,-3.3 L3.3,-3.3 L3.3,-1.5",
+      jupiter: "M-3.2,1.4 L2.4,1.4 M1,-2.8 L1,3.6 M-3,-0.9 C-3,-3.1 -0.3,-3.1 -0.3,-0.9 C-0.3,0.1 -1.7,0.8 -3.2,1.4",
+      saturn: "M-1.7,-3.6 L-1.7,2.2 M-2.9,-2.4 L-0.5,-2.4 M-1.7,-0.1 C-0.3,-1.3 1.7,-0.5 1.7,1 C1.7,2.2 0.9,3 0.3,3.5 C0.7,3.8 1.2,3.8 1.6,3.5",
+      uranus: "M-2.3,-3.3 L-2.3,0.3 M2.3,-3.3 L2.3,0.3 M-2.3,-1.5 L2.3,-1.5 M0,-3.3 L0,1.2 M1.2,2.4 a1.2,1.2 0 1 1 -2.4,0 a1.2,1.2 0 1 1 2.4,0",
+      neptune: "M-2.5,-3.3 C-2.5,-1 -1.3,0 0,0 C1.3,0 2.5,-1 2.5,-3.3 M0,-3.5 L0,3.6 M-1.3,2.2 L1.3,2.2",
+      pluto: "M0,-2.3 m1.1,0 a1.1,1.1 0 1 1 -2.2,0 a1.1,1.1 0 1 1 2.2,0 M-2.3,-2.7 A2.5,2.5 0 0 0 2.3,-2.7 M0,-0.1 L0,3.6 M-1.3,1.9 L1.3,1.9",
+    };
+    const mk = (lon, key, color, rad, id) => {
       const [cx, cy] = polar(rad, toScreen(lon));
-      return { cx, cy, glyph, color, onTap: tapSel(id) };
+      return { cx, cy, tf: "translate(" + cx + "," + cy + ")", d: PLANET_PATHS[key], color, onTap: tapSel(id) };
     };
     const wheelMarks = [
-      mk(76.23, "☉", "#FFB000", 68, "sun"),
-      mk(116.82, "☽", "#F0D89A", 68, "moon"),
-      mk(92.78, "♀", "#F2EAD6", 68, "venus"),
+      mk(76.23, "sun", "#FFB000", 68, "sun"),
+      mk(116.82, "moon", "#F0D89A", 68, "moon"),
+      mk(92.78, "venus", "#F2EAD6", 68, "venus"),
+      mk(62.97, "mercury", "#B8A97E", 68, "mercury"),
+      mk(78.23, "jupiter", "#B8A97E", 57, "jupiter"),
+      mk(119.88, "mars", "#B8A97E", 57, "mars"),
+      mk(279.73, "saturn", "#B8A97E", 57, "saturn"),
+      mk(274.1, "uranus", "#B8A97E", 68, "uranus"),
+      mk(281.82, "neptune", "#B8A97E", 68, "neptune"),
+      mk(222.82, "pluto", "#B8A97E", 68, "pluto"),
     ];
+    const DETAILS = {
+      sun: { title: "your sun", sub: "16°14′ gemini · 8th house", paras: [
+        "the sun is the engine — what you are for. yours burns in gemini, the sign of the question, and in the eighth house, where things are buried. the mind that digs.",
+        "in the older sky it stands in The Storm, the sixth mansion — the brand, the howler, the work that cannot be taken back. the full reading is on your shard.",
+        "jupiter rides two degrees away, conjunct. the questions get answered bigger than you asked them, which looks like luck to everyone but you.",
+      ]},
+      moon: { title: "your moon", sub: "26°49′ cancer · 9th house", paras: [
+        "the moon is the weather — how you actually feel, hour by hour. yours is in cancer, its own sign, running strong and close to the top of the chart.",
+        "it stands in The Throne, the tenth mansion, in the same stretch of sky as your midheaven — the 1-in-221 signature on your shard. the private tide and the public seat are one place.",
+        "mars sits three degrees off, conjunct. the tide has teeth; the composure costs more than it shows.",
+      ]},
+      venus: { title: "your venus", sub: "2°47′ cancer · 9th house · chart ruler", paras: [
+        "a libra chart answers to venus, so where she sits is where the balance is actually kept. yours keeps it in cancer, in the ninth — through care, and at a distance.",
+        "she stands in The Ghost, the eighth mansion — the pale cluster over the carriage of the dead, the unfinished things heard at night. what you love is what you have not finished answering.",
+        "she holds a trine to your ascendant: the mask and the ruler agree, which is why the even-handedness reads as effortless. it is not.",
+      ]},
+      asc: { title: "your ascendant", sub: "28°46′ libra", paras: [
+        "the ascendant is the eastern edge of the sky at the minute you arrived — the mask, the door, the first move. yours rises in the last degrees of libra: the first move is always to weigh.",
+        "it stands in The Crown, the seventeenth mansion — the wreath above the scales, how the world meets you at the door. once a month the moon crosses it; tonight's page will tell you when.",
+        "libra rising hands the chart to venus. see the chart ruler for where the balance is actually kept.",
+      ]},
+      mc: { title: "your midheaven", sub: "5°48′ leo", paras: [
+        "the midheaven is the point that stood directly overhead at 4:42 that afternoon — the highest place in your chart, what you are known for. yours stands in leo, the sign of the chart's own king.",
+        "and it stands in The Throne, the same mansion as your moon — the signature on your shard. the composure is not a skill you developed for public life; it is the same thing as your public life.",
+        "saturn is touching this point now, from the easy angle. tonight has the numbers.",
+      ]},
+    };
+    DETAILS.sun.mansion = { ord: "sixth", name: "The Storm", text: "an eighth-house sun already digs; the sixth mansion makes the digging irreversible. the brand, the howler, the question asked at full volume — buried things do not stay buried around you, and that was never optional." };
+    DETAILS.moon.mansion = { ord: "tenth", name: "The Throne", text: "a ninth-house moon feels at a distance; the tenth mansion gives that feeling a chair to hold from. the tide runs high in the chart and in the sky's oldest seat at once — composure as inheritance, not performance." };
+    DETAILS.venus.mansion = { ord: "eighth", name: "The Ghost", text: "a ninth-house venus loves far places; the eighth mansion says what she loves there is the unfinished. the balance of your whole chart is kept among questions you have not stopped answering." };
+    DETAILS.asc.mansion = { ord: "seventeenth", name: "The Crown", text: "libra rising weighs at the door; the crown is the wreath above those scales. the mask is not just even-handed — it arrives already garlanded, and people defer to it before you have said anything." };
+    DETAILS.mc.mansion = { ord: "tenth", name: "The Throne", text: "the midheaven is what you are known for, and yours shares a mansion with your moon. the public seat and the private tide are one stretch of sky — the reputation is the feeling, worn outward." };
+    DETAILS.mercury = { title: "your mercury", sub: "2°58′ gemini · 8th house", paras: [
+      "mercury is the voice and the reasoning. yours is in gemini, its own sign — quick, doubled, at home in questions — and in the eighth house, where the questions go under the floorboards.",
+      "you say the unsayable thing early. mercury this strong in the house of buried matters means the interrogation is not a mood; it is the native language.",
+    ], mansion: { ord: "fifth", name: "The Brand", text: "the mark made on purpose — the said thing, permanent by design. an eighth-house mercury in the brand does not make small talk; it makes statements that stay on the room after you leave." } };
+    DETAILS.jupiter = { title: "your jupiter", sub: "18°14′ gemini · 8th house", paras: [
+      "jupiter is the amplifier — where things arrive bigger than requested. yours sits two degrees from your sun, conjunct, in gemini and the eighth: the questions get answered at scale.",
+      "what looks like luck to everyone else is the conjunction doing its work: you dig, and the ground gives more than it should.",
+    ], mansion: { ord: "seventh", name: "The Reach", text: "the outstretched paw — the ask that costs you your balance. jupiter here enlarges the reach itself: you ask past what is sensible, and the sky's oldest answer is that the leaning is the point." } };
+    DETAILS.mars = { title: "your mars", sub: "29°53′ cancer · 9th house", paras: [
+      "mars is the heat and the cut. yours runs in cancer — sideways, protective, slow to draw and slower to sheathe — in the ninth house, where it fights for beliefs and far things.",
+      "it rides three degrees off your moon, conjunct. the tide has teeth: the feeling and the fight are never far apart, whatever the surface says.",
+    ], mansion: { ord: "tenth", name: "The Throne", text: "a blade in the king's seat. mars in the throne with your moon means the composure is armed — the carriage people read as calm is a guard posture, held so long it looks like rest." } };
+    DETAILS.saturn = { title: "your saturn", sub: "9°44′ capricorn rx · 3rd house", paras: [
+      "saturn is the load-bearing wall. yours stands in capricorn, its own sign, retrograde in the third — the house of speech, siblings, the near world. the discipline turned inward on the sentence itself.",
+      "you weigh words before spending them, and the standard you hold your own voice to was installed early and audits often.",
+    ], mansion: { ord: "twenty-second", name: "The Sacrifice", text: "the goat's horn — what is given up so the rest can go on. saturn here makes the giving-up structural: every sentence you don't say is a beam somewhere, holding something." } };
+    DETAILS.uranus = { title: "your uranus", sub: "4°06′ capricorn rx · 3rd house", paras: [
+      "uranus is the break in the pattern. yours works retrograde in capricorn's early degrees, in the third — the revolt happens inside the structure, in how you think and phrase, not in the costume.",
+      "a generational placement made personal by the house: the near world keeps being rearranged by sentences of yours that sounded reasonable at the time.",
+    ], mansion: { ord: "twenty-second", name: "The Sacrifice", text: "the same mansion as your saturn — the horn of what is given up. the break and the wall share one stretch of sky: your revolutions are paid for in advance, which is why they hold." } };
+    DETAILS.neptune = { title: "your neptune", sub: "11°49′ capricorn rx · 3rd house", paras: [
+      "neptune is the fog and the longing. yours dissolves in capricorn, in the third — the dream wears work clothes, and the longing talks in practical sentences.",
+      "in the house of the near world it blurs the ordinary: the errand, the sibling, the street you grew up on all carry more weight than they admit.",
+    ], mansion: { ord: "twenty-second", name: "The Sacrifice", text: "third of your three in the goat's horn. the fog, the wall, and the break all stand in the mansion of what is surrendered — a whole working life built over one quiet act of giving something up." } };
+    DETAILS.pluto = { title: "your pluto", sub: "12°49′ scorpio rx · 1st house", paras: [
+      "pluto is the slow pressure that transforms. yours sits in scorpio, its own sign, in the first house — the pressure is applied to the self, on the surface, where people can almost see it.",
+      "first-house pluto reads as intensity before you have spoken. you have been described as 'a lot' by people who could not name what the lot was.",
+    ], mansion: { ord: "eighteenth", name: "The Heart", text: "the red heart of the scorpion — antares, loyalty tested under pressure. pluto standing on it doubles the signature: what transforms you is what you stay loyal to past the point of sense." } };
+    const cd = this.state.cd ? DETAILS[this.state.cd] : null;
+    const cdOpen = (k) => () => this.setState({ cd: k });
     const night = this.state.night ? NIGHTS[this.state.night] : null;
     const tabBase = "background:none;border:none;cursor:pointer;text-align:center;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;line-height:1.8;padding:2px 0;";
     const tabStyle = (t) => tabBase + (tab === t ? "color:#FFB000" : "color:#9A8A5E");
     const segBase = "background:none;border:none;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;";
     const view = this.state.view;
-    const setTab = (t) => () => this.setState({ tab: t, arch: false });
+    const setTab = (t) => () => this.setState({ tab: t, prevTab: tab, shardSt: 0, shardStage: 0, arch: false, mcPushed: false, night: null, cd: null }, () => {
+      document.querySelectorAll("[data-ss-screen]").forEach((el) => { el.scrollTop = 0; });
+    });
+    const timeKnown = this.state.timeKnown ?? (this.props.birthTimeKnown ?? true);
+    const locKnown = this.state.locKnown ?? (this.props.locationKnown ?? true);
+    const onboardOn = (this.props.showOnboarding ?? false) && !this.state.onboardDone;
+    const obU = this.state.obTimeUnknown;
+    const obPolar = (r, deg) => { const t = (deg - 90) * Math.PI / 180; return [+(40 + r * Math.cos(t)).toFixed(2), +(40 + r * Math.sin(t)).toFixed(2)]; };
+    const obArc = (r, a0, a1) => { const [x0, y0] = obPolar(r, a0), [x1, y1] = obPolar(r, a1); return `M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`; };
+    const obDone = [this.state.obDate.trim().length > 0, obU || this.state.obTime.trim().length > 0, this.state.obPlace.trim().length > 0];
+    const obGroup = (s) => (s < 10 ? 0 : s < 19 ? 1 : 2);
+    const obRingSegs = [];
+    for (let s = 0; s < 28; s++) {
+      const a0 = s * (360 / 28) + 2.4, a1 = (s + 1) * (360 / 28) - 2.4;
+      obRingSegs.push({ d: obArc(32, a0, a1), color: obDone[obGroup(s)] ? "#F0D89A" : "rgba(240,216,154,.15)" });
+    }
+    const obCount = obDone.filter(Boolean).length;
+    const cs = this.state.obCastStep;
+    const obCastSegs = [];
+    for (let s = 0; s < 28; s++) {
+      const a0 = s * (360 / 28) + 2.4, a1 = (s + 1) * (360 / 28) - 2.4;
+      let color = "rgba(240,216,154,.28)", w = 2.2;
+      if ((s === 5 && cs >= 1) || (s === 9 && cs >= 2) || (s === 16 && cs >= 3)) { color = "#FFB000"; w = 3.2; }
+      obCastSegs.push({ d: obArc(32, a0, a1), color, w });
+    }
+    const obCastLines = ["placing your sun · the storm", "seating your moon · the throne", "hanging the wheel · libra rising"].map((t, i) => ({
+      t,
+      style: "font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;text-align:center;transition:opacity .5s ease,color .5s ease;" + (cs >= i + 1 ? "opacity:1;color:#F0D89A" : "opacity:.18;color:#9A8A5E"),
+    }));
     return {
       starfieldOn: this.props.starfield ?? true,
       frameScaleStyle: "transform:scale(" + Math.min(1, (window.innerHeight - 24) / 940, (window.innerWidth - 24) / 450).toFixed(3) + ");transform-origin:center center",
@@ -479,7 +848,32 @@ class Component extends DCLogic {
       popArch: () => this.setState({ arch: false }),
       tabTonight: setTab("tonight"), tabChart: setTab("chart"), tabShard: setTab("shard"),
       tabTonightStyle: tabStyle("tonight"), tabChartStyle: tabStyle("chart"), tabShardStyle: tabStyle("shard"),
-      showTonightView: view === "tonight", showWeekView: view === "week",
+      showTonightView: locKnown && view === "tonight", showWeekView: locKnown && view === "week",
+      locOn: locKnown, locOff: !locKnown,
+      locIdle: !this.state.locLoading, locLoading: this.state.locLoading,
+      askLoc: () => { this.setState({ locLoading: true }); setTimeout(() => this.setState({ locKnown: true, locLoading: false }), 1200); },
+      onboardOn, navOn: !onboardOn,
+      obToggleTime: () => this.setState(s => ({ obTimeUnknown: !s.obTimeUnknown })),
+      obTimeMark: obU ? "☑" : "☐",
+      obTimeStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.08em;" + (obU ? "color:#FFB000" : "color:#9A8A5E"),
+      obTimeInputStyle: "background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%;" + (obU ? "color:rgba(154,138,94,.4);text-decoration:line-through" : "color:#F2EAD6"),
+      castChart: () => {
+        if (obCount < 3 || this.state.obCasting) return;
+        this.setState({ obCasting: true, obCastStep: 0 });
+        [1, 2, 3].forEach(i => setTimeout(() => this.setState({ obCastStep: i }), 200 + i * 850));
+        setTimeout(() => this.setState(s => ({ onboardDone: true, timeKnown: !s.obTimeUnknown, tab: "shard", obCasting: false, obCastStep: 0 })), 4100);
+      },
+      obFormOn: !this.state.obCasting, obCastingOn: this.state.obCasting,
+      obRingSegs, obCastSegs, obCastLines,
+      obRingCount: obCount + " of 3",
+      obDateVal: this.state.obDate, obTimeVal: this.state.obTime, obPlaceVal: this.state.obPlace,
+      obSetDate: (e) => this.setState({ obDate: e.target.value }),
+      obSetTime: (e) => this.setState({ obTime: e.target.value }),
+      obSetPlace: (e) => this.setState({ obPlace: e.target.value }),
+      obCastStyle: "margin:44px auto 0;font-family:'Pixelify Sans',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:15px 32px;transition:all .4s ease;" + (obCount === 3 ? "background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;cursor:pointer;box-shadow:0 0 24px rgba(255,176,0,.22)" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
+      timeOn: timeKnown, timeOff: !timeKnown,
+      addTime: () => this.setState({ timeKnown: true }),
+      shardMetaLine2: timeKnown ? "libra rising · outbound · waxing crescent" : "rising unknown · outbound · waxing crescent",
       toTonightView: () => this.setState({ view: "tonight" }),
       toWeekView: () => this.setState({ view: "week" }),
       segTonightStyle: segBase + (view === "tonight" ? "background:rgba(255,176,0,.12);color:#FFB000" : "color:#9A8A5E"),
@@ -489,7 +883,32 @@ class Component extends DCLogic {
       pushMC: () => this.setState({ mcPushed: true }),
       popMC: () => this.setState({ mcPushed: false }),
       isWalked: walked, notWalked: !walked,
-      walk: () => this.setState({ walked: true }),
+      walk: () => {
+        if (this.state.walkAnim) return;
+        this.setState({ walkAnim: 1 });
+        setTimeout(() => this.setState({ walkAnim: 2 }), 1250);
+        setTimeout(() => this.setState({ walkAnim: 0, walked: true }), 2450);
+      },
+      walkSweepOn: this.state.walkAnim === 1,
+      walkBurstOn: this.state.walkAnim === 2,
+      tonightSegD: tRingSegs[TONIGHT_SEG].d,
+      tRingWrapStyle: "align-self:center;cursor:pointer;filter:drop-shadow(0 0 16px rgba(240,216,154,.22));animation:" + morph("tonight"),
+      cRingWrapStyle: "align-self:center;margin-top:16px;filter:drop-shadow(0 0 18px rgba(240,216,154,.22));animation:" + morph("chart"),
+      shardHeroStyle: "position:sticky;top:-4px;z-index:3;align-self:center;margin-top:18px;height:" + Math.round(292 * shs) + "px;animation:" + morph("shard"),
+      shardHeroInnerStyle: "transform:scale(" + shs.toFixed(3) + ");transform-origin:top center;filter:drop-shadow(0 0 20px rgba(240,216,154,.28))" + (shs < .98 ? ";background:radial-gradient(closest-side, rgba(8,5,2,.94) 52%, rgba(8,5,2,0) 74%);border-radius:50%" : ""),
+      sChordD, sChordStyle,
+      shardScroll: (e) => {
+        const el = e.currentTarget;
+        if (this._sRaf) return;
+        this._sRaf = requestAnimationFrame(() => {
+          this._sRaf = null;
+          if (!el) return;
+          const st = el.scrollTop, vh = el.clientHeight;
+          let stage = 0;
+          el.querySelectorAll("[data-ss-mark]").forEach((m) => { if (m.offsetTop < st + vh * 0.65) stage++; });
+          if (Math.abs(st - this.state.shardSt) > 3 || stage !== this.state.shardStage) this.setState({ shardSt: st, shardStage: stage });
+        });
+      },
       numbersOpen: this.state.numbersOpen,
       numbersChevron: this.state.numbersOpen ? "−" : "+",
       toggleNumbers: () => this.setState(s => ({ numbersOpen: !s.numbersOpen })),
@@ -497,7 +916,26 @@ class Component extends DCLogic {
       remindStyle: "background:none;cursor:pointer;font-family:'Pixelify Sans',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:6px 14px;border:1px solid " + (this.state.remind ? "#FFB000;color:#FFB000" : "rgba(240,216,154,.3);color:#9A8A5E"),
       toggleRemind: () => this.setState(s => ({ remind: !s.remind })),
       signLines, signGlyphs, houseLines, houseNums, chartRing, angleLines, angleLabels, wheelMarks,
-      selLabel: this.state.sel ? LABELS[this.state.sel] : "tap a light to name it",
+      planetRows: [
+        { name: "mercury", pos: "2°58′ gemini · 8th", d: PLANET_PATHS.mercury, onTap: cdOpen("mercury") },
+        { name: "mars", pos: "29°53′ cancer · 9th", d: PLANET_PATHS.mars, onTap: cdOpen("mars") },
+        { name: "jupiter", pos: "18°14′ gemini · 8th", d: PLANET_PATHS.jupiter, onTap: cdOpen("jupiter") },
+        { name: "saturn rx", pos: "9°44′ capricorn · 3rd", d: PLANET_PATHS.saturn, onTap: cdOpen("saturn") },
+        { name: "uranus rx", pos: "4°06′ capricorn · 3rd", d: PLANET_PATHS.uranus, onTap: cdOpen("uranus") },
+        { name: "neptune rx", pos: "11°49′ capricorn · 3rd", d: PLANET_PATHS.neptune, onTap: cdOpen("neptune") },
+        { name: "pluto rx", pos: "12°49′ scorpio · 1st", d: PLANET_PATHS.pluto, onTap: cdOpen("pluto") },
+      ],
+      selLabel: this.state.sel ? LABELS[this.state.sel] : "tap a light — or a mansion on the rim",
+      hitArcs,
+      mSelOn: selM !== null,
+      mSelOrd: selM !== null ? ORDS[selM] : "",
+      mSelName: selM !== null ? NAMES[selM] : "",
+      mSelLine: selM !== null ? ARCH[selM] : "",
+      mSelOwnOn: selM !== null && !!OWN[selM],
+      mSelOwn: selM !== null ? (OWN[selM] || "") : "",
+      mSelSpan, mSelBodies,
+      mSelHasBodies: mSelBodies.length > 0,
+      mSelEmpty: selM !== null && mSelBodies.length === 0,
       sRingSegs, sRingTicks, sRingMarks, litCount, stationRows,
       nightPushed: !!night,
       popNight: () => this.setState({ night: null }),
@@ -507,6 +945,15 @@ class Component extends DCLogic {
       nightSpecial: !!(night && night.special),
       nightSpecialLabel: night && night.special ? night.special : "",
       nightText: night ? night.text : "",
+      cdOn: !!cd,
+      popCD: () => this.setState({ cd: null }),
+      cdTitle: cd ? cd.title : "", cdSub: cd ? cd.sub : "",
+      cdParas: cd ? cd.paras.map(t => ({ t })) : [],
+      cdMOn: !!(cd && cd.mansion),
+      cdMOrd: cd && cd.mansion ? cd.mansion.ord : "",
+      cdMName: cd && cd.mansion ? cd.mansion.name : "",
+      cdMText: cd && cd.mansion ? cd.mansion.text : "",
+      cdSun: cdOpen("sun"), cdMoon: cdOpen("moon"), cdVenus: cdOpen("venus"), cdAsc: cdOpen("asc"), cdMc: cdOpen("mc"),
     };
   }
 }

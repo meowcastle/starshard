@@ -79,7 +79,7 @@ the year has to be lived by somebody. arriving first and being ready are
 different skills, and these degrees only ever handed out the one.
 
 **MANSION.01.keyword**
-the opening
+arriving first
 
 ---
 
@@ -1201,6 +1201,24 @@ When the sukuyō system dropped 牛宿 it dropped the Chinese slot for the
 nakshatra India had already removed. **One seam, transmitted** — which
 is a better finding than the coincidence, and it survives checking.
 `MANSION.21` and `MANSION.22` carry this.
+
+---
+
+## One naming defect, caught during the 784 pass
+
+`MANSION.01` and `MANSION.24` were both keyworded **"the opening."** The
+keyword is the ring label and the codex index entry, so it has to be
+unique across the twenty-eight — two mansions cannot share a handle a
+user taps.
+
+**Mansion 24 keeps it.** Its whole meaning is the offered space, its
+`claim` turns on *an opening is not a wound*, and its combination row is
+written on that premise throughout. **Mansion 01 becomes "arriving
+first"** — which is what its archetype actually says (*a light here
+arrives before it is invited*) and what separates it from 24: the Gate
+opens **onto** something, the Void **is** the opening.
+
+Checked against the rest: no other duplicate keyword exists.
 
 ---
 

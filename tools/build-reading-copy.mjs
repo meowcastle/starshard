@@ -59,6 +59,7 @@ const SOURCE_FILES = [
   'corpus-stations-08-14.md',
   'corpus-stations-15-21.md',
   'corpus-stations-22-28.md',
+  'corpus-mansions.md', // the 28 mansion portraits (MANSION.nn.*) — CHART-BUILDER.md layer A
 ];
 
 // The only interpolation tokens ever found inside a real slot body
@@ -173,8 +174,10 @@ for (const s of allSlots) {
 }
 
 const stationSlots = allSlots.filter(s => s.id.startsWith('STATION.'));
-if (allSlots.length !== 258) throw new Error(`expected 258 total slots, got ${allSlots.length}`);
+const mansionSlots = allSlots.filter(s => s.id.startsWith('MANSION.'));
+if (allSlots.length !== 398) throw new Error(`expected 398 total slots, got ${allSlots.length}`);
 if (stationSlots.length !== 112) throw new Error(`expected 112 STATION.* slots, got ${stationSlots.length}`);
+if (mansionSlots.length !== 140) throw new Error(`expected 140 MANSION.* slots (28 x 5), got ${mansionSlots.length}`);
 
 // corpus-arrival.md is UI copy (CTAs, terminal readout lines, toggle
 // labels) — 32 of its 49 slots are under 15 words by design, verified
@@ -185,11 +188,27 @@ if (stationSlots.length !== 112) throw new Error(`expected 112 STATION.* slots, 
 // before this batch landed.
 const ARRIVAL_UI_IDS = new Set(allSlots.filter(s => s.file === 'corpus-arrival.md').map(s => s.id));
 
+// research/corpus-mansions.md's own table (§ "Five slots per mansion"):
+// keyword is 2-4 words by design (the ring label / codex index entry) —
+// the shortest real slot family in the corpus, same category as
+// ARRIVAL_UI_IDS's short UI copy.
+const MANSION_KEYWORD_RE = /^MANSION\.\d{2}\.keyword$/;
+// claim targets ~25w and 27 of 28 clear the general 15w floor comfortably
+// (23-40w) — MANSION.06.claim alone is a real, complete, well-formed
+// 14-word sentence ("every tradition that looked at these degrees named
+// something that cannot be taken back."), not a truncation. A single
+// legitimate outlier one word under the floor, not a reason to loosen the
+// floor for every slot family — scoped to `claim` alone, at 10w.
+const MANSION_CLAIM_RE = /^MANSION\.\d{2}\.claim$/;
+
 const COPY = {};
 for (const s of allSlots) {
   const wordCount = s.rawBody.split(/\s+/).filter(Boolean).length;
   const isStrikeOrRoot = /^STATION\.\d{2}\.(strike|root)$/.test(s.id);
-  const floor = isStrikeOrRoot ? 100 : (ARRIVAL_UI_IDS.has(s.id) ? 1 : 15);
+  const floor = isStrikeOrRoot ? 100
+    : (ARRIVAL_UI_IDS.has(s.id) || MANSION_KEYWORD_RE.test(s.id)) ? 1
+    : MANSION_CLAIM_RE.test(s.id) ? 10
+    : 15;
   if (wordCount < floor) throw new Error(`${s.id} (${s.file}) is ${wordCount} words, below the ${floor}-word floor for its slot family`);
 
   const tokenNames = [...s.rawBody.matchAll(/\{([a-zA-Z]+)\}/g)].map(m => m[1]);

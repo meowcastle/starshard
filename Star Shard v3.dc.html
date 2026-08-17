@@ -963,10 +963,15 @@ a{color:var(--ink-accent)}
 <sc-if value="{{ sigIsShardTab }}">
 <div class="screen-in pad" style="padding-top:20px; padding-bottom:26px; display:flex; flex-direction:column; flex:1; min-height:100vh; min-height:100dvh">
 
-  <sc-if value="{{ sigShardDetailClosed }}">
-    <div class="eyebrow">your star shard</div>
+  <sc-if value="{{ sigShardNotReady }}">
+    <p class="hint" style="margin-top:40px">casting your shard…</p>
+  </sc-if>
+
+  <sc-if value="{{ sigShardReady }}">
+  <sc-if value="{{ sigShardHome }}">
+    <div class="eyebrow" style="text-align:center">your star shard · {{ sigShardAddress }}</div>
     <div style="display:flex; justify-content:center; padding:14px 0 2px">
-      <svg viewBox="0 0 200 200" width="250" height="250" role="img" aria-label="your star shard, with tonight's station lit">
+      <svg viewBox="0 0 200 200" width="220" height="220" role="img" aria-label="your star shard, with tonight's station lit">
         <sc-for list="{{ ringSegments }}" as="seg">
           <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
         </sc-for>
@@ -978,23 +983,114 @@ a{color:var(--ink-accent)}
         </sc-for>
       </svg>
     </div>
-    <p class="progress-line" style="text-align:center; margin:0">{{ sigShardProgress }}</p>
+    <h1 class="h1" style="text-align:center; margin-top:8px">{{ sigShardHeroName }}</h1>
+    <p class="mono-note" style="text-align:center; margin:10px 0 0">{{ sigShardMetaLine }}</p>
 
-    <sc-if value="{{ sigIsNewborn }}">
-      <p class="hint" style="margin:16px 0 0">your shard is dark. it lights one station at a time, and only by walking.</p>
+    <hr class="sep" style="margin-top:28px">
+
+    <!-- the combination — layer B, generated once, static, 784 cells -->
+    <div class="eyebrow" style="text-align:center; margin-top:22px">the combination</div>
+    <sc-if value="{{ sigComboReady }}">
+      <p class="reading" style="margin-top:12px; font-size:var(--text-xl)">{{ sigComboLead }}</p>
+      <p class="reading">{{ sigComboSun }}</p>
+      <p class="reading">{{ sigComboMoon }}</p>
+      <div class="card-panel panel-accent" style="margin:6px 0 14px"><p style="margin:0; font-family:'Baloo 2',cursive; font-weight:700; font-size:var(--text-lg)">{{ sigComboPull }}</p></div>
+      <p class="reading">{{ sigComboTension }}</p>
+      <p class="reading">{{ sigComboCost }}</p>
+    </sc-if>
+    <sc-if value="{{ sigComboPending }}">
+      <p class="hint" style="margin-top:12px">this combination hasn't been written yet — 784 cells, generated and reviewed in order. yours is coming.</p>
     </sc-if>
 
-    <div style="margin-top:22px">
-      <div class="eyebrow" style="margin-bottom:10px">the twenty-eight</div>
-      <div class="st-grid">
-        <sc-for list="{{ sigShardCells }}" as="c" hint-placeholder-count="28">
-          <button type="button" class="st-cell" data-lit="{{ c.lit }}" data-now="{{ c.now }}" onClick="{{ c.open }}" aria-label="{{ c.aria }}">
-            <span>{{ c.n }}</span>
-            <span>{{ c.glyph }}</span>
-          </button>
+    <hr class="sep" style="margin-top:28px">
+
+    <!-- the mansion portraits — layer A, shipped for all 28 -->
+    <div class="eyebrow" style="text-align:center; margin-top:22px">{{ sigShardSunOrd }} mansion</div>
+    <div style="text-align:center; margin-top:10px"><span style="font-size:28px; font-family:serif">{{ sigShardSunKanji }}</span></div>
+    <h2 class="h2" style="text-align:center; margin-top:10px">{{ sigShardSunEpithet }}</h2>
+    <p class="mono-note" style="text-align:center; margin:8px 0 20px">{{ sigShardSunPosition }} · your sun stands here</p>
+    <p class="reading">{{ sigShardSunClaim }}</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin:14px 0">
+      <sc-for list="{{ sigShardSunTraditions }}" as="t" hint-placeholder-count="4">
+        <div style="display:grid; grid-template-columns:72px 1fr; gap:12px">
+          <span class="mono-note" style="text-transform:uppercase">{{ t.sky }}</span>
+          <span class="muted" style="font-size:var(--text-sm)"><strong style="color:var(--ink)">{{ t.name }}</strong> — {{ t.meaning }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <p class="reading">{{ sigShardSunSynthesis }}</p>
+    <p class="reading">{{ sigShardSunElection }}</p>
+    <p class="reading">{{ sigShardSunArchetype }}</p>
+
+    <sc-if value="{{ sigShardMoonPortraitOn }}">
+      <hr class="sep" style="margin-top:14px">
+      <div class="eyebrow" style="text-align:center; margin-top:22px">{{ sigShardMoonOrd }} mansion</div>
+      <div style="text-align:center; margin-top:10px"><span style="font-size:28px; font-family:serif">{{ sigShardMoonKanji }}</span></div>
+      <h2 class="h2" style="text-align:center; margin-top:10px">{{ sigShardMoonEpithet }}</h2>
+      <p class="mono-note" style="text-align:center; margin:8px 0 20px">{{ sigShardMoonPosition }} · your moon stands here</p>
+      <p class="reading">{{ sigShardMoonClaim }}</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin:14px 0">
+        <sc-for list="{{ sigShardMoonTraditions }}" as="t" hint-placeholder-count="4">
+          <div style="display:grid; grid-template-columns:72px 1fr; gap:12px">
+            <span class="mono-note" style="text-transform:uppercase">{{ t.sky }}</span>
+            <span class="muted" style="font-size:var(--text-sm)"><strong style="color:var(--ink)">{{ t.name }}</strong> — {{ t.meaning }}</span>
+          </div>
         </sc-for>
       </div>
-      <p class="hint" style="margin:12px 0 0">{{ sigShardGridHint }}</p>
+      <p class="reading">{{ sigShardMoonSynthesis }}</p>
+      <p class="reading">{{ sigShardMoonElection }}</p>
+      <p class="reading">{{ sigShardMoonArchetype }}</p>
+    </sc-if>
+
+    <hr class="sep" style="margin-top:14px">
+
+    <!-- the signature — layer C. Deterministic parts are real; the
+         generated paragraph waits on the api.js generation path. -->
+    <div class="eyebrow" style="text-align:center; margin-top:22px">your signature</div>
+    <sc-if value="{{ sigFindingReady }}">
+      <div class="card-panel panel-accent" style="margin-top:14px; text-align:center">
+        <div class="orb-line" style="justify-content:center"><span class="orb-num">{{ sigFindingRateLabel }}</span></div>
+        <p class="h3" style="margin-top:10px">{{ sigFindingHeadline }}</p>
+        <p class="mono-note" style="margin-top:10px">{{ sigFindingDetail }}</p>
+      </div>
+      <sc-if value="{{ sigFindingBodyPending }}">
+        <p class="hint" style="margin-top:14px">the full reading of this finding is generated once and stored — that generation path isn't live on this build yet.</p>
+      </sc-if>
+    </sc-if>
+    <sc-if value="{{ sigFindingNone }}">
+      <p class="hint" style="margin-top:14px">no standout finding yet — this needs a birth chart with all points computed.</p>
+    </sc-if>
+
+    <hr class="sep" style="margin-top:14px">
+
+    <!-- the farlight — mansion 14 along from the sun, exact by construction -->
+    <div class="eyebrow" style="text-align:center; margin-top:22px">your farlight</div>
+    <p class="mono-note" style="text-align:center; margin:10px 0 20px">mansion {{ sigFarlightN }} · directly opposite your sun</p>
+    <p class="reading">{{ sigFarlightText }}</p>
+
+    <hr class="sep" style="margin-top:14px">
+
+    <button type="button" class="link-down" onClick="{{ pushArch }}" style="margin-top:8px">
+      <span>the twenty-eight →</span><span class="mono-note">{{ sigShardProgress }} walked</span>
+    </button>
+  </sc-if>
+
+  <!-- "the twenty-eight" — the real walked-collection view -->
+  <sc-if value="{{ sigShardArchList }}">
+    <button type="button" class="back-btn" onClick="{{ popArch }}">← your shard</button>
+    <div class="eyebrow" style="margin-top:16px">the twenty-eight</div>
+    <p class="progress-line" style="margin:6px 0 0">{{ sigShardProgress }}</p>
+    <sc-if value="{{ sigIsNewborn }}">
+      <p class="hint" style="margin:12px 0 0">your shard is dark. it lights one station at a time, and only by walking.</p>
+    </sc-if>
+    <div style="display:flex; flex-direction:column; margin-top:14px">
+      <sc-for list="{{ stationRows }}" as="row" hint-placeholder-count="28">
+        <div onClick="{{ row.open }}" style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:2px solid var(--edge-light); cursor:pointer">
+          <span class="mono-note" style="width:24px">{{ row.n }}</span>
+          <span style="flex:1; font-size:var(--text-md)">{{ row.name }}</span>
+          <span class="mono-note">{{ row.trail }}</span>
+        </div>
+      </sc-for>
     </div>
   </sc-if>
 
@@ -1004,11 +1100,13 @@ a{color:var(--ink-accent)}
     <div class="eyebrow" style="margin-top:6px">station {{ sigShardOpenN }}</div>
     <h1 class="h2" style="margin-top:8px">{{ sigShardOpenTitle }}</h1>
     <sc-if value="{{ sigShardOpenWalked }}">
-      <p class="slot" style="margin-top:16px">sigNightOf[{{ sigShardOpenN }}] — date walked · the step · the reading as it read that night</p>
+      <p class="mono-note" style="margin-top:12px">walked {{ sigShardOpenDate }}</p>
+      <p class="reading" style="margin-top:16px">{{ sigShardOpenText }}</p>
     </sc-if>
     <sc-if value="{{ sigShardOpenDark }}">
       <p style="margin:16px 0 0">a station you aren't there for stays dark — the shard only lights by being walked.</p>
     </sc-if>
+  </sc-if>
   </sc-if>
 </div>
 </sc-if>
@@ -1090,6 +1188,7 @@ class Component extends DCLogic {
     sigReturnTo: 'profile',    // where the Sounding and share overlays go back to
     sigComputeCount: 0,        // lines revealed on the compute readout
     sigShardOpen: null,        // the station pushed to inside your shard
+    sigArch: false,            // "the twenty-eight" pushed sub-screen, from the shard blueprint
     sigNumbersOpen: false,     // tier 3 on tonight, opt-in
 
     sigName: '', sigDate: '1999-07-15', sigTime: '23:40', sigTimeKnown: true,
@@ -1115,19 +1214,20 @@ class Component extends DCLogic {
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.startBurst();
 
-    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api, transits] = await Promise.all([
+    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api, transits, combosMod, findingsMod] = await Promise.all([
       import(`./astro.js?v=${BUILD_ID}`), import(`./sigil.js?v=${BUILD_ID}`),
       import(`./sky.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
       import(`./stations.js?v=${BUILD_ID}`), import(`./reading-copy.js?v=${BUILD_ID}`),
       import(`./sigil-copy.js?v=${BUILD_ID}`),
       import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
       import(`./transits.js?v=${BUILD_ID}`),
+      import(`./combos.js?v=${BUILD_ID}`), import(`./findings.js?v=${BUILD_ID}`),
     ]);
     // arrivalReading() (the real corpus, PORT-SPEC.md) and soundingReading()
     // (still-placeholder Sounding content, sigil-copy.js) read from two
     // different modules — see OWNERSHIP.md's note on sigil-copy.js's
     // trimmed scope.
-    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api, transits });
+    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api, transits, combos: combosMod.COMBOS, findings: findingsMod });
 
     let save = null;
     try { save = JSON.parse(localStorage.getItem('starshard.sigil-save') || 'null'); } catch (e) {}
@@ -1145,7 +1245,7 @@ class Component extends DCLogic {
       });
     }
     this.setState(patch, () => {
-      if (this.state.sigStep === 'tonight' || this.state.sigStep === 'profile') this.refreshArrivalAndTonight();
+      if (['tonight', 'profile', 'shard'].includes(this.state.sigStep)) this.refreshArrivalAndTonight();
     });
 
     const who = await this.api.me();
@@ -1265,38 +1365,157 @@ class Component extends DCLogic {
   sigShardOpenAt = n => () => this.setState({ sigShardOpen: n });
   sigShardClose = () => this.setState({ sigShardOpen: null });
 
-  // archetype C. The 28 are always all present; lit state comes from the
-  // recollection, tonight's station is marked separately. Station names come
-  // from stations.js when it is merged; until then the cells carry numbers.
-  shardVals(tonight) {
-    const s = this.state, rec = s.sigRecollection || [];
+  // The shard blueprint (CHART-BUILDER.md/BLUEPRINT-BINDINGS.md): the
+  // object model correction from UI-PRINCIPLES.md's Aug 14 note — the
+  // shard IS the natal chart, sun-mansion x moon-mansion, not a separate
+  // "walked collection" object. That older 28-cell progress-grid concept
+  // (sigRecollection-backed, real and still valuable) moves to a pushed
+  // sub-screen ("the twenty-eight") reachable from here, rather than being
+  // the tab's primary content.
+  ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  pad2(n) { return String(n).padStart(2, '0'); }
+
+  mansionPortrait(stationIdx) {
+    const st = this.stations.STATIONS[stationIdx];
+    const nn = this.pad2(stationIdx + 1);
+    const C = this.readingCopy;
+    const get = k => (C[`MANSION.${nn}.${k}`] ? C[`MANSION.${nn}.${k}`].text : '');
+    return {
+      n: stationIdx + 1, ord: this.ordinal(stationIdx + 1),
+      epithet: st.epithet, kanji: st.kanji, position: st.position,
+      claim: get('claim'), synthesis: get('synthesis'), election: get('election'),
+      archetype: get('archetype'), keyword: get('keyword'),
+      traditions: st.crossCultural || [], match: st.match,
+    };
+  }
+
+  shardVals() {
+    const s = this.state;
+    if (!s.sigil || !s.sigChart || !this.stations || !this.combos || !this.readingCopy) {
+      return { sigShardReady: false, sigShardNotReady: true };
+    }
+    const sunN = s.sigil.sunStation, moonN = s.sigil.moonStation;
+    const address = this.pad2(sunN + 1) + '·' + this.pad2(moonN + 1);
+    const combo = this.combos[address] || null;
+
+    const sunP = this.mansionPortrait(sunN), moonP = this.mansionPortrait(moonN);
+    const sameMansion = sunN === moonN;
+
+    // the signature card (CHART-BUILDER.md §3.1/§3.4) — rate/headline/detail
+    // are real, computed by findings.js/rates.js. The ~250-word generated
+    // paragraph is NOT here: it needs api.js's generation path, which
+    // PRODUCT.md §12b gates on a model/pipeline decision that isn't Code's
+    // to make silently. sigFindingBodyPending shows that honestly instead
+    // of inventing prose.
+    const finding = (s.sigFindings && s.sigFindings[0]) || null;
+    const HEADLINE = {
+      colocation: f => `your ${f.points[0].toLowerCase()} and your ${f.points[1].toLowerCase()} are standing in the same mansion.`,
+      pile: f => `${f.points.slice(0, -1).map(p => p.toLowerCase()).join(', ')} and your ${f.points[f.points.length - 1].toLowerCase()} are all in one mansion.`,
+      boundary: f => `your ${f.points[0].toLowerCase()} is standing almost exactly on a mansion's edge.`,
+      quiet: f => `your chart and your shard agree on every point — nothing here disagrees.`,
+      type: f => `your sun and your moon share one mansion. you are Seedborn.`,
+      dissent: f => `the four traditions genuinely disagree about this stretch of sky, and your ${f.points.map(p => p.toLowerCase()).join(', ')} stand${f.points.length === 1 ? 's' : ''} there.`,
+    };
+
+    // "the twenty-eight" — the real walked-collection view, ported forward
+    // rather than dropped: sigRecollection is real per-station-per-step
+    // history, unrelated to the natal sun/moon mansions above (this is
+    // about which mansions the MOON has crossed since arrival, a different
+    // axis from the blueprint's natal placements).
+    const rec = s.sigRecollection || [];
     const idxOf = e => (e && (e.station != null ? e.station : (e.stationIndex != null ? e.stationIndex : e.i)));
-    const walked = new Set(rec.map(idxOf).filter(i => i != null));
-    const nowIdx = tonight ? idxOf(tonight) : null;
-    const named = (this.stations && (this.stations.STATIONS || this.stations.all)) || null;
-    const cells = Array.from({ length: 28 }, (_, i) => {
-      const lit = walked.has(i);
-      const ep = named && named[i] ? (named[i].epithet || named[i].name || '') : '';
+    const walkedMap = new Map();
+    for (const r of rec) { const i = idxOf(r); if (i != null && !walkedMap.has(i)) walkedMap.set(i, r); }
+    const stationRows = Array.from({ length: 28 }, (_, i) => {
+      const st = this.stations.STATIONS[i];
+      const r = walkedMap.get(i);
+      const own = i === sunN ? '☉ ' : i === moonN ? '☽ ' : (s.sigTimeKnown && s.sigil.risingStation === i) ? '↑ ' : (i === s.sigil.farlight ? '✧ ' : '');
       return {
-        n: i + 1, glyph: lit ? '✦' : '·', lit: lit ? '1' : '0', now: i === nowIdx ? '1' : '0',
-        aria: (ep || 'station ' + (i + 1)) + (lit ? ', walked' : ', dark'),
-        epithet: ep, open: this.sigShardOpenAt(i)
+        n: this.pad2(i + 1), name: own + (st.epithet || ''),
+        walked: !!r, trail: r ? new Date(r.kindledAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : (own ? 'yours' : ''),
+        open: this.sigShardOpenAt(i),
       };
     });
+    const litCount = walkedMap.size;
+
+    // Three mutually exclusive views: the blueprint itself, "the twenty-
+    // eight" list, and one station's push. Each sc-if in the markup keys
+    // off exactly one of these three, so a click into the list can never
+    // leave the blueprint's hero/combo/portraits stacked underneath it —
+    // caught live in the browser: the first version gated the list and
+    // detail views only on "not showing a station," not on "not showing
+    // the blueprint," so opening the list rendered both at once.
     const openN = s.sigShardOpen;
-    const openCell = openN != null ? cells[openN] : null;
+    const detailOpen = openN != null;
+    const archList = s.sigArch && !detailOpen;
+    const home = !s.sigArch && !detailOpen;
+    let openVals = { sigShardDetailOpen: false };
+    if (detailOpen) {
+      const st = this.stations.STATIONS[openN];
+      const r = walkedMap.get(openN);
+      openVals = {
+        sigShardDetailOpen: true,
+        sigShardOpenN: openN + 1, sigShardOpenTitle: st.epithet,
+        sigShardOpenWalked: !!r, sigShardOpenDark: !r,
+        // st.dailyCrossing is real corpus (stations.js), written for "the
+        // moon stands here tonight" — the honest scope here: this is what
+        // the station reads in general, not a byte-for-byte replay of that
+        // specific night's exact reading (which was never stored).
+        sigShardOpenText: r ? st.dailyCrossing : '',
+        sigShardOpenDate: r ? new Date(r.kindledAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : '',
+      };
+    }
+
     return {
-      sigShardCells: cells,
-      sigShardProgress: walked.size + ' of 28',
-      sigShardGridHint: walked.size === 0
-        ? 'twenty-eight stations. the moon crosses one a night.'
-        : 'tap a lit station to re-read the night you walked it.',
-      sigShardDetailOpen: openCell != null, sigShardDetailClosed: openCell == null,
-      sigShardOpenN: openCell ? openCell.n : '',
-      sigShardOpenTitle: openCell ? (openCell.epithet || 'the ' + openCell.n + 'th station') : '',
-      sigShardOpenWalked: openCell ? openCell.lit === '1' : false,
-      sigShardOpenDark: openCell ? openCell.lit === '0' : false,
-      sigShardClose: this.sigShardClose
+      sigShardReady: true, sigShardNotReady: false,
+      sigShardHome: home, sigShardArchList: archList,
+      sigShardAddress: address,
+      sigShardSunEpithet: sunP.epithet, sigShardMoonEpithet: moonP.epithet,
+      // GENERATION.md §2 — the diagonal (sun===moon mansion) gets the
+      // epithet alone, not "X of X": a doubled hexagram, not a blend.
+      // Every epithet already starts with "The " (stations.js, all 28) —
+      // strip it before re-composing "of the ___", or a moon epithet like
+      // "The Glance" renders as "of the The Glance".
+      sigShardHeroName: sameMansion ? sunP.epithet : `${sunP.epithet} of the ${moonP.epithet.replace(/^The /, '')}`,
+      sigShardMoonPortraitOn: !sameMansion, // don't render the same portrait twice
+      sigShardMetaLine: sameMansion
+        ? `sun and moon both in ${sunP.epithet.toLowerCase()}`
+        : `sun in ${sunP.epithet.toLowerCase()} · moon in ${moonP.epithet.toLowerCase()}`,
+
+      sigComboReady: !!combo,
+      sigComboPending: !combo,
+      sigComboLead: combo ? combo.lead : '', sigComboSun: combo ? combo.sun : '',
+      sigComboMoon: combo ? combo.moon : '', sigComboPull: combo ? combo.pull : '',
+      sigComboTension: combo ? combo.tension : '', sigComboCost: combo ? combo.cost : '',
+
+      sigShardSunN: sunP.n, sigShardSunOrd: sunP.ord, sigShardSunKanji: sunP.kanji,
+      sigShardSunPosition: sunP.position, sigShardSunClaim: sunP.claim,
+      sigShardSunSynthesis: sunP.synthesis, sigShardSunElection: sunP.election,
+      sigShardSunArchetype: sunP.archetype, sigShardSunTraditions: sunP.traditions,
+
+      sigShardMoonN: moonP.n, sigShardMoonOrd: moonP.ord, sigShardMoonKanji: moonP.kanji,
+      sigShardMoonPosition: moonP.position, sigShardMoonClaim: moonP.claim,
+      sigShardMoonSynthesis: moonP.synthesis, sigShardMoonElection: moonP.election,
+      sigShardMoonArchetype: moonP.archetype, sigShardMoonTraditions: moonP.traditions,
+
+      sigFindingReady: !!finding, sigFindingNone: !finding,
+      sigFindingRateLabel: finding ? '1 in ' + Math.round(1 / finding.rate) : '',
+      sigFindingHeadline: finding ? (HEADLINE[finding.kind] ? HEADLINE[finding.kind](finding) : finding.detail) : '',
+      sigFindingDetail: finding ? finding.detail : '',
+      sigFindingBodyPending: !!finding, // the generated paragraph — see comment above
+
+      sigFarlightN: s.sigil.farlight + 1, sigFarlightOrd: this.ordinal(s.sigil.farlight + 1),
+      sigFarlightText: s.sigArrival ? s.sigArrival.answering.line : '',
+
+      sigShardProgress: litCount + ' of 28',
+      sigIsNewborn: litCount === 0,
+      stationRows,
+      pushArch: () => this.setState({ sigArch: true }), popArch: () => this.setState({ sigArch: false }),
+      ...openVals,
+      sigShardClose: this.sigShardClose,
     };
   }
 
@@ -1555,9 +1774,23 @@ class Component extends DCLogic {
     const backdrop = this.transits.standingWeather(outer, s.sigChart, { timeKnown: s.sigTimeKnown });
     const week = this.reading.weeklyReading({ standout, backdrop, days });
 
+    // the shard blueprint's ranked findings (CHART-BUILDER.md §3.1) — the
+    // deterministic half of the signature card (rarity, headline, degrees).
+    // The ~250-word generated paragraph itself is NOT computed here: it
+    // needs api.js's generation path, gated on a model/pipeline decision
+    // PRODUCT.md §12b is explicit isn't Code's to make silently. shardVals()
+    // shows an honest "not generated yet" state for that paragraph rather
+    // than inventing plausible-sounding prose.
+    const findings = await this.findings.enumerateFindings(s.sigChart, s.sigil, { timeKnown: s.sigTimeKnown });
+
+    // the full aspect grid the redesigned chart wheel's "aspects" section
+    // needs — every natal pair, not just the four trusted points
+    // natalAspects() (PATTERN tab, above) scans.
+    const fullAspects = await this.sigilMod.fullNatalAspects(s.sigChart, { timeKnown: s.sigTimeKnown });
+
     this.setState({
       sigArrival: arrival, sigPattern: pattern, sigHouses: houses, sigDepth: depth,
-      sigWeek: week,
+      sigWeek: week, sigFindings: findings, sigFullAspects: fullAspects,
       sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding,
     });
   };

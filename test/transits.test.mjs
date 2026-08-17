@@ -217,3 +217,26 @@ test('weekTightestContact: rising and MC excluded without a birth time', async (
   const result = await T.weekTightestContact(chart, { timeKnown: false }, weekStart);
   if (result) assert.ok(result.point !== 'rising' && result.point !== 'mc');
 });
+
+// -- natalPlanetPositions -------------------------------------------------
+
+test('natalPlanetPositions: matches planetPositions()/outerPositions() called against the birth date', async () => {
+  const jd = 2448088.0; // an arbitrary real JD (1990-06-15 12:00 UTC)
+  const birthDate = new Date((jd - 2440587.5) * 86400000);
+  const chart = { jd };
+  const [inner, outer] = await Promise.all([T.planetPositions(birthDate), T.outerPositions(birthDate)]);
+  const natal = await T.natalPlanetPositions(chart);
+  for (const name of ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn']) {
+    assert.equal(natal[name].lon, inner[name].lon);
+  }
+  for (const name of ['Uranus', 'Neptune', 'Pluto']) {
+    assert.equal(natal[name].lon, outer[name].lon);
+  }
+});
+
+test('natalPlanetPositions: deterministic for a fixed chart.jd', async () => {
+  const chart = { jd: 2451545.0 }; // J2000
+  const a = await T.natalPlanetPositions(chart);
+  const b = await T.natalPlanetPositions(chart);
+  assert.deepEqual(a, b);
+});

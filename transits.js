@@ -165,6 +165,28 @@ export async function outerPositions(date = new Date()) {
 }
 
 /**
+ * All eight Mercury-through-Pluto natal longitudes for a chart — astro.js's
+ * computeChart() only ever returns Sun/Moon/Asc/MC, so anything that needs
+ * a full natal picture (findings.js's seven finding kinds, a full aspect
+ * grid) has to fetch the rest itself. This is the shared way to do that:
+ * planetPositions()/outerPositions() called against the BIRTH date instead
+ * of "now" — the exact pattern sigil.js's ascRulerHouse() established
+ * first, now shared rather than re-derived at each call site.
+ * `{ [planet]: { lon } }`, flattened (no retrograde/outer distinction —
+ * callers wanting that read planetPositions()/outerPositions() directly).
+ */
+export async function natalPlanetPositions(chart) {
+  // JD 2440587.5 = 1970-01-01T00:00:00 UTC (see sigil.js's ascRulerHouse
+  // for the same conversion, same comment).
+  const birthDate = new Date((chart.jd - 2440587.5) * 86400000);
+  const [inner, outer] = await Promise.all([planetPositions(birthDate), outerPositions(birthDate)]);
+  const out = {};
+  for (const [name, pos] of Object.entries(inner)) out[name] = { lon: pos.lon };
+  for (const [name, pos] of Object.entries(outer)) out[name] = { lon: pos.lon };
+  return out;
+}
+
+/**
  * The weekly's "standing weather" (PRODUCT.md §7b beat 4 "the backdrop"
  * and beat 7 "the honest note") — Uranus/Neptune/Pluto contacts against
  * the four trusted natal points, sorted tightest-orb-first. Deliberately

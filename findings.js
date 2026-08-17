@@ -36,8 +36,8 @@
 // (research/mansions-patch-aug15.json) finished it — 14 STRONG, 10
 // PARTIAL, 4 DIVERGENT — so it's implemented below.
 
-import { mansionOf, signOf, SIGNS } from './astro.js';
-import { planetPositions, outerPositions } from './transits.js';
+import { mansionOf, signOf } from './astro.js';
+import { natalPlanetPositions } from './transits.js';
 import { degFmt } from './format.js';
 import { STATIONS } from './stations.js';
 import {
@@ -69,22 +69,19 @@ const ANGLE_PROXIMITY_MULT = 1.5;
  * honesty rule sigil.js's deriveSigil() already applies to risingStation.
  */
 async function allPoints(chart, { timeKnown }) {
-  // JD 2440587.5 = 1970-01-01T00:00:00 UTC (see sigil.js's ascRulerHouse
-  // for the same conversion, same comment).
-  const birthDate = new Date((chart.jd - 2440587.5) * 86400000);
-  const [inner, outer] = await Promise.all([planetPositions(birthDate), outerPositions(birthDate)]);
+  const natal = await natalPlanetPositions(chart);
 
   const points = [
     { name: 'Sun', lon: chart.sunLon },
     { name: 'Moon', lon: chart.moonLon },
-    { name: 'Mercury', lon: inner.Mercury.lon },
-    { name: 'Venus', lon: inner.Venus.lon },
-    { name: 'Mars', lon: inner.Mars.lon },
-    { name: 'Jupiter', lon: inner.Jupiter.lon },
-    { name: 'Saturn', lon: inner.Saturn.lon },
-    { name: 'Uranus', lon: outer.Uranus.lon },
-    { name: 'Neptune', lon: outer.Neptune.lon },
-    { name: 'Pluto', lon: outer.Pluto.lon },
+    { name: 'Mercury', lon: natal.Mercury.lon },
+    { name: 'Venus', lon: natal.Venus.lon },
+    { name: 'Mars', lon: natal.Mars.lon },
+    { name: 'Jupiter', lon: natal.Jupiter.lon },
+    { name: 'Saturn', lon: natal.Saturn.lon },
+    { name: 'Uranus', lon: natal.Uranus.lon },
+    { name: 'Neptune', lon: natal.Neptune.lon },
+    { name: 'Pluto', lon: natal.Pluto.lon },
   ];
   if (timeKnown) {
     points.push({ name: 'Ascendant', lon: chart.asc });

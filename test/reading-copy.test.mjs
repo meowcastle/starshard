@@ -18,10 +18,11 @@ test('reading-copy.js is not stale relative to tools/build-reading-copy.mjs\'s c
   assert.equal(committed, copyJs(), 'reading-copy.js is stale — run node tools/build-reading-copy.mjs');
 });
 
-test('exactly 258 slots, exactly 112 STATION.* slots', () => {
+test('exactly 398 slots, exactly 112 STATION.* slots, exactly 140 MANSION.* slots', () => {
   const ids = Object.keys(COPY);
-  assert.equal(ids.length, 258);
+  assert.equal(ids.length, 398);
   assert.equal(ids.filter(id => id.startsWith('STATION.')).length, 112);
+  assert.equal(ids.filter(id => id.startsWith('MANSION.')).length, 140);
 });
 
 test('every STATION.NN has all four slots (strike, root, facing, answer)', () => {
@@ -33,10 +34,30 @@ test('every STATION.NN has all four slots (strike, root, facing, answer)', () =>
   }
 });
 
-test('word-count floors hold, scoped per slot family (strike/root >=100, arrival UI copy uncapped, everything else >=15)', () => {
+test('every MANSION.NN has all five slots (claim, synthesis, election, archetype, keyword)', () => {
+  for (let n = 1; n <= 28; n++) {
+    const nn = String(n).padStart(2, '0');
+    for (const kind of ['claim', 'synthesis', 'election', 'archetype', 'keyword']) {
+      assert.ok(COPY[`MANSION.${nn}.${kind}`], `missing MANSION.${nn}.${kind}`);
+    }
+  }
+});
+
+test('every MANSION.NN.keyword is unique across the 28 (the ring label / codex index)', () => {
+  const keywords = [];
+  for (let n = 1; n <= 28; n++) {
+    keywords.push(COPY[`MANSION.${String(n).padStart(2, '0')}.keyword`].text);
+  }
+  assert.equal(new Set(keywords).size, 28, 'duplicate MANSION.*.keyword found');
+});
+
+test('word-count floors hold, scoped per slot family (strike/root >=100, arrival UI copy and MANSION.*.keyword uncapped, MANSION.*.claim >=10, everything else >=15)', () => {
   for (const [id, entry] of Object.entries(COPY)) {
     const words = entry.text.split(/\s+/).filter(Boolean).length;
-    const floor = /^STATION\.\d{2}\.(strike|root)$/.test(id) ? 100 : (ARRIVAL_UI_IDS.has(id) ? 1 : 15);
+    const floor = /^STATION\.\d{2}\.(strike|root)$/.test(id) ? 100
+      : (ARRIVAL_UI_IDS.has(id) || /^MANSION\.\d{2}\.keyword$/.test(id)) ? 1
+      : /^MANSION\.\d{2}\.claim$/.test(id) ? 10
+      : 15;
     assert.ok(words >= floor, `${id} is ${words} words, below the ${floor}-word floor`);
   }
 });

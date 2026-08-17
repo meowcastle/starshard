@@ -5414,8 +5414,2756 @@ export const COPY = {
         "emphasis": null
       }
     ]
+  },
+  "MANSION.01.claim": {
+    "text": "every degree of sky anyone has ever measured is counted from a point on this mansion's floor. it is the place the wheel starts, and the only one that has to be.",
+    "tokens": [
+      {
+        "text": "every degree of sky anyone has ever measured is counted from a point on this mansion's floor. ",
+        "emphasis": null
+      },
+      {
+        "text": "it is the place the wheel starts, and the only one that has to be.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.01.synthesis": {
+    "text": "two horns opening the year, twin physicians who reach the accident before anyone finishes calling for help, and a dog that hears it at the gate before the house does. three names for arriving first.",
+    "tokens": [
+      {
+        "text": "two horns opening the year, twin physicians who reach the accident before anyone finishes calling for help, and a dog that hears it at the gate before the house does. ",
+        "emphasis": null
+      },
+      {
+        "text": "three names for arriving first.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.01.election": {
+    "text": "the medieval election books gave these degrees beginnings and journeys. picatrix marks them for safe travel and safe return. and the same books are blunt that it is a poor stretch for weddings — a gate is built for passing through, not for staying in.",
+    "tokens": [
+      {
+        "text": "the medieval election books gave these degrees beginnings and journeys. picatrix marks them for safe travel and safe return. and the same books are blunt that it is a poor stretch for weddings — ",
+        "emphasis": null
+      },
+      {
+        "text": "a gate is built for passing through, not for staying in.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.01.archetype": {
+    "text": "a light here arrives before it is invited. the aśvins are the gods' first responders and they are twins, which is the part the symbol keeps: arriving is a thing done in pairs, at speed, with the treatment worked out on the way. the dog is the same instinct one register down — it announces every time, including the nine times it was nothing, and its alarm runs on affection rather than suspicion. what this mansion does not supply is the second half. the horns open the year and then the year has to be lived by somebody. arriving first and being ready are different skills, and these degrees only ever handed out the one.",
+    "tokens": [
+      {
+        "text": "a light here arrives before it is invited. the aśvins are the gods' first responders and they are ",
+        "emphasis": null
+      },
+      {
+        "text": "twins",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", which is the part the symbol keeps: arriving is a thing done in pairs, at speed, with the treatment worked out on the way. the dog is the same instinct one register down — it announces every time, including the nine times it was nothing, and its alarm runs on affection rather than suspicion. ",
+        "emphasis": null
+      },
+      {
+        "text": "what this mansion does not supply is the second half.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the horns open the year and then the year has to be lived by somebody. arriving first and being ready are different skills, and these degrees only ever handed out the one.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.01.keyword": {
+    "text": "arriving first",
+    "tokens": [
+      {
+        "text": "arriving first",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.02.claim": {
+    "text": "arabia called it the little belly. china called it the stomach. india called it she who bears. three of the four traditions independently looked at these degrees and named an organ that holds something inside it.",
+    "tokens": [
+      {
+        "text": "arabia called it the little belly. china called it the stomach. india called it ",
+        "emphasis": null
+      },
+      {
+        "text": "she who bears.",
+        "emphasis": "italic"
+      },
+      {
+        "text": " ",
+        "emphasis": null
+      },
+      {
+        "text": "three of the four traditions independently looked at these degrees and named an organ that holds something inside it.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.02.synthesis": {
+    "text": "a belly, a womb, a stomach — and yama at the door of them. the god of this mansion is the keeper of thresholds, which is the other half of carrying: something is held, and then something decides when it comes out.",
+    "tokens": [
+      {
+        "text": "a belly, a womb, a stomach — and yama at the door of them. the god of this mansion is the keeper of thresholds, which is the other half of carrying: ",
+        "emphasis": null
+      },
+      {
+        "text": "something is held, and then something decides when it comes out.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.02.election": {
+    "text": "picatrix gives these degrees the finding of hidden treasure, and the increase of wheat. agrippa adds the retaining of captives — a use that stays on the history shelf, and the same instinct as the rest: this is the stretch of sky for things kept somewhere until they are wanted.",
+    "tokens": [
+      {
+        "text": "picatrix gives these degrees the finding of hidden treasure, and the increase of wheat. agrippa adds the retaining of captives — a use that stays on the history shelf, and the same instinct as the rest: ",
+        "emphasis": null
+      },
+      {
+        "text": "this is the stretch of sky for things kept somewhere until they are wanted.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.02.archetype": {
+    "text": "a light here carries a full term. the work is interior and mostly invisible, and the mansion's whole difficulty is that nobody can see the difference between carrying something and doing nothing. yama is not a cruel god in the oldest layer — he is the first to die, and therefore the one who knows the way, and therefore the one at the threshold deciding what passes. so the capacity comes with a gate on it. to be born under the bearer is to hold more than you show and to be the one who says when. a thing held too long stops being carried and starts being stored.",
+    "tokens": [
+      {
+        "text": "a light here carries a full term. the work is interior and mostly invisible, and the mansion's whole difficulty is that nobody can see the difference between carrying something and doing nothing. yama is not a cruel god in the oldest layer — he is the ",
+        "emphasis": null
+      },
+      {
+        "text": "first",
+        "emphasis": "italic"
+      },
+      {
+        "text": " to die, and therefore the one who knows the way, and therefore the one at the threshold deciding what passes. ",
+        "emphasis": null
+      },
+      {
+        "text": "so the capacity comes with a gate on it.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " to be born under the bearer is to hold more than you show and to be the one who says when. a thing held too long stops being carried and starts being stored.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.02.keyword": {
+    "text": "what is carried",
+    "tokens": [
+      {
+        "text": "what is carried",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.03.claim": {
+    "text": "two of the four traditions named these stars a crowd, and japan still says it in ordinary speech: subaru is the everyday japanese word for this cluster today, and it means to gather.",
+    "tokens": [
+      {
+        "text": "two of the four traditions named these stars ",
+        "emphasis": null
+      },
+      {
+        "text": "a crowd",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and japan still says it in ordinary speech: ",
+        "emphasis": null
+      },
+      {
+        "text": "subaru",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is the everyday japanese word for this cluster today, and it means ",
+        "emphasis": null
+      },
+      {
+        "text": "to gather.",
+        "emphasis": "italic"
+      }
+    ]
+  },
+  "MANSION.03.synthesis": {
+    "text": "the many little ones and the gathered stars. the other two refuse the crowd entirely — china sees a hairy head, and india hands the cluster a blade: kṛttikā means the cutters, its deity is agni, and its emblem is a flame or a cutting edge.",
+    "tokens": [
+      {
+        "text": "the many little ones and the gathered stars. the other two refuse the crowd entirely — china sees a ",
+        "emphasis": null
+      },
+      {
+        "text": "hairy head",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and india hands the cluster a blade: ",
+        "emphasis": null
+      },
+      {
+        "text": "kṛttikā",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means ",
+        "emphasis": null
+      },
+      {
+        "text": "the cutters",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", its deity is agni, and its emblem is a flame or a cutting edge.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.03.election": {
+    "text": "al-bīrūnī's lineage marks these degrees for trade and marriage. agrippa, in 1533, is more specific and more strange: \"profitable to sailors, huntsmen, and alchemists.\" picatrix gives it safe sailing, work with fire, and married love.",
+    "tokens": [
+      {
+        "text": "al-bīrūnī's lineage marks these degrees for trade and marriage. agrippa, in 1533, is more specific and more strange: ",
+        "emphasis": null
+      },
+      {
+        "text": "\"profitable to sailors, huntsmen, and alchemists.\"",
+        "emphasis": "bold"
+      },
+      {
+        "text": " picatrix gives it safe sailing, work with fire, and married love.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.03.archetype": {
+    "text": "a light here reads as one object from a distance and resolves into six or seven the moment anyone looks properly. the arabs called this cluster al-najm — \"the Star,\" no qualifier — as though the sky contained only one, and the joke inside that name is that it is the most plural thing up there. so the mansion is about being counted wrong in both directions: taken for a single thing when you are several, taken for a crowd when you are one. agni's blade is what resolves it. fire separates what it burns, and these degrees belong to people who find out what they are made of by what survives the heat.",
+    "tokens": [
+      {
+        "text": "a light here reads as one object from a distance and resolves into six or seven the moment anyone looks properly. the arabs called this cluster ",
+        "emphasis": null
+      },
+      {
+        "text": "al-najm",
+        "emphasis": "italic"
+      },
+      {
+        "text": " — ",
+        "emphasis": null
+      },
+      {
+        "text": "\"the Star,\" no qualifier",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — as though the sky contained only one, and the joke inside that name is that it is the most plural thing up there. so the mansion is about being counted wrong in both directions: taken for a single thing when you are several, taken for a crowd when you are one. agni's blade is what resolves it. ",
+        "emphasis": null
+      },
+      {
+        "text": "fire separates what it burns",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and these degrees belong to people who find out what they are made of by what survives the heat.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.03.keyword": {
+    "text": "the many as one",
+    "tokens": [
+      {
+        "text": "the many as one",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.04.claim": {
+    "text": "aldebaran rises just behind the pleiades and chases them across the sky every night without ever closing the gap. it is also far brighter than any star in the cluster it is named for following.",
+    "tokens": [
+      {
+        "text": "aldebaran rises just behind the pleiades and chases them across the sky every night without ever closing the gap. ",
+        "emphasis": null
+      },
+      {
+        "text": "it is also far brighter than any star in the cluster it is named for following.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.04.synthesis": {
+    "text": "the follower, the growing one, and a net. arabia recorded the chase, india recorded what the chase accumulates — rohiṇī means growing, and its deity is brahmā, the maker — and china put down a thing that holds whatever walks into it.",
+    "tokens": [
+      {
+        "text": "the follower, the growing one, and a net. arabia recorded the chase, india recorded what the chase accumulates — ",
+        "emphasis": null
+      },
+      {
+        "text": "rohiṇī",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means growing, and its deity is brahmā, the maker — and china put down a thing that holds whatever walks into it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.04.election": {
+    "text": "poor for building and poor for marriage, say the old books, with agrippa specific about it — these degrees cause \"the destruction and hindrances of buildings, fountains, wells,\" and discord between man and wife. picatrix agrees. the poets had already noticed the irony and kept it: the eternal suitor never weds.",
+    "tokens": [
+      {
+        "text": "poor for building and poor for marriage, say the old books, with agrippa specific about it — these degrees cause ",
+        "emphasis": null
+      },
+      {
+        "text": "\"the destruction and hindrances of buildings, fountains, wells,\"",
+        "emphasis": "bold"
+      },
+      {
+        "text": " and discord between man and wife. picatrix agrees. the poets had already noticed the irony and kept it: ",
+        "emphasis": null
+      },
+      {
+        "text": "the eternal suitor never weds.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.04.archetype": {
+    "text": "a light here is behind something on purpose. a person, a standard, a version of the thing seen once and never unseen. the arrangement is usually chosen and rarely discussed, and the brightness makes it strange: the follower is not less than what it follows, it has simply declined the front. the crow is the detail that turns the mansion. crows recognise individual faces years later and hold the grudge that goes with them, so the accumulation is not only material. rohiṇī grows things where they stand. what gets kept here — the standard, the memory, the position behind — gets kept for a very long time.",
+    "tokens": [
+      {
+        "text": "a light here is behind something on purpose. a person, a standard, a version of the thing seen once and never unseen. ",
+        "emphasis": null
+      },
+      {
+        "text": "the arrangement is usually chosen and rarely discussed",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and the brightness makes it strange: the follower is not less than what it follows, it has simply declined the front. the crow is the detail that turns the mansion. crows recognise individual faces years later and hold the grudge that goes with them, so the accumulation is not only material. rohiṇī grows things where they stand. ",
+        "emphasis": null
+      },
+      {
+        "text": "what gets kept here — the standard, the memory, the position behind — gets kept for a very long time.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.04.keyword": {
+    "text": "the pursuit",
+    "tokens": [
+      {
+        "text": "the pursuit",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.05.claim": {
+    "text": "a white blaze on a horse's forehead, a deer's head, a beak. every tradition put a face in these degrees and then marked the front of it — the part that goes first and finds out.",
+    "tokens": [
+      {
+        "text": "a white blaze on a horse's forehead, a deer's head, a beak. ",
+        "emphasis": null
+      },
+      {
+        "text": "every tradition put a face in these degrees and then marked the front of it",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the part that goes first and finds out.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.05.synthesis": {
+    "text": "the seeking end of an animal, three times over. and the deity is soma, the draught the gods went looking for: the mansion names both the nose and the thing it is following.",
+    "tokens": [
+      {
+        "text": "the seeking end of an animal, three times over. and the deity is soma, the draught the gods went looking for: ",
+        "emphasis": null
+      },
+      {
+        "text": "the mansion names both the nose and the thing it is following.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.05.election": {
+    "text": "the old books gave these degrees travel, learning, and safe returns from journeys. picatrix keeps all three and adds teaching and health — one of the few stations that stays gentle even on the history shelf, where most of the martial mansions live.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees travel, learning, and safe returns from journeys. picatrix keeps all three and adds teaching and health — ",
+        "emphasis": null
+      },
+      {
+        "text": "one of the few stations that stays gentle even on the history shelf",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", where most of the martial mansions live.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.05.archetype": {
+    "text": "a light here is curious the way an animal is curious: forward, quick, close to the ground, and without much dignity about it. mṛgaśīrṣā is the deer's head, and a deer is alert — a cheaper faculty than courage and a more useful one. the monkey does the same job with hands. what these degrees hand out is a nose for the thing itself, and what they withhold is the patience to stay once it has been found. soma is a draught, not a meal. the search is the pleasure here, and a search that succeeds has to end, which is the quiet difficulty of a blaze-marked chart: arriving is faintly disappointing, and there is always another scent.",
+    "tokens": [
+      {
+        "text": "a light here is curious the way an animal is curious: forward, quick, close to the ground, and without much dignity about it. mṛgaśīrṣā is the deer's head, and a deer is ",
+        "emphasis": null
+      },
+      {
+        "text": "alert",
+        "emphasis": "italic"
+      },
+      {
+        "text": " — a cheaper faculty than courage and a more useful one. the monkey does the same job with hands. what these degrees hand out is a nose for the thing itself, and what they withhold is the patience to stay once it has been found. soma is a draught, not a meal. ",
+        "emphasis": null
+      },
+      {
+        "text": "the search is the pleasure here, and a search that succeeds has to end",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", which is the quiet difficulty of a blaze-marked chart: arriving is faintly disappointing, and there is always another scent.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.05.keyword": {
+    "text": "the searching face",
+    "tokens": [
+      {
+        "text": "the searching face",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.06.claim": {
+    "text": "every tradition that looked at these degrees named something that cannot be taken back.",
+    "tokens": [
+      {
+        "text": "every tradition that looked at these degrees named something that ",
+        "emphasis": null
+      },
+      {
+        "text": "cannot be taken back.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.06.synthesis": {
+    "text": "a brand burned into a camel's neck to say whose it is, the howling god's teardrop, and a long-armed caller heard across miles before anything sees it. a mark, a tear, and a voice — three things that arrive whole and do not retract.",
+    "tokens": [
+      {
+        "text": "a brand burned into a camel's neck to say whose it is, the howling god's teardrop, and a long-armed caller heard across miles before anything sees it. ",
+        "emphasis": null
+      },
+      {
+        "text": "a mark, a tear, and a voice",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — three things that arrive whole and do not retract.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.06.election": {
+    "text": "the medieval electors gave these degrees the fierce work: hunting, sieges, the jobs done at full force. picatrix adds revenge and the harming of crops, firmly on the history shelf. their reasoning was consistent — this is the stretch of sky for actions without an undo.",
+    "tokens": [
+      {
+        "text": "the medieval electors gave these degrees the fierce work: hunting, sieges, the jobs done at full force. picatrix adds revenge and the harming of crops, firmly on the history shelf. ",
+        "emphasis": null
+      },
+      {
+        "text": "their reasoning was consistent — this is the stretch of sky for actions without an undo.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.06.archetype": {
+    "text": "a light here goes all the way in. rudra is not the god of the storm's damage, he is the god of its sound — the howler — and the mansion keeps that distinction. the difficulty is amplitude rather than anger. things are felt at full volume, and full volume gets filed as too much by rooms that were only ever set up for one register. the mark left on a room stays on it after the person has gone, which is a gift when it was meant and a debt when it was not. ārdrā's emblem is a teardrop, and a teardrop is what a storm leaves once it has stopped being weather.",
+    "tokens": [
+      {
+        "text": "a light here goes all the way in. rudra is not the god of the storm's damage, he is the god of its ",
+        "emphasis": null
+      },
+      {
+        "text": "sound",
+        "emphasis": "italic"
+      },
+      {
+        "text": " — the howler — and the mansion keeps that distinction. the difficulty is amplitude rather than anger. things are felt at full volume, and full volume gets filed as too much by rooms that were only ever set up for one register. ",
+        "emphasis": null
+      },
+      {
+        "text": "the mark left on a room stays on it after the person has gone",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", which is a gift when it was meant and a debt when it was not. ārdrā's emblem is a teardrop, and a teardrop is what a storm leaves once it has stopped being weather.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.06.keyword": {
+    "text": "no undo",
+    "tokens": [
+      {
+        "text": "no undo",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.07.claim": {
+    "text": "a forearm, a well, and the light that returns. three ways of describing one gesture — reaching down and drawing something back up.",
+    "tokens": [
+      {
+        "text": "a forearm, a well, and ",
+        "emphasis": null
+      },
+      {
+        "text": "the light that returns.",
+        "emphasis": "italic"
+      },
+      {
+        "text": " ",
+        "emphasis": null
+      },
+      {
+        "text": "three ways of describing one gesture — reaching down and drawing something back up.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.07.synthesis": {
+    "text": "punarvasu means the good things coming again, and its deity is aditi, the boundless mother — the one who is not diminished by what is taken from her. a well is the same idea with a rope on it.",
+    "tokens": [
+      {
+        "text": "punarvasu means the good things coming again, and its deity is aditi, the boundless mother — the one who is not diminished by what is taken from her. ",
+        "emphasis": null
+      },
+      {
+        "text": "a well is the same idea with a rope on it.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.07.election": {
+    "text": "the old books gave these degrees gain, friendship, and lovers. picatrix keeps trade and friendship and adds royal favour. the whole stretch reads gently in every source that touched it, which is uncommon on this road.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees gain, friendship, and lovers. picatrix keeps trade and friendship and adds royal favour. ",
+        "emphasis": null
+      },
+      {
+        "text": "the whole stretch reads gently in every source that touched it",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", which is uncommon on this road.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.07.archetype": {
+    "text": "a light here gets a second time. the mansion governs things coming back, which requires that they left, and the leaving is not the optional half. castor and pollux are the twins one of whom is mortal, and the myth is entirely about the arrangement they reached to keep from losing each other: alternating days, forever, on opposite sides of the same door. that is the shape these degrees hand out. recovery is the native talent and the native expectation, and the cost of expecting recovery is that leaving stops feeling final, so goodbyes here are often provisional in a way the other person did not agree to.",
+    "tokens": [
+      {
+        "text": "a light here gets a second time. the mansion governs things coming ",
+        "emphasis": null
+      },
+      {
+        "text": "back",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", which requires that they left, and the leaving is not the optional half. castor and pollux are the twins one of whom is mortal, and the myth is entirely about the arrangement they reached to keep from losing each other: alternating days, forever, on opposite sides of the same door. ",
+        "emphasis": null
+      },
+      {
+        "text": "that is the shape these degrees hand out.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " recovery is the native talent and the native expectation, and the cost of expecting recovery is that leaving stops feeling final, so goodbyes here are often provisional in a way the other person did not agree to.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.07.keyword": {
+    "text": "what comes back",
+    "tokens": [
+      {
+        "text": "what comes back",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.08.claim": {
+    "text": "a smudge of haze that resolves, under any lens at all, into a thousand stars. every tradition named the smudge and none of them named the stars — the mansion is the blur itself.",
+    "tokens": [
+      {
+        "text": "a smudge of haze that resolves, under any lens at all, into a thousand stars. ",
+        "emphasis": null
+      },
+      {
+        "text": "every tradition named the smudge and none of them named the stars",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the mansion is the blur itself.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.08.synthesis": {
+    "text": "a ghost, the misted nostril of a lion, and a cow's udder. china saw vapour and india saw milk, and both of them were describing the same soft white patch that turns out to be feeding something.",
+    "tokens": [
+      {
+        "text": "a ghost, the misted nostril of a lion, and a cow's udder. china saw vapour and india saw milk, ",
+        "emphasis": null
+      },
+      {
+        "text": "and both of them were describing the same soft white patch that turns out to be feeding something.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.08.election": {
+    "text": "the old books gave these degrees love, friendship, and the company of fellow travellers. picatrix keeps all three and adds safe travel. the indian tradition rates puṣya the most auspicious of the twenty-seven — the station where anything begun is nourished.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees love, friendship, and the company of fellow travellers. picatrix keeps all three and adds safe travel. ",
+        "emphasis": null
+      },
+      {
+        "text": "the indian tradition rates puṣya the most auspicious of the twenty-seven",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the station where anything begun is nourished.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.08.archetype": {
+    "text": "a light here is read as insubstantial by people standing far enough away. the mansion's whole trick is the resolution: what looks like a haze is a crowd, and what looks like a ghost is a food source. puṣya means the nourisher, its deity is bṛhaspati — the priest, the one who speaks for others to the gods — and the emblem is the udder, which is the least mystical object in the entire corpus and the most exact. something is being fed here and it is rarely the person doing the feeding. the difficulty is proportion. an udder does not decide how much is taken, and neither does a haze that nobody can see the edges of.",
+    "tokens": [
+      {
+        "text": "a light here is read as insubstantial by people standing far enough away. the mansion's whole trick is the resolution: what looks like a haze is a crowd, and what looks like a ghost is a food source. puṣya means ",
+        "emphasis": null
+      },
+      {
+        "text": "the nourisher",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", its deity is bṛhaspati — the priest, the one who speaks for others to the gods — and the emblem is the udder, which is the least mystical object in the entire corpus and the most exact. ",
+        "emphasis": null
+      },
+      {
+        "text": "something is being fed here and it is rarely the person doing the feeding.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the difficulty is proportion. an udder does not decide how much is taken, and neither does a haze that nobody can see the edges of.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.08.keyword": {
+    "text": "the haze that feeds",
+    "tokens": [
+      {
+        "text": "the haze that feeds",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.09.claim": {
+    "text": "this is the only mansion on the road named for an act of perception. not a creature, not an object — a look.",
+    "tokens": [
+      {
+        "text": "this is the only mansion on the road named for ",
+        "emphasis": null
+      },
+      {
+        "text": "an act of perception.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " not a creature, not an object — a look.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.09.synthesis": {
+    "text": "the eye of the lion, the serpent's coil, and the willow that trails in water and never quite lets go of it. three images of contact that does not release. india's nāgas are the serpents who keep the knowledge that is not said out loud.",
+    "tokens": [
+      {
+        "text": "the eye of the lion, the serpent's coil, and the willow that trails in water and never quite lets go of it. ",
+        "emphasis": null
+      },
+      {
+        "text": "three images of contact that does not release.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " india's nāgas are the serpents who keep the knowledge that is not said out loud.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.09.election": {
+    "text": "the medieval electors were wary of these degrees. they marked them for discord, said the stretch hindered travel, and gave it a wide berth; picatrix goes as far as harming harvests and travellers, a hostile flag kept on the history shelf. the lion's eye misses nothing, and calendar-keepers found that an uncomfortable sky to plan under.",
+    "tokens": [
+      {
+        "text": "the medieval electors were wary of these degrees. they marked them for discord, said the stretch hindered travel, and gave it a wide berth; picatrix goes as far as harming harvests and travellers, a hostile flag kept on the history shelf. ",
+        "emphasis": null
+      },
+      {
+        "text": "the lion's eye misses nothing, and calendar-keepers found that an uncomfortable sky to plan under.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.09.archetype": {
+    "text": "a light here notices at a resolution most charts do not carry: the pause before the answer, the name that stopped being mentioned, who stopped being copied in. and then it holds. the willow, the coil and the eye all say the same thing from different angles — contact is made easily here and released with difficulty. what the mansion is genuinely good at is knowing a thing is over long before anyone announces it. what it costs is that seeing and gripping arrive as one motion, so the knowledge that should have been passed on sits, coiled, being kept instead.",
+    "tokens": [
+      {
+        "text": "a light here notices at a resolution most charts do not carry: the pause before the answer, the name that stopped being mentioned, who stopped being copied in. and then it holds. the willow, the coil and the eye all say the same thing from different angles — ",
+        "emphasis": null
+      },
+      {
+        "text": "contact is made easily here and released with difficulty.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " what the mansion is genuinely good at is knowing a thing is over long before anyone announces it. what it costs is that seeing and gripping arrive as one motion, so the knowledge that should have been passed on sits, coiled, being kept instead.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.09.keyword": {
+    "text": "contact that holds",
+    "tokens": [
+      {
+        "text": "contact that holds",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.10.claim": {
+    "text": "two civilisations looked at these degrees and saw the seat of a king. one looked at the same degrees and saw the heart of a water-snake. the disagreement is old and nobody has ever settled it.",
+    "tokens": [
+      {
+        "text": "two civilisations looked at these degrees and saw the seat of a king. one looked at the same degrees and saw the heart of a water-snake. ",
+        "emphasis": null
+      },
+      {
+        "text": "the disagreement is old and nobody has ever settled it.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.10.synthesis": {
+    "text": "arabia put the lion's forehead here and india put the royal throne, both on regulus — and china fixed the mansion instead on alphard, in hydra, a different star in a different animal. the flag on these degrees reads DIVERGENT, and it is one of four that do.",
+    "tokens": [
+      {
+        "text": "arabia put the lion's forehead here and india put the royal throne, both on regulus — and china fixed the mansion instead on ",
+        "emphasis": null
+      },
+      {
+        "text": "alphard, in hydra",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", a different star in a different animal. the flag on these degrees reads DIVERGENT, and it is one of four that do.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.10.election": {
+    "text": "favourable for trade and building, say the old books. agrippa's line is the one worth keeping: these degrees \"strengthen buildings.\" picatrix gives them love and alliance. the sky of things meant to outlast whoever made them.",
+    "tokens": [
+      {
+        "text": "favourable for trade and building, say the old books. agrippa's line is the one worth keeping: these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "\"strengthen buildings.\"",
+        "emphasis": "bold"
+      },
+      {
+        "text": " picatrix gives them love and alliance. ",
+        "emphasis": null
+      },
+      {
+        "text": "the sky of things meant to outlast whoever made them.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.10.archetype": {
+    "text": "regulus sits almost exactly on the ecliptic, so the moon and the planets pass over it in an endless procession — the way a court files past a chair. a light here keeps its bearing. there is a carriage to it even at rest, an instinct not to be seen flinching, and the room responds by bringing its best behaviour and taking its mess elsewhere. the indian reading is the one that turns the mansion, because it refuses the obvious: the seat is real and its deity is not a king — it is the ancestors, the dead who are owed offerings. the chair was carved before anyone arrived to sit in it, and these degrees carry the private question of whether the occupant is worthy of a thing they did not build.",
+    "tokens": [
+      {
+        "text": "regulus sits almost exactly on the ecliptic, so the moon and the planets pass over it in an endless procession — ",
+        "emphasis": null
+      },
+      {
+        "text": "the way a court files past a chair.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " a light here keeps its bearing. there is a carriage to it even at rest, an instinct not to be seen flinching, and the room responds by bringing its best behaviour and taking its mess elsewhere. the indian reading is the one that turns the mansion, because it refuses the obvious: the seat is real and its deity is ",
+        "emphasis": null
+      },
+      {
+        "text": "not a king",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — it is the ancestors, the dead who are owed offerings. ",
+        "emphasis": null
+      },
+      {
+        "text": "the chair was carved before anyone arrived to sit in it",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and these degrees carry the private question of whether the occupant is worthy of a thing they did not build.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.10.keyword": {
+    "text": "the carved chair",
+    "tokens": [
+      {
+        "text": "the carved chair",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.11.claim": {
+    "text": "a lion's mane, the front legs of a bed, and a net drawn open. three spread things — and 張 zhāng is literally the verb for stretching something wide.",
+    "tokens": [
+      {
+        "text": "a lion's mane, the front legs of a bed, and a net drawn open. ",
+        "emphasis": null
+      },
+      {
+        "text": "three spread things",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — and 張 ",
+        "emphasis": null
+      },
+      {
+        "text": "zhāng",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is literally the verb for stretching something wide.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.11.synthesis": {
+    "text": "india's deity here is bhaga, god of the share you were allotted — not what is earned, what is assigned. the classical power given to these degrees is prajanana śakti, the power of procreation. a bed, a mane, and an open net all hold whatever is brought to them.",
+    "tokens": [
+      {
+        "text": "india's deity here is bhaga, god of ",
+        "emphasis": null
+      },
+      {
+        "text": "the share you were allotted",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — not what is earned, what is assigned. the classical power given to these degrees is ",
+        "emphasis": null
+      },
+      {
+        "text": "prajanana śakti",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the power of procreation. ",
+        "emphasis": null
+      },
+      {
+        "text": "a bed, a mane, and an open net all hold whatever is brought to them.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.11.election": {
+    "text": "the old books gave these degrees travel and commerce, and then the theme that recurs across this whole stretch of sky: the release of captives. picatrix keeps the freeing and the wealth, and adds sieges — a mixed flag, half of it on the history shelf.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees travel and commerce, and then the theme that recurs across this whole stretch of sky: ",
+        "emphasis": null
+      },
+      {
+        "text": "the release of captives.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " picatrix keeps the freeing and the wealth, and adds sieges — a mixed flag, half of it on the history shelf.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.11.archetype": {
+    "text": "a light here is comfortable being looked at, and the comfort is the mansion rather than the personality. a mane does exactly one job: it makes the animal read as larger and better than the animal. bhaga hands out portions, so the difficulty is never scarcity — it is the suspicion that the portion arrived rather than being won. these degrees give ease and rest and display, and take the same thing back on the other side: what is spread open cannot also be held in reserve, and a bed with its legs showing is furniture nobody thinks to ask permission to use.",
+    "tokens": [
+      {
+        "text": "a light here is comfortable being looked at, and the comfort is the mansion rather than the personality. a mane does exactly one job: it makes the animal read as larger and better than the animal. bhaga hands out portions, so the difficulty is never scarcity — ",
+        "emphasis": null
+      },
+      {
+        "text": "it is the suspicion that the portion arrived rather than being won.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " these degrees give ease and rest and display, and take the same thing back on the other side: what is spread open cannot also be held in reserve, and a bed with its legs showing is furniture nobody thinks to ask permission to use.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.11.keyword": {
+    "text": "the spread",
+    "tokens": [
+      {
+        "text": "the spread",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.12.claim": {
+    "text": "arabia named these degrees for a change in the weather rather than a thing in the sky. al-ṣarfa is the turning of the heat — the point in the year when summer breaks and the season changes its mind.",
+    "tokens": [
+      {
+        "text": "arabia named these degrees for a change in the weather rather than a thing in the sky. ",
+        "emphasis": null
+      },
+      {
+        "text": "al-ṣarfa",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is ",
+        "emphasis": null
+      },
+      {
+        "text": "the turning of the heat",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the point in the year when summer breaks and the season changes its mind.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.12.synthesis": {
+    "text": "the turning, a pair of wings, and a snake that grows only by leaving a skin behind. india's deity is aryaman, god of kinship and the kept contract — so the mansion holds a change and an obligation in the same hand. (the oldest sanskrit list, the taittirīya brāhmaṇa, assigns aryaman and bhaga the other way round; later jyotiṣa reversed them, and this is the later reading.)",
+    "tokens": [
+      {
+        "text": "the turning, a pair of wings, and a snake that grows only by leaving a skin behind. india's deity is aryaman, god of ",
+        "emphasis": null
+      },
+      {
+        "text": "kinship and the kept contract",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — so the mansion holds a change and an obligation in the same hand. ",
+        "emphasis": null
+      },
+      {
+        "text": "(the oldest sanskrit list, the taittirīya brāhmaṇa, assigns aryaman and bhaga the other way round; later jyotiṣa reversed them, and this is the later reading.)",
+        "emphasis": "italic"
+      }
+    ]
+  },
+  "MANSION.12.election": {
+    "text": "the old books gave these degrees harvests and household matters, and warned against putting to sea. picatrix has crops increased and ships harmed, a mixed flag. a stretch of sky for bringing things in and finishing them, and a poor one for setting out.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees harvests and household matters, and warned against putting to sea. picatrix has crops increased and ships harmed, a mixed flag. ",
+        "emphasis": null
+      },
+      {
+        "text": "a stretch of sky for bringing things in and finishing them, and a poor one for setting out.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.12.archetype": {
+    "text": "a light here molts. a snake does not shed a percentage. what makes these degrees difficult is the second deity: aryaman keeps contracts, and a contract is a thing that survives the change, so the mansion asks for both at once. what is finished here is finished completely, and what is owed is still owed. the pairing runs through the whole stretch: uttara phalgunī is the second half of a pair whose first half is a bed's front legs, and the classical power given to it is prosperity that arrives through union. what is shed is a skin. what is kept is everyone else.",
+    "tokens": [
+      {
+        "text": "a light here molts. ",
+        "emphasis": null
+      },
+      {
+        "text": "a snake does not shed a percentage.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " what makes these degrees difficult is the second deity: aryaman keeps contracts, and a contract is a thing that survives the change, so the mansion asks for both at once. ",
+        "emphasis": null
+      },
+      {
+        "text": "what is finished here is finished completely, and what is owed is still owed.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the pairing runs through the whole stretch: uttara phalgunī is the second half of a pair whose first half is a bed's front legs, and the classical power given to it is prosperity that arrives through union. what is shed is a skin. what is kept is everyone else.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.12.keyword": {
+    "text": "the weather breaks",
+    "tokens": [
+      {
+        "text": "the weather breaks",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.13.claim": {
+    "text": "an open hand, a barking dog, and the board of a chariot. the mansion of things you hold on to and things that hold you up — and india's name for it is simply the hand.",
+    "tokens": [
+      {
+        "text": "an open hand, a barking dog, and the board of a chariot. ",
+        "emphasis": null
+      },
+      {
+        "text": "the mansion of things you hold on to and things that hold you up",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — and india's name for it is simply ",
+        "emphasis": null
+      },
+      {
+        "text": "the hand.",
+        "emphasis": "italic"
+      }
+    ]
+  },
+  "MANSION.13.synthesis": {
+    "text": "hasta's deity is savitṛ, the impeller — the god who sets things in motion rather than making them. arabia's al-ʿawwāʾ is read as the barker and, by a minority, as the bend of the figure. china's 軫 zhěn is the crossboard at the back of a chariot, the part a driver braces against. a hand, and the thing the hand pushes off.",
+    "tokens": [
+      {
+        "text": "hasta's deity is savitṛ, the impeller — the god who ",
+        "emphasis": null
+      },
+      {
+        "text": "sets things in motion",
+        "emphasis": "bold"
+      },
+      {
+        "text": " rather than making them. arabia's ",
+        "emphasis": null
+      },
+      {
+        "text": "al-ʿawwāʾ",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is read as the barker and, by a minority, as the bend of the figure. china's 軫 ",
+        "emphasis": null
+      },
+      {
+        "text": "zhěn",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is the crossboard at the back of a chariot, the part a driver braces against. ",
+        "emphasis": null
+      },
+      {
+        "text": "a hand, and the thing the hand pushes off.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.13.election": {
+    "text": "the old books gave these degrees benevolence, gain, voyages, and freedom. picatrix keeps trade and harvests and adds the freeing of captives. gentle in every source that recorded it, which on this road is worth noting.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees benevolence, gain, voyages, and freedom. picatrix keeps trade and harvests and adds the freeing of captives. ",
+        "emphasis": null
+      },
+      {
+        "text": "gentle in every source that recorded it",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", which on this road is worth noting.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.13.archetype": {
+    "text": "a light here works with its hands, in the wide sense — the talent is making a thing exist that did not, and the mansion does not care whether the thing is a chair or an argument. savitṛ's job is the impulse, not the object, so what these degrees hand out is the ability to start the motion in something else. the earthworm is the guardian and it is not a joke: it moves more soil than any machine and is never once observed doing it. the difficulty is the open palm. a hand that can make can also give away, and the mansion has no built-in instinct for keeping count of what has left it.",
+    "tokens": [
+      {
+        "text": "a light here works with its hands, in the wide sense — the talent is making a thing exist that did not, and the mansion does not care whether the thing is a chair or an argument. savitṛ's job is the impulse, not the object, so what these degrees hand out is the ability to ",
+        "emphasis": null
+      },
+      {
+        "text": "start the motion in something else.",
+        "emphasis": "italic"
+      },
+      {
+        "text": " the earthworm is the guardian and it is not a joke: it moves more soil than any machine and is never once observed doing it. ",
+        "emphasis": null
+      },
+      {
+        "text": "the difficulty is the open palm.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " a hand that can make can also give away, and the mansion has no built-in instinct for keeping count of what has left it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.13.keyword": {
+    "text": "the maker's hand",
+    "tokens": [
+      {
+        "text": "the maker's hand",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.14.claim": {
+    "text": "arabia's name for spica is the unarmed high one — al-simāk al-aʿzal, the tall star that carries no weapon. its twin, arcturus, is al-simāk the lance-bearer. the sky named the pair and then took the weapon off one of them.",
+    "tokens": [
+      {
+        "text": "arabia's name for spica is ",
+        "emphasis": null
+      },
+      {
+        "text": "the unarmed high one",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — ",
+        "emphasis": null
+      },
+      {
+        "text": "al-simāk al-aʿzal",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the tall star that carries no weapon. its twin, arcturus, is al-simāk the lance-bearer. ",
+        "emphasis": null
+      },
+      {
+        "text": "the sky named the pair and then took the weapon off one of them.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.14.synthesis": {
+    "text": "a jewel, an unarmed height, and the azure dragon's own horn. india's chitrā means the brilliant one and its deity is tvaṣṭṛ, the divine artisan — the maker of made things, including the weapon this mansion is not carrying.",
+    "tokens": [
+      {
+        "text": "a jewel, an unarmed height, and the azure dragon's own horn. india's ",
+        "emphasis": null
+      },
+      {
+        "text": "chitrā",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means the brilliant one and its deity is tvaṣṭṛ, ",
+        "emphasis": null
+      },
+      {
+        "text": "the divine artisan",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the maker of made things, including the weapon this mansion is not carrying.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.14.election": {
+    "text": "the old books gave these degrees love, marriage, and the healing of the sick. agrippa is good to sailors here and hinders journeys by land; picatrix cures the sick and destroys the harvest. every source gives this mansion something it loves and something it ruins.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees love, marriage, and the healing of the sick. agrippa is good to sailors here and ",
+        "emphasis": null
+      },
+      {
+        "text": "hinders journeys by land",
+        "emphasis": "bold"
+      },
+      {
+        "text": "; picatrix cures the sick and destroys the harvest. ",
+        "emphasis": null
+      },
+      {
+        "text": "every source gives this mansion something it loves and something it ruins.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.14.archetype": {
+    "text": "a light here is visible and undefended, and the two are the same condition. spica is the brightest star in virgo and one of the brightest in the sky, and the tradition that named it went out of its way to say it is holding nothing. tvaṣṭṛ makes objects of great beauty and is famous in the myths for what happens to them afterward — the artisan's problem is never the making. these degrees give craft and the attention craft attracts, and withhold the instinct to arm against that attention. what is built here is admired first and protected second, if at all.",
+    "tokens": [
+      {
+        "text": "a light here is visible and undefended, and the two are the same condition. spica is the brightest star in virgo and one of the brightest in the sky, and the tradition that named it went out of its way to say it is holding nothing. tvaṣṭṛ makes objects of great beauty and is famous in the myths for what happens to them afterward — ",
+        "emphasis": null
+      },
+      {
+        "text": "the artisan's problem is never the making.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " these degrees give craft and the attention craft attracts, and withhold the instinct to arm against that attention. what is built here is admired first and protected second, if at all.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.14.keyword": {
+    "text": "the unarmed bright",
+    "tokens": [
+      {
+        "text": "the unarmed bright",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.15.claim": {
+    "text": "arabia named these degrees the cover. india looked at the same stretch and put its station on arcturus — a star off the road entirely — and called it svātī, the one that goes by itself. cover, and the thing that will not be covered.",
+    "tokens": [
+      {
+        "text": "arabia named these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "the cover.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " india looked at the same stretch and put its station on arcturus — a star off the road entirely — and called it ",
+        "emphasis": null
+      },
+      {
+        "text": "svātī",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", ",
+        "emphasis": null
+      },
+      {
+        "text": "the one that goes by itself.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " ",
+        "emphasis": null
+      },
+      {
+        "text": "cover, and the thing that will not be covered.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.15.synthesis": {
+    "text": "a veil, a young shoot bending in the wind, and the dragon's exposed throat. svātī is self-going; its deity is vāyu, the wind itself. the flag here reads DIVERGENT — the traditions are not describing one place, and the argument is between hiding and standing apart.",
+    "tokens": [
+      {
+        "text": "a veil, a young shoot bending in the wind, and the dragon's exposed throat. ",
+        "emphasis": null
+      },
+      {
+        "text": "svātī",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is self-going; its deity is vāyu, the wind itself. ",
+        "emphasis": null
+      },
+      {
+        "text": "the flag here reads DIVERGENT",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the traditions are not describing one place, and the argument is between hiding and standing apart.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.15.election": {
+    "text": "the old books gave these degrees digging, wells, and the finding of treasure — all three of them things retrieved from under something. picatrix keeps the treasure and the wells and adds separation, a mixed flag. the same sources say the stretch hinders travel.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees digging, wells, and the finding of treasure — ",
+        "emphasis": null
+      },
+      {
+        "text": "all three of them things retrieved from under something.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " picatrix keeps the treasure and the wells and adds separation, a mixed flag. the same sources say the stretch hinders travel.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.15.archetype": {
+    "text": "a light here is not hidden so much as unplaced. svātī is the star that stands apart from every group near it, and vāyu is the one element that cannot be held; the arabic cover and the chinese throat are both about the thin layer between something soft and the open air. independence arrives here as a fact rather than a decision, which is the difficulty: a shoot in wind bends because nothing is holding it. these degrees give a self that does not need the room's permission, and take away the option of belonging to the room without thinking about it.",
+    "tokens": [
+      {
+        "text": "a light here is not hidden so much as ",
+        "emphasis": null
+      },
+      {
+        "text": "unplaced.",
+        "emphasis": "italic"
+      },
+      {
+        "text": " svātī is the star that stands apart from every group near it, and vāyu is the one element that cannot be held; the arabic cover and the chinese throat are both about the thin layer between something soft and the open air. ",
+        "emphasis": null
+      },
+      {
+        "text": "independence arrives here as a fact rather than a decision",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", which is the difficulty: a shoot in wind bends because nothing is holding it. these degrees give a self that does not need the room's permission, and take away the option of belonging to the room without thinking about it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.15.keyword": {
+    "text": "the cover",
+    "tokens": [
+      {
+        "text": "the cover",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.16.claim": {
+    "text": "libra's two brightest stars are still called the southern claw and the northern claw. the greeks kept them on the scorpion as the chelae; rome cut them off and handed the space back to a balance babylon had already put there. the names never changed.",
+    "tokens": [
+      {
+        "text": "libra's two brightest stars are still called ",
+        "emphasis": null
+      },
+      {
+        "text": "the southern claw and the northern claw.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the greeks kept them on the scorpion as the ",
+        "emphasis": null
+      },
+      {
+        "text": "chelae",
+        "emphasis": "italic"
+      },
+      {
+        "text": "; rome cut them off and handed the space back to a balance babylon had already put there. the names never changed.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.16.synthesis": {
+    "text": "two claws, a forked star, and a foundation. viśākhā means the branched one, and its deity is indrāgnī — indra and agni worshipped as a single god, force and fire welded into one name. everything in this mansion comes in twos that refuse to separate.",
+    "tokens": [
+      {
+        "text": "two claws, a forked star, and a foundation. ",
+        "emphasis": null
+      },
+      {
+        "text": "viśākhā",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means ",
+        "emphasis": null
+      },
+      {
+        "text": "the branched one",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and its deity is indrāgnī — indra and agni worshipped as a single god, force and fire welded into one name. ",
+        "emphasis": null
+      },
+      {
+        "text": "everything in this mansion comes in twos that refuse to separate.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.16.election": {
+    "text": "the old books say these degrees hinder journeys and marriage, and picatrix marks them for discord and the destruction of crops — hostile flags, kept on the history shelf. the one use every source agrees on is the freeing of captives.",
+    "tokens": [
+      {
+        "text": "the old books say these degrees hinder journeys and marriage, and picatrix marks them for discord and the destruction of crops — hostile flags, kept on the history shelf. ",
+        "emphasis": null
+      },
+      {
+        "text": "the one use every source agrees on is the freeing of captives.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.16.archetype": {
+    "text": "a light here goes two ways at once and does not experience this as indecision. the classical power given to these degrees is vyāpana śakti, the power to achieve many and various fruits, and its stated basis is the pair of ploughing and harvest — the same field, twice, at opposite ends of the year. the mansion's whole architecture is the fork: two claws on one animal, two gods in one name, a triumphal arch that is two pillars before it is a victory. what these degrees withhold is the single-mindedness that makes things fast. the arch stands because it is carrying weight in two directions.",
+    "tokens": [
+      {
+        "text": "a light here goes two ways at once and does not experience this as indecision. the classical power given to these degrees is ",
+        "emphasis": null
+      },
+      {
+        "text": "vyāpana śakti",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", ",
+        "emphasis": null
+      },
+      {
+        "text": "the power to achieve many and various fruits",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and its stated basis is the pair of ploughing and harvest — the same field, twice, at opposite ends of the year. the mansion's whole architecture is the fork: two claws on one animal, two gods in one name, a triumphal arch that is two pillars before it is a victory. ",
+        "emphasis": null
+      },
+      {
+        "text": "what these degrees withhold is the single-mindedness that makes things fast.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the arch stands because it is carrying weight in two directions.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.16.keyword": {
+    "text": "the fork",
+    "tokens": [
+      {
+        "text": "the fork",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.17.claim": {
+    "text": "a diadem across a scorpion's brow, an archway, and a room. three things a person walks under or into, and all three of them were built by somebody who expected them to still be standing later.",
+    "tokens": [
+      {
+        "text": "a diadem across a scorpion's brow, an archway, and a room. ",
+        "emphasis": null
+      },
+      {
+        "text": "three things a person walks under or into",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and all three of them were built by somebody who expected them to still be standing later.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.17.synthesis": {
+    "text": "india's deity here is mitra — the god of the sworn oath between equals, the contract nobody is forced into. anurādhā means following rādhā, and the classical power given to it is rādhana śakti, the power of worship. devotion here is a thing entered on purpose.",
+    "tokens": [
+      {
+        "text": "india's deity here is ",
+        "emphasis": null
+      },
+      {
+        "text": "mitra — the god of the sworn oath between equals",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", the contract nobody is forced into. ",
+        "emphasis": null
+      },
+      {
+        "text": "anurādhā",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means following rādhā, and the classical power given to it is ",
+        "emphasis": null
+      },
+      {
+        "text": "rādhana śakti",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the power of worship. ",
+        "emphasis": null
+      },
+      {
+        "text": "devotion here is a thing entered on purpose.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.17.election": {
+    "text": "the old books gave these degrees fortune, love of long duration, buildings, and armies. picatrix keeps the long-lasting love and adds the safety of sailors. the durability station — every recorded use is about something that has to hold up over time.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees fortune, love ",
+        "emphasis": null
+      },
+      {
+        "text": "of long duration",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", buildings, and armies. picatrix keeps the long-lasting love and adds the safety of sailors. ",
+        "emphasis": null
+      },
+      {
+        "text": "the durability station",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — every recorded use is about something that has to hold up over time.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.17.archetype": {
+    "text": "a light here builds the kind of thing that is judged in decades. mitra is not the god of feeling; he is the god of the agreement that outlives the feeling, which is a colder idea and a warmer practice. the crown sits on the scorpion — the mansion puts a diadem on the most dangerous animal in the sky and the diadem stays on — so what is governed here is the arrangement under which a dangerous thing consents to be governed. the difficulty is exit. a chart that specialises in durable bonds is a chart with no instinct for how to leave one, and these degrees supply no such instinct at all.",
+    "tokens": [
+      {
+        "text": "a light here builds the kind of thing that is judged in decades. mitra is not the god of feeling; he is the god of the agreement that outlives the feeling, which is a colder idea and a warmer practice. the crown sits on the scorpion — ",
+        "emphasis": null
+      },
+      {
+        "text": "the mansion puts a diadem on the most dangerous animal in the sky and the diadem stays on",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — so what is governed here is the arrangement under which a dangerous thing consents to be governed. the difficulty is exit. a chart that specialises in durable bonds is a chart with no instinct for how to leave one, and these degrees supply no such instinct at all.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.17.keyword": {
+    "text": "the kept oath",
+    "tokens": [
+      {
+        "text": "the kept oath",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.18.claim": {
+    "text": "arabia, china and japan all call these degrees the heart — the same word, the same star. it is the clearest agreement anywhere on the road, and the flag reads STRONG.",
+    "tokens": [
+      {
+        "text": "arabia, china and japan all call these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "the heart",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the same word, the same star. ",
+        "emphasis": null
+      },
+      {
+        "text": "it is the clearest agreement anywhere on the road",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and the flag reads STRONG.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.18.synthesis": {
+    "text": "antares is red and it sits in the scorpion's chest. the arabic qalb al-ʿaqrab translates the greek kardia skorpiou — the agreement here is inheritance rather than coincidence, one name carried across three languages without anyone changing their mind about it. india calls the station jyeṣṭhā, the eldest — the senior-most, the one who was here first — and gives it indra, king of the gods.",
+    "tokens": [
+      {
+        "text": "antares is red and it sits in the scorpion's chest. the arabic ",
+        "emphasis": null
+      },
+      {
+        "text": "qalb al-ʿaqrab",
+        "emphasis": "italic"
+      },
+      {
+        "text": " translates the greek ",
+        "emphasis": null
+      },
+      {
+        "text": "kardia skorpiou",
+        "emphasis": "italic"
+      },
+      {
+        "text": " — ",
+        "emphasis": null
+      },
+      {
+        "text": "the agreement here is inheritance rather than coincidence",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", one name carried across three languages without anyone changing their mind about it. india calls the station ",
+        "emphasis": null
+      },
+      {
+        "text": "jyeṣṭhā, the eldest",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the senior-most, the one who was here first — and gives it indra, king of the gods.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.18.election": {
+    "text": "the old books gave these degrees victory over enemies, and the same books mark them for sedition and discord. both entries survive in every source. picatrix has victory and conspiracies together, a mixed flag. a heart this strong was understood to need aiming.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees victory over enemies, and the same books mark them for sedition and discord. ",
+        "emphasis": null
+      },
+      {
+        "text": "both entries survive in every source.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " picatrix has victory and conspiracies together, a mixed flag. a heart this strong was understood to need aiming.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.18.archetype": {
+    "text": "a light here is senior. not older — senior, which is a position rather than an age, and these degrees confer it early and without asking. the classical power given to jyeṣṭhā is ārohana śakti, the power to rise, and its stated basis is attack above and defence below: the same motion serving either. antares means rival of mars, a name given by people watching a red star hold its own against a red planet all year. the mansion's difficulty is that seniority is not the same as being loved for it. the eldest gets the responsibility, the deference, and the specific loneliness of a position nobody else applied for.",
+    "tokens": [
+      {
+        "text": "a light here is senior. not older — ",
+        "emphasis": null
+      },
+      {
+        "text": "senior",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", which is a position rather than an age, and these degrees confer it early and without asking. the classical power given to jyeṣṭhā is ",
+        "emphasis": null
+      },
+      {
+        "text": "ārohana śakti",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", ",
+        "emphasis": null
+      },
+      {
+        "text": "the power to rise",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and its stated basis is attack above and defence below: the same motion serving either. antares means ",
+        "emphasis": null
+      },
+      {
+        "text": "rival of mars",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", a name given by people watching a red star hold its own against a red planet all year. ",
+        "emphasis": null
+      },
+      {
+        "text": "the mansion's difficulty is that seniority is not the same as being loved for it.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the eldest gets the responsibility, the deference, and the specific loneliness of a position nobody else applied for.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.18.keyword": {
+    "text": "the eldest",
+    "tokens": [
+      {
+        "text": "the eldest",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.19.claim": {
+    "text": "india calls these degrees the root and everyone else calls them the tail. same stars, opposite ends of the same idea — the part of the animal that comes last, and the part of the plant that came first.",
+    "tokens": [
+      {
+        "text": "india calls these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "the root",
+        "emphasis": "bold"
+      },
+      {
+        "text": " and everyone else calls them the tail. ",
+        "emphasis": null
+      },
+      {
+        "text": "same stars, opposite ends of the same idea",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the part of the animal that comes last, and the part of the plant that came first.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.19.synthesis": {
+    "text": "a raised sting, a tail, and a bundle of roots tied together. mūla means the bottom, the origin, the thing you hit when you have dug all the way down. its deity is nirṛti, dissolution — named in the oldest text and softened by later hands into alakṣmī, misfortune personified.",
+    "tokens": [
+      {
+        "text": "a raised sting, a tail, and a bundle of roots tied together. ",
+        "emphasis": null
+      },
+      {
+        "text": "mūla",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means the bottom, the origin, the thing you hit when you have dug all the way down. its deity is nirṛti, ",
+        "emphasis": null
+      },
+      {
+        "text": "dissolution",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — named in the oldest text and softened by later hands into alakṣmī, misfortune personified.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.19.election": {
+    "text": "the medieval electors kept peace-work away from these degrees. picatrix sends armies against cities and takes fugitives — and then, without comment, increases the crops. the harming of ships is agrippa's entry, not his. the martial end of the scorpion, and not uniformly so.",
+    "tokens": [
+      {
+        "text": "the medieval electors kept peace-work away from these degrees. picatrix sends armies against cities and takes fugitives — and then, without comment, ",
+        "emphasis": null
+      },
+      {
+        "text": "increases the crops.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the harming of ships is agrippa's entry, not his. the martial end of the scorpion, and not uniformly so.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.19.archetype": {
+    "text": "a light here goes to the bottom of things, and the mansion is honest that this is a destructive act. you cannot examine a root without pulling the plant up. nirṛti is the goddess of dissolution and she is not a villain in the texts — she is what is left when a structure is taken apart, and somebody has to be able to do that. the talent is finding the actual cause, the one under the three plausible ones. the search is not gentle and does not stop on request, and these degrees supply no mechanism for deciding that a thing has been understood well enough already.",
+    "tokens": [
+      {
+        "text": "a light here goes to the bottom of things, and the mansion is honest that this is a destructive act. you cannot examine a root without pulling the plant up. nirṛti is the goddess of dissolution and she is not a villain in the texts — she is what is left when a structure is taken apart, and somebody has to be able to do that. ",
+        "emphasis": null
+      },
+      {
+        "text": "the talent is finding the actual cause",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", the one under the three plausible ones. the search is not gentle and does not stop on request, and these degrees supply no mechanism for deciding that a thing has been understood well enough already.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.19.keyword": {
+    "text": "the bottom of it",
+    "tokens": [
+      {
+        "text": "the bottom of it",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.20.claim": {
+    "text": "eight stars, in two groups of four. arabia read them as ostriches walking to the river to drink, and ostriches walking back — one flock, photographed going both directions at once.",
+    "tokens": [
+      {
+        "text": "eight stars, in two groups of four. arabia read them as ",
+        "emphasis": null
+      },
+      {
+        "text": "ostriches walking to the river to drink, and ostriches walking back",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — one flock, photographed going both directions at once.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.20.synthesis": {
+    "text": "the ostriches go to the water; india's deity for the same degrees is āpas, the divine waters themselves; and china's winnowing basket is the tool that separates what is worth keeping from what blows away. two traditions independently put water at the centre of this stretch.",
+    "tokens": [
+      {
+        "text": "the ostriches go to the water; india's deity for the same degrees is ",
+        "emphasis": null
+      },
+      {
+        "text": "āpas, the divine waters themselves",
+        "emphasis": "bold"
+      },
+      {
+        "text": "; and china's winnowing basket is the tool that separates what is worth keeping from what blows away. ",
+        "emphasis": null
+      },
+      {
+        "text": "two traditions independently put water at the centre of this stretch.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.20.election": {
+    "text": "the old books gave these degrees the taming of wild beasts and the laying of a first brick. and then the entry that turns it: agrippa has them destroying the wealth of societies, picatrix breaking the bonds between companions. the mansion tames the animal and dissolves the partnership.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees the taming of wild beasts and the laying of a first brick. and then the entry that turns it: agrippa has them ",
+        "emphasis": null
+      },
+      {
+        "text": "destroying the wealth of societies",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", picatrix breaking the bonds between companions. ",
+        "emphasis": null
+      },
+      {
+        "text": "the mansion tames the animal and dissolves the partnership.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.20.archetype": {
+    "text": "a light here belongs to a group and is never entirely inside it. the image is exact: half the flock is arriving and half is leaving, and no single bird is doing both, but from the ground it reads as one animal with two intentions. pūrva aṣāḍhā means the former unconquered, and the power given to it is invigoration — the mansion refills things. the difficulty is the basket. winnowing separates, and the old books were blunt about what gets separated here — these degrees hand out an unusual talent for sorting what matters from what does not, applied to harvests that were never the sorter's to begin with.",
+    "tokens": [
+      {
+        "text": "a light here belongs to a group and is never entirely inside it. the image is exact: half the flock is arriving and half is leaving, and no single bird is doing both, but from the ground it reads as one animal with two intentions. ",
+        "emphasis": null
+      },
+      {
+        "text": "pūrva aṣāḍhā",
+        "emphasis": "italic"
+      },
+      {
+        "text": " means ",
+        "emphasis": null
+      },
+      {
+        "text": "the former unconquered",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and the power given to it is invigoration — the mansion refills things. the difficulty is the basket. winnowing separates, and the old books were blunt about what gets separated here — these degrees hand out an unusual talent for sorting what matters from what does not, applied to harvests that were never the sorter's to begin with.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.20.keyword": {
+    "text": "to the water and back",
+    "tokens": [
+      {
+        "text": "to the water and back",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.21.claim": {
+    "text": "arabia named these degrees for having nothing in them — al-balda, the empty district, the sky's deliberate blank. india put every god in the pantheon here at once.",
+    "tokens": [
+      {
+        "text": "arabia named these degrees for having ",
+        "emphasis": null
+      },
+      {
+        "text": "nothing in them",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — ",
+        "emphasis": null
+      },
+      {
+        "text": "al-balda",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the empty district, the sky's deliberate blank. india put ",
+        "emphasis": null
+      },
+      {
+        "text": "every god in the pantheon here at once.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.21.synthesis": {
+    "text": "the viśvedevas are the all-gods, worshipped as a collective of ten and never individually. so the same stretch of sky is a vacant lot and a full assembly, and the flag reads DIVERGENT — one of only four on the road. china's dipper is a container, which is the one image that works either way.",
+    "tokens": [
+      {
+        "text": "the viśvedevas are the all-gods, worshipped as a collective of ten and never individually. so the same stretch of sky is a vacant lot and a full assembly, ",
+        "emphasis": null
+      },
+      {
+        "text": "and the flag reads DIVERGENT",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — one of only four on the road. china's dipper is a container, which is the one image that works either way.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.21.election": {
+    "text": "harvests, gain, buildings, travel — a productive station despite the blankness, and every major source agrees on that. agrippa and picatrix both add a warning about separations, a mixed flag kept on the history shelf.",
+    "tokens": [
+      {
+        "text": "harvests, gain, buildings, travel — ",
+        "emphasis": null
+      },
+      {
+        "text": "a productive station despite the blankness",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and every major source agrees on that. agrippa and picatrix both add a warning about separations, a mixed flag kept on the history shelf.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.21.archetype": {
+    "text": "india's own wheel has a seam on the far edge of these degrees. the older lists counted twenty-eight nakshatras, with abhijit — vega — standing immediately after this station and before śravaṇa; it was dropped so that twenty-seven divisions would come out at exactly 13°20′ each. the tradition that counts twenty-seven is the tradition that once counted twenty-eight and chose the arithmetic. a light here stands in that decision. the classical power given to uttara aṣāḍhā is apradhṛṣya śakti, the power to grant an unchallengeable victory — and it is granted in the emptiest quarter of the road. what these degrees offer is room. what they do not offer is anything already in it.",
+    "tokens": [
+      {
+        "text": "india's own wheel has a seam on the far edge of these degrees. the older lists counted ",
+        "emphasis": null
+      },
+      {
+        "text": "twenty-eight",
+        "emphasis": "bold"
+      },
+      {
+        "text": " nakshatras, with ",
+        "emphasis": null
+      },
+      {
+        "text": "abhijit",
+        "emphasis": "italic"
+      },
+      {
+        "text": " — vega — standing immediately after this station and before śravaṇa; it was dropped so that twenty-seven divisions would come out at exactly 13°20′ each. ",
+        "emphasis": null
+      },
+      {
+        "text": "the tradition that counts twenty-seven is the tradition that once counted twenty-eight and chose the arithmetic.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " a light here stands in that decision. the classical power given to uttara aṣāḍhā is ",
+        "emphasis": null
+      },
+      {
+        "text": "apradhṛṣya śakti",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", ",
+        "emphasis": null
+      },
+      {
+        "text": "the power to grant an unchallengeable victory",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — and it is granted in the emptiest quarter of the road. what these degrees offer is room. what they do not offer is anything already in it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.21.keyword": {
+    "text": "the blank that holds everything",
+    "tokens": [
+      {
+        "text": "the blank that holds everything",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.22.claim": {
+    "text": "india calls these degrees the ear. japan stopped counting them altogether. this is the station the sukuyō system dropped to get from twenty-eight down to twenty-seven.",
+    "tokens": [
+      {
+        "text": "india calls these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "the ear.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " japan stopped counting them altogether. ",
+        "emphasis": null
+      },
+      {
+        "text": "this is the station the sukuyō system dropped",
+        "emphasis": "bold"
+      },
+      {
+        "text": " to get from twenty-eight down to twenty-seven.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.22.synthesis": {
+    "text": "arabia and china agree closely and grimly — saʿd al-dhābiḥ, the luck of the slaughterer, and 牛 niú, the ox — the midwinter herding calendar's hard season, named plainly for its work. india is somewhere else entirely: śravaṇa, the listening one, on altair, with viṣṇu who crossed the whole world in three strides.",
+    "tokens": [
+      {
+        "text": "arabia and china agree closely and grimly — ",
+        "emphasis": null
+      },
+      {
+        "text": "saʿd al-dhābiḥ",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the luck of the slaughterer, and 牛 ",
+        "emphasis": null
+      },
+      {
+        "text": "niú",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the ox — the midwinter herding calendar's hard season, named plainly for its work. india is somewhere else entirely: ",
+        "emphasis": null
+      },
+      {
+        "text": "śravaṇa, the listening one",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", on altair, with viṣṇu who crossed the whole world in three strides.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.22.election": {
+    "text": "agrippa gave these degrees the flight of captives and the curing of disease. picatrix keeps the cure and adds discord between people — the mansion lets something out, and the books do not agree that what gets out is the prisoner.",
+    "tokens": [
+      {
+        "text": "agrippa gave these degrees the flight of captives and the curing of disease. picatrix keeps the cure and adds discord between people — the mansion lets something out, ",
+        "emphasis": null
+      },
+      {
+        "text": "and the books do not agree that what gets out is the prisoner.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.22.archetype": {
+    "text": "in the buddhist tables that carried the twenty-eight from china to japan, this mansion is abhijit — 斗 is uttara aṣāḍhā, 牛 is abhijit, 女 is śravaṇa. so when the sukuyō system cut 牛宿 it was not making a second decision. it was inheriting india's, one language later, and the same station fell out twice. a light here stands on the road's one transmitted seam. the compensation is śravaṇa: the ear, the organ that works in the dark and cannot be closed, and viṣṇu's three footprints, which measure a thing by walking it rather than looking at it. the talent is hearing what a room is actually saying under what it is saying. the difficulty is the ox — the mansion also hands out the season's work, and nobody thanks the animal that carried it.",
+    "tokens": [
+      {
+        "text": "in the buddhist tables that carried the twenty-eight from china to japan, ",
+        "emphasis": null
+      },
+      {
+        "text": "this mansion is abhijit",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — 斗 is uttara aṣāḍhā, 牛 is abhijit, 女 is śravaṇa. so when the sukuyō system cut 牛宿 it was not making a second decision. ",
+        "emphasis": null
+      },
+      {
+        "text": "it was inheriting india's",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", one language later, and the same station fell out twice. a light here stands on the road's one transmitted seam. the compensation is śravaṇa: the ear, the organ that works in the dark and cannot be closed, and viṣṇu's three footprints, which measure a thing by walking it rather than looking at it. ",
+        "emphasis": null
+      },
+      {
+        "text": "the talent is hearing what a room is actually saying under what it is saying.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the difficulty is the ox — the mansion also hands out the season's work, and nobody thanks the animal that carried it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.22.keyword": {
+    "text": "the ear",
+    "tokens": [
+      {
+        "text": "the ear",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.23.claim": {
+    "text": "india heard percussion in these degrees. dhaniṣṭhā's emblem is a drum, and its gods are the eight vasus — the elemental abundances, earth, water, fire, wind, sky and the rest, worshipped as a set.",
+    "tokens": [
+      {
+        "text": "india heard ",
+        "emphasis": null
+      },
+      {
+        "text": "percussion",
+        "emphasis": "bold"
+      },
+      {
+        "text": " in these degrees. ",
+        "emphasis": null
+      },
+      {
+        "text": "dhaniṣṭhā",
+        "emphasis": "italic"
+      },
+      {
+        "text": "'s emblem is a drum, and its gods are the eight vasus — the elemental abundances, earth, water, fire, wind, sky and the rest, worshipped as a set.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.23.synthesis": {
+    "text": "a drum, the luck of the swallower — the star that drinks the rain — and china's girl. the guardian is the bat, the animal that finds a pitch-black world by making a sound and listening to what comes back. an instrument, a mouth, and an echo.",
+    "tokens": [
+      {
+        "text": "a drum, the luck of the swallower — the star that drinks the rain — and china's girl. the guardian is ",
+        "emphasis": null
+      },
+      {
+        "text": "the bat",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", the animal that finds a pitch-black world by making a sound and listening to what comes back. ",
+        "emphasis": null
+      },
+      {
+        "text": "an instrument, a mouth, and an echo.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.23.election": {
+    "text": "picatrix gives these degrees the curing of the sick and the joining of men with wives. the liberty of captives is agrippa's entry, and it arrives paired with divorce, which stays glossed on the history shelf. the letting-go work, in both senses the books meant it.",
+    "tokens": [
+      {
+        "text": "picatrix gives these degrees the curing of the sick and the joining of men with wives. ",
+        "emphasis": null
+      },
+      {
+        "text": "the liberty of captives is agrippa's entry",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and it arrives paired with divorce, which stays glossed on the history shelf. the letting-go work, in both senses the books meant it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.23.archetype": {
+    "text": "a light here sets a tempo other people keep without noticing they are doing it. the bat is the whole mansion in one animal: you find out where you are by putting something out and reading the return, which is a method, and it only works if you keep emitting. the eight vasus are abundances that arrive as a group, so what these degrees hand out is rarely one thing. a drummer does not get to be off-beat. a slow week registers to everyone else as the whole system faltering, because the system had quietly been keeping time off one person.",
+    "tokens": [
+      {
+        "text": "a light here sets a tempo other people keep without noticing they are doing it. the bat is the whole mansion in one animal: ",
+        "emphasis": null
+      },
+      {
+        "text": "you find out where you are by putting something out and reading the return",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", which is a method, and it only works if you keep emitting. the eight vasus are abundances that arrive as a group, so what these degrees hand out is rarely one thing. ",
+        "emphasis": null
+      },
+      {
+        "text": "a drummer does not get to be off-beat.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " a slow week registers to everyone else as the whole system faltering, because the system had quietly been keeping time off one person.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.23.keyword": {
+    "text": "the beat",
+    "tokens": [
+      {
+        "text": "the beat",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.24.claim": {
+    "text": "china named these degrees emptiness. arabia named the same star the luckiest of the lucky. india put a hundred physicians around an empty circle. the flag reads DIVERGENT and it is the widest spread on the road.",
+    "tokens": [
+      {
+        "text": "china named these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "emptiness.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " arabia named the same star ",
+        "emphasis": null
+      },
+      {
+        "text": "the luckiest of the lucky.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " india put ",
+        "emphasis": null
+      },
+      {
+        "text": "a hundred physicians",
+        "emphasis": "bold"
+      },
+      {
+        "text": " around an empty circle. ",
+        "emphasis": null
+      },
+      {
+        "text": "the flag reads DIVERGENT and it is the widest spread on the road.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.24.synthesis": {
+    "text": "they are not looking at different stars — china, arabia and japan all fix on β aquarii, and the star's formal name in astronomy today is still sadalsuud, from the arabic. one place, three verdicts. india's varuṇa is the god of oaths and of deep water, and its emblem is a ring with nothing in it.",
+    "tokens": [
+      {
+        "text": "they are not looking at different stars — china, arabia and japan all fix on β aquarii, and the star's formal name in astronomy today is still ",
+        "emphasis": null
+      },
+      {
+        "text": "sadalsuud",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", from the arabic. ",
+        "emphasis": null
+      },
+      {
+        "text": "one place, three verdicts.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " india's varuṇa is the god of oaths and of deep water, and its emblem is a ring with nothing in it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.24.election": {
+    "text": "robson calls it the luckiest of the lucky and gives it marital happiness and victory for soldiers — then adds, in the same breath, that it prevents the execution of government. agrippa says the same. build, marry, make friends, travel; do not expect the paperwork to clear.",
+    "tokens": [
+      {
+        "text": "robson calls it ",
+        "emphasis": null
+      },
+      {
+        "text": "the luckiest of the lucky",
+        "emphasis": "bold"
+      },
+      {
+        "text": " and gives it marital happiness and victory for soldiers — then adds, in the same breath, that it ",
+        "emphasis": null
+      },
+      {
+        "text": "prevents the execution of government.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " agrippa says the same. build, marry, make friends, travel; do not expect the paperwork to clear.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.24.archetype": {
+    "text": "a void, the greatest luck there is, and a hundred healers standing around a ring with nothing in it. the old election books had already resolved it by naming the emptiest station on the road for luck: an opening is not a wound. a light here makes room, and the room is genuine and genuinely lucky. varuṇa watches oaths, so what gets held in the space is binding. the difficulty belongs to whoever can always make room — they keep making it long after everyone else has stopped bringing anything to put there.",
+    "tokens": [
+      {
+        "text": "a void, the greatest luck there is, and a hundred healers standing around a ring with nothing in it. the old election books had already resolved it by naming the emptiest station on the road for luck: ",
+        "emphasis": null
+      },
+      {
+        "text": "an opening is not a wound.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " a light here makes room, and the room is genuine and genuinely lucky. varuṇa watches oaths, so what gets held in the space is binding. ",
+        "emphasis": null
+      },
+      {
+        "text": "the difficulty belongs to whoever can always make room",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — they keep making it long after everyone else has stopped bringing anything to put there.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.24.keyword": {
+    "text": "the opening",
+    "tokens": [
+      {
+        "text": "the opening",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.25.claim": {
+    "text": "a tent, a rooftop, and a god who stands on one foot. three names for a shelter and the single upright holding it up.",
+    "tokens": [
+      {
+        "text": "a tent, a rooftop, and a god who stands on one foot. ",
+        "emphasis": null
+      },
+      {
+        "text": "three names for a shelter and the single upright holding it up.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.25.synthesis": {
+    "text": "saʿd al-akhbiya is the luck of the tents — and of hidden things; china's 危 wēi is the rooftop; and india's aja ekapāda, the one-footed, is read as a pillar of fire, a thing that stands by having exactly one point of contact with the ground. the flag reads STRONG.",
+    "tokens": [
+      {
+        "text": "saʿd al-akhbiya",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is the luck of the tents — and of ",
+        "emphasis": null
+      },
+      {
+        "text": "hidden things",
+        "emphasis": "bold"
+      },
+      {
+        "text": "; china's 危 ",
+        "emphasis": null
+      },
+      {
+        "text": "wēi",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is the rooftop; and india's ",
+        "emphasis": null
+      },
+      {
+        "text": "aja ekapāda, the one-footed",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", is read as a pillar of fire, a thing that stands by having exactly one point of contact with the ground. ",
+        "emphasis": null
+      },
+      {
+        "text": "the flag reads STRONG.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.25.election": {
+    "text": "protection and hiding — what is inside the tent is safe, and every source recorded it that way. agrippa and picatrix also mark these degrees for sieges and binding, hostile flags kept on the history shelf.",
+    "tokens": [
+      {
+        "text": "protection and hiding — ",
+        "emphasis": null
+      },
+      {
+        "text": "what is inside the tent is safe",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and every source recorded it that way. agrippa and picatrix also mark these degrees for sieges and binding, hostile flags kept on the history shelf.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.25.archetype": {
+    "text": "a light here builds cover and lives under it. the four stars form a small tent shape and the mansion means it literally: this is enclosed ground, and what is inside is not available for inspection. the difficulty is load-bearing. a structure with one pole is standing because of one thing, and aja ekapāda is a single upright doing the work of a foundation. the classical power given to pūrva bhādrapadā is the fire that raises a person up, with the good of all as its stated basis — so the shelter is not built for one. these degrees hand out the instinct to house other people and no instinct at all for who houses the housekeeper.",
+    "tokens": [
+      {
+        "text": "a light here builds cover and lives under it. the four stars form a small tent shape and the mansion means it literally: this is enclosed ground, and what is inside is not available for inspection. the difficulty is load-bearing. ",
+        "emphasis": null
+      },
+      {
+        "text": "a structure with one pole is standing because of one thing",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and aja ekapāda is a single upright doing the work of a foundation. the classical power given to pūrva bhādrapadā is the fire that raises a person up, with the good of all as its stated basis — so the shelter is not built for one. these degrees hand out the instinct to house other people and no instinct at all for who houses the housekeeper.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.25.keyword": {
+    "text": "the single pole",
+    "tokens": [
+      {
+        "text": "the single pole",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.26.claim": {
+    "text": "the great square of pegasus begins here — the most recognisable four-sided figure in the northern sky, and these degrees are its first wall.",
+    "tokens": [
+      {
+        "text": "the great square of pegasus begins here",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the most recognisable four-sided figure in the northern sky, and these degrees are its first wall.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.26.synthesis": {
+    "text": "a room, an encampment, and the fore-spout of the great bucket that pours the spring rain. india's deity is ahirbudhnya, the serpent of the deep — the coil at the bottom of the foundation, holding it. a wall above and a serpent underneath it.",
+    "tokens": [
+      {
+        "text": "a room, an encampment, and the fore-spout of the great bucket that pours the spring rain. india's deity is ",
+        "emphasis": null
+      },
+      {
+        "text": "ahirbudhnya, the serpent of the deep",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the coil at the bottom of the foundation, holding it. ",
+        "emphasis": null
+      },
+      {
+        "text": "a wall above and a serpent underneath it.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.26.election": {
+    "text": "the old books gave these degrees the union of lovers and goodwill, and agrippa — on the mansion of the wall — has them destroying prisons and buildings. the classical indian power assigned here is the bringing of rain, with the growing of plants as its result. every source agrees something comes down.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees the union of lovers and goodwill, and agrippa — on the mansion of the wall — has them ",
+        "emphasis": null
+      },
+      {
+        "text": "destroying prisons and buildings.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " ",
+        "emphasis": null
+      },
+      {
+        "text": "the classical indian power assigned here is the bringing of rain",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", with the growing of plants as its result. every source agrees something comes down.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.26.archetype": {
+    "text": "a light here builds the enclosure other people will live inside, and the mansion is specific that this is structural work rather than hospitality. markab and scheat are corners, not ornaments. the pairing matters: uttara bhādrapadā is the second half of a pair whose first half is the one-footed pillar, so the sequence runs pole, then wall — and a wall is what makes a shelter into a room. ahirbudhnya is at the bottom of it, in the dark, and the tradition never asks the serpent whether it minds. nobody in a room thinks about the wall, and these degrees do not supply the impulse to mention it.",
+    "tokens": [
+      {
+        "text": "a light here builds the enclosure other people will live inside, and the mansion is specific that this is structural work rather than hospitality. markab and scheat are corners, not ornaments. the pairing matters: uttara bhādrapadā is the second half of a pair whose first half is the one-footed pillar, ",
+        "emphasis": null
+      },
+      {
+        "text": "so the sequence runs pole, then wall",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — and a wall is what makes a shelter into a room. ahirbudhnya is at the bottom of it, in the dark, and the tradition never asks the serpent whether it minds. ",
+        "emphasis": null
+      },
+      {
+        "text": "nobody in a room thinks about the wall",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and these degrees do not supply the impulse to mention it.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.26.keyword": {
+    "text": "the first wall",
+    "tokens": [
+      {
+        "text": "the first wall",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.27.claim": {
+    "text": "revatī is the last station of india's wheel, and its god is pūṣan — the one who walks travellers to the far side and does not come with them. the arabic name says the same thing about water: the pour completes here.",
+    "tokens": [
+      {
+        "text": "revatī is the last station of india's wheel",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and its god is pūṣan — the one who walks travellers to the far side and does not come with them. the arabic name says the same thing about water: ",
+        "emphasis": null
+      },
+      {
+        "text": "the pour completes here.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.27.synthesis": {
+    "text": "the hind-spout of the bucket, the square's far wall, and a fish. these degrees are where three of the four traditions put an ending that is also a delivery — the last of india's twenty-seven, the closing of the great rain, the far side of the wall.",
+    "tokens": [
+      {
+        "text": "the hind-spout of the bucket, the square's far wall, and a fish. these degrees are where three of the four traditions put an ",
+        "emphasis": null
+      },
+      {
+        "text": "ending that is also a delivery",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — the last of india's twenty-seven, the closing of the great rain, the far side of the wall.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.27.election": {
+    "text": "the old books gave these degrees harvests, revenue, and gain, and marked them favourable for marriage. picatrix adds the increase of trade with a caution for sailors, a mixed flag. they also say the stretch hinders building — even guides do not pour foundations.",
+    "tokens": [
+      {
+        "text": "the old books gave these degrees harvests, revenue, and gain, and marked them favourable for marriage. picatrix adds the increase of trade with a caution for sailors, a mixed flag. ",
+        "emphasis": null
+      },
+      {
+        "text": "they also say the stretch hinders building",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — even guides do not pour foundations.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.27.archetype": {
+    "text": "a light here takes other people the rest of the way. pūṣan is the god of roads and of lost things and of animals that stray, and his defining quality in the hymns is that he knows the paths and travels them for others' sake. the fish is the same idea in water: something that moves through a medium other creatures cannot. what these degrees withhold is arrival. a guide's work ends at the boundary of the country the traveller wanted, and the one talent this mansion does not confer is knowing what to do once the delivery is made.",
+    "tokens": [
+      {
+        "text": "a light here takes other people the rest of the way. pūṣan is the god of roads and of lost things and of animals that stray, and his defining quality in the hymns is that he ",
+        "emphasis": null
+      },
+      {
+        "text": "knows the paths and travels them for others' sake.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the fish is the same idea in water: something that moves through a medium other creatures cannot. what these degrees withhold is arrival. a guide's work ends at the boundary of the country the traveller wanted, and ",
+        "emphasis": null
+      },
+      {
+        "text": "the one talent this mansion does not confer is knowing what to do once the delivery is made.",
+        "emphasis": "bold"
+      }
+    ]
+  },
+  "MANSION.27.keyword": {
+    "text": "the far side",
+    "tokens": [
+      {
+        "text": "the far side",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.28.claim": {
+    "text": "arabia gave these degrees two names at once — baṭn al-ḥūt, the belly of the fish, and al-rishāʾ, the cord. india gave them none. the twenty-seven-fold wheel has already returned to its first station by the time the sky gets here.",
+    "tokens": [
+      {
+        "text": "arabia gave these degrees ",
+        "emphasis": null
+      },
+      {
+        "text": "two names at once",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — ",
+        "emphasis": null
+      },
+      {
+        "text": "baṭn al-ḥūt",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the belly of the fish, and ",
+        "emphasis": null
+      },
+      {
+        "text": "al-rishāʾ",
+        "emphasis": "italic"
+      },
+      {
+        "text": ", the cord. ",
+        "emphasis": null
+      },
+      {
+        "text": "india gave them none.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the twenty-seven-fold wheel has already returned to its first station by the time the sky gets here.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.28.synthesis": {
+    "text": "a fish's belly, a rope, and a stride. the double arabic name is the classic example of layered bedouin sky-imagery — the same stars read as an animal and as a piece of equipment, and both names kept, because neither reading was wrong.",
+    "tokens": [
+      {
+        "text": "a fish's belly, a rope, and a stride. the double arabic name is the classic example of layered bedouin sky-imagery — ",
+        "emphasis": null
+      },
+      {
+        "text": "the same stars read as an animal and as a piece of equipment",
+        "emphasis": "bold"
+      },
+      {
+        "text": ", and both names kept, because neither reading was wrong.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.28.election": {
+    "text": "journeys, trade, and peace between spouses — the closing works. picatrix has trade, marital peace, and safe travel, and then both books turn: agrippa's twenty-eighth \"strengtheneth prisons and causeth loss of treasures.\" the road ends on a knot, not a bow.",
+    "tokens": [
+      {
+        "text": "journeys, trade, and peace between spouses — ",
+        "emphasis": null
+      },
+      {
+        "text": "the closing works.",
+        "emphasis": "bold"
+      },
+      {
+        "text": " picatrix has trade, marital peace, and safe travel, and then both books turn: agrippa's twenty-eighth ",
+        "emphasis": null
+      },
+      {
+        "text": "\"strengtheneth prisons and causeth loss of treasures.\"",
+        "emphasis": "bold"
+      },
+      {
+        "text": " the road ends on a knot, not a bow.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.28.archetype": {
+    "text": "a light here stands where the road runs out and has not started again. al-rishāʾ is the well-rope, the object that connects two things by being long enough and by being under tension the whole way. china's 奎 kuí is the stride, the gap between one footfall and the next, which is the same fact told as motion instead of rope. what these degrees hand out is the ability to hold two things together across a distance nobody else finds crossable — and the corresponding difficulty, which is that a rope is only doing its job while it is pulled tight from both ends.",
+    "tokens": [
+      {
+        "text": "a light here stands where the road runs out and has not started again. ",
+        "emphasis": null
+      },
+      {
+        "text": "al-rishāʾ",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is the well-rope, the object that connects two things by being long enough and by being under tension the whole way. china's 奎 ",
+        "emphasis": null
+      },
+      {
+        "text": "kuí",
+        "emphasis": "italic"
+      },
+      {
+        "text": " is the stride, the gap between one footfall and the next, which is the same fact told as motion instead of rope. ",
+        "emphasis": null
+      },
+      {
+        "text": "what these degrees hand out is the ability to hold two things together across a distance nobody else finds crossable",
+        "emphasis": "bold"
+      },
+      {
+        "text": " — and the corresponding difficulty, which is that a rope is only doing its job while it is pulled tight from both ends.",
+        "emphasis": null
+      }
+    ]
+  },
+  "MANSION.28.keyword": {
+    "text": "the cord",
+    "tokens": [
+      {
+        "text": "the cord",
+        "emphasis": null
+      }
+    ]
   }
 };
 
 export const STATION_SLOTS = 112;
-export const COPY_VERSION = "654ce326";
+export const COPY_VERSION = "b074897f";

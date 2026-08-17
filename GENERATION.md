@@ -274,6 +274,50 @@ generalises: **the tell moves. Each gate finds the current one and the next
 row invents a new one**, so the frame gate has to be re-read by a human every
 tranche, not trusted to stay calibrated.
 
+### 4e. The premise line — the cheapest quality lever found so far
+
+Five rows in, the clearest predictor of whether a row repeats itself is
+**one sentence given to every agent writing it.**
+
+| row | premise supplied | outcome |
+|---|---|---|
+| 06 The Storm | none — portrait only | needed a full de-templating pass, 24 of 30 cells |
+| 10 The Throne | none | clean, but angles clustered around visibility |
+| 24 The Void | *space deliberately offered; a person who makes room* | clean, widest angle spread so far |
+| 15 The Veil | *unplaced rather than hidden* | clean; the distinction did all the work |
+| 21 The Empty District | *capacity by vacancy — an absence others fill without asking, then treat as always furnished* | clean; **and it had to be written against two neighbours** |
+
+**Mansion 21 is the case that proves it.** Its portrait and mansion 24's
+both describe emptiness. Without a premise the two rows would have
+collapsed into each other — 56 cells saying the same thing about space. The
+brief drew the line explicitly (*offered* versus *filled without being
+offered*) and told every agent to read `24·xx` cells and steer away. One
+agent reported back that it had avoided "offer / clear / make-room verbs
+entirely: these are deposits made on assumption, not space given."
+
+> **Every row gets a premise line before it is written, and where two
+> mansions are thematically adjacent the premise must name the
+> distinction, not just the theme.**
+
+The adjacency map worth writing before the remaining rows: 21/24 (both
+emptiness), 15/21 (both about not being placed), 2/8 (both containers),
+4/12 (both about what a pursuit accumulates), 1/7 (both arrival).
+
+### 4f. The gate is not sufficient, and the writers now know it
+
+By row five the agents were catching their own tells unprompted — label-first
+`tension` openers, repeated `cost` openers, a not-X-but-Y that slipped past
+the regex. Two caught cross-batch frame collisions against cells written by
+*other* agents in earlier waves and fixed their own side. One reported
+plainly: **"the harness misses several literal banned frames, so I audited
+separately"** — and it was right; the regexes are anchored and some frames
+appear mid-sentence in forms the pattern does not reach.
+
+That is the correct posture and it should be stated rather than left to
+luck: **the gate is a floor, not a verdict.** Every batch brief now carries
+the general rule — *if three of your slots of one kind open alike, two are
+wrong* — because that rule generalises and a banned-frame list never will.
+
 ### 4b. What the pilot got right, and it is the expensive part
 
 **Zero collisions across 8 cells, including both deliberate traps** —

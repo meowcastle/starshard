@@ -299,6 +299,46 @@ test('natalAspects: rising-midheaven is never returned, even when exactly conjun
   assert.ok(!aspects.some(a => (a.from === 'rising' && a.to === 'midheaven') || (a.from === 'midheaven' && a.to === 'rising')));
 });
 
+// -- fullNatalAspects ---------------------------------------------------
+
+test('fullNatalAspects: rising/midheaven only appear with a birth time (the real point-count check is the independent re-derivation below)', async () => {
+  const jd = A.julianDay(1990, 6, 15, 12);
+  const chart = { sunLon: 10, moonLon: 200, asc: 100, mc: 190, jd };
+  const withoutTime = await G.fullNatalAspects(chart, { timeKnown: false });
+  assert.ok(withoutTime.every(a => a.from !== 'rising' && a.to !== 'rising' && a.from !== 'midheaven' && a.to !== 'midheaven'));
+});
+
+test('fullNatalAspects: matches an independent re-derivation over all 12 candidate points', async () => {
+  const jd = A.julianDay(1990, 6, 15, 12);
+  const birthDate = new Date((jd - 2440587.5) * 86400000);
+  const chart = { sunLon: 15, moonLon: 250, asc: 80, mc: 340, jd };
+  const natal = await T.natalPlanetPositions(chart);
+  const points = [
+    ['sun', chart.sunLon], ['moon', chart.moonLon],
+    ['mercury', natal.Mercury.lon], ['venus', natal.Venus.lon], ['mars', natal.Mars.lon],
+    ['jupiter', natal.Jupiter.lon], ['saturn', natal.Saturn.lon],
+    ['uranus', natal.Uranus.lon], ['neptune', natal.Neptune.lon], ['pluto', natal.Pluto.lon],
+    ['rising', chart.asc], ['midheaven', chart.mc],
+  ];
+  const expected = [];
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      if (points[i][0] === 'rising' && points[j][0] === 'midheaven') continue;
+      const hit = T.classifyAspect(points[i][1], points[j][1]);
+      if (hit) expected.push(`${points[i][0]}-${points[j][0]}`);
+    }
+  }
+  const actual = await G.fullNatalAspects(chart, { timeKnown: true });
+  assert.deepEqual(actual.map(a => `${a.from}-${a.to}`).sort(), expected.sort());
+});
+
+test('fullNatalAspects: sorted tightest-orb-first, same as natalAspects', async () => {
+  const jd = A.julianDay(1990, 6, 15, 12);
+  const chart = { sunLon: 33, moonLon: 210, asc: 12, mc: 300, jd };
+  const aspects = await G.fullNatalAspects(chart, { timeKnown: true });
+  for (let i = 1; i < aspects.length; i++) assert.ok(aspects[i].orbUsed >= aspects[i - 1].orbUsed);
+});
+
 // -- ascRulerHouse ----------------------------------------------------------
 
 const EQUAL_CUSPS = Array.from({ length: 12 }, (_, i) => i * 30); // 0,30,60,...,330 — house N+1 = [30N, 30N+30)

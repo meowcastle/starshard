@@ -27,7 +27,7 @@
 
 import { mansionOf, houseOf } from './astro.js';
 import { moonPhase, PLANETARY_HOUR_ORDER, WEEKDAY_RULER } from './sky.js';
-import { classifyAspect, planetPositions } from './transits.js';
+import { classifyAspect, planetPositions, natalPlanetPositions } from './transits.js';
 
 const STATIONS = 28, STEPS = 4, SEGMENTS = STATIONS * STEPS; // 112
 const STATION_WIDTH = 360 / STATIONS;   // 12.857...deg
@@ -199,6 +199,38 @@ export function movingLight(chart, { timeKnown }) {
  */
 export function natalAspects(chart, { timeKnown }) {
   const points = [['sun', chart.sunLon], ['moon', chart.moonLon]];
+  if (timeKnown) points.push(['rising', chart.asc], ['midheaven', chart.mc]);
+
+  const out = [];
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      if (points[i][0] === 'rising' && points[j][0] === 'midheaven') continue;
+      const [from, fromLon] = points[i], [to, toLon] = points[j];
+      const hit = classifyAspect(fromLon, toLon);
+      if (hit) out.push({ from, to, ...hit });
+    }
+  }
+  return out.sort((a, b) => a.orbUsed - b.orbUsed);
+}
+
+/**
+ * Every natal-to-natal aspect across the full chart — sun, moon, the eight
+ * Mercury-through-Pluto planets, and (with a birth time) rising/midheaven.
+ * natalAspects() above stays as it is (the four trusted points only, the
+ * Deep Chart's PATTERN tab); this is the wider grid the redesigned chart
+ * wheel's "aspects" section needs. Async for the same reason findings.js's
+ * allPoints() is: Mercury-Pluto natal positions don't exist anywhere in
+ * astro.js's chart object, so transits.js's natalPlanetPositions() has to
+ * fetch them against the birth date.
+ */
+export async function fullNatalAspects(chart, { timeKnown }) {
+  const natal = await natalPlanetPositions(chart);
+  const points = [
+    ['sun', chart.sunLon], ['moon', chart.moonLon],
+    ['mercury', natal.Mercury.lon], ['venus', natal.Venus.lon], ['mars', natal.Mars.lon],
+    ['jupiter', natal.Jupiter.lon], ['saturn', natal.Saturn.lon],
+    ['uranus', natal.Uranus.lon], ['neptune', natal.Neptune.lon], ['pluto', natal.Pluto.lon],
+  ];
   if (timeKnown) points.push(['rising', chart.asc], ['midheaven', chart.mc]);
 
   const out = [];
