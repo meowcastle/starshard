@@ -229,6 +229,28 @@ a{color:var(--ink-accent)}
 .caret{display:inline-block;width:8px;height:14px;margin-top:8px;background:var(--accent);animation:ss-blink 1s step-end infinite}
 @keyframes ss-in{from{opacity:0}to{opacity:1}}
 .screen-in{animation:ss-in .35s ease both}
+
+/* -- the ring morph (tab-switch) and kindle (claim) animations — Star
+   Shard v3 Build Plan's motion layer, ported alongside its visual one.
+   ssRingIn is the fallback when there's no previous ring to morph from
+   (first paint); ssFromSmall/ssFromLarge/ssSettle are picked by
+   ringMorphVals() from the size ratio between the previous destination's
+   ring and this one, so switching tonight (small) -> your chart (big)
+   visibly grows, and the reverse visibly shrinks. ssSweep/ssFlare/ssPart
+   are the kindle burst on the "kindled" screen, keyed off a state machine
+   (kindleAnim 0|1|2) rather than tied to CSS animation-end events, so it
+   can't get stuck mid-animation if a screen re-renders. -- */
+@keyframes ssRingIn{from{opacity:0;transform:rotate(-16deg) scale(.94)}to{opacity:1;transform:none}}
+@keyframes ssFromSmall{from{opacity:.3;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes ssFromLarge{from{opacity:.3;transform:scale(1.5)}to{opacity:1;transform:scale(1)}}
+@keyframes ssSettle{from{opacity:.5;transform:scale(1.08)}to{opacity:1;transform:scale(1)}}
+/* calibrated to pathLength="100" (normalized), not the arc's real pixel
+   length, so it works identically regardless of which segment lit —
+   dasharray "30 70" starts fully hidden at offset 100 and slides to 0,
+   a 30-long bright dash travelling the arc's full normalized length. */
+@keyframes ssSweep{0%{stroke-dashoffset:100;opacity:0}8%{opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+@keyframes ssFlare{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+@keyframes ssPart{0%{opacity:0;transform:translate(0,0) scale(1)}15%{opacity:1}100%{opacity:0;transform:translate(12px,0) scale(.3)}}
 @media (prefers-reduced-motion: reduce){*{animation:none !important}}
 
 /* -- the shard blueprint's own visual language (Star Shard v3 Build Plan/
@@ -486,7 +508,7 @@ a{color:var(--ink-accent)}
     <!-- TIER 2 · tonight's sky -->
     <div class="eyebrow" style="margin-top:26px">tonight's sky</div>
     <div style="display:flex; align-items:center; gap:16px; margin-top:12px">
-      <svg viewBox="0 0 200 200" width="112" height="112" role="img" aria-label="your star shard, with tonight's station lit">
+      <svg viewBox="0 0 200 200" width="112" height="112" role="img" aria-label="your star shard, with tonight's station lit" style="animation:{{ ringMorphTonight }}">
         <sc-for list="{{ ringSegments }}" as="seg">
           <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
         </sc-for>
@@ -632,7 +654,7 @@ a{color:var(--ink-accent)}
   <div class="eyebrow" style="padding-bottom:6px">{{ sigProfileName }}'s star shard</div>
 
   <div style="display:flex;justify-content:center;padding:10px 0">
-    <svg viewBox="0 0 200 200" width="260" height="260" role="img" aria-label="your star shard ring">
+    <svg viewBox="0 0 200 200" width="260" height="260" role="img" aria-label="your star shard ring" style="animation:{{ ringMorphChart }}">
       <sc-for list="{{ ringSegments }}" as="seg">
         <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
       </sc-for>
@@ -1063,6 +1085,16 @@ a{color:var(--ink-accent)}
       <sc-for list="{{ ringMarks }}" as="m">
         <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="4.5" class="{{ m.cls }}"></circle>
       </sc-for>
+      <!-- the kindle burst: a bright sweep along the just-lit segment's own
+           arc, then a soft flare over the same path — both real geometry
+           (kindledSegD, computed from the same 112-segment indexing
+           sigilRingData() itself uses), not a decorative approximation. -->
+      <sc-if value="{{ kindleSweepOn }}">
+        <path d="{{ kindledSegD }}" pathLength="100" stroke="#FFB000" stroke-width="6" stroke-linecap="round" fill="none" stroke-dasharray="30 70" style="animation:ssSweep 1.25s cubic-bezier(.45,.05,.55,.95) both;filter:drop-shadow(0 0 6px rgba(255,176,0,.85))"></path>
+      </sc-if>
+      <sc-if value="{{ kindleFlareOn }}">
+        <path d="{{ kindledSegD }}" stroke="#FFFDF5" stroke-width="7" fill="none" style="animation:ssFlare 1.1s ease-out both;filter:blur(2px)"></path>
+      </sc-if>
     </svg>
   </div>
   <p class="h2" style="text-align:center;margin-top:14px">kindled.</p>
@@ -1091,7 +1123,7 @@ a{color:var(--ink-accent)}
   <sc-if value="{{ sigShardHome }}">
     <div class="eyebrow" style="text-align:center">your star shard · {{ sigShardAddress }}</div>
     <div style="display:flex; justify-content:center; padding:14px 0 2px">
-      <svg viewBox="0 0 200 200" width="220" height="220" role="img" aria-label="your star shard, with tonight's station lit">
+      <svg viewBox="0 0 200 200" width="220" height="220" role="img" aria-label="your star shard, with tonight's station lit" style="animation:{{ ringMorphShard }}">
         <sc-for list="{{ ringSegments }}" as="seg">
           <path d="{{ seg.d }}" class="{{ seg.cls }}" fill="none" stroke-width="5"></path>
         </sc-for>
@@ -1466,14 +1498,17 @@ class Component extends DCLogic {
     };
   }
 
-  // tonight is home for a returning traveler; the chart is a destination
-  sigToChart = () => this.setState({ sigStep: 'profile' });
-  sigToTonight = () => this.setState({ sigStep: 'tonight' });
+  // tonight is home for a returning traveler; the chart is a destination.
+  // ringPrevStep records which destination's ring was last on screen, so
+  // the next one can morph in relative to it (ringMorphVals()) instead of
+  // always doing the same generic entrance.
+  sigToChart = () => this.setState(st => ({ sigStep: 'profile', ringPrevStep: st.sigStep }));
+  sigToTonight = () => this.setState(st => ({ sigStep: 'tonight', ringPrevStep: st.sigStep }));
   sigViewTonight = () => this.setState({ sigTonightView: 'tonight' });
   sigViewWeek = () => this.setState({ sigTonightView: 'week' });
 
   // the third destination, and the push inside it
-  sigToShard = () => this.setState({ sigStep: 'shard' });
+  sigToShard = () => this.setState(st => ({ sigStep: 'shard', ringPrevStep: st.sigStep }));
   sigToggleNumbers = () => this.setState(s => ({ sigNumbersOpen: !s.sigNumbersOpen }));
 
   // ceremony scales inversely with frequency: the paced five-beat reveal fires
@@ -1677,6 +1712,40 @@ class Component extends DCLogic {
       chartRulerOn: !!s.sigWheelRuler,
       chartRulerLine: s.sigWheelRuler ? `chart ruler: ${s.sigWheelRuler.ruler.toLowerCase()} · ${HOUSE_ORD[s.sigWheelRuler.house - 1]} house` : '',
       wheelTimeUnknown: !s.sigTimeKnown,
+    };
+  }
+
+  // Ring sizes at each of the three destinations' main ring (px, matches
+  // the width="" on each <svg> — see the three usage sites). Not the
+  // "kindled" screen's ring (240px): that one plays the kindle animation
+  // instead of the morph, and never has a "previous destination" of its
+  // own to morph from.
+  static RING_SIZE = { tonight: 112, profile: 260, shard: 220 };
+
+  ringMorphVals() {
+    const s = this.state;
+    const prev = Component.RING_SIZE[s.ringPrevStep];
+    const morph = (step) => {
+      if (!prev || s.ringPrevStep === step) return 'ssRingIn .8s cubic-bezier(.22,1,.36,1) both';
+      const r = prev / Component.RING_SIZE[step];
+      const name = r < .85 ? 'ssFromSmall' : r > 1.15 ? 'ssFromLarge' : 'ssSettle';
+      return `${name} .55s cubic-bezier(.22,1,.36,1) both`;
+    };
+    return {
+      ringMorphTonight: morph('tonight'), ringMorphChart: morph('profile'), ringMorphShard: morph('shard'),
+    };
+  }
+
+  // The kindle burst on the "kindled" screen — a state machine (0 idle |
+  // 1 sweep | 2 flare), started from sndClaim() itself (a real user
+  // action) rather than by inspecting state inside renderVals(): calling
+  // setState() during a render pass risks a cascading re-render loop.
+  // kindleVals() here just reads the state sndClaim() already set.
+  kindleVals() {
+    const s = this.state;
+    return {
+      kindleSweepOn: s.kindleAnim === 1,
+      kindleFlareOn: s.kindleAnim === 2,
     };
   }
 
@@ -2144,7 +2213,9 @@ class Component extends DCLogic {
 
     const record = { station, step, castContext: { current: s.sndRelation.taraName, light: s.sndLight.name, castKind: s.sndCast.kind }, kindledAt: new Date().toISOString() };
     const merged = [...s.sigRecollection, record];
-    this.setState({ sigRecollection: merged, sigJustKindled: { station, step }, sndStep: 4 });
+    this.setState({ sigRecollection: merged, sigJustKindled: { station, step }, sndStep: 4, kindleAnim: 1 });
+    setTimeout(() => this.setState({ kindleAnim: 2 }), 1250);
+    setTimeout(() => this.setState({ kindleAnim: 0 }), 2450);
     try { localStorage.setItem('starshard.recollection', JSON.stringify(merged)); } catch (e) {}
 
     if (this.state.authEmail) {
@@ -2239,6 +2310,12 @@ class Component extends DCLogic {
     const ringSegments = ring.segments.map(seg => ({ d: seg.d, cls: 'ring-seg-' + seg.state }));
     const ringTicks = ring.skyTicks;
     const ringMarks = ring.natalMarks.map(m => ({ ...m, cls: 'ring-mark ring-mark-' + m.role }));
+    // the kindle animation's flare/particle burst traces the just-lit
+    // segment's own arc — same 4-steps-per-station indexing sigilRingData()
+    // itself uses, so this can't drift out of sync with the real ring.
+    const kindledSegD = s.sigJustKindled
+      ? (ring.segments[s.sigJustKindled.station * 4 + s.sigJustKindled.step] || {}).d || ''
+      : '';
 
     const walkedCount = s.sigRecollection.length;
     const tonightAlreadyKindled = tonight ? this.alreadyKindled(tonight.station, tonight.step) : false;
@@ -2428,7 +2505,8 @@ class Component extends DCLogic {
       sigShareStat: `${walkedCount} of 112 kindled · ${arrival ? arrival.handle.typeLabel.toLowerCase() : ''}`,
 
       // -- ring (shared across profile / beat4 / share) --------------------
-      ringSegments, ringTicks, ringMarks,
+      ringSegments, ringTicks, ringMarks, kindledSegD,
+      ...this.ringMorphVals(), ...this.kindleVals(),
 
       // -- auth (unprefixed) -----------------------------------------------
       isLoggedIn: !!s.authEmail, isNotLoggedIn: !s.authEmail, authEmail: s.authEmail,

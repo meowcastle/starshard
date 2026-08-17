@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**372 bindings, 297 top-level.**
+**378 bindings, 303 top-level.**
 
 ## Rule
 
@@ -77,6 +77,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `houseNums` | component state |
 | `isLoggedIn` | component state |
 | `isNotLoggedIn` | component state |
+| `kindleFlareOn` | component state |
+| `kindleSweepOn` | component state |
+| `kindledSegD` | component state |
 | `mNums` | component state |
 | `mSelBodies` | component state |
 | `mSelClaim` | component state |
@@ -90,6 +93,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `popArch` | component state |
 | `pushArch` | component state |
 | `ringMarks` | component state |
+| `ringMorphChart` | component state |
+| `ringMorphShard` | component state |
+| `ringMorphTonight` | component state |
 | `ringSegments` | component state |
 | `ringTicks` | component state |
 | `setAEmail` | component state |
