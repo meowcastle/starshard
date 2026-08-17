@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**330 bindings, 271 top-level.**
+**332 bindings, 273 top-level.**
 
 ## Rule
 
@@ -176,6 +176,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigShardClose` | component state |
 | `sigShardDetailOpen` | component state |
 | `sigShardHeroName` | component state |
+| `sigShardHeroSuffix` | component state |
+| `sigShardHeroSuffixOn` | component state |
 | `sigShardHome` | component state |
 | `sigShardMetaLine` | component state |
 | `sigShardMoonArchetype` | component state |

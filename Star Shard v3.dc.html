@@ -38,7 +38,7 @@
 <meta name="twitter:description" content="a nightly ritual played against the real sky. enter your birth minute, get your star shard, and walk the road one station a night.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 /* -- DESIGN-SYSTEM.md's own copy/paste token block, verbatim -- */
 :root {
@@ -229,6 +229,50 @@ a{color:var(--ink-accent)}
 @keyframes ss-in{from{opacity:0}to{opacity:1}}
 .screen-in{animation:ss-in .35s ease both}
 @media (prefers-reduced-motion: reduce){*{animation:none !important}}
+
+/* -- the shard blueprint's own visual language (Star Shard v3 Build Plan/
+   Star Shard v3.dc.html — the source of truth for UI, Aug 17). Scoped
+   under .shard-blueprint rather than touching the shared tokens above: the
+   rest of the site (onboarding, tonight, chart, auth) keeps its existing
+   look for now — this is a contained first pass, not a site-wide re-theme.
+   Same structural classes (.h1/.eyebrow/.reading/.card-panel/etc.) as
+   everywhere else, overridden in place, so the markup didn't need to be
+   rewritten with a parallel class set. -- */
+.shard-blueprint{
+  background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);
+  color:#F2EAD6;
+}
+.shard-blueprint .eyebrow,.shard-blueprint .mono-note,.shard-blueprint .hint,
+.shard-blueprint .muted{color:#9A8A5E}
+.shard-blueprint .h1,.shard-blueprint .h2,.shard-blueprint .h3{
+  font-family:'Cormorant Garamond',serif; font-weight:600; color:#F2EAD6}
+.shard-blueprint .reading{color:rgba(244,236,214,.92); font-size:17px; line-height:1.8; max-width:none}
+.shard-blueprint .reading strong{color:#FFFDF5}
+.shard-blueprint .reading em{color:#D8C89C; font-style:italic}
+.shard-blueprint .sep{background:rgba(240,216,154,.16)}
+.shard-blueprint .card-panel{background:rgba(240,216,154,.04); border-color:rgba(240,216,154,.2); box-shadow:none}
+.shard-blueprint .panel-accent{background:rgba(255,176,0,.08); border-color:rgba(255,176,0,.5)}
+.shard-blueprint .panel-accent .eyebrow,.shard-blueprint .panel-accent .mono-note{color:#F0D89A}
+.shard-blueprint .orb-num{color:#FFB000; text-shadow:0 0 16px rgba(255,176,0,.5)}
+.shard-blueprint .link-down{color:#FFB000; border-top-color:rgba(240,216,154,.16)}
+.shard-blueprint .back-btn{color:#FFB000}
+.shard-blueprint .progress-line{color:#F0D89A}
+.shard-blueprint .ring-seg-dark{stroke:rgba(240,216,154,.15)}
+.shard-blueprint .ring-seg-lit{stroke:#F0D89A}
+.shard-blueprint .ring-seg-now{stroke:#FFB000}
+.shard-blueprint .ring-tick{stroke:rgba(240,216,154,.3)}
+.shard-blueprint .ring-mark{fill:#FFB000}
+.shard-flourish{display:flex; align-items:center; gap:12px; margin:36px 0}
+.shard-flourish .line{flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(240,216,154,.4))}
+.shard-flourish .line-end{flex:1; height:1px; background:linear-gradient(90deg,rgba(240,216,154,.4),transparent)}
+.shard-flourish .star{color:#F0D89A; font-size:12px}
+.shard-sig-card{position:relative; border:1px solid rgba(255,176,0,.5); padding:26px 22px;
+  background:rgba(24,18,6,.75); box-shadow:0 0 40px rgba(255,176,0,.18), inset 0 0 40px rgba(8,5,2,.6)}
+.shard-sig-card .corner{position:absolute; width:10px; height:10px; border-color:#FFB000}
+.shard-sig-card .corner-tl{top:-1px; left:-1px; border-top:2px solid; border-left:2px solid}
+.shard-sig-card .corner-tr{top:-1px; right:-1px; border-top:2px solid; border-right:2px solid}
+.shard-sig-card .corner-bl{bottom:-1px; left:-1px; border-bottom:2px solid; border-left:2px solid}
+.shard-sig-card .corner-br{bottom:-1px; right:-1px; border-bottom:2px solid; border-right:2px solid}
 </style>
 </helmet>
 
@@ -961,7 +1005,7 @@ a{color:var(--ink-accent)}
      A lit station pushes to the night it was walked — that push is what
      replaces a fourth "past readings" tab (APP-FRAMEWORK §3). -->
 <sc-if value="{{ sigIsShardTab }}">
-<div class="screen-in pad" style="padding-top:20px; padding-bottom:26px; display:flex; flex-direction:column; flex:1; min-height:100vh; min-height:100dvh">
+<div class="screen-in pad shard-blueprint" style="padding-top:20px; padding-bottom:26px; display:flex; flex-direction:column; flex:1; min-height:100vh; min-height:100dvh">
 
   <sc-if value="{{ sigShardNotReady }}">
     <p class="hint" style="margin-top:40px">casting your shard…</p>
@@ -983,18 +1027,18 @@ a{color:var(--ink-accent)}
         </sc-for>
       </svg>
     </div>
-    <h1 class="h1" style="text-align:center; margin-top:8px">{{ sigShardHeroName }}</h1>
+    <h1 class="h1" style="text-align:center; margin-top:8px; font-size:36px">{{ sigShardHeroName }}<sc-if value="{{ sigShardHeroSuffixOn }}"><br><em style="color:#F0D89A; font-style:italic">{{ sigShardHeroSuffix }}</em></sc-if></h1>
     <p class="mono-note" style="text-align:center; margin:10px 0 0">{{ sigShardMetaLine }}</p>
 
-    <hr class="sep" style="margin-top:28px">
+    <div class="shard-flourish"><span class="line"></span><span class="star">✦</span><span class="line-end"></span></div>
 
     <!-- the combination — layer B, generated once, static, 784 cells -->
-    <div class="eyebrow" style="text-align:center; margin-top:22px">the combination</div>
+    <div class="eyebrow" style="text-align:center">the combination</div>
     <sc-if value="{{ sigComboReady }}">
       <p class="reading" style="margin-top:12px; font-size:var(--text-xl)">{{ sigComboLead }}</p>
       <p class="reading">{{ sigComboSun }}</p>
       <p class="reading">{{ sigComboMoon }}</p>
-      <div class="card-panel panel-accent" style="margin:6px 0 14px"><p style="margin:0; font-family:'Baloo 2',cursive; font-weight:700; font-size:var(--text-lg)">{{ sigComboPull }}</p></div>
+      <div style="border-left:2px solid #F0D89A; padding:4px 0 4px 18px; font-family:'Cormorant Garamond',serif; font-weight:600; font-size:21px; line-height:1.5; color:#F0D89A; margin:18px 0">{{ sigComboPull }}</div>
       <p class="reading">{{ sigComboTension }}</p>
       <p class="reading">{{ sigComboCost }}</p>
     </sc-if>
@@ -1002,19 +1046,19 @@ a{color:var(--ink-accent)}
       <p class="hint" style="margin-top:12px">this combination hasn't been written yet — 784 cells, generated and reviewed in order. yours is coming.</p>
     </sc-if>
 
-    <hr class="sep" style="margin-top:28px">
+    <div class="shard-flourish"><span class="line"></span><span class="star">✦</span><span class="line-end"></span></div>
 
     <!-- the mansion portraits — layer A, shipped for all 28 -->
-    <div class="eyebrow" style="text-align:center; margin-top:22px">{{ sigShardSunOrd }} mansion</div>
-    <div style="text-align:center; margin-top:10px"><span style="font-size:28px; font-family:serif">{{ sigShardSunKanji }}</span></div>
-    <h2 class="h2" style="text-align:center; margin-top:10px">{{ sigShardSunEpithet }}</h2>
+    <div class="eyebrow" style="text-align:center">{{ sigShardSunOrd }} mansion</div>
+    <div style="text-align:center; margin-top:10px"><span style="font-size:28px; font-family:serif; color:#F0D89A">{{ sigShardSunKanji }}</span></div>
+    <h2 class="h2" style="text-align:center; margin-top:10px; font-size:30px">{{ sigShardSunEpithet }}</h2>
     <p class="mono-note" style="text-align:center; margin:8px 0 20px">{{ sigShardSunPosition }} · your sun stands here</p>
     <p class="reading">{{ sigShardSunClaim }}</p>
     <div style="display:flex; flex-direction:column; gap:10px; margin:14px 0">
       <sc-for list="{{ sigShardSunTraditions }}" as="t" hint-placeholder-count="4">
         <div style="display:grid; grid-template-columns:72px 1fr; gap:12px">
-          <span class="mono-note" style="text-transform:uppercase">{{ t.sky }}</span>
-          <span class="muted" style="font-size:var(--text-sm)"><strong style="color:var(--ink)">{{ t.name }}</strong> — {{ t.meaning }}</span>
+          <span class="mono-note" style="text-transform:uppercase; color:#FFB000">{{ t.sky }}</span>
+          <span style="font-size:var(--text-sm); color:#C9BC96"><strong style="color:#F2EAD6">{{ t.name }}</strong> — {{ t.meaning }}</span>
         </div>
       </sc-for>
     </div>
@@ -1023,17 +1067,17 @@ a{color:var(--ink-accent)}
     <p class="reading">{{ sigShardSunArchetype }}</p>
 
     <sc-if value="{{ sigShardMoonPortraitOn }}">
-      <hr class="sep" style="margin-top:14px">
-      <div class="eyebrow" style="text-align:center; margin-top:22px">{{ sigShardMoonOrd }} mansion</div>
-      <div style="text-align:center; margin-top:10px"><span style="font-size:28px; font-family:serif">{{ sigShardMoonKanji }}</span></div>
-      <h2 class="h2" style="text-align:center; margin-top:10px">{{ sigShardMoonEpithet }}</h2>
+      <div class="shard-flourish"><span class="line"></span><span class="star">✦</span><span class="line-end"></span></div>
+      <div class="eyebrow" style="text-align:center">{{ sigShardMoonOrd }} mansion</div>
+      <div style="text-align:center; margin-top:10px"><span style="font-size:28px; font-family:serif; color:#F0D89A">{{ sigShardMoonKanji }}</span></div>
+      <h2 class="h2" style="text-align:center; margin-top:10px; font-size:30px">{{ sigShardMoonEpithet }}</h2>
       <p class="mono-note" style="text-align:center; margin:8px 0 20px">{{ sigShardMoonPosition }} · your moon stands here</p>
       <p class="reading">{{ sigShardMoonClaim }}</p>
       <div style="display:flex; flex-direction:column; gap:10px; margin:14px 0">
         <sc-for list="{{ sigShardMoonTraditions }}" as="t" hint-placeholder-count="4">
           <div style="display:grid; grid-template-columns:72px 1fr; gap:12px">
-            <span class="mono-note" style="text-transform:uppercase">{{ t.sky }}</span>
-            <span class="muted" style="font-size:var(--text-sm)"><strong style="color:var(--ink)">{{ t.name }}</strong> — {{ t.meaning }}</span>
+            <span class="mono-note" style="text-transform:uppercase; color:#FFB000">{{ t.sky }}</span>
+            <span style="font-size:var(--text-sm); color:#C9BC96"><strong style="color:#F2EAD6">{{ t.name }}</strong> — {{ t.meaning }}</span>
           </div>
         </sc-for>
       </div>
@@ -1042,16 +1086,18 @@ a{color:var(--ink-accent)}
       <p class="reading">{{ sigShardMoonArchetype }}</p>
     </sc-if>
 
-    <hr class="sep" style="margin-top:14px">
+    <div class="shard-flourish"><span class="line"></span><span class="star">✦</span><span class="line-end"></span></div>
 
     <!-- the signature — layer C. Deterministic parts are real; the
          generated paragraph waits on the api.js generation path. -->
-    <div class="eyebrow" style="text-align:center; margin-top:22px">your signature</div>
+    <div class="eyebrow" style="text-align:center; margin-bottom:22px">your signature</div>
     <sc-if value="{{ sigFindingReady }}">
-      <div class="card-panel panel-accent" style="margin-top:14px; text-align:center">
-        <div class="orb-line" style="justify-content:center"><span class="orb-num">{{ sigFindingRateLabel }}</span></div>
-        <p class="h3" style="margin-top:10px">{{ sigFindingHeadline }}</p>
-        <p class="mono-note" style="margin-top:10px">{{ sigFindingDetail }}</p>
+      <div class="shard-sig-card" style="text-align:center">
+        <span class="corner corner-tl"></span><span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span><span class="corner corner-br"></span>
+        <div style="font-family:'Pixelify Sans',monospace; font-size:26px; color:#FFB000; line-height:1; text-shadow:0 0 16px rgba(255,176,0,.5)">{{ sigFindingRateLabel }}</div>
+        <p class="h3" style="margin-top:12px; font-size:22px">{{ sigFindingHeadline }}</p>
+        <p class="mono-note" style="margin-top:12px">{{ sigFindingDetail }}</p>
       </div>
       <sc-if value="{{ sigFindingBodyPending }}">
         <p class="hint" style="margin-top:14px">the full reading of this finding is generated once and stored — that generation path isn't live on this build yet.</p>
@@ -1061,14 +1107,14 @@ a{color:var(--ink-accent)}
       <p class="hint" style="margin-top:14px">no standout finding yet — this needs a birth chart with all points computed.</p>
     </sc-if>
 
-    <hr class="sep" style="margin-top:14px">
+    <div class="shard-flourish"><span class="line"></span><span class="star">✦</span><span class="line-end"></span></div>
 
     <!-- the farlight — mansion 14 along from the sun, exact by construction -->
-    <div class="eyebrow" style="text-align:center; margin-top:22px">your farlight</div>
+    <div class="eyebrow" style="text-align:center">your farlight</div>
     <p class="mono-note" style="text-align:center; margin:10px 0 20px">mansion {{ sigFarlightN }} · directly opposite your sun</p>
     <p class="reading">{{ sigFarlightText }}</p>
 
-    <hr class="sep" style="margin-top:14px">
+    <hr class="sep" style="margin-top:32px">
 
     <button type="button" class="link-down" onClick="{{ pushArch }}" style="margin-top:8px">
       <span>the twenty-eight →</span><span class="mono-note">{{ sigShardProgress }} walked</span>
@@ -1085,9 +1131,9 @@ a{color:var(--ink-accent)}
     </sc-if>
     <div style="display:flex; flex-direction:column; margin-top:14px">
       <sc-for list="{{ stationRows }}" as="row" hint-placeholder-count="28">
-        <div onClick="{{ row.open }}" style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:2px solid var(--edge-light); cursor:pointer">
+        <div onClick="{{ row.open }}" style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid rgba(240,216,154,.16); cursor:pointer">
           <span class="mono-note" style="width:24px">{{ row.n }}</span>
-          <span style="flex:1; font-size:var(--text-md)">{{ row.name }}</span>
+          <span style="flex:1; font-size:var(--text-md); color:#F2EAD6">{{ row.name }}</span>
           <span class="mono-note">{{ row.trail }}</span>
         </div>
       </sc-for>
@@ -1104,7 +1150,7 @@ a{color:var(--ink-accent)}
       <p class="reading" style="margin-top:16px">{{ sigShardOpenText }}</p>
     </sc-if>
     <sc-if value="{{ sigShardOpenDark }}">
-      <p style="margin:16px 0 0">a station you aren't there for stays dark — the shard only lights by being walked.</p>
+      <p style="margin:16px 0 0; color:#C9BC96">a station you aren't there for stays dark — the shard only lights by being walked.</p>
     </sc-if>
   </sc-if>
   </sc-if>
@@ -1476,10 +1522,14 @@ class Component extends DCLogic {
       sigShardSunEpithet: sunP.epithet, sigShardMoonEpithet: moonP.epithet,
       // GENERATION.md §2 — the diagonal (sun===moon mansion) gets the
       // epithet alone, not "X of X": a doubled hexagram, not a blend.
-      // Every epithet already starts with "The " (stations.js, all 28) —
-      // strip it before re-composing "of the ___", or a moon epithet like
+      // Split for the hero's two-line treatment (name / "of the ___" in
+      // italic on its own line, per Star Shard v3 Build Plan). Every
+      // epithet already starts with "The " (stations.js, all 28) — strip
+      // it before re-composing "of the ___", or a moon epithet like
       // "The Glance" renders as "of the The Glance".
-      sigShardHeroName: sameMansion ? sunP.epithet : `${sunP.epithet} of the ${moonP.epithet.replace(/^The /, '')}`,
+      sigShardHeroName: sunP.epithet,
+      sigShardHeroSuffixOn: !sameMansion,
+      sigShardHeroSuffix: sameMansion ? '' : `of the ${moonP.epithet.replace(/^The /, '')}`,
       sigShardMoonPortraitOn: !sameMansion, // don't render the same portrait twice
       sigShardMetaLine: sameMansion
         ? `sun and moon both in ${sunP.epithet.toLowerCase()}`
