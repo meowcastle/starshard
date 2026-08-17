@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**332 bindings, 273 top-level.**
+**372 bindings, 297 top-level.**
 
 ## Rule
 
@@ -25,8 +25,17 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 
 | `sc-for` list | alias | properties read |
 |---|---|---|
-| `ringMarks` | `m` | `cls`, `cx`, `cy` |
-| `ringSegments` | `seg` | `cls`, `d` |
+| `angleLabels` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
+| `angleLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `chartRing` | `seg` | `cls`, `color`, `d`, `w` |
+| `hitArcs` | `h` | `d`, `onTap` |
+| `houseLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `houseNums` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
+| `mNums` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
+| `mSelBodies` | `b` | `name`, `pos` |
+| `mTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `ringMarks` | `m` | `cls`, `color`, `cx`, `cy`, `d`, `onTap`, `tf` |
+| `ringSegments` | `seg` | `cls`, `color`, `d`, `w` |
 | `ringTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `sigAspects` | `asp` | `aspect`, `hasPassage`, `maxOrb`, `missing`, `missingIf`, `orbUsed`, `pair`, `plain`, `text` |
 | `sigCityResults` | `r` | `name`, `pick`, `region` |
@@ -38,8 +47,11 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigStrikeDepth.traditions` | `td1` | `meaning`, `name`, `sky` |
 | `sigWkBackdropLines` | `line` | `text` |
 | `sigWkDays` | `d` | `key`, `on`, `sign` |
+| `signGlyphs` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
+| `signLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `sndCrossCultural` | `c` | `name`, `sky` |
 | `stationRows` | `row` | `n`, `name`, `open`, `trail` |
+| `wheelMarks` | `m` | `cls`, `color`, `cx`, `cy`, `d`, `onTap`, `tf` |
 
 ## Scalars and callbacks
 
@@ -47,6 +59,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 |---|---|
 | `aEmail` | component state |
 | `aPassword` | component state |
+| `angleLabels` | component state |
+| `angleLines` | component state |
 | `authBusy` | component state |
 | `authEmail` | component state |
 | `authError` | api.js |
@@ -54,9 +68,25 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `authSubmitLabel` | component state |
 | `authSwitchLabel` | component state |
 | `authSwitchMode` | component state |
+| `chartRing` | component state |
+| `chartRulerLine` | component state |
+| `chartRulerOn` | component state |
 | `doLogout` | api.js |
+| `hitArcs` | component state |
+| `houseLines` | component state |
+| `houseNums` | component state |
 | `isLoggedIn` | component state |
 | `isNotLoggedIn` | component state |
+| `mNums` | component state |
+| `mSelBodies` | component state |
+| `mSelClaim` | component state |
+| `mSelEmpty` | component state |
+| `mSelHasBodies` | component state |
+| `mSelName` | component state |
+| `mSelOn` | component state |
+| `mSelOrd` | component state |
+| `mSelSpan` | component state |
+| `mTicks` | component state |
 | `popArch` | component state |
 | `pushArch` | component state |
 | `ringMarks` | component state |
@@ -284,6 +314,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sigWkStandoutNeeds` | component state |
 | `sigWkTwoWay` | component state |
 | `sigWkTwoWayNeeds` | component state |
+| `signGlyphs` | component state |
+| `signLines` | component state |
 | `sndBecomingEpithet` | component state |
 | `sndBecomingStepName` | component state |
 | `sndCastFlavor` | component state |
@@ -318,3 +350,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sndToProfile` | component state |
 | `sndToShare` | component state |
 | `stationRows` | component state |
+| `wheelMarks` | component state |
+| `wheelReady` | component state |
+| `wheelSelLabel` | component state |
+| `wheelTimeUnknown` | component state |

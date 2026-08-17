@@ -659,6 +659,81 @@ a{color:var(--ink-accent)}
   </div>
 
   <sc-if value="{{ sigTabShard }}" hint-placeholder-val="{{ true }}">
+  <sc-if value="{{ wheelReady }}">
+  <div class="pad" style="padding-top:18px">
+    <sc-if value="{{ wheelTimeUnknown }}">
+      <p class="hint" style="margin:0 0 14px">no birth time — houses and the angles are left off rather than guessed.</p>
+    </sc-if>
+    <div style="display:flex;justify-content:center">
+      <svg viewBox="0 0 200 200" width="290" height="290" role="img" aria-label="your chart wheel — signs, mansions, houses and planets">
+        <sc-for list="{{ chartRing }}" as="seg">
+          <path d="{{ seg.d }}" stroke="{{ seg.color }}" stroke-width="{{ seg.w }}" fill="none"></path>
+        </sc-for>
+        <sc-for list="{{ mTicks }}" as="t">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(240,216,154,.3)" stroke-width="0.5"></line>
+        </sc-for>
+        <sc-for list="{{ mNums }}" as="g">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:4.2px;fill:{{ g.fill }}">{{ g.t }}</text>
+        </sc-for>
+        <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(240,216,154,.22)" stroke-width="0.6"></circle>
+        <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(240,216,154,.22)" stroke-width="0.6"></circle>
+        <sc-for list="{{ signLines }}" as="t">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(240,216,154,.3)" stroke-width="0.7"></line>
+        </sc-for>
+        <sc-for list="{{ signGlyphs }}" as="g">
+          <path transform="{{ g.tf }}" d="{{ g.d }}" fill="none" stroke="#D8C89C" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </sc-for>
+        <circle cx="100" cy="100" r="46" fill="none" stroke="rgba(154,138,94,.3)" stroke-width="0.6"></circle>
+        <sc-for list="{{ houseLines }}" as="t">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(154,138,94,.55)" stroke-width="0.7"></line>
+        </sc-for>
+        <sc-for list="{{ houseNums }}" as="g">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:5.5px;fill:#9A8A5E">{{ g.t }}</text>
+        </sc-for>
+        <sc-for list="{{ angleLines }}" as="t">
+          <line x1="{{ t.x1 }}" y1="{{ t.y1 }}" x2="{{ t.x2 }}" y2="{{ t.y2 }}" stroke="rgba(255,176,0,.6)" stroke-width="1"></line>
+        </sc-for>
+        <sc-for list="{{ angleLabels }}" as="g">
+          <text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" dominant-baseline="central" style="font-family:'Pixelify Sans',monospace;font-size:6px;letter-spacing:.1em;fill:#FFB000">{{ g.t }}</text>
+        </sc-for>
+        <sc-for list="{{ wheelMarks }}" as="m">
+          <g onClick="{{ m.onTap }}" style="cursor:pointer">
+            <path transform="{{ m.tf }}" d="{{ m.d }}" fill="none" stroke="{{ m.color }}" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="{{ m.cx }}" cy="{{ m.cy }}" r="10" fill="rgba(0,0,0,0)"></circle>
+          </g>
+        </sc-for>
+        <sc-for list="{{ hitArcs }}" as="h">
+          <path d="{{ h.d }}" stroke="rgba(0,0,0,0)" stroke-width="11" fill="none" onClick="{{ h.onTap }}" style="cursor:pointer"></path>
+        </sc-for>
+      </svg>
+    </div>
+    <div style="display:flex;justify-content:center;gap:14px;margin-top:4px;font-family:'Pixelify Sans',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9A8A5E;flex-wrap:wrap"><span>outer · the 28 mansions</span><span>middle · the 12 signs</span><span>inner · the houses</span></div>
+    <div style="text-align:center;margin-top:8px;font-family:'Pixelify Sans',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#F0D89A;min-height:14px">{{ wheelSelLabel }}</div>
+    <sc-if value="{{ mSelOn }}">
+      <div style="margin-top:14px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.04);padding:16px 18px;text-align:center">
+        <div class="eyebrow">the {{ mSelOrd }} mansion</div>
+        <div class="h3" style="margin-top:4px">{{ mSelName }}</div>
+        <p style="font-size:14px;margin:8px 0 0;color:#D8C89C">{{ mSelClaim }}</p>
+        <div style="margin-top:14px;border-top:1px solid rgba(240,216,154,.14);padding-top:12px">
+          <div class="mono-note">spans {{ mSelSpan }}</div>
+          <sc-if value="{{ mSelHasBodies }}">
+            <div style="display:flex;flex-direction:column;gap:7px;margin-top:11px">
+              <sc-for list="{{ mSelBodies }}" as="b">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13.5px"><span style="color:var(--ink)">{{ b.name }}</span><span style="color:#D8C89C">{{ b.pos }}</span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ mSelEmpty }}">
+            <div style="font-size:13px;color:#9A8A5E;margin-top:11px;font-style:italic">nothing of yours stands here</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ chartRulerOn }}">
+      <p class="mono-note" style="text-align:center;margin-top:14px">{{ chartRulerLine }}</p>
+    </sc-if>
+  </div>
+  </sc-if>
   <div class="pad" style="padding-top:22px">
     <div class="eyebrow">01</div>
     <h2 class="h2" style="margin-top:6px">{{ sigHdrStrike }}</h2>
@@ -1236,6 +1311,9 @@ class Component extends DCLogic {
     sigComputeCount: 0,        // lines revealed on the compute readout
     sigShardOpen: null,        // the station pushed to inside your shard
     sigArch: false,            // "the twenty-eight" pushed sub-screen, from the shard blueprint
+    wheelSel: null, wheelSelM: null, // the chart wheel's tapped planet / tapped mansion (sky tab)
+    ringPrevStep: null,        // for the ring-morph animation: which step's ring was last shown
+    kindleAnim: 0,             // 0 idle | 1 sweep | 2 flare — the kindle animation on claim
     sigNumbersOpen: false,     // tier 3 on tonight, opt-in
 
     sigName: '', sigDate: '1999-07-15', sigTime: '23:40', sigTimeKnown: true,
@@ -1261,7 +1339,7 @@ class Component extends DCLogic {
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.startBurst();
 
-    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api, transits, combosMod, findingsMod] = await Promise.all([
+    const [astro, sigilMod, sky, reading, stationsMod, readingCopyMod, soundingCopy, tz, api, transits, combosMod, findingsMod, format] = await Promise.all([
       import(`./astro.js?v=${BUILD_ID}`), import(`./sigil.js?v=${BUILD_ID}`),
       import(`./sky.js?v=${BUILD_ID}`), import(`./reading.js?v=${BUILD_ID}`),
       import(`./stations.js?v=${BUILD_ID}`), import(`./reading-copy.js?v=${BUILD_ID}`),
@@ -1269,12 +1347,13 @@ class Component extends DCLogic {
       import(`./tz.js?v=${BUILD_ID}`), import(`./api.js?v=${BUILD_ID}`),
       import(`./transits.js?v=${BUILD_ID}`),
       import(`./combos.js?v=${BUILD_ID}`), import(`./findings.js?v=${BUILD_ID}`),
+      import(`./format.js?v=${BUILD_ID}`),
     ]);
     // arrivalReading() (the real corpus, PORT-SPEC.md) and soundingReading()
     // (still-placeholder Sounding content, sigil-copy.js) read from two
     // different modules — see OWNERSHIP.md's note on sigil-copy.js's
     // trimmed scope.
-    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api, transits, combos: combosMod.COMBOS, findings: findingsMod });
+    Object.assign(this, { astro, sigilMod, sky, reading, stations: stationsMod, readingCopy: readingCopyMod.COPY, copy: soundingCopy, tz, api, transits, combos: combosMod.COMBOS, findings: findingsMod, format });
 
     let save = null;
     try { save = JSON.parse(localStorage.getItem('starshard.sigil-save') || 'null'); } catch (e) {}
@@ -1436,6 +1515,168 @@ class Component extends DCLogic {
       claim: get('claim'), synthesis: get('synthesis'), election: get('election'),
       archetype: get('archetype'), keyword: get('keyword'),
       traditions: st.crossCultural || [], match: st.match,
+    };
+  }
+
+  wheelTapPlanet = key => () => this.setState(st => ({ wheelSel: st.wheelSel === key ? null : key, wheelSelM: null }));
+  wheelTapMansion = n => () => this.setState(st => ({ wheelSelM: st.wheelSelM === n ? null : n, wheelSel: null }));
+
+  // Zodiac glyphs as stroke paths (no system font in the dc-runtime's
+  // sandbox reliably renders U+2648-2653) and the ten planet glyphs, both
+  // verbatim from Star Shard v3 Build Plan/Star Shard v3.dc.html — hand-
+  // drawn SVG paths, not text, so they render identically everywhere.
+  static GLYPHS = [
+    "M-3.2,-1.3 A1.6,1.6 0 1 1 0,-1.3 L0,3.2 M3.2,-1.3 A1.6,1.6 0 1 0 0,-1.3",
+    "M-2.6,-3.2 A2.6,2.6 0 0 0 2.6,-3.2 M2,1 a2,2 0 1 1 -4,0 a2,2 0 1 1 4,0",
+    "M-2.8,-3.2 C-1,-2.4 1,-2.4 2.8,-3.2 M-2.8,3.2 C-1,2.4 1,2.4 2.8,3.2 M-1.4,-2.7 L-1.4,2.7 M1.4,-2.7 L1.4,2.7",
+    "M-1.6,-1 a1.4,1.4 0 1 0 2.8,0 a1.4,1.4 0 1 0 -2.8,0 M1.6,1 a1.4,1.4 0 1 0 -2.8,0 a1.4,1.4 0 1 0 2.8,0 M-3,-1 C-3,-3 0,-3.4 2.6,-2.7 M3,1 C3,3 0,3.4 -2.6,2.7",
+    "M-2.4,0.5 a1.3,1.3 0 1 0 2.6,0 a1.3,1.3 0 1 0 -2.6,0 M0.2,0.5 C0.2,-2.6 3,-3 3,-1.1 C3,0.4 1.5,1.9 1.5,2.9 C1.5,3.7 2.6,3.7 3,3.1",
+    "M-3,3 L-3,-1.5 C-3,-3 -1.5,-3 -1.5,-1.5 L-1.5,3 M-1.5,-1.5 C-1.5,-3 0,-3 0,-1.5 L0,3 M0,-1.5 C0,-3 1.5,-3 1.5,-1.5 L1.5,1.8 C1.5,3.4 3,3.4 3.2,2.2 M1.5,1.8 C1.5,3 0.6,3.7 -0.2,3.7",
+    "M-3.2,1.2 L-1.4,1.2 M1.4,1.2 L3.2,1.2 M-1.4,1.2 A2.1,2.1 0 1 1 1.4,1.2 M-3.2,3 L3.2,3",
+    "M-3,3 L-3,-1.5 C-3,-3 -1.5,-3 -1.5,-1.5 L-1.5,3 M-1.5,-1.5 C-1.5,-3 0,-3 0,-1.5 L0,3 M0,-1.5 C0,-3 1.5,-3 1.5,-1.5 L1.5,1.9 C1.5,3.3 2.3,3.3 3.4,2.9 M3.4,2.9 L2.7,2.1 M3.4,2.9 L2.6,3.6",
+    "M-3,3 L3,-3 M0.9,-3 L3,-3 L3,-0.9 M-1.9,0 L0.5,2.4",
+    "M-3.2,-2.5 C-2.4,-3.4 -1.6,-3 -1.6,-2 L-1.6,1 M-1.6,-2 C-1.6,-3.2 0,-3.2 0,-2 L0,1.6 C0,3 1.2,3.6 2.2,3 C3.2,2.4 3,0.9 1.9,0.9 C1,0.9 0.7,1.9 1.3,2.5",
+    "M-3.2,-1.3 L-1.6,-2.5 L0,-1.3 L1.6,-2.5 L3.2,-1.3 M-3.2,1.7 L-1.6,0.5 L0,1.7 L1.6,0.5 L3.2,1.7",
+    "M-1.6,-3.2 C-3.2,-1.6 -3.2,1.6 -1.6,3.2 M1.6,-3.2 C3.2,-1.6 3.2,1.6 1.6,3.2 M-2.7,0 L2.7,0",
+  ];
+  static PLANET_PATHS = {
+    sun: "M3.2,0 a3.2,3.2 0 1 1 -6.4,0 a3.2,3.2 0 1 1 6.4,0 M0.8,0 a0.8,0.8 0 1 1 -1.6,0 a0.8,0.8 0 1 1 1.6,0",
+    moon: "M1,-3.2 A3.3,3.3 0 1 0 1,3.2 A2.5,2.5 0 1 1 1,-3.2",
+    venus: "M2.1,-1.6 a2.1,2.1 0 1 0 -4.2,0 a2.1,2.1 0 1 0 4.2,0 M0,0.5 L0,3.4 M-1.3,2 L1.3,2",
+    mercury: "M1.8,-0.2 a1.8,1.8 0 1 0 -3.6,0 a1.8,1.8 0 1 0 3.6,0 M0,1.6 L0,3.6 M-1.2,2.6 L1.2,2.6 M-1.7,-3.7 A1.9,1.9 0 0 0 1.7,-3.7",
+    mars: "M-0.7,0.7 m2.1,0 a2.1,2.1 0 1 1 -4.2,0 a2.1,2.1 0 1 1 4.2,0 M0.8,-0.8 L3.3,-3.3 M1.5,-3.3 L3.3,-3.3 L3.3,-1.5",
+    jupiter: "M-3.2,1.4 L2.4,1.4 M1,-2.8 L1,3.6 M-3,-0.9 C-3,-3.1 -0.3,-3.1 -0.3,-0.9 C-0.3,0.1 -1.7,0.8 -3.2,1.4",
+    saturn: "M-1.7,-3.6 L-1.7,2.2 M-2.9,-2.4 L-0.5,-2.4 M-1.7,-0.1 C-0.3,-1.3 1.7,-0.5 1.7,1 C1.7,2.2 0.9,3 0.3,3.5 C0.7,3.8 1.2,3.8 1.6,3.5",
+    uranus: "M-2.3,-3.3 L-2.3,0.3 M2.3,-3.3 L2.3,0.3 M-2.3,-1.5 L2.3,-1.5 M0,-3.3 L0,1.2 M1.2,2.4 a1.2,1.2 0 1 1 -2.4,0 a1.2,1.2 0 1 1 2.4,0",
+    neptune: "M-2.5,-3.3 C-2.5,-1 -1.3,0 0,0 C1.3,0 2.5,-1 2.5,-3.3 M0,-3.5 L0,3.6 M-1.3,2.2 L1.3,2.2",
+    pluto: "M0,-2.3 m1.1,0 a1.1,1.1 0 1 1 -2.2,0 a1.1,1.1 0 1 1 2.2,0 M-2.3,-2.7 A2.5,2.5 0 0 0 2.3,-2.7 M0,-0.1 L0,3.6 M-1.3,1.9 L1.3,1.9",
+  };
+
+  /**
+   * The "sky" sub-tab's real chart wheel: 12 signs + 28 mansions + (with a
+   * birth time) 12 houses and the angles, all ten planets marked at their
+   * real longitudes. Pure geometry over s.sigWheelPoints/sigWheelRuler,
+   * both computed once in refreshArrivalAndTonight() — renderVals() stays
+   * synchronous. Houses/angles are omitted entirely (not shown-but-vague)
+   * without a birth time, the same honesty rule sigil.js's deriveSigil()
+   * already applies to risingStation/moonStep — astro.js's computeChart()
+   * still returns a defaulted asc/cusps in that case, and showing a house
+   * ring built from it would be fake precision.
+   */
+  chartWheelVals() {
+    const s = this.state, wp = s.sigWheelPoints;
+    if (!wp) return { wheelReady: false };
+    const C = 100;
+    const polar = (r, deg) => { const t = (deg - 90) * Math.PI / 180; return [+(C + r * Math.cos(t)).toFixed(2), +(C + r * Math.sin(t)).toFixed(2)]; };
+    const arcPath = (r, a0, a1) => {
+      const [x0, y0] = polar(r, a0), [x1, y1] = polar(r, a1);
+      return `M ${x0} ${y0} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}`;
+    };
+    // Wheel orientation: hang it from the ascendant when one exists, same
+    // as astrological convention (ascendant at 9 o'clock); with no known
+    // birth time there is no real ascendant to hang it from, so it falls
+    // back to the Aries point (0deg) rather than fabricate one.
+    const ASC = s.sigTimeKnown ? wp.asc.lon : 0;
+    const toScreen = lon => 270 - (lon - ASC);
+    const lonArc = (r, lon0, lon1) => arcPath(r, toScreen(lon1), toScreen(lon1) + (lon1 - lon0));
+
+    const STATIONS = 28, STEPS = 4, SEGMENTS = 112, SW = 360 / STATIONS, PW = 360 / SEGMENTS;
+    const GLYPHS = Component.GLYPHS, PLANET_PATHS = Component.PLANET_PATHS;
+
+    const signLines = [], signGlyphs = [];
+    for (let i = 0; i < 12; i++) {
+      const a = toScreen(i * 30);
+      const [x1, y1] = polar(72, a), [x2, y2] = polar(86, a);
+      signLines.push({ x1, y1, x2, y2 });
+      const [gx, gy] = polar(79, toScreen(i * 30 + 15));
+      signGlyphs.push({ tf: `translate(${gx},${gy})`, d: GLYPHS[i] });
+    }
+
+    const selM = s.wheelSelM;
+    const ownMansions = new Set([wp.sun.mansion, wp.moon.mansion]);
+    if (s.sigTimeKnown) ownMansions.add(wp.asc.mansion);
+    const chartRing = [];
+    for (let i = 0; i < SEGMENTS; i++) {
+      const station = Math.floor(i / STEPS), step = i % STEPS;
+      const lon0 = i * PW + (step === 0 ? 0.9 : 0.35), lon1 = (i + 1) * PW - 0.35;
+      let color = 'rgba(240,216,154,.16)', w = 2.4;
+      if (ownMansions.has(station)) color = 'rgba(240,216,154,.5)';
+      if (station === selM) { color = '#FFB000'; w = 3; }
+      chartRing.push({ d: lonArc(94, lon0, lon1), color, w });
+    }
+    const mTicks = [], mNums = [];
+    for (let st = 0; st < STATIONS; st++) {
+      const a = toScreen(st * SW);
+      const [x1, y1] = polar(91, a), [x2, y2] = polar(97, a);
+      mTicks.push({ x1, y1, x2, y2 });
+      const [nx, ny] = polar(90, toScreen(st * SW + SW / 2));
+      mNums.push({ x: nx, y: ny, t: String(st + 1), fill: ownMansions.has(st) ? '#FFB000' : (st === selM ? '#FFB000' : 'rgba(216,200,156,.55)') });
+    }
+    const hitArcs = [];
+    for (let st = 0; st < STATIONS; st++) {
+      hitArcs.push({ d: lonArc(94, st * SW + 0.5, (st + 1) * SW - 0.5), onTap: this.wheelTapMansion(st) });
+    }
+
+    const houseLines = [], houseNums = [], angleLines = [], angleLabels = [];
+    if (s.sigTimeKnown) {
+      for (let i = 0; i < 12; i++) {
+        const lon = ASC + i * 30;
+        const a = toScreen(lon);
+        const [x1, y1] = polar(46, a), [x2, y2] = polar(66, a);
+        houseLines.push({ x1, y1, x2, y2 });
+        const [nx, ny] = polar(56, toScreen(lon + 15));
+        houseNums.push({ x: nx, y: ny, t: String(i + 1) });
+      }
+      [[wp.asc.lon, 'ASC', 'DSC'], [wp.mc.lon, 'MC', 'IC']].forEach(([lon, a, b]) => {
+        const sc = toScreen(lon);
+        const [x1, y1] = polar(38, sc), [x2, y2] = polar(86, sc);
+        angleLines.push({ x1, y1, x2, y2 });
+        const [lx, ly] = polar(91, sc); angleLabels.push({ x: lx, y: ly, t: a });
+        const [ox, oy] = polar(91, sc + 180); angleLabels.push({ x: ox, y: oy, t: b });
+      });
+    }
+
+    const PLANET_KEYS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
+    const OUTER_KEYS = new Set(['jupiter', 'mars', 'saturn', 'uranus', 'neptune', 'pluto']);
+    const wheelMarks = PLANET_KEYS.map(key => {
+      const p = wp[key];
+      const [cx, cy] = polar(OUTER_KEYS.has(key) ? 57 : 68, toScreen(p.lon));
+      return { cx, cy, tf: `translate(${cx},${cy})`, d: PLANET_PATHS[key], color: key === 'sun' ? '#FFB000' : key === 'moon' ? '#F0D89A' : '#B8A97E', onTap: this.wheelTapPlanet(key) };
+    });
+
+    const fmtLon = lon => this.format.degFmt(lon);
+    const HOUSE_ORD = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th'];
+    const labelFor = key => {
+      if (key === 'asc') return `ascendant · ${fmtLon(wp.asc.lon)}`;
+      if (key === 'mc') return `midheaven · ${fmtLon(wp.mc.lon)}`;
+      const p = wp[key];
+      const houseText = p.house != null ? ` · ${HOUSE_ORD[p.house - 1]} house` : '';
+      return `${key} · ${fmtLon(p.lon)}${houseText}`;
+    };
+    const sel = s.wheelSel;
+
+    let mSelSpan = '', mSelBodies = [];
+    if (selM != null) {
+      const lo = selM * SW, hi = (selM + 1) * SW;
+      mSelSpan = `${fmtLon(lo)} — ${fmtLon(hi)}`;
+      const allKeys = s.sigTimeKnown ? [...PLANET_KEYS, 'asc', 'mc'] : PLANET_KEYS;
+      mSelBodies = allKeys.filter(k => wp[k].mansion === selM).map(k => ({ name: k, pos: fmtLon(wp[k].lon) }));
+    }
+    const st = this.stations.STATIONS;
+
+    return {
+      wheelReady: true,
+      signLines, signGlyphs, chartRing, mTicks, mNums, hitArcs, wheelMarks,
+      houseLines, houseNums, angleLines, angleLabels,
+      wheelSelLabel: sel ? labelFor(sel) : (selM != null ? `${this.ordinal(selM + 1)} mansion` : 'tap a light — or a mansion on the rim'),
+      mSelOn: selM != null,
+      mSelOrd: selM != null ? this.ordinal(selM + 1) : '',
+      mSelName: selM != null ? st[selM].epithet : '',
+      mSelClaim: selM != null ? this.mansionPortrait(selM).claim : '',
+      mSelSpan, mSelBodies, mSelHasBodies: mSelBodies.length > 0, mSelEmpty: selM != null && mSelBodies.length === 0,
+      chartRulerOn: !!s.sigWheelRuler,
+      chartRulerLine: s.sigWheelRuler ? `chart ruler: ${s.sigWheelRuler.ruler.toLowerCase()} · ${HOUSE_ORD[s.sigWheelRuler.house - 1]} house` : '',
+      wheelTimeUnknown: !s.sigTimeKnown,
     };
   }
 
@@ -1839,9 +2080,40 @@ class Component extends DCLogic {
     // natalAspects() (PATTERN tab, above) scans.
     const fullAspects = await this.sigilMod.fullNatalAspects(s.sigChart, { timeKnown: s.sigTimeKnown });
 
+    // the chart wheel's own point data (sky tab): every point's real
+    // longitude/sign/house/mansion, computed once here so renderVals() can
+    // stay synchronous and just build SVG geometry from it. A second natal
+    // fetch beyond fullAspects' own internal one (transits.js does its own
+    // lazy dynamic import, so this costs a redundant call, not a redundant
+    // network round-trip) — not worth threading pre-fetched positions
+    // through fullNatalAspects() for this pass.
+    const natal = await this.transits.natalPlanetPositions(s.sigChart);
+    const houseOf = lon => this.astro.houseOf(lon, s.sigChart.cusps);
+    const mkPoint = (name, lon) => ({
+      name, lon,
+      sign: this.astro.SIGNS[this.astro.signOf(lon)],
+      house: s.sigTimeKnown ? houseOf(lon) : null,
+      mansion: this.astro.mansionOf(lon),
+    });
+    const wheelPoints = {
+      sun: mkPoint('sun', s.sigChart.sunLon), moon: mkPoint('moon', s.sigChart.moonLon),
+      mercury: mkPoint('mercury', natal.Mercury.lon), venus: mkPoint('venus', natal.Venus.lon),
+      mars: mkPoint('mars', natal.Mars.lon), jupiter: mkPoint('jupiter', natal.Jupiter.lon),
+      saturn: mkPoint('saturn', natal.Saturn.lon), uranus: mkPoint('uranus', natal.Uranus.lon),
+      neptune: mkPoint('neptune', natal.Neptune.lon), pluto: mkPoint('pluto', natal.Pluto.lon),
+    };
+    if (s.sigTimeKnown) {
+      wheelPoints.asc = mkPoint('asc', s.sigChart.asc);
+      wheelPoints.mc = mkPoint('mc', s.sigChart.mc);
+    }
+    // the chart ruler (sigilMod.ascRulerHouse, already used by the HOUSES
+    // tab above) — the wheel highlights which point it is.
+    const ruler = await this.sigilMod.ascRulerHouse(s.sigChart);
+
     this.setState({
       sigArrival: arrival, sigPattern: pattern, sigHouses: houses, sigDepth: depth,
       sigWeek: week, sigFindings: findings, sigFullAspects: fullAspects,
+      sigWheelPoints: wheelPoints, sigWheelRuler: ruler,
       sndCast: cast, sndRelation: relation, sndLight: light, sndSounding: sounding,
     });
   };
@@ -2040,6 +2312,7 @@ class Component extends DCLogic {
       sigOnShard: s.sigStep === 'shard' ? '1' : '0',
       sigToShard: this.sigToShard,
       ...this.shardVals(tonight),
+      ...this.chartWheelVals(),
 
       // PATTERN tab (PRODUCT.md §3) — real geometry, real corpus where it
       // exists; s.sigPattern is null until refreshArrivalAndTonight() has
