@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**369 bindings, 319 top-level.**
+**372 bindings, 322 top-level.**
 
 ## Rule
 
@@ -201,6 +201,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `navOn` | component state |
 | `ncCast` | component state |
 | `ncCastLabel` | component state |
+| `ncCastStyle` | component state |
 | `ncDateDVal` | component state |
 | `ncDateMVal` | component state |
 | `ncDateYVal` | component state |
@@ -229,6 +230,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `ncTimeHVal` | component state |
 | `ncTimeMark` | component state |
 | `ncTimeMinVal` | component state |
+| `ncTimeSelectDisabled` | component state |
+| `ncTimeSelectStyle` | component state |
 | `ncToggleManual` | component state |
 | `ncToggleTimeUnknown` | component state |
 | `ncTzVal` | component state |

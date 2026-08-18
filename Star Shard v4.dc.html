@@ -626,7 +626,7 @@
           <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
             <div style="display:flex;align-items:center;gap:10px">
               <div style="position:relative;flex:1">
-                <select value="{{ ncTimeHVal }}" onChange="{{ ncSetTimeH }}" style="{{ obSelectStyle }}">
+                <select value="{{ ncTimeHVal }}" onChange="{{ ncSetTimeH }}" style="{{ ncTimeSelectStyle }}" disabled="{{ ncTimeSelectDisabled }}">
                   <option value="" disabled selected>hh</option>
                   <sc-for list="{{ obHourOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
                 </select>
@@ -634,14 +634,14 @@
               </div>
               <span style="color:#9A8A5E;font-size:17px">:</span>
               <div style="position:relative;flex:1">
-                <select value="{{ ncTimeMinVal }}" onChange="{{ ncSetTimeMin }}" style="{{ obSelectStyle }}">
+                <select value="{{ ncTimeMinVal }}" onChange="{{ ncSetTimeMin }}" style="{{ ncTimeSelectStyle }}" disabled="{{ ncTimeSelectDisabled }}">
                   <option value="" disabled selected>mm</option>
                   <sc-for list="{{ obMinuteOptions }}" as="o" hint-placeholder-count="60"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
                 </select>
                 <span style="{{ obChevronStyle }}">⌄</span>
               </div>
               <div style="position:relative;flex:1.1">
-                <select value="{{ ncTimeAPVal }}" onChange="{{ ncSetTimeAP }}" style="{{ obSelectStyle }}">
+                <select value="{{ ncTimeAPVal }}" onChange="{{ ncSetTimeAP }}" style="{{ ncTimeSelectStyle }}" disabled="{{ ncTimeSelectDisabled }}">
                   <option value="" disabled selected>—</option>
                   <option value="AM">am</option>
                   <option value="PM">pm</option>
@@ -672,7 +672,7 @@
         </sc-if>
         <button onClick="{{ ncToggleManual }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">{{ ncManualToggleLabel }}</button>
       </div>
-      <button onClick="{{ ncCast }}" style="margin-top:34px;align-self:flex-start;background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;cursor:pointer">{{ ncCastLabel }}</button>
+      <button onClick="{{ ncCast }}" style="{{ ncCastStyle }}">{{ ncCastLabel }}</button>
       <sc-if value="{{ ncErrorOn }}" hint-placeholder-val="{{ false }}">
         <p style="font-size:12.5px;line-height:1.6;color:#E8A87C;margin:14px 0 0">{{ ncError }}</p>
       </sc-if>
@@ -982,6 +982,12 @@ class Component extends DCLogic {
     const s = this.state;
     if (s.ncCasting) return;
     if (!s.ncName.trim()) { this.setState({ ncError: "give this chart a name, so you can tell it apart from your own" }); return; }
+    if (!s.ncDate.trim()) { this.setState({ ncError: "still needs a full birth date" }); return; }
+    if (!s.ncTimeUnknown && !s.ncTime.trim()) { this.setState({ ncError: "still needs a birth time, or check \"don't know their birth time\"" }); return; }
+    const locDone = s.ncManualMode
+      ? [s.ncLat, s.ncLon, s.ncTz].every(v => v.trim().length > 0)
+      : s.ncPlace.trim().length > 0;
+    if (!locDone) { this.setState({ ncError: s.ncManualMode ? "latitude, longitude and UTC offset still need real values" : "still needs a birthplace" }); return; }
     const timeKnown = !s.ncTimeUnknown;
     this.setState({ ncCasting: true, ncError: "" });
     let chart;
@@ -1092,8 +1098,13 @@ class Component extends DCLogic {
   };
 
   acctLogout = async () => {
+    const email = this.state.authEmail;
     await this.api.logout();
-    this.setState({ authEmail: null, acct: null });
+    // default the sheet to "sign in" next time it opens, with the email
+    // still filled in — someone who just logged out already has an
+    // account, "create your account" would be the wrong first move, and
+    // re-typing the email they were just shown is friction with no point.
+    this.setState({ authEmail: null, acct: null, acctMode: "login", acctEmail: email || "", acctPassword: "" });
   };
 
   // -- account: sigil + recollection sync, mirrors Star Shard v3.dc.html's
@@ -1496,6 +1507,14 @@ class Component extends DCLogic {
       obRingSegs.push({ d: obArc(32, a0, a1), color: obDone[obGroup(s)] ? "#F0D89A" : "rgba(240,216,154,.15)" });
     }
     const obCount = obDone.filter(Boolean).length;
+    // "add a chart" form completeness — same shape as obDone/obCount, plus
+    // the name field, so its cast button can show the same real disabled/
+    // enabled distinction the primary onboarding form already has instead
+    // of always looking clickable.
+    const ncLocDone = this.state.ncManualMode
+      ? [this.state.ncLat, this.state.ncLon, this.state.ncTz].every(v => v.trim().length > 0)
+      : this.state.ncPlace.trim().length > 0;
+    const ncOk = !!this.state.ncName.trim() && this.state.ncDate.trim().length > 0 && (this.state.ncTimeUnknown || this.state.ncTime.trim().length > 0) && ncLocDone;
     const cs = this.state.obCastStep;
     const obCastSegs = [];
     for (let s = 0; s < 28; s++) {
@@ -1573,8 +1592,7 @@ class Component extends DCLogic {
       acctSendStyle: "margin-top:26px;align-self:flex-start;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;transition:all .4s ease;" + (acctOk && !this.state.acctBusy ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       acctModeToggleLabel: this.state.acctMode === "signup" ? "already have a shard? sign in instead" : "new here? create an account instead",
       acctToggleMode: () => this.setState(st => ({ acctMode: st.acctMode === "signup" ? "login" : "signup", acctError: "" })),
-      acctDone: () => this.setState({ acct: "done" }),
-      acctSkip: () => this.setState({ acct: "skip" }),
+      acctSkip: () => this.setState({ acct: "skip", acctPassword: "", acctError: "" }),
       acctStatusLine: this.state.authEmail ? `signed in as ${this.state.authEmail}` : "not signed in · this shard lives on this device only",
       acctStatusAction: this.state.authEmail ? "log out" : "keep your shard →",
       acctStatusTap: this.state.authEmail ? this.acctLogout : () => this.setState({ acct: "ask" }),
@@ -1687,6 +1705,8 @@ class Component extends DCLogic {
       ncTimeUnknownOn: this.state.ncTimeUnknown,
       ncToggleTimeUnknown: () => this.setState(st => ({ ncTimeUnknown: !st.ncTimeUnknown })),
       ncTimeMark: this.state.ncTimeUnknown ? "☑" : "☐",
+      ncTimeSelectStyle: "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:16px;padding:8px 16px 8px 2px;outline:none;cursor:pointer;" + (this.state.ncTimeUnknown ? "color:rgba(154,138,94,.4)" : "color:#F2EAD6"),
+      ncTimeSelectDisabled: this.state.ncTimeUnknown,
       ncPlaceVal: this.state.ncPlace, ncSetPlace: (e) => this.setState({ ncPlace: e.target.value, ncError: "" }),
       ncManualOn: this.state.ncManualMode, ncManualOff: !this.state.ncManualMode,
       ncManualToggleLabel: this.state.ncManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
@@ -1697,6 +1717,7 @@ class Component extends DCLogic {
       ncSetTz: (e) => this.setState({ ncTz: e.target.value, ncError: "" }),
       ncErrorOn: !!this.state.ncError, ncError: this.state.ncError,
       ncCastLabel: this.state.ncCasting ? "casting…" : "cast this chart",
+      ncCastStyle: "margin-top:34px;align-self:flex-start;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;transition:all .4s ease;" + (ncOk && !this.state.ncCasting ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       ncCast: this.ncCast,
 
       // -- the chart preview screen (task 38) --------------------------

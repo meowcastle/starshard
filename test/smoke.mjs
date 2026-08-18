@@ -249,8 +249,13 @@ if (!/keep your shard →/i.test(loggedOutBody)) fail.push('logout did not retur
 
 await page.getByText('keep your shard →').click();
 await page.waitForFunction(() => /keep your shard/i.test(document.body.innerText || ''), null, { timeout: 3000 });
-await page.getByText('already have a shard? sign in instead').click();
-await page.getByPlaceholder('you@somewhere.com').fill('smoketest@example.com');
+// the sheet should already default to "sign in" (not "create your
+// account") after a logout, with the email still filled in — polish
+// pass: re-typing the email you were just shown is friction with no
+// point, and defaulting a returning user into "create account" is wrong.
+await page.waitForFunction(() => /^sign in$/im.test(document.body.innerText || ''), null, { timeout: 3000 });
+const emailAfterLogout = await page.getByPlaceholder('you@somewhere.com').inputValue();
+if (emailAfterLogout !== 'smoketest@example.com') fail.push(`email should stay filled in after logout, got "${emailAfterLogout}"`);
 await page.getByPlaceholder('your password').fill('correct horse battery');
 await page.getByText('sign in', { exact: true }).click();
 await page.waitForFunction(() => /signed in as smoketest@example\.com/i.test(document.body.innerText || ''), null, { timeout: 5000 });
@@ -299,12 +304,24 @@ await shot('07-charts-list-empty');
 
 await page.getByText('+ add a chart').click();
 await page.waitForFunction(() => /whose chart is this/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+
+// the cast button must start disabled (empty form) and only become real
+// once every field is filled — same polish pass as the primary
+// onboarding form's obCastStyle, applied here as ncCastStyle/ncOk.
+const ncCastBtn = page.getByText('cast this chart');
+const emptyCursor = await ncCastBtn.evaluate(el => getComputedStyle(el).cursor);
+if (emptyCursor !== 'default') fail.push(`"cast this chart" should be disabled (cursor:default) on an empty form, got cursor:${emptyCursor}`);
+
 await page.getByPlaceholder('mom, alex, ...').fill('a friend');
 await fillDate('1995', '03', '12');
 await fillTime('2', '15', 'PM');
 await page.getByPlaceholder('portland, oregon').fill('New York');
 await shot('08-add-chart-filled');
-await page.getByText('cast this chart').click();
+
+const filledCursor = await ncCastBtn.evaluate(el => getComputedStyle(el).cursor);
+if (filledCursor !== 'pointer') fail.push(`"cast this chart" should be enabled (cursor:pointer) once the form is filled, got cursor:${filledCursor}`);
+
+await ncCastBtn.click();
 await page.waitForFunction(() => /^a friend$/im.test(document.body.innerText || ''), null, { timeout: 8000 });
 await page.waitForTimeout(500);
 await shot('09-second-chart-preview');
