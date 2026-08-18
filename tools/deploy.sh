@@ -20,16 +20,18 @@ FRONTEND_REMOTE=/volume2/web/starshard-staging
 BACKEND_REMOTE=/volume2/web/starshard-api
 NODE_BIN=/volume2/@appstore/Node.js_v20/usr/local/bin/node
 
-FRONTEND_FILES="api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil-copy.js reading-copy.js transits.js deck.js events.js stations.js astronomy-engine.js support.js sitemap.xml combos.js findings.js rates.js"
+FRONTEND_FILES="api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil-copy.js reading-copy.js transits.js deck.js events.js stations.js astronomy-engine.js support.js sitemap.xml combos.js findings.js rates.js ios-frame.jsx"
 
 cd "$(dirname "$0")/.."
 
 deploy_frontend() {
   echo "==> index.html"
-  # "Star Shard v3.dc.html" is the live page as of the Sigil/Sounding MVP —
-  # "Star Shard v2 (archived).dc.html" stays in the repo as reference only,
-  # not deployed. See CLAUDE.md's receipt protocol.
-  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3.dc.html"
+  # "Star Shard v4.dc.html" is the live page (the calm-pass UI, wired to the
+  # real engine/corpus/combos — see CLAUDE.md's port-plan history). Prior
+  # generations stay in the repo as reference only, not deployed:
+  # "Star Shard v3.dc.html", "Star Shard v2 (archived).dc.html". See
+  # CLAUDE.md's receipt protocol.
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v4.dc.html"
   for f in $FRONTEND_FILES; do
     if [ -f "$f" ]; then
       echo "==> $f"

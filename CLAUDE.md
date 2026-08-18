@@ -28,19 +28,29 @@ layer** — see `PLATFORM.md`.
 The **front end was rebuilt from scratch** against this reboot; the engine
 modules and the database carried forward. The old four-shard flip flow
 (houses / archetype / mansion / weekday) is retired; its computations live
-on inside the Sigil. Status (updated 18 Aug): `Star Shard v3.dc.html` is
-the live page, and it is no longer a pure stopgap. A real Claude Design
-export landed (`Star Shard v3 Build Plan/`) and, per Justin's own call,
-**is now the source of truth for UI** — its visual language (palette,
-Cormorant Garamond headings, the flat glow-based chrome, the ✦ flourish
-dividers, the bracketed signature card) has been ported into the live
-page's shared CSS tokens, and its chart-wheel design was rebuilt as real,
-data-wired markup (the "sky" sub-tab: signs/mansions/houses/planets,
-tap-to-select). The page's *script* — state, lifecycle, `renderVals()`,
-the module wiring — is still entirely Code-authored; only the visual
-system and specific screens are Design-sourced. `Star Shard v4.dc.html`
-(same folder) is a further design reference, not yet ported — see below.
-`Star Shard v2 (archived).dc.html` is retired, kept only as reference.
+on inside the Sigil. Status (updated 18 Aug): `Star Shard v4.dc.html`
+(repo root) is the live page now — the "calm pass" Design export, fully
+re-wired to the real engine/corpus/combos/findings pipeline (same pattern
+`Star Shard v3.dc.html` used: Design's markup, Code's script). `deploy.sh`
+ships it as `index.html`. **`Star Shard v3.dc.html` is retired** — per
+Justin's call ("v3 is outdated and not needed anymore"), it stays in the
+repo as historical reference only, same as `Star Shard v2 (archived).dc.html`,
+and is not deployed. `ios-frame.jsx` (repo root, copied from the Build
+Plan folder) is a real runtime dependency of v4's markup — the device-
+frame wrapper Design's export uses — not decoration; it ships in
+`FRONTEND_FILES` alongside the engine modules.
+
+v4's known gaps against the export, all deliberate scope calls made when
+it was ported (not oversights): the per-planet/angle detail cards show
+real position/house/mansion facts only, not invented interpretive prose
+(no composer exists for that); the "in your life" lifetime-rarity line
+was dropped entirely (no engine computes it — the single biggest
+still-unbuilt piece per `SHARD-MODEL.md`'s own innovation claim); the
+onboarding form is wired best-effort against its own free-text date/
+place fields (loose `Date` parsing, first geocode match, no manual-
+coordinate fallback — the markup has no fields for one); Manzil's
+"the covered well" door is forced off (`gameNightOn: false` unconditionally)
+since Manzil itself is still WIP.
 
 Beyond the arrival/Sounding pipeline, the live page now also carries: the
 **shard blueprint** (`sigStep: 'shard'` — sun-mansion × moon-mansion as
@@ -155,11 +165,17 @@ and workflow rules in `OWNERSHIP.md`.
 ## Architecture
 
 ```
-Star Shard v3.dc.html
-  ├─ markup            Claude Design-sourced (the wheel + shard blueprint's
-  │                    visual language ported in; rest is Code-authored —
-  │                    see "Status" above). v4.dc.html is the next reference,
-  │                    not yet ported.
+Star Shard v4.dc.html
+  ├─ markup            Claude Design-sourced (the "calm pass" export,
+  │                    ported per the receipt protocol below). Static
+  │                    per-example prose in the export (the combination
+  │                    reading, mansion portraits, tonight's reading) was
+  │                    converted to real `{{ bindings }}` in place — same
+  │                    DOM/CSS, real data. `Star Shard v3.dc.html` is
+  │                    retired (see "Status" above), kept for reference.
+  ├─ ios-frame.jsx     Design-sourced device-frame wrapper the markup's
+  │                    `<x-import>` depends on — a real runtime file, not
+  │                    a design reference; deployed alongside the engine.
   ├─ <helmet>          Claude Design owns the fonts/styles; title+OG/meta
   │                    are Code's to preserve by hand on every merge — real
   │                    exports so far don't carry them (see receipt protocol)
