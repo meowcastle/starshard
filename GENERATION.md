@@ -342,6 +342,47 @@ the fourth hallucinated *aversion* out of a `none`. A field whose only
 observed effect is to invite invention is worse than absent. `opposite`
 returns later as an explicit farlight flag, or not at all.
 
+### 4g. The banned-frame list, and why it now lives in this document
+
+§4c–§4f describe the *mechanism* — a ban produces a paraphrase, the tell
+moves, the gate is a floor. None of them enumerates the frames. The actual
+list accumulated in `run/PROMPT.txt`, a scratch file, and in August 2026 that
+file went missing between tranches.
+
+`run/` was rebuilt from this document. **The rebuild was faithful on every
+lesson §4a–§4f records and lost the one thing §4a–§4f never wrote down.**
+
+Measured cost: **rows 07 and 12 came back with 18 hits against the list across
+56 cells. The 420 cells written before them carry 14 in total.** Six times the
+density, in exactly the constructions five earlier rows had been spent
+killing. Every automated gate passed the whole time — these sit mid-sentence
+and the regexes are anchored.
+
+So the list lives here now, where the constitution lives:
+
+    "what it costs is"        "what that costs is"
+    "at full size and"        "is the word and"
+    "the word and it"         "there is no way"
+    "is no way to"            "and it is the"
+    "so there is no"          "and it does not"
+    "you have never once"     "and none of them"
+    "and not one of them"     "not one of them knows"
+    "and every one of them"   "and you are the only"
+    "and there is nothing to" "is real and it is"
+    "and you have never been"
+
+**Audit both literally and with punctuation stripped.** Two of the row-12 hits
+were comma-variants — `"at full size, and"`, `"is the word, and it is"` —
+invisible to a literal grep and identical to a reader.
+
+**And do not evade a frame by inserting a word.** An earlier pass turned
+*"from people"* into *"from the people"*, which fools the tool and not the
+reader. A banned frame means the sentence is rebuilt, not respaced.
+
+The list is not the point and it is not exhaustive — §4c's mechanism is the
+point, and the next row will invent a frame that is not on it. But a list that
+costs 18 defects when it goes missing belongs in the document that cannot.
+
 ---
 
 **Few-shot: `06·10`, `09·12`, `28·8`** — Justin, Corey, Adam. Three
