@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**266 bindings, 219 top-level.**
+**284 bindings, 235 top-level.**
 
 ## Rule
 
@@ -39,7 +39,12 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `moonPTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `obCastLines` | `l` | `style`, `t` |
 | `obCastSegs` | `seg` | `color`, `d`, `w` |
+| `obDayOptions` | `o` | `label`, `value` |
+| `obHourOptions` | `o` | `label`, `value` |
+| `obMinuteOptions` | `o` | `label`, `value` |
+| `obMonthOptions` | `o` | `label`, `value` |
 | `obRingSegs` | `seg` | `color`, `d`, `w` |
+| `obYearOptions` | `o` | `label`, `value` |
 | `planetRows` | `p` | `d`, `name`, `onTap`, `pos`, `t` |
 | `sRingMarks` | `m` | `color`, `cx`, `cy`, `d`, `fill`, `onTap`, `r`, `stroke`, `tf` |
 | `sRingSegs` | `seg` | `color`, `d`, `w` |
@@ -164,31 +169,47 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `obCastSegs` | component state |
 | `obCastStyle` | component state |
 | `obCastingOn` | component state |
-| `obDateVal` | component state |
+| `obChevronStyle` | component state |
+| `obDateDVal` | component state |
+| `obDateMVal` | component state |
+| `obDateYVal` | component state |
+| `obDayOptions` | component state |
 | `obError` | component state |
 | `obErrorOn` | component state |
 | `obFormOn` | component state |
+| `obHourOptions` | component state |
 | `obLatVal` | component state |
 | `obLonVal` | component state |
 | `obManualOff` | component state |
 | `obManualOn` | component state |
 | `obManualToggleLabel` | component state |
+| `obMinuteOptions` | component state |
+| `obMonthOptions` | component state |
 | `obPlaceVal` | component state |
 | `obRingCount` | component state |
 | `obRingSegs` | component state |
-| `obSetDate` | component state |
+| `obSelectStyle` | component state |
+| `obSetDateD` | component state |
+| `obSetDateM` | component state |
+| `obSetDateY` | component state |
 | `obSetLat` | component state |
 | `obSetLon` | component state |
 | `obSetPlace` | component state |
-| `obSetTime` | component state |
+| `obSetTimeAP` | component state |
+| `obSetTimeH` | component state |
+| `obSetTimeMin` | component state |
 | `obSetTz` | component state |
-| `obTimeInputStyle` | component state |
+| `obTimeAPVal` | component state |
+| `obTimeHVal` | component state |
 | `obTimeMark` | component state |
+| `obTimeMinVal` | component state |
+| `obTimeSelectDisabled` | component state |
+| `obTimeSelectStyle` | component state |
 | `obTimeStyle` | component state |
-| `obTimeVal` | component state |
 | `obToggleManual` | component state |
 | `obToggleTime` | component state |
 | `obTzVal` | component state |
+| `obYearOptions` | component state |
 | `onChart` | component state |
 | `onShard` | component state |
 | `onTonight` | component state |

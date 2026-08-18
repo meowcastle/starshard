@@ -110,11 +110,26 @@ await page.goto(base + '/' + PAGE, { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(() => /tell us the minute/i.test(document.body.innerText || ''), null, { timeout: 15000 });
 await shot('00-onboard');
 
-// -- birth entry: native date/time pickers (fixed a real reported bug —
-// the export's free-text date field gave no year/month/day picker at
-// all) + place search with a manual lat/lon/UTC-offset fallback --------
-await page.locator('input[type="date"]').fill('1989-06-06');
-await page.locator('input[type="time"]').fill('16:42');
+// -- birth entry: on-brand month/day/year + hour/minute/am-pm <select>s
+// (fixed a real reported bug — the browser's own <input type="date"/
+// "time"> picker chrome can't be restyled and read as a generic OS
+// calendar dropped into the app) + place search with a manual lat/lon/
+// UTC-offset fallback. DOM order on the onboarding form is fixed
+// (month, day, year, hour, minute, am/pm), so selecting by index is
+// reliable — there are no other <select>s on this screen. -----------------
+const obSelects = page.locator('select');
+const fillDate = async (y, m, d) => {
+  await obSelects.nth(0).selectOption(m);
+  await obSelects.nth(1).selectOption(d);
+  await obSelects.nth(2).selectOption(y);
+};
+const fillTime = async (h, min, ap) => {
+  await obSelects.nth(3).selectOption(h);
+  await obSelects.nth(4).selectOption(min);
+  await obSelects.nth(5).selectOption(ap);
+};
+await fillDate('1989', '06', '06');
+await fillTime('4', '42', 'PM');
 
 // the manual-coordinates toggle: cast a real chart from raw lat/lon/tz,
 // bypassing geocode entirely (mirrors Star Shard v3's proven manual-mode
@@ -137,8 +152,8 @@ if (manualMissing) fail.push(`manual-coordinates shard tab: ${manualMissing}`);
 await page.evaluate(() => localStorage.clear());
 await page.goto(base + '/' + PAGE, { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(() => /tell us the minute/i.test(document.body.innerText || ''), null, { timeout: 15000 });
-await page.locator('input[type="date"]').fill('1989-06-06');
-await page.locator('input[type="time"]').fill('16:42');
+await fillDate('1989', '06', '06');
+await fillTime('4', '42', 'PM');
 await page.getByPlaceholder('portland, oregon').fill('Nowhereatallville');
 await shot('01-form-filled-bad-place');
 

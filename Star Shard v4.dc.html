@@ -48,13 +48,69 @@
       <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;text-align:center;margin:12px 0 0;color:#F2EAD6">star shard</h1>
       <p style="font-size:14.5px;line-height:1.7;color:#9A8A5E;text-align:center;margin:12px 0 0">the sky wrote something the minute you arrived.<br>tell us the minute.</p>
       <div style="display:flex;flex-direction:column;gap:30px;margin-top:44px">
-        <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:ssFadeUp .5s ease .08s both">born on
-          <input type="date" value="{{ obDateVal }}" onChange="{{ obSetDate }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%;color-scheme:dark">
-        </label>
+        <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:ssFadeUp .5s ease .08s both">born on
+          <div style="display:flex;gap:14px">
+            <div style="position:relative;flex:1.3">
+              <select value="{{ obDateMVal }}" onChange="{{ obSetDateM }}" style="{{ obSelectStyle }}">
+                <option value="" disabled selected>month</option>
+                <sc-for list="{{ obMonthOptions }}" as="o" hint-placeholder-count="12">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+              <span style="{{ obChevronStyle }}">⌄</span>
+            </div>
+            <div style="position:relative;flex:1">
+              <select value="{{ obDateDVal }}" onChange="{{ obSetDateD }}" style="{{ obSelectStyle }}">
+                <option value="" disabled selected>day</option>
+                <sc-for list="{{ obDayOptions }}" as="o" hint-placeholder-count="31">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+              <span style="{{ obChevronStyle }}">⌄</span>
+            </div>
+            <div style="position:relative;flex:1.2">
+              <select value="{{ obDateYVal }}" onChange="{{ obSetDateY }}" style="{{ obSelectStyle }}">
+                <option value="" disabled selected>year</option>
+                <sc-for list="{{ obYearOptions }}" as="o" hint-placeholder-count="6">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+              <span style="{{ obChevronStyle }}">⌄</span>
+            </div>
+          </div>
+        </div>
         <div style="display:flex;flex-direction:column;gap:10px;animation:ssFadeUp .5s ease .16s both">
-          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
-            <input type="time" value="{{ obTimeVal }}" onChange="{{ obSetTime }}" style="{{ obTimeInputStyle }}">
-          </label>
+          <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="position:relative;flex:1">
+                <select value="{{ obTimeHVal }}" onChange="{{ obSetTimeH }}" style="{{ obTimeSelectStyle }}" disabled="{{ obTimeSelectDisabled }}">
+                  <option value="" disabled selected>hh</option>
+                  <sc-for list="{{ obHourOptions }}" as="o" hint-placeholder-count="12">
+                    <option value="{{ o.value }}">{{ o.label }}</option>
+                  </sc-for>
+                </select>
+                <span style="{{ obChevronStyle }}">⌄</span>
+              </div>
+              <span style="color:#9A8A5E;font-size:17px">:</span>
+              <div style="position:relative;flex:1">
+                <select value="{{ obTimeMinVal }}" onChange="{{ obSetTimeMin }}" style="{{ obTimeSelectStyle }}" disabled="{{ obTimeSelectDisabled }}">
+                  <option value="" disabled selected>mm</option>
+                  <sc-for list="{{ obMinuteOptions }}" as="o" hint-placeholder-count="60">
+                    <option value="{{ o.value }}">{{ o.label }}</option>
+                  </sc-for>
+                </select>
+                <span style="{{ obChevronStyle }}">⌄</span>
+              </div>
+              <div style="position:relative;flex:1.1">
+                <select value="{{ obTimeAPVal }}" onChange="{{ obSetTimeAP }}" style="{{ obTimeSelectStyle }}" disabled="{{ obTimeSelectDisabled }}">
+                  <option value="" disabled selected>—</option>
+                  <option value="AM">am</option>
+                  <option value="PM">pm</option>
+                </select>
+                <span style="{{ obChevronStyle }}">⌄</span>
+              </div>
+            </div>
+          </div>
           <button onClick="{{ obToggleTime }}" style="{{ obTimeStyle }}">{{ obTimeMark }} i don't know my birth time</button>
         </div>
         <sc-if value="{{ obManualOff }}" hint-placeholder-val="{{ true }}">
@@ -578,6 +634,7 @@ class Component extends DCLogic {
     sel: null, arch: false, selM: null, onboardDone: false, obTimeUnknown: false, timeKnown: null,
     locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "", obError: "",
     obManualMode: false, obLat: "", obLon: "", obTz: "",
+    obDateY: "", obDateM: "", obDateD: "", obTimeH: "", obTimeMin: "", obTimeAP: "",
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
     acct: null, acctEmail: "", gamePushed: false, owned: false, shareCopied: false,
     // real engine state (replaces the export's hardcoded sample chart)
@@ -664,9 +721,23 @@ class Component extends DCLogic {
     return (this.state.sigRecollection || []).some(r => r.station === station && r.step === step);
   }
 
-  // dateStr/timeStr are the native <input type="date">/<input type="time">
-  // values — always "YYYY-MM-DD"/"HH:MM" (24h), never locale-formatted, so
-  // there's no free-text date parsing left to get wrong.
+  // On-brand replacement for the browser's own <input type="date"/"time">
+  // picker chrome (unstyleable — a real reported complaint: it looked like
+  // a generic OS calendar dropdown dropped into the app). Three selects
+  // each for date and time compose into the same "YYYY-MM-DD"/"HH:MM"
+  // (24h) shapes chartFromParts()/the manual-mode branch already expect,
+  // so nothing downstream of onboarding needed to change.
+  composeObDate(y, m, d) { return (y && m && d) ? `${y}-${m}-${d}` : ""; }
+  composeObTime(h, min, ap) {
+    if (!h || !min || !ap) return "";
+    let hh = parseInt(h, 10) % 12;
+    if (ap === "PM") hh += 12;
+    return `${String(hh).padStart(2, "0")}:${min}`;
+  }
+
+  // dateStr/timeStr are always "YYYY-MM-DD"/"HH:MM" (24h) — composeObDate/
+  // composeObTime's output, so there's no free-text date parsing left to
+  // get wrong.
   chartFromParts(dateStr, timeStr, place, timeKnown) {
     const [y, m, d] = dateStr.split('-').map(Number);
     const [hh, mm] = timeKnown ? timeStr.split(':').map(Number) : [12, 0];
@@ -1112,6 +1183,27 @@ class Component extends DCLogic {
       ? [this.state.obLat, this.state.obLon, this.state.obTz].every(v => v.trim().length > 0)
       : this.state.obPlace.trim().length > 0;
     const obDone = [this.state.obDate.trim().length > 0, obU || this.state.obTime.trim().length > 0, obLocDone];
+
+    // custom date/time selects — replaces the browser's own <input
+    // type="date"/"time"> picker chrome, which can't be restyled and read
+    // as a generic OS calendar dropdown dropped into the app (a real
+    // reported complaint). Kept as plain <select>s (real keyboard/a11y
+    // support, type-to-jump on year) rather than a hand-rolled scroll-
+    // wheel widget — only the closed/trigger chrome is skinnable either
+    // way, so a full custom widget wasn't a proportionate build for what
+    // it would add.
+    const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const obMonthOptions = MONTH_NAMES.map((label, i) => ({ value: String(i + 1).padStart(2, "0"), label }));
+    const obDaysInMonth = (m, y) => {
+      const mm = m ? parseInt(m, 10) : 2, yy = y ? parseInt(y, 10) : 2000; // Feb defaults to 29 until a year narrows it
+      return new Date(yy, mm, 0).getDate();
+    };
+    const obDayCount = obDaysInMonth(this.state.obDateM, this.state.obDateY);
+    const obDayOptions = Array.from({ length: obDayCount }, (_, i) => { const v = String(i + 1).padStart(2, "0"); return { value: v, label: String(i + 1) }; });
+    const obNowYear = new Date().getFullYear();
+    const obYearOptions = Array.from({ length: obNowYear - 1919 }, (_, i) => { const y = String(obNowYear - i); return { value: y, label: y }; });
+    const obHourOptions = Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }));
+    const obMinuteOptions = Array.from({ length: 60 }, (_, i) => { const v = String(i).padStart(2, "0"); return { value: v, label: v }; });
     const obGroup = (s) => (s < 10 ? 0 : s < 19 ? 1 : 2);
     const obRingSegs = [];
     for (let s = 0; s < 28; s++) {
@@ -1221,14 +1313,34 @@ class Component extends DCLogic {
       obToggleTime: () => this.setState(s => ({ obTimeUnknown: !s.obTimeUnknown })),
       obTimeMark: obU ? "☑" : "☐",
       obTimeStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;" + (obU ? "color:#F0D89A" : "color:#9A8A5E"),
-      obTimeInputStyle: "background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%;color-scheme:dark;" + (obU ? "color:rgba(154,138,94,.4);text-decoration:line-through" : "color:#F2EAD6"),
+      obSelectStyle: "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:16px;padding:8px 16px 8px 2px;outline:none;cursor:pointer",
+      obTimeSelectStyle: "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:16px;padding:8px 16px 8px 2px;outline:none;cursor:pointer;" + (obU ? "color:rgba(154,138,94,.4)" : "color:#F2EAD6"),
+      obTimeSelectDisabled: obU,
+      obChevronStyle: "position:absolute;right:2px;top:8px;pointer-events:none;color:#9A8A5E;font-size:10px",
       castChart: () => { if (obCount >= 3) this.startCast(); },
       obFormOn: !this.state.obCasting, obCastingOn: this.state.obCasting,
       obRingSegs, obCastSegs, obCastLines,
       obRingCount: obCount + " of 3",
-      obDateVal: this.state.obDate, obTimeVal: this.state.obTime, obPlaceVal: this.state.obPlace,
-      obSetDate: (e) => this.setState({ obDate: e.target.value, obError: "" }),
-      obSetTime: (e) => this.setState({ obTime: e.target.value, obError: "" }),
+      obPlaceVal: this.state.obPlace,
+      obDateYVal: this.state.obDateY, obDateMVal: this.state.obDateM, obDateDVal: this.state.obDateD,
+      obMonthOptions, obDayOptions, obYearOptions,
+      // changing month/year can invalidate the selected day (e.g. 31st ->
+      // February) — clamp it back to blank rather than silently keeping
+      // an out-of-range value the day <select> can no longer show selected.
+      obSetDateY: (e) => this.setState(st => {
+        const y = e.target.value, d = parseInt(st.obDateD, 10) > obDaysInMonth(st.obDateM, y) ? "" : st.obDateD;
+        return { obDateY: y, obDateD: d, obDate: this.composeObDate(y, st.obDateM, d), obError: "" };
+      }),
+      obSetDateM: (e) => this.setState(st => {
+        const m = e.target.value, d = parseInt(st.obDateD, 10) > obDaysInMonth(m, st.obDateY) ? "" : st.obDateD;
+        return { obDateM: m, obDateD: d, obDate: this.composeObDate(st.obDateY, m, d), obError: "" };
+      }),
+      obSetDateD: (e) => this.setState(st => ({ obDateD: e.target.value, obDate: this.composeObDate(st.obDateY, st.obDateM, e.target.value), obError: "" })),
+      obTimeHVal: this.state.obTimeH, obTimeMinVal: this.state.obTimeMin, obTimeAPVal: this.state.obTimeAP,
+      obHourOptions, obMinuteOptions,
+      obSetTimeH: (e) => this.setState(st => ({ obTimeH: e.target.value, obTime: this.composeObTime(e.target.value, st.obTimeMin, st.obTimeAP), obError: "" })),
+      obSetTimeMin: (e) => this.setState(st => ({ obTimeMin: e.target.value, obTime: this.composeObTime(st.obTimeH, e.target.value, st.obTimeAP), obError: "" })),
+      obSetTimeAP: (e) => this.setState(st => ({ obTimeAP: e.target.value, obTime: this.composeObTime(st.obTimeH, st.obTimeMin, e.target.value), obError: "" })),
       obSetPlace: (e) => this.setState({ obPlace: e.target.value, obError: "" }),
       obManualOn: this.state.obManualMode, obManualOff: !this.state.obManualMode,
       obManualToggleLabel: this.state.obManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
