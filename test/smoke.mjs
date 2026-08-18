@@ -112,8 +112,31 @@ await shot('00-onboard');
 
 // -- birth entry: native date/time pickers (fixed a real reported bug —
 // the export's free-text date field gave no year/month/day picker at
-// all) + a free-text place field (still best-effort, no manual lat/lon/tz
-// fallback — see CLAUDE.md's "wire as-is" scope note) ----------------------
+// all) + place search with a manual lat/lon/UTC-offset fallback --------
+await page.locator('input[type="date"]').fill('1989-06-06');
+await page.locator('input[type="time"]').fill('16:42');
+
+// the manual-coordinates toggle: cast a real chart from raw lat/lon/tz,
+// bypassing geocode entirely (mirrors Star Shard v3's proven manual-mode
+// branch — same computeChart() call, no astro.js/tz.js changes needed).
+await page.getByText('enter coordinates manually instead').click();
+await page.getByPlaceholder('45.52').fill('41.85');
+await page.getByPlaceholder('-122.68').fill('-87.65');
+await page.getByPlaceholder('-7').fill('-5');
+await shot('01a-manual-coords');
+await page.getByText('cast your chart').click();
+await page.waitForFunction(() => /casting your chart/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+await page.waitForFunction(() => !/casting your chart/i.test(document.body.innerText || ''), null, { timeout: 12000 });
+await page.waitForTimeout(1000);
+const manualBody = await page.evaluate(() => document.body.innerText || '');
+if (!/your star shard/i.test(manualBody)) fail.push('manual-coordinates cast did not reach the shard tab');
+const manualMissing = unresolvedIn(manualBody);
+if (manualMissing) fail.push(`manual-coordinates shard tab: ${manualMissing}`);
+
+// start over as a fresh visitor for the place-search + error-path flow below.
+await page.evaluate(() => localStorage.clear());
+await page.goto(base + '/' + PAGE, { waitUntil: 'domcontentloaded' });
+await page.waitForFunction(() => /tell us the minute/i.test(document.body.innerText || ''), null, { timeout: 15000 });
 await page.locator('input[type="date"]').fill('1989-06-06');
 await page.locator('input[type="time"]').fill('16:42');
 await page.getByPlaceholder('portland, oregon').fill('Nowhereatallville');

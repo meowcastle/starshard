@@ -57,9 +57,25 @@
           </label>
           <button onClick="{{ obToggleTime }}" style="{{ obTimeStyle }}">{{ obTimeMark }} i don't know my birth time</button>
         </div>
+        <sc-if value="{{ obManualOff }}" hint-placeholder-val="{{ true }}">
         <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:ssFadeUp .5s ease .24s both">in
           <input placeholder="portland, oregon" value="{{ obPlaceVal }}" onChange="{{ obSetPlace }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
         </label>
+        </sc-if>
+        <sc-if value="{{ obManualOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:18px;animation:ssFadeUp .35s ease both">
+          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">latitude
+            <input placeholder="45.52" inputmode="decimal" value="{{ obLatVal }}" onChange="{{ obSetLat }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">longitude
+            <input placeholder="-122.68" inputmode="decimal" value="{{ obLonVal }}" onChange="{{ obSetLon }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">UTC offset at that time (e.g. -7 for PDT)
+            <input placeholder="-7" inputmode="decimal" value="{{ obTzVal }}" onChange="{{ obSetTz }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+          </label>
+        </div>
+        </sc-if>
+        <button onClick="{{ obToggleManual }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:14px">{{ obManualToggleLabel }}</button>
       </div>
       <button onClick="{{ castChart }}" style="{{ obCastStyle }}">cast your chart</button>
       <sc-if value="{{ obErrorOn }}" hint-placeholder-val="{{ false }}">
@@ -561,6 +577,7 @@ class Component extends DCLogic {
     tab: null, view: "tonight", mcPushed: false, night: null, numbersOpen: false, remind: false,
     sel: null, arch: false, selM: null, onboardDone: false, obTimeUnknown: false, timeKnown: null,
     locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "", obError: "",
+    obManualMode: false, obLat: "", obLon: "", obTz: "",
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
     acct: null, acctEmail: "", gamePushed: false, owned: false, shareCopied: false,
     // real engine state (replaces the export's hardcoded sample chart)
@@ -679,10 +696,18 @@ class Component extends DCLogic {
     const timeKnown = !s.obTimeUnknown;
     let chart = null;
     try {
-      const res = await this.api.geocode(s.obPlace.trim());
-      const place = res && res[0];
-      if (!place) throw new Error(`couldn't find "${s.obPlace.trim()}" — try a bigger nearby city, or check the spelling`);
-      chart = this.chartFromParts(s.obDate, s.obTime, place, timeKnown);
+      if (s.obManualMode) {
+        const lat = parseFloat(s.obLat), lon = parseFloat(s.obLon), tzOffset = parseFloat(s.obTz);
+        if ([lat, lon, tzOffset].some(isNaN)) throw new Error("latitude, longitude and UTC offset all need real numbers");
+        const [y, m, d] = s.obDate.split("-").map(Number);
+        const [hh, mm] = timeKnown ? s.obTime.split(":").map(Number) : [12, 0];
+        chart = this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset });
+      } else {
+        const res = await this.api.geocode(s.obPlace.trim());
+        const place = res && res[0];
+        if (!place) throw new Error(`couldn't find "${s.obPlace.trim()}" — try a bigger nearby city, or check the spelling, or enter coordinates manually`);
+        chart = this.chartFromParts(s.obDate, s.obTime, place, timeKnown);
+      }
     } catch (e) {
       this.setState({ obCasting: false, obCastStep: 0, obError: e.message || "something went wrong reading that — try again" });
       return;
@@ -1083,7 +1108,10 @@ class Component extends DCLogic {
     const obU = this.state.obTimeUnknown;
     const obPolar = (r, deg) => { const t = (deg - 90) * Math.PI / 180; return [+(40 + r * Math.cos(t)).toFixed(2), +(40 + r * Math.sin(t)).toFixed(2)]; };
     const obArc = (r, a0, a1) => { const [x0, y0] = obPolar(r, a0), [x1, y1] = obPolar(r, a1); return `M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`; };
-    const obDone = [this.state.obDate.trim().length > 0, obU || this.state.obTime.trim().length > 0, this.state.obPlace.trim().length > 0];
+    const obLocDone = this.state.obManualMode
+      ? [this.state.obLat, this.state.obLon, this.state.obTz].every(v => v.trim().length > 0)
+      : this.state.obPlace.trim().length > 0;
+    const obDone = [this.state.obDate.trim().length > 0, obU || this.state.obTime.trim().length > 0, obLocDone];
     const obGroup = (s) => (s < 10 ? 0 : s < 19 ? 1 : 2);
     const obRingSegs = [];
     for (let s = 0; s < 28; s++) {
@@ -1202,6 +1230,13 @@ class Component extends DCLogic {
       obSetDate: (e) => this.setState({ obDate: e.target.value, obError: "" }),
       obSetTime: (e) => this.setState({ obTime: e.target.value, obError: "" }),
       obSetPlace: (e) => this.setState({ obPlace: e.target.value, obError: "" }),
+      obManualOn: this.state.obManualMode, obManualOff: !this.state.obManualMode,
+      obManualToggleLabel: this.state.obManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
+      obToggleManual: () => this.setState(st => ({ obManualMode: !st.obManualMode, obError: "" })),
+      obLatVal: this.state.obLat, obLonVal: this.state.obLon, obTzVal: this.state.obTz,
+      obSetLat: (e) => this.setState({ obLat: e.target.value, obError: "" }),
+      obSetLon: (e) => this.setState({ obLon: e.target.value, obError: "" }),
+      obSetTz: (e) => this.setState({ obTz: e.target.value, obError: "" }),
       obErrorOn: !!this.state.obError, obError: this.state.obError,
       obCastStyle: "margin:44px auto 0;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:15px 32px;transition:all .4s ease;" + (obCount === 3 ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer;box-shadow:0 0 24px rgba(240,216,154,.22)" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       timeOn: timeKnown, timeOff: !timeKnown,

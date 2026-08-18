@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**256 bindings, 209 top-level.**
+**266 bindings, 219 top-level.**
 
 ## Rule
 
@@ -168,17 +168,27 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `obError` | component state |
 | `obErrorOn` | component state |
 | `obFormOn` | component state |
+| `obLatVal` | component state |
+| `obLonVal` | component state |
+| `obManualOff` | component state |
+| `obManualOn` | component state |
+| `obManualToggleLabel` | component state |
 | `obPlaceVal` | component state |
 | `obRingCount` | component state |
 | `obRingSegs` | component state |
 | `obSetDate` | component state |
+| `obSetLat` | component state |
+| `obSetLon` | component state |
 | `obSetPlace` | component state |
 | `obSetTime` | component state |
+| `obSetTz` | component state |
 | `obTimeInputStyle` | component state |
 | `obTimeMark` | component state |
 | `obTimeStyle` | component state |
 | `obTimeVal` | component state |
+| `obToggleManual` | component state |
 | `obToggleTime` | component state |
+| `obTzVal` | component state |
 | `onChart` | component state |
 | `onShard` | component state |
 | `onTonight` | component state |
