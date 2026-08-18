@@ -28,37 +28,62 @@ layer** — see `PLATFORM.md`.
 The **front end was rebuilt from scratch** against this reboot; the engine
 modules and the database carried forward. The old four-shard flip flow
 (houses / archetype / mansion / weekday) is retired; its computations live
-on inside the Sigil. Status: `Star Shard v3.dc.html` is the live page —
-**a Code-authored stopgap**, not a Claude Design export (no fresh export
-existed with a real binding manifest when it was built), using the
-`sig.*`/`snd.*` namespace `DESIGN-BRIEF.md` v2 specifies so a future real
-handoff reconciles cleanly. `Star Shard v2 (archived).dc.html` is retired,
-kept only as reference. What shipped, in order: `sigil.js` (natal
-derivation, the arrival grammar, ring geometry, and — added after
-INSTRUMENT.md landed — `movingLight()`, the Becoming); `sky.js`'s
-station/step cast kinds; the `sigil`/`recollection` DB tables (additive,
-alongside the untouched `deck` table); `reading.js`'s composers, now
-against the real corpus (`reading-copy.js`, per `PORT-SPEC.md`) instead of
-placeholder prose. See `docs/archive/STATUS.md` for the day-by-day trail.
+on inside the Sigil. Status (updated 18 Aug): `Star Shard v3.dc.html` is
+the live page, and it is no longer a pure stopgap. A real Claude Design
+export landed (`Star Shard v3 Build Plan/`) and, per Justin's own call,
+**is now the source of truth for UI** — its visual language (palette,
+Cormorant Garamond headings, the flat glow-based chrome, the ✦ flourish
+dividers, the bracketed signature card) has been ported into the live
+page's shared CSS tokens, and its chart-wheel design was rebuilt as real,
+data-wired markup (the "sky" sub-tab: signs/mansions/houses/planets,
+tap-to-select). The page's *script* — state, lifecycle, `renderVals()`,
+the module wiring — is still entirely Code-authored; only the visual
+system and specific screens are Design-sourced. `Star Shard v4.dc.html`
+(same folder) is a further design reference, not yet ported — see below.
+`Star Shard v2 (archived).dc.html` is retired, kept only as reference.
 
-**Receipt protocol, for whenever a real Claude Design export actually
-lands** (still binding, nothing here is retired):
+Beyond the arrival/Sounding pipeline, the live page now also carries: the
+**shard blueprint** (`sigStep: 'shard'` — sun-mansion × moon-mansion as
+the natal-chart-as-object, per `CHART-BUILDER.md`/`SHARD-MODEL.md`:
+the combination reading from the 784-cell corpus, two mansion portraits,
+a `findings.js`/`rates.js`-driven signature card, the farlight), the
+**chart wheel** (real natal positions for all ten planets + angles,
+`transits.js`'s `natalPlanetPositions()`/`fullNatalAspects()`), and a
+**motion layer** (ring morph on tab switch, the kindle sweep+flare on
+claim). `transits.js` is fully wired now — the "not yet wired into
+reading.js or the page" note from the reboot is stale; see Architecture
+below. See `docs/archive/STATUS.md` for the day-by-day trail through
+Aug 13; `RESUME-784.md` and `GENERATION.md` for the corpus pass since.
+
+**Receipt protocol, for the next Claude Design export** (binding —
+confirmed useful by the one real export received so far, with two of its
+own predictions corrected below):
 
 1. **Diff it against the current markup, not the archived v2 page.**
 2. **The export's script block is disposable mock wiring.** Rebuild the
    `x-dc` block thin — state + lifecycle + `renderVals()` — wired to real
    modules. Any hardcoded sample text in the export is placeholder by
    contract (Design is instructed never to import engine modules).
-3. **Expect namespaced bindings** — `sig.*` (arrival/ring), `snd.*`
-   (Sounding), `cdx.*` (codex), `crd.*` (cards); auth + `deck` shared
-   unprefixed — and a **binding manifest** in the handoff notes. If the
-   manifest is missing, run `npm run bindings` to inventory, map each name to
-   a module source, and **flag anything unmappable — do not guess.**
-4. Verify no engine imports snuck into the export, and that the `<helmet>`
-   meta/OG tags survived.
-5. Reconcile against the stopgap's own bindings (`BINDINGS.md`) rather than
-   assuming a wholesale replacement is needed — the namespace was chosen
-   specifically to make this a diff, not a rewrite.
+3. ~~Expect namespaced bindings (`sig.*`/`snd.*`/`cdx.*`/`crd.*`) and a
+   binding manifest.~~ **Corrected by experience:** the one real export
+   received (`Star Shard v3 Build Plan/Star Shard v3.dc.html`, then
+   `v4.dc.html`) used flat, unprefixed, ad-hoc mock state instead (`sel`,
+   `selM`, `cd`, `ob*`, `acct*`) and shipped no binding manifest. Don't
+   wait for one — run `npm run bindings` to inventory the export's own
+   bindings, map each to a real module by hand, and **flag anything
+   unmappable, do not guess.**
+4. Verify no engine imports snuck into the export. ~~And that the
+   `<helmet>` meta/OG tags survived.~~ **Corrected by experience:** the
+   real exports received so far ship with fonts only in `<helmet>` — no
+   `<title>`, no OG/meta at all. Don't assume they'll be there to
+   "survive" — the live page's own `<title>`/OG tags have to be
+   preserved by hand during the merge, every time.
+5. Reconcile against the live page's own bindings (`BINDINGS.md`) rather
+   than assuming a wholesale replacement is needed — port screen by
+   screen, the way the chart wheel went in from `v3.dc.html`. `v4.dc.html`
+   is next in line; its funnel/onboarding/shard screens carry two
+   assumptions (email magic-link auth, a web-side IAP gate) that need
+   Justin's call before porting — see Open decisions.
 
 **Then, the app wrapper** (`PLATFORM.md` — decided Aug 13). Ships to the
 App Store as a **Capacitor wrapper around the existing web build, not a
@@ -79,15 +104,27 @@ The web build stays live and free: the shareable chart, the
 Reddit-linkable demo, and the 28 station permalinks (an SEO asset we
 already own). One account, entitlement on both.
 
-Explicitly deferred (on the record, Justin's call): new minigames, more
-easter eggs, community features, the Remembering endgame, paradox cards,
-Undertext rendering, event-foil curriculum, the Full Reading's page surface
+Explicitly deferred (on the record, Justin's call): more easter eggs,
+community features, the Remembering endgame, paradox cards, Undertext
+rendering, event-foil curriculum, the Full Reading's page surface
 (`reading.js`'s `fullReading()` is built and tested; nothing renders it
 yet — no spec says where it lives in the UI), the daily/weekly generative
 pipeline itself (`transits.js` — the engine piece it needs — is built and
 tested per PRODUCT.md §11.1, but the LLM prompt/moderation/storage pipeline
 around it has open decisions per PRODUCT.md §12b — which model, where it
 runs — that aren't Code's to make silently).
+
+**Minigames are no longer flatly deferred** — Design has a locked v2
+ruleset for a minigame ("Manzil": road-building solitaire against the
+moon's 28-station walk) with a working prototype
+(`Star Shard v3 Build Plan/Manzil - Prototype.dc.html`), separate from
+the road-shards (its wins award a distinct "game-shard" set; the 28
+never become skill-gated, per the ethics floor below). None of it is
+built on Code's side yet. Its own rules doc (`Manzil - Rules & Cards.dc.html`)
+still describes an earlier, superseded ruleset (banking/points, a
+112-card deck) rather than the locked one — read the locked description
+in the Build Plan's own `CLAUDE.md`, not the rules file, until that's
+reconciled.
 
 ## The one thing that will break this repo
 
@@ -99,7 +136,17 @@ You (Claude Code) own everything except the markup:
 
 | Yours | Claude Design's | Generated — never edit |
 |---|---|---|
-| `astro.js` `sky.js` `sigil.js` `transits.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `reading.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>` | `support.js` |
+| `astro.js` `sky.js` `sigil.js` `transits.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `reading.js` `findings.js` `rates.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>` | `support.js` `stations.js` `reading-copy.js` `combos.js` |
+
+`stations.js`/`reading-copy.js`/`combos.js` regenerate from source
+(`research/mansions-table.json` + `tools/build-mansions.mjs`;
+`research/corpus-*.md` + `tools/build-reading-copy.mjs`;
+`research/combos.json` + `tools/build-combos.mjs`) — hand-editing the
+output is exactly the stale-export failure mode below, aimed at
+yourself. `mansion-depth.js` (repo root) is an **orphan** — not an ES
+module, not imported anywhere, not in `tools/deploy.sh`. Don't build
+against it without checking first whether it's meant to replace
+something live or whether it's dead code nobody removed.
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
@@ -109,33 +156,56 @@ and workflow rules in `OWNERSHIP.md`.
 
 ```
 Star Shard v3.dc.html
-  ├─ markup            Claude Design (currently: a Code-authored stopgap —
-  │                    see "Status" above)
-  ├─ <helmet>          Claude Design  (fonts, styles, meta/OG tags)
+  ├─ markup            Claude Design-sourced (the wheel + shard blueprint's
+  │                    visual language ported in; rest is Code-authored —
+  │                    see "Status" above). v4.dc.html is the next reference,
+  │                    not yet ported.
+  ├─ <helmet>          Claude Design owns the fonts/styles; title+OG/meta
+  │                    are Code's to preserve by hand on every merge — real
+  │                    exports so far don't carry them (see receipt protocol)
   └─ <script x-dc>     SHARED — state + lifecycle + renderVals(), nothing else
        │
        ├─ astro.js     ephemeris, houses, lunar mansion, weekday
        ├─ sigil.js     the Sigil: natal derivation, type, movingLight()/the
-       │               Becoming, readingPlan(), SVG ring
+       │               Becoming, readingPlan(), SVG ring,
+       │               fullNatalAspects() (the chart wheel's aspect grid)
        ├─ sky.js       daily engine: moon phase, tārābala, planetary hours,
        │               station+step+cast kinds
        ├─ deck.js      the collection game: claim windows, grace, returns —
        │               server-side claimability check for POST /api/recollection
        ├─ events.js    the event calendar: dated sky events, foil conditions
        ├─ astronomy-engine.js   vendored MIT build — FULL api (147 exports:
-       │               Body, GeoVector, Ecliptic). Planets + retrograde
-       │               work today; transits are unblocked (PRODUCT.md §0)
-       ├─ transits.js  aspect geometry (classifyAspect(), shared with the
-       │               future PATTERN tab) + planetPositions()/
-       │               natalContacts()/pickLiveTransit() — the daily's
-       │               "live transit" (PRODUCT.md §7). Built, tested, not
-       │               yet wired into reading.js or the page.
+       │               Body, GeoVector, Ecliptic).
+       ├─ transits.js  aspect geometry (classifyAspect()) +
+       │               planetPositions()/natalContacts()/pickLiveTransit()
+       │               (the daily's live transit, PRODUCT.md §7 — wired,
+       │               not just built) + natalPlanetPositions() (natal
+       │               Mercury-Pluto, since astro.js's chart object never
+       │               carries them — shared by findings.js and the wheel)
+       │               + weekTightestContact()/standingWeather() (the weekly)
+       ├─ findings.js  the shard's ranker (CHART-BUILDER.md §3.1): seven
+       │               candidate finding kinds, five implemented
+       │               (colocation/pile/boundary/quiet/type/dissent are
+       │               live; `seam` is a no-op pending the nakshatra
+       │               alignment call below), scored rarity×prominence×tension
+       ├─ rates.js     the measured-constants table findings.js scores
+       │               against — refuses to emit a rarity for anything
+       │               uniform-by-construction (mansion/step/archetype/weekday)
        ├─ format.js    degFmt, ordinal, place/birth lines
        ├─ tz.js        historical UTC offset + DST for a birth moment
        ├─ api.js       ALL network I/O
-       ├─ reading.js   the Sigil/Sounding composers: arrivalReading(),
-       │               fullReading(), soundingReading()
-       ├─ reading-copy.js   generated: the real corpus, browser-side (PORT-SPEC.md)
+       ├─ reading.js   arrivalReading(), fullReading(), soundingReading(),
+       │               weeklyReading(), patternAspects(), houseReading(),
+       │               depthReading() — all real, all wired
+       ├─ reading-copy.js   generated: STATION.* (the real arrival/Sounding
+       │               corpus, PORT-SPEC.md) + MANSION.* (the shard
+       │               blueprint's 28 portraits, CHART-BUILDER.md layer A) —
+       │               tools/build-reading-copy.mjs from research/corpus-*.md
+       ├─ combos.js    generated: the 784-cell sun-mansion×moon-mansion
+       │               combination corpus (CHART-BUILDER.md layer B,
+       │               GENERATION.md) — complete as of 18 Aug, gate-clean,
+       │               NOT yet human-reviewed (GENERATION.md §5b) —
+       │               tools/build-combos.mjs from research/combos.json
        └─ sigil-copy.js     placeholder prose — Sounding only; arrival is real
 
 starshard-api/          Express 4 + MySQL: accounts, sigil, recollection
@@ -198,6 +268,14 @@ node tools/vendor.mjs && VENDOR_DIR=./vendor node test/smoke.mjs
 **Run `npm run bindings` after every Claude Design handoff.** It is the guard
 against a design regeneration silently renaming a binding — the failure mode is
 a literal `{{ name }}` on the live page.
+
+**Adding a new module the live page imports?** `npm run check` does not
+catch a module missing from `tools/deploy.sh`'s `FRONTEND_FILES` list —
+it only tests locally, where every file is already present on disk. This
+has silently shipped a page that would 404 on a new module in production
+before (`combos.js`/`findings.js`/`rates.js`, caught only by remembering
+to check by hand). Update `FRONTEND_FILES` in the same commit as any new
+top-level `import()` in the script block.
 
 ## What the ephemeris is worth
 
@@ -274,16 +352,51 @@ unavailability.
   stale pre-refactor copy four times. The from-scratch rebuild makes this
   moot *only if* the receipt protocol above is followed — check imports on
   every handoff anyway.
+- **`setState()` called from inside a function invoked *by* `renderVals()`**
+  (as opposed to from an event handler) risks a cascading re-render loop —
+  caught once, building the kindle animation, where a first draft started
+  the animation's state machine by inspecting `sigJustKindled` inside a
+  helper `renderVals()` itself called. Fixed by moving the state
+  transition into the actual user action (`sndClaim()`) and having the
+  `renderVals()` helper only *read* state, never write it. `renderVals()`
+  and anything it calls must stay read-only.
+- **Duplicate/mismatched double-"the"**: composing a sentence from two
+  epithets (all 28 mansion epithets start with "The ") without stripping
+  the leading article produces "The Storm of the The Glance." Strip
+  `/^The /` before recomposing "of the ___" — caught live, not by any
+  test, building the shard blueprint's hero.
 
 ## Open decisions — ask, do not guess
 
-- **The Keeper table** — the per-station luminary cycle is `[VERIFY]`-blocked
-  pending research. Placeholder + loud flag until cleared.
+- **The Keeper table** — ~~`[VERIFY]`-blocked pending research.~~ Corrected:
+  the research is done (`research/hunger-axis.md`,
+  `keeper(station) = CYCLE[(xiu.native_number-1)%7]`) and sigil.js's own
+  header says so. It's unbuilt because no composer needs the *per-station*
+  Keeper yet (only the birth-day one, a different value that happens to
+  share the name) — not because it's still blocked. Build it when the
+  "road-kin" topology feature actually needs it.
 - **W6.** The account system runs a password database; with reveal state and
   Recollection it now stores real progression. Still no email verification,
   no account deletion, no data export — and a quarter of the audience is
   13–17. This needs a decision before public launch; raise it, don't decide
-  it.
+  it. **v4's onboarding assumes email magic-link auth instead of the
+  password system** — a real conflict with W6, not a resolution of it;
+  don't port that part of v4 without Justin's call.
+- **The nakshatra alignment** (`research/corpus-mansions.md`'s own
+  escalation section) — this corpus pairs nakshatra *n* with mansion *n*
+  by ordinal index; the classical Sino-Indian correspondence doesn't
+  (牛宿 = Abhijit, so the pairing from mansion 22 onward runs one step
+  later). Independently checkable by star identification, not just
+  convention. Blocks `findings.js`'s `seam` kind and `stations.js`'s
+  `hunger` field for mansion 28. Justin's call per the doc itself, not
+  Code's or Design's.
+- **The $19–24 one-time unlock's IAP/entitlement path** — `PLATFORM.md`
+  already calls this app-wrapper-only (a localStorage flag is forgeable;
+  Safari evicts it), decided Aug 13. v4's `nightEight` paywall gate is a
+  real, wired mock of this on the web build, which the decided plan says
+  shouldn't exist there. Don't build the web-side gate without checking
+  this is still the call.
 
 Full findings and reasoning: `docs/archive/AUDIT.md` (historical) · current system:
-`BLUEPRINT.html` · `COSMOLOGY.md` · `SIGIL-READING.md`.
+`BLUEPRINT.html` · `COSMOLOGY.md` · `SIGIL-READING.md` · the Star Shard
+blueprint system: `CHART-BUILDER.md` · `SHARD-MODEL.md` · `GENERATION.md`.
