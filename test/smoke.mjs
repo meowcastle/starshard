@@ -88,6 +88,49 @@ await page.route('**/geocoding-api.open-meteo.com/**', route => {
   return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results }) });
 });
 
+// api.js's API_BASE is `https://api.${location.hostname}` — on this test
+// server that's an unreachable made-up host, so every real backend call
+// (signup/login/logout/me/saveSigil/...) would otherwise throw
+// ApiError('unreachable', 0) or just silently fail (saveSigil is fire-
+// and-forget). Mock just enough of /api/auth/* + /api/me to exercise the
+// real client-side wiring (task 39) without needing a live database.
+// mockAccounts persists across logout (a real DB row would too — logout
+// only ends the session); mockSession is the current logged-in email, if
+// any. Conflating the two was a real bug in an earlier draft of this
+// mock: it made login-after-logout always 401, which looked like an app
+// bug until traced back to the test itself.
+const mockAccounts = new Map(); // email -> password
+let mockSession = null;
+await page.route('https://api.localhost/**', route => {
+  const req = route.request();
+  const url = new URL(req.url());
+  const body = req.method() === 'POST' ? JSON.parse(req.postData() || '{}') : null;
+  if (url.pathname === '/api/auth/signup') {
+    if (mockAccounts.has(body.email)) return route.fulfill({ status: 409, contentType: 'application/json', body: JSON.stringify({ error: 'email_taken' }) });
+    mockAccounts.set(body.email, body.password);
+    mockSession = body.email;
+    return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({ email: body.email }) });
+  }
+  if (url.pathname === '/api/auth/login') {
+    if (mockAccounts.get(body.email) !== body.password) return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'invalid_credentials' }) });
+    mockSession = body.email;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ email: body.email }) });
+  }
+  if (url.pathname === '/api/auth/logout') { mockSession = null; return route.fulfill({ status: 204 }); }
+  if (url.pathname === '/api/me') {
+    return mockSession
+      ? route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ email: mockSession }) })
+      : route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: 'not_authenticated' }) });
+  }
+  // sigil/recollection sync: accept writes, return nothing saved on reads
+  // — good enough to prove the call happens without a fatal error.
+  if (url.pathname === '/api/sigil' && req.method() === 'PUT') return route.fulfill({ status: 204 });
+  if (url.pathname === '/api/sigil') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ sigil: null }) });
+  if (url.pathname === '/api/recollection' && req.method() === 'POST') return route.fulfill({ status: 204 });
+  if (url.pathname === '/api/recollection') return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ recollection: [] }) });
+  return route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ error: 'not_found' }) });
+});
+
 const fatal = [];
 page.on('pageerror', e => fatal.push(`page error: ${e.message}`));
 // Same filter this test has always used: unresolved-{{ }} console noise (a
@@ -187,10 +230,31 @@ if (!/your star shard/i.test(shardBody)) fail.push('no shard hero rendered after
 const shardMissing = unresolvedIn(shardBody);
 if (shardMissing) fail.push(`shard tab: ${shardMissing}`);
 
-// dismiss the "keep your shard" account sheet if it appeared (real funnel
-// behavior, ~1.7s after a real cast — not a bug)
-try { await page.getByText('not now', { exact: true }).click({ timeout: 2000 }); } catch (e) {}
-await page.waitForTimeout(300);
+// -- real auth (task 39/Part 1): the "keep your shard" sheet auto-opens
+// ~1.7s after a real cast. Sign up for real (against the mocked
+// /api/auth/* above), confirm the account status line updates, log out,
+// then log back in — the actual reported ask ("how do you log out"). ---
+await page.waitForFunction(() => /keep your shard/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+await page.getByPlaceholder('you@somewhere.com').fill('smoketest@example.com');
+await page.getByPlaceholder('at least 8 characters').fill('correct horse battery');
+await shot('03a-signup-form');
+await page.getByText('create your account').click();
+await page.waitForFunction(() => /signed in as smoketest@example\.com/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await shot('03b-signed-in');
+
+await page.getByText('log out', { exact: true }).click();
+await page.waitForFunction(() => /not signed in/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+const loggedOutBody = await page.evaluate(() => document.body.innerText || '');
+if (!/keep your shard →/i.test(loggedOutBody)) fail.push('logout did not return to the "keep your shard" prompt');
+
+await page.getByText('keep your shard →').click();
+await page.waitForFunction(() => /keep your shard/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+await page.getByText('already have a shard? sign in instead').click();
+await page.getByPlaceholder('you@somewhere.com').fill('smoketest@example.com');
+await page.getByPlaceholder('your password').fill('correct horse battery');
+await page.getByText('sign in', { exact: true }).click();
+await page.waitForFunction(() => /signed in as smoketest@example\.com/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await shot('03c-logged-back-in');
 
 // -- tonight ----------------------------------------------------------------
 await page.locator('button:has-text("tonight")').first().click();
@@ -224,6 +288,40 @@ if (await walkBtn.count()) {
   const claimedBody = await page.evaluate(() => document.body.innerText || '');
   if (!/, lit ·/.test(claimedBody)) fail.push('claiming tonight\'s station did not render the "lit" confirmation');
 }
+
+// -- saved charts (task 39/Part 2): add a second person's chart, confirm
+// its preview shows real per-chart data distinct from the primary. -------
+await page.locator('button:has-text("your shard")').first().click();
+await page.waitForTimeout(400);
+await page.getByText('your charts →').click();
+await page.waitForFunction(() => /your shard, and anyone else's/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+await shot('07-charts-list-empty');
+
+await page.getByText('+ add a chart').click();
+await page.waitForFunction(() => /whose chart is this/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+await page.getByPlaceholder('mom, alex, ...').fill('a friend');
+await fillDate('1995', '03', '12');
+await fillTime('2', '15', 'PM');
+await page.getByPlaceholder('portland, oregon').fill('New York');
+await shot('08-add-chart-filled');
+await page.getByText('cast this chart').click();
+await page.waitForFunction(() => /^a friend$/im.test(document.body.innerText || ''), null, { timeout: 8000 });
+await page.waitForTimeout(500);
+await shot('09-second-chart-preview');
+
+const previewBody = await page.evaluate(() => document.body.innerText || '');
+if (!/a friend/i.test(previewBody)) fail.push('add-a-chart did not land on that chart\'s preview');
+const previewMissing = unresolvedIn(previewBody);
+if (previewMissing) fail.push(`chart preview: ${previewMissing}`);
+
+// the preview must show real, chart-specific data, not the primary
+// chart's — the whole point of task 37/38 is that these are independent.
+if (shardBody.includes('a friend')) fail.push('sanity check itself is broken — primary shard body already mentions the test name');
+
+await page.getByText('‹ your charts').click();
+await page.waitForTimeout(300);
+const listBody = await page.evaluate(() => document.body.innerText || '');
+if (!/1 saved/i.test(listBody)) fail.push('charts list does not show the newly-added chart in its count');
 
 fail.push(...fatal);
 await browser.close();

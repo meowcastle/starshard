@@ -462,7 +462,7 @@
     </sc-if>
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:56px 0;padding-left:1.4em">✦ ✦ ✦</div>
     <sc-if value="{{ sunPOn }}" hint-placeholder-val="{{ false }}">
-    <div data-ss-mark="storm" style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center">the {{ sunPName }} mansion</div>
+    <div data-ss-mark="storm" style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center">{{ sunPName }} mansion</div>
     <div style="text-align:center;margin-top:16px"><div style="font-size:32px;color:#F0D89A;font-family:serif">{{ sunPKanji }}</div><div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:8px">{{ sunPStars }}</div></div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;margin:14px 0 6px;color:#F2EAD6;text-align:center">{{ sunPName }}</h2>
     <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;line-height:1.9;margin-bottom:24px">{{ sunPSpan }}<br>{{ sunPOwnLine }}</div>
@@ -477,7 +477,7 @@
     </sc-if>
     <sc-if value="{{ moonPOn }}" hint-placeholder-val="{{ false }}">
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:56px 0;padding-left:1.4em">✦ ✦ ✦</div>
-    <div data-ss-mark="throne" style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center">the {{ moonPName }} mansion</div>
+    <div data-ss-mark="throne" style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center">{{ moonPName }} mansion</div>
     <div style="text-align:center;margin-top:16px"><div style="font-size:32px;color:#F0D89A;font-family:serif">{{ moonPKanji }}</div><div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:8px">{{ moonPStars }}</div></div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;margin:14px 0 6px;color:#F2EAD6;text-align:center">{{ moonPName }}</h2>
     <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;line-height:1.9;margin-bottom:24px">{{ moonPSpan }}<br>{{ moonPOwnLine }}</div>
@@ -534,7 +534,9 @@
     <button onClick="{{ shareTap }}" style="margin:16px auto 0;background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 24px;cursor:pointer">{{ shareLabel }}</button>
     <div style="height:1px;background:rgba(240,216,154,.16);margin:34px 0 0"></div>
     <button onClick="{{ pushArch }}" style="background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;padding:20px 0;text-align:left"><span style="font-family:'Varela Round',sans-serif;font-size:12px;color:#F0D89A">learn the archetypes →</span><span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">28 mansions · {{ litCount }} yours</span></button>
-    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:0 0 20px"><span style="font-size:12px;color:#9A8A5E">game-shards · a second set, kept by play</span><span style="font-size:12px;color:rgba(154,138,94,.6)">none yet</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:0 0 20px;border-bottom:1px solid rgba(240,216,154,.16)"><span style="font-size:12px;color:#9A8A5E">game-shards · a second set, kept by play</span><span style="font-size:12px;color:rgba(154,138,94,.6)">none yet</span></div>
+    <button onClick="{{ pushChartsList }}" style="background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;padding:20px 0;text-align:left"><span style="font-family:'Varela Round',sans-serif;font-size:12px;color:#F0D89A">your charts →</span><span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">{{ savedChartsCountLabel }}</span></button>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:0 0 4px"><span style="font-size:12px;color:#9A8A5E">{{ acctStatusLine }}</span><button onClick="{{ acctStatusTap }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#F0D89A;padding:0">{{ acctStatusAction }}</button></div>
   </div>
   <sc-if value="{{ archPushed }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:60px 32px 140px;display:flex;flex-direction:column">
@@ -561,6 +563,167 @@
         <div style="margin-top:16px;font-family:'Varela Round',sans-serif;font-size:12px;color:#F0D89A">✦ {{ nightSpecialLabel }}</div>
       </sc-if>
       <p style="font-size:17px;line-height:1.85;color:rgba(244,236,214,.94);margin:24px 0 0">{{ nightText }}</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ chartsListPushed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:60px 32px 140px;display:flex;flex-direction:column">
+      <button onClick="{{ popChartsList }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#F0D89A">‹ your shard</button>
+      <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:28px">your charts</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0;color:#F2EAD6">your shard, and anyone else's</h2>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:12px 0 0">these stay on this device only — never sent anywhere, same as your own birth data.</p>
+      <div style="display:flex;flex-direction:column;margin-top:28px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)">
+          <span style="font-size:15px;color:#F0D89A">you</span>
+          <span style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:right">{{ primaryHeroLine }}</span>
+        </div>
+        <sc-for list="{{ savedChartRows }}" as="row" hint-placeholder-count="3">
+          <div onClick="{{ row.onTap }}" style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12);cursor:pointer">
+            <span style="font-size:15px;color:#F2EAD6">{{ row.name }}</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:right">{{ row.hero }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <button onClick="{{ openAddChart }}" style="margin-top:26px;background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 22px;cursor:pointer;align-self:flex-start">+ add a chart</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ addChartOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:6;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:60px 32px 140px;display:flex;flex-direction:column">
+      <button onClick="{{ closeAddChart }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#F0D89A">‹ your charts</button>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:20px 0 0;color:#F2EAD6">add a chart</h2>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:12px 0 0">stays on this device only.</p>
+      <div style="display:flex;flex-direction:column;gap:26px;margin-top:30px">
+        <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">whose chart is this?
+          <input placeholder="mom, alex, ..." value="{{ ncNameVal }}" onChange="{{ ncSetName }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+        </label>
+        <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">born on
+          <div style="display:flex;gap:14px">
+            <div style="position:relative;flex:1.3">
+              <select value="{{ ncDateMVal }}" onChange="{{ ncSetDateM }}" style="{{ obSelectStyle }}">
+                <option value="" disabled selected>month</option>
+                <sc-for list="{{ obMonthOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+              </select>
+              <span style="{{ obChevronStyle }}">⌄</span>
+            </div>
+            <div style="position:relative;flex:1">
+              <select value="{{ ncDateDVal }}" onChange="{{ ncSetDateD }}" style="{{ obSelectStyle }}">
+                <option value="" disabled selected>day</option>
+                <sc-for list="{{ ncDayOptions }}" as="o" hint-placeholder-count="31"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+              </select>
+              <span style="{{ obChevronStyle }}">⌄</span>
+            </div>
+            <div style="position:relative;flex:1.2">
+              <select value="{{ ncDateYVal }}" onChange="{{ ncSetDateY }}" style="{{ obSelectStyle }}">
+                <option value="" disabled selected>year</option>
+                <sc-for list="{{ obYearOptions }}" as="o" hint-placeholder-count="6"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+              </select>
+              <span style="{{ obChevronStyle }}">⌄</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="position:relative;flex:1">
+                <select value="{{ ncTimeHVal }}" onChange="{{ ncSetTimeH }}" style="{{ obSelectStyle }}">
+                  <option value="" disabled selected>hh</option>
+                  <sc-for list="{{ obHourOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+                </select>
+                <span style="{{ obChevronStyle }}">⌄</span>
+              </div>
+              <span style="color:#9A8A5E;font-size:17px">:</span>
+              <div style="position:relative;flex:1">
+                <select value="{{ ncTimeMinVal }}" onChange="{{ ncSetTimeMin }}" style="{{ obSelectStyle }}">
+                  <option value="" disabled selected>mm</option>
+                  <sc-for list="{{ obMinuteOptions }}" as="o" hint-placeholder-count="60"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+                </select>
+                <span style="{{ obChevronStyle }}">⌄</span>
+              </div>
+              <div style="position:relative;flex:1.1">
+                <select value="{{ ncTimeAPVal }}" onChange="{{ ncSetTimeAP }}" style="{{ obSelectStyle }}">
+                  <option value="" disabled selected>—</option>
+                  <option value="AM">am</option>
+                  <option value="PM">pm</option>
+                </select>
+                <span style="{{ obChevronStyle }}">⌄</span>
+              </div>
+            </div>
+          </div>
+          <button onClick="{{ ncToggleTimeUnknown }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E">{{ ncTimeMark }} don't know their birth time</button>
+        </div>
+        <sc-if value="{{ ncManualOff }}" hint-placeholder-val="{{ true }}">
+          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">in
+            <input placeholder="portland, oregon" value="{{ ncPlaceVal }}" onChange="{{ ncSetPlace }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+          </label>
+        </sc-if>
+        <sc-if value="{{ ncManualOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">latitude
+              <input placeholder="45.52" inputmode="decimal" value="{{ ncLatVal }}" onChange="{{ ncSetLat }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">longitude
+              <input placeholder="-122.68" inputmode="decimal" value="{{ ncLonVal }}" onChange="{{ ncSetLon }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">UTC offset at that time
+              <input placeholder="-7" inputmode="decimal" value="{{ ncTzVal }}" onChange="{{ ncSetTz }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+            </label>
+          </div>
+        </sc-if>
+        <button onClick="{{ ncToggleManual }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">{{ ncManualToggleLabel }}</button>
+      </div>
+      <button onClick="{{ ncCast }}" style="margin-top:34px;align-self:flex-start;background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;cursor:pointer">{{ ncCastLabel }}</button>
+      <sc-if value="{{ ncErrorOn }}" hint-placeholder-val="{{ false }}">
+        <p style="font-size:12.5px;line-height:1.6;color:#E8A87C;margin:14px 0 0">{{ ncError }}</p>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ chartPreviewOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:6;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:60px 32px 140px;display:flex;flex-direction:column">
+      <button onClick="{{ popChartPreview }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#F0D89A">‹ your charts</button>
+      <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center;margin-top:24px">{{ cpName }}</div>
+      <div style="text-align:center;margin-top:10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;line-height:1.1;color:#F2EAD6">{{ cpHeroName }}<sc-if value="{{ cpHeroSuffixOn }}" hint-placeholder-val="{{ true }}"><br><em style="color:#F0D89A;font-size:24px">{{ cpHeroSuffix }}</em></sc-if></div>
+      <div style="text-align:center;margin-top:12px;font-family:'Varela Round',sans-serif;font-size:12px;color:#D8C89C">{{ cpMetaLine }}</div>
+      <div style="display:flex;align-items:center;gap:12px;margin:32px 0 22px"><span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(240,216,154,.4))"></span><span style="color:#F0D89A;font-size:12.5px">✦</span><span style="flex:1;height:1px;background:linear-gradient(90deg,rgba(240,216,154,.4),transparent)"></span></div>
+      <sc-if value="{{ cpComboReady }}" hint-placeholder-val="{{ false }}">
+      <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center;margin-bottom:20px">the combination</div>
+      <div style="font-size:15.5px;line-height:1.78;color:rgba(244,236,214,.94);display:flex;flex-direction:column;gap:16px">
+        <p style="margin:0;font-size:18px;line-height:1.55">{{ cpComboLead }}</p>
+        <p style="margin:0">{{ cpComboSun }}</p>
+        <p style="margin:0">{{ cpComboMoon }}</p>
+        <div style="border-left:2px solid #F0D89A;padding:4px 0 4px 16px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;line-height:1.45;color:#F0D89A">{{ cpComboPull }}</div>
+        <p style="margin:0">{{ cpComboTension }}</p>
+        <p style="margin:0">{{ cpComboCost }}</p>
+      </div>
+      </sc-if>
+      <div style="text-align:center;color:rgba(240,216,154,.4);font-size:12px;letter-spacing:1.3em;margin:48px 0;padding-left:1.3em">✦ ✦ ✦</div>
+      <div style="text-align:center;margin-top:0"><div style="font-size:28px;color:#F0D89A;font-family:serif">{{ cpSunKanji }}</div><div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:8px">{{ cpSunStars }}</div></div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;margin:12px 0 6px;color:#F2EAD6;text-align:center">{{ cpSunName }}</h2>
+      <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;line-height:1.8;margin-bottom:20px">{{ cpSunSpan }}<br>their sun stands here</div>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:0 0 18px">{{ cpSunOpening }}</p>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;line-height:1.55">
+        <sc-for list="{{ cpSunTraditions }}" as="t" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:58px 1fr;gap:12px"><span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#F0D89A;padding-top:3px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b> — {{ t.meaning }}</span></div>
+        </sc-for>
+      </div>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:20px 0 0">{{ cpSunSynthesis }}</p>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:14px 0 0">{{ cpSunElection }}</p>
+      <sc-if value="{{ cpMoonOn }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;color:rgba(240,216,154,.4);font-size:12px;letter-spacing:1.3em;margin:48px 0;padding-left:1.3em">✦ ✦ ✦</div>
+      <div style="text-align:center;margin-top:0"><div style="font-size:28px;color:#F0D89A;font-family:serif">{{ cpMoonKanji }}</div><div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:8px">{{ cpMoonStars }}</div></div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;margin:12px 0 6px;color:#F2EAD6;text-align:center">{{ cpMoonName }}</h2>
+      <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;line-height:1.8;margin-bottom:20px">{{ cpMoonSpan }}<br>their moon stands here</div>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:0 0 18px">{{ cpMoonOpening }}</p>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;line-height:1.55">
+        <sc-for list="{{ cpMoonTraditions }}" as="t" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:58px 1fr;gap:12px"><span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#F0D89A;padding-top:3px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b> — {{ t.meaning }}</span></div>
+        </sc-for>
+      </div>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:20px 0 0">{{ cpMoonSynthesis }}</p>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:14px 0 0">{{ cpMoonElection }}</p>
+      </sc-if>
+      <button onClick="{{ removeFromPreview }}" style="margin-top:48px;align-self:center;background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E">remove this chart</button>
     </div>
   </sc-if>
   </sc-if>
@@ -594,22 +757,21 @@
   <sc-if value="{{ accountOn }}" hint-placeholder-val="{{ false }}">
   <div data-screen-label="keep your shard" style="position:absolute;inset:0;z-index:7;background:rgba(4,3,2,.55);backdrop-filter:blur(3px);display:flex;flex-direction:column;justify-content:flex-end">
     <div style="background:#0D0903;border-top:1px solid rgba(240,216,154,.25);padding:34px 32px 46px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both">
-      <sc-if value="{{ acctAskOn }}" hint-placeholder-val="{{ true }}">
-        <div style="font-size:12px;color:#9A8A5E">keep your shard</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;line-height:1.15;color:#F2EAD6;margin-top:8px">the shard lives on this device, for now</div>
-        <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.8);margin:14px 0 0">an email carries it — every fragment, every night walked, on any screen you open.</p>
-        <label style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#9A8A5E;margin-top:28px">email
-          <input placeholder="you@somewhere.com" value="{{ acctEmailVal }}" onChange="{{ acctSetEmail }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
-        </label>
-        <button onClick="{{ acctSend }}" style="{{ acctSendStyle }}">send a sign-in link</button>
-        <button onClick="{{ acctSkip }}" style="background:none;border:none;cursor:pointer;margin-top:18px;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#9A8A5E;padding:6px">not now</button>
+      <div style="font-size:12px;color:#9A8A5E">keep your shard</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;line-height:1.15;color:#F2EAD6;margin-top:8px">{{ acctHeadline }}</div>
+      <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.8);margin:14px 0 0">{{ acctSubline }}</p>
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#9A8A5E;margin-top:28px">email
+        <input placeholder="you@somewhere.com" value="{{ acctEmailVal }}" onChange="{{ acctSetEmail }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#9A8A5E;margin-top:22px">password
+        <input type="password" placeholder="{{ acctPassPlaceholder }}" value="{{ acctPasswordVal }}" onChange="{{ acctSetPassword }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+      </label>
+      <sc-if value="{{ acctErrorOn }}" hint-placeholder-val="{{ false }}">
+        <p style="font-size:12.5px;line-height:1.6;color:#E8A87C;margin:14px 0 0">{{ acctError }}</p>
       </sc-if>
-      <sc-if value="{{ acctSentOn }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:12px;color:#9A8A5E">keep your shard</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;color:#F2EAD6;margin-top:8px">✦ a link is in your inbox</div>
-        <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.8);margin:14px 0 0">tap it on any device and the shard is there — nothing to remember, no password.</p>
-        <button onClick="{{ acctDone }}" style="margin-top:30px;align-self:flex-start;background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;cursor:pointer">done</button>
-      </sc-if>
+      <button onClick="{{ acctSubmit }}" style="{{ acctSendStyle }}">{{ acctSubmitLabel }}</button>
+      <button onClick="{{ acctToggleMode }}" style="background:none;border:none;cursor:pointer;margin-top:16px;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#9A8A5E;padding:6px;text-align:left">{{ acctModeToggleLabel }}</button>
+      <button onClick="{{ acctSkip }}" style="background:none;border:none;cursor:pointer;margin-top:2px;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#9A8A5E;padding:6px;text-align:left">not now</button>
     </div>
   </div>
   </sc-if>
@@ -635,8 +797,13 @@ class Component extends DCLogic {
     locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "", obError: "",
     obManualMode: false, obLat: "", obLon: "", obTz: "",
     obDateY: "", obDateM: "", obDateD: "", obTimeH: "", obTimeMin: "", obTimeAP: "",
+    savedCharts: [], chartsListPushed: false, chartPreviewId: null, addChartOpen: false,
+    ncName: "", ncDateY: "", ncDateM: "", ncDateD: "", ncDate: "", ncTimeH: "", ncTimeMin: "", ncTimeAP: "", ncTime: "",
+    ncTimeUnknown: false, ncPlace: "", ncManualMode: false, ncLat: "", ncLon: "", ncTz: "",
+    ncError: "", ncCasting: false,
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
-    acct: null, acctEmail: "", gamePushed: false, owned: false, shareCopied: false,
+    acct: null, acctEmail: "", acctPassword: "", acctMode: "signup", acctError: "", acctBusy: false,
+    gamePushed: false, owned: false, shareCopied: false,
     // real engine state (replaces the export's hardcoded sample chart)
     ready: false, sigChart: null, sigil: null, sigName: "", sigRecollection: [],
     sigArrival: null, sigWeek: null, sigFindings: null, sigWheelPoints: null, sigWheelRuler: null,
@@ -663,7 +830,12 @@ class Component extends DCLogic {
     try { save = JSON.parse(localStorage.getItem("starshard.sigil-save") || "null"); } catch (e) {}
     let recollection = [];
     try { recollection = JSON.parse(localStorage.getItem("starshard.recollection") || "[]"); } catch (e) {}
-    const patch = { sigRecollection: Array.isArray(recollection) ? recollection : [] };
+    let savedCharts = [];
+    try { savedCharts = JSON.parse(localStorage.getItem("starshard.saved-charts") || "[]"); } catch (e) {}
+    const patch = {
+      sigRecollection: Array.isArray(recollection) ? recollection : [],
+      savedCharts: Array.isArray(savedCharts) ? savedCharts : [],
+    };
     if (save && save.sigil && save.chart) {
       Object.assign(patch, {
         sigName: save.name || "", sigChart: save.chart, sigil: save.sigil,
@@ -762,23 +934,30 @@ class Component extends DCLogic {
     setTimeout(() => this.runCast(), 4100);
   };
 
+  // shared by the primary onboarding cast and the "add a chart" cast
+  // (task 37) — geocode-or-manual branch, identical either way. Throws
+  // with a user-facing message on failure; caller decides what state
+  // field the error lands in.
+  async castFromInputs({ dateStr, timeStr, timeKnown, manualMode, place, lat, lon, tz }) {
+    if (manualMode) {
+      const latN = parseFloat(lat), lonN = parseFloat(lon), tzN = parseFloat(tz);
+      if ([latN, lonN, tzN].some(isNaN)) throw new Error("latitude, longitude and UTC offset all need real numbers");
+      const [y, m, d] = dateStr.split("-").map(Number);
+      const [hh, mm] = timeKnown ? timeStr.split(":").map(Number) : [12, 0];
+      return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: latN, lon: lonN, tzOffset: tzN });
+    }
+    const res = await this.api.geocode(place.trim());
+    const found = res && res[0];
+    if (!found) throw new Error(`couldn't find "${place.trim()}" — try a bigger nearby city, or check the spelling, or enter coordinates manually`);
+    return this.chartFromParts(dateStr, timeStr, found, timeKnown);
+  }
+
   runCast = async () => {
     const s = this.state;
     const timeKnown = !s.obTimeUnknown;
     let chart = null;
     try {
-      if (s.obManualMode) {
-        const lat = parseFloat(s.obLat), lon = parseFloat(s.obLon), tzOffset = parseFloat(s.obTz);
-        if ([lat, lon, tzOffset].some(isNaN)) throw new Error("latitude, longitude and UTC offset all need real numbers");
-        const [y, m, d] = s.obDate.split("-").map(Number);
-        const [hh, mm] = timeKnown ? s.obTime.split(":").map(Number) : [12, 0];
-        chart = this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat, lon, tzOffset });
-      } else {
-        const res = await this.api.geocode(s.obPlace.trim());
-        const place = res && res[0];
-        if (!place) throw new Error(`couldn't find "${s.obPlace.trim()}" — try a bigger nearby city, or check the spelling, or enter coordinates manually`);
-        chart = this.chartFromParts(s.obDate, s.obTime, place, timeKnown);
-      }
+      chart = await this.castFromInputs({ dateStr: s.obDate, timeStr: s.obTime, timeKnown, manualMode: s.obManualMode, place: s.obPlace, lat: s.obLat, lon: s.obLon, tz: s.obTz });
     } catch (e) {
       this.setState({ obCasting: false, obCastStep: 0, obError: e.message || "something went wrong reading that — try again" });
       return;
@@ -791,6 +970,72 @@ class Component extends DCLogic {
       setTimeout(() => this.setState(st => (st.acct ? null : { acct: "ask" })), 1700);
     });
   };
+
+  // -- saved charts (task 37, local-only per the plan's privacy call):
+  // other people's charts, cast the same way as the primary but appended
+  // to a separate list instead of replacing this.state.sigChart/sigil.
+  persistSavedCharts(list) {
+    try { localStorage.setItem("starshard.saved-charts", JSON.stringify(list)); } catch (e) {}
+  }
+
+  ncCast = async () => {
+    const s = this.state;
+    if (s.ncCasting) return;
+    if (!s.ncName.trim()) { this.setState({ ncError: "give this chart a name, so you can tell it apart from your own" }); return; }
+    const timeKnown = !s.ncTimeUnknown;
+    this.setState({ ncCasting: true, ncError: "" });
+    let chart;
+    try {
+      chart = await this.castFromInputs({ dateStr: s.ncDate, timeStr: s.ncTime, timeKnown, manualMode: s.ncManualMode, place: s.ncPlace, lat: s.ncLat, lon: s.ncLon, tz: s.ncTz });
+    } catch (e) {
+      this.setState({ ncCasting: false, ncError: e.message || "something went wrong reading that — try again" });
+      return;
+    }
+    const sigil = this.sigilMod.deriveSigil(chart, { timeKnown });
+    const entry = { id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())), name: s.ncName.trim(), chart, sigil, timeKnown, createdAt: new Date().toISOString() };
+    const merged = [...s.savedCharts, entry];
+    this.persistSavedCharts(merged);
+    this.setState({
+      savedCharts: merged, ncCasting: false, addChartOpen: false, chartPreviewId: entry.id,
+      ncName: "", ncDateY: "", ncDateM: "", ncDateD: "", ncDate: "", ncTimeH: "", ncTimeMin: "", ncTimeAP: "", ncTime: "",
+      ncTimeUnknown: false, ncPlace: "", ncManualMode: false, ncLat: "", ncLon: "", ncTz: "", ncError: "",
+    });
+  };
+
+  ncRemove = (id) => () => {
+    const merged = this.state.savedCharts.filter(c => c.id !== id);
+    this.persistSavedCharts(merged);
+    this.setState(st => ({ savedCharts: merged, chartPreviewId: st.chartPreviewId === id ? null : st.chartPreviewId }));
+  };
+
+  // -- the chart preview screen (task 38): the synchronous half of the
+  // primary shard tab's own computation (hero/combo/portraits), written
+  // as its own pure function rather than refactoring the already-proven
+  // primary-shard logic in renderVals() to be multi-chart-aware — lower
+  // risk, and the plan's own v1 scope explicitly excludes the wheel/
+  // signature-card/becoming/farlight (those need refreshAll()'s async
+  // half, which only runs for the one primary chart today).
+  buildShardStaticVals(chart, sigil, timeKnown) {
+    const sun = sigil.sunStation, moon = sigil.moonStation, same = sun === moon;
+    const address = this.pad2(sun + 1) + "·" + this.pad2(moon + 1);
+    const combo = this.combos[address] || null;
+    const sunP = this.mansionPortrait(sun), moonP = this.mansionPortrait(moon);
+    return {
+      address,
+      heroName: sunP.epithet, heroSuffixOn: !same, heroSuffix: same ? "" : `of the ${moonP.epithet.replace(/^The /, "")}`,
+      metaLine: `sun in ${sunP.epithet.toLowerCase()} · moon in ${moonP.epithet.toLowerCase()}`,
+      comboReady: !!combo,
+      comboLead: combo ? combo.lead : "", comboSun: combo ? combo.sun : "", comboMoon: combo ? combo.moon : "",
+      comboPull: combo ? combo.pull : "", comboTension: combo ? combo.tension : "", comboCost: combo ? combo.cost : "",
+      sunKanji: sunP.kanji, sunStars: this.stations.STATIONS[sun].stars || "", sunName: sunP.epithet, sunSpan: sunP.signSpan,
+      sunOpening: sunP.claim, sunTraditions: sunP.traditions, sunSynthesis: sunP.synthesis, sunElection: sunP.election,
+      moonOn: !same,
+      moonKanji: same ? "" : moonP.kanji, moonStars: same ? "" : (this.stations.STATIONS[moon].stars || ""),
+      moonName: same ? "" : moonP.epithet, moonSpan: same ? "" : moonP.signSpan,
+      moonOpening: same ? "" : moonP.claim, moonTraditions: same ? [] : moonP.traditions,
+      moonSynthesis: same ? "" : moonP.synthesis, moonElection: same ? "" : moonP.election,
+    };
+  }
 
   // -- tonight: claiming the moon's real current station into
   // sigRecollection, mirrors Star Shard v3.dc.html's sndClaim().
@@ -813,6 +1058,42 @@ class Component extends DCLogic {
       try { localStorage.setItem("starshard.recollection", JSON.stringify(merged)); } catch (e) {}
       if (st.authEmail) this.api.addRecollection(station, record.castContext).catch(() => {});
     }, 2450);
+  };
+
+  // -- real signup/login, replacing the export's magic-link stub (the
+  // real backend is password auth — api.js/server.js already have
+  // working signup()/login()/logout(), just never called from this page
+  // before). On success, push the local guest chart up (saveSigil() —
+  // runCast() already calls it on every cast, but unauthenticated, so it
+  // silently has nothing to attach to yet) and pull down/merge anything
+  // already on the account via the existing loadAndMergeAccount().
+  acctSubmit = async () => {
+    const s = this.state;
+    if (s.acctBusy) return;
+    const email = s.acctEmail.trim(), password = s.acctPassword;
+    if (!email.includes("@") || password.length < 8) {
+      this.setState({ acctError: "email and a password of at least 8 characters, both real" });
+      return;
+    }
+    this.setState({ acctBusy: true, acctError: "" });
+    try {
+      const res = s.acctMode === "signup" ? await this.api.signup(email, password) : await this.api.login(email, password);
+      this.setState({ authEmail: res.email, acct: "done", acctBusy: false, acctPassword: "" });
+      if (s.sigil) this.api.saveSigil(s.sigil);
+      this.loadAndMergeAccount();
+    } catch (e) {
+      if (s.acctMode === "signup" && e.code === "email_taken") {
+        this.setState({ acctMode: "login", acctBusy: false, acctError: "that email already has a shard — sign in instead" });
+        return;
+      }
+      const msg = s.acctMode === "signup" ? this.api.signupError(e.code) : this.api.loginError(e.code);
+      this.setState({ acctBusy: false, acctError: msg });
+    }
+  };
+
+  acctLogout = async () => {
+    await this.api.logout();
+    this.setState({ authEmail: null, acct: null });
   };
 
   // -- account: sigil + recollection sync, mirrors Star Shard v3.dc.html's
@@ -1168,7 +1449,7 @@ class Component extends DCLogic {
     const tabStyle = (t) => tabBase + (tab === t ? "color:#F0D89A" : "color:#9A8A5E");
     const segBase = "background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12px;padding:8px 16px;";
     const view = this.state.view;
-    const setTab = (t) => () => this.setState({ tab: t, prevTab: tab, shardSt: 0, shardStage: 0, arch: false, mcPushed: false, night: null, cd: null }, () => {
+    const setTab = (t) => () => this.setState({ tab: t, prevTab: tab, shardSt: 0, shardStage: 0, arch: false, mcPushed: false, night: null, cd: null, chartsListPushed: false, addChartOpen: false, chartPreviewId: null }, () => {
       document.querySelectorAll("[data-ss-screen]").forEach((el) => { el.scrollTop = 0; });
     });
     const locKnown = this.state.locKnown ?? (this.props.locationKnown ?? true);
@@ -1204,6 +1485,10 @@ class Component extends DCLogic {
     const obYearOptions = Array.from({ length: obNowYear - 1919 }, (_, i) => { const y = String(obNowYear - i); return { value: y, label: y }; });
     const obHourOptions = Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }));
     const obMinuteOptions = Array.from({ length: 60 }, (_, i) => { const v = String(i).padStart(2, "0"); return { value: v, label: v }; });
+    // the "add a chart" form's own day list — same month/year-aware logic,
+    // its own independent selection (task 37).
+    const ncDayCount = obDaysInMonth(this.state.ncDateM, this.state.ncDateY);
+    const ncDayOptions = Array.from({ length: ncDayCount }, (_, i) => { const v = String(i + 1).padStart(2, "0"); return { value: v, label: String(i + 1) }; });
     const obGroup = (s) => (s < 10 ? 0 : s < 19 ? 1 : 2);
     const obRingSegs = [];
     for (let s = 0; s < 28; s++) {
@@ -1223,7 +1508,7 @@ class Component extends DCLogic {
       t,
       style: "font-family:'Varela Round',sans-serif;font-size:12px;text-align:center;transition:opacity .5s ease,color .5s ease;" + (cs >= i + 1 ? "opacity:1;color:#F0D89A" : "opacity:.18;color:#9A8A5E"),
     }));
-    const acctOk = this.state.acctEmail.includes("@");
+    const acctOk = this.state.acctEmail.includes("@") && this.state.acctPassword.length >= 8;
 
     // -- the shard: hero, combination, mansion portraits, signature,
     // becoming, farlight — real corpus/combos/findings, port plan §5.
@@ -1269,16 +1554,30 @@ class Component extends DCLogic {
       }
     }
 
+    // the saved-chart preview (task 38) — computed only when one is open.
+    const previewEntry = this.state.chartPreviewId ? this.state.savedCharts.find(c => c.id === this.state.chartPreviewId) : null;
+    const cp = (ready && previewEntry) ? this.buildShardStaticVals(previewEntry.chart, previewEntry.sigil, previewEntry.timeKnown) : null;
+
     return {
-      accountOn: ((this.props.accountSheet ?? false) && !this.state.acct) || this.state.acct === "ask" || this.state.acct === "sent",
-      acctAskOn: this.state.acct !== "sent",
-      acctSentOn: this.state.acct === "sent",
+      accountOn: ((this.props.accountSheet ?? false) && !this.state.acct) || this.state.acct === "ask",
+      acctHeadline: this.state.acctMode === "signup" ? "the shard lives on this device, for now" : "welcome back",
+      acctSubline: this.state.acctMode === "signup" ? "an account carries it — every fragment, every night walked, on any screen you open." : "sign in to pick up where you left off.",
       acctEmailVal: this.state.acctEmail,
-      acctSetEmail: (e) => this.setState({ acctEmail: e.target.value }),
-      acctSend: () => { if (acctOk) this.setState({ acct: "sent" }); },
-      acctSendStyle: "margin-top:30px;align-self:flex-start;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;transition:all .4s ease;" + (acctOk ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
+      acctSetEmail: (e) => this.setState({ acctEmail: e.target.value, acctError: "" }),
+      acctPasswordVal: this.state.acctPassword,
+      acctSetPassword: (e) => this.setState({ acctPassword: e.target.value, acctError: "" }),
+      acctPassPlaceholder: this.state.acctMode === "signup" ? "at least 8 characters" : "your password",
+      acctErrorOn: !!this.state.acctError, acctError: this.state.acctError,
+      acctSubmitLabel: this.state.acctBusy ? "…" : (this.state.acctMode === "signup" ? "create your account" : "sign in"),
+      acctSubmit: this.acctSubmit,
+      acctSendStyle: "margin-top:26px;align-self:flex-start;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;transition:all .4s ease;" + (acctOk && !this.state.acctBusy ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
+      acctModeToggleLabel: this.state.acctMode === "signup" ? "already have a shard? sign in instead" : "new here? create an account instead",
+      acctToggleMode: () => this.setState(st => ({ acctMode: st.acctMode === "signup" ? "login" : "signup", acctError: "" })),
       acctDone: () => this.setState({ acct: "done" }),
       acctSkip: () => this.setState({ acct: "skip" }),
+      acctStatusLine: this.state.authEmail ? `signed in as ${this.state.authEmail}` : "not signed in · this shard lives on this device only",
+      acctStatusAction: this.state.authEmail ? "log out" : "keep your shard →",
+      acctStatusTap: this.state.authEmail ? this.acctLogout : () => this.setState({ acct: "ask" }),
       payOn: (this.props.nightEight ?? false) && !this.state.owned && tab === "tonight",
       ownIt: () => this.setState({ owned: true }),
       // Manzil ("the covered well") is explicitly WIP and out of scope for
@@ -1349,6 +1648,72 @@ class Component extends DCLogic {
       obSetLat: (e) => this.setState({ obLat: e.target.value, obError: "" }),
       obSetLon: (e) => this.setState({ obLon: e.target.value, obError: "" }),
       obSetTz: (e) => this.setState({ obTz: e.target.value, obError: "" }),
+
+      // -- saved charts: the "your charts" list, task 37 --------------
+      pushChartsList: () => this.setState({ chartsListPushed: true }),
+      popChartsList: () => this.setState({ chartsListPushed: false }),
+      chartsListPushed: this.state.chartsListPushed,
+      savedChartsCountLabel: this.state.savedCharts.length ? `${this.state.savedCharts.length} saved` : "none yet",
+      primaryHeroLine: ready ? `${sunPortrait.epithet.toLowerCase()}${sameMansion ? "" : " of the " + moonPortrait.epithet.replace(/^The /, "").toLowerCase()}` : "",
+      savedChartRows: this.state.savedCharts.map(c => {
+        const cSun = this.mansionPortrait(c.sigil.sunStation), cMoon = this.mansionPortrait(c.sigil.moonStation);
+        const same = c.sigil.sunStation === c.sigil.moonStation;
+        return {
+          id: c.id, name: c.name,
+          hero: `${cSun.epithet.toLowerCase()}${same ? "" : " of the " + cMoon.epithet.replace(/^The /, "").toLowerCase()}`,
+          onTap: () => this.setState({ chartPreviewId: c.id }),
+          onRemove: this.ncRemove(c.id),
+        };
+      }),
+      openAddChart: () => this.setState({ addChartOpen: true, ncError: "" }),
+      closeAddChart: () => this.setState({ addChartOpen: false }),
+      addChartOpen: this.state.addChartOpen,
+      ncNameVal: this.state.ncName, ncSetName: (e) => this.setState({ ncName: e.target.value, ncError: "" }),
+      ncDateMVal: this.state.ncDateM, ncDateDVal: this.state.ncDateD, ncDateYVal: this.state.ncDateY,
+      ncDayOptions,
+      ncSetDateY: (e) => this.setState(st => {
+        const y = e.target.value, d = parseInt(st.ncDateD, 10) > obDaysInMonth(st.ncDateM, y) ? "" : st.ncDateD;
+        return { ncDateY: y, ncDateD: d, ncDate: this.composeObDate(y, st.ncDateM, d), ncError: "" };
+      }),
+      ncSetDateM: (e) => this.setState(st => {
+        const m = e.target.value, d = parseInt(st.ncDateD, 10) > obDaysInMonth(m, st.ncDateY) ? "" : st.ncDateD;
+        return { ncDateM: m, ncDateD: d, ncDate: this.composeObDate(st.ncDateY, m, d), ncError: "" };
+      }),
+      ncSetDateD: (e) => this.setState(st => ({ ncDateD: e.target.value, ncDate: this.composeObDate(st.ncDateY, st.ncDateM, e.target.value), ncError: "" })),
+      ncTimeHVal: this.state.ncTimeH, ncTimeMinVal: this.state.ncTimeMin, ncTimeAPVal: this.state.ncTimeAP,
+      ncSetTimeH: (e) => this.setState(st => ({ ncTimeH: e.target.value, ncTime: this.composeObTime(e.target.value, st.ncTimeMin, st.ncTimeAP), ncError: "" })),
+      ncSetTimeMin: (e) => this.setState(st => ({ ncTimeMin: e.target.value, ncTime: this.composeObTime(st.ncTimeH, e.target.value, st.ncTimeAP), ncError: "" })),
+      ncSetTimeAP: (e) => this.setState(st => ({ ncTimeAP: e.target.value, ncTime: this.composeObTime(st.ncTimeH, st.ncTimeMin, e.target.value), ncError: "" })),
+      ncTimeUnknownOn: this.state.ncTimeUnknown,
+      ncToggleTimeUnknown: () => this.setState(st => ({ ncTimeUnknown: !st.ncTimeUnknown })),
+      ncTimeMark: this.state.ncTimeUnknown ? "☑" : "☐",
+      ncPlaceVal: this.state.ncPlace, ncSetPlace: (e) => this.setState({ ncPlace: e.target.value, ncError: "" }),
+      ncManualOn: this.state.ncManualMode, ncManualOff: !this.state.ncManualMode,
+      ncManualToggleLabel: this.state.ncManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
+      ncToggleManual: () => this.setState(st => ({ ncManualMode: !st.ncManualMode, ncError: "" })),
+      ncLatVal: this.state.ncLat, ncLonVal: this.state.ncLon, ncTzVal: this.state.ncTz,
+      ncSetLat: (e) => this.setState({ ncLat: e.target.value, ncError: "" }),
+      ncSetLon: (e) => this.setState({ ncLon: e.target.value, ncError: "" }),
+      ncSetTz: (e) => this.setState({ ncTz: e.target.value, ncError: "" }),
+      ncErrorOn: !!this.state.ncError, ncError: this.state.ncError,
+      ncCastLabel: this.state.ncCasting ? "casting…" : "cast this chart",
+      ncCast: this.ncCast,
+
+      // -- the chart preview screen (task 38) --------------------------
+      chartPreviewOn: !!cp,
+      popChartPreview: () => this.setState({ chartPreviewId: null }),
+      removeFromPreview: previewEntry ? () => { this.ncRemove(previewEntry.id)(); } : () => {},
+      cpName: previewEntry ? previewEntry.name : "",
+      cpHeroName: cp ? cp.heroName : "", cpHeroSuffixOn: cp ? cp.heroSuffixOn : false, cpHeroSuffix: cp ? cp.heroSuffix : "",
+      cpAddress: cp ? cp.address : "", cpMetaLine: cp ? cp.metaLine : "",
+      cpComboReady: cp ? cp.comboReady : false,
+      cpComboLead: cp ? cp.comboLead : "", cpComboSun: cp ? cp.comboSun : "", cpComboMoon: cp ? cp.comboMoon : "",
+      cpComboPull: cp ? cp.comboPull : "", cpComboTension: cp ? cp.comboTension : "", cpComboCost: cp ? cp.comboCost : "",
+      cpSunKanji: cp ? cp.sunKanji : "", cpSunStars: cp ? cp.sunStars : "", cpSunName: cp ? cp.sunName : "", cpSunSpan: cp ? cp.sunSpan : "",
+      cpSunOpening: cp ? cp.sunOpening : "", cpSunTraditions: cp ? cp.sunTraditions : [], cpSunSynthesis: cp ? cp.sunSynthesis : "", cpSunElection: cp ? cp.sunElection : "",
+      cpMoonOn: cp ? cp.moonOn : false,
+      cpMoonKanji: cp ? cp.moonKanji : "", cpMoonStars: cp ? cp.moonStars : "", cpMoonName: cp ? cp.moonName : "", cpMoonSpan: cp ? cp.moonSpan : "",
+      cpMoonOpening: cp ? cp.moonOpening : "", cpMoonTraditions: cp ? cp.moonTraditions : [], cpMoonSynthesis: cp ? cp.moonSynthesis : "", cpMoonElection: cp ? cp.moonElection : "",
       obErrorOn: !!this.state.obError, obError: this.state.obError,
       obCastStyle: "margin:44px auto 0;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:15px 32px;transition:all .4s ease;" + (obCount === 3 ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer;box-shadow:0 0 24px rgba(240,216,154,.22)" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       timeOn: timeKnown, timeOff: !timeKnown,

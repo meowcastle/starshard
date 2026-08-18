@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**284 bindings, 235 top-level.**
+**369 bindings, 319 top-level.**
 
 ## Rule
 
@@ -27,9 +27,11 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 |---|---|---|
 | `angleLabels` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
 | `angleLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `aspectRows` | `row` | `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
+| `aspectRows` | `row` | `hero`, `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
 | `cdParas` | `p` | `d`, `name`, `onTap`, `pos`, `t` |
 | `chartRing` | `seg` | `color`, `d`, `w` |
+| `cpMoonTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `cpSunTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `hitArcs` | `h` | `d`, `onTap` |
 | `houseLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `houseNums` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
@@ -37,6 +39,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `mSelBodies` | `b` | `name`, `pos` |
 | `mTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `moonPTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `ncDayOptions` | `o` | `label`, `value` |
 | `obCastLines` | `l` | `style`, `t` |
 | `obCastSegs` | `seg` | `color`, `d`, `w` |
 | `obDayOptions` | `o` | `label`, `value` |
@@ -49,13 +52,14 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `sRingMarks` | `m` | `color`, `cx`, `cy`, `d`, `fill`, `onTap`, `r`, `stroke`, `tf` |
 | `sRingSegs` | `seg` | `color`, `d`, `w` |
 | `sRingTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `savedChartRows` | `row` | `hero`, `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
 | `signGlyphs` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
 | `signLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `stationRows` | `row` | `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
+| `stationRows` | `row` | `hero`, `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
 | `sunPTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `tRingSegs` | `seg` | `color`, `d`, `w` |
 | `weekParas` | `p` | `d`, `name`, `onTap`, `pos`, `t` |
-| `weekRows` | `row` | `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
+| `weekRows` | `row` | `hero`, `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
 | `wheelMarks` | `m` | `color`, `cx`, `cy`, `d`, `fill`, `onTap`, `r`, `stroke`, `tf` |
 
 ## Scalars and callbacks
@@ -63,14 +67,25 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | binding | produced by |
 |---|---|
 | `accountOn` | component state |
-| `acctAskOn` | component state |
-| `acctDone` | component state |
 | `acctEmailVal` | component state |
-| `acctSend` | component state |
+| `acctError` | component state |
+| `acctErrorOn` | component state |
+| `acctHeadline` | component state |
+| `acctModeToggleLabel` | component state |
+| `acctPassPlaceholder` | component state |
+| `acctPasswordVal` | component state |
 | `acctSendStyle` | component state |
-| `acctSentOn` | component state |
 | `acctSetEmail` | component state |
+| `acctSetPassword` | component state |
 | `acctSkip` | component state |
+| `acctStatusAction` | component state |
+| `acctStatusLine` | component state |
+| `acctStatusTap` | component state |
+| `acctSubline` | component state |
+| `acctSubmit` | component state |
+| `acctSubmitLabel` | component state |
+| `acctToggleMode` | component state |
+| `addChartOpen` | component state |
 | `addTime` | component state |
 | `angleLabels` | component state |
 | `angleLines` | component state |
@@ -99,10 +114,13 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `chartHeaderLine` | component state |
 | `chartMcLine` | component state |
 | `chartMoonLine` | component state |
+| `chartPreviewOn` | component state |
 | `chartRing` | component state |
 | `chartRulerLine` | component state |
 | `chartRulerName` | component state |
 | `chartSunLine` | component state |
+| `chartsListPushed` | component state |
+| `closeAddChart` | component state |
 | `comboCost` | component state |
 | `comboLead` | component state |
 | `comboMoon` | component state |
@@ -110,6 +128,35 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `comboReady` | component state |
 | `comboSun` | component state |
 | `comboTension` | component state |
+| `cpComboCost` | component state |
+| `cpComboLead` | component state |
+| `cpComboMoon` | component state |
+| `cpComboPull` | component state |
+| `cpComboReady` | component state |
+| `cpComboSun` | component state |
+| `cpComboTension` | component state |
+| `cpHeroName` | component state |
+| `cpHeroSuffix` | component state |
+| `cpHeroSuffixOn` | component state |
+| `cpMetaLine` | component state |
+| `cpMoonElection` | component state |
+| `cpMoonKanji` | component state |
+| `cpMoonName` | component state |
+| `cpMoonOn` | component state |
+| `cpMoonOpening` | component state |
+| `cpMoonSpan` | component state |
+| `cpMoonStars` | component state |
+| `cpMoonSynthesis` | component state |
+| `cpMoonTraditions` | component state |
+| `cpName` | component state |
+| `cpSunElection` | component state |
+| `cpSunKanji` | component state |
+| `cpSunName` | component state |
+| `cpSunOpening` | component state |
+| `cpSunSpan` | component state |
+| `cpSunStars` | component state |
+| `cpSunSynthesis` | component state |
+| `cpSunTraditions` | component state |
 | `farlightN` | component state |
 | `farlightText` | component state |
 | `frameScaleStyle` | component state |
@@ -152,6 +199,39 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `moonPSynthesis` | component state |
 | `moonPTraditions` | component state |
 | `navOn` | component state |
+| `ncCast` | component state |
+| `ncCastLabel` | component state |
+| `ncDateDVal` | component state |
+| `ncDateMVal` | component state |
+| `ncDateYVal` | component state |
+| `ncDayOptions` | component state |
+| `ncError` | component state |
+| `ncErrorOn` | component state |
+| `ncLatVal` | component state |
+| `ncLonVal` | component state |
+| `ncManualOff` | component state |
+| `ncManualOn` | component state |
+| `ncManualToggleLabel` | component state |
+| `ncNameVal` | component state |
+| `ncPlaceVal` | component state |
+| `ncSetDateD` | component state |
+| `ncSetDateM` | component state |
+| `ncSetDateY` | component state |
+| `ncSetLat` | component state |
+| `ncSetLon` | component state |
+| `ncSetName` | component state |
+| `ncSetPlace` | component state |
+| `ncSetTimeAP` | component state |
+| `ncSetTimeH` | component state |
+| `ncSetTimeMin` | component state |
+| `ncSetTz` | component state |
+| `ncTimeAPVal` | component state |
+| `ncTimeHVal` | component state |
+| `ncTimeMark` | component state |
+| `ncTimeMinVal` | component state |
+| `ncToggleManual` | component state |
+| `ncToggleTimeUnknown` | component state |
+| `ncTzVal` | component state |
 | `nightDate` | component state |
 | `nightMeta` | component state |
 | `nightName` | component state |
@@ -214,25 +294,33 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `onShard` | component state |
 | `onTonight` | component state |
 | `onboardOn` | component state |
+| `openAddChart` | component state |
 | `ownIt` | component state |
 | `payOn` | component state |
 | `planetRows` | component state |
 | `popArch` | component state |
 | `popCD` | component state |
+| `popChartPreview` | component state |
+| `popChartsList` | component state |
 | `popGame` | component state |
 | `popMC` | component state |
 | `popNight` | component state |
+| `primaryHeroLine` | component state |
 | `pushArch` | component state |
+| `pushChartsList` | component state |
 | `pushGame` | component state |
 | `pushMC` | component state |
 | `remindLabel` | component state |
 | `remindStyle` | component state |
+| `removeFromPreview` | component state |
 | `rulerHouseText` | component state |
 | `sChordD` | component state |
 | `sChordStyle` | component state |
 | `sRingMarks` | component state |
 | `sRingSegs` | component state |
 | `sRingTicks` | component state |
+| `savedChartRows` | component state |
+| `savedChartsCountLabel` | component state |
 | `segTonightStyle` | component state |
 | `segWeekStyle` | component state |
 | `selLabel` | component state |
