@@ -49,11 +49,11 @@
       <p style="font-size:14.5px;line-height:1.7;color:#9A8A5E;text-align:center;margin:12px 0 0">the sky wrote something the minute you arrived.<br>tell us the minute.</p>
       <div style="display:flex;flex-direction:column;gap:30px;margin-top:44px">
         <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:ssFadeUp .5s ease .08s both">born on
-          <input placeholder="6 june 1989" value="{{ obDateVal }}" onChange="{{ obSetDate }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+          <input type="date" value="{{ obDateVal }}" onChange="{{ obSetDate }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%;color-scheme:dark">
         </label>
         <div style="display:flex;flex-direction:column;gap:10px;animation:ssFadeUp .5s ease .16s both">
           <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
-            <input placeholder="4:42 pm" value="{{ obTimeVal }}" onChange="{{ obSetTime }}" style="{{ obTimeInputStyle }}">
+            <input type="time" value="{{ obTimeVal }}" onChange="{{ obSetTime }}" style="{{ obTimeInputStyle }}">
           </label>
           <button onClick="{{ obToggleTime }}" style="{{ obTimeStyle }}">{{ obTimeMark }} i don't know my birth time</button>
         </div>
@@ -62,7 +62,9 @@
         </label>
       </div>
       <button onClick="{{ castChart }}" style="{{ obCastStyle }}">cast your chart</button>
-      
+      <sc-if value="{{ obErrorOn }}" hint-placeholder-val="{{ false }}">
+        <p style="font-size:12.5px;line-height:1.6;color:#E8A87C;text-align:center;margin:16px 0 0">{{ obError }}</p>
+      </sc-if>
     </div>
     </sc-if>
     <sc-if value="{{ obCastingOn }}" hint-placeholder-val="{{ false }}">
@@ -558,7 +560,7 @@ class Component extends DCLogic {
   state = {
     tab: null, view: "tonight", mcPushed: false, night: null, numbersOpen: false, remind: false,
     sel: null, arch: false, selM: null, onboardDone: false, obTimeUnknown: false, timeKnown: null,
-    locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "",
+    locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "", obError: "",
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
     acct: null, acctEmail: "", gamePushed: false, owned: false, shareCopied: false,
     // real engine state (replaces the export's hardcoded sample chart)
@@ -645,23 +647,29 @@ class Component extends DCLogic {
     return (this.state.sigRecollection || []).some(r => r.station === station && r.step === step);
   }
 
-  chartFromDate(dt, place, timeKnown) {
-    const y = dt.getFullYear(), m = dt.getMonth() + 1, d = dt.getDate();
-    const hh = timeKnown ? dt.getHours() : 12, mm = timeKnown ? dt.getMinutes() : 0;
+  // dateStr/timeStr are the native <input type="date">/<input type="time">
+  // values — always "YYYY-MM-DD"/"HH:MM" (24h), never locale-formatted, so
+  // there's no free-text date parsing left to get wrong.
+  chartFromParts(dateStr, timeStr, place, timeKnown) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [hh, mm] = timeKnown ? timeStr.split(':').map(Number) : [12, 0];
     const tzOffset = this.tz.dstInfo(place.tz, y, m, d, hh, mm).off;
     return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: place.lat, lon: place.lon, tzOffset });
   }
 
   // -- onboarding: real casting, replacing the export's setTimeout-only
-  // castChart(). obDate/obTime are free-text fields (no manual lat/lon/tz
-  // fallback exists in this markup — best-effort per the scope decision),
-  // so the birth date/time are parsed with the platform's own loose Date
-  // parser rather than a strict format; a failed parse or a failed geocode
-  // both fail closed (stop the cast, leave the form up) since there is no
-  // error-line binding in the markup to report why.
+  // castChart(). obDate/obTime are native <input type="date"/"time">
+  // fields (upgraded from the export's free-text fields — the freeform
+  // version gave no year/month/day picker at all and needed a loose Date
+  // string parse, a real reported bug: "can't even choose your birth
+  // year"). No manual lat/lon/tz fallback exists in this markup for a
+  // failed geocode — best-effort per the port plan's scope decision — but
+  // a failed geocode now surfaces a real inline error (obError) instead
+  // of silently resetting the form, since that read as "the app is
+  // broken" rather than "try a different city."
   startCast = () => {
     if (this.state.obCasting) return;
-    this.setState({ obCasting: true, obCastStep: 0 });
+    this.setState({ obCasting: true, obCastStep: 0, obError: "" });
     [1, 2, 3].forEach(i => setTimeout(() => this.setState({ obCastStep: i }), 200 + i * 850));
     setTimeout(() => this.runCast(), 4100);
   };
@@ -673,18 +681,16 @@ class Component extends DCLogic {
     try {
       const res = await this.api.geocode(s.obPlace.trim());
       const place = res && res[0];
-      if (!place) throw new Error("no place found for that spelling");
-      const dt = new Date(`${s.obDate} ${timeKnown ? s.obTime : "12:00 pm"}`);
-      if (isNaN(dt.getTime())) throw new Error("could not read that date/time");
-      chart = this.chartFromDate(dt, place, timeKnown);
+      if (!place) throw new Error(`couldn't find "${s.obPlace.trim()}" — try a bigger nearby city, or check the spelling`);
+      chart = this.chartFromParts(s.obDate, s.obTime, place, timeKnown);
     } catch (e) {
-      this.setState({ obCasting: false, obCastStep: 0 });
+      this.setState({ obCasting: false, obCastStep: 0, obError: e.message || "something went wrong reading that — try again" });
       return;
     }
     const sigil = this.sigilMod.deriveSigil(chart, { timeKnown });
     try { localStorage.setItem("starshard.sigil-save", JSON.stringify({ name: "", chart, sigil, timeKnown })); } catch (e) {}
     this.api.saveSigil(sigil);
-    this.setState({ sigChart: chart, sigil, timeKnown, obCasting: false, obCastStep: 0, onboardDone: true, tab: "shard" }, () => {
+    this.setState({ sigChart: chart, sigil, timeKnown, obCasting: false, obCastStep: 0, obError: "", onboardDone: true, tab: "shard" }, () => {
       this.refreshAll();
       setTimeout(() => this.setState(st => (st.acct ? null : { acct: "ask" })), 1700);
     });
@@ -1187,15 +1193,16 @@ class Component extends DCLogic {
       obToggleTime: () => this.setState(s => ({ obTimeUnknown: !s.obTimeUnknown })),
       obTimeMark: obU ? "☑" : "☐",
       obTimeStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;" + (obU ? "color:#F0D89A" : "color:#9A8A5E"),
-      obTimeInputStyle: "background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%;" + (obU ? "color:rgba(154,138,94,.4);text-decoration:line-through" : "color:#F2EAD6"),
+      obTimeInputStyle: "background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%;color-scheme:dark;" + (obU ? "color:rgba(154,138,94,.4);text-decoration:line-through" : "color:#F2EAD6"),
       castChart: () => { if (obCount >= 3) this.startCast(); },
       obFormOn: !this.state.obCasting, obCastingOn: this.state.obCasting,
       obRingSegs, obCastSegs, obCastLines,
       obRingCount: obCount + " of 3",
       obDateVal: this.state.obDate, obTimeVal: this.state.obTime, obPlaceVal: this.state.obPlace,
-      obSetDate: (e) => this.setState({ obDate: e.target.value }),
-      obSetTime: (e) => this.setState({ obTime: e.target.value }),
-      obSetPlace: (e) => this.setState({ obPlace: e.target.value }),
+      obSetDate: (e) => this.setState({ obDate: e.target.value, obError: "" }),
+      obSetTime: (e) => this.setState({ obTime: e.target.value, obError: "" }),
+      obSetPlace: (e) => this.setState({ obPlace: e.target.value, obError: "" }),
+      obErrorOn: !!this.state.obError, obError: this.state.obError,
       obCastStyle: "margin:44px auto 0;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:15px 32px;transition:all .4s ease;" + (obCount === 3 ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer;box-shadow:0 0 24px rgba(240,216,154,.22)" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       timeOn: timeKnown, timeOff: !timeKnown,
       addTime: () => this.setState({ timeKnown: true }),

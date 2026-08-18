@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**254 bindings, 207 top-level.**
+**256 bindings, 209 top-level.**
 
 ## Rule
 
@@ -165,6 +165,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `obCastStyle` | component state |
 | `obCastingOn` | component state |
 | `obDateVal` | component state |
+| `obError` | component state |
+| `obErrorOn` | component state |
 | `obFormOn` | component state |
 | `obPlaceVal` | component state |
 | `obRingCount` | component state |

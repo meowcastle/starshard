@@ -76,14 +76,17 @@ if (VENDOR_DIR) {
 }
 
 // The real geocode call hits Open-Meteo over the network — mock it so this
-// test is deterministic and offline.
-await page.route('**/geocoding-api.open-meteo.com/**', route => route.fulfill({
-  status: 200, contentType: 'application/json',
-  body: JSON.stringify({ results: [{
+// test is deterministic and offline. Only "New York" resolves; anything
+// else returns zero results, so the no-match error path is exercisable too.
+await page.route('**/geocoding-api.open-meteo.com/**', route => {
+  const url = new URL(route.request().url());
+  const q = (url.searchParams.get('name') || '').toLowerCase();
+  const results = q.includes('new york') ? [{
     name: 'New York', admin1: 'New York', country: 'United States',
     latitude: 40.71, longitude: -74.01, timezone: 'America/New_York',
-  }] }),
-}));
+  }] : [];
+  return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results }) });
+});
 
 const fatal = [];
 page.on('pageerror', e => fatal.push(`page error: ${e.message}`));
@@ -107,10 +110,28 @@ await page.goto(base + '/' + PAGE, { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(() => /tell us the minute/i.test(document.body.innerText || ''), null, { timeout: 15000 });
 await shot('00-onboard');
 
-// -- birth entry (free-text date/time/place fields — see CLAUDE.md's note
-// on the "wire as-is" scope call for this form) ----------------------------
-await page.getByPlaceholder('6 june 1989').fill('6 june 1989');
-await page.getByPlaceholder('4:42 pm').fill('4:42 pm');
+// -- birth entry: native date/time pickers (fixed a real reported bug —
+// the export's free-text date field gave no year/month/day picker at
+// all) + a free-text place field (still best-effort, no manual lat/lon/tz
+// fallback — see CLAUDE.md's "wire as-is" scope note) ----------------------
+await page.locator('input[type="date"]').fill('1989-06-06');
+await page.locator('input[type="time"]').fill('16:42');
+await page.getByPlaceholder('portland, oregon').fill('Nowhereatallville');
+await shot('01-form-filled-bad-place');
+
+// -- a failed cast (no geocode match) must surface a real error, not
+// silently reset the form — this was the reported bug ("doesn't open to
+// the actual app after inputting your birth time"): a failed cast used to
+// fail silently with zero explanation, which read as the app being broken.
+await page.getByText('cast your chart').click();
+await page.waitForFunction(() => !/casting your chart/i.test(document.body.innerText || ''), null, { timeout: 12000 });
+await page.waitForTimeout(300);
+await shot('01b-cast-error');
+const errorBody = await page.evaluate(() => document.body.innerText || '');
+if (!/couldn't find|try a bigger|check the spelling/i.test(errorBody)) fail.push('a failed geocode did not surface an inline error message');
+if (/tell us the minute/i.test(errorBody) === false) fail.push('a failed cast should return to the onboarding form, not advance past it');
+
+// now fix the place and continue with the real successful flow.
 await page.getByPlaceholder('portland, oregon').fill('New York');
 await shot('01-form-filled');
 
