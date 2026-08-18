@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**378 bindings, 303 top-level.**
+**254 bindings, 207 top-level.**
 
 ## Rule
 
@@ -27,336 +27,240 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 |---|---|---|
 | `angleLabels` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
 | `angleLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `chartRing` | `seg` | `cls`, `color`, `d`, `w` |
+| `aspectRows` | `row` | `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
+| `cdParas` | `p` | `d`, `name`, `onTap`, `pos`, `t` |
+| `chartRing` | `seg` | `color`, `d`, `w` |
 | `hitArcs` | `h` | `d`, `onTap` |
 | `houseLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `houseNums` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
 | `mNums` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
 | `mSelBodies` | `b` | `name`, `pos` |
 | `mTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `ringMarks` | `m` | `cls`, `color`, `cx`, `cy`, `d`, `onTap`, `tf` |
-| `ringSegments` | `seg` | `cls`, `color`, `d`, `w` |
-| `ringTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `sigAspects` | `asp` | `aspect`, `hasPassage`, `maxOrb`, `missing`, `missingIf`, `orbUsed`, `pair`, `plain`, `text` |
-| `sigCityResults` | `r` | `name`, `pick`, `region` |
-| `sigComputeLines` | `cl` | `color`, `text` |
-| `sigHousePlacements` | `p` | `label`, `number`, `text`, `which` |
-| `sigRootDepth.traditions` | `td2` | `meaning`, `name`, `sky` |
-| `sigShardMoonTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `sigShardSunTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `sigStrikeDepth.traditions` | `td1` | `meaning`, `name`, `sky` |
-| `sigWkBackdropLines` | `line` | `text` |
-| `sigWkDays` | `d` | `key`, `on`, `sign` |
+| `moonPTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `obCastLines` | `l` | `style`, `t` |
+| `obCastSegs` | `seg` | `color`, `d`, `w` |
+| `obRingSegs` | `seg` | `color`, `d`, `w` |
+| `planetRows` | `p` | `d`, `name`, `onTap`, `pos`, `t` |
+| `sRingMarks` | `m` | `color`, `cx`, `cy`, `d`, `fill`, `onTap`, `r`, `stroke`, `tf` |
+| `sRingSegs` | `seg` | `color`, `d`, `w` |
+| `sRingTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `signGlyphs` | `g` | `d`, `fill`, `t`, `tf`, `x`, `y` |
 | `signLines` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
-| `sndCrossCultural` | `c` | `name`, `sky` |
-| `stationRows` | `row` | `n`, `name`, `open`, `trail` |
-| `wheelMarks` | `m` | `cls`, `color`, `cx`, `cy`, `d`, `onTap`, `tf` |
+| `stationRows` | `row` | `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
+| `sunPTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `tRingSegs` | `seg` | `color`, `d`, `w` |
+| `weekParas` | `p` | `d`, `name`, `onTap`, `pos`, `t` |
+| `weekRows` | `row` | `name`, `nameColor`, `num`, `numColor`, `onTap`, `sign`, `style`, `t`, `trail` |
+| `wheelMarks` | `m` | `color`, `cx`, `cy`, `d`, `fill`, `onTap`, `r`, `stroke`, `tf` |
 
 ## Scalars and callbacks
 
 | binding | produced by |
 |---|---|
-| `aEmail` | component state |
-| `aPassword` | component state |
+| `accountOn` | component state |
+| `acctAskOn` | component state |
+| `acctDone` | component state |
+| `acctEmailVal` | component state |
+| `acctSend` | component state |
+| `acctSendStyle` | component state |
+| `acctSentOn` | component state |
+| `acctSetEmail` | component state |
+| `acctSkip` | component state |
+| `addTime` | component state |
 | `angleLabels` | component state |
 | `angleLines` | component state |
-| `authBusy` | component state |
-| `authEmail` | component state |
-| `authError` | api.js |
-| `authSubmit` | api.js |
-| `authSubmitLabel` | component state |
-| `authSwitchLabel` | component state |
-| `authSwitchMode` | component state |
+| `archPushed` | component state |
+| `askLoc` | component state |
+| `aspectRows` | component state |
+| `becomingPara1` | component state |
+| `becomingPara2` | component state |
+| `becomingSub` | component state |
+| `cRingWrapStyle` | component state |
+| `castChart` | component state |
+| `cdAsc` | component state |
+| `cdMName` | component state |
+| `cdMOn` | component state |
+| `cdMOrd` | component state |
+| `cdMText` | component state |
+| `cdMc` | component state |
+| `cdMoon` | component state |
+| `cdOn` | component state |
+| `cdParas` | component state |
+| `cdSub` | component state |
+| `cdSun` | component state |
+| `cdTitle` | component state |
+| `cdVenus` | component state |
+| `chartAscLine` | component state |
+| `chartHeaderLine` | component state |
+| `chartMcLine` | component state |
+| `chartMoonLine` | component state |
 | `chartRing` | component state |
 | `chartRulerLine` | component state |
-| `chartRulerOn` | component state |
-| `doLogout` | api.js |
+| `chartRulerName` | component state |
+| `chartSunLine` | component state |
+| `comboCost` | component state |
+| `comboLead` | component state |
+| `comboMoon` | component state |
+| `comboPull` | component state |
+| `comboReady` | component state |
+| `comboSun` | component state |
+| `comboTension` | component state |
+| `farlightN` | component state |
+| `farlightText` | component state |
+| `frameScaleStyle` | component state |
+| `gameNightOn` | component state |
+| `gamePushed` | component state |
 | `hitArcs` | component state |
 | `houseLines` | component state |
 | `houseNums` | component state |
-| `isLoggedIn` | component state |
-| `isNotLoggedIn` | component state |
-| `kindleFlareOn` | component state |
-| `kindleSweepOn` | component state |
-| `kindledSegD` | component state |
+| `housesSystemLabel` | component state |
+| `isWalked` | component state |
+| `litCount` | component state |
+| `locIdle` | component state |
+| `locLoading` | component state |
+| `locOff` | component state |
+| `locOn` | component state |
 | `mNums` | component state |
 | `mSelBodies` | component state |
-| `mSelClaim` | component state |
 | `mSelEmpty` | component state |
 | `mSelHasBodies` | component state |
+| `mSelLine` | component state |
 | `mSelName` | component state |
 | `mSelOn` | component state |
 | `mSelOrd` | component state |
+| `mSelOwn` | component state |
+| `mSelOwnOn` | component state |
 | `mSelSpan` | component state |
 | `mTicks` | component state |
+| `mcPara` | component state |
+| `mcPushed` | component state |
+| `mcSubLine` | component state |
+| `moonHouseText` | component state |
+| `moonPElection` | component state |
+| `moonPKanji` | component state |
+| `moonPName` | component state |
+| `moonPOn` | component state |
+| `moonPOpening` | component state |
+| `moonPOwnLine` | component state |
+| `moonPSpan` | component state |
+| `moonPStars` | component state |
+| `moonPSynthesis` | component state |
+| `moonPTraditions` | component state |
+| `navOn` | component state |
+| `nightDate` | component state |
+| `nightMeta` | component state |
+| `nightName` | component state |
+| `nightPushed` | component state |
+| `nightSpecial` | component state |
+| `nightSpecialLabel` | component state |
+| `nightText` | component state |
+| `notWalked` | component state |
+| `numLiveLine` | component state |
+| `numMoonLine` | component state |
+| `numNextLine` | component state |
+| `numbersChevron` | component state |
+| `numbersOpen` | component state |
+| `obCastLines` | component state |
+| `obCastSegs` | component state |
+| `obCastStyle` | component state |
+| `obCastingOn` | component state |
+| `obDateVal` | component state |
+| `obFormOn` | component state |
+| `obPlaceVal` | component state |
+| `obRingCount` | component state |
+| `obRingSegs` | component state |
+| `obSetDate` | component state |
+| `obSetPlace` | component state |
+| `obSetTime` | component state |
+| `obTimeInputStyle` | component state |
+| `obTimeMark` | component state |
+| `obTimeStyle` | component state |
+| `obTimeVal` | component state |
+| `obToggleTime` | component state |
+| `onChart` | component state |
+| `onShard` | component state |
+| `onTonight` | component state |
+| `onboardOn` | component state |
+| `ownIt` | component state |
+| `payOn` | component state |
+| `planetRows` | component state |
 | `popArch` | component state |
+| `popCD` | component state |
+| `popGame` | component state |
+| `popMC` | component state |
+| `popNight` | component state |
 | `pushArch` | component state |
-| `ringMarks` | component state |
-| `ringMorphChart` | component state |
-| `ringMorphShard` | component state |
-| `ringMorphTonight` | component state |
-| `ringSegments` | component state |
-| `ringTicks` | component state |
-| `setAEmail` | component state |
-| `setAPassword` | component state |
-| `sigAdvanceArrival` | component state |
-| `sigAlreadyWalkedTonight` | component state |
-| `sigAnsweringLine` | component state |
-| `sigAspectNoneText` | component state |
-| `sigAspects` | component state |
-| `sigAuthOpen` | component state |
-| `sigAuthToggleLabel` | component state |
-| `sigBackToHow` | component state |
-| `sigBackToStory` | component state |
-| `sigBecomingEpithet` | component state |
-| `sigBecomingLine` | component state |
-| `sigBecomingRegister` | component state |
-| `sigBurst1` | component state |
-| `sigBurst2` | component state |
-| `sigBurst3` | component state |
-| `sigBurstTap` | component state |
-| `sigCanWalkTonight` | component state |
-| `sigCityResults` | component state |
-| `sigCloseShare` | component state |
-| `sigComboCost` | component state |
-| `sigComboLead` | component state |
-| `sigComboMoon` | component state |
-| `sigComboPending` | component state |
-| `sigComboPull` | component state |
-| `sigComboReady` | component state |
-| `sigComboSun` | component state |
-| `sigComboTension` | component state |
-| `sigComputeLines` | component state |
-| `sigCountdown` | component state |
-| `sigDate` | component state |
-| `sigDrewOnLine` | component state |
-| `sigFacingLine` | component state |
-| `sigFarlightN` | component state |
-| `sigFarlightText` | component state |
-| `sigFindingBodyPending` | component state |
-| `sigFindingDetail` | component state |
-| `sigFindingHeadline` | component state |
+| `pushGame` | component state |
+| `pushMC` | component state |
+| `remindLabel` | component state |
+| `remindStyle` | component state |
+| `rulerHouseText` | component state |
+| `sChordD` | component state |
+| `sChordStyle` | component state |
+| `sRingMarks` | component state |
+| `sRingSegs` | component state |
+| `sRingTicks` | component state |
+| `segTonightStyle` | component state |
+| `segWeekStyle` | component state |
+| `selLabel` | component state |
+| `shardHeroAddress` | component state |
+| `shardHeroInnerStyle` | component state |
+| `shardHeroName` | component state |
+| `shardHeroStyle` | component state |
+| `shardHeroSuffix` | component state |
+| `shardHeroSuffixOn` | component state |
+| `shardMetaLine1` | component state |
+| `shardMetaLine2` | component state |
+| `shardScroll` | component state |
+| `shareLabel` | component state |
+| `shareTap` | component state |
+| `showTonightView` | component state |
+| `showWeekView` | component state |
 | `sigFindingNone` | component state |
-| `sigFindingRateLabel` | component state |
 | `sigFindingReady` | component state |
-| `sigFormError` | component state |
-| `sigGaitLine` | component state |
-| `sigGaitPermission` | component state |
-| `sigGaitTypeLabel` | component state |
-| `sigGlowLine` | component state |
-| `sigHandLine` | component state |
-| `sigHasBecoming` | component state |
-| `sigHasCountdown` | component state |
-| `sigHasFacing` | component state |
-| `sigHasResults` | component state |
-| `sigHdrFacing` | component state |
-| `sigHdrGlow` | component state |
-| `sigHdrHand` | component state |
-| `sigHdrRoot` | component state |
-| `sigHdrStrike` | component state |
-| `sigHouseEmptyNote` | component state |
-| `sigHousePlacements` | component state |
-| `sigHousePorphyryNote` | component state |
-| `sigHowOpen` | component state |
-| `sigHowOpenFlag` | component state |
-| `sigIsBurst` | component state |
-| `sigIsEntry` | component state |
-| `sigIsFalling` | component state |
-| `sigIsHow` | component state |
-| `sigIsNewborn` | component state |
-| `sigIsPorphyry` | component state |
-| `sigIsProfile` | component state |
-| `sigIsPush` | component state |
-| `sigIsShardTab` | component state |
-| `sigIsShare` | component state |
-| `sigIsStory` | component state |
-| `sigIsTonight` | component state |
-| `sigLat` | component state |
-| `sigLon` | component state |
-| `sigManualMode` | component state |
-| `sigManualToggleLabel` | component state |
-| `sigName` | component state |
-| `sigNoAspects` | component state |
-| `sigNotManualMode` | component state |
-| `sigNotNewborn` | component state |
-| `sigNumbersOpen` | component state |
-| `sigNumbersOpenFlag` | component state |
-| `sigOnChart` | component state |
-| `sigOnShard` | component state |
-| `sigOnTonight` | component state |
-| `sigOpenPush` | component state |
-| `sigOpenShare` | component state |
-| `sigOrdinaryClaim` | component state |
-| `sigProfileName` | component state |
-| `sigPushAllow` | component state |
-| `sigPushDismiss` | component state |
-| `sigQuery` | component state |
-| `sigRootDepth` | component state |
-| `sigRootEpithet` | component state |
-| `sigRootHasStep` | component state |
-| `sigRootLine` | component state |
-| `sigRootStepName` | component state |
-| `sigScanlines` | component state |
-| `sigSearch` | component state |
-| `sigSearchLabel` | component state |
-| `sigSetDate` | component state |
-| `sigSetLat` | component state |
-| `sigSetLon` | component state |
-| `sigSetName` | component state |
-| `sigSetQuery` | component state |
-| `sigSetTime` | component state |
-| `sigSetTz` | component state |
-| `sigShardAddress` | component state |
-| `sigShardArchList` | component state |
-| `sigShardClose` | component state |
-| `sigShardDetailOpen` | component state |
-| `sigShardHeroName` | component state |
-| `sigShardHeroSuffix` | component state |
-| `sigShardHeroSuffixOn` | component state |
-| `sigShardHome` | component state |
-| `sigShardMetaLine` | component state |
-| `sigShardMoonArchetype` | component state |
-| `sigShardMoonClaim` | component state |
-| `sigShardMoonElection` | component state |
-| `sigShardMoonEpithet` | component state |
-| `sigShardMoonKanji` | component state |
-| `sigShardMoonOrd` | component state |
-| `sigShardMoonPortraitOn` | component state |
-| `sigShardMoonPosition` | component state |
-| `sigShardMoonSynthesis` | component state |
-| `sigShardMoonTraditions` | component state |
-| `sigShardNotReady` | component state |
-| `sigShardOpenDark` | component state |
-| `sigShardOpenDate` | component state |
-| `sigShardOpenN` | component state |
-| `sigShardOpenText` | component state |
-| `sigShardOpenTitle` | component state |
-| `sigShardOpenWalked` | component state |
-| `sigShardProgress` | component state |
-| `sigShardReady` | component state |
-| `sigShardSunArchetype` | component state |
-| `sigShardSunClaim` | component state |
-| `sigShardSunElection` | component state |
-| `sigShardSunEpithet` | component state |
-| `sigShardSunKanji` | component state |
-| `sigShardSunOrd` | component state |
-| `sigShardSunPosition` | component state |
-| `sigShardSunSynthesis` | component state |
-| `sigShardSunTraditions` | component state |
-| `sigShareStat` | component state |
-| `sigShowCountdown` | component state |
-| `sigShowPushPrompt` | component state |
-| `sigShowTabs` | component state |
-| `sigSkipArrival` | component state |
-| `sigSkyRef` | component state |
-| `sigSpecialCta` | component state |
-| `sigSpecialLabel` | component state |
-| `sigSpecialNight` | component state |
-| `sigStory1` | component state |
-| `sigStory2` | component state |
-| `sigStory3` | component state |
-| `sigStory4` | component state |
-| `sigStrangeLine` | component state |
-| `sigStrikeBody` | component state |
-| `sigStrikeDepth` | component state |
-| `sigStrikeEpithet` | component state |
-| `sigStrikeHeadline` | component state |
-| `sigStrikeStepName` | component state |
-| `sigSubmit` | component state |
-| `sigTabBecoming` | component state |
-| `sigTabBecomingOn` | component state |
-| `sigTabDepth` | component state |
-| `sigTabDepthOn` | component state |
-| `sigTabHouses` | component state |
-| `sigTabHousesOn` | component state |
-| `sigTabPattern` | component state |
-| `sigTabPatternOn` | component state |
-| `sigTabShard` | component state |
-| `sigTabShardOn` | component state |
-| `sigTabToBecoming` | component state |
-| `sigTabToDepth` | component state |
-| `sigTabToHouses` | component state |
-| `sigTabToPattern` | component state |
-| `sigTabToShard` | component state |
-| `sigTime` | component state |
-| `sigTimeKnown` | component state |
-| `sigTimeToggleLabel` | component state |
-| `sigToChart` | component state |
-| `sigToShard` | component state |
-| `sigToTonight` | component state |
-| `sigToggleAuth` | component state |
-| `sigToggleHow` | component state |
-| `sigToggleManual` | component state |
-| `sigToggleNumbers` | component state |
-| `sigToggleTime` | component state |
-| `sigTonightEyebrow` | component state |
-| `sigTypeRateLine` | component state |
-| `sigTz` | component state |
-| `sigViewIsTonight` | component state |
-| `sigViewIsWeek` | component state |
-| `sigViewTonight` | component state |
-| `sigViewTonightOn` | component state |
-| `sigViewWeek` | component state |
-| `sigViewWeekOn` | component state |
-| `sigWalkTonight` | component state |
-| `sigWalkedLabel` | component state |
-| `sigWkBackdropLines` | component state |
-| `sigWkBackdropNeeds` | component state |
-| `sigWkBestDays` | component state |
-| `sigWkBestDaysNeeds` | component state |
-| `sigWkDays` | component state |
-| `sigWkExact` | component state |
-| `sigWkExactNeeds` | component state |
-| `sigWkHonest` | component state |
-| `sigWkHonestNeeds` | component state |
-| `sigWkOrbLabel` | component state |
-| `sigWkOrbText` | component state |
-| `sigWkPartial` | component state |
-| `sigWkRange` | component state |
-| `sigWkRhythm` | component state |
-| `sigWkRhythmNeeds` | component state |
-| `sigWkStandout` | component state |
-| `sigWkStandoutNeeds` | component state |
-| `sigWkTwoWay` | component state |
-| `sigWkTwoWayNeeds` | component state |
+| `sigHeadline` | component state |
+| `sigRateLabel` | component state |
+| `sigSubLine` | component state |
 | `signGlyphs` | component state |
 | `signLines` | component state |
-| `sndBecomingEpithet` | component state |
-| `sndBecomingStepName` | component state |
-| `sndCastFlavor` | component state |
-| `sndCastKindLabel` | component state |
-| `sndClaim` | component state |
-| `sndClaimEpithet` | component state |
-| `sndClaimLabel` | component state |
-| `sndClaimStepName` | component state |
-| `sndClaiming` | component state |
-| `sndCloseLine` | component state |
-| `sndCounselBody` | component state |
-| `sndCrossCultural` | component state |
-| `sndHasBecoming` | component state |
-| `sndHasLiveTransit` | component state |
-| `sndIsBeat0` | component state |
-| `sndIsBeat1` | component state |
-| `sndIsBeat2` | component state |
-| `sndIsBeat3` | component state |
-| `sndIsBeat4` | component state |
-| `sndLiveTransitLine` | component state |
-| `sndNext` | component state |
-| `sndNoLiveTransit` | component state |
-| `sndNowEpithet` | component state |
-| `sndNowStepName` | component state |
-| `sndPips` | component state |
-| `sndQuestion` | component state |
-| `sndRelational` | component state |
-| `sndStationEpithet` | component state |
-| `sndStationKanji` | component state |
-| `sndStepName` | component state |
-| `sndToChart` | component state |
-| `sndToProfile` | component state |
-| `sndToShare` | component state |
+| `starfieldOn` | component state |
 | `stationRows` | component state |
+| `sunHouseText` | component state |
+| `sunPElection` | component state |
+| `sunPKanji` | component state |
+| `sunPName` | component state |
+| `sunPOn` | component state |
+| `sunPOpening` | component state |
+| `sunPOwnLine` | component state |
+| `sunPSpan` | component state |
+| `sunPStars` | component state |
+| `sunPSynthesis` | component state |
+| `sunPTraditions` | component state |
+| `tRingSegs` | component state |
+| `tRingWrapStyle` | component state |
+| `tabChart` | component state |
+| `tabChartStyle` | component state |
+| `tabShard` | component state |
+| `tabShardStyle` | component state |
+| `tabTonight` | component state |
+| `tabTonightStyle` | component state |
+| `timeOff` | component state |
+| `toTonightView` | component state |
+| `toWeekView` | component state |
+| `toggleNumbers` | component state |
+| `toggleRemind` | component state |
+| `tonightDateLine` | component state |
+| `tonightLitLine` | component state |
+| `tonightNextLine` | component state |
+| `tonightPara1` | component state |
+| `tonightPara2` | component state |
+| `tonightRingLabel` | component state |
+| `tonightSegD` | component state |
+| `tonightStationName` | component state |
+| `tonightStationOrd` | component state |
+| `walk` | component state |
+| `walkBurstOn` | component state |
+| `walkSweepOn` | component state |
+| `weekParas` | component state |
+| `weekRows` | component state |
 | `wheelMarks` | component state |
-| `wheelReady` | component state |
-| `wheelSelLabel` | component state |
-| `wheelTimeUnknown` | component state |

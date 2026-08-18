@@ -148,15 +148,24 @@ You (Claude Code) own everything except the markup:
 |---|---|---|
 | `astro.js` `sky.js` `sigil.js` `transits.js` `deck.js` `events.js` `astronomy-engine.js` `format.js` `tz.js` `api.js` `reading.js` `findings.js` `rates.js` `starshard-api/**` `test/**` `tools/**` | `*.dc.html` markup + `<helmet>` | `support.js` `stations.js` `reading-copy.js` `combos.js` |
 
-`stations.js`/`reading-copy.js`/`combos.js` regenerate from source
-(`research/mansions-table.json` + `tools/build-mansions.mjs`;
+`stations.js`/`reading-copy.js`/`combos.js`/`mansion-depth.js` regenerate
+from source (`research/mansions-table.json` + `tools/build-mansions.mjs`;
 `research/corpus-*.md` + `tools/build-reading-copy.mjs`;
-`research/combos.json` + `tools/build-combos.mjs`) — hand-editing the
-output is exactly the stale-export failure mode below, aimed at
-yourself. `mansion-depth.js` (repo root) is an **orphan** — not an ES
-module, not imported anywhere, not in `tools/deploy.sh`. Don't build
-against it without checking first whether it's meant to replace
-something live or whether it's dead code nobody removed.
+`research/combos.json` + `tools/build-combos.mjs`;
+`research/mansions-table.json` again + `tools/build-mansion-depth.mjs`) —
+hand-editing the output is exactly the stale-export failure mode below,
+aimed at yourself. **Corrected (18 Aug, verified by hand rather than
+trusted from an earlier note):** `mansion-depth.js` is not dead code or
+an abandoned orphan — it's a real, current, generated artifact, same
+tier as the others. It's genuinely unwired (no `.dc.html` page imports
+it, and it's absent from `tools/deploy.sh` on purpose, not by oversight)
+because nothing consumes it yet: `reading.js`'s DEPTH tab
+(`depthReading()`) uses `stations.js`'s plainer per-station data instead,
+and `mansion-depth.js` is a richer, per-tradition-match-flagged
+alternative shape sitting ready for whenever that tab wants it. It's
+also not an ES module like its siblings — it sets `window.MANSION_DEPTH`
+via a plain `<script>` tag, not `export`/`import` — so wiring it in means
+a `<script src>` tag, not a dynamic `import()`.
 
 **Shared seam:** the `<script type="text/x-dc">` block at the bottom of the
 `.dc.html`. Keep it thin — state, lifecycle, and `renderVals()` only. Full table
