@@ -185,7 +185,7 @@
       <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:88px;animation:ssFadeUp .45s ease both">
         <div style="font-size:42px;color:rgba(240,216,154,.5)">☾</div>
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;margin-top:16px">the sky is somewhere</div>
-        <p style="font-size:14.5px;line-height:1.75;color:#9A8A5E;margin:12px 0 0;max-width:280px">tonight is read from where you stand. the moon's station is the same everywhere — its hours are yours.</p>
+        <p style="font-size:14.5px;line-height:1.75;color:#9A8A5E;margin:12px 0 0;max-width:280px">tonight is read from where you stand. the moon's station is the same everywhere. its hours are yours.</p>
         <sc-if value="{{ locIdle }}" hint-placeholder-val="{{ true }}">
           <button onClick="{{ askLoc }}" style="margin-top:30px;background:rgba(240,216,154,.1);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:14px 28px;cursor:pointer">use my location</button>
         </sc-if>
@@ -292,10 +292,10 @@
   <div style="position:absolute;inset:0;overflow-y:auto;padding:64px 32px 140px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both" data-ss-screen="1">
     <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E">{{ chartHeaderLine }}</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">your chart</h1>
-    <p style="font-size:14px;line-height:1.6;color:#9A8A5E;margin:10px 0 0">the classic wheel, hung from your ascendant — twelve signs, twelve houses, your lights. the outer ring is the twenty-eight mansions and their steps, laid over the same sky. your shard is that ring, read alone.</p>
+    <p style="font-size:14px;line-height:1.6;color:#9A8A5E;margin:10px 0 0">the classic wheel, hung from your ascendant: twelve signs, twelve houses, your lights. the outer ring is the twenty-eight mansions and their steps, laid over the same sky. your shard is that ring, read alone.</p>
     <sc-if value="{{ timeOff }}" hint-placeholder-val="{{ false }}">
       <div style="margin-top:16px;border:1px dashed rgba(240,216,154,.4);padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <span style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#D8C89C;line-height:1.6">no birth time — rising, houses and midheaven are approximate</span>
+        <span style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#D8C89C;line-height:1.6">no birth time: rising, houses and midheaven are approximate</span>
         <button onClick="{{ addTime }}" style="background:none;border:none;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;padding:0">add ›</button>
       </div>
     </sc-if>
@@ -343,7 +343,7 @@
       </svg>
     </div>
     <div style="display:flex;justify-content:center;gap:14px;margin-top:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex-wrap:wrap"><span>outer · the 28 mansions</span><span>middle · the 12 signs</span><span>inner · the houses</span></div>
-    <p style="font-size:13px;line-height:1.7;color:#9A8A5E;text-align:center;margin:14px 0 0;text-wrap:pretty">most of your houses have nothing in them. that's normal — twelve houses, a handful of lights. an empty house isn't a missing part of your life; it just isn't where your weather comes from.</p>
+    <p style="font-size:13px;line-height:1.7;color:#9A8A5E;text-align:center;margin:14px 0 0;text-wrap:pretty">most of your houses have nothing in them. that's normal: twelve houses, a handful of lights. an empty house isn't a missing part of your life; it just isn't where your weather comes from.</p>
     <div style="text-align:center;margin-top:8px;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;min-height:14px">{{ selLabel }}</div>
     <sc-if value="{{ mSelOn }}" hint-placeholder-val="{{ false }}">
       <div style="margin-top:14px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.04);padding:16px 18px;text-align:center;animation:ssFadeUp .35s ease both">
@@ -363,7 +363,7 @@
             </div>
           </sc-if>
           <sc-if value="{{ mSelEmpty }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:13px;color:#9A8A5E;margin-top:11px;font-style:italic">nothing of yours stands here — the moon passes through once a month</div>
+            <div style="font-size:13px;color:#9A8A5E;margin-top:11px;font-style:italic">nothing of yours stands here; the moon passes through once a month</div>
           </sc-if>
         </div>
       </div>
@@ -419,7 +419,7 @@
       </div>
     </div>
     <div style="margin-top:30px;padding:20px;border:1px solid rgba(240,216,154,.15);background:rgba(240,216,154,.03)">
-      <p style="font-size:14px;line-height:1.7;color:#D8C89C;margin:0">this is the classic reading. the finer weather — the twenty-eight mansions your lights actually fall in, and how they combine — lives on <a href="#shard">your shard</a>.</p>
+      <p style="font-size:14px;line-height:1.7;color:#D8C89C;margin:0">this is the classic reading. the finer weather (the twenty-eight mansions your lights actually fall in, and how they combine) lives on <a href="#shard">your shard</a>.</p>
     </div>
   </div>
   <sc-if value="{{ cdOn }}" hint-placeholder-val="{{ false }}">
@@ -487,7 +487,7 @@
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0 0 22px">{{ sunPOpening }}</p>
     <div style="display:flex;flex-direction:column;gap:12px;font-size:14.5px;line-height:1.6">
       <sc-for list="{{ sunPTraditions }}" as="t" hint-placeholder-count="3">
-        <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;padding-top:4px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b> — {{ t.meaning }}</span></div>
+        <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;padding-top:4px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b>: {{ t.meaning }}</span></div>
       </sc-for>
     </div>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:24px 0 0">{{ sunPSynthesis }}</p>
@@ -502,7 +502,7 @@
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0 0 22px">{{ moonPOpening }}</p>
     <div style="display:flex;flex-direction:column;gap:12px;font-size:14.5px;line-height:1.6">
       <sc-for list="{{ moonPTraditions }}" as="t" hint-placeholder-count="3">
-        <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;padding-top:4px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b> — {{ t.meaning }}</span></div>
+        <div style="display:grid;grid-template-columns:64px 1fr;gap:14px"><span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;padding-top:4px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b>: {{ t.meaning }}</span></div>
       </sc-for>
     </div>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:24px 0 0">{{ moonPSynthesis }}</p>
@@ -529,7 +529,7 @@
     </div>
     </sc-if>
     <sc-if value="{{ sigFindingNone }}" hint-placeholder-val="{{ false }}">
-      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;text-align:center;margin:0">no standout finding on this chart yet — every point sits comfortably inside its own mansion.</p>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;text-align:center;margin:0">no standout finding on this chart yet: every point sits comfortably inside its own mansion.</p>
     </sc-if>
     <div style="text-align:center;color:rgba(240,216,154,.4);font-size:13px;letter-spacing:1.4em;margin:56px 0;padding-left:1.4em">✦ ✦ ✦</div>
     <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center">your becoming</div>
@@ -541,12 +541,12 @@
     <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;line-height:1.9;margin:14px 0 22px">mansion {{ farlightN }} · directly opposite your sun</div>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0">{{ farlightText }}</p>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">it is the one night a year the sky reads your storm from the opposite bank. the hollow mark on your ring holds its place; the night it rises, tonight will say so.</p>
-    <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:40px 0 0;text-align:center;font-style:italic">the sky writes this once, at the minute you arrive, and never revises it.<br>what moves across it is another matter — and that is what tonight is for.</p>
+    <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:40px 0 0;text-align:center;font-style:italic">the sky writes this once, at the minute you arrive, and never revises it.<br>what moves across it is another matter, and that is what tonight is for.</p>
     <div style="height:52px"></div>
     <div style="font-size:12px;color:#9A8A5E;text-align:center">share your shard</div>
     <div style="margin-top:14px;border:1px solid rgba(240,216,154,.22);background:rgba(240,216,154,.03);padding:24px 22px">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;color:#F2EAD6;text-transform:lowercase">{{ shardHeroName }} {{ shardHeroSuffix }}</div>
-      <p style="font-size:13.5px;line-height:1.75;color:#D8C89C;margin:10px 0 0">{{ shardMetaLine1 }}<sc-if value="{{ sigFindingReady }}" hint-placeholder-val="{{ false }}"> — {{ sigHeadline }} {{ sigRateLabel }}.</sc-if></p>
+      <p style="font-size:13.5px;line-height:1.75;color:#D8C89C;margin:10px 0 0">{{ shardMetaLine1 }}<sc-if value="{{ sigFindingReady }}" hint-placeholder-val="{{ false }}">. {{ sigHeadline }} {{ sigRateLabel }}.</sc-if></p>
       <div style="font-size:11.5px;color:#9A8A5E;margin-top:12px">star shard · the moon's zodiac, cut finer</div>
     </div>
     <button onClick="{{ shareTap }}" style="margin:16px auto 0;background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 24px;cursor:pointer">{{ shareLabel }}</button>
@@ -589,7 +589,7 @@
       <button onClick="{{ popChartsList }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#F0D89A">‹ your shard</button>
       <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:28px">your charts</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0;color:#F2EAD6">your shard, and anyone else's</h2>
-      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:12px 0 0">these stay on this device only — never sent anywhere, same as your own birth data.</p>
+      <p style="font-size:13.5px;line-height:1.7;color:#9A8A5E;margin:12px 0 0">these stay on this device only, never sent anywhere, same as your own birth data.</p>
       <div style="display:flex;flex-direction:column;margin-top:28px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)">
           <span style="font-size:15px;color:#F0D89A">you</span>
@@ -740,7 +740,7 @@
       <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:0 0 18px">{{ cpSunOpening }}</p>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;line-height:1.55">
         <sc-for list="{{ cpSunTraditions }}" as="t" hint-placeholder-count="3">
-          <div style="display:grid;grid-template-columns:58px 1fr;gap:12px"><span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#F0D89A;padding-top:3px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b> — {{ t.meaning }}</span></div>
+          <div style="display:grid;grid-template-columns:58px 1fr;gap:12px"><span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#F0D89A;padding-top:3px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b>: {{ t.meaning }}</span></div>
         </sc-for>
       </div>
       <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:20px 0 0">{{ cpSunSynthesis }}</p>
@@ -753,7 +753,7 @@
       <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:0 0 18px">{{ cpMoonOpening }}</p>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;line-height:1.55">
         <sc-for list="{{ cpMoonTraditions }}" as="t" hint-placeholder-count="3">
-          <div style="display:grid;grid-template-columns:58px 1fr;gap:12px"><span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#F0D89A;padding-top:3px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b> — {{ t.meaning }}</span></div>
+          <div style="display:grid;grid-template-columns:58px 1fr;gap:12px"><span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#F0D89A;padding-top:3px;text-transform:lowercase">{{ t.sky }}</span><span style="color:#C9BC96"><b style="color:#F2EAD6">{{ t.name }}</b>: {{ t.meaning }}</span></div>
         </sc-for>
       </div>
       <p style="font-size:14.5px;line-height:1.75;color:rgba(244,236,214,.9);margin:20px 0 0">{{ cpMoonSynthesis }}</p>
@@ -768,7 +768,7 @@
   <div data-screen-label="own the road" style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:64px 32px 140px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both">
     <div style="font-size:12px;color:#9A8A5E">night eight · saturday 22 august</div>
     <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">own the road</h1>
-    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:22px 0 0">a week walked. the fragments you gathered stay yours, always — and the road is twenty-eight, turning again every month.</p>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:22px 0 0">a week walked. the fragments you gathered stay yours, always, and the road is twenty-eight, turning again every month.</p>
     <div style="display:flex;flex-direction:column;margin-top:30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:14.5px;color:#F2EAD6">every night's reading</span><span style="font-size:12px;color:#9A8A5E;text-align:right">the moon, read from your chart</span></div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid rgba(240,216,154,.12)"><span style="font-size:14.5px;color:#F2EAD6">the weekly sky</span><span style="font-size:12px;color:#9A8A5E;text-align:right">what the week tips toward</span></div>
@@ -785,9 +785,9 @@
     <div style="font-size:12px;color:#9A8A5E;margin-top:28px">a game of the fifteenth mansion · tonight only</div>
     <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1.1;margin:8px 0 0;color:#F2EAD6">the covered well</h2>
     <div style="font-size:11.5px;color:#9A8A5E;margin-top:10px">open until the moon leaves the veil · 4:12 am</div>
-    <p style="font-size:15px;line-height:1.8;color:rgba(244,236,214,.9);margin:22px 0 0">lower the bucket without waking the surface. a small game in the veil's spirit — work that disappears under what it holds up.</p>
+    <p style="font-size:15px;line-height:1.8;color:rgba(244,236,214,.9);margin:22px 0 0">lower the bucket without waking the surface. a small game in the veil's spirit: work that disappears under what it holds up.</p>
     <div style="margin-top:26px;border:1px dashed rgba(240,216,154,.3);height:230px;display:flex;align-items:center;justify-content:center;color:rgba(154,138,94,.7);font-size:12.5px">the game plays here</div>
-    <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:22px 0 0">a win keeps a game-shard — a second set, apart from the road. the twenty-eight are never gated behind play.</p>
+    <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:22px 0 0">a win keeps a game-shard: a second set, apart from the road. the twenty-eight are never gated behind play.</p>
   </div>
   </sc-if>
   <sc-if value="{{ accountOn }}" hint-placeholder-val="{{ false }}">
@@ -1003,9 +1003,9 @@ class Component extends DCLogic {
     this.setState({ [searchingKey]: true, [resultsKey]: [], [errorKey]: "" });
     try {
       const res = await this.api.geocode(q);
-      this.setState({ [searchingKey]: false, [resultsKey]: res, [errorKey]: res.length ? "" : "no place found by that name — try a different spelling, or enter coordinates manually" });
+      this.setState({ [searchingKey]: false, [resultsKey]: res, [errorKey]: res.length ? "" : "no place found by that name. try a different spelling, or enter coordinates manually" });
     } catch (e) {
-      this.setState({ [searchingKey]: false, [errorKey]: "the star atlas is unreachable — try again, or enter coordinates manually" });
+      this.setState({ [searchingKey]: false, [errorKey]: "the star atlas is unreachable. try again, or enter coordinates manually" });
     }
   }
   obSearch = () => this.runPlaceSearch("ob");
@@ -1022,7 +1022,7 @@ class Component extends DCLogic {
     try {
       chart = await this.castFromInputs({ dateStr: s.obDate, timeStr: s.obTime, timeKnown, manualMode: s.obManualMode, place: s.obPlace, lat: s.obLat, lon: s.obLon, tz: s.obTz });
     } catch (e) {
-      this.setState({ obCasting: false, obCastStep: 0, obError: e.message || "something went wrong reading that — try again" });
+      this.setState({ obCasting: false, obCastStep: 0, obError: e.message || "something went wrong reading that. try again" });
       return;
     }
     const sigil = this.sigilMod.deriveSigil(chart, { timeKnown });
@@ -1057,7 +1057,7 @@ class Component extends DCLogic {
     try {
       chart = await this.castFromInputs({ dateStr: s.ncDate, timeStr: s.ncTime, timeKnown, manualMode: s.ncManualMode, place: s.ncPlace, lat: s.ncLat, lon: s.ncLon, tz: s.ncTz });
     } catch (e) {
-      this.setState({ ncCasting: false, ncError: e.message || "something went wrong reading that — try again" });
+      this.setState({ ncCasting: false, ncError: e.message || "something went wrong reading that. try again" });
       return;
     }
     const sigil = this.sigilMod.deriveSigil(chart, { timeKnown });
@@ -1153,7 +1153,7 @@ class Component extends DCLogic {
       this.loadAndMergeAccount();
     } catch (e) {
       if (s.acctMode === "signup" && e.code === "email_taken") {
-        this.setState({ acctMode: "login", acctBusy: false, acctError: "that email already has a shard — sign in instead" });
+        this.setState({ acctMode: "login", acctBusy: false, acctError: "that email already has a shard. sign in instead" });
         return;
       }
       const msg = s.acctMode === "signup" ? this.api.signupError(e.code) : this.api.loginError(e.code);
@@ -1441,7 +1441,7 @@ class Component extends DCLogic {
     let mSelSpan = "", mSelBodies = [];
     if (selM !== null) {
       const lo = selM * SW, hi = (selM + 1) * SW;
-      mSelSpan = fmtLon(lo) + " — " + fmtLon(hi);
+      mSelSpan = fmtLon(lo) + " to " + fmtLon(hi);
       mSelBodies = CHART_BODIES.filter(([n, l]) => l >= lo && l < hi).map(([n, l]) => ({ name: n, pos: fmtLon(l) }));
     }
     const houseLines = [], houseNums = [], angleLines = [], angleLabels = [];
@@ -1605,7 +1605,7 @@ class Component extends DCLogic {
       colocation: f => `your ${f.points[0].toLowerCase()} and your ${f.points[1].toLowerCase()} are standing in the same mansion.`,
       pile: f => `${f.points.slice(0, -1).map(p => p.toLowerCase()).join(", ")} and your ${f.points[f.points.length - 1].toLowerCase()} are all in one mansion.`,
       boundary: f => `your ${f.points[0].toLowerCase()} is standing almost exactly on a mansion's edge.`,
-      quiet: f => "your chart and your shard agree on every point — nothing here disagrees.",
+      quiet: f => "your chart and your shard agree on every point: nothing here disagrees.",
       type: f => "your sun and your moon share one mansion. you are Seedborn.",
       dissent: f => `the four traditions genuinely disagree about this stretch of sky, and your ${f.points.map(p => p.toLowerCase()).join(", ")} stand${f.points.length === 1 ? "s" : ""} there.`,
     };
@@ -1644,7 +1644,7 @@ class Component extends DCLogic {
     return {
       accountOn: ((this.props.accountSheet ?? false) && !this.state.acct) || this.state.acct === "ask",
       acctHeadline: this.state.acctMode === "signup" ? "the shard lives on this device, for now" : "welcome back",
-      acctSubline: this.state.acctMode === "signup" ? "an account carries it — every fragment, every night walked, on any screen you open." : "sign in to pick up where you left off.",
+      acctSubline: this.state.acctMode === "signup" ? "an account carries it: every fragment, every night walked, on any screen you open." : "sign in to pick up where you left off.",
       acctEmailVal: this.state.acctEmail,
       acctSetEmail: (e) => this.setState({ acctEmail: e.target.value, acctError: "" }),
       acctPasswordVal: this.state.acctPassword,
@@ -1671,7 +1671,7 @@ class Component extends DCLogic {
       shareLabel: this.state.shareCopied ? "copied ✓" : "copy it",
       shareTap: () => {
         const t = ready
-          ? `${sunPortrait.epithet.toLowerCase()}${sameMansion ? "" : " of the " + moonPortrait.epithet.replace(/^The /, "").toLowerCase()} — sun in the ${sunPortrait.ord} mansion, moon in the ${moonPortrait.ord} mansion.${finding ? " " + (HEADLINE[finding.kind] ? HEADLINE[finding.kind](finding) : finding.detail) + ` 1 in ${Math.round(1 / finding.rate)}.` : ""} star shard · the moon's zodiac, cut finer.`
+          ? `${sunPortrait.epithet.toLowerCase()}${sameMansion ? "" : " of the " + moonPortrait.epithet.replace(/^The /, "").toLowerCase()}. sun in the ${sunPortrait.ord} mansion, moon in the ${moonPortrait.ord} mansion.${finding ? " " + (HEADLINE[finding.kind] ? HEADLINE[finding.kind](finding) : finding.detail) + ` 1 in ${Math.round(1 / finding.rate)}.` : ""} star shard · the moon's zodiac, cut finer.`
           : "star shard · the moon's zodiac, cut finer.";
         if (navigator.clipboard) navigator.clipboard.writeText(t);
         this.setState({ shareCopied: true });
@@ -1838,7 +1838,7 @@ class Component extends DCLogic {
       tonightPara1: s.sndSounding ? s.sndSounding.counsel.body : "",
       tonightPara2: s.sndSounding ? [s.sndSounding.cast.flavor, s.sndSounding.counsel.relational, s.sndSounding.liveTransit ? s.sndSounding.liveTransit.line : null].filter(Boolean).join(" ") : "",
       tonightLitLine: (TONIGHT_ST != null && this.alreadyKindled(TONIGHT_ST, TONIGHT_STEP)) ? `✦ ${NAMES[TONIGHT_ST].toLowerCase()}, lit · ${litCount} of 28` : "",
-      tonightNextLine: nextSpecial != null ? `next — the moon crosses ${NAMES[nextSpecial]}, ${nextSpecialLabel} station` : "",
+      tonightNextLine: nextSpecial != null ? `next: the moon crosses ${NAMES[nextSpecial]}, ${nextSpecialLabel} station` : "",
       numMoonLine: (ready && TONIGHT_ST != null) ? `${fmtLon(s.sndMoonLon ?? 0)} · ${NAMES[TONIGHT_ST]} · step ${TONIGHT_STEP + 1} of 4` : "",
       numLiveLine: s.sndSounding && s.sndSounding.liveTransit ? s.sndSounding.liveTransit.line : "no exact transit within orb tonight",
       numNextLine: nextSpecial != null ? `${NAMES[nextSpecial].toLowerCase()} · ${nextSpecialLabel}` : "",
@@ -1875,7 +1875,7 @@ class Component extends DCLogic {
       planetRows: (ready && wp) ? ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]
         .filter(k => k !== rulerKey)
         .map(k => ({ name: k, pos: posLine(k, wp[k]).replace(k + " · ", ""), d: PLANET_PATHS[k], onTap: cdOpen(k) })) : [],
-      selLabel: this.state.sel ? (LABELS[this.state.sel] || "") : "tap a light — or a mansion on the rim",
+      selLabel: this.state.sel ? (LABELS[this.state.sel] || "") : "tap a light, or a mansion on the rim",
       hitArcs,
       mSelOn: selM !== null,
       mSelOrd: selM !== null ? ORDS[selM] : "",
