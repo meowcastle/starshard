@@ -764,6 +764,45 @@
   </sc-if>
   </sc-if>
 
+  <sc-if value="{{ addTimeOpen }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="add a birth time" style="position:absolute;inset:0;z-index:7;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:64px 32px 140px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both">
+    <button onClick="{{ closeAddTime }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#F0D89A">‹ back</button>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;line-height:1.1;margin:20px 0 0;color:#F2EAD6">add your birth time</h1>
+    <p style="font-size:14.5px;line-height:1.75;color:#9A8A5E;margin:14px 0 0">your rising, houses and midheaven move too fast to guess — this fills them in for real, from what you already gave us.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:30px">at
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="position:relative;flex:1">
+          <select value="{{ atTimeHVal }}" onChange="{{ atSetTimeH }}" style="{{ obSelectStyle }}">
+            <option value="" disabled selected>hh</option>
+            <sc-for list="{{ obHourOptions }}" as="o" hint-placeholder-count="12"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+          </select>
+          <span style="{{ obChevronStyle }}">⌄</span>
+        </div>
+        <span style="color:#9A8A5E;font-size:17px">:</span>
+        <div style="position:relative;flex:1">
+          <select value="{{ atTimeMinVal }}" onChange="{{ atSetTimeMin }}" style="{{ obSelectStyle }}">
+            <option value="" disabled selected>mm</option>
+            <sc-for list="{{ obMinuteOptions }}" as="o" hint-placeholder-count="60"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+          </select>
+          <span style="{{ obChevronStyle }}">⌄</span>
+        </div>
+        <div style="position:relative;flex:1.1">
+          <select value="{{ atTimeAPVal }}" onChange="{{ atSetTimeAP }}" style="{{ obSelectStyle }}">
+            <option value="" disabled selected>—</option>
+            <option value="AM">am</option>
+            <option value="PM">pm</option>
+          </select>
+          <span style="{{ obChevronStyle }}">⌄</span>
+        </div>
+      </div>
+    </div>
+    <button onClick="{{ atSubmit }}" style="margin-top:34px;align-self:flex-start;background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:14px 28px;cursor:pointer">{{ atSubmitLabel }}</button>
+    <sc-if value="{{ atErrorOn }}" hint-placeholder-val="{{ false }}">
+      <p style="font-size:12.5px;line-height:1.6;color:#E8A87C;margin:14px 0 0">{{ atError }}</p>
+    </sc-if>
+  </div>
+  </sc-if>
+
   <sc-if value="{{ payOn }}" hint-placeholder-val="{{ false }}">
   <div data-screen-label="own the road" style="position:absolute;inset:0;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);overflow-y:auto;padding:64px 32px 140px;display:flex;flex-direction:column;animation:ssFadeUp .45s ease both">
     <div style="font-size:12px;color:#9A8A5E">night eight · saturday 22 august</div>
@@ -839,6 +878,7 @@ class Component extends DCLogic {
     ncTimeUnknown: false, ncManualMode: false, ncLat: "", ncLon: "", ncTz: "",
     ncQuery: "", ncCityResults: [], ncSearching: false, ncPlace: null,
     ncError: "", ncCasting: false,
+    birthRecast: null, addTimeOpen: false, atTimeH: "", atTimeMin: "", atTimeAP: "", atError: "", atCasting: false,
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
     acct: null, acctEmail: "", acctPassword: "", acctMode: "signup", acctError: "", acctBusy: false,
     gamePushed: false, owned: false, shareCopied: false,
@@ -877,7 +917,7 @@ class Component extends DCLogic {
     if (save && save.sigil && save.chart) {
       Object.assign(patch, {
         sigName: save.name || "", sigChart: save.chart, sigil: save.sigil,
-        onboardDone: true, timeKnown: save.timeKnown !== false,
+        onboardDone: true, timeKnown: save.timeKnown !== false, birthRecast: save.birthRecast || null,
       });
     }
     this.setState(patch);
@@ -1026,12 +1066,50 @@ class Component extends DCLogic {
       return;
     }
     const sigil = this.sigilMod.deriveSigil(chart, { timeKnown });
-    try { localStorage.setItem("starshard.sigil-save", JSON.stringify({ name: "", chart, sigil, timeKnown })); } catch (e) {}
+    // birthRecast: enough to later recompute this same chart with a real
+    // time once it's known (the "add a birth time" fix) — coordinates
+    // and the IANA tz name aren't stored on the chart object itself
+    // (astro.js's computeChart() only keeps the resolved jd), so without
+    // this, "add a birth time" would have nothing to recast from after a
+    // page reload restores the chart from localStorage but not the form.
+    const [by, bm, bd] = s.obDate.split("-").map(Number);
+    const birthRecast = s.obManualMode
+      ? { y: by, m: bm, d: bd, lat: parseFloat(s.obLat), lon: parseFloat(s.obLon), tz: null, tzOffset: parseFloat(s.obTz) }
+      : { y: by, m: bm, d: bd, lat: s.obPlace.lat, lon: s.obPlace.lon, tz: s.obPlace.tz, tzOffset: null };
+    try { localStorage.setItem("starshard.sigil-save", JSON.stringify({ name: "", chart, sigil, timeKnown, birthRecast })); } catch (e) {}
     this.api.saveSigil(sigil);
-    this.setState({ sigChart: chart, sigil, timeKnown, obCasting: false, obCastStep: 0, obError: "", onboardDone: true, tab: "shard" }, () => {
+    this.setState({ sigChart: chart, sigil, timeKnown, birthRecast, obCasting: false, obCastStep: 0, obError: "", onboardDone: true, tab: "shard" }, () => {
       this.refreshAll();
       setTimeout(() => this.setState(st => (st.acct ? null : { acct: "ask" })), 1700);
     });
+  };
+
+  // -- adding a real birth time to a chart that was cast without one
+  // (the reported bug: "add a birth time" used to just flip timeKnown to
+  // true without ever collecting a real time, showing the noon-default
+  // ascendant/houses as if they were real — exactly the fake precision
+  // CLAUDE.md's own rules forbid). Recasts using birthRecast, re-running
+  // tz.dstInfo with the real hour for the geocode path since DST is
+  // itself time-of-day-sensitive (rare, but a chart near a DST boundary
+  // could genuinely land on either side depending on the real hour).
+  atSubmit = async () => {
+    const s = this.state;
+    if (s.atCasting) return;
+    if (!s.atTimeH || !s.atTimeMin || !s.atTimeAP) { this.setState({ atError: "still needs an hour, minute and am/pm" }); return; }
+    const r = s.birthRecast;
+    if (!r) { this.setState({ atError: "this chart doesn't have enough stored to add a time to it — try casting it again with the time known" }); return; }
+    this.setState({ atCasting: true, atError: "" });
+    const timeStr = this.composeObTime(s.atTimeH, s.atTimeMin, s.atTimeAP);
+    const [hh, mm] = timeStr.split(":").map(Number);
+    const tzOffset = r.tz ? this.tz.dstInfo(r.tz, r.y, r.m, r.d, hh, mm).off : r.tzOffset;
+    const chart = this.astro.computeChart({ year: r.y, month: r.m, day: r.d, hour: hh, minute: mm, lat: r.lat, lon: r.lon, tzOffset });
+    const sigil = this.sigilMod.deriveSigil(chart, { timeKnown: true });
+    try {
+      const save = JSON.parse(localStorage.getItem("starshard.sigil-save") || "null") || {};
+      localStorage.setItem("starshard.sigil-save", JSON.stringify({ ...save, chart, sigil, timeKnown: true, birthRecast: r }));
+    } catch (e) {}
+    this.api.saveSigil(sigil);
+    this.setState({ sigChart: chart, sigil, timeKnown: true, addTimeOpen: false, atCasting: false, atTimeH: "", atTimeMin: "", atTimeAP: "", atError: "" }, () => this.refreshAll());
   };
 
   // -- saved charts (task 37, local-only per the plan's privacy call):
@@ -1524,7 +1602,7 @@ class Component extends DCLogic {
     const tabStyle = (t) => tabBase + (tab === t ? "color:#F0D89A" : "color:#9A8A5E");
     const segBase = "background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12px;padding:8px 16px;";
     const view = this.state.view;
-    const setTab = (t) => () => this.setState({ tab: t, prevTab: tab, shardSt: 0, shardStage: 0, arch: false, mcPushed: false, night: null, cd: null, chartsListPushed: false, addChartOpen: false, chartPreviewId: null }, () => {
+    const setTab = (t) => () => this.setState({ tab: t, prevTab: tab, shardSt: 0, shardStage: 0, arch: false, mcPushed: false, night: null, cd: null, chartsListPushed: false, addChartOpen: false, chartPreviewId: null, addTimeOpen: false }, () => {
       document.querySelectorAll("[data-ss-screen]").forEach((el) => { el.scrollTop = 0; });
     });
     const locKnown = this.state.locKnown ?? (this.props.locationKnown ?? true);
@@ -1814,7 +1892,16 @@ class Component extends DCLogic {
       obErrorOn: !!this.state.obError, obError: this.state.obError,
       obCastStyle: "margin:44px auto 0;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:15px 32px;transition:all .4s ease;" + (obCount === 3 ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;cursor:pointer;box-shadow:0 0 24px rgba(240,216,154,.22)" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       timeOn: timeKnown, timeOff: !timeKnown,
-      addTime: () => this.setState({ timeKnown: true }),
+      addTime: () => this.setState({ addTimeOpen: true, atError: "" }),
+      addTimeOpen: this.state.addTimeOpen,
+      closeAddTime: () => this.setState({ addTimeOpen: false, atError: "" }),
+      atTimeHVal: this.state.atTimeH, atTimeMinVal: this.state.atTimeMin, atTimeAPVal: this.state.atTimeAP,
+      atSetTimeH: (e) => this.setState({ atTimeH: e.target.value, atError: "" }),
+      atSetTimeMin: (e) => this.setState({ atTimeMin: e.target.value, atError: "" }),
+      atSetTimeAP: (e) => this.setState({ atTimeAP: e.target.value, atError: "" }),
+      atErrorOn: !!this.state.atError, atError: this.state.atError,
+      atSubmitLabel: this.state.atCasting ? "…" : "add it",
+      atSubmit: this.atSubmit,
       shardMetaLine1: ready ? `sun in ${sunPortrait.epithet.toLowerCase()} · moon in ${moonPortrait.epithet.toLowerCase()}` : "",
       shardMetaLine2: ready ? `${timeKnown && RISING != null ? NAMES[RISING].toLowerCase() + " rising" : "rising unknown"} · ${s.sigil.type} · ${s.sndLight ? s.sndLight.name.toLowerCase() : ""}` : "",
       toTonightView: () => this.setState({ view: "tonight" }),

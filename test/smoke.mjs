@@ -349,6 +349,60 @@ await page.waitForTimeout(300);
 const listBody = await page.evaluate(() => document.body.innerText || '');
 if (!/1 saved/i.test(listBody)) fail.push('charts list does not show the newly-added chart in its count');
 
+// -- add a birth time to a chart cast without one (fixed bug: "add a
+// birth time" used to just flip timeKnown to true with no real time
+// collected, showing the noon-default ascendant/houses as if real). A
+// fresh cast with the time unknown, then a real recast through the new
+// form, must genuinely change the ascendant — not just the timeOn flag. -
+await page.evaluate(() => localStorage.clear());
+await page.goto(base + '/' + PAGE, { waitUntil: 'domcontentloaded' });
+await page.waitForFunction(() => /tell us the minute/i.test(document.body.innerText || ''), null, { timeout: 15000 });
+await fillDate('1989', '06', '06');
+await page.getByText("i don't know my birth time", { exact: false }).click();
+await page.getByPlaceholder('portland, oregon').fill('New York');
+await page.getByText('search', { exact: true }).click();
+await page.waitForFunction(() => /New York, New York/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await page.getByText('New York, New York').click();
+await page.getByText('cast your chart').click();
+await page.waitForFunction(() => !/casting your chart/i.test(document.body.innerText || ''), null, { timeout: 12000 });
+// the account sheet auto-opens ~1.7s after a real cast — wait for it
+// deterministically (not a blind timeout) and confirm it's actually
+// gone before touching the tab bar underneath it, since it's a
+// full-screen overlay that would otherwise eat the next click.
+await page.waitForFunction(() => /keep your shard|welcome back/i.test(document.body.innerText || ''), null, { timeout: 4000 });
+await page.getByText('not now', { exact: true }).click();
+await page.waitForFunction(() => !/keep your shard|welcome back/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+
+await page.locator('button:has-text("your chart")').last().click();
+await page.waitForTimeout(500);
+await shot('09b-chart-no-time');
+const noTimeBody = await page.evaluate(() => document.body.innerText || '');
+if (!/no birth time/i.test(noTimeBody)) fail.push('a chart cast without a time should show the "no birth time" note on the chart tab');
+console.log('--- chart tab (no time) body ---\n' + noTimeBody.slice(0, 800));
+const ascBefore = await page.evaluate(() => {
+  const angles = [...document.querySelectorAll('*')].find(el => el.textContent === 'the angles');
+  return angles ? angles.parentElement.textContent : null;
+});
+
+await page.getByText('add ›').click();
+await page.waitForFunction(() => /add your birth time/i.test(document.body.innerText || ''), null, { timeout: 3000 });
+await shot('10-add-birth-time-form');
+const atSelects = page.locator('select');
+await atSelects.nth(0).selectOption('4');
+await atSelects.nth(1).selectOption('42');
+await atSelects.nth(2).selectOption('PM');
+await page.getByText('add it', { exact: true }).click();
+await page.waitForFunction(() => !/add your birth time/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await page.waitForTimeout(500);
+await shot('11-birth-time-added');
+const afterBody = await page.evaluate(() => document.body.innerText || '');
+if (/no birth time/i.test(afterBody)) fail.push('adding a birth time did not clear the "no birth time" note');
+const ascAfter = await page.evaluate(() => {
+  const angles = [...document.querySelectorAll('*')].find(el => el.textContent === 'the angles');
+  return angles ? angles.parentElement.textContent : null;
+});
+if (ascBefore && ascAfter && ascBefore === ascAfter) fail.push('adding a birth time should change the real ascendant/houses shown, not just the "known" flag');
+
 fail.push(...fatal);
 await browser.close();
 server.close();

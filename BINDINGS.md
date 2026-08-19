@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**390 bindings, 338 top-level.**
+**402 bindings, 350 top-level.**
 
 ## Rule
 
@@ -89,11 +89,22 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `acctToggleMode` | component state |
 | `addChartOpen` | component state |
 | `addTime` | component state |
+| `addTimeOpen` | component state |
 | `angleLabels` | component state |
 | `angleLines` | component state |
 | `archPushed` | component state |
 | `askLoc` | component state |
 | `aspectRows` | component state |
+| `atError` | component state |
+| `atErrorOn` | component state |
+| `atSetTimeAP` | component state |
+| `atSetTimeH` | component state |
+| `atSetTimeMin` | component state |
+| `atSubmit` | component state |
+| `atSubmitLabel` | component state |
+| `atTimeAPVal` | component state |
+| `atTimeHVal` | component state |
+| `atTimeMinVal` | component state |
 | `becomingPara1` | component state |
 | `becomingPara2` | component state |
 | `becomingSub` | component state |
@@ -123,6 +134,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `chartSunLine` | component state |
 | `chartsListPushed` | component state |
 | `closeAddChart` | component state |
+| `closeAddTime` | component state |
 | `comboCost` | component state |
 | `comboLead` | component state |
 | `comboMoon` | component state |
