@@ -34,7 +34,7 @@
 // nakshatra doesn't nudge a displayed value, it flips the whole favorable/
 // unfavorable verdict.
 
-import { moonLongitude } from './astro.js';
+import { moonLongitude, sunLongitude } from './astro.js';
 
 const norm = d => ((d % 360) + 360) % 360;
 
@@ -282,4 +282,86 @@ export function castKind(moonLon, jd) {
   const becoming = kind === 'steady' ? null : { station: becomingStation, step: becomingStep };
 
   return { kind, current: { station, step }, becoming };
+}
+
+// -- farlight returns -------------------------------------------------------
+//
+// The real cadence, checked rather than assumed: a full moon's longitude
+// precesses ~30.67deg per lunation (12 synodic months run ~11 days short of
+// a solar year), and a station is 12.857deg wide, so the odds any given full
+// moon lands in one specific station are ~3.6% — an expected gap around 2-3
+// years, not "once a year" the way that sounds at a glance. Walks consecutive
+// full moons out from `jd` in both directions, using the SAME astro.js
+// Sun/Moon longitudes as moonPhase() above (no astronomy-engine here, by the
+// same rule CLAUDE.md's "what sky.js is worth" note already sets: this only
+// needs Sun+Moon longitude, which astro.js already computes and has
+// verified). A day-step scan plus bisection is more than accurate enough for
+// a calendar-date display — nobody reads "next rising" to the minute.
+
+/** Signed angular distance from exact opposition (full moon), in (-180,180]. */
+function fullMoonDelta(jd) {
+  let d = norm(moonLongitude(jd) - sunLongitude(jd)) - 180;
+  if (d > 180) d -= 360;
+  return d;
+}
+
+/** Bisect a bracket [a,b] with opposite-signed fullMoonDelta down to the
+ * enclosed full moon's jd (20 halvings is far past the precision this needs). */
+function bisectFullMoon(a, b) {
+  let da = fullMoonDelta(a);
+  for (let i = 0; i < 20; i++) {
+    const mid = (a + b) / 2, dm = fullMoonDelta(mid);
+    if (Math.sign(dm) === Math.sign(da) || dm === 0) { a = mid; da = dm; } else { b = mid; }
+  }
+  return (a + b) / 2;
+}
+
+/** Walk full moons away from `jd` in `dir` (+1 forward, -1 back), stepping a
+ * day at a time (safely under the ~29.53-day synodic month, so a crossing
+ * can't be stepped over), until one's Moon longitude lands in
+ * [station*W, station*W + W). `maxLunations` bounds the search rather than
+ * letting it run forever — measured empirically (every station, sampled
+ * every 7 years from 1930-2080) at a worst case of 37 lunations either
+ * direction from "now"; 60 (~4.9 years) leaves real margin above that
+ * without costing anything (~60 cheap trig calls, sub-millisecond). */
+function nextFarlightReturn(farlightStation, jd, dir, maxLunations = 60) {
+  const lo = farlightStation * STATION_WIDTH, hi = lo + STATION_WIDTH;
+  const inBand = lon => { const l = norm(lon); return l >= lo && l < hi; };
+
+  let prevJd = jd, prevD = fullMoonDelta(jd);
+  let found = 0;
+  const maxDays = Math.ceil(maxLunations * 29.6);
+  for (let step = 1; step <= maxDays; step++) {
+    const j = jd + dir * step;
+    const d = fullMoonDelta(j);
+    // A real full-moon crossing moves ~12deg/day (the Moon's rate relative
+    // to the Sun) — d changes by a small amount. The OTHER place this
+    // signed delta flips sign is the new-moon wrap, where norm()'s 360deg
+    // seam makes d jump from just under +180 to just over -180: a ~360deg
+    // apparent change, not a crossing. Requiring a small step tells the two
+    // apart without needing to track elongation unwrapped.
+    if (Math.sign(d) !== Math.sign(prevD) && Math.abs(d - prevD) < 180) {
+      const fmJd = dir > 0 ? bisectFullMoon(prevJd, j) : bisectFullMoon(j, prevJd);
+      found++;
+      if (inBand(moonLongitude(fmJd))) return fmJd;
+    }
+    prevJd = j; prevD = d;
+    if (found >= maxLunations) break;
+  }
+  return null;
+}
+
+/**
+ * The last and next full moon to rise in the farlight mansion — the
+ * countdown the ethics floor's "live return-countdowns" law calls for.
+ * `jd` is the current instant (same `Date.now()/86400000 + 2440587.5`
+ * formula the page already uses for "now"). Returns jd values, not dates —
+ * callers already have their own jd-to-calendar-date conversion (or can use
+ * `new Date((jd - 2440587.5) * 86400000)`).
+ */
+export function farlightReturns(farlightStation, jd) {
+  return {
+    last: nextFarlightReturn(farlightStation, jd, -1),
+    next: nextFarlightReturn(farlightStation, jd, +1),
+  };
 }

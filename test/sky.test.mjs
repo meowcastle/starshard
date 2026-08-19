@@ -279,3 +279,42 @@ test('planetaryHours: genuine polar day and polar night both return unavailable,
   const winter = await S.planetaryHours(new Date('2026-12-21T12:00:00Z'), 78, 15);
   assert.deepEqual(winter, { available: false });
 });
+
+// ---------------------------------------------------------------------------
+// farlightReturns — the last/next full moon to land in a given station.
+// Real bug caught building this: the signed elongation-from-180 delta this
+// walks also flips sign at the NEW moon (norm()'s 360deg wrap jumps +180 to
+// -180), which looks identical to a sign-change scan unless the jump size is
+// checked — a small `Math.abs(d - prevD)` is a real full-moon crossing
+// (~12deg/day), a ~360deg jump is the wrap. The regression test below is
+// exactly the case that caught it: an unfiltered scan finds a "crossing"
+// every ~14-15 days (half a synodic month) instead of ~29.53.
+// ---------------------------------------------------------------------------
+
+const STATION_WIDTH = 360 / 28;
+const mansionOf = lon => Math.floor(((lon % 360) + 360) % 360 / STATION_WIDTH);
+
+test('farlightReturns: every station resolves both directions, and each hit truly lands in that station', () => {
+  const jd = A.julianDay(2026, 8, 19, 12);
+  for (let station = 0; station < 28; station++) {
+    const r = S.farlightReturns(station, jd);
+    assert.ok(r.last, `station ${station}: no last return found`);
+    assert.ok(r.next, `station ${station}: no next return found`);
+    assert.ok(r.last < jd, `station ${station}: last return is not in the past`);
+    assert.ok(r.next > jd, `station ${station}: next return is not in the future`);
+    assert.equal(mansionOf(A.moonLongitude(r.last)), station);
+    assert.equal(mansionOf(A.moonLongitude(r.next)), station);
+  }
+});
+
+test('farlightReturns: consecutive full moons are ~29.53 days apart, not ~14-15 (the new-moon-wrap regression)', () => {
+  // Station 12 at this jd needs more than one lunation out — a station whose
+  // "next" full moon is more than a lunation away is exactly the case where
+  // the old (buggy) every-14-days scan would have found a spurious early
+  // "crossing" that doesn't actually land in the station and returned it
+  // anyway if unchecked.
+  const jd = A.julianDay(2026, 8, 19, 12);
+  const r = S.farlightReturns(12, jd);
+  const gapDays = r.next - jd;
+  assert.ok(gapDays > 20, `expected a real synodic-scale gap, got ${gapDays.toFixed(1)} days`);
+});

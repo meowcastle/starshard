@@ -540,7 +540,8 @@
     <div data-ss-mark="farlight" style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;text-align:center">your farlight</div>
     <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;line-height:1.9;margin:14px 0 22px">mansion {{ farlightN }} · directly opposite your sun</div>
     <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:0">{{ farlightText }}</p>
-    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">it is the one night a year the sky reads your storm from the opposite bank. the hollow mark on your ring holds its place; the night it rises, tonight will say so.</p>
+    <p style="font-size:16px;line-height:1.8;color:rgba(244,236,214,.92);margin:17px 0 0">it is the night the sky reads your storm from the opposite bank. the hollow mark on your ring holds its place; the night it rises, tonight will say so.</p>
+    <div style="text-align:center;font-family:'Varela Round',sans-serif;font-size:11.5px;line-height:2.1;margin-top:22px;color:#9A8A5E">{{ farlightLastLine }}<br><span style="color:#F0D89A">{{ farlightNextLine }}</span></div>
     <p style="font-size:13.5px;line-height:1.75;color:#9A8A5E;margin:40px 0 0;text-align:center;font-style:italic">the sky writes this once, at the minute you arrive, and never revises it.<br>what moves across it is another matter, and that is what tonight is for.</p>
     <div style="height:52px"></div>
     <div style="font-size:12px;color:#9A8A5E;text-align:center">share your shard</div>
@@ -1691,6 +1692,30 @@ class Component extends DCLogic {
     const becomingLines = (s.sigArrival && s.sigArrival.becoming) ? s.sigArrival.becoming.lines : [];
     const farlightSt = ready ? this.stations.STATIONS[FARLIGHT] : null;
 
+    // The last/next full moon to rise in the farlight mansion (sky.js's
+    // farlightReturns() — a real day-scale search, cached per station+day
+    // rather than re-run on every render, since renderVals() can fire many
+    // times a second during the ring-morph animation).
+    const jdNow = Date.now() / 86400000 + 2440587.5;
+    let farlightRet = { last: null, next: null };
+    if (ready && this.sky) {
+      const cacheKey = FARLIGHT + ":" + Math.floor(jdNow);
+      if (this._farlightCacheKey !== cacheKey) {
+        this._farlightCacheKey = cacheKey;
+        this._farlightCacheVal = this.sky.farlightReturns(FARLIGHT, jdNow);
+      }
+      farlightRet = this._farlightCacheVal;
+    }
+    const jdToDate = jd => new Date((jd - 2440587.5) * 86400000);
+    // Both args are jd (days already) — NOT jd mixed with a ms epoch value.
+    const nightsBetween = (jdA, jdB) => Math.round(jdB - jdA);
+    const farlightDateStr = (jd, nowYear) => {
+      const d = jdToDate(jd);
+      const opts = d.getUTCFullYear() === nowYear
+        ? { day: "numeric", month: "long" } : { day: "numeric", month: "long", year: "numeric" };
+      return d.toLocaleDateString(undefined, opts).toLowerCase();
+    };
+
     // real day-strip / week beats for the week view (port plan §33 — only
     // the beats reading.js's weeklyReading() actually backs; the three
     // unwritten beats stay off rather than inventing copy for them).
@@ -2036,6 +2061,8 @@ class Component extends DCLogic {
       farlightN: ready ? FARLIGHT + 1 : "", farlightOrd: ready ? this.ordinal(FARLIGHT + 1) : "",
       farlightName: farlightSt ? farlightSt.epithet : "",
       farlightText: (s.sigArrival && s.sigArrival.answering) ? s.sigArrival.answering.line : "",
+      farlightLastLine: (ready && farlightRet.last) ? `it last rose ${farlightDateStr(farlightRet.last, new Date().getUTCFullYear())} · ${nightsBetween(farlightRet.last, jdNow)} nights ago` : "",
+      farlightNextLine: (ready && farlightRet.next) ? `next rising · ${farlightDateStr(farlightRet.next, new Date().getUTCFullYear())} · ${nightsBetween(jdNow, farlightRet.next)} nights away` : "",
     };
   }
 }
