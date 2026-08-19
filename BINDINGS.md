@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**372 bindings, 322 top-level.**
+**390 bindings, 338 top-level.**
 
 ## Rule
 
@@ -39,9 +39,11 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `mSelBodies` | `b` | `name`, `pos` |
 | `mTicks` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
 | `moonPTraditions` | `t` | `meaning`, `name`, `sky`, `x1`, `x2`, `y1`, `y2` |
+| `ncCityRows` | `r` | `label`, `pick` |
 | `ncDayOptions` | `o` | `label`, `value` |
 | `obCastLines` | `l` | `style`, `t` |
 | `obCastSegs` | `seg` | `color`, `d`, `w` |
+| `obCityRows` | `r` | `label`, `pick` |
 | `obDayOptions` | `o` | `label`, `value` |
 | `obHourOptions` | `o` | `label`, `value` |
 | `obMinuteOptions` | `o` | `label`, `value` |
@@ -202,26 +204,34 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `ncCast` | component state |
 | `ncCastLabel` | component state |
 | `ncCastStyle` | component state |
+| `ncChangePlace` | component state |
+| `ncCityRows` | component state |
 | `ncDateDVal` | component state |
 | `ncDateMVal` | component state |
 | `ncDateYVal` | component state |
 | `ncDayOptions` | component state |
 | `ncError` | component state |
 | `ncErrorOn` | component state |
+| `ncHasResults` | component state |
 | `ncLatVal` | component state |
 | `ncLonVal` | component state |
 | `ncManualOff` | component state |
 | `ncManualOn` | component state |
 | `ncManualToggleLabel` | component state |
 | `ncNameVal` | component state |
-| `ncPlaceVal` | component state |
+| `ncPlaceChosen` | component state |
+| `ncPlaceConfirmedLine` | component state |
+| `ncPlaceNotChosen` | component state |
+| `ncQueryVal` | component state |
+| `ncSearch` | component state |
+| `ncSearchLabel` | component state |
 | `ncSetDateD` | component state |
 | `ncSetDateM` | component state |
 | `ncSetDateY` | component state |
 | `ncSetLat` | component state |
 | `ncSetLon` | component state |
 | `ncSetName` | component state |
-| `ncSetPlace` | component state |
+| `ncSetQuery` | component state |
 | `ncSetTimeAP` | component state |
 | `ncSetTimeH` | component state |
 | `ncSetTimeMin` | component state |
@@ -252,7 +262,9 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `obCastSegs` | component state |
 | `obCastStyle` | component state |
 | `obCastingOn` | component state |
+| `obChangePlace` | component state |
 | `obChevronStyle` | component state |
+| `obCityRows` | component state |
 | `obDateDVal` | component state |
 | `obDateMVal` | component state |
 | `obDateYVal` | component state |
@@ -260,6 +272,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `obError` | component state |
 | `obErrorOn` | component state |
 | `obFormOn` | component state |
+| `obHasResults` | component state |
 | `obHourOptions` | component state |
 | `obLatVal` | component state |
 | `obLonVal` | component state |
@@ -268,16 +281,21 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `obManualToggleLabel` | component state |
 | `obMinuteOptions` | component state |
 | `obMonthOptions` | component state |
-| `obPlaceVal` | component state |
+| `obPlaceChosen` | component state |
+| `obPlaceConfirmedLine` | component state |
+| `obPlaceNotChosen` | component state |
+| `obQueryVal` | component state |
 | `obRingCount` | component state |
 | `obRingSegs` | component state |
+| `obSearch` | component state |
+| `obSearchLabel` | component state |
 | `obSelectStyle` | component state |
 | `obSetDateD` | component state |
 | `obSetDateM` | component state |
 | `obSetDateY` | component state |
 | `obSetLat` | component state |
 | `obSetLon` | component state |
-| `obSetPlace` | component state |
+| `obSetQuery` | component state |
 | `obSetTimeAP` | component state |
 | `obSetTimeH` | component state |
 | `obSetTimeMin` | component state |

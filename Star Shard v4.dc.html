@@ -114,9 +114,27 @@
           <button onClick="{{ obToggleTime }}" style="{{ obTimeStyle }}">{{ obTimeMark }} i don't know my birth time</button>
         </div>
         <sc-if value="{{ obManualOff }}" hint-placeholder-val="{{ true }}">
-        <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:ssFadeUp .5s ease .24s both">in
-          <input placeholder="portland, oregon" value="{{ obPlaceVal }}" onChange="{{ obSetPlace }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
-        </label>
+        <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:ssFadeUp .5s ease .24s both">in
+          <sc-if value="{{ obPlaceChosen }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(240,216,154,.3);padding:8px 2px">
+              <span style="font-family:'Varela Round',sans-serif;font-size:17px;color:#F2EAD6">{{ obPlaceConfirmedLine }}</span>
+              <button onClick="{{ obChangePlace }}" style="background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;padding:0;white-space:nowrap">change</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ obPlaceNotChosen }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:10px;align-items:flex-end">
+              <input placeholder="portland, oregon" value="{{ obQueryVal }}" onChange="{{ obSetQuery }}" style="flex:1;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none">
+              <button onClick="{{ obSearch }}" style="background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12px;padding:9px 16px;cursor:pointer;white-space:nowrap">{{ obSearchLabel }}</button>
+            </div>
+            <sc-if value="{{ obHasResults }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;margin-top:4px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.03)">
+                <sc-for list="{{ obCityRows }}" as="r" hint-placeholder-count="4">
+                  <div onClick="{{ r.pick }}" style="padding:12px 14px;font-family:'Varela Round',sans-serif;font-size:14px;color:#F2EAD6;cursor:pointer;border-bottom:1px solid rgba(240,216,154,.1)">{{ r.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+        </div>
         </sc-if>
         <sc-if value="{{ obManualOn }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:18px;animation:ssFadeUp .35s ease both">
@@ -653,9 +671,27 @@
           <button onClick="{{ ncToggleTimeUnknown }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E">{{ ncTimeMark }} don't know their birth time</button>
         </div>
         <sc-if value="{{ ncManualOff }}" hint-placeholder-val="{{ true }}">
-          <label style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">in
-            <input placeholder="portland, oregon" value="{{ ncPlaceVal }}" onChange="{{ ncSetPlace }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
-          </label>
+        <div style="display:flex;flex-direction:column;gap:8px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">in
+          <sc-if value="{{ ncPlaceChosen }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(240,216,154,.3);padding:8px 2px">
+              <span style="font-family:'Varela Round',sans-serif;font-size:17px;color:#F2EAD6">{{ ncPlaceConfirmedLine }}</span>
+              <button onClick="{{ ncChangePlace }}" style="background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;padding:0;white-space:nowrap">change</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ ncPlaceNotChosen }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:10px;align-items:flex-end">
+              <input placeholder="portland, oregon" value="{{ ncQueryVal }}" onChange="{{ ncSetQuery }}" style="flex:1;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none">
+              <button onClick="{{ ncSearch }}" style="background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12px;padding:9px 16px;cursor:pointer;white-space:nowrap">{{ ncSearchLabel }}</button>
+            </div>
+            <sc-if value="{{ ncHasResults }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;margin-top:4px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.03)">
+                <sc-for list="{{ ncCityRows }}" as="r" hint-placeholder-count="4">
+                  <div onClick="{{ r.pick }}" style="padding:12px 14px;font-family:'Varela Round',sans-serif;font-size:14px;color:#F2EAD6;cursor:pointer;border-bottom:1px solid rgba(240,216,154,.1)">{{ r.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+        </div>
         </sc-if>
         <sc-if value="{{ ncManualOn }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:18px">
@@ -794,12 +830,14 @@ class Component extends DCLogic {
   state = {
     tab: null, view: "tonight", mcPushed: false, night: null, numbersOpen: false, remind: false,
     sel: null, arch: false, selM: null, onboardDone: false, obTimeUnknown: false, timeKnown: null,
-    locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obPlace: "", obError: "",
+    locKnown: null, locLoading: false, cd: null, obDate: "", obTime: "", obError: "",
+    obQuery: "", obCityResults: [], obSearching: false, obPlace: null,
     obManualMode: false, obLat: "", obLon: "", obTz: "",
     obDateY: "", obDateM: "", obDateD: "", obTimeH: "", obTimeMin: "", obTimeAP: "",
     savedCharts: [], chartsListPushed: false, chartPreviewId: null, addChartOpen: false,
     ncName: "", ncDateY: "", ncDateM: "", ncDateD: "", ncDate: "", ncTimeH: "", ncTimeMin: "", ncTimeAP: "", ncTime: "",
-    ncTimeUnknown: false, ncPlace: "", ncManualMode: false, ncLat: "", ncLon: "", ncTz: "",
+    ncTimeUnknown: false, ncManualMode: false, ncLat: "", ncLon: "", ncTz: "",
+    ncQuery: "", ncCityResults: [], ncSearching: false, ncPlace: null,
     ncError: "", ncCasting: false,
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
     acct: null, acctEmail: "", acctPassword: "", acctMode: "signup", acctError: "", acctBusy: false,
@@ -934,10 +972,14 @@ class Component extends DCLogic {
     setTimeout(() => this.runCast(), 4100);
   };
 
-  // shared by the primary onboarding cast and the "add a chart" cast
-  // (task 37) — geocode-or-manual branch, identical either way. Throws
-  // with a user-facing message on failure; caller decides what state
-  // field the error lands in.
+  // shared by the primary onboarding cast and the "add a chart" cast —
+  // geocode-or-manual branch, identical either way. Throws with a user-
+  // facing message on failure; caller decides what state field the error
+  // lands in. `place` is a real, already-picked geocode result object
+  // (from obSearch/ncSearch below), not a raw query string — casting no
+  // longer silently guesses the first match, the search step (the "log
+  // in on the location" ask) makes that choice explicit before this ever
+  // runs.
   async castFromInputs({ dateStr, timeStr, timeKnown, manualMode, place, lat, lon, tz }) {
     if (manualMode) {
       const latN = parseFloat(lat), lonN = parseFloat(lon), tzN = parseFloat(tz);
@@ -946,11 +988,32 @@ class Component extends DCLogic {
       const [hh, mm] = timeKnown ? timeStr.split(":").map(Number) : [12, 0];
       return this.astro.computeChart({ year: y, month: m, day: d, hour: hh, minute: mm, lat: latN, lon: lonN, tzOffset: tzN });
     }
-    const res = await this.api.geocode(place.trim());
-    const found = res && res[0];
-    if (!found) throw new Error(`couldn't find "${place.trim()}" — try a bigger nearby city, or check the spelling, or enter coordinates manually`);
-    return this.chartFromParts(dateStr, timeStr, found, timeKnown);
+    if (!place) throw new Error("search for a birthplace and pick one from the results first");
+    return this.chartFromParts(dateStr, timeStr, place, timeKnown);
   }
+
+  // -- birthplace search (the "log in on the location" fix): an explicit
+  // search step with a real results list, same proven pattern as
+  // Star Shard v3.dc.html's sigSearch()/sigCityResults — replacing the
+  // free-text field that used to just get blindly geocoded at cast time.
+  async runPlaceSearch(prefix) {
+    const queryKey = `${prefix}Query`, resultsKey = `${prefix}CityResults`, searchingKey = `${prefix}Searching`, errorKey = `${prefix}Error`;
+    const q = this.state[queryKey].trim();
+    if (!q) return;
+    this.setState({ [searchingKey]: true, [resultsKey]: [], [errorKey]: "" });
+    try {
+      const res = await this.api.geocode(q);
+      this.setState({ [searchingKey]: false, [resultsKey]: res, [errorKey]: res.length ? "" : "no place found by that name — try a different spelling, or enter coordinates manually" });
+    } catch (e) {
+      this.setState({ [searchingKey]: false, [errorKey]: "the star atlas is unreachable — try again, or enter coordinates manually" });
+    }
+  }
+  obSearch = () => this.runPlaceSearch("ob");
+  ncSearch = () => this.runPlaceSearch("nc");
+  obPickPlace = (r) => () => this.setState({ obPlace: r, obCityResults: [], obQuery: `${r.name}, ${r.region}` });
+  ncPickPlace = (r) => () => this.setState({ ncPlace: r, ncCityResults: [], ncQuery: `${r.name}, ${r.region}` });
+  obChangePlace = () => this.setState({ obPlace: null, obQuery: "", obCityResults: [] });
+  ncChangePlace = () => this.setState({ ncPlace: null, ncQuery: "", ncCityResults: [] });
 
   runCast = async () => {
     const s = this.state;
@@ -986,8 +1049,8 @@ class Component extends DCLogic {
     if (!s.ncTimeUnknown && !s.ncTime.trim()) { this.setState({ ncError: "still needs a birth time, or check \"don't know their birth time\"" }); return; }
     const locDone = s.ncManualMode
       ? [s.ncLat, s.ncLon, s.ncTz].every(v => v.trim().length > 0)
-      : s.ncPlace.trim().length > 0;
-    if (!locDone) { this.setState({ ncError: s.ncManualMode ? "latitude, longitude and UTC offset still need real values" : "still needs a birthplace" }); return; }
+      : !!s.ncPlace;
+    if (!locDone) { this.setState({ ncError: s.ncManualMode ? "latitude, longitude and UTC offset still need real values" : "search for a birthplace and pick one from the results first" }); return; }
     const timeKnown = !s.ncTimeUnknown;
     this.setState({ ncCasting: true, ncError: "" });
     let chart;
@@ -1004,7 +1067,8 @@ class Component extends DCLogic {
     this.setState({
       savedCharts: merged, ncCasting: false, addChartOpen: false, chartPreviewId: entry.id,
       ncName: "", ncDateY: "", ncDateM: "", ncDateD: "", ncDate: "", ncTimeH: "", ncTimeMin: "", ncTimeAP: "", ncTime: "",
-      ncTimeUnknown: false, ncPlace: "", ncManualMode: false, ncLat: "", ncLon: "", ncTz: "", ncError: "",
+      ncTimeUnknown: false, ncManualMode: false, ncLat: "", ncLon: "", ncTz: "", ncError: "",
+      ncQuery: "", ncCityResults: [], ncPlace: null,
     });
   };
 
@@ -1473,7 +1537,7 @@ class Component extends DCLogic {
     const obArc = (r, a0, a1) => { const [x0, y0] = obPolar(r, a0), [x1, y1] = obPolar(r, a1); return `M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`; };
     const obLocDone = this.state.obManualMode
       ? [this.state.obLat, this.state.obLon, this.state.obTz].every(v => v.trim().length > 0)
-      : this.state.obPlace.trim().length > 0;
+      : !!this.state.obPlace;
     const obDone = [this.state.obDate.trim().length > 0, obU || this.state.obTime.trim().length > 0, obLocDone];
 
     // custom date/time selects — replaces the browser's own <input
@@ -1513,7 +1577,7 @@ class Component extends DCLogic {
     // of always looking clickable.
     const ncLocDone = this.state.ncManualMode
       ? [this.state.ncLat, this.state.ncLon, this.state.ncTz].every(v => v.trim().length > 0)
-      : this.state.ncPlace.trim().length > 0;
+      : !!this.state.ncPlace;
     const ncOk = !!this.state.ncName.trim() && this.state.ncDate.trim().length > 0 && (this.state.ncTimeUnknown || this.state.ncTime.trim().length > 0) && ncLocDone;
     const cs = this.state.obCastStep;
     const obCastSegs = [];
@@ -1638,7 +1702,13 @@ class Component extends DCLogic {
       obFormOn: !this.state.obCasting, obCastingOn: this.state.obCasting,
       obRingSegs, obCastSegs, obCastLines,
       obRingCount: obCount + " of 3",
-      obPlaceVal: this.state.obPlace,
+      obPlaceChosen: !!this.state.obPlace, obPlaceNotChosen: !this.state.obPlace,
+      obPlaceConfirmedLine: this.state.obPlace ? `${this.state.obPlace.name}, ${this.state.obPlace.region}` : "",
+      obChangePlace: this.obChangePlace,
+      obQueryVal: this.state.obQuery, obSetQuery: (e) => this.setState({ obQuery: e.target.value, obError: "" }),
+      obSearch: this.obSearch, obSearchLabel: this.state.obSearching ? "searching…" : "search",
+      obHasResults: this.state.obCityResults.length > 0,
+      obCityRows: this.state.obCityResults.map(r => ({ label: `${r.name}, ${r.region}`, pick: this.obPickPlace(r) })),
       obDateYVal: this.state.obDateY, obDateMVal: this.state.obDateM, obDateDVal: this.state.obDateD,
       obMonthOptions, obDayOptions, obYearOptions,
       // changing month/year can invalidate the selected day (e.g. 31st ->
@@ -1707,7 +1777,13 @@ class Component extends DCLogic {
       ncTimeMark: this.state.ncTimeUnknown ? "☑" : "☐",
       ncTimeSelectStyle: "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:16px;padding:8px 16px 8px 2px;outline:none;cursor:pointer;" + (this.state.ncTimeUnknown ? "color:rgba(154,138,94,.4)" : "color:#F2EAD6"),
       ncTimeSelectDisabled: this.state.ncTimeUnknown,
-      ncPlaceVal: this.state.ncPlace, ncSetPlace: (e) => this.setState({ ncPlace: e.target.value, ncError: "" }),
+      ncPlaceChosen: !!this.state.ncPlace, ncPlaceNotChosen: !this.state.ncPlace,
+      ncPlaceConfirmedLine: this.state.ncPlace ? `${this.state.ncPlace.name}, ${this.state.ncPlace.region}` : "",
+      ncChangePlace: this.ncChangePlace,
+      ncQueryVal: this.state.ncQuery, ncSetQuery: (e) => this.setState({ ncQuery: e.target.value, ncError: "" }),
+      ncSearch: this.ncSearch, ncSearchLabel: this.state.ncSearching ? "searching…" : "search",
+      ncHasResults: this.state.ncCityResults.length > 0,
+      ncCityRows: this.state.ncCityResults.map(r => ({ label: `${r.name}, ${r.region}`, pick: this.ncPickPlace(r) })),
       ncManualOn: this.state.ncManualMode, ncManualOff: !this.state.ncManualMode,
       ncManualToggleLabel: this.state.ncManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
       ncToggleManual: () => this.setState(st => ({ ncManualMode: !st.ncManualMode, ncError: "" })),

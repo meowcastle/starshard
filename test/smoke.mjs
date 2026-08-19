@@ -197,23 +197,28 @@ await page.goto(base + '/' + PAGE, { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(() => /tell us the minute/i.test(document.body.innerText || ''), null, { timeout: 15000 });
 await fillDate('1989', '06', '06');
 await fillTime('4', '42', 'PM');
-await page.getByPlaceholder('portland, oregon').fill('Nowhereatallville');
-await shot('01-form-filled-bad-place');
 
-// -- a failed cast (no geocode match) must surface a real error, not
-// silently reset the form — this was the reported bug ("doesn't open to
-// the actual app after inputting your birth time"): a failed cast used to
-// fail silently with zero explanation, which read as the app being broken.
-await page.getByText('cast your chart').click();
-await page.waitForFunction(() => !/casting your chart/i.test(document.body.innerText || ''), null, { timeout: 12000 });
-await page.waitForTimeout(300);
-await shot('01b-cast-error');
-const errorBody = await page.evaluate(() => document.body.innerText || '');
-if (!/couldn't find|try a bigger|check the spelling/i.test(errorBody)) fail.push('a failed geocode did not surface an inline error message');
-if (/tell us the minute/i.test(errorBody) === false) fail.push('a failed cast should return to the onboarding form, not advance past it');
+// -- real birthplace search (the reported "the login on the location
+// doesn't do a search" fix): typing a place used to just get blindly
+// geocoded (first match, no way to disambiguate) at cast time. Now it's
+// an explicit search step with a real results list, same pattern as
+// Star Shard v3.dc.html's sigSearch()/sigCityResults. A search with no
+// matches must show a real inline error, not silently let the form
+// advance. ------------------------------------------------------------
+const placeQuery = page.getByPlaceholder('portland, oregon');
+await placeQuery.fill('Nowhereatallville');
+await page.getByText('search', { exact: true }).click();
+await page.waitForFunction(() => /no place found/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await shot('01a-search-no-match');
+const noMatchBody = await page.evaluate(() => document.body.innerText || '');
+if (/, United States/i.test(noMatchBody)) fail.push('a no-match search should not show a confirmed place line');
 
-// now fix the place and continue with the real successful flow.
-await page.getByPlaceholder('portland, oregon').fill('New York');
+await placeQuery.fill('New York');
+await page.getByText('search', { exact: true }).click();
+await page.waitForFunction(() => /New York, New York/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await shot('01b-search-results');
+await page.getByText('New York, New York').click();
+await page.waitForFunction(() => /New York, New York/i.test(document.body.innerText || '') && /change/i.test(document.body.innerText || ''), null, { timeout: 3000 });
 await shot('01-form-filled');
 
 await page.getByText('cast your chart').click();
@@ -316,6 +321,10 @@ await page.getByPlaceholder('mom, alex, ...').fill('a friend');
 await fillDate('1995', '03', '12');
 await fillTime('2', '15', 'PM');
 await page.getByPlaceholder('portland, oregon').fill('New York');
+await page.getByText('search', { exact: true }).click();
+await page.waitForFunction(() => /New York, New York/i.test(document.body.innerText || ''), null, { timeout: 5000 });
+await page.getByText('New York, New York').click();
+await page.waitForFunction(() => /change/i.test(document.body.innerText || ''), null, { timeout: 3000 });
 await shot('08-add-chart-filled');
 
 const filledCursor = await ncCastBtn.evaluate(el => getComputedStyle(el).cursor);
