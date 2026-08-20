@@ -17,22 +17,23 @@
 </helmet>
 <div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #1E1706 0%, #0F0B03 45%, #080502 100%);display:flex;justify-content:center;padding:80px 32px 140px">
 <div style="width:100%;max-width:880px;display:flex;flex-direction:column">
-  <div style="font-size:12px;color:#9A8A5E">star shard · the minigame · rules sheet v4 · the locked base layer, 19 aug 2026</div>
+  <div style="font-size:12px;color:#9A8A5E">star shard · the minigame · rules sheet v5 · the flip-density pass, 20 aug 2026</div>
   <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:64px;line-height:1;margin:10px 0 0;color:#F2EAD6">manzil</h1>
   <p style="font-size:15px;line-height:1.7;color:#9A8A5E;margin:14px 0 0;max-width:600px">the lodging game. a capture duel against the sky, played sideways, for the mansion the moon enters tonight.</p>
   <div style="margin-top:26px;border-left:2px solid #F0D89A;padding:6px 0 6px 20px;max-width:640px">
-    <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.5;color:#F0D89A">take turns lodging cards on the nine mansions ahead of her. where cards touch, the bigger number claims the smaller. own most of the nine when the road is full. first to three boards takes the mansion.</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.5;color:#F0D89A">take turns lodging cards on the nine mansions ahead of her. where cards touch, the bigger number claims the smaller, and equal numbers claim too. own most of the nine when the road is full. first to three boards takes the mansion.</div>
     <div style="font-size:11.5px;color:#9A8A5E;margin-top:8px">triple triad's principles observed: fixed length · one comparison rule · a countable win · every printed element is the mechanic · complexity opt-in.</div>
   </div>
   <div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:26px;font-size:12.5px;color:#D8C89C">
-    <span>you: your walking five</span><span>the sky: tonight's planets, closed</span><span>best of five boards</span><span>the lead alternates</span><span>tied counts are hers</span>
+    <span>you: your walking five</span><span>the sky: tonight's planets, closed</span><span>best of five boards</span><span>the lead alternates</span><span>tied counts are yours</span>
   </div>
 
   <div style="height:64px"></div>
   <div style="font-size:12px;color:#9A8A5E">the locked base layer · hard-coded, out of the tweaks</div>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">four laws under everything</h2>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">five laws under everything</h2>
   <div style="font-size:14px;line-height:1.9;color:rgba(244,236,214,.88);margin-top:14px;max-width:680px;display:flex;flex-direction:column;gap:12px">
-    <p style="margin:0"><strong style="color:#FFFDF5">tied counts are hers.</strong> the sky keeps what you do not take. every draw pressure in the ruleset leans on this.</p>
+    <p style="margin:0"><strong style="color:#FFFDF5">ties flip.</strong> equal numbers claim like bigger ones, both ways. and a card taken by a tie fights on: it attacks both its own neighbours the moment it turns. adopted 20 aug 2026, the flip-density pass: 5.1 flips a board, up from 2.4.</p>
+    <p style="margin:0"><strong style="color:#FFFDF5">tied counts are yours.</strong> a level road at the count falls to you: the sky already claims ties in the fight, so the draw does not tax you twice. relocked 20 aug 2026.</p>
     <p style="margin:0"><strong style="color:#FFFDF5">dominion.</strong> a card lodged on its own mansion glows ✦ and counts as two at the count. the ground keeps that weight whoever claims the card. her planets hold dominion where they truly stand tonight. jupiter counts two everywhere; on his own mansion, three. dominion is never hinted on the deck screen: spotting it is skill.</p>
     <p style="margin:0"><strong style="color:#FFFDF5">the seeded sky.</strong> her judgment is deterministic; where her arithmetic ties, a date seed breaks it. the same for everyone tonight, different tomorrow. nothing else is random.</p>
     <p style="margin:0"><strong style="color:#FFFDF5">the night's temper.</strong> one planet stands closest each night and flavors her even choices, printed in one header line, learnable in a board: mars strikes (tied, she picks the biggest fight) · saturn guards (she keeps her ground) · venus keeps company (she lodges beside the crowd) · mercury roams (she lodges apart) · jupiter spends big (she plays her largest, and his mercy is real: jupiter's nights run softer). tempers rest on road nights.</p>
@@ -126,7 +127,7 @@ class Component extends DCLogic {
       ["The Gathered Stars", "counts as two at the count"],
       ["The Follower", "copies its left neighbor's facing number"],
       ["The Blaze", "its mansion counts as yours, whoever holds the card", 1],
-      ["The Storm", "claims on ties", 1],
+      ["The Storm", "cannot be tied: equal numbers do nothing against its faces", 1],
       ["The Return", "returns to your hand once when claimed"],
       ["The Ghost", "her cards beside it fight at −1"],
       ["The Glance", "reveals one closed card of hers when lodged"],

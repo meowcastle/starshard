@@ -342,6 +342,17 @@
     <div onClick="{{ nextRoundTap }}" style="{{ roundOverStyle }}">
       <div style="font-size:20px;color:{{ roundMark }}">✦</div>
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6">{{ roundTitle }}</div>
+      <sc-if value="{{ ascentOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;align-items:center">
+          <div style="font-size:11px;color:#9A8A5E">the road turns between boards. take one, or tap past.</div>
+          <sc-for list="{{ ascentBtns }}" as="b" hint-placeholder-count="3">
+            <div onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ ascentNote }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:11px;color:#9A8A5E;margin-top:14px">{{ ascentNote }}</div>
+      </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{ endOn }}" hint-placeholder-val="{{ false }}">
@@ -378,7 +389,7 @@
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = real moon tonight; 1-28 forces a mansion&quot;},&quot;forceLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = true levels; 1-4 previews every owned card at that level&quot;},&quot;forceTemper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto (real sky)&quot;,&quot;mars&quot;,&quot;saturn&quot;,&quot;venus&quot;,&quot;mercury&quot;,&quot;jupiter&quot;],&quot;default&quot;:&quot;auto (real sky)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;the night's temper: her bias on rated-equal moves (jupiter also carries the simmed w=30 mercy). auto = the planet most exact to tonight's moon. rests on road nights&quot;},&quot;roadShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a road&quot;,&quot;wrapped: edges touch&quot;,&quot;contiguous: lodge beside the lodged&quot;],&quot;default&quot;:&quot;a road&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;board geometry: the locked open road, thread's wrap (slots 1 and 9 fight each other), or placement restricted to slots touching a lodged card (first lodge free)&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = real moon tonight; 1-28 forces a mansion&quot;},&quot;forceLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = true levels; 1-4 previews every owned card at that level&quot;},&quot;forceTemper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto (real sky)&quot;,&quot;mars&quot;,&quot;saturn&quot;,&quot;venus&quot;,&quot;mercury&quot;,&quot;jupiter&quot;],&quot;default&quot;:&quot;auto (real sky)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;the night's temper: her bias on rated-equal moves (jupiter also carries the simmed w=30 mercy). auto = the planet most exact to tonight's moon. rests on road nights&quot;},&quot;roadShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a road&quot;,&quot;wrapped: edges touch&quot;,&quot;contiguous: lodge beside the lodged&quot;],&quot;default&quot;:&quot;a road&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;board geometry: the locked open road, thread's wrap (slots 1 and 9 fight each other), or placement restricted to slots touching a lodged card (first lodge free)&quot;},&quot;matchAscent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;handoff §5 prompt: her hand grows 3 to 5 across the match on a road that grows with it, one choice offered between boards. untested; road nights unaffected. the outer on board five is not dealt&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;you&quot;,&quot;the sky&quot;,&quot;a draw&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;you&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a level board count. relocked 20 aug 2026 to you (the flip-density pass)&quot;}}">
 class Component extends DCLogic {
   constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
   componentDidMount() {
@@ -471,7 +482,7 @@ class Component extends DCLogic {
     const r = st.round + 1;
     const nextLeader = st.leader === "you" ? "sky" : "you";
     this._clearSeq();
-    this.setState({ ...this._freshRound(r, nextLeader, st.chosen), round: r, roundWins: st.roundWins, phase: "play" });
+    this.setState({ ...this._freshRound(r, nextLeader, st.chosen, true), round: r, roundWins: st.roundWins, phase: "play" });
     this._afterDeal();
     if (nextLeader === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
   }
@@ -509,21 +520,30 @@ class Component extends DCLogic {
     ownedIds.forEach(id => { if (five.length < 5 && !five.includes(id)) five.push(id); });
     return { phase: "menu", pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "" };
   }
-  _freshMatch(hand) { return { ...this._freshRound(1, "you", hand), round: 1, roundWins: [], phase: "play", chosen: hand.slice() }; }
-  _freshRound(round, leader, hand) {
-    return { slots: [null, null, null, null, null, null, null, null, null], hand: hand.slice(), sky: [101, 102, 103, 104, 105], sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, log: "" };
+  _freshMatch(hand) { return { ...this._freshRound(1, "you", hand, true), round: 1, roundWins: [], phase: "play", chosen: hand.slice() }; }
+  _freshRound(round, leader, hand, asc) {
+    let sky = [101, 102, 103, 104, 105], len = 9;
+    if (asc && this.props.matchAscent) { // the ascent: three planets on a short road, her full five by board three
+      let n = Math.min(5, 2 + round);
+      if (this.state && this.state.ascentDrop) n = Math.max(2, n - 1);
+      sky = [104, 103, 102, 105, 101].slice(0, n); // weakest first: her game deepens
+      len = Math.min(9, n * 2 + (leader === "you" ? 1 : 0));
+    }
+    return { slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, log: "" };
   }
   _cards() {
     const fl = Math.max(0, Math.min(4, (this._opts().level != null ? this._opts().level : (this.props.forceLevel || 0))));
-    if (this._C && this._Cfl === fl) return this._C;
-    this._Cfl = fl;
+    const wake = (this.state && this.state.ascentWake) || 0;
+    const ck = fl + ":" + wake;
+    if (this._C && this._Cfl === ck) return this._C;
+    this._Cfl = ck;
     // canon epithets (research/mansion-names.md); values derived from research/mansions-table.json:
     // total = star prominence, side-gap = match flag (STRONG balanced · PARTIAL leaning · DIVERGENT spread: 10/15/21/24)
     const pool = [["The Gate", 6, 5], ["The Bearer", 6, 4], ["The Gathered Stars", 7, 6], ["The Follower", 7, 7], ["The Blaze", 5, 6], ["The Storm", 8, 5], ["The Return", 7, 6], ["The Ghost", 6, 6], ["The Glance", 4, 6], ["The Throne", 6, 9], ["The Mane", 6, 5], ["The Turning", 7, 5], ["The Hand", 7, 4], ["The Jewel", 7, 7], ["The Veil", 8, 2], ["The Claws", 6, 6], ["The Crown", 6, 6], ["The Heart", 7, 7], ["The Root", 7, 6], ["The Flock", 6, 6], ["The Empty District", 2, 8], ["The Listener", 7, 4], ["The Drum", 4, 7], ["The Void", 9, 2], ["The Hideaway", 5, 6], ["The Chamber", 7, 5], ["The Guide", 6, 5], ["The Thread", 5, 6]];
     // signature pass, decided 19 aug 2026: heart + blaze reworked live, jewel + crown coded (wake at L2)
     const ABS = {
       5: { ab: "blaze", abText: "ground stays yours" },
-      6: { ab: "storm", abText: "claims ties" },
+      6: { ab: "storm", abText: "cannot be tied" },
       10: { ab: "throne", abText: "two-faced", twoFaced: true },
       14: { ab: "jewel", abText: "cannot be softened" },
       25: { ab: "hideaway", abText: "mansion is silent" },
@@ -562,6 +582,7 @@ class Component extends DCLogic {
     // walkers' fives: other players' hands at loaner grade, piloted by her judgment (ids 200+mansion)
     pool.forEach((p, idx) => { const id = idx + 1; C[200 + id] = { name: p[0], l: p[1], r: p[2], who: "sky", lvl: 1, loan: false, ab: null, abText: "", twoFaced: false, walker: true, homeM: id }; });
     // her cards wear L3 quiet by default; a whole set at L4 turns the whole game L4
+    if (wake && C[wake] && C[wake].lvl < 2) C[wake] = { ...C[wake], lvl: 2 }; // ascent: one signature woken for the match
     let allL4 = fl === 4;
     if (!allL4) { allL4 = true; for (let i2 = 1; i2 <= 28; i2++) if (C[i2].loan || C[i2].lvl < 4) { allL4 = false; break; } }
     C.skyLv = allL4 ? 4 : 3;
@@ -586,7 +607,7 @@ class Component extends DCLogic {
       localStorage.setItem("starshard-game-shards", String(g + 1));
     } catch (e) {}
   }
-  _mansions() { return Array.from({ length: 9 }, (_, i) => "the " + this._mName(this._boardM(i))); }
+  _mansions() { return Array.from({ length: ((this.state && this.state.slots && this.state.slots.length) || 9) }, (_, i) => "the " + this._mName(this._boardM(i))); }
   _peekFor(k) {
     k = String(k);
     const C = this._cards();
@@ -601,7 +622,7 @@ class Component extends DCLogic {
     else if (c.ab && (c.who === "sky" || this._abilityOn(c))) {
       const t = {
         blaze: "its ground stays yours. the mansion the blaze lodges on counts as yours to the end, whoever holds the card.",
-        storm: "the storm claims ties. where the numbers stand equal, it takes the card.",
+        storm: "the storm cannot be tied. against its faces, equal numbers do nothing: bigger or nothing.",
         throne: "two-faced. the throne chose which number faces which way as it lodged.",
         heart: "fights +1 while behind. both its numbers rise by one while the sky holds more of the road.",
         jewel: "cannot be softened. venus and every softening move pass over the hard light.",
@@ -645,9 +666,10 @@ class Component extends DCLogic {
   _setBtn(on) { return "background:none;border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";font-family:'Varela Round',sans-serif;font-size:11px;padding:8px 14px;cursor:pointer"; }
   _shape() { return this._opts().shape || this.props.roadShape || "a road"; }
   _nb(i, dir) {
-    if (this._shape() === "wrapped: edges touch" || this._bossRule() === "thread") return (i + dir + 9) % 9;
+    const L = ((this.state && this.state.slots && this.state.slots.length) || 9);
+    if (this._shape() === "wrapped: edges touch" || this._bossRule() === "thread") return (i + dir + L) % L;
     const k = i + dir;
-    return k >= 0 && k <= 8 ? k : -1;
+    return k >= 0 && k < L ? k : -1;
   }
   _legalSlot(slots, i) {
     if (this._shape() !== "contiguous: lodge beside the lodged") return true;
@@ -670,15 +692,17 @@ class Component extends DCLogic {
     let tv = attackRight ? t.l : t.r;
     if (this._heartUp(slots, a)) av += 1;
     if (this._heartUp(slots, t)) tv += 1;
-    const aC = this._cards()[a.id];
-    const storm = a.owner === "you" && aC.ab === "storm" && aC.lvl >= 2;
-    const bossTies = a.owner === "sky" && this._bossRule() === "storm";
-    const wins = av > tv || ((storm || bossTies) && av === tv);
+    const C = this._cards(), aC = C[a.id], tC = C[t.id];
+    if (this._bossRule() === "storm") { av = Math.max(1, av - 1); tv = Math.max(1, tv - 1); } // storm weather: all faces fight at -1
+    // base rule (adopted 20 aug 2026): ties flip. storm's new signature: ties against its faces don't exist
+    const stormFace = (aC.ab === "storm" && aC.lvl >= 2) || (tC.ab === "storm" && tC.lvl >= 2);
+    const tie = av === tv && !stormFace;
+    const wins = av > tv || tie;
     if (!wins) return false;
-    if (this._cards()[t.id].ab === "saturn") return false;
+    if (tC.ab === "saturn") return false;
     if (this._bossRule() === "void") { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && k !== ai && slots[k]) n++; } if (n === 0) return false; }
     t.owner = a.owner;
-    return true;
+    return tie ? "tie" : true;
   }
   _lodge(slotsIn, cardId, i, rev, side) {
     // the single source of lodge truth: placement + blaze ground + venus soften (used by _resolve AND _commitPlace)
@@ -708,8 +732,12 @@ class Component extends DCLogic {
     while (queue.length) {
       const { from, to, dir } = queue.shift();
       if (to < 0 || !slots[from]) continue;
-      if (!this._tryFlip(slots, from, to, dir)) continue;
+      const res = this._tryFlip(slots, from, to, dir);
+      if (!res) continue;
       seq.push({ from, to, dir, owner: slots[to].owner });
+      if (res === "tie") { // combo: a card flipped by a tie attacks its own neighbours
+        for (const d of [-1, 1]) { const far = this._nb(to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d }); }
+      }
       if (C[slots[from].id].ab === "mars") {
         const far = this._nb(to, dir);
         if (far >= 0) queue.push({ from: to, to: far, dir });
@@ -731,7 +759,7 @@ class Component extends DCLogic {
       const home = this._isHome(s.id, i);
       let j = 0;
       if (C[s.id].ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
-      const crown = C[s.id].ab === "crown" && C[s.id].lvl >= 2 && (i === 0 || i === 8) ? 1 : 0;
+      const crown = C[s.id].ab === "crown" && C[s.id].lvl >= 2 && (i === 0 || i === slots.length - 1) ? 1 : 0;
       const w = 1 + j + (home ? 1 : 0) + crown;
       if ((s.ground || s.owner) === "you") you += w; else sky += w;
     });
@@ -740,10 +768,11 @@ class Component extends DCLogic {
   _boardWinner(slots) {
     const [you, sky] = this._counts(slots);
     if (you !== sky) return you > sky ? "you" : "sky";
-    const tr = this.props.tieRule || "the sky";
+    const tr = this.props.tieRule || "you"; // relocked 20 aug 2026: tied counts are yours (one fact no longer taxes twice)
     if (tr === "a draw") return "draw";
     if (tr === "tonight's holder") return slots[0] ? slots[0].owner : "sky";
-    return "sky";
+    if (tr === "the sky") return "sky";
+    return "you";
   }
   _nightSeed(n) {
     const s = new Date(Date.now() - 6 * 3600000).toISOString().slice(0, 10) + ":" + this._tonight() + ":" + n;
@@ -990,22 +1019,26 @@ class Component extends DCLogic {
     });
     const frame = (lvl) => lvl >= 4 ? { b: "#FFFDF5", c: "#FFFDF5", glow: ", 0 0 16px rgba(240,216,154,.3)" } : lvl === 3 ? { b: "#F0D89A", c: "#F0D89A", glow: "" } : lvl === 2 ? { b: "rgba(240,216,154,.55)", c: "rgba(240,216,154,.85)", glow: "" } : { b: "rgba(240,216,154,.28)", c: "", glow: "" };
     const n = st.hand.length;
+    let _hy = 0, _hs = 0; st.slots.forEach(x => { if (x) (x.owner === "you" ? _hy++ : _hs++); });
+    const heartBehind = _hs > _hy;
     const handCards = st.hand.map((id, i) => {
       const c = C[id];
+      const hUp = c.ab === "heart" && c.lvl >= 2 && heartBehind;
+      const cl = c.l + (hUp ? 1 : 0), cr = c.r + (hUp ? 1 : 0);
       const seld = st.sel === id;
       const dragMe = !!(st.drag && st.drag.id === id);
       const rot = (i - (n - 1) / 2) * 1.1;
       const f = frame(c.lvl);
       const numSty = (pos) => "position:absolute;" + pos + ";font-size:" + (c.lvl >= 4 ? 9 : 11) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)";
       return {
-        name: c.name, ln: c.l, rn: c.r,
+        name: c.name, ln: cl, rn: cr,
         nameOn: c.lvl < 2,
         artStyle: "position:absolute;opacity:.9;" + (c.lvl >= 4 ? "top:8px;left:8px;width:64px;height:78px" : c.lvl >= 3 ? "top:17px;left:8px;width:64px;height:74px" : c.lvl === 2 ? "top:13px;left:14px;width:52px;height:44px" : "top:9px;left:18px;width:44px;height:34px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
         lnStyle: numSty(c.lvl >= 4 ? "top:6px;left:9px" : "top:8px;left:11px"),
         rnStyle: numSty(c.lvl >= 4 ? "bottom:6px;right:9px" : "bottom:8px;right:11px"),
         shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
         cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
-        ability: this._abilityOn(c) && c.lvl === 2 ? c.abText : "",
+        ability: hUp && c.lvl === 2 ? "burning: +1" : (this._abilityOn(c) && c.lvl === 2 ? c.abText : ""),
         onPeek: () => {
           clearTimeout(this._holdT); clearTimeout(this._graceT);
           if (this.state.peek) this.setState({ peek: "h" + id });
@@ -1046,7 +1079,7 @@ class Component extends DCLogic {
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
       turnLine: skyThinking ? "the sky is thinking…" : "",
       deckOn: st.phase === "deck",
-      roadTag: st.road && st.phase !== "deck" ? (st.roadBoss ? "the sky herself · " + ({ storm: "ties are hers tonight", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : "the walkers' road · rung " + (st.roadRung + 1) + " of 5 · " + st.roadWalker) : "",
+      roadTag: st.road && st.phase !== "deck" ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : "the walkers' road · rung " + (st.roadRung + 1) + " of 5 · " + st.roadWalker) : "",
       roadTagC: st.roadBoss ? "#FFB000" : "#9A8A5E",
       deckCount: (st.deckSel || []).length,
       tonightName: this._mName(this._tonight()),
@@ -1119,6 +1152,13 @@ class Component extends DCLogic {
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
       roundTitle: st.road ? (st.roadRung >= 4 ? "the rungs are cleared. the sky herself waits." : (st.roadWalker || "the walker") + " steps aside") : (lastRound === "you" ? "round " + st.round + " is yours" : lastRound === "draw" ? "round " + st.round + " stands even" : "the sky takes round " + st.round),
       nextRoundTap: () => this._exitRound(),
+      ascentOn: !!this.props.matchAscent && !st.road && st.phase === "round" && !st.ascentChosen,
+      ascentNote: (st.phase === "round" && st.ascentChosen && st.ascentNote) || "",
+      ascentBtns: [
+        { label: "trade your weakest for the pool's best", tap: (e) => { e.stopPropagation(); const cs = this._cards(); const five = st.chosen.slice(); let wi = 0; five.forEach((id, k) => { if (cs[id].l + cs[id].r < cs[five[wi]].l + cs[five[wi]].r) wi = k; }); let best = 0, bt = -1; for (let id = 1; id <= 28; id++) { if (five.includes(id)) continue; const t = cs[id].l + cs[id].r; if (t > bt) { bt = t; best = id; } } const note = cs[five[wi]].name.toLowerCase() + " steps out, " + cs[best].name.toLowerCase() + " steps in"; five[wi] = best; this.setState({ chosen: five, deckSel: five, ascentChosen: true, ascentNote: note }); }, style: this._setBtn(false) },
+        { label: "wake a sleeping signature for the match", tap: (e) => { e.stopPropagation(); const cs = this._cards(); const cand = st.chosen.find(id => cs[id].ab && cs[id].lvl < 2); this._C = null; this.setState({ ascentChosen: true, ascentWake: cand || 0, ascentNote: cand ? cs[cand].name.toLowerCase() + "'s move wakes for this match" : "every signature in your five already wakes" }); }, style: this._setBtn(false) },
+        { label: "her brightest planet sits out one board", tap: (e) => { e.stopPropagation(); this.setState({ ascentChosen: true, ascentDrop: true, ascentNote: "her brightest planet sits out the next board" }); }, style: this._setBtn(false) },
+      ],
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       endWonOn: endWon,
       endMark: endWon ? "#FFB000" : "rgba(240,216,154,.5)",
