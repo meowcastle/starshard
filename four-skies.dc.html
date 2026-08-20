@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<title>four skies — Star Shard</title>
+<style>
+html,body{margin:0;padding:0;background:#080502}
+body{font-family:'Cormorant Garamond',serif;color:#D8C89C;-webkit-font-smoothing:antialiased}
+a{color:#F0D89A;text-decoration:none}a:hover{color:#FFB000}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:rgba(240,216,154,.25);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#F0D89A;cursor:pointer;border:none}
+</style>
+</helmet>
+<div style="max-width:470px;margin:0 auto;min-height:100vh;background:radial-gradient(120% 60% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);padding:64px 32px 140px;display:flex;flex-direction:column">
+  <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E">the instrument · one degree, four skies</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1.05;margin:8px 0 0;color:#F2EAD6">four skies</h1>
+  <p style="font-size:15px;line-height:1.75;color:#9A8A5E;margin:12px 0 0">every tradition that watched the moon divided her road differently. pick a degree and read what each sky holds there. where they disagree, the disagreement is shown as fact.</p>
+
+  <div style="margin-top:36px;display:flex;gap:2px;border:1px solid rgba(240,216,154,.2);align-self:flex-start;font-family:'Varela Round',sans-serif">
+    <button onClick="{{ setTrop }}" style="{{ tropStyle }}">tropical</button>
+    <button onClick="{{ setSid }}" style="{{ sidStyle }}">sidereal</button>
+  </div>
+  <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:10px;line-height:1.7">{{ frameNote }}</div>
+
+  <div style="margin-top:40px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;color:#F2EAD6">{{ degLabel }}</div>
+    <div style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;margin-top:4px">{{ lonLabel }}</div>
+  </div>
+  <input type="range" min="0" max="359.75" step="0.25" value="{{ deg }}" onChange="{{ setDeg }}" onInput="{{ setDeg }}" style="margin-top:22px">
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;justify-content:center;font-family:'Varela Round',sans-serif">
+    <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+      <button onClick="{{ c.go }}" style="{{ c.style }}">{{ c.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:14px;margin-top:44px">
+    <div style="border:1px solid rgba(255,176,0,.4);background:rgba(255,176,0,.04);padding:18px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+        <span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#FFB000">al-manāzil · your shard's 28</span>
+        <span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E">{{ mzStep }}</span>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;margin-top:8px">{{ mzName }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#D8C89C;margin-top:5px">{{ mzAr }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:7px">mansion {{ mzN }} of 28 · equal doors of 12°51′26″ · {{ mzIn }}</div>
+    </div>
+    <div style="border:1px solid rgba(240,216,154,.18);padding:18px 20px">
+      <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A">europe · agrippa's mansions, 1533</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#F2EAD6;margin-top:8px">{{ euName }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:7px;line-height:1.7">the same 28 doors, the arabic names worn down by latin transmission. europe copied the geometry and kept little else.</div>
+    </div>
+    <div style="border:1px solid rgba(240,216,154,.18);padding:18px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+        <span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A">nakshatra · the vedic 27</span>
+        <span style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E">pada {{ nkPada }}</span>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#F2EAD6;margin-top:8px">{{ nkName }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#D8C89C;margin-top:5px">{{ nkGloss }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:7px;line-height:1.7">{{ nkNote }}</div>
+    </div>
+    <div style="border:1px solid rgba(240,216,154,.18);padding:18px 20px">
+      <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A">xiu · the chinese 28</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#F2EAD6;margin-top:8px">{{ xName }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#D8C89C;margin-top:5px">from {{ xStar }} · this lodge spans {{ xWidth }}</div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:7px;line-height:1.7">unequal lodges, measured in right ascension from each determinative star; projected here onto the ecliptic, ±1°. nothing about the xiu is asserted beyond the stars.</div>
+      <sc-if value="{{ xInvOn }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#FFB000;margin-top:9px;line-height:1.7">here the wheel breaks: 觜 zī's star now trails 參 shēn's, so a lodge born first comes second. twenty centuries of precession, shown as fact.</div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="height:1px;background:rgba(240,216,154,.16);margin:36px 0 0"></div>
+  <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;padding:16px 0;line-height:1.9">{{ divLine }}</div>
+  <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:rgba(154,138,94,.65);line-height:1.9;margin-top:20px">sources rendered, never harmonised: robson 1923 · volguine 1936 · the sūrya-siddhānta lineage for the 27 · the shi ji lodge lists for the 28. the vedic 27 sometimes deals a 28th, abhijit, between 20 and 21; it is a special-use door and is not drawn here. computed on your device.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:960}}">
+class Component extends DCLogic {
+  // Real chart degrees arrive as query params from v4.dc.html's own link
+  // ("?sun=..&moon=..&mc=..&asc=.."), which only sets mc/asc when the
+  // visitor's birth time is known — same "no fake precision" rule the rest
+  // of the page follows. Absent params (a bookmark, a direct visit) fall
+  // back to the demo person's positions the instrument shipped with.
+  state = { deg: 116.07, frame: "tropical", real: {}, tonightLon: null };
+
+  componentDidMount() {
+    const params = new URLSearchParams(location.search);
+    const real = {};
+    for (const k of ["sun", "moon", "mc", "asc"]) {
+      const v = parseFloat(params.get(k));
+      if (Number.isFinite(v)) real[k] = v;
+    }
+    this.setState({ real, deg: real.sun ?? this.state.deg });
+
+    // Real tonight's Moon, not the Manzil prototype's ephemeris.js — this
+    // page ships without that module, and astro.js is already the site's
+    // one verified Sun/Moon source (CLAUDE.md's "what sky.js is worth").
+    import("./astro.js").then(astro => {
+      const jd = Date.now() / 86400000 + 2440587.5;
+      this.setState({ tonightLon: astro.moonLongitude(jd) });
+    });
+  }
+
+  renderVals() {
+    const AYAN = 24.236; // lahiri, 2026
+    const SIGNS = ["aries","taurus","gemini","cancer","leo","virgo","libra","scorpio","sagittarius","capricorn","aquarius","pisces"];
+    const MZ = [["The Gate","al-sharaṭān, the two signs"],["The Bearer","al-buṭayn, the little belly"],["The Gathered Stars","al-thurayyā, the many small ones"],["The Follower","al-dabarān, the follower"],["The Blaze","al-haqʿa, the white mark"],["The Storm","al-hanʿa, the brand"],["The Return","al-dhirāʿ, the forearm"],["The Ghost","al-nathra, the gap"],["The Glance","al-ṭarf, the lion's glance"],["The Throne","al-jabha, the forehead"],["The Mane","al-zubra, the mane"],["The Turning","al-ṣarfa, the turning of the heat"],["The Hand","al-ʿawwāʾ, the howler"],["The Jewel","al-simāk, the unarmed one"],["The Veil","al-ghafr, the cover"],["The Claws","al-zubānā, the claws"],["The Crown","al-iklīl, the crown"],["The Heart","al-qalb, the heart"],["The Root","al-shawla, the raised sting"],["The Flock","al-naʿāʾim, the ostriches"],["The Empty District","al-balda, the district"],["The Listener","saʿd al-dhābiḥ, luck of the slaughterer"],["The Drum","saʿd bulaʿ, luck of the swallower"],["The Void","saʿd al-suʿūd, luckiest of the lucky"],["The Hideaway","saʿd al-akhbiya, luck of the tents"],["The Chamber","al-fargh al-awwal, the fore spout"],["The Guide","al-fargh al-thānī, the rear spout"],["The Thread","baṭn al-hūt, the belly of the fish"]];
+    const EU = ["Alnath","Allothaim","Achaomazon","Aldebaram","Alchatay","Alhanna","Aldimiach","Alnaza","Algelioche","Algebh","Azobra","Alzarpha","Alhaire","Achureth","Agrapha","Azubene","Alchil","Alchas","Allatha","Abnahaya","Abeda","Sadahacha","Zabadola","Sadabath","Sadalabra","Alpharg","Alcharya","Albotham"];
+    const NK = [["Ashwini","the horsemen"],["Bharani","she who bears"],["Krittika","the cutters"],["Rohini","the red one"],["Mrigashira","the deer's head"],["Ardra","the moist star"],["Punarvasu","the light that returns"],["Pushya","the nourisher"],["Ashlesha","the embrace"],["Magha","the mighty"],["Purva Phalguni","the former reddish one"],["Uttara Phalguni","the latter reddish one"],["Hasta","the hand"],["Chitra","the brilliant"],["Swati","the self-going"],["Vishakha","the forked"],["Anuradha","the following"],["Jyeshtha","the eldest"],["Mula","the root"],["Purva Ashadha","the former invincible"],["Uttara Ashadha","the latter invincible"],["Shravana","the ear"],["Dhanishta","the drum"],["Shatabhisha","the hundred healers"],["Purva Bhadrapada","the former blessed feet"],["Uttara Bhadrapada","the latter blessed feet"],["Revati","the prosperous"]];
+    // xiu determinative stars, approximate ecliptic longitude epoch 2026, ecliptic order
+    const XIU = [["壁 bì, the wall","γ Peg",9.4],["奎 kuí, the astride","ζ And",17.9],["婁 lóu, the bond","β Ari",34.0],["胃 wèi, the stomach","35 Ari",45.9],["昴 mǎo, the pleiades","17 Tau",59.6],["畢 bì, the net","ε Tau",67.9],["參 shēn, the three","δ Ori",82.7],["觜 zī, the beak","λ Ori",84.0],["井 jǐng, the well","μ Gem",95.3],["鬼 guǐ, the ghost","θ Cnc",126.6],["柳 liǔ, the willow","δ Hya",132.8],["星 xīng, the star","α Hya",147.6],["張 zhāng, the bow","υ¹ Hya",152.9],["翼 yì, the wings","α Crt",173.6],["軫 zhěn, the carriage","γ Crv",190.9],["角 jiǎo, the horn","α Vir (spica)",204.1],["亢 kàng, the neck","κ Vir",213.7],["氐 dī, the base","α² Lib",225.3],["房 fáng, the room","π Sco",243.1],["心 xīn, the heart","σ Sco",249.1],["尾 wěi, the tail","μ¹ Sco",254.2],["箕 jī, the winnower","γ² Sgr",271.4],["斗 dǒu, the dipper","φ Sgr",276.7],["牛 niú, the ox","β Cap",304.2],["女 nǚ, the girl","ε Aqr",311.7],["虛 xū, the emptiness","β Aqr",323.6],["危 wēi, the rooftop","α Aqr",333.5],["室 shì, the encampment","α Peg",353.6]];
+    const FLAG = "SPSSSPSSPDSPPSDSSSSSDPPDSPPP"; // per mansion, canon pass
+    const norm = d => ((d % 360) + 360) % 360;
+    const deg = this.state.deg, frame = this.state.frame;
+    const W = 360 / 28;
+    const lonFrame = frame === "sidereal" ? norm(deg - AYAN) : deg;
+    const mzN = Math.floor(lonFrame / W) + 1;
+    const mzIn = lonFrame - (mzN - 1) * W;
+    const step = Math.min(4, Math.floor(mzIn / (W / 4)) + 1);
+    const sid = norm(deg - AYAN);
+    const nkN = Math.floor(sid / (360 / 27)) + 1;
+    const nkIn = sid - (nkN - 1) * (360 / 27);
+    const pada = Math.min(4, Math.floor(nkIn / (360 / 27 / 4)) + 1);
+    let xi = XIU.length - 1;
+    for (let k = 0; k < XIU.length; k++) { if (XIU[k][2] <= deg) xi = k; }
+    if (deg < XIU[0][2]) xi = XIU.length - 1;
+    const xNext = XIU[(xi + 1) % XIU.length][2];
+    const xw = norm(xNext - XIU[xi][2]);
+    const dmt = d => { const dd = Math.floor(d), m = Math.round((d - dd) * 60); return dd + "\u00B0" + String(m).padStart(2, "0") + "\u2032"; };
+    const signDeg = d => dmt(d % 30) + " " + SIGNS[Math.floor(norm(d) / 30)];
+    const mk = (label, v) => ({ label, go: () => this.setState({ deg: v }), style: "background:" + (Math.abs(deg - v) < 0.13 ? "rgba(240,216,154,.12)" : "none") + ";border:1px solid rgba(240,216,154,.3);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:11px;padding:7px 12px;cursor:pointer" });
+    const real = this.state.real || {};
+    const tonightLon = this.state.tonightLon != null ? Math.round(this.state.tonightLon * 4) / 4 : 180;
+    const fl = FLAG[mzN - 1];
+    const divLine = fl === "D"
+      ? "at this degree the four skies split. the arabic, vedic and chinese readings name different figures over the same stars: a divergent mansion, one of four on the wheel. a century of writing smoothed this into one lost system; the instrument leaves it apart."
+      : fl === "P"
+      ? "the four skies lean together here but do not agree: the figures overlap without matching. a partial concordance, said as partial."
+      : "the four skies agree here: different names, one figure over the same stars. concordance this strong holds at roughly a third of the wheel.";
+    const segStyle = on => "background:" + (on ? "rgba(240,216,154,.12)" : "none") + ";border:none;color:" + (on ? "#F0D89A" : "#9A8A5E") + ";font-size:11.5px;padding:9px 18px;cursor:pointer;font-family:'Varela Round',sans-serif";
+    return {
+      deg, degLabel: signDeg(deg), lonLabel: "ecliptic longitude " + dmt(deg) + (frame === "sidereal" ? " tropical \u00B7 read sidereal below" : ""),
+      setDeg: e => this.setState({ deg: parseFloat(e.target.value) }),
+      setTrop: () => this.setState({ frame: "tropical" }), setSid: () => this.setState({ frame: "sidereal" }),
+      tropStyle: segStyle(frame === "tropical"), sidStyle: segStyle(frame === "sidereal"),
+      frameNote: frame === "tropical" ? "the 28 counted from 0\u00B0 aries at the equinox: the frame your shard uses, and the one the latin books used." : "the 28 counted from the stars themselves (lahiri ayanamsa, 24\u00B014\u2032 in 2026): the frame the arabic sources watched. the vedic row always reads sidereal; this switches the 28.",
+      chips: [
+        mk("your sun", real.sun ?? 76.08), mk("your moon", real.moon ?? 116.07),
+        ...(real.mc != null ? [mk("your midheaven", real.mc)] : real.sun == null ? [mk("your midheaven", 125.8)] : []),
+        ...(real.asc != null ? [mk("your rising", real.asc)] : real.sun == null ? [mk("your rising", 208.77)] : []),
+        mk("\u263E tonight", tonightLon),
+      ],
+      mzN, mzName: MZ[mzN - 1][0], mzAr: MZ[mzN - 1][1], mzIn: dmt(mzIn) + " in", mzStep: "step " + step + " of 4",
+      euName: EU[mzN - 1],
+      nkName: NK[nkN - 1][0], nkGloss: NK[nkN - 1][1], nkPada: pada + " of 4",
+      nkNote: "27 equal doors of 13\u00B020\u2032, always sidereal: at this point the two zodiacs stand " + dmt(AYAN) + " apart, so the vedic sky reads " + signDeg(sid) + ".",
+      xName: XIU[xi][0], xStar: XIU[xi][1], xWidth: dmt(xw),
+      xInvOn: xi === 6 || xi === 7,
+      divLine,
+    };
+  }
+}
+</script>
+</body>
+</html>

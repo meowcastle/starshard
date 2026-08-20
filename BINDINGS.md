@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**404 bindings, 352 top-level.**
+**405 bindings, 353 top-level.**
 
 ## Rule
 
@@ -175,6 +175,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `farlightN` | component state |
 | `farlightNextLine` | component state |
 | `farlightText` | component state |
+| `fourSkiesHref` | component state |
 | `frameScaleStyle` | component state |
 | `gameNightOn` | component state |
 | `gamePushed` | component state |
