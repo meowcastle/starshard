@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<script src="doc-page.js"></script>
+<style>
+doc-page:not(:defined){visibility:hidden}
+html,body{margin:0;padding:0}
+body{font-family:'Varela Round',sans-serif;color:#2A2115;-webkit-font-smoothing:antialiased}
+a{color:#8A6A1F;text-decoration:none}a:hover{color:#2A2115}
+.keep{break-inside:avoid}
+</style>
+</helmet>
+<doc-page margin="0.9in">
+  <div slot="header" style="font-size:8.5pt;color:#6B5D40;display:flex;justify-content:space-between;padding:0 0.9in;margin-top:0.35in"><span>manzil · a user's manual</span><span>star shard</span></div>
+  <div slot="footer" style="font-size:8.5pt;color:#6B5D40;text-align:center;margin-bottom:0.35in">the 28 mansions are never skill-gated</div>
+
+  <div style="font-size:10pt;color:#8A6A1F">the sky's card game</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34pt;margin:6pt 0 0;line-height:1.1">manzil</h1>
+  <p style="font-size:12pt;line-height:1.7;color:#6B5D40;margin:10pt 0 0;max-width:5.6in">the moon crosses one of 28 mansions each night. manzil is played on the nine nights ahead of her: how to play, and every kind of night you will meet.</p>
+
+  <div class="keep" style="border:1px solid rgba(42,33,21,.35);padding:14pt 18pt;margin:22pt 0 0">
+    <div style="font-size:9.5pt;color:#8A6A1F;margin-bottom:6pt">the whole game</div>
+    <p style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16.5pt;line-height:1.5;margin:0">you and the sky take turns lodging cards on the nine mansions ahead of her. where cards touch, the bigger number claims the smaller. own most of the nine when the road is full.</p>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0">your hand: the walking five</h2>
+  <p style="font-size:12pt;line-height:1.75;margin:8pt 0 0">five cards chosen from your collection. the five carries night to night and can be changed anytime. a card has two numbers, its two sides: left fights left, right fights right. your ground is parchment, hers is amber.</p>
+  <div class="keep" style="display:flex;align-items:center;gap:22pt;margin:14pt 0 0">
+    <div style="width:96pt;height:128pt;border:1.5pt solid #2A2115;border-radius:6pt;position:relative;background:#F7F0DC;flex-shrink:0">
+      <div style="position:absolute;top:6pt;left:9pt;font-size:14pt">8</div>
+      <div style="position:absolute;bottom:6pt;right:9pt;font-size:14pt">6</div>
+      <div style="position:absolute;top:52pt;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:12.5pt">The Storm</div>
+      <div style="position:absolute;bottom:22pt;left:0;right:0;text-align:center;font-size:7.5pt;color:#6B5D40">claims ties</div>
+    </div>
+    <div style="font-size:11pt;line-height:1.9;color:#6B5D40">top left: the number that fights leftward.<br>bottom right: the number that fights rightward.<br>center: the name, then its move once earned.<br>hold any card, in hand or lodged, to read it in full.</div>
+  </div>
+  <p style="font-size:12pt;line-height:1.75;margin:12pt 0 0">your chart's own cards start truly owned: framed, dated, able to level. every other mansion is a loaner, grey and frameless at level 1, the sky's loan, playable from day one. the throne is two-faced: you choose which number faces which way when you lodge it.</p>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0">her hand</h2>
+  <p style="font-size:12pt;line-height:1.75;margin:8pt 0 0">tonight's five planets, closed: face down until she plays them. her judgment is deterministic and seeded by the date, so her game is the same for everyone tonight and different tomorrow. each planet keeps its signature:</p>
+  <div class="keep" style="font-size:12pt;line-height:2;margin:8pt 0 0;padding-left:16pt">
+    <div><span style="color:#8A6A1F">saturn</span> · its ground is locked: the card is never claimed</div>
+    <div><span style="color:#8A6A1F">mars</span> · its claim strikes onward: a claimed card fights its far neighbor</div>
+    <div><span style="color:#8A6A1F">venus</span> · softens both neighbors' facing numbers by one</div>
+    <div><span style="color:#8A6A1F">mercury</span> · picks its better face</div>
+    <div><span style="color:#8A6A1F">jupiter</span> · counts as two at the count</div>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0">the night's temper</h2>
+  <p style="font-size:12pt;line-height:1.75;margin:8pt 0 0">one planet stands closest each night and flavors how she breaks her even choices. the header prints it in one line, and it is learnable in a single board:</p>
+  <div class="keep" style="font-size:12pt;line-height:2;margin:8pt 0 0;padding-left:16pt">
+    <div><span style="color:#8A6A1F">mars strikes</span> · tied, she picks the biggest fight, lodging beside your strongest numbers</div>
+    <div><span style="color:#8A6A1F">saturn guards</span> · tied, she keeps her ground</div>
+    <div><span style="color:#8A6A1F">venus keeps company</span> · tied, she lodges beside the crowd</div>
+    <div><span style="color:#8A6A1F">mercury roams</span> · tied, she lodges apart</div>
+    <div><span style="color:#8A6A1F">jupiter spends big</span> · she plays her largest, and his mercy is real: jupiter's nights run softer</div>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0">the count</h2>
+  <p style="font-size:12pt;line-height:1.75;margin:8pt 0 0">when the ninth card lodges, count the road. most of nine wins the board. tied counts are hers: the sky keeps what you do not take. <span style="color:#8A6A1F">dominion:</span> a card lodged on its own mansion glows ✦ and counts as two, and the ground keeps that weight whoever claims the card. her planets hold dominion where they truly stand tonight. jupiter counts two everywhere; on his own mansion, three.</p>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0">levels</h2>
+  <p style="font-size:12pt;line-height:1.75;margin:8pt 0 0">cards level by walking the road: wins level fastest, visits count too. a card sheds its labels as you learn it.</p>
+  <div class="keep" style="font-size:12pt;line-height:2;margin:8pt 0 0;padding-left:16pt">
+    <div><span style="color:#8A6A1F">level 1</span> · says everything: numbers, name, move</div>
+    <div><span style="color:#8A6A1F">level 2</span> · drops the name. the signature move wakes</div>
+    <div><span style="color:#8A6A1F">level 3</span> · drops the printed move. one number sharpens</div>
+    <div><span style="color:#8A6A1F">level 4</span> · nearly all art. both numbers sharpened</div>
+  </div>
+  <p style="font-size:12pt;line-height:1.75;margin:10pt 0 0">first signatures, waking at level 2: the storm claims ties · the heart fights +1 while the sky holds more of the road · the blaze's ground stays yours · the throne is two-faced · the jewel cannot be softened · the crown counts two on edge mansions · the hideaway's mansion counts for nobody. all 28 earn a move eventually.</p>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0;break-before:page">the nights</h2>
+  <div class="keep" style="border:1px solid rgba(42,33,21,.25);padding:12pt 16pt;margin:12pt 0 0">
+    <div style="font-size:9.5pt;color:#8A6A1F">a claimed mansion's night</div>
+    <p style="font-size:12pt;line-height:1.75;margin:6pt 0 0">the standard match: best of five boards against the sky, the lead alternating each round. first to three boards takes the night. win, and a game-shard is yours. lose, and nothing is lost. play as many matches as the night holds.</p>
+  </div>
+  <div class="keep" style="border:1px solid rgba(42,33,21,.25);padding:12pt 16pt;margin:10pt 0 0">
+    <div style="font-size:9.5pt;color:#8A6A1F">a first night: the walkers' road</div>
+    <p style="font-size:12pt;line-height:1.75;margin:6pt 0 0">an unclaimed mansion's night is not the sky cold. it is a short ladder: five single boards against other walkers' fives, piloted by her own judgment, ending at the sky herself, decently harder, wearing the mansion's own rule. the storm's night, ties are hers. the veil's night, her cards close again. the thread's night, the road wraps. the void's night, a lone card cannot be claimed.</p>
+    <p style="font-size:12pt;line-height:1.75;margin:8pt 0 0">fall off a rung and the night ends there: the road-shard is given anyway, and the ladder waits where it stood for your next visit. beat her at the top and the mansion is claimed: your name and the date go on the card, its levels unlock, and the ladder never returns. tempers rest on these nights; her rule is the whole lesson.</p>
+  </div>
+  <div class="keep" style="border:1px solid rgba(42,33,21,.25);padding:12pt 16pt;margin:10pt 0 0">
+    <div style="font-size:9.5pt;color:#8A6A1F">shards</div>
+    <p style="font-size:12pt;line-height:1.75;margin:6pt 0 0">two currencies, never mixed. the road-shard comes every night the moon crosses, win or lose: the 28 are never skill-gated. game-shards come only from match wins and buy nothing that affects the collection.</p>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;margin:26pt 0 0">nights to come</h2>
+  <p style="font-size:11pt;line-height:1.7;color:#6B5D40;margin:6pt 0 0">designed and written, not yet dealt in:</p>
+  <div class="keep" style="font-size:12pt;line-height:1.9;margin:8pt 0 0;padding-left:16pt">
+    <div><span style="color:#8A6A1F">the eclipse fortnight</span> · a 14-station board from eclipse to answering lunation, seven cards each, her hand grown by two outers standing true, best of three</div>
+    <div><span style="color:#8A6A1F">the moonstone</span> · call the sky to double a board at the match count. her call and answer rules are printed, so her call is a tell on her closed hand</div>
+    <div><span style="color:#8A6A1F">event cards</span> · real eclipses, lunations on your lights, and never-in-your-life transits mint dated cards with their computed rarity printed. the set never closes</div>
+  </div>
+
+  <p style="font-size:10.5pt;line-height:1.8;color:#6B5D40;margin:26pt 0 0;border-top:1px solid rgba(42,33,21,.2);padding-top:10pt">everything here is computed from the real sky, on your device. nothing is random except the date's seed that breaks her even choices, and that is the same for everyone tonight.</p>
+</doc-page>
+</x-dc>
+</body>
+</html>

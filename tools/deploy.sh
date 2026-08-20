@@ -7,8 +7,9 @@
 # Usage:
 #   tools/deploy.sh frontend   # static site: index.html + all JS modules
 #   tools/deploy.sh mansions   # the 28 mansion permalink pages + OG images
+#   tools/deploy.sh manzil     # the manzil/ prototype (own subdir, tar-over-ssh)
 #   tools/deploy.sh backend    # starshard-api/server.js, restarts the process
-#   tools/deploy.sh all        # all three
+#   tools/deploy.sh all        # all four
 #
 # Does NOT run DB migrations — those touch production data and stay a
 # deliberate, reviewed step (see the ad hoc PHP scripts used in git history).
@@ -58,6 +59,22 @@ deploy_mansions() {
   echo "mansions deployed."
 }
 
+deploy_manzil() {
+  if [ ! -d manzil ]; then
+    echo "no manzil/ directory" >&2
+    exit 1
+  fi
+  # tar-over-ssh, same reason as deploy_mansions: filenames inside manzil/
+  # (the rules sheet, the user's manual) carry spaces/apostrophes/ampersands
+  # that would break FRONTEND_FILES' plain space-separated word-splitting.
+  # Served at staging.starshard.net/manzil/ — its own doc-relative
+  # "../support.js" resolves against $FRONTEND_REMOTE, so deploy_frontend
+  # (which ships support.js there) must have run at least once already.
+  echo "==> manzil/ (game + rules sheet + user's manual)"
+  tar cf - manzil | ssh "$HOST" "mkdir -p $FRONTEND_REMOTE && tar xf - -C $FRONTEND_REMOTE"
+  echo "manzil deployed."
+}
+
 deploy_backend() {
   echo "==> starshard-api/server.js"
   ssh "$HOST" "cat > $BACKEND_REMOTE/server.js" < starshard-api/server.js
@@ -77,7 +94,8 @@ deploy_backend() {
 case "${1:-}" in
   frontend) deploy_frontend ;;
   mansions) deploy_mansions ;;
+  manzil) deploy_manzil ;;
   backend) deploy_backend ;;
-  all) deploy_frontend; deploy_mansions; deploy_backend ;;
-  *) echo "usage: $0 {frontend|mansions|backend|all}" >&2; exit 1 ;;
+  all) deploy_frontend; deploy_mansions; deploy_manzil; deploy_backend ;;
+  *) echo "usage: $0 {frontend|mansions|manzil|backend|all}" >&2; exit 1 ;;
 esac
