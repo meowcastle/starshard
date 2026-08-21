@@ -87,7 +87,6 @@
         <span style="{{ p.style }}"></span>
       </sc-for>
     </span>
-    <span style="display:flex;align-items:baseline;gap:9px"><span style="font-size:18px;color:#F0D89A">{{ youN }}</span><span style="font-size:10px;color:rgba(154,138,94,.55)">·</span><span style="font-size:18px;color:#FFB000">{{ skyN }}</span></span>
     <button onClick="{{ rulesTap }}" style="background:none;border:1px solid rgba(240,216,154,.3);color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11px;width:26px;height:26px;border-radius:50%;cursor:pointer">?</button>
   </div>
 
@@ -138,10 +137,25 @@
           <sc-if value="{{ s.nameOn }}" hint-placeholder-val="{{ true }}">
             <div style="position:absolute;top:52px;left:0;right:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:10.5px;color:#F2EAD6;text-align:center;line-height:1.1;padding:0 16px">{{ s.cname }}</div>
           </sc-if>
+          <sc-if value="{{ s.homeOn }}" hint-placeholder-val="{{ false }}">
+            <span style="{{ s.homeStyle }}">✦</span>
+          </sc-if>
           <div style="position:absolute;bottom:5px;left:0;right:0;font-size:7.5px;color:{{ s.tagColor }};text-align:center">{{ s.tag }}</div>
         </sc-if>
         <sc-if value="{{ s.veilOn }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;inset:5px;border-radius:4px;background:rgba(255,176,0,.05);border:1px solid rgba(255,176,0,.18);display:flex;align-items:center;justify-content:center;color:rgba(255,176,0,.4);font-size:12px">✦</div>
+        </sc-if>
+      </div>
+      <div style="display:flex;justify-content:center">
+        <sc-if value="{{ s.groundOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:3px;width:52px;margin-top:7px">
+            <sc-for list="{{ s.groundMarks }}" as="g" hint-placeholder-count="1">
+              <span style="{{ g.style }}"></span>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ s.groundBareOn }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ s.groundBare }}"></div>
         </sc-if>
       </div>
       </div>
@@ -160,14 +174,16 @@
   <div style="position:absolute;top:262px;left:0;right:0;text-align:center;min-height:18px;font-size:12px;color:#D8C89C">{{ logLine }}</div>
 
   <sc-if value="{{ peekOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-width:620px;background:rgba(9,6,2,.95);border:1px solid rgba(240,216,154,.22);border-radius:8px;padding:11px 20px 13px;z-index:6;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.65);animation:mzHandIn .18s ease both">
-      <div style="display:flex;align-items:baseline;gap:8px;justify-content:center;margin-bottom:2px">
-        <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:14px;color:{{ peekTitleC }}">{{ peekTitle }}</span>
-        <span style="font-size:9px;color:#9A8A5E">{{ peekWho }}</span>
+    <div style="{{ peekStyle }}">
+      <div style="background:rgba(10,7,3,.94);border:1px solid rgba(240,216,154,.18);border-radius:8px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.55)">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;line-height:1.15;color:{{ peekTitleC }}">{{ peekTitle }}</span>
+          <span style="font-size:9.5px;color:#9A8A5E">{{ peekWho }}</span>
+        </div>
+        <sc-for list="{{ peekLines }}" as="p" hint-placeholder-count="2">
+          <div style="font-size:11px;line-height:1.6;color:#D8C89C;text-align:left;text-wrap:pretty;margin-top:8px">{{ p.t }}</div>
+        </sc-for>
       </div>
-      <sc-for list="{{ peekLines }}" as="p" hint-placeholder-count="2">
-        <div style="font-size:10.5px;line-height:1.55;color:#D8C89C;text-align:center;white-space:nowrap">{{ p.t }}</div>
-      </sc-for>
     </div>
   </sc-if>
 
@@ -330,9 +346,9 @@
     </div>
   </sc-if>
   <sc-if value="{{ faceOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;background:rgba(4,3,2,.72);backdrop-filter:blur(3px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;z-index:5;animation:mzFadeUp .2s ease both">
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;color:#F2EAD6">the throne is two-faced. which number faces which way?</div>
-      <div style="display:flex;gap:14px;margin-top:6px">
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(4,3,2,0) 0 46%, rgba(4,3,2,.55) 60%, rgba(4,3,2,.93) 74%, rgba(4,3,2,.97) 100%);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;padding-bottom:26px;z-index:5;animation:mzFadeUp .2s ease both">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#F2EAD6">the throne is two-faced. which number faces which way?</div>
+      <div style="display:flex;gap:14px;margin-top:2px">
         <button onClick="{{ faceSeat }}" style="background:rgba(240,216,154,.08);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 26px;cursor:pointer;line-height:1.7">the seat<br><span style="font-size:15px;color:#F2EAD6">6 | 9</span></button>
         <button onClick="{{ faceSerpent }}" style="background:rgba(240,216,154,.08);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 26px;cursor:pointer;line-height:1.7">the serpent<br><span style="font-size:15px;color:#F2EAD6">9 | 6</span></button>
       </div>
@@ -542,13 +558,13 @@ class Component extends DCLogic {
     const pool = [["The Gate", 6, 5], ["The Bearer", 6, 4], ["The Gathered Stars", 7, 6], ["The Follower", 7, 7], ["The Blaze", 5, 6], ["The Storm", 8, 5], ["The Return", 7, 6], ["The Ghost", 6, 6], ["The Glance", 4, 6], ["The Throne", 6, 9], ["The Mane", 6, 5], ["The Turning", 7, 5], ["The Hand", 7, 4], ["The Jewel", 7, 7], ["The Veil", 8, 2], ["The Claws", 6, 6], ["The Crown", 6, 6], ["The Heart", 7, 7], ["The Root", 7, 6], ["The Flock", 6, 6], ["The Empty District", 2, 8], ["The Listener", 7, 4], ["The Drum", 4, 7], ["The Void", 9, 2], ["The Hideaway", 5, 6], ["The Chamber", 7, 5], ["The Guide", 6, 5], ["The Thread", 5, 6]];
     // signature pass, decided 19 aug 2026: heart + blaze reworked live, jewel + crown coded (wake at L2)
     const ABS = {
-      5: { ab: "blaze", abText: "ground stays yours" },
+      5: { ab: "blaze", abText: "keeps its ground" },
       6: { ab: "storm", abText: "cannot be tied" },
-      10: { ab: "throne", abText: "two-faced", twoFaced: true },
+      10: { ab: "throne", abText: "chooses its faces", twoFaced: true },
       14: { ab: "jewel", abText: "cannot be softened" },
-      25: { ab: "hideaway", abText: "mansion is silent" },
-      17: { ab: "crown", abText: "two on edges" },
-      18: { ab: "heart", abText: "+1 while behind" },
+      25: { ab: "hideaway", abText: "silences its mansion" },
+      17: { ab: "crown", abText: "counts two on edges" },
+      18: { ab: "heart", abText: "fights +1 behind" },
     };
     const owned = {
       5: { lvl: 2, ...ABS[5] },
@@ -574,8 +590,8 @@ class Component extends DCLogic {
     const PH = (window.ManzilEphem && ManzilEphem.mansionOf)
       ? { saturn: ManzilEphem.mansionOf("saturn"), mars: ManzilEphem.mansionOf("mars"), venus: ManzilEphem.mansionOf("venus"), mercury: ManzilEphem.mansionOf("mercury"), jupiter: ManzilEphem.mansionOf("jupiter") }
       : { saturn: 26, mars: 14, venus: 22, mercury: 8, jupiter: 2 };
-    C[101] = { name: "Saturn", l: 9, r: 5, who: "sky", ab: "saturn", abText: "its ground is locked", homeM: PH.saturn };
-    C[102] = { name: "Mars", l: 8, r: 6, who: "sky", ab: "mars", abText: "its claim strikes onward", homeM: PH.mars };
+    C[101] = { name: "Saturn", l: 9, r: 5, who: "sky", ab: "saturn", abText: "locks its ground", homeM: PH.saturn };
+    C[102] = { name: "Mars", l: 8, r: 6, who: "sky", ab: "mars", abText: "strikes onward", homeM: PH.mars };
     C[103] = { name: "Venus", l: 4, r: 7, who: "sky", ab: "venus", abText: "softens both neighbors", homeM: PH.venus };
     C[104] = { name: "Mercury", l: 6, r: 5, who: "sky", ab: "mercury", abText: "picks its better face", homeM: PH.mercury };
     C[105] = { name: "Jupiter", l: 7, r: 8, who: "sky", ab: "jupiter", abText: "counts as two", homeM: PH.jupiter };
@@ -622,7 +638,7 @@ class Component extends DCLogic {
     else if (c.ab && (c.who === "sky" || this._abilityOn(c))) {
       const t = {
         blaze: "its ground stays yours. the mansion the blaze lodges on counts as yours to the end, whoever holds the card.",
-        storm: "the storm cannot be tied. against its faces, equal numbers do nothing: bigger or nothing.",
+        storm: "the storm cannot be tied. equal numbers do nothing against it: bigger or nothing. its own attacks tie like any card.",
         throne: "two-faced. the throne chose which number faces which way as it lodged.",
         heart: "fights +1 while behind. both its numbers rise by one while the sky holds more of the road.",
         jewel: "cannot be softened. venus and every softening move pass over the hard light.",
@@ -641,6 +657,22 @@ class Component extends DCLogic {
     let who = c.who === "sky" ? (c.walker ? "a walker's" : "the sky's") : s && !you ? "claimed by the sky" : "";
     if (c.who === "you") who += (who ? " · " : "") + (c.loan ? "the sky's loan" : "level " + c.lvl);
     return { title: c.name.toLowerCase(), who, color: you ? "#F0D89A" : "#FFB000", lines: lines.map(t => ({ t })) };
+  }
+  _peekStyle(k, st) {
+    const W = 232, base = "position:absolute;width:" + W + "px;z-index:6;pointer-events:none;animation:mzHandIn .2s ease both;";
+    if (k == null) return base + "left:-999px;top:0";
+    k = String(k);
+    const cl = (x) => Math.max(14, Math.min(932 - W - 14, x));
+    if (k[0] === "s") {
+      const i = +k.slice(1), L = st.slots.length;
+      const total = L * 86 + (L - 1) * 5, edge = 466 - total / 2;
+      const cx = edge + i * 91 + 43, cy = 132 + Math.pow(i - 4, 2) * 4;
+      const right = i <= (L - 1) / 2;
+      return base + "left:" + cl(right ? cx + 52 : cx - 52 - W) + "px;top:" + Math.min(cy + 4, 300) + "px";
+    }
+    const idx = st.hand.indexOf(+k.slice(1)), n = st.hand.length;
+    const cx = 466 - n * 40 + (idx < 0 ? 0 : idx) * 80 + 40;
+    return base + "left:" + cl(cx - W / 2) + "px;bottom:136px";
   }
   _abilityOn(c) { return c.ab && c.lvl >= 2; }
   _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 28: "thread", 24: "void" })[this._tonight()] || null; }
@@ -695,7 +727,7 @@ class Component extends DCLogic {
     const C = this._cards(), aC = C[a.id], tC = C[t.id];
     if (this._bossRule() === "storm") { av = Math.max(1, av - 1); tv = Math.max(1, tv - 1); } // storm weather: all faces fight at -1
     // base rule (adopted 20 aug 2026): ties flip. storm's new signature: ties against its faces don't exist
-    const stormFace = (aC.ab === "storm" && aC.lvl >= 2) || (tC.ab === "storm" && tC.lvl >= 2);
+    const stormFace = tC.ab === "storm" && tC.lvl >= 2; // defensive only (20 aug, post-Addendum-5 fix): its own attacks tie normally
     const tie = av === tv && !stormFace;
     const wins = av > tv || tie;
     if (!wins) return false;
@@ -764,6 +796,16 @@ class Component extends DCLogic {
       if ((s.ground || s.owner) === "you") you += w; else sky += w;
     });
     return [you, sky];
+  }
+  _station(slots, i) {
+    const s = slots[i]; if (!s) return { who: null, w: 0 };
+    const C = this._cards(), jm = this.props.jupiterMode || "always";
+    if (C[s.id].ab === "hideaway" && C[s.id].lvl >= 2) return { who: null, w: 0, silent: true };
+    const home = this._isHome(s.id, i);
+    let j = 0;
+    if (C[s.id].ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
+    const crown = C[s.id].ab === "crown" && C[s.id].lvl >= 2 && (i === 0 || i === slots.length - 1) ? 1 : 0;
+    return { who: (s.ground || s.owner), w: 1 + j + (home ? 1 : 0) + crown };
   }
   _boardWinner(slots) {
     const [you, sky] = this._counts(slots);
@@ -936,6 +978,7 @@ class Component extends DCLogic {
     const st = this.state;
     const C = this._cards();
     const [youN, skyN] = this._counts(st.slots);
+
     const mw = st.roundWins.filter(x => x === "you").length;
     const ms = st.roundWins.filter(x => x === "sky").length;
     const matchPips = st.road ? Array.from({ length: 6 }, (_, i) => {
@@ -961,19 +1004,26 @@ class Component extends DCLogic {
       const numBase = (side) => "position:absolute;" + side + ":" + (lv >= 4 ? 4 : 5) + "px;top:50%;transform:translateY(-50%);font-size:" + (lv >= 4 ? 9 : 11) + "px;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95);color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + (st.duelI === i && st.duelSide === (side === "left" ? "l" : "r") ? ";animation:mzNumPulse .45s ease both" : "");
       const home = s && this._isHome(s.id, i);
       return {
-        wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 4).toFixed(1) + "px) rotate(" + ((i - 4) * 2.4).toFixed(1) + "deg);transform-origin:center top",
+        wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top",
         idx: i,
         num: String(20 + i),
         mname: this._mansions()[i],
         emptyOn: empty, cardOn: !empty && !veiled, veilOn: veiled,
-        cname: s ? (home ? "✦ " + C[s.id].name : C[s.id].name) : "",
-        nameOn: !!s && lv < 2,
+        cname: s ? C[s.id].name.toLowerCase() : "",
+        nameOn: !!s && lv < 2, homeOn: !!home,
+        homeStyle: "position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1;color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + ";text-shadow:0 0 7px " + (s && s.owner === "sky" ? "rgba(255,176,0,.85)" : "rgba(240,216,154,.85)"),
         artStyle: "position:absolute;opacity:.9;" + (lv >= 4 ? "top:9px;left:9px;width:68px;height:86px" : lv >= 3 ? "top:17px;left:9px;width:68px;height:78px" : lv >= 2 ? "top:17px;left:14px;width:58px;height:54px" : "top:7px;left:19px;width:48px;height:40px") + (s ? ";animation:mzEmblemBreathe " + (6.5 + (s.id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(s.id % 7)) + "s infinite" : ""),
         shapes: s && window.ManzilArt ? window.ManzilArt.get(s.id >= 200 ? s.id - 200 : s.id) : [],
         emptyShapes: !s && window.ManzilArt ? window.ManzilArt.get(this._boardM(i)) : [],
         l: s ? s.l + (this._heartUp(st.slots, s) ? 1 : 0) : "", r: s ? s.r + (this._heartUp(st.slots, s) ? 1 : 0) : "",
         lStyle: s ? numBase("left") : "", rStyle: s ? numBase("right") : "",
         tag, tagColor,
+        ...((g) => ({
+          groundOn: g.w > 0,
+          groundBareOn: g.w === 0,
+          groundBare: "height:3px;border-radius:1.5px;margin-top:7px;" + (g.silent ? "width:44px;background:repeating-linear-gradient(90deg,rgba(154,138,94,.55) 0 3px,transparent 3px 6px)" : "width:44px;background:rgba(240,216,154,.16)"),
+          groundMarks: Array.from({ length: g.w }, () => ({ style: "height:3px;border-radius:1.5px;flex:1;background:" + (g.who === "you" ? "#F0D89A" : "#FFB000") + ";box-shadow:0 0 8px " + (g.who === "you" ? "rgba(240,216,154,.65)" : "rgba(255,176,0,.65)") })),
+        }))(this._station(st.slots, i)),
         onPeek: () => {
           if (!this.state.slots[i]) return;
           clearTimeout(this._holdT); clearTimeout(this._graceT);
@@ -993,7 +1043,7 @@ class Component extends DCLogic {
         },
         style: "width:86px;height:112px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .3s ease;" +
           (empty
-            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.5)" : "transparent") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".16" : selOn ? ".09" : ".035") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "")
+            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.5)" : selOn ? "rgba(240,216,154,.2)" : "rgba(240,216,154,.09)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".16" : selOn ? ".09" : ".035") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "")
             : "border:1.5px solid " + (s.owner === "you" ? "#F0D89A" : "#FFB000") + ";background:linear-gradient(160deg," + (s.owner === "you" ? "#241B08" : "#2A1A02") + ",#0B0703);box-shadow:0 4px 12px rgba(0,0,0,.55)" + (home ? ", 0 0 14px rgba(240,216,154,.5)" : "") +
               (i === st.dropIdx ? ";animation:mzDrop .34s cubic-bezier(.22,1,.36,1) both" : i === st.flipIdx ? ";animation:mzFlip3d .5s cubic-bezier(.22,1,.36,1) both" : (roundWinner && s.owner === roundWinner ? ";animation:mzWinGlow 1.1s ease-in-out infinite" : ""))),
       };
@@ -1031,7 +1081,7 @@ class Component extends DCLogic {
       const f = frame(c.lvl);
       const numSty = (pos) => "position:absolute;" + pos + ";font-size:" + (c.lvl >= 4 ? 9 : 11) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)";
       return {
-        name: c.name, ln: cl, rn: cr,
+        name: c.name.toLowerCase(), ln: cl, rn: cr,
         nameOn: c.lvl < 2,
         artStyle: "position:absolute;opacity:.9;" + (c.lvl >= 4 ? "top:8px;left:8px;width:64px;height:78px" : c.lvl >= 3 ? "top:17px;left:8px;width:64px;height:74px" : c.lvl === 2 ? "top:13px;left:14px;width:52px;height:44px" : "top:9px;left:18px;width:44px;height:34px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
         lnStyle: numSty(c.lvl >= 4 ? "top:6px;left:9px" : "top:8px;left:11px"),
@@ -1073,18 +1123,19 @@ class Component extends DCLogic {
         };
       }),
       youN, skyN, matchPips, slots, skyCards, handCards,
-      ...((p => ({ peekOn: !!p, peekTitle: p ? p.title : "", peekWho: p ? p.who : "", peekTitleC: p ? p.color : "#F0D89A", peekLines: p ? p.lines : [] }))(st.peek != null && st.phase === "play" ? this._peekFor(st.peek) : null)),
+      countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
+      ...((p => ({ peekOn: !!p, peekTitle: p ? p.title : "", peekWho: p ? p.who : "", peekTitleC: p ? p.color : "#F0D89A", peekLines: p ? p.lines : [], peekStyle: this._peekStyle(st.peek, st) }))(st.peek != null && st.phase === "play" ? this._peekFor(st.peek) : null)),
       logLine: st.log,
       castOn: !!st.castFx,
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
       turnLine: skyThinking ? "the sky is thinking…" : "",
       deckOn: st.phase === "deck",
-      roadTag: st.road && st.phase !== "deck" ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : "the walkers' road · rung " + (st.roadRung + 1) + " of 5 · " + st.roadWalker) : "",
+      roadTag: st.road && st.phase !== "deck" ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : "rung " + (st.roadRung + 1) + " of 5 · " + st.roadWalker) : "",
       roadTagC: st.roadBoss ? "#FFB000" : "#9A8A5E",
       deckCount: (st.deckSel || []).length,
       tonightName: this._mName(this._tonight()),
       temperLine: st.road || st.phase === "deck" ? "" : ({ mars: "mars stands closest: the sky picks the biggest fight", saturn: "saturn stands closest: the sky guards", venus: "venus stands closest: the sky keeps company", mercury: "mercury stands closest: the sky roams", jupiter: "jupiter stands closest: the sky spends big" })[this._temper()],
-      introL: C[this._tonight()].l, introR: C[this._tonight()].r, introName: C[this._tonight()].name,
+      introL: C[this._tonight()].l, introR: C[this._tonight()].r, introName: C[this._tonight()].name.toLowerCase(),
       introShapes: (window.ManzilArt ? window.ManzilArt.get(this._tonight()) : []),
       deckCards: (st.pool || []).map(id => {
         const tonight = this._tonight();

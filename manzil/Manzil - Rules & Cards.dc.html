@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="../support.js"></script>
+<script>window.addEventListener("load",function(){if(customElements.get("x-dc"))return;var t=new URL(location.href).searchParams.get("t");if(!t)return;var s=document.createElement("script");s.src="./support.js?t="+encodeURIComponent(t);document.head.appendChild(s);});</script>
 </head>
 <body>
 <x-dc>
@@ -45,7 +46,7 @@
       <div style="font-size:12px;color:#9A8A5E">the table</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0">nine mansions, two colors</h2>
       <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;display:flex;flex-direction:column;gap:12px">
-        <p style="margin:0">the board is the road ahead of her: her next nine nights (she crosses one mansion a night; the board never claims otherwise). your ground is parchment; the sky's is amber. a card's two numbers are its two sides: left fights left, right fights right; claims flip the loser's color. no cascades: one comparison, once.</p>
+        <p style="margin:0">the board is the road ahead of her: her next nine nights (she crosses one mansion a night; the board never claims otherwise). your ground is parchment; the sky's is amber. a card's two numbers are its two sides: left fights left, right fights right; claims flip the loser's color. one comparison, once, with one exception: a card taken by a tie strikes on.</p>
         <p style="margin:0">her hand is closed: tonight's real planets, face down until played. she is deterministic, greedy arithmetic that reads your best reply before she commits, so the same night deals the same duel for everyone.</p>
       </div>
     </div>
@@ -98,8 +99,17 @@
   <div style="font-size:12px;color:#9A8A5E">first nights</div>
   <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">the walkers' road</h2>
   <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;max-width:660px;display:flex;flex-direction:column;gap:12px">
-    <p style="margin:0">an unclaimed mansion's night is not the sky cold. it is a short ladder: <strong style="color:#FFFDF5">five single boards against other walkers' fives</strong>, piloted by her own judgment, then the sky herself, decently harder, wearing the mansion's own rule. the storm's night, ties are hers everywhere. the veil's night, her cards close again. the thread's night, the road wraps. the void's night, a lone card cannot be claimed.</p>
+    <p style="margin:0">an unclaimed mansion's night is not the sky cold. it is a short ladder: <strong style="color:#FFFDF5">five single boards against other walkers' fives</strong>, piloted by her own judgment, then the sky herself, decently harder, wearing the mansion's own rule. the storm's night is storm weather: every face on the board fights at −1, never below one. the veil's night, her cards close again. the thread's night, the road wraps. the void's night, a lone card cannot be claimed.</p>
     <p style="margin:0">fall off a rung and the night ends there: <strong style="color:#FFFDF5">the road-shard is given anyway</strong>, and the ladder waits where it stood for your next visit. beat her at the top and the mansion is claimed. the ladder is lifetime-per-mansion, an introduction, never a toll. claimed nights are the standard best-of-five.</p>
+  </div>
+
+  <div style="height:64px"></div>
+  <div style="font-size:12px;color:#9A8A5E">claimed nights · in the prototype, off by default</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">the match as an ascent</h2>
+  <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;max-width:660px;display:flex;flex-direction:column;gap:12px">
+    <p style="margin:0">a best of five that opens rather than repeats. the first board is small: <strong style="color:#FFFDF5">three planets on a road of seven</strong>. by board three she holds all five and the road is nine. her hand fills weakest planets first, so the slow sky arrives last and the match gets heavier as it goes.</p>
+    <p style="margin:0">between boards you take <strong style="color:#FFFDF5">one choice, one tap</strong>: trade your weakest card for the best in the pool · wake a sleeping signature for the rest of the match · her brightest planet sits out the next board. the choice is auto-targeted, so it costs a beat, not a menu.</p>
+    <p style="margin:0;font-size:12px;color:#9A8A5E">claimed nights only: the walkers' road runs its own shape. no outer planet is ever dealt on board five, and the ascent never touches the road-shard.</p>
   </div>
 
   <div style="height:64px"></div>
@@ -127,7 +137,7 @@ class Component extends DCLogic {
       ["The Gathered Stars", "counts as two at the count"],
       ["The Follower", "copies its left neighbor's facing number"],
       ["The Blaze", "its mansion counts as yours, whoever holds the card", 1],
-      ["The Storm", "cannot be tied: equal numbers do nothing against its faces", 1],
+      ["The Storm", "cannot be tied: equal numbers do nothing against it; its own attacks tie normally", 1],
       ["The Return", "returns to your hand once when claimed"],
       ["The Ghost", "her cards beside it fight at −1"],
       ["The Glance", "reveals one closed card of hers when lodged"],
