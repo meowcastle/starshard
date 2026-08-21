@@ -77,6 +77,21 @@ export async function resetPassword(token, password) {
   return call('/api/auth/reset-password', { method: 'POST', body: { token, password } });
 }
 
+/** Everything the account owns — the "keep a copy of my data" export.
+ * Throws (unlike me()) — this is a confirmed user request for their own
+ * data, so a failure needs to surface, not disappear as an empty page. */
+export async function exportData() {
+  return call('/api/me/export');
+}
+
+/** Irreversible. Throws (like addRecollection, unlike logout) — a
+ * silent failure here would tell the user their account is gone when the
+ * server never deleted it. Requires the current password; the caller is
+ * responsible for collecting it. */
+export async function deleteAccount(password) {
+  return call('/api/me', { method: 'DELETE', body: { password } });
+}
+
 // --- saved window layout ---------------------------------------------------
 
 /** Resolves to the saved layout object, or null. Never throws. */
@@ -191,6 +206,11 @@ export function forgotPasswordError(code) {
 
 export function resetPasswordError(code) {
   return AUTH_COPY[code] || 'could not reset your password, try again ♡';
+}
+
+export function deleteAccountError(code) {
+  if (code === 'invalid_credentials') return 'that password isn\'t right ♡';
+  return AUTH_COPY[code] || 'could not delete your account, try again ♡';
 }
 
 export function guestbookError(code) {

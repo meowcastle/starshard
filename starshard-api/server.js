@@ -31,14 +31,24 @@ if (!ADMIN_TOKEN) {
   console.warn('ADMIN_TOKEN is not set. Guestbook moderation endpoints are disabled.');
 }
 
-const pool = mysql.createPool({
-  socketPath: process.env.DB_SOCKET,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 5,
-});
+// Production connects over the NAS's unix socket (DB_SOCKET); local dev
+// against a plain TCP mysqld (Docker, Homebrew, etc.) has no such socket, so
+// DB_HOST/DB_PORT is a real alternative, not a hypothetical one — used to
+// stand up and test this file's new /api/me/export and DELETE /api/me
+// against a real MySQL 8 container, cascade deletes included.
+const pool = mysql.createPool(
+  process.env.DB_HOST
+    ? {
+        host: process.env.DB_HOST, port: Number(process.env.DB_PORT) || 3306,
+        user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME,
+        waitForConnections: true, connectionLimit: 5,
+      }
+    : {
+        socketPath: process.env.DB_SOCKET,
+        user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME,
+        waitForConnections: true, connectionLimit: 5,
+      }
+);
 
 if (IS_PROD && !process.env.ALLOWED_ORIGINS) {
   console.error('ALLOWED_ORIGINS is not set in production. Refusing to start.');
@@ -156,6 +166,13 @@ const resetPasswordLimiter = rateLimit({
 const guestbookPostLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
+const deleteAccountLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
@@ -324,6 +341,64 @@ app.get('/api/me', wrap(async (req, res) => {
   const user = rows[0];
   if (!user || user.token_version !== payload.tv) return res.status(401).json({ error: 'not_authenticated' });
   res.json({ email: user.email });
+}));
+
+// Everything this account owns, for the user to keep — W6's "no data
+// export" gap. One query per table rather than a join: the tables don't
+// share a natural join key (window_state/deck/sigil are 1:1 on user_id,
+// recollection is 1:many), and this endpoint runs once in a while for one
+// user, not on a hot path, so four small queries over one wide join is the
+// simpler and more honest shape here.
+app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
+  const [[user], [state], [deckRow], [sigilRow], recollection] = await Promise.all([
+    pool.execute('SELECT email, created_at FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
+    pool.execute('SELECT state_json FROM window_state WHERE user_id = ?', [req.userId]).then(([r]) => r),
+    pool.execute('SELECT deck_json FROM deck WHERE user_id = ?', [req.userId]).then(([r]) => r),
+    pool.execute('SELECT sigil_json FROM sigil WHERE user_id = ?', [req.userId]).then(([r]) => r),
+    pool.execute(
+      'SELECT station, step, cast_context_json, kindled_at FROM recollection WHERE user_id = ? ORDER BY kindled_at',
+      [req.userId]
+    ).then(([r]) => r),
+  ]);
+  const parseOr = (json, fallback) => { try { return JSON.parse(json); } catch (e) { return fallback; } };
+
+  res.setHeader('Content-Disposition', 'attachment; filename="star-shard-data.json"');
+  res.json({
+    email: user.email,
+    accountCreatedAt: user.created_at,
+    windowState: state ? parseOr(state.state_json, null) : null,
+    deck: deckRow ? parseOr(deckRow.deck_json, null) : null,
+    sigil: sigilRow ? parseOr(sigilRow.sigil_json, null) : null,
+    recollection: recollection.map(r => ({
+      station: r.station, step: r.step,
+      castContext: parseOr(r.cast_context_json, {}),
+      kindledAt: r.kindled_at,
+    })),
+  });
+}));
+
+// Deletes the account and everything FK-cascaded from it (window_state,
+// deck, sigil, recollection, password_resets — schema.sql's ON DELETE
+// CASCADE on every one) — W6's "no account deletion" gap. Requires the
+// current password in the body, not just the session cookie: deletion is
+// the one action here with no undo, and a valid session alone (forgeable
+// via XSS/CSRF in a way a freshly-typed password isn't) shouldn't be
+// enough to trigger it — same reasoning reset-password already applies to
+// bumping token_version.
+app.delete('/api/me', deleteAccountLimiter, requireAuth, wrap(async (req, res) => {
+  const { password } = req.body || {};
+  if (typeof password !== 'string') return res.status(400).json({ error: 'invalid_input' });
+
+  const [rows] = await pool.execute('SELECT password_hash FROM users WHERE id = ?', [req.userId]);
+  const user = rows[0];
+  if (!user) return res.status(401).json({ error: 'not_authenticated' });
+
+  const ok = await bcrypt.compare(password, user.password_hash);
+  if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
+
+  await pool.execute('DELETE FROM users WHERE id = ?', [req.userId]);
+  res.clearCookie(COOKIE_NAME, { path: '/' });
+  res.status(204).end();
 }));
 
 app.get('/api/state', requireAuth, wrap(async (req, res) => {
