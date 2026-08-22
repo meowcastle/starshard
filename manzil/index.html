@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="../support.js"></script>
+<script>window.__mzRetry=function(f,p){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src=(p||"./")+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js","../");if(!window.ManzilArt)window.__mzRetry("manzil-art.js");if(!window.ManzilEphem)window.__mzRetry("ephemeris.js")};</script>
+<script src="../support.js" onerror="__mzRetry('support.js')"></script>
+<script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
 </head>
 <body>
 <x-dc>
@@ -68,11 +70,14 @@
 <div style="height:100vh;display:flex;justify-content:center;align-items:center;background:#040302">
 <div style="{{ frameScaleStyle }}">
 <div data-screen-label="manzil" data-mzstage="1" style="width:932px;height:430px;position:relative;overflow:hidden;background:radial-gradient(55% 45% at 74% 16%, rgba(240,216,154,.05), transparent 62%), radial-gradient(70% 40% at 50% 0%, rgba(64,104,210,.13), transparent 68%), radial-gradient(48% 42% at 12% 72%, rgba(96,74,186,.14), transparent 65%), radial-gradient(40% 36% at 88% 62%, rgba(52,128,168,.12), transparent 65%), radial-gradient(36% 30% at 34% 10%, rgba(186,84,110,.09), transparent 65%), radial-gradient(30% 26% at 62% 92%, rgba(70,170,120,.07), transparent 65%), linear-gradient(115deg, transparent 40%, rgba(240,216,154,.05) 52%, transparent 64%), radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%)">
-  <div style="position:absolute;inset:0;pointer-events:none">
+  <div style="{{ elevAirStyle }}"></div>
+  <div style="{{ starDimStyle }}">
     <sc-for list="{{ stars }}" as="s" hint-placeholder-count="8">
       <span style="{{ s.style }}"></span>
     </sc-for>
   </div>
+  <div style="{{ elevGroundStyle }}"></div>
+  <div style="{{ elevRimStyle }}"></div>
   <div style="{{ breatheStyle }}"></div>
 
   <div style="position:absolute;top:12px;left:20px;display:flex;align-items:baseline;gap:10px">
@@ -220,35 +225,72 @@
   </div>
 
   <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}">
-    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;justify-content:center;align-items:center;gap:76px;z-index:8;animation:mzFadeUp .35s ease both">
-      <div style="display:flex;flex-direction:column;align-items:flex-start">
-        <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:mzFadeUp .6s ease .05s both">the covered well</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:56px;line-height:1;color:#F2EAD6;margin-top:6px;animation:mzFadeUp .6s ease .14s both">manzil</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:12px;animation:mzFadeUp .6s ease .24s both">a card game against the sky</div>
-        <button onClick="{{ menuPlayTap }}" style="margin-top:28px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .38s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">{{ menuPlayLabel }}</button>
-        <div style="display:flex;gap:10px;margin-top:16px;animation:mzFadeUp .6s ease .5s both">
-          <button onClick="{{ menuDeckTap }}" style="background:none;border:1px solid rgba(240,216,154,.3);color:#D8C89C;font-family:'Varela Round',sans-serif;font-size:11.5px;padding:9px 16px;cursor:pointer;transition:border-color .3s ease, color .3s ease" style-hover="border-color:rgba(240,216,154,.65);color:#F0D89A">your five · {{ deckCount }} of 5</button>
-          <button onClick="{{ rulesTap }}" style="background:none;border:1px solid rgba(240,216,154,.3);color:#D8C89C;font-family:'Varela Round',sans-serif;font-size:11.5px;padding:9px 16px;cursor:pointer;transition:border-color .3s ease, color .3s ease" style-hover="border-color:rgba(240,216,154,.65);color:#F0D89A">how to play</button>
-          <button onClick="{{ menuSetTap }}" style="background:none;border:1px solid rgba(240,216,154,.3);color:#D8C89C;font-family:'Varela Round',sans-serif;font-size:11.5px;padding:9px 16px;cursor:pointer;transition:border-color .3s ease, color .3s ease" style-hover="border-color:rgba(240,216,154,.65);color:#F0D89A">the table</button>
-        </div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:rgba(154,138,94,.75);margin-top:30px;animation:mzFadeUp .6s ease .64s both">{{ menuFooter }}</div>
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);overflow:hidden;z-index:8;animation:mzFadeUp .35s ease both">
+      <div style="{{ elevAirStyle }}"></div>
+      <div style="{{ starDimStyle }}">
+        <sc-for list="{{ stars }}" as="s" hint-placeholder-count="8">
+          <span style="{{ s.style }}"></span>
+        </sc-for>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:13px;max-width:250px;animation:mzFadeUp .7s ease .45s both">
+      <div style="{{ elevGroundStyle }}"></div>
+      <div style="{{ elevRimStyle }}"></div>
+
+      <div style="position:absolute;left:64px;top:76px;display:flex;flex-direction:column;align-items:flex-start">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:58px;line-height:1;color:#F2EAD6;animation:mzFadeUp .6s ease .06s both">manzil</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:11px;animation:mzFadeUp .6s ease .18s both">a card game against the sky</div>
+        <button onClick="{{ menuPlayTap }}" style="margin-top:26px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .32s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">{{ menuPlayLabel }}</button>
+        <div style="display:flex;gap:22px;margin-top:20px;animation:mzFadeUp .6s ease .46s both">
+          <button onClick="{{ rulesTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">how to play</button>
+          <button onClick="{{ menuSetTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the table</button>
+        </div>
+      </div>
+
+      <div style="position:absolute;right:80px;top:54px;width:240px;display:flex;flex-direction:column;align-items:center;gap:12px;animation:mzFadeUp .7s ease .42s both">
         <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22);animation:mzCardDrift 9s ease-in-out infinite">
           <div style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
-          <svg viewBox="0 0 100 100" style="position:absolute;top:14px;left:27px;width:50px;height:40px;opacity:.9">
+          <svg viewBox="0 0 100 100" style="position:absolute;top:16px;left:27px;width:50px;height:44px;opacity:.9">
             <sc-for list="{{ introShapes }}" as="p" hint-placeholder-count="2">
               <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
             </sc-for>
           </svg>
           <div style="position:absolute;top:10px;left:13px;font-size:15px;color:#F0D89A">{{ introL }}</div>
           <div style="position:absolute;bottom:10px;right:13px;font-size:15px;color:#F0D89A">{{ introR }}</div>
-          <div style="position:absolute;top:56px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#F2EAD6;padding:0 8px;line-height:1.1">{{ introName }}</div>
-          <div style="position:absolute;top:80px;left:0;right:0;text-align:center;font-size:8.5px;color:#9A8A5E">tonight's mansion</div>
+          <div style="position:absolute;top:74px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#F2EAD6;padding:0 8px;line-height:1.1">{{ introName }}</div>
         </div>
         <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#FFB000">{{ menuNight }}</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.8;color:#9A8A5E;text-align:center">{{ menuSub }}</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.7;color:#9A8A5E;text-align:center">{{ temperLine }}</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.75;color:#9A8A5E;text-align:center;text-wrap:pretty">{{ menuLine }}</div>
+      </div>
+
+      <div style="position:absolute;left:0;right:0;bottom:22px;display:flex;flex-direction:column;align-items:center;gap:9px;animation:mzFadeUp .7s ease .56s both">
+        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:rgba(154,138,94,.85)">{{ fiveLabel }}</div>
+        <div style="display:flex;gap:10px">
+          <sc-for list="{{ fiveCards }}" as="c" hint-placeholder-count="5">
+            <div onClick="{{ c.onTap }}" style="{{ c.style }}" style-hover="transform:translateY(-7px)">
+              <sc-if value="{{ c.on }}" hint-placeholder-val="{{ true }}">
+                <div style="position:absolute;inset:4px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
+                <svg viewBox="0 0 100 100" style="{{ c.artStyle }}">
+                  <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
+                    <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+                  </sc-for>
+                </svg>
+                <div style="{{ c.lnStyle }}">{{ c.ln }}</div>
+                <div style="{{ c.rnStyle }}">{{ c.rn }}</div>
+                <sc-if value="{{ c.nameOn }}" hint-placeholder-val="{{ true }}">
+                  <div style="position:absolute;top:60%;left:0;right:0;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:11px;color:#F2EAD6;text-align:center;line-height:1.05;padding:0 6px">{{ c.name }}</div>
+                </sc-if>
+                <sc-if value="{{ c.cornersOn }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute;top:-1px;left:-1px;width:6px;height:6px;border-top:1.5px solid {{ c.frameC }};border-left:1.5px solid {{ c.frameC }};border-radius:6px 0 0 0"></span>
+                  <span style="position:absolute;top:-1px;right:-1px;width:6px;height:6px;border-top:1.5px solid {{ c.frameC }};border-right:1.5px solid {{ c.frameC }};border-radius:0 6px 0 0"></span>
+                  <span style="position:absolute;bottom:-1px;left:-1px;width:6px;height:6px;border-bottom:1.5px solid {{ c.frameC }};border-left:1.5px solid {{ c.frameC }};border-radius:0 0 0 6px"></span>
+                  <span style="position:absolute;bottom:-1px;right:-1px;width:6px;height:6px;border-bottom:1.5px solid {{ c.frameC }};border-right:1.5px solid {{ c.frameC }};border-radius:0 0 6px 0"></span>
+                </sc-if>
+                <sc-if value="{{ c.innerOn }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute;inset:3px;border-radius:5px;border:1px solid rgba(240,216,154,.22);pointer-events:none"></span>
+                </sc-if>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
       </div>
     </div>
   </sc-if>
@@ -262,6 +304,13 @@
           <button onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</button>
         </sc-for>
       </div>
+      <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:32px">the set · which mansions you carry. all 28 hands you the whole slate at level 2, every signature awake, to read the cards and the deal</div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <sc-for list="{{ setBtns }}" as="b" hint-placeholder-count="2">
+          <button onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</button>
+        </sc-for>
+      </div>
+
       <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:32px">card faces · preview every owned card at a level</div>
       <div style="display:flex;gap:10px;margin-top:12px">
         <sc-for list="{{ faceBtns }}" as="b" hint-placeholder-count="5">
@@ -277,8 +326,8 @@
   <sc-if value="{{ deckOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;z-index:4;animation:mzFadeUp .3s ease both">
       <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ the well</button>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your five, <span style="color:#F0D89A">{{ deckCount }}</span> of 5</div>
-      <div style="font-size:10px;color:#9A8A5E">face-down cards are still on the road. win their mansion's night to turn them.</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your pack, <span style="color:#F0D89A">{{ deckCount }}</span> of 12</div>
+      <div style="font-size:10px;color:#9A8A5E">five are dealt from your pack at the start of every board, face up. face-down cards are still on the road: win their mansion's night to turn them.</div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:660px;margin-top:2px">
         <sc-for list="{{ deckCards }}" as="c" hint-placeholder-count="28">
           <div onClick="{{ c.onTap }}" style="{{ c.style }}" style-hover="transform:translateY(-3px)">
@@ -338,10 +387,11 @@
       <div style="max-width:540px;padding:0 40px;font-size:12.5px;line-height:2;color:#D8C89C">
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6;margin-bottom:10px">the whole game</div>
         <span style="color:#FFFDF5">take turns lodging cards on the nine mansions ahead of her. where cards touch, the bigger number claims the smaller. own most of the nine when the road is full. first to three boards takes the mansion.</span><br>
-        a card's two numbers are its two sides: left fights left, right fights right. your ground is parchment; the sky's is amber. her hand is closed: tonight's planets, veiled until she plays them. the lead alternates each round.<br>
-        <span style="color:#9A8A5E">levels wear away the labels: a new card says everything, level 2 drops the name, level 3 drops the move, level 4 is nearly all art. hold any card to read it in full. the throne is two-faced; choose on lodge.</span><br>
+        a card's two numbers are its two sides: left fights left, right fights right. your ground is parchment; the sky's is amber. her hand is open: tonight's planets, five lights you can tell apart. the lead alternates each round.<br>
+        <span style="color:#9A8A5E">a card's numbers never change: it fights the same on its first night as its hundredth. levels wake its signature at 2, then wear away the labels: a new card says everything, level 2 drops the name, level 3 drops the move, level 4 is nearly all art. hold any card to read it in full. the throne is two-faced; choose on lodge.</span><br>
         <span style="color:#FFFDF5">dominion:</span> a card lodged on its own mansion glows and counts as two at the count. the ground keeps it, whoever claims the card. her planets hold dominion where they truly stand tonight.<br>
-        <span style="color:#FFFDF5">first nights:</span> an unclaimed mansion's night is the walkers' road: five single boards against other walkers' fives, then the sky herself, wearing the mansion's own rule. fall off and the ladder waits where you left it. claimed mansions go straight to her table.
+        <span style="color:#FFFDF5">first nights:</span> an unclaimed mansion's night is the walkers' road: eight single boards against other walkers' hands, each reading deeper than the last, then the sky herself at the top, best of five, wearing the mansion's own rule. fall off and the ladder waits where you left it. the climb is the ground rising into space.
+        <span style="color:#FFFDF5">after the claim:</span> the mansion is yours and its nights go back to the walkers, best of five. the sky herself returns only when the moon crosses one of your chart's own mansions, and then she stays for a whole match.
       </div>
     </div>
   </sc-if>
@@ -405,7 +455,7 @@
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = real moon tonight; 1-28 forces a mansion&quot;},&quot;forceLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = true levels; 1-4 previews every owned card at that level&quot;},&quot;forceTemper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto (real sky)&quot;,&quot;mars&quot;,&quot;saturn&quot;,&quot;venus&quot;,&quot;mercury&quot;,&quot;jupiter&quot;],&quot;default&quot;:&quot;auto (real sky)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;the night's temper: her bias on rated-equal moves (jupiter also carries the simmed w=30 mercy). auto = the planet most exact to tonight's moon. rests on road nights&quot;},&quot;roadShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a road&quot;,&quot;wrapped: edges touch&quot;,&quot;contiguous: lodge beside the lodged&quot;],&quot;default&quot;:&quot;a road&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;board geometry: the locked open road, thread's wrap (slots 1 and 9 fight each other), or placement restricted to slots touching a lodged card (first lodge free)&quot;},&quot;matchAscent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;handoff §5 prompt: her hand grows 3 to 5 across the match on a road that grows with it, one choice offered between boards. untested; road nights unaffected. the outer on board five is not dealt&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;you&quot;,&quot;the sky&quot;,&quot;a draw&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;you&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a level board count. relocked 20 aug 2026 to you (the flip-density pass)&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;dealGuarantee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;tonight's mansion is always in the five dealt from your pack (handoff §3, open call)&quot;},&quot;ownAll&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;own all 28 at level 2: every signature awake, for reading the whole slate&quot;},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = real moon tonight; 1-28 forces a mansion&quot;},&quot;forceLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = true levels; 1-4 previews every owned card at that level&quot;},&quot;forceTemper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto (real sky)&quot;,&quot;mars&quot;,&quot;saturn&quot;,&quot;venus&quot;,&quot;mercury&quot;,&quot;jupiter&quot;],&quot;default&quot;:&quot;auto (real sky)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;the night's temper: her bias on rated-equal moves (jupiter also carries the simmed w=30 mercy). auto = the planet most exact to tonight's moon. rests on road nights&quot;},&quot;roadShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a road&quot;,&quot;wrapped: edges touch&quot;,&quot;contiguous: lodge beside the lodged&quot;],&quot;default&quot;:&quot;a road&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;board geometry: the locked open road, thread's wrap (slots 1 and 9 fight each other), or placement restricted to slots touching a lodged card (first lodge free)&quot;},&quot;matchAscent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;handoff §5 prompt: her hand grows 3 to 5 across the match on a road that grows with it, one choice offered between boards. untested; road nights unaffected. the outer on board five is not dealt&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;you&quot;,&quot;the sky&quot;,&quot;a draw&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;you&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a level board count. relocked 20 aug 2026 to you (the flip-density pass)&quot;}}">
 class Component extends DCLogic {
   constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
   componentDidMount() {
@@ -486,8 +536,8 @@ class Component extends DCLogic {
   _afterDeal() { clearTimeout(this._dealT); this._dealT = setTimeout(() => this.setState({ dealt: true }), 1100); }
   _advanceRound() {
     const st = this.state;
-    if (st.road) {
-      const k = Math.min(this._rungs()[this._tonight()] || 0, 5);
+    if (st.road && !st.roadBoss) {
+      const k = Math.min(this._rungs()[this._tonight()] || 0, 8);
       this._clearSeq();
       const step = this._freshRoadStep(k, st.chosen);
       this.setState({ ...step, roundExit: false });
@@ -498,7 +548,9 @@ class Component extends DCLogic {
     const r = st.round + 1;
     const nextLeader = st.leader === "you" ? "sky" : "you";
     this._clearSeq();
-    this.setState({ ...this._freshRound(r, nextLeader, st.chosen, true), round: r, roundWins: st.roundWins, phase: "play" });
+    const fr = this._freshRound(r, nextLeader, st.chosen, !st.nightWalker && !st.road);
+    if (st.nightWalker) fr.sky = this._walkerFor(this._tonight()).hand.slice();
+    this.setState({ ...fr, round: r, roundWins: st.roundWins, phase: "play" });
     this._afterDeal();
     if (nextLeader === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
   }
@@ -516,28 +568,45 @@ class Component extends DCLogic {
       const five = this.state.deckSel;
       const t = this._tonight();
       if (this._cards()[t].loan) {
-        const k = Math.min(this._rungs()[t] || 0, 5);
+        const k = Math.min(this._rungs()[t] || 0, 8);
         const step = this._freshRoadStep(k, five);
         this.setState({ ...this._deckState(), ...step, deckSel: five });
         this._afterDeal();
         if (step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
       } else {
-        this.setState({ ...this._deckState(), ...this._freshMatch(five), deckSel: five });
+        const step = this._freshNightMatch(five);
+        this.setState({ ...this._deckState(), ...step, deckSel: five });
         this._afterDeal();
+        if (step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
       }
     }, 340);
   }
   _deckState() {
-    let five = [6, 10, 17, 18, 5];
-    try { const s = JSON.parse(localStorage.getItem("manzil-walking-five")); if (Array.isArray(s) && s.length === 5 && s.every(x => x >= 1 && x <= 28)) five = s; } catch (e) {}
+    // the pack: up to twelve you carry, dealt five a board (handoff §3, 22 aug 2026)
+    let five = null;
+    try { const s = JSON.parse(localStorage.getItem("manzil-walking-twelve")); if (Array.isArray(s) && s.length >= 5 && s.every(x => x >= 1 && x <= 28)) five = s; } catch (e) {}
+    if (!five) try { const s = JSON.parse(localStorage.getItem("manzil-walking-five")); if (Array.isArray(s) && s.length >= 5 && s.every(x => x >= 1 && x <= 28)) five = s; } catch (e) {}
+    if (!five) five = [6, 10, 17, 18, 5];
     const C0 = this._cards();
     five = five.filter(id => C0[id] && !C0[id].loan);
     const ownedIds = Object.keys(C0).map(Number).filter(id => id <= 28 && !C0[id].loan);
-    ownedIds.forEach(id => { if (five.length < 5 && !five.includes(id)) five.push(id); });
-    return { phase: "menu", pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "" };
+    ownedIds.forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
+    five = five.slice(0, 12);
+    return { phase: "menu", pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "" };
   }
   _freshMatch(hand) { return { ...this._freshRound(1, "you", hand, true), round: 1, roundWins: [], phase: "play", chosen: hand.slice() }; }
-  _freshRound(round, leader, hand, asc) {
+  // five dealt from the pack at the start of every board, face up: randomness before the board, in the open
+  _deal(pack, round) {
+    if (!pack || pack.length <= 5) return (pack || []).slice();
+    let h = this._nightSeed(700 + round);
+    const rnd = () => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return h / 4294967296; };
+    const bag = pack.slice(), out = [], t = this._tonight();
+    if (this.props.dealGuarantee !== false && bag.includes(t)) out.push(bag.splice(bag.indexOf(t), 1)[0]); // tonight's mansion walks with you
+    while (out.length < 5 && bag.length) out.push(bag.splice(Math.floor(rnd() * bag.length), 1)[0]);
+    return out;
+  }
+  _freshRound(round, leader, pack, asc) {
+    const hand = this._deal(pack, round);
     let sky = [101, 102, 103, 104, 105], len = 9;
     if (asc && this.props.matchAscent) { // the ascent: three planets on a short road, her full five by board three
       let n = Math.min(5, 2 + round);
@@ -545,45 +614,67 @@ class Component extends DCLogic {
       sky = [104, 103, 102, 105, 101].slice(0, n); // weakest first: her game deepens
       len = Math.min(9, n * 2 + (leader === "you" ? 1 : 0));
     }
-    return { slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, log: "" };
+    const Cg = this._cards();
+    if (leader === "sky" && hand.some(id => Cg[id] && Cg[id].ab === "gate" && this._on(Cg[id]))) leader = "you"; // the gate lodges before her lead
+    return { retUsed: false, handUsed: false, guideUsed: false, glanceOn: false, pick: null, slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, log: "" };
   }
   _cards() {
     const fl = Math.max(0, Math.min(4, (this._opts().level != null ? this._opts().level : (this.props.forceLevel || 0))));
     const wake = (this.state && this.state.ascentWake) || 0;
-    const ck = fl + ":" + wake;
+    const all = this._opts().ownAll != null ? this._opts().ownAll : !!this.props.ownAll;
+    const ck = fl + ":" + wake + ":" + (all ? 1 : 0);
     if (this._C && this._Cfl === ck) return this._C;
     this._Cfl = ck;
     // canon epithets (research/mansion-names.md); values derived from research/mansions-table.json:
     // total = star prominence, side-gap = match flag (STRONG balanced · PARTIAL leaning · DIVERGENT spread: 10/15/21/24)
     const pool = [["The Gate", 6, 5], ["The Bearer", 6, 4], ["The Gathered Stars", 7, 6], ["The Follower", 7, 7], ["The Blaze", 5, 6], ["The Storm", 8, 5], ["The Return", 7, 6], ["The Ghost", 6, 6], ["The Glance", 4, 6], ["The Throne", 6, 9], ["The Mane", 6, 5], ["The Turning", 7, 5], ["The Hand", 7, 4], ["The Jewel", 7, 7], ["The Veil", 8, 2], ["The Claws", 6, 6], ["The Crown", 6, 6], ["The Heart", 7, 7], ["The Root", 7, 6], ["The Flock", 6, 6], ["The Empty District", 2, 8], ["The Listener", 7, 4], ["The Drum", 4, 7], ["The Void", 9, 2], ["The Hideaway", 5, 6], ["The Chamber", 7, 5], ["The Guide", 6, 5], ["The Thread", 5, 6]];
-    // signature pass, decided 19 aug 2026: heart + blaze reworked live, jewel + crown coded (wake at L2)
+    // the full slate, 22 aug 2026: all 28 live. three reworks cleared (storm at home, district off the -1,
+    // thread off the wrap) and two cards rewritten a third time (heart -8.8, hideaway 0.0 as shipped).
     const ABS = {
-      5: { ab: "blaze", abText: "keeps its ground" },
-      6: { ab: "storm", abText: "cannot be tied" },
+      1:  { ab: "gate", abText: "lodges first, once" },
+      2:  { ab: "bearer", abText: "your neighbors +1" },
+      3:  { ab: "gathered", abText: "counts as two" },
+      4:  { ab: "follower", abText: "copies the left" },
+      5:  { ab: "blaze", abText: "keeps its ground" },
+      6:  { ab: "storm", abText: "no ties at home" },
+      7:  { ab: "return", abText: "comes back once" },
+      8:  { ab: "ghost", abText: "her neighbors −1" },
+      9:  { ab: "glance", abText: "her next fights −1" },
       10: { ab: "throne", abText: "chooses its faces", twoFaced: true },
+      11: { ab: "mane", abText: "+1 between two" },
+      12: { ab: "turning", abText: "turns a neighbor" },
+      13: { ab: "hand", abText: "may move once" },
       14: { ab: "jewel", abText: "cannot be softened" },
-      25: { ab: "hideaway", abText: "silences its mansion" },
+      15: { ab: "veil", abText: "safe as it lands" },
+      16: { ab: "claws", abText: "its claimer −1" },
       17: { ab: "crown", abText: "counts two on edges" },
-      18: { ab: "heart", abText: "fights +1 behind" },
+      18: { ab: "heart", abText: "nothing of yours dims" },
+      19: { ab: "root", abText: "+1 as your first" },
+      20: { ab: "flock", abText: "+1 to yours on claim" },
+      21: { ab: "district", abText: "counts two alone" },
+      22: { ab: "listener", abText: "strikes what lands" },
+      23: { ab: "drum", abText: "its claim strikes on" },
+      24: { ab: "void", abText: "safe while alone" },
+      25: { ab: "hideaway", abText: "silences a neighbor" },
+      26: { ab: "chamber", abText: "safe landings beside" },
+      27: { ab: "guide", abText: "may trade grounds" },
+      28: { ab: "thread", abText: "holds both ends" },
     };
-    const owned = {
-      5: { lvl: 2, ...ABS[5] },
-      6: { lvl: 3, ...ABS[6] },
-      10: { lvl: 2, ...ABS[10] },
-      17: { lvl: 1, ...ABS[17] },
-      18: { lvl: 2, ...ABS[18] },
-    };
+    const owned = {};
+    [5, 6, 10, 17, 18].forEach(id => { owned[id] = { lvl: 2, ...ABS[id] }; }); // your chart's five ship awake
+    if (all) for (let i2 = 1; i2 <= 28; i2++) if (!owned[i2]) owned[i2] = { lvl: 2, ...ABS[i2] };
     let claims = {};
     try { claims = JSON.parse(localStorage.getItem("starshard-claims")) || {}; } catch (e) {}
     Object.keys(claims).forEach(k => { const id = parseInt(k); if (id >= 1 && id <= 28 && !owned[id]) owned[id] = { lvl: 1, won: claims[k], ...(ABS[id] || {}) }; });
     const C = {};
     pool.forEach((p, idx) => {
       const id = idx + 1, o = owned[id];
+      // the re-baseline (22 aug 2026): every card carries what used to be its L3 numbers, from night one.
+      // levelling no longer touches numbers at all: L2 wakes the signature, L3 and L4 are the familiarity law.
       let l = p[1], r = p[2];
+      if (l <= r) l = Math.min(9, l + 1); else r = Math.min(9, r + 1);
       let lvl = o ? o.lvl : 1;
       if (fl && o) lvl = fl;
-      if (lvl >= 3) { if (l <= r) l = Math.min(9, l + 1); else r = Math.min(9, r + 1); }
-      if (lvl >= 4) { l = Math.min(9, l + 1); r = Math.min(9, r + 1); }
       C[id] = { name: p[0], l, r, who: "you", lvl, loan: !o, ab: (o && o.ab) || null, abText: (o && o.abText) || "", twoFaced: !!(o && o.twoFaced), won: o && o.won };
     });
     // her planets hold dominion where they truly stand tonight (real ephemeris; fixed fallback)
@@ -596,7 +687,7 @@ class Component extends DCLogic {
     C[104] = { name: "Mercury", l: 6, r: 5, who: "sky", ab: "mercury", abText: "picks its better face", homeM: PH.mercury };
     C[105] = { name: "Jupiter", l: 7, r: 8, who: "sky", ab: "jupiter", abText: "counts as two", homeM: PH.jupiter };
     // walkers' fives: other players' hands at loaner grade, piloted by her judgment (ids 200+mansion)
-    pool.forEach((p, idx) => { const id = idx + 1; C[200 + id] = { name: p[0], l: p[1], r: p[2], who: "sky", lvl: 1, loan: false, ab: null, abText: "", twoFaced: false, walker: true, homeM: id }; });
+    pool.forEach((p, idx) => { const id = idx + 1; C[200 + id] = { name: p[0], l: C[id].l, r: C[id].r, who: "sky", lvl: 1, loan: false, ab: null, abText: "", twoFaced: false, walker: true, homeM: id }; });
     // her cards wear L3 quiet by default; a whole set at L4 turns the whole game L4
     if (wake && C[wake] && C[wake].lvl < 2) C[wake] = { ...C[wake], lvl: 2 }; // ascent: one signature woken for the match
     let allL4 = fl === 4;
@@ -637,13 +728,34 @@ class Component extends DCLogic {
     if (!s && c.twoFaced && this._abilityOn(c)) lines.push("two-faced. you choose which number faces which way when it lodges.");
     else if (c.ab && (c.who === "sky" || this._abilityOn(c))) {
       const t = {
+        gate: "it lodges before her lead. once a board, when the sky leads, the gate takes the first turn.",
+        bearer: "your neighbors gain +1. both cards it stands beside fight one higher while it stands.",
+        gathered: "counts as two at the count, wherever it stands.",
+        follower: "it copies the number on its left. the face it turns leftward matches whatever stands there.",
         blaze: "its ground stays yours. the mansion the blaze lodges on counts as yours to the end, whoever holds the card.",
-        storm: "the storm cannot be tied. equal numbers do nothing against it: bigger or nothing. its own attacks tie like any card.",
+        storm: "the storm cannot be tied on its own mansion. equal numbers do nothing there: bigger or nothing.",
+        return: "it comes home once. the first time the sky claims it, it returns to your hand instead.",
+        ghost: "her cards beside it fight at −1 while the road is less than half full. the ghost fades as the night fills.",
+        glance: "her next card fights at −1. the glance sees the blow coming.",
         throne: "two-faced. the throne chose which number faces which way as it lodged.",
-        heart: "fights +1 while behind. both its numbers rise by one while the sky holds more of the road.",
+        mane: "+1 while it stands between two cards. a filled pocket lifts both its faces.",
+        turning: "it turns a neighbor. as it lodges, her card beside it swaps its numbers, the strong side facing away.",
+        hand: "it may move once. tap it on your turn to lift it off the road and lodge it again.",
         jewel: "cannot be softened. venus and every softening move pass over the hard light.",
-        hideaway: "counts for nobody. the mansion it lodges on is silent at the count, whoever holds the card.",
+        veil: "safe as it lands. her answer to the veil comes a turn late.",
+        claws: "its claimer bleeds. whatever claims the claws fights at −1 from then on.",
         crown: "counts two on edges. the crown wears dominion at either end of the road.",
+        heart: "while the heart stands, none of your cards can be softened. venus and every dimming move pass over them.",
+        root: "+1 as your first lodge. the card that opens your road fights one higher all board.",
+        flock: "when the flock claims, your cards beside it gain +1 for the rest of the board.",
+        district: "counts two while nothing of yours touches it. the empty quarter is worth double, alone.",
+        listener: "it strikes what lands beside it. when she lodges next to the listener, the listener fights first.",
+        drum: "its claim strikes onward. a card the drum claims fights its far neighbor in turn.",
+        void: "safe while it stands alone. with only its attacker beside it, it cannot be claimed.",
+        hideaway: "it closes the loudest mansion beside it: that mansion counts for nobody at the count.",
+        chamber: "landings beside it are safe. your cards that lodge next to the chamber survive their first turn.",
+        guide: "it may trade grounds. tap the guide, then another of your cards, and the two change mansions.",
+        thread: "it holds both ends of the road. the first and last mansions count for whoever holds the thread.",
         saturn: "saturn's ground is locked. it cannot be claimed, and holds this mansion to the end.",
         mars: "its claim strikes onward. a card mars claims fights its far neighbor in turn.",
         venus: "venus softened both neighbors' facing numbers by 1 as she lodged.",
@@ -680,18 +792,58 @@ class Component extends DCLogic {
     { name: "imra", hand: [201, 202, 208, 211, 227] },
     { name: "sef", hand: [203, 207, 212, 219, 222] },
     { name: "odel", hand: [204, 214, 213, 226, 216] },
+    { name: "tesh", hand: [205, 209, 217, 223, 225] },
+    { name: "ruen", hand: [202, 210, 216, 220, 228] },
     { name: "brann", hand: [206, 215, 218, 210, 220] },
+    { name: "mave", hand: [201, 213, 219, 224, 226] },
     { name: "the quiet one", hand: [206, 215, 218, 221, 224] },
   ]; }
+  _walkerFor(t) { const w = this._walkers(); return w[t % w.length]; }
+  _specialNight(t) { return [5, 6, 10, 17, 18].indexOf(t) >= 0; }
+  _replyW() {
+    const st = this.state;
+    if (!st) return 8;
+    if (st.road) return st.roadBoss ? 14 : [3, 4, 5, 6, 7, 8, 9, 11][Math.min(st.roadRung || 0, 7)];
+    if (st.nightSky) return 12;
+    if (st.nightWalker) return 10;
+    return 8;
+  }
   _rungs() { try { return JSON.parse(localStorage.getItem("manzil-road-rungs")) || {}; } catch (e) { return {}; } }
   _saveRung(m, k) { try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-road-rungs", JSON.stringify(r)); } catch (e) {} }
+  _elev() {
+    const st = this.state;
+    if (!st) return 8;
+    if (st.road) return st.roadBoss ? 8 : Math.min(st.roadRung || 0, 7);
+    if (st.phase === "menu" || st.phase === "deck" || st.phase === "set" || st.phase === "intro") {
+      const t = this._tonight();
+      return this._cards()[t].loan ? Math.min(this._rungs()[t] || 0, 8) : 8;
+    }
+    return 8;
+  }
+  _elevSpec() {
+    const e = this._elev();
+    return {
+      e,
+      air: [1, .88, .74, .6, .47, .35, .24, .12, 0][e],
+      gh: [98, 86, 74, 63, 52, 42, 32, 20, 0][e],
+      go: [1, .92, .84, .74, .64, .54, .42, .24, 0][e],
+      sd: [.12, .22, .33, .43, .54, .65, .76, .88, 1][e],
+      name: ["the ground", "the low air", "the dusk", "the cloud line", "the high air", "the cold air", "the thin air", "the edge of the air", "the sky herself"][e],
+    };
+  }
   _freshRoadStep(k, hand) {
-    const boss = k >= 5;
+    const boss = k >= 8;
     const w = boss ? null : this._walkers()[k];
     const leader = boss ? "sky" : (k % 2 === 0 ? "you" : "sky");
     return { ...this._freshRound(1, leader, hand), phase: "play", chosen: hand.slice(), round: 1, roundWins: [],
       sky: boss ? [101, 102, 103, 104, 105] : w.hand.slice(),
-      road: true, roadRung: boss ? 5 : k, roadBoss: boss, roadWalker: boss ? "" : w.name };
+      road: true, roadRung: boss ? 8 : k, roadBoss: boss, roadWalker: boss ? "" : w.name, nightSky: false, nightWalker: "" };
+  }
+  _freshNightMatch(hand) {
+    const t = this._tonight();
+    if (this._specialNight(t)) return { ...this._freshRound(1, "sky", hand, true), round: 1, roundWins: [], phase: "play", chosen: hand.slice(), road: false, roadBoss: false, roadWalker: "", nightSky: true, nightWalker: "" };
+    const w = this._walkerFor(t);
+    return { ...this._freshRound(1, "you", hand), round: 1, roundWins: [], phase: "play", chosen: hand.slice(), sky: w.hand.slice(), road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: w.name };
   }
   _opts() { if (!this._opt) { try { this._opt = JSON.parse(localStorage.getItem("manzil-settings")) || {}; } catch (e) { this._opt = {}; } } return this._opt; }
   _setOpt(k, v) { this._opt = { ...this._opts(), [k]: v }; try { localStorage.setItem("manzil-settings", JSON.stringify(this._opt)); } catch (e) {} this._C = null; this.forceUpdate(); }
@@ -708,48 +860,89 @@ class Component extends DCLogic {
     if (slots.every(x => !x)) return true;
     return [this._nb(i, -1), this._nb(i, 1)].some(k => k >= 0 && slots[k]);
   }
-  _heartUp(slots, s) {
-    if (!s || s.owner !== "you") return false;
+  _on(c) { return !!c && !!c.ab && (c.who === "sky" || (c.lvl >= 2 && !c.loan)); }
+  _hasAwake(slots, ab, own) {
+    const C = this._cards();
+    return slots.some(s => s && s.owner === own && C[s.id].ab === ab && this._on(C[s.id]));
+  }
+  _noSoften(slots, i) {
+    const s = slots[i]; if (!s || s.owner !== "you") return false;
     const c = this._cards()[s.id];
-    if (c.ab !== "heart" || c.lvl < 2) return false;
-    let you = 0, sky = 0;
-    slots.forEach(x => { if (x) (x.owner === "you" ? you++ : sky++); });
-    return sky > you;
+    if (c.ab === "jewel" && this._on(c)) return true;          // the hard light
+    return this._hasAwake(slots, "heart", "you");               // while the heart stands, none of yours dim
+  }
+  // every face modifier in the slate, resolved live: the one place a number is read
+  _faceOf(slots, i, dir) {
+    const s = slots[i]; if (!s) return 0;
+    const C = this._cards(), c = C[s.id];
+    let v = dir === 1 ? s.r : s.l;
+    if (c.ab === "follower" && this._on(c) && dir === -1) { const k = this._nb(i, -1); if (k >= 0 && slots[k]) v = Math.max(v, slots[k].r); }
+    let d = 0, own = s.owner;
+    if (c.ab === "mane" && this._on(c)) { const a = this._nb(i, -1), b = this._nb(i, 1); if (a >= 0 && b >= 0 && slots[a] && slots[b]) d += 1; }
+    if (c.ab === "root" && this._on(c) && s.first) d += 1;
+    if (s.clawed) d -= 1;
+    if (s.flocked) d += 1;
+    if (s.glanced) d -= 1; // the glance saw it coming
+    const filled = slots.filter(x => x).length;
+    for (const dd of [-1, 1]) {
+      const k = this._nb(i, dd); if (k < 0 || !slots[k]) continue;
+      const n = C[slots[k].id]; if (!this._on(n)) continue;
+      if (n.ab === "bearer" && slots[k].owner === own && own === "you") d += 1;
+      if (n.ab === "ghost" && slots[k].owner === "you" && own === "sky" && filled < 5) d -= 1; // it fades as the road fills
+    }
+    if (d < 0 && this._noSoften(slots, i)) d = 0;
+    return Math.max(1, v + d);
+  }
+  _safeNow(slots, ti, ai) {
+    const t = slots[ti]; if (!t || t.owner !== "you") return false;
+    const C = this._cards(), c = C[t.id], age = t.age || 0;
+    if (c.ab === "veil" && this._on(c) && age <= 1) return true;
+    if (c.ab === "void" && this._on(c)) { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && slots[k]) n++; } if (n <= 1) return true; } // only its attacker beside it: still alone
+    if (age <= 1) for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k < 0 || !slots[k] || slots[k].owner !== "you") continue; const n = C[slots[k].id]; if (n.ab === "chamber" && this._on(n)) return true; }
+    return false;
   }
   _tryFlip(slots, ai, ti, dir) {
     const a = slots[ai], t = slots[ti];
     if (!t || t.owner === a.owner) return false;
-    const attackRight = dir === 1;
-    let av = attackRight ? a.r : a.l;
-    let tv = attackRight ? t.l : t.r;
-    if (this._heartUp(slots, a)) av += 1;
-    if (this._heartUp(slots, t)) tv += 1;
     const C = this._cards(), aC = C[a.id], tC = C[t.id];
+    let av = this._faceOf(slots, ai, dir), tv = this._faceOf(slots, ti, -dir);
     if (this._bossRule() === "storm") { av = Math.max(1, av - 1); tv = Math.max(1, tv - 1); } // storm weather: all faces fight at -1
-    // base rule (adopted 20 aug 2026): ties flip. storm's new signature: ties against its faces don't exist
-    const stormFace = tC.ab === "storm" && tC.lvl >= 2; // defensive only (20 aug, post-Addendum-5 fix): its own attacks tie normally
+    // base rule (adopted 20 aug 2026): ties flip. the storm's answer (addendum 7): no ties against it on its own mansion
+    const stormFace = tC.ab === "storm" && this._on(tC) && this._isHome(t.id, ti);
     const tie = av === tv && !stormFace;
-    const wins = av > tv || tie;
-    if (!wins) return false;
+    if (!(av > tv || tie)) return false;
     if (tC.ab === "saturn") return false;
+    if (this._safeNow(slots, ti, ai)) return false;
     if (this._bossRule() === "void") { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && k !== ai && slots[k]) n++; } if (n === 0) return false; }
+    if (tC.ab === "return" && this._on(tC) && !t.came) return "return";  // it comes back once
     t.owner = a.owner;
+    if (tC.ab === "claws" && this._on(tC)) slots[ai] = { ...slots[ai], clawed: true }; // its claimer bleeds
+    if (aC.ab === "flock" && this._on(aC)) for (const d of [-1, 1]) { const k = this._nb(ai, d); if (k >= 0 && slots[k] && slots[k].owner === a.owner) slots[k] = { ...slots[k], flocked: true }; }
     return tie ? "tie" : true;
   }
   _lodge(slotsIn, cardId, i, rev, side) {
-    // the single source of lodge truth: placement + blaze ground + venus soften (used by _resolve AND _commitPlace)
+    // the single source of lodge truth: placement, ages, blaze ground, turning, venus soften
     const C = this._cards(); const c = C[cardId];
     const own = side || c.who;
-    const slots = slotsIn.slice().map(x => x ? { ...x } : x);
-    slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own };
-    if (own === "you" && c.ab === "blaze" && c.lvl >= 2) slots[i].ground = "you";
+    const slots = slotsIn.slice().map(x => x ? { ...x, age: (x.age || 0) + 1 } : x);
+    const first = !slotsIn.some(x => x && x.owner === own);
+    slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, age: 0, first };
+    if (own === "sky" && this.state && this.state.glanceOn) slots[i].glanced = true;
+    if (own === "you" && c.ab === "blaze" && this._on(c)) slots[i].ground = "you";
+    if (own === "you" && c.ab === "return" && this._on(c) && !(this.state && this.state.retUsed)) slots[i].came = false; else if (own === "you" && c.ab === "return") slots[i].came = true;
+    if (own === "you" && c.ab === "turning" && this._on(c)) { // turns the neighbour that fights it hardest
+      let best = -1, bv = 0;
+      [-1, 1].forEach(d => { const k = this._nb(i, d); if (k < 0 || !slots[k] || slots[k].owner !== "sky") return;
+        const face = d === 1 ? slots[k].l : slots[k].r, back = d === 1 ? slots[k].r : slots[k].l;
+        if (face > back && face - back > bv) { bv = face - back; best = k; } });
+      if (best >= 0) slots[best] = { ...slots[best], l: slots[best].r, r: slots[best].l, turned: true };
+    }
     const soft = [];
     if (c.ab === "venus") {
       [-1, 1].forEach(d => {
         const t = this._nb(i, d);
         if (t < 0 || !slots[t]) return;
-        const tC2 = C[slots[t].id];
-        if (tC2.ab === "jewel" && tC2.lvl >= 2 && slots[t].owner === "you") return; // cannot be softened
+        if (this._noSoften(slots, t)) return;
         const key = d === 1 ? "l" : "r";
         if (slots[t][key] > 1) { slots[t] = { ...slots[t], [key]: slots[t][key] - 1 }; soft.push(t); }
       });
@@ -759,18 +952,25 @@ class Component extends DCLogic {
   _resolve(slotsIn, cardId, i, rev, side) {
     const C = this._cards();
     const { slots, soft } = this._lodge(slotsIn, cardId, i, rev, side);
-    const queue = [{ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 }];
+    const queue = [];
+    if ((side || C[cardId].who) === "sky") for (const d of [-1, 1]) { // the listener strikes what lands beside it
+      const k = this._nb(i, d);
+      if (k >= 0 && slots[k] && slots[k].owner === "you" && C[slots[k].id].ab === "listener" && this._on(C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
+    }
+    queue.push({ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 });
     const seq = [];
     while (queue.length) {
       const { from, to, dir } = queue.shift();
-      if (to < 0 || !slots[from]) continue;
+      if (to < 0 || !slots[from] || !slots[to]) continue;
       const res = this._tryFlip(slots, from, to, dir);
       if (!res) continue;
+      if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id, owner: "you" }); slots[to] = null; continue; }
       seq.push({ from, to, dir, owner: slots[to].owner });
       if (res === "tie") { // combo: a card flipped by a tie attacks its own neighbours
         for (const d of [-1, 1]) { const far = this._nb(to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d }); }
       }
-      if (C[slots[from].id].ab === "mars") {
+      const fromAb = C[slots[from].id].ab;
+      if (fromAb === "mars" || (fromAb === "drum" && this._on(C[slots[from].id]))) { // the strike carries one further
         const far = this._nb(to, dir);
         if (far >= 0) queue.push({ from: to, to: far, dir });
       }
@@ -781,32 +981,53 @@ class Component extends DCLogic {
     const c = this._cards()[cardId];
     return (c.homeM || cardId) === this._boardM(slotIdx);
   }
-  _counts(slots) {
-    const C = this._cards();
-    const jm = this.props.jupiterMode || "always";
-    let you = 0, sky = 0;
-    slots.forEach((s, i) => {
-      if (!s) return;
-      if (C[s.id].ab === "hideaway" && C[s.id].lvl >= 2) return; // the tent is silent: counts for nobody
-      const home = this._isHome(s.id, i);
-      let j = 0;
-      if (C[s.id].ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
-      const crown = C[s.id].ab === "crown" && C[s.id].lvl >= 2 && (i === 0 || i === slots.length - 1) ? 1 : 0;
-      const w = 1 + j + (home ? 1 : 0) + crown;
-      if ((s.ground || s.owner) === "you") you += w; else sky += w;
-    });
-    return [you, sky];
-  }
-  _station(slots, i) {
+  // the count's own signatures: gathered stars, crown, empty district, hideaway, thread, jupiter, dominion
+  _slotW(slots, i, ctx) {
     const s = slots[i]; if (!s) return { who: null, w: 0 };
-    const C = this._cards(), jm = this.props.jupiterMode || "always";
-    if (C[s.id].ab === "hideaway" && C[s.id].lvl >= 2) return { who: null, w: 0, silent: true };
+    if (ctx && ctx.sil && ctx.sil[i]) return { who: null, w: 0, silent: true };
+    const C = this._cards(), c = C[s.id], jm = this.props.jupiterMode || "always";
     const home = this._isHome(s.id, i);
     let j = 0;
-    if (C[s.id].ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
-    const crown = C[s.id].ab === "crown" && C[s.id].lvl >= 2 && (i === 0 || i === slots.length - 1) ? 1 : 0;
-    return { who: (s.ground || s.owner), w: 1 + j + (home ? 1 : 0) + crown };
+    if (c.ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
+    let w = 1 + j + (home ? 1 : 0);
+    const own = s.ground || s.owner;
+    if (this._on(c)) {
+      if (c.ab === "gathered") w += 1;
+      if (c.ab === "crown" && (i === 0 || i === slots.length - 1)) w += 1;
+      if (c.ab === "district") { // untouched: nothing of its holder's beside it, alone in her half
+        let touch = false;
+        for (const d of [-1, 1]) { const k = this._nb(i, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) touch = true; }
+        if (!touch) w += 1;
+      }
+    }
+    let who = own;
+    if (ctx && ctx.thread && (i === 0 || i === slots.length - 1)) who = ctx.thread; // both ends of the road
+    return { who, w, thread: !!(ctx && ctx.thread && (i === 0 || i === slots.length - 1) && ctx.thread !== own) };
   }
+  _ctx(slots) {
+    const C = this._cards();
+    let thread = null;
+    slots.forEach(s => { if (s && C[s.id].ab === "thread" && this._on(C[s.id])) thread = s.ground || s.owner; });
+    const sil = {};
+    slots.forEach((s, i) => { // the hideaway closes the loudest mansion beside it
+      if (!s) return; const c = C[s.id];
+      if (c.ab !== "hideaway" || !this._on(c)) return;
+      const own = s.ground || s.owner;
+      let best = -1, bw = -1;
+      [-1, 1].forEach(d => { const k = this._nb(i, d); if (k < 0 || !slots[k]) return;
+        const r = this._slotW(slots, k, null);
+        if (r.who && r.who !== own && r.w > bw) { bw = r.w; best = k; } });
+      if (best >= 0) sil[best] = true;
+    });
+    return { thread, sil };
+  }
+  _counts(slots) {
+    const ctx = this._ctx(slots);
+    let you = 0, sky = 0;
+    slots.forEach((s, i) => { const r = this._slotW(slots, i, ctx); if (!r.who) return; if (r.who === "you") you += r.w; else sky += r.w; });
+    return [you, sky];
+  }
+  _station(slots, i) { return this._slotW(slots, i, this._ctx(slots)); }
   _boardWinner(slots) {
     const [you, sky] = this._counts(slots);
     if (you !== sky) return you > sky ? "you" : "sky";
@@ -848,7 +1069,9 @@ class Component extends DCLogic {
     this.setState(s => {
       const { slots, soft } = this._lodge(s.slots, cardId, i, rev, who);
       return {
-        slots, busy: true, dropIdx: i, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null, log: soft.length ? "venus softens her neighbors." : "",
+        slots, busy: true, dropIdx: i, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null, pick: null,
+        glanceOn: who === "you" ? (c.ab === "glance" && this._on(c)) : false,
+        log: soft.length ? "venus softens her neighbors." : "",
         castFx: { id: cardId, owner: who, n: this._fxN },
         hand: who === "you" ? s.hand.filter(x => x !== cardId) : s.hand,
         sky: who === "sky" ? s.sky.filter(x => x !== cardId) : s.sky,
@@ -861,6 +1084,11 @@ class Component extends DCLogic {
       this.setState(s => {
         const it = seq[k];
         if (!s.slots[it.to] || !s.slots[it.from]) return {};
+        if (it.ret) { // the return comes home rather than change hands
+          const sl = s.slots.slice().map(x => x ? { ...x } : x);
+          sl[it.to] = null;
+          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", hand: s.hand.concat([it.ret]), log: (s.log ? s.log + "  " : "") + "the return comes home." };
+        }
         const slots = s.slots.slice().map(x => x ? { ...x } : x);
         slots[it.to] = { ...slots[it.to], owner: it.owner };
         const aName = this._cards()[slots[it.from].id].name.toLowerCase();
@@ -878,19 +1106,17 @@ class Component extends DCLogic {
           st.turn = "over";
           st.roundWins = s.roundWins.concat(this._boardWinner(s.slots));
           this._endT = setTimeout(() => {
-            if (this.state.road) {
+            if (this.state.road && !this.state.roadBoss) {
               const last = this.state.roundWins[this.state.roundWins.length - 1];
               const t2 = this._tonight();
-              if (last === "you") {
-                if (this.state.roadBoss) { this._recordWin(); this.setState({ phase: "won" }); }
-                else { this._saveRung(t2, this.state.roadRung + 1); this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
-              } else this.setState({ phase: "roadlost" });
+              if (last === "you") { this._saveRung(t2, this.state.roadRung + 1); this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
+              else this.setState({ phase: "roadlost" });
               return;
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
             if (w >= 3) { this._recordWin(); this.setState({ phase: "won" }); }
-            else if (l >= 3) this.setState({ phase: "lost" });
+            else if (l >= 3) this.setState({ phase: this.state.road ? "roadlost" : "lost" });
             else {
               this.setState({ phase: "round" });
               this._roundT = setTimeout(() => this._exitRound(), 3800);
@@ -936,7 +1162,7 @@ class Component extends DCLogic {
     const st = this.state;
     if (st.phase !== "play" || st.turn !== "sky") return;
     const C = this._cards();
-    const temper = st.road ? null : this._temper(); // tempers rest on road nights (rungs + rule-only bosses)
+    const temper = (st.road || st.nightWalker) ? null : this._temper(); // only the sky has a temper: it rests on road rungs and walker nights
     const moves = [];
     st.sky.forEach(id => {
       const revOpts = C[id].ab === "mercury" ? [false, true] : [false];
@@ -949,7 +1175,7 @@ class Component extends DCLogic {
           let base;
           if (st.hand.length > 0 && !s2.every(x => x)) {
             const reply = this._bestYouReply(s2, st.hand);
-            base = (sky - you) * 10 - (reply === null ? 0 : reply) * (st.roadBoss ? 12 : 8);
+            base = (sky - you) * 10 - (reply === null ? 0 : reply) * this._replyW();
           } else {
             base = (sky - you) * 10;
           }
@@ -981,10 +1207,7 @@ class Component extends DCLogic {
 
     const mw = st.roundWins.filter(x => x === "you").length;
     const ms = st.roundWins.filter(x => x === "sky").length;
-    const matchPips = st.road ? Array.from({ length: 6 }, (_, i) => {
-      const cur = st.roadBoss ? 5 : st.roadRung;
-      return { style: "width:7px;height:7px;transform:rotate(45deg);display:inline-block;" + (i < cur ? "background:#F0D89A" : i === cur ? (i === 5 ? "background:#FFB000" : "border:1px solid #FFB000") : "border:1px solid rgba(154,138,94,.6)") };
-    }) : Array.from({ length: Math.max(5, st.roundWins.length) }, (_, i) => {
+    const matchPips = st.road && !st.roadBoss ? [] : Array.from({ length: Math.max(5, st.roundWins.length) }, (_, i) => {
       const r = st.roundWins[i];
       return { style: "width:7px;height:7px;transform:rotate(45deg);display:inline-block;" + (r === "you" ? "background:#F0D89A" : r === "sky" ? "background:#FFB000" : r === "draw" ? "background:rgba(154,138,94,.55)" : "border:1px solid rgba(154,138,94,.6)") };
     });
@@ -994,10 +1217,12 @@ class Component extends DCLogic {
       const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
       const selOn = st.sel !== null && st.turn === "you" && st.phase === "play" && !st.busy && this._legalSlot(st.slots, i);
       let tag = "", tagColor = "#9A8A5E";
+      const fL = s ? this._faceOf(st.slots, i, -1) : 0, fR = s ? this._faceOf(st.slots, i, 1) : 0;
       if (s) {
         const c = C[s.id];
         if (s.ground && s.owner !== s.ground) { tag = "the ground stays yours"; tagColor = "#F0D89A"; }
-        else if (this._heartUp(st.slots, s)) { tag = "burning: +1"; tagColor = "#F0D89A"; }
+        else if (fL > s.l || fR > s.r) { tag = "lifted: +1"; tagColor = "#F0D89A"; }
+        else if (fL < s.l || fR < s.r) { tag = "softened"; tagColor = "#FFB000"; }
         else if (c.who === "you" && this._abilityOn(c) && c.lvl === 2) tag = c.abText;
       }
       const lv = !s ? 1 : C[s.id].who === "you" ? C[s.id].lvl : (C.skyLv || 3);
@@ -1015,7 +1240,7 @@ class Component extends DCLogic {
         artStyle: "position:absolute;opacity:.9;" + (lv >= 4 ? "top:9px;left:9px;width:68px;height:86px" : lv >= 3 ? "top:17px;left:9px;width:68px;height:78px" : lv >= 2 ? "top:17px;left:14px;width:58px;height:54px" : "top:7px;left:19px;width:48px;height:40px") + (s ? ";animation:mzEmblemBreathe " + (6.5 + (s.id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(s.id % 7)) + "s infinite" : ""),
         shapes: s && window.ManzilArt ? window.ManzilArt.get(s.id >= 200 ? s.id - 200 : s.id) : [],
         emptyShapes: !s && window.ManzilArt ? window.ManzilArt.get(this._boardM(i)) : [],
-        l: s ? s.l + (this._heartUp(st.slots, s) ? 1 : 0) : "", r: s ? s.r + (this._heartUp(st.slots, s) ? 1 : 0) : "",
+        l: s ? fL : "", r: s ? fR : "",
         lStyle: s ? numBase("left") : "", rStyle: s ? numBase("right") : "",
         tag, tagColor,
         ...((g) => ({
@@ -1036,6 +1261,22 @@ class Component extends DCLogic {
           if (this._dragDid) return;
           clearTimeout(this._holdT);
           if (this.state.peek) this.setState({ peek: null });
+          if (st.phase === "play" && st.turn === "you" && !st.busy && st.slots[i] && st.slots[i].owner === "you") {
+            const mine = C[st.slots[i].id];
+            if (st.pick !== null && st.pick !== i) { // the guide trades grounds
+              const sl = st.slots.slice().map(x => x ? { ...x } : x), a = sl[st.pick], b = sl[i];
+              sl[st.pick] = { ...b, age: a.age }; sl[i] = { ...a, age: b.age };
+              this.setState({ slots: sl, pick: null, guideUsed: true, log: "the guide trades grounds." });
+              return;
+            }
+            if (mine.ab === "guide" && this._on(mine) && !st.guideUsed) { this.setState({ pick: st.pick === i ? null : i }); return; }
+            if (mine.ab === "hand" && this._on(mine) && !st.handUsed) { // may move once
+              const sl = st.slots.slice().map(x => x ? { ...x } : x);
+              sl[i] = null;
+              this.setState({ slots: sl, hand: st.hand.concat([st.slots[i].id]), handUsed: true, sel: st.slots[i].id, log: "the hand lifts off the road." });
+              return;
+            }
+          }
           if (st.phase !== "play" || st.turn !== "you" || st.busy || st.sel === null || st.slots[i] || !this._legalSlot(st.slots, i)) return;
           const c = C[st.sel];
           if (c.twoFaced) this.setState({ face: { id: st.sel, i } });
@@ -1073,8 +1314,7 @@ class Component extends DCLogic {
     const heartBehind = _hs > _hy;
     const handCards = st.hand.map((id, i) => {
       const c = C[id];
-      const hUp = c.ab === "heart" && c.lvl >= 2 && heartBehind;
-      const cl = c.l + (hUp ? 1 : 0), cr = c.r + (hUp ? 1 : 0);
+      const cl = c.l, cr = c.r;
       const seld = st.sel === id;
       const dragMe = !!(st.drag && st.drag.id === id);
       const rot = (i - (n - 1) / 2) * 1.1;
@@ -1088,7 +1328,7 @@ class Component extends DCLogic {
         rnStyle: numSty(c.lvl >= 4 ? "bottom:6px;right:9px" : "bottom:8px;right:11px"),
         shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
         cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
-        ability: hUp && c.lvl === 2 ? "burning: +1" : (this._abilityOn(c) && c.lvl === 2 ? c.abText : ""),
+        ability: this._abilityOn(c) && c.lvl === 2 ? c.abText : "",
         onPeek: () => {
           clearTimeout(this._holdT); clearTimeout(this._graceT);
           if (this.state.peek) this.setState({ peek: "h" + id });
@@ -1110,6 +1350,7 @@ class Component extends DCLogic {
           (seld || dragMe ? "border:1px solid #FFFDF5;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 16px rgba(240,216,154,.35)" : "border:1px solid " + (c.loan ? "rgba(154,138,94,.4)" : f.b) + ";box-shadow:0 8px 20px rgba(0,0,0,.6)" + (c.loan ? "" : f.glow)),
       };
     });
+    const ev = this._elevSpec();
     const endWon = st.phase === "won";
     const lastRound = st.roundWins[st.roundWins.length - 1];
     const nextLeader = st.leader === "you" ? "sky" : "you";
@@ -1122,6 +1363,10 @@ class Component extends DCLogic {
           style: "position:absolute;left:" + p[0] + "%;top:" + p[1] + "%;width:" + p[2] + "px;height:" + p[2] + "px;border-radius:50%;background:rgba(" + hue + "," + (p[2] > 1.4 ? ".8" : ".5") + ");animation:bsTwinkle " + (3 + (i % 5)) + "s ease-in-out " + (i * .6) + "s infinite" + (p[2] > 1.9 ? ";box-shadow:0 0 6px rgba(" + hue + ",.55)" : ""),
         };
       }),
+      elevAirStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.air + ";background:radial-gradient(78% 38% at 50% 106%, rgba(255,198,116,.15), transparent 62%), linear-gradient(to top, rgba(255,166,72,.10) 0%, rgba(198,118,66,.07) 14%, rgba(122,88,134,.05) 32%, transparent 54%)",
+      starDimStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.sd,
+      elevGroundStyle: "position:absolute;left:0;right:0;bottom:0;pointer-events:none;transition:height 1.6s ease, opacity 1.6s ease;height:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to top, #090603 0%, #0C0805 58%, rgba(62,44,24,.9) 100%)",
+      elevRimStyle: "position:absolute;left:0;right:0;height:1px;pointer-events:none;transition:bottom 1.6s ease, opacity 1.6s ease;bottom:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to right, transparent, rgba(255,190,120,.3) 22%, rgba(255,214,150,.5) 50%, rgba(255,190,120,.3) 78%, transparent)",
       youN, skyN, matchPips, slots, skyCards, handCards,
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
       ...((p => ({ peekOn: !!p, peekTitle: p ? p.title : "", peekWho: p ? p.who : "", peekTitleC: p ? p.color : "#F0D89A", peekLines: p ? p.lines : [], peekStyle: this._peekStyle(st.peek, st) }))(st.peek != null && st.phase === "play" ? this._peekFor(st.peek) : null)),
@@ -1130,11 +1375,11 @@ class Component extends DCLogic {
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
       turnLine: skyThinking ? "the sky is thinking…" : "",
       deckOn: st.phase === "deck",
-      roadTag: st.road && st.phase !== "deck" ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : "rung " + (st.roadRung + 1) + " of 5 · " + st.roadWalker) : "",
-      roadTagC: st.roadBoss ? "#FFB000" : "#9A8A5E",
+      roadTag: st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : this._elevSpec().name + " · " + st.roadWalker) : st.nightSky ? "the sky herself returns" : st.nightWalker ? st.nightWalker + " sits tonight" : "",
+      roadTagC: st.roadBoss || st.nightSky ? "#FFB000" : "#9A8A5E",
       deckCount: (st.deckSel || []).length,
       tonightName: this._mName(this._tonight()),
-      temperLine: st.road || st.phase === "deck" ? "" : ({ mars: "mars stands closest: the sky picks the biggest fight", saturn: "saturn stands closest: the sky guards", venus: "venus stands closest: the sky keeps company", mercury: "mercury stands closest: the sky roams", jupiter: "jupiter stands closest: the sky spends big" })[this._temper()],
+      temperLine: st.nightSky && st.phase !== "deck" && st.phase !== "menu" ? ({ mars: "mars stands closest: the sky picks the biggest fight", saturn: "saturn stands closest: the sky guards", venus: "venus stands closest: the sky keeps company", mercury: "mercury stands closest: the sky roams", jupiter: "jupiter stands closest: the sky spends big" })[this._temper()] : "",
       introL: C[this._tonight()].l, introR: C[this._tonight()].r, introName: C[this._tonight()].name.toLowerCase(),
       introShapes: (window.ManzilArt ? window.ManzilArt.get(this._tonight()) : []),
       deckCards: (st.pool || []).map(id => {
@@ -1155,7 +1400,7 @@ class Component extends DCLogic {
           ringStyle: "position:absolute;inset:-2px;border-radius:8px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;transition:opacity .3s ease;opacity:.6",
           onTap: () => {
             if (c.loan) return;
-            const sel = st.deckSel.includes(id) ? st.deckSel.filter(x => x !== id) : (st.deckSel.length < 5 ? st.deckSel.concat(id) : st.deckSel);
+            const sel = st.deckSel.includes(id) ? st.deckSel.filter(x => x !== id) : (st.deckSel.length < 12 ? st.deckSel.concat(id) : st.deckSel);
             this.setState({ deckSel: sel });
           },
           style: "width:58px;height:78px;border-radius:6px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);transition:border-color .2s ease, opacity .2s ease;" +
@@ -1164,25 +1409,47 @@ class Component extends DCLogic {
       }),
       menuOn: st.phase === "menu",
       setOn: st.phase === "set",
-      menuPlayLabel: C[this._tonight()].loan ? "walk the road ✦" : "sit at the table ✦",
+      menuPlayLabel: C[this._tonight()].loan ? "walk the road ✦" : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
       menuNight: "tonight · the " + this._mName(this._tonight()),
-      menuSub: (() => { const t = this._tonight(); if (C[t].loan) { const k = Math.min(this._rungs()[t] || 0, 5); return "unclaimed: the walkers' road waits, rung " + Math.min(k + 1, 5) + " of 5 to the sky herself"; } return "yours: best of five boards, as many matches as the night holds"; })(),
-      menuFooter: (() => { const own = Object.keys(C).filter(k => +k <= 28 && !C[k].loan).length; const g = parseInt(localStorage.getItem("starshard-game-shards")) || 0; return own + " of 28 claimed · " + g + " game-shard" + (g === 1 ? "" : "s"); })(),
+      fiveLabel: (st.deckSel || []).length >= 5 ? "tonight's first five" : "choose your pack",
+      fiveCards: (() => {
+        const out = this._deal(st.deckSel || [], 1).map((id, i) => {
+          const c = C[id], f = frame(c.lvl);
+          return {
+            on: true, name: c.name.toLowerCase(), ln: c.l, rn: c.r,
+            nameOn: c.lvl < 2, cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
+            shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
+            artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:8px;left:8px;width:56px;height:70px" : c.lvl >= 3 ? "top:15px;left:10px;width:52px;height:48px" : c.lvl === 2 ? "top:12px;left:14px;width:44px;height:40px" : "top:7px;left:17px;width:38px;height:32px"),
+            lnStyle: "position:absolute;top:5px;left:9px;font-size:" + (c.lvl >= 4 ? 9 : 12) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
+            rnStyle: "position:absolute;bottom:5px;right:9px;font-size:" + (c.lvl >= 4 ? 9 : 12) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
+            onTap: () => this.setState({ phase: "deck" }),
+            style: "flex:none;width:72px;height:96px;border-radius:7px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);cursor:pointer;transition:transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s ease;animation:mzCardDrift " + (8 + i * 0.8).toFixed(1) + "s ease-in-out " + (-i * 1.5).toFixed(1) + "s infinite;border:1px solid " + (c.loan ? "rgba(154,138,94,.4)" : f.b) + ";box-shadow:0 8px 20px rgba(0,0,0,.55)" + (c.loan ? "" : f.glow),
+          };
+        });
+        while (out.length < 5) out.push({ on: false, name: "", ln: "", rn: "", nameOn: false, cornersOn: false, innerOn: false, frameC: "transparent", shapes: [], artStyle: "display:none", lnStyle: "display:none", rnStyle: "display:none", onTap: () => this.setState({ phase: "deck" }), style: "flex:none;width:72px;height:96px;border-radius:7px;position:relative;border:1px dashed rgba(154,138,94,.3);cursor:pointer;transition:transform .28s cubic-bezier(.22,1,.36,1), border-color .28s ease" });
+        return out;
+      })(),
+      menuLine: (() => {
+        const t = this._tonight();
+        if (C[t].loan) return ev.e === 0 ? "unclaimed. the road starts on the ground and ends with the sky herself." : "unclaimed. you left the road in " + ev.name + ", the sky herself still above.";
+        if (this._specialNight(t)) return "claimed, and the sky herself returns tonight: best of five at her table. " + (({ mars: "mars stands closest, so she picks the biggest fight.", saturn: "saturn stands closest, so she guards.", venus: "venus stands closest, so she keeps company.", mercury: "mercury stands closest, so she roams.", jupiter: "jupiter stands closest, so she spends big." })[this._temper()] || "");
+        return "claimed. " + this._walkerFor(t).name + " sits at the table tonight, best of five.";
+      })(),
       menuPlayTap: () => {
-        if (st.deckSel.length !== 5) { this.setState({ phase: "deck" }); return; }
-        try { localStorage.setItem("manzil-walking-five", JSON.stringify(st.deckSel)); } catch (e) {}
+        if (st.deckSel.length < 5) { this.setState({ phase: "deck" }); return; }
+        try { localStorage.setItem("manzil-walking-twelve", JSON.stringify(st.deckSel)); } catch (e) {}
         this._clearSeq();
         this.setState({ phase: "intro" });
         this._introT = setTimeout(() => this._startMatch(), 2400);
       },
-      menuDeckTap: () => this.setState({ phase: "deck" }),
       menuSetTap: () => this.setState({ phase: "set" }),
       menuBackTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), deckSel: st.deckSel }); },
       shapeBtns: ["a road", "wrapped: edges touch", "contiguous: lodge beside the lodged"].map(o => ({ label: o, tap: () => this._setOpt("shape", o), style: this._setBtn(this._shape() === o) })),
+      setBtns: [["your own", false], ["all 28, awake", true]].map(o => ({ label: o[0], tap: () => { this._setOpt("ownAll", o[1]); this.setState({ deckSel: this._deckState().deckSel }); }, style: this._setBtn((this._opts().ownAll != null ? this._opts().ownAll : !!this.props.ownAll) === o[1]) })),
       faceBtns: [0, 1, 2, 3, 4].map(v => ({ label: v === 0 ? "true levels" : "L" + v, tap: () => this._setOpt("level", v), style: this._setBtn((this._opts().level != null ? this._opts().level : (this.props.forceLevel || 0)) === v) })),
       deckStartTap: () => {
-        if (st.deckSel.length !== 5) return;
-        try { localStorage.setItem("manzil-walking-five", JSON.stringify(st.deckSel)); } catch (e) {}
+        if (st.deckSel.length < 5) return;
+        try { localStorage.setItem("manzil-walking-twelve", JSON.stringify(st.deckSel)); } catch (e) {}
         this._clearSeq();
         this.setState({ phase: "intro" });
         this._introT = setTimeout(() => this._startMatch(), 2400);
@@ -1191,8 +1458,8 @@ class Component extends DCLogic {
       introTap: () => this._startMatch(),
       introStyle: "position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;z-index:5;cursor:pointer" + (st.introExit ? ";animation:mzFadeOut .32s ease both" : ""),
       roundOverStyle: "position:absolute;inset:0;background:rgba(4,3,2,.82);backdrop-filter:blur(4px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;z-index:6;cursor:pointer;animation:" + (st.roundExit ? "mzFadeOut .32s ease both" : "mzFadeUp .3s ease both"),
-      deckStartStyle: "margin-top:6px;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 26px;transition:all .3s ease;" + (st.deckSel.length === 5 ? "background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;cursor:pointer;animation:mzPop .45s cubic-bezier(.22,1,.36,1) both, mzReadyGlow 1.8s ease-in-out .45s infinite" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
-      deckStartLabel: st.deckSel.length === 5 ? (C[this._tonight()].loan ? "walk the road ✦" : "sit at the table ✦") : "choose " + (5 - st.deckSel.length) + " more",
+      deckStartStyle: "margin-top:6px;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 26px;transition:all .3s ease;" + (st.deckSel.length >= 5 ? "background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;cursor:pointer;animation:mzPop .45s cubic-bezier(.22,1,.36,1) both, mzReadyGlow 1.8s ease-in-out .45s infinite" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
+      deckStartLabel: st.deckSel.length >= 5 ? (C[this._tonight()].loan ? "walk the road ✦" : "sit at the table ✦") : "choose " + (5 - st.deckSel.length) + " more",
       resetTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), deckSel: st.chosen || st.deckSel }); },
       rulesTap: () => this.setState(s => ({ rulesOn: !s.rulesOn })),
       rulesOn: !!st.rulesOn,
@@ -1201,9 +1468,9 @@ class Component extends DCLogic {
       faceSerpent: () => st.face && this._commitPlace(st.face.id, st.face.i, true, "you"),
       roundOverOn: st.phase === "round",
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
-      roundTitle: st.road ? (st.roadRung >= 4 ? "the rungs are cleared. the sky herself waits." : (st.roadWalker || "the walker") + " steps aside") : (lastRound === "you" ? "round " + st.round + " is yours" : lastRound === "draw" ? "round " + st.round + " stands even" : "the sky takes round " + st.round),
+      roundTitle: st.road && !st.roadBoss ? (st.roadRung >= 7 ? "the air thins. the sky herself waits." : (st.roadWalker || "the walker") + " steps aside") : (lastRound === "you" ? "round " + st.round + " is yours" : lastRound === "draw" ? "round " + st.round + " stands even" : "the sky takes round " + st.round),
       nextRoundTap: () => this._exitRound(),
-      ascentOn: !!this.props.matchAscent && !st.road && st.phase === "round" && !st.ascentChosen,
+      ascentOn: !!this.props.matchAscent && !st.road && !!st.nightSky && st.phase === "round" && !st.ascentChosen,
       ascentNote: (st.phase === "round" && st.ascentChosen && st.ascentNote) || "",
       ascentBtns: [
         { label: "trade your weakest for the pool's best", tap: (e) => { e.stopPropagation(); const cs = this._cards(); const five = st.chosen.slice(); let wi = 0; five.forEach((id, k) => { if (cs[id].l + cs[id].r < cs[five[wi]].l + cs[five[wi]].r) wi = k; }); let best = 0, bt = -1; for (let id = 1; id <= 28; id++) { if (five.includes(id)) continue; const t = cs[id].l + cs[id].r; if (t > bt) { bt = t; best = id; } } const note = cs[five[wi]].name.toLowerCase() + " steps out, " + cs[best].name.toLowerCase() + " steps in"; five[wi] = best; this.setState({ chosen: five, deckSel: five, ascentChosen: true, ascentNote: note }); }, style: this._setBtn(false) },
@@ -1214,8 +1481,8 @@ class Component extends DCLogic {
       endWonOn: endWon,
       endMark: endWon ? "#FFB000" : "rgba(240,216,154,.5)",
       endTitle: st.phase === "roadlost" ? "the night rests"
-        : endWon ? (st.road ? "the " + this._mName(this._tonight()) + " is claimed" : "the mansion is yours, " + mw + " boards to " + ms)
-        : "the sky holds the mansion, " + ms + " to " + mw,
+        : endWon ? (st.road ? "the " + this._mName(this._tonight()) + " is claimed" : (st.nightSky ? "you held the sky, " : "the night is yours, ") + mw + " boards to " + ms)
+        : (st.nightWalker ? st.nightWalker + " takes the night, " : "the sky holds the mansion, ") + ms + " to " + mw,
       endLine: st.phase === "roadlost" ? "nothing lost. the ladder waits where you left it, and the road gives its shard regardless."
         : endWon ? (st.road ? "its card joins your deck, named and dated. the ladder here is done forever." : "")
         : "nothing lost. she deals again tomorrow.",

@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="../support.js"></script>
-<script>window.addEventListener("load",function(){if(customElements.get("x-dc"))return;var t=new URL(location.href).searchParams.get("t");if(!t)return;var s=document.createElement("script");s.src="./support.js?t="+encodeURIComponent(t);document.head.appendChild(s);});</script>
+<script>window.__mzRetry=function(f,p){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src=(p||"./")+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js","../")};</script>
+<script src="../support.js" onerror="__mzRetry('support.js')"></script>
+<script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
 </head>
 <body>
 <x-dc>
@@ -18,7 +19,7 @@
 </helmet>
 <div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #1E1706 0%, #0F0B03 45%, #080502 100%);display:flex;justify-content:center;padding:80px 32px 140px">
 <div style="width:100%;max-width:880px;display:flex;flex-direction:column">
-  <div style="font-size:12px;color:#9A8A5E">star shard · the minigame · rules sheet v5 · the flip-density pass, 20 aug 2026</div>
+  <div style="font-size:12px;color:#9A8A5E">star shard · the minigame · rules sheet v7 · the whole slate and the deal, 22 aug 2026</div>
   <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:64px;line-height:1;margin:10px 0 0;color:#F2EAD6">manzil</h1>
   <p style="font-size:15px;line-height:1.7;color:#9A8A5E;margin:14px 0 0;max-width:600px">the lodging game. a capture duel against the sky, played sideways, for the mansion the moon enters tonight.</p>
   <div style="margin-top:26px;border-left:2px solid #F0D89A;padding:6px 0 6px 20px;max-width:640px">
@@ -26,15 +27,16 @@
     <div style="font-size:11.5px;color:#9A8A5E;margin-top:8px">triple triad's principles observed: fixed length · one comparison rule · a countable win · every printed element is the mechanic · complexity opt-in.</div>
   </div>
   <div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:26px;font-size:12.5px;color:#D8C89C">
-    <span>you: your walking five</span><span>the sky: tonight's planets, closed</span><span>best of five boards</span><span>the lead alternates</span><span>tied counts are yours</span>
+    <span>you: five dealt from your twelve</span><span>the sky: tonight's five planets</span><span>best of five boards</span><span>the lead alternates</span><span>tied counts are yours</span>
   </div>
 
   <div style="height:64px"></div>
   <div style="font-size:12px;color:#9A8A5E">the locked base layer · hard-coded, out of the tweaks</div>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">five laws under everything</h2>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">six laws under everything</h2>
   <div style="font-size:14px;line-height:1.9;color:rgba(244,236,214,.88);margin-top:14px;max-width:680px;display:flex;flex-direction:column;gap:12px">
-    <p style="margin:0"><strong style="color:#FFFDF5">ties flip.</strong> equal numbers claim like bigger ones, both ways. and a card taken by a tie fights on: it attacks both its own neighbours the moment it turns. adopted 20 aug 2026, the flip-density pass: 5.1 flips a board, up from 2.4.</p>
-    <p style="margin:0"><strong style="color:#FFFDF5">tied counts are yours.</strong> a level road at the count falls to you: the sky already claims ties in the fight, so the draw does not tax you twice. relocked 20 aug 2026.</p>
+    <p style="margin:0"><strong style="color:#FFFDF5">ties flip.</strong> equal numbers claim like bigger ones, both ways. and a card taken by a tie fights on: it attacks both its own neighbours the moment it turns. a board changes hands about five times.</p>
+    <p style="margin:0"><strong style="color:#FFFDF5">tied counts are yours.</strong> a level road at the count falls to you: the sky already claims ties in the fight, so the draw does not tax you twice.</p>
+    <p style="margin:0"><strong style="color:#FFFDF5">the card is the card.</strong> a mansion's two numbers never change. it fights the same on its first night as its hundredth, and levels only wear away what is printed around them.</p>
     <p style="margin:0"><strong style="color:#FFFDF5">dominion.</strong> a card lodged on its own mansion glows ✦ and counts as two at the count. the ground keeps that weight whoever claims the card. her planets hold dominion where they truly stand tonight. jupiter counts two everywhere; on his own mansion, three. dominion is never hinted on the deck screen: spotting it is skill.</p>
     <p style="margin:0"><strong style="color:#FFFDF5">the seeded sky.</strong> her judgment is deterministic; where her arithmetic ties, a date seed breaks it. the same for everyone tonight, different tomorrow. nothing else is random.</p>
     <p style="margin:0"><strong style="color:#FFFDF5">the night's temper.</strong> one planet stands closest each night and flavors her even choices, printed in one header line, learnable in a board: mars strikes (tied, she picks the biggest fight) · saturn guards (she keeps her ground) · venus keeps company (she lodges beside the crowd) · mercury roams (she lodges apart) · jupiter spends big (she plays her largest, and his mercy is real: jupiter's nights run softer). tempers rest on road nights.</p>
@@ -46,16 +48,17 @@
       <div style="font-size:12px;color:#9A8A5E">the table</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0">nine mansions, two colors</h2>
       <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;display:flex;flex-direction:column;gap:12px">
-        <p style="margin:0">the board is the road ahead of her: her next nine nights (she crosses one mansion a night; the board never claims otherwise). your ground is parchment; the sky's is amber. a card's two numbers are its two sides: left fights left, right fights right; claims flip the loser's color. one comparison, once, with one exception: a card taken by a tie strikes on.</p>
-        <p style="margin:0">her hand is closed: tonight's real planets, face down until played. she is deterministic, greedy arithmetic that reads your best reply before she commits, so the same night deals the same duel for everyone.</p>
+        <p style="margin:0">the board is the road ahead of her: her next nine nights (she crosses one mansion a night; the board never claims otherwise). your ground is parchment; the sky's is amber. a card's two numbers are its two sides: left fights left, right fights right; claims flip the loser's color. one comparison, once, with two exceptions: a card taken by a tie strikes on, and the listener strikes what lands beside it.</p>
+        <p style="margin:0">her five planets stand open, where they truly stand tonight. nothing about her is hidden and nothing needs to be: she is deterministic, greedy arithmetic that reads your best reply before she commits, so the same night deals the same duel for everyone. the difficulty is how far ahead she reads, never what she is given.</p>
       </div>
     </div>
     <div>
       <div style="font-size:12px;color:#9A8A5E">the deck</div>
-      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0">choose your five</h2>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0">your walking twelve</h2>
       <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;display:flex;flex-direction:column;gap:12px">
-        <p style="margin:0">a persistent walking five, changed anytime, carried night to night. all 28 mansions play from day one: unclaimed ones as loaners, grey and frameless at level 1, the sky's loan. winning a mansion's night claims it: your date goes on the card and its levels unlock. every owned card is a receipt of a real night.</p>
-        <p style="margin:0"><strong style="color:#FFFDF5">levels, earned by the road:</strong> L1 vanilla numbers · L2 wakes the signature move · L3–4 sharpen numbers by +1. borders richen with level, TTA-style, and the card face sheds what you no longer need: L2 drops the name, L3 drops the printed move, L4 gives the face to the art with small numbers. hold any card to read it in full. nothing is ever sold.</p>
+        <p style="margin:0">you carry twelve mansions, changed anytime, and <strong style="color:#FFFDF5">five are dealt from them at the start of every board, face up</strong>. the deal is seeded to the night: the same for everyone tonight, different tomorrow, and tonight's own mansion always walks with you when you carry it. chance sits before the board, in the open. inside the board nothing is hidden, so reading ahead still pays.</p>
+        <p style="margin:0">all 28 mansions play from day one: unclaimed ones as loaners, grey and frameless at level 1, the sky's loan. winning a mansion's night claims it: your date goes on the card and its levels unlock. every owned card is a receipt of a real night.</p>
+        <p style="margin:0"><strong style="color:#FFFDF5">levels, earned by the road:</strong> L2 wakes the signature move. L3 and L4 buy nothing but quiet: the face sheds the name, then the printed move, then gives itself to the art with small numbers. borders richen with level, TTA-style. hold any card to read it in full. nothing is ever sold.</p>
       </div>
     </div>
   </div>
@@ -63,13 +66,14 @@
   <div style="height:64px"></div>
   <div style="font-size:12px;color:#9A8A5E">the 28 signatures</div>
   <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">every archetype, one move</h2>
-  <p style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin:14px 0 0;max-width:660px">each mansion's signature is its archetype made mechanical: six words or fewer, never touching the one comparison rule, waking at level 2. the seven marked ✦ are live in the prototype. all values and moves are tunables until playtested; the signature pass (19 aug) audits all 28 against the sim.</p>
+  <p style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin:14px 0 0;max-width:660px">each mansion's signature is its archetype made mechanical: six words or fewer, never touching the one comparison rule, waking at level 2. <strong style="color:#FFFDF5">all 28 are live.</strong> numbers are star prominence plus one on the lower side, carried from a card's first night.</p>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:24px">
     <sc-for list="{{ sigs }}" as="s" hint-placeholder-count="28">
       <div style="display:flex;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(240,216,154,.08)">
         <span style="font-size:10px;color:rgba(154,138,94,.7);width:16px;flex:none">{{ s.n }}</span>
         <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:{{ s.nameColor }};width:118px;flex:none">{{ s.name }}</span>
-        <span style="font-size:11.5px;line-height:1.5;color:#D8C89C">{{ s.move }}<span style="color:#F0D89A">{{ s.live }}</span></span>
+        <span style="font-size:10.5px;color:#F0D89A;width:26px;flex:none">{{ s.num }}</span>
+        <span style="font-size:11.5px;line-height:1.5;color:#D8C89C">{{ s.move }}</span>
       </div>
     </sc-for>
   </div>
@@ -86,7 +90,7 @@
         <div style="display:flex;gap:10px"><span style="color:#FFB000;width:64px;flex:none">mercury</span><span>picks its better face: plays its numbers either way</span></div>
         <div style="display:flex;gap:10px"><span style="color:#FFB000;width:64px;flex:none">jupiter</span><span>counts as two at the count</span></div>
       </div>
-      <p style="font-size:12px;line-height:1.8;color:#9A8A5E;margin:12px 0 0">her side answers ours rather than mirroring it: she holds ground, we take it back. signatures show on the board the moment a planet is revealed. the closed hand keeps its fog.</p>
+      <p style="font-size:12px;line-height:1.8;color:#9A8A5E;margin:12px 0 0">her side answers ours rather than mirroring it: she holds ground, we take it back. her five stand open all night, so what she will do is knowable and how far she reads is the only thing that changes.</p>
     </div>
     <div>
       <div style="font-size:12px;color:#9A8A5E">the money, unchanged</div>
@@ -99,17 +103,19 @@
   <div style="font-size:12px;color:#9A8A5E">first nights</div>
   <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">the walkers' road</h2>
   <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;max-width:660px;display:flex;flex-direction:column;gap:12px">
-    <p style="margin:0">an unclaimed mansion's night is not the sky cold. it is a short ladder: <strong style="color:#FFFDF5">five single boards against other walkers' fives</strong>, piloted by her own judgment, then the sky herself, decently harder, wearing the mansion's own rule. the storm's night is storm weather: every face on the board fights at −1, never below one. the veil's night, her cards close again. the thread's night, the road wraps. the void's night, a lone card cannot be claimed.</p>
-    <p style="margin:0">fall off a rung and the night ends there: <strong style="color:#FFFDF5">the road-shard is given anyway</strong>, and the ladder waits where it stood for your next visit. beat her at the top and the mansion is claimed. the ladder is lifetime-per-mansion, an introduction, never a toll. claimed nights are the standard best-of-five.</p>
+    <p style="margin:0">an unclaimed mansion's night is not the sky cold. it is a climb: <strong style="color:#FFFDF5">eight single boards against other walkers' fives</strong>, piloted by her own judgment, each hand reading deeper than the last, then the sky herself at the top, <strong style="color:#FFFDF5">best of five</strong>, wearing the mansion's own rule. the storm's night is storm weather: every face on the board fights at −1, never below one. the veil's night, her cards close again. the thread's night, the road wraps. the void's night, a lone card cannot be claimed.</p>
+    <p style="margin:0">the climb is told by <strong style="color:#FFFDF5">altitude, never by a counter</strong>. the first board stands on the ground: warm horizon, ground haze, the stars barely out. from there the low air, the dusk, the cloud line, the high air, the cold air, the thin air, the edge of the air. she waits in open space, full stars, no horizon at all. the sky you play under is the only progress bar.</p>
+    <p style="margin:0">fall off a rung and the night ends there: <strong style="color:#FFFDF5">the road-shard is given anyway</strong>, and the ladder waits where it stood for your next visit. beat her at the top and the mansion is claimed. the ladder is lifetime-per-mansion, an introduction, never a toll.</p>
+    <p style="margin:0">after the claim the mansion is yours and its nights <strong style="color:#FFFDF5">go back to the walkers</strong>, best of five. the sky herself returns only when the moon crosses one of your chart's own mansions, and then she stays for the whole match. she is an occasion, not a fixture.</p>
   </div>
 
   <div style="height:64px"></div>
-  <div style="font-size:12px;color:#9A8A5E">claimed nights · in the prototype, off by default</div>
+  <div style="font-size:12px;color:#9A8A5E">her nights only · in the prototype, off by default</div>
   <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;margin:8px 0 0">the match as an ascent</h2>
   <div style="font-size:14px;line-height:1.8;color:rgba(244,236,214,.88);margin-top:14px;max-width:660px;display:flex;flex-direction:column;gap:12px">
-    <p style="margin:0">a best of five that opens rather than repeats. the first board is small: <strong style="color:#FFFDF5">three planets on a road of seven</strong>. by board three she holds all five and the road is nine. her hand fills weakest planets first, so the slow sky arrives last and the match gets heavier as it goes.</p>
+    <p style="margin:0">a best of five that opens rather than repeats. the first board is small: <strong style="color:#FFFDF5">three planets on a road of six</strong>. she holds three, you still hold your five, so the board asks which three you commit. the road is nine from board two, and by board three she holds all five. her hand fills weakest planets first, so the slow sky arrives last and the match gets heavier as it goes.</p>
     <p style="margin:0">between boards you take <strong style="color:#FFFDF5">one choice, one tap</strong>: trade your weakest card for the best in the pool · wake a sleeping signature for the rest of the match · her brightest planet sits out the next board. the choice is auto-targeted, so it costs a beat, not a menu.</p>
-    <p style="margin:0;font-size:12px;color:#9A8A5E">claimed nights only: the walkers' road runs its own shape. no outer planet is ever dealt on board five, and the ascent never touches the road-shard.</p>
+    <p style="margin:0;font-size:12px;color:#9A8A5E">the ascent belongs to the sky alone: it runs on the nights she returns, never on the walkers' road and never on a walker's night. no outer planet is ever dealt on board five, and the ascent never touches the road-shard.</p>
   </div>
 
   <div style="height:64px"></div>
@@ -119,12 +125,11 @@
     <p style="margin:0">on the rare night an eclipse stands on the road ahead, the table may stretch: <strong style="color:#FFFDF5">fourteen stations</strong>, eclipse to the answering lunation, a fortnight of road. seven cards each fill it. you bring seven; her hand is the five planets and two of the slow sky, standing where they truly stand tonight.</p>
     <p style="margin:0">the outers play as themselves: <span style="color:#FFB000">uranus</span> swaps two lodged cards · <span style="color:#FFB000">neptune</span> turns her numbers to mist until played against · <span style="color:#FFB000">pluto</span> removes one card from the road. best of three boards; the road is longer, the match is not.</p>
     <p style="margin:0">fourteen is even, so a count can level. <strong style="color:#FFFDF5">a level road falls to whoever holds the eclipse's own station.</strong> that slot is the board's anchor; hold it and ties are yours.</p>
-    <p style="margin:0;font-size:12px;color:#9A8A5E">designed, not yet dealt: the nine-station road is the whole game. this returns only on true event nights, and only if you ask for it.</p>
-    <p style="margin:0;font-size:12px;color:#9A8A5E">flagged 19 aug 2026, from the length sim: a longer road adds turns, not decisions (unique best moves fall 38% to 31%, flips per turn stay ~0.5, and her extra planets outgrow your extra cards). before this is ever dealt, the fortnight must earn its length through rules pressure per placement: the outers, the level count at the anchor, not stations for their own sake. re-sim at fourteen first.</p>
+    <p style="margin:0;font-size:12px;color:#9A8A5E">designed, not yet dealt. the nine-station road is the whole game, and a longer road adds turns rather than decisions, so before this is ever dealt the fortnight has to earn its length through pressure per placement: the outers, the level count at the anchor, never stations for their own sake.</p>
   </div>
 
   <div style="height:56px"></div>
-  <div style="font-size:11.5px;line-height:1.9;color:rgba(154,138,94,.7)">play it: <a href="Manzil - Prototype.dc.html">the prototype</a> (walking five, loaners, the walkers' road, tempers, dominion, all live) · printable: <a href="Manzil - A User's Manual.dc.html">a user's manual</a>.</div>
+  <div style="font-size:11.5px;line-height:1.9;color:rgba(154,138,94,.7)">play it: <a href="Manzil - Prototype.dc.html">the prototype</a> (all 28 signatures, the deal, the walkers' road, tempers, dominion, all live) · printable: <a href="Manzil - A User's Manual.dc.html">a user's manual</a> · the cards: <a href="Manzil - Base Set.dc.html">the base set</a>.</div>
 </div>
 </div>
 </x-dc>
@@ -132,41 +137,40 @@
 class Component extends DCLogic {
   renderVals() {
     const SIGS = [
-      ["The Gate", "lodges before her lead, once per match"],
-      ["The Bearer", "your neighbors gain +1"],
-      ["The Gathered Stars", "counts as two at the count"],
-      ["The Follower", "copies its left neighbor's facing number"],
-      ["The Blaze", "its mansion counts as yours, whoever holds the card", 1],
-      ["The Storm", "cannot be tied: equal numbers do nothing against it; its own attacks tie normally", 1],
-      ["The Return", "returns to your hand once when claimed"],
-      ["The Ghost", "her cards beside it fight at −1"],
-      ["The Glance", "reveals one closed card of hers when lodged"],
-      ["The Throne", "two-faced: choose which number faces which way", 1],
-      ["The Mane", "+1 both sides while both neighbors are filled"],
-      ["The Turning", "on lodging, swap a neighbor's two numbers"],
-      ["The Hand", "may relocate once to an empty mansion"],
-      ["The Jewel", "cannot be softened: hostile moves pass over its numbers", 1],
-      ["The Veil", "cannot be claimed the turn it lands"],
-      ["The Claws", "a card that claims it fights at −1 after"],
-      ["The Crown", "counts as two on an edge mansion", 1],
-      ["The Heart", "fights +1 both sides while the sky holds more of the road", 1],
-      ["The Root", "+1 both sides as your first lodge"],
-      ["The Flock", "your adjacent cards +1 when it claims"],
-      ["The Empty District", "both neighbors fight at −1"],
-      ["The Listener", "her next card is played face-up"],
-      ["The Drum", "its claim strikes one mansion further"],
-      ["The Void", "cannot be claimed while standing alone"],
-      ["The Hideaway", "its mansion is silent: counts for nobody", 1],
-      ["The Chamber", "neighbors are safe the turn they land"],
-      ["The Guide", "may swap places with another of your cards"],
-      ["The Thread", "the board wraps: edge mansions touch"],
+      ["The Gate", "6|6", "lodges before her lead, once a board"],
+      ["The Bearer", "6|5", "your cards beside it fight +1"],
+      ["The Gathered Stars", "7|7", "counts as two at the count"],
+      ["The Follower", "8|7", "its left face copies whatever stands to its left"],
+      ["The Blaze", "6|6", "its mansion counts as yours, whoever holds the card"],
+      ["The Storm", "8|6", "cannot be tied while it stands on its own mansion"],
+      ["The Return", "7|7", "the first time she claims it, it comes home to your hand"],
+      ["The Ghost", "7|6", "her cards beside it fight at −1 while the road is under half full"],
+      ["The Glance", "5|6", "her next card fights at −1"],
+      ["The Throne", "7|9", "two-faced: choose which number faces which way"],
+      ["The Mane", "6|6", "+1 both sides while it stands between two cards"],
+      ["The Turning", "7|6", "on lodging, turns a neighbour's two numbers"],
+      ["The Hand", "7|5", "may be lifted off the road once and lodged again"],
+      ["The Jewel", "8|7", "cannot be softened: dimming moves pass over its numbers"],
+      ["The Veil", "8|3", "cannot be claimed the turn it lands"],
+      ["The Claws", "7|6", "whatever claims it fights at −1 after"],
+      ["The Crown", "7|6", "counts as two on an edge mansion"],
+      ["The Heart", "8|7", "while it stands, nothing of yours can be softened"],
+      ["The Root", "7|7", "+1 both sides as your first lodge"],
+      ["The Flock", "7|6", "your cards beside it gain +1 when it claims"],
+      ["The Empty District", "3|8", "counts as two while nothing of yours touches it"],
+      ["The Listener", "7|5", "strikes what lands beside it, before the new card resolves"],
+      ["The Drum", "5|7", "its claim strikes one mansion further"],
+      ["The Void", "9|3", "cannot be claimed while standing alone"],
+      ["The Hideaway", "6|6", "closes the loudest mansion beside it: that mansion counts for nobody"],
+      ["The Chamber", "7|6", "your cards beside it are safe the turn they land"],
+      ["The Guide", "6|6", "may trade grounds with another of your cards"],
+      ["The Thread", "6|6", "holds both ends of the road: the first and last mansions count for its holder"],
     ];
+    const DIV = [10, 15, 21, 24]; // the divergent family: the traditions disagree on these degrees
     const sigs = SIGS.map((s, i) => ({
       n: String(i + 1).padStart(2, "0"),
-      name: s[0],
-      move: s[1],
-      live: s[2] ? "  ✦ live" : "",
-      nameColor: s[2] ? "#F0D89A" : "#F2EAD6",
+      name: s[0], num: s[1], move: s[2],
+      nameColor: DIV.includes(i + 1) ? "#F0D89A" : "#F2EAD6",
     }));
     return { sigs };
   }
