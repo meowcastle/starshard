@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>window.__mzRetry=function(f,p){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src=(p||"./")+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js","../");if(!window.ManzilArt)window.__mzRetry("manzil-art.js");if(!window.ManzilEphem)window.__mzRetry("ephemeris.js")};</script>
+<script>window.__mzRetry=function(f,p){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src=(p||"./")+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js","../");if(!window.ManzilArt)window.__mzRetry("manzil-art2.js");if(!window.ManzilEphem)window.__mzRetry("ephemeris2.js")};</script>
 <script src="../support.js" onerror="__mzRetry('support.js')"></script>
 <script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
 </head>
@@ -11,7 +11,7 @@
 <x-dc>
 <helmet>
 <link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap" rel="stylesheet">
-<title>manzil — a card game against the sky</title>
+<title>manzil — the empty district</title>
 <style>
   body{margin:0;background:#040302;font-family:'Varela Round',sans-serif;color:#F2EAD6;overflow:hidden}
   a{color:#F0D89A;text-decoration:none}
@@ -61,9 +61,19 @@
   @keyframes mzEmblemBreathe{0%,100%{opacity:.76}50%{opacity:.96}}
   @keyframes mzCardDrift{0%,100%{translate:0 0}50%{translate:0 -2.5px}}
   @keyframes mzBandTurn{from{transform:translateX(-50%) rotate(0deg)}to{transform:translateX(-50%) rotate(360deg)}}
+  @keyframes mzFadeUp2{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes mzSway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.6deg)}}
+  @keyframes mzSteam{0%{transform:translateY(0);opacity:0}12%{opacity:.55}100%{transform:translateY(-48px) scale(1.6);opacity:0}}
+  @keyframes mzRat{0%,87%{transform:translateX(0)}96%,100%{transform:translateX(620px)}}
+  @keyframes mzPigeon{0%,91%,100%{transform:translateY(0)}94%{transform:translateY(-3px)}}
+  @keyframes mzWindow{0%,78%,100%{opacity:.32}84%{opacity:.05}90%{opacity:.26}}
+  @keyframes mzScrap{0%,68%{transform:translate(0,0) rotate(0deg);opacity:0}71%{opacity:.75}99%{opacity:0}100%{transform:translate(760px,-10px) rotate(300deg);opacity:0}}
+  @keyframes mzTail{0%,86%,100%{transform:rotate(0deg)}90%{transform:rotate(-16deg)}95%{transform:rotate(5deg)}}
+  @keyframes mzDrip{0%,58%{transform:translateY(0);opacity:0}62%{opacity:.7}80%{opacity:.7}86%,100%{transform:translateY(58px);opacity:0}}
+  @keyframes mzPuddle{0%,100%{opacity:.75}50%{opacity:.3}}
 </style>
-<script src="manzil-art.js"></script>
-<script src="ephemeris.js"></script>
+<script src="manzil-art2.js"></script>
+<script src="ephemeris2.js"></script>
 <style>
 </style>
 </helmet>
@@ -76,8 +86,212 @@
       <span style="{{ s.style }}"></span>
     </sc-for>
   </div>
+  <div style="{{ elevDayStyle }}"></div>
   <div style="{{ elevGroundStyle }}"></div>
   <div style="{{ elevRimStyle }}"></div>
+  <div style="{{ edFarStyle }}"><svg viewBox="0 0 932 64" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <g fill="#0A0704">
+      <rect x="52" y="26" width="26" height="38"></rect>
+      <rect x="332" y="12" width="24" height="52"></rect><path d="M336 12 h16 l-8 -9 z"></path><path d="M344 3 v-7" stroke="#0A0704" stroke-width="1.5"></path>
+      <rect x="512" y="22" width="20" height="42"></rect>
+      <rect x="788" y="18" width="28" height="46"></rect><rect x="812" y="30" width="14" height="34"></rect>
+    </g>
+    <path d="M0 64 V40 h74 v-7 h30 v7 h58 v10 h66 v-14 h44 v8 h92 v-6 h52 v10 h74 v-16 h40 v12 h88 v-8 h60 v10 h70 v-12 h46 v9 h72 v7 h66 V64 Z" fill="#0C0805"></path>
+    <g stroke="rgba(240,216,154,.13)" stroke-width="1" fill="#0C0805">
+      <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
+      <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
+    </g>
+  </svg></div>
+  <div style="{{ edMidStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#100A06"></path>
+    <g fill="#100A06" stroke="rgba(240,216,154,.15)" stroke-width="1">
+      <rect x="120" y="34" width="9" height="8"></rect><rect x="308" y="38" width="9" height="8"></rect><rect x="700" y="50" width="9" height="8"></rect>
+      <path d="M498 42 v-14 M516 42 v-14"></path><rect x="491" y="12" width="32" height="16" rx="2"></rect><path d="M489 12 h36 l-18 -9 z"></path>
+    </g>
+    <g stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none">
+      <path d="M156 62 h44 M156 74 h44 M156 86 h44 M160 62 l-4 12 M196 74 l-4 12"></path>
+    </g>
+    <path d="M60 26 q400 18 812 -4" fill="none" stroke="rgba(240,216,154,.1)" stroke-width="1"></path>
+    <g fill="#0D0906" style="animation:mzPigeon 12s ease-in-out infinite">
+      <circle cx="380" cy="32" r="2.2"></circle><circle cx="383.5" cy="30" r="1.2"></circle>
+      <circle cx="406" cy="34" r="2.2"></circle><circle cx="409.5" cy="32" r="1.2"></circle>
+      <circle cx="452" cy="33" r="2"></circle><circle cx="455" cy="31.2" r="1.1"></circle>
+    </g>
+    <g fill="#0D0906" stroke="rgba(240,216,154,.13)" stroke-width="1">
+      <rect x="140" y="52" width="11" height="7"></rect><rect x="448" y="58" width="11" height="7"></rect><rect x="836" y="56" width="11" height="7"></rect>
+    </g>
+    <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
+      <path d="M748 58 v-16 M742 46 h12 M744 50 h8"></path>
+    </g>
+  </svg></div>
+  <div style="{{ edNearStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <path d="M0 150 V96 h180 v-8 h120 v8 h150 v-6 h130 v6 h352 V150 Z" fill="#140D07"></path>
+    <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
+      <path d="M24 96 h132 M204 88 h72 M330 96 h96 M474 90 h82 M600 96 h120"></path>
+    </g>
+    <path d="M40 34 Q 240 76 466 60 Q 700 44 892 30" fill="none" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+    <g fill="#0E0906" stroke="rgba(240,216,154,.24)" stroke-width="1">
+      <path d="M110 48 v6 M190 57 v6 M280 62 v6 M370 64 v6 M460 61 v6 M560 56 v6 M660 50 v6 M760 42 v6 M850 33 v6" stroke="rgba(240,216,154,.14)"></path>
+      <circle cx="110" cy="61" r="7"></circle><circle cx="190" cy="70" r="7"></circle><circle cx="280" cy="75" r="7"></circle><circle cx="370" cy="77" r="7"></circle><circle cx="460" cy="74" r="7"></circle><circle cx="560" cy="69" r="7"></circle><circle cx="660" cy="63" r="7"></circle><circle cx="760" cy="55" r="7"></circle><circle cx="850" cy="46" r="7"></circle>
+    </g>
+    <g stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none">
+      <path d="M866 70 V150 M920 70 V150 M866 92 h54 M866 116 h54 M866 140 h54 M916 70 l-46 22 M916 92 l-46 24 M916 116 l-46 24"></path>
+    </g>
+    <g fill="none" stroke="rgba(240,216,154,.15)" stroke-width="1">
+      <rect x="42" y="112" width="92" height="38"></rect>
+      <path d="M46 120 h84 M46 128 h84 M46 136 h84 M46 144 h84"></path>
+      <rect x="636" y="116" width="74" height="34"></rect>
+      <path d="M640 124 h66 M640 132 h66 M640 140 h66"></path>
+    </g>
+    <g fill="#0F0A06" stroke="rgba(240,216,154,.2)" stroke-width=".8">
+      <rect x="206" y="104" width="9" height="13" transform="rotate(-4 210 110)"></rect>
+      <rect x="219" y="106" width="9" height="12" transform="rotate(3 223 112)"></rect>
+      <rect x="560" y="102" width="10" height="14" transform="rotate(-3 565 109)"></rect>
+    </g>
+    <g style="animation:mzSway 13s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0">
+      <path d="M330 88 v6" stroke="rgba(240,216,154,.3)" stroke-width="1"></path>
+      <rect x="322" y="94" width="16" height="46" rx="2" fill="#120C07" stroke="rgba(240,216,154,.26)" stroke-width="1"></rect>
+      <path d="M326 102 h8 M330 98 v9 M326 114 h8 M330 114 v9 M326 130 h8" stroke="rgba(240,216,154,.3)" stroke-width="1" fill="none"></path>
+    </g>
+    <g style="animation:mzSway 15s ease-in-out -6s infinite;transform-box:fill-box;transform-origin:50% 0">
+      <path d="M612 90 v5" stroke="rgba(240,216,154,.28)" stroke-width="1"></path>
+      <rect x="605" y="95" width="14" height="38" rx="2" fill="#120C07" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+      <path d="M608 102 h8 M612 99 v8 M608 112 h8 M612 112 v7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
+    </g>
+    <g fill="#0B0705">
+      <ellipse cx="164" cy="146" rx="11" ry="7"></ellipse><ellipse cx="179" cy="148" rx="8" ry="5.5"></ellipse>
+      <rect x="190" y="134" width="13" height="16" rx="1.5"></rect><ellipse cx="196.5" cy="134" rx="7.5" ry="2.6"></ellipse>
+    </g>
+    <g style="animation:mzSteam 9s ease-in infinite">
+      <ellipse cx="724" cy="130" rx="7" ry="4.5" fill="rgba(216,200,168,.10)"></ellipse>
+    </g>
+    <g style="animation:mzSteam 11.5s ease-in -4.5s infinite">
+      <ellipse cx="732" cy="132" rx="9" ry="5" fill="rgba(216,200,168,.08)"></ellipse>
+    </g>
+    <g style="animation:mzScrap 18s linear infinite">
+      <path d="M-24 141 l7 -3 l2 5 l-7 3 z" fill="rgba(216,200,168,.3)"></path>
+    </g>
+    <g style="animation:mzRat 26s linear infinite">
+      <g transform="translate(-40 0)">
+        <ellipse cx="0" cy="147" rx="7" ry="3.4" fill="#0B0705"></ellipse><circle cx="6.5" cy="146" r="2.2" fill="#0B0705"></circle>
+        <path d="M-7 147 q-8 3 -14 -1" stroke="#0B0705" stroke-width="1.2" fill="none"></path>
+      </g>
+    </g>
+    <g fill="rgba(216,200,168,.18)">
+      <path d="M300 142 l7 -3 l3 4 l-7 3 z M508 146 l6 -3 l3 4 l-6 3 z M694 141 l7 -2 l2 4 l-7 3 z"></path>
+    </g>
+    <ellipse cx="420" cy="147" rx="30" ry="3.5" fill="rgba(216,200,168,.04)" stroke="rgba(240,216,154,.1)" stroke-width="1" style="animation:mzPuddle 9s ease-in-out -3s infinite"></ellipse>
+  </svg></div>
+  <div style="{{ edWallLStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
+    <rect x="188" y="34" width="50" height="396" fill="#0A0705"></rect>
+    <path d="M186 60 h56" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
+    <path d="M0 46 h200 v384 h-200 z" fill="#0E0906"></path>
+    <path d="M0 46 h200 M8 40 h184 M22 34 h60" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
+    <g fill="#0E0906" stroke="rgba(240,216,154,.15)" stroke-width="1">
+      <path d="M36 34 v-10 M52 34 v-10"></path><rect x="30" y="10" width="28" height="15" rx="2"></rect><path d="M28 10 h32 l-16 -8 z"></path>
+      <rect x="118" y="26" width="12" height="8"></rect><rect x="146" y="26" width="12" height="8"></rect>
+    </g>
+    <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+      <path d="M14 96 h10 M30 96 h10 M46 96 h10 M22 104 h10 M38 104 h10 M14 112 h10 M30 112 h10"></path>
+      <path d="M96 210 h10 M112 210 h10 M104 218 h10 M120 218 h10 M96 226 h10 M112 226 h10"></path>
+      <path d="M22 262 h10 M38 262 h10 M30 270 h10 M46 270 h10"></path>
+    </g>
+    <g stroke="rgba(240,216,154,.1)" stroke-width="1" fill="none">
+      <rect x="22" y="70" width="13" height="17"></rect><rect x="52" y="70" width="13" height="17"></rect><rect x="82" y="70" width="13" height="17"></rect><rect x="112" y="70" width="13" height="17"></rect><rect x="142" y="70" width="13" height="17"></rect>
+      <rect x="22" y="126" width="13" height="17"></rect><rect x="52" y="126" width="13" height="17"></rect><rect x="112" y="126" width="13" height="17"></rect><rect x="142" y="126" width="13" height="17"></rect>
+      <rect x="22" y="182" width="13" height="17"></rect><rect x="82" y="182" width="13" height="17"></rect><rect x="142" y="182" width="13" height="17"></rect>
+    </g>
+    <rect x="82" y="126" width="13" height="17" fill="rgba(255,214,150,.32)" style="animation:mzWindow 21s ease-in-out infinite"></rect>
+    <g stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none">
+      <path d="M162 92 h32 M162 148 h32 M162 204 h32 M162 260 h32 M166 92 v168 M190 92 v168 M190 92 l-24 56 M190 148 l-24 56 M190 204 l-24 56"></path>
+      <path d="M178 260 v96 M186 272 h-16 M186 292 h-16 M186 312 h-16 M186 332 h-16 M186 348 h-16"></path>
+    </g>
+    <circle cx="182" cy="362" r="1.6" fill="rgba(216,200,168,.7)" style="animation:mzDrip 7s linear infinite"></circle>
+    <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
+      <path d="M26 322 q16 -20 34 -6 q14 11 30 -3" stroke-width="3"></path>
+      <path d="M44 338 q12 9 26 2" stroke-width="2"></path>
+      <path d="M38 330 v10 M58 336 v8 M74 332 v7" stroke-width="1"></path>
+    </g>
+    <path d="M14 350 L114 330 L118 338 L18 358 z" fill="#0F0A06" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+    <rect x="18" y="352" width="100" height="52" fill="#0B0705" stroke="rgba(240,216,154,.18)" stroke-width="1"></rect>
+    <path d="M38 352 v52 M66 352 v52 M94 352 v52" stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none"></path>
+    <g style="animation:mzTail 9s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%">
+      <path d="M106 346 q13 -3 11 -17" stroke="#0B0705" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+    </g>
+    <path d="M82 350 q-6 -15 5 -21 q-2 -7 4 -9 l2 -4 l3 4 h5 l3 -4 l2 4 q6 3 5 10 q10 7 5 20 z" fill="#0B0705"></path>
+    <ellipse cx="132" cy="400" rx="12" ry="7" fill="#0B0705"></ellipse>
+    <ellipse cx="148" cy="403" rx="9" ry="5.5" fill="#0B0705"></ellipse>
+    <path d="M126 388 l8 -4 l3 5 l-8 4 z" fill="rgba(216,200,168,.22)"></path>
+    <ellipse cx="168" cy="414" rx="24" ry="4.5" fill="rgba(216,200,168,.05)" stroke="rgba(240,216,154,.12)" stroke-width="1" style="animation:mzPuddle 8s ease-in-out infinite"></ellipse>
+    <g style="animation:mzSway 14s ease-in-out -3s infinite;transform-box:fill-box;transform-origin:50% 0">
+      <path d="M178 178 h14" stroke="rgba(240,216,154,.24)" stroke-width="1"></path>
+      <rect x="186" y="178" width="15" height="42" rx="2" fill="#130D08" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+      <path d="M190 186 h7 M193.5 183 v9 M190 198 h7 M193.5 198 v8 M190 210 h7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
+    </g>
+    <path d="M12 46 v384" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
+  </svg></div>
+  <div style="{{ edWallRStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
+    <rect x="12" y="30" width="52" height="400" fill="#0A0705"></rect>
+    <path d="M10 56 h58" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
+    <path d="M50 42 h200 v388 h-200 z" fill="#0E0906"></path>
+    <path d="M50 42 h200 M58 36 h184" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
+    <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
+      <path d="M140 36 v-22 M134 20 h12 M136 27 h8"></path>
+      <rect x="180" y="30" width="12" height="8" fill="#0E0906"></rect><rect x="206" y="30" width="12" height="8" fill="#0E0906"></rect>
+    </g>
+    <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+      <path d="M188 96 h10 M204 96 h10 M196 104 h10 M212 104 h10 M188 112 h10 M204 112 h10"></path>
+      <path d="M100 206 h10 M116 206 h10 M108 214 h10 M124 214 h10"></path>
+      <path d="M196 258 h10 M212 258 h10 M204 266 h10"></path>
+    </g>
+    <g stroke="rgba(240,216,154,.1)" stroke-width="1" fill="none">
+      <rect x="96" y="66" width="13" height="17"></rect><rect x="126" y="66" width="13" height="17"></rect><rect x="156" y="66" width="13" height="17"></rect><rect x="186" y="66" width="13" height="17"></rect><rect x="216" y="66" width="13" height="17"></rect>
+      <rect x="96" y="122" width="13" height="17"></rect><rect x="126" y="122" width="13" height="17"></rect><rect x="186" y="122" width="13" height="17"></rect><rect x="216" y="122" width="13" height="17"></rect>
+      <rect x="126" y="178" width="13" height="17"></rect><rect x="156" y="178" width="13" height="17"></rect><rect x="216" y="178" width="13" height="17"></rect>
+    </g>
+    <g stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none">
+      <path d="M56 100 h32 M56 156 h32 M56 212 h32 M56 268 h32 M60 100 v168 M84 100 v168 M60 100 l24 56 M60 156 l24 56 M60 212 l24 56"></path>
+      <path d="M72 268 v88 M80 280 h-16 M80 300 h-16 M80 320 h-16 M80 340 h-16"></path>
+    </g>
+    <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
+      <path d="M148 328 q18 -18 38 -4 q-14 16 -34 8" stroke-width="3"></path>
+      <path d="M160 342 v9 M178 346 v7 M196 338 v8" stroke-width="1"></path>
+    </g>
+    <path d="M140 356 q52 10 104 0" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
+    <path d="M140 356 v58 M192 360 v54 M244 356 v58" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
+    <path d="M140 366 l104 30 M140 384 l104 28 M140 402 l58 14 M244 366 l-104 30 M244 384 l-104 28 M244 402 l-58 14" stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none"></path>
+    <ellipse cx="115" cy="372" rx="15" ry="4" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1" transform="rotate(-8 115 372)"></ellipse>
+    <rect x="100" y="374" width="28" height="38" rx="3" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1"></rect>
+    <path d="M108 378 v30 M114 378 v30 M120 378 v30" stroke="rgba(240,216,154,.07)" stroke-width="1" fill="none"></path>
+    <g fill="#0D0906" stroke="rgba(240,216,154,.14)" stroke-width="1">
+      <rect x="58" y="392" width="32" height="20"></rect><path d="M58 399 h32 M58 406 h32"></path>
+      <rect x="62" y="376" width="27" height="16"></rect><path d="M62 382 h27 M62 388 h27"></path>
+    </g>
+    <g style="animation:mzSteam 8.5s ease-in -2s infinite"><ellipse cx="76" cy="416" rx="7" ry="4" fill="rgba(216,200,168,.09)"></ellipse></g>
+    <g style="animation:mzSteam 11s ease-in -6.5s infinite"><ellipse cx="84" cy="418" rx="9" ry="4.5" fill="rgba(216,200,168,.07)"></ellipse></g>
+    <g style="animation:mzSway 16s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0">
+      <path d="M58 132 h-14" stroke="rgba(240,216,154,.22)" stroke-width="1"></path>
+      <rect x="42" y="132" width="15" height="38" rx="2" fill="#130D08" stroke="rgba(240,216,154,.22)" stroke-width="1"></rect>
+      <path d="M46 140 h7 M49.5 137 v9 M46 152 h7 M49.5 152 v7" stroke="rgba(240,216,154,.26)" stroke-width="1" fill="none"></path>
+    </g>
+    <path d="M56 42 v388" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
+  </svg></div>
+  <div style="{{ edOverStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <path d="M-8 34 C 250 96, 690 92, 940 28" fill="none" stroke="rgba(240,216,154,.16)" stroke-width="1"></path>
+    <g fill="#0E0906" stroke="rgba(240,216,154,.22)" stroke-width="1">
+      <g style="animation:mzSway 11s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M172 58 v7"></path><circle cx="172" cy="73" r="8"></circle><path d="M168 65 h8"></path></g>
+      <g style="animation:mzSway 13s ease-in-out -4s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M338 84 v7"></path><circle cx="338" cy="99" r="8"></circle><path d="M334 91 h8"></path></g>
+      <g style="animation:mzSway 12s ease-in-out -7s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M560 86 v7"></path><circle cx="560" cy="101" r="8"></circle><path d="M556 93 h8"></path></g>
+      <g style="animation:mzSway 14s ease-in-out -2s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M742 62 v7"></path><circle cx="742" cy="77" r="8"></circle><path d="M738 69 h8"></path></g>
+    </g>
+    <path d="M-8 14 C 300 44, 640 42, 940 10" fill="none" stroke="rgba(240,216,154,.12)" stroke-width="1"></path>
+    <g fill="#0F0A06" stroke="rgba(240,216,154,.14)" stroke-width="1">
+      <g style="animation:mzSway 10s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M196 30 v5"></path><path d="M188 35 h17 v20 l-8.5 6 l-8.5 -6 z"></path></g>
+      <g style="animation:mzSway 12s ease-in-out -5s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M430 41 v5"></path><path d="M421 46 h18 v24 l-9 5 l-9 -5 z"></path></g>
+      <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z"></path></g>
+    </g>
+  </svg></div>
+  <div style="{{ elevWorldStyle }}"></div>
   <div style="{{ breatheStyle }}"></div>
 
   <div style="position:absolute;top:12px;left:20px;display:flex;align-items:baseline;gap:10px">
@@ -95,15 +309,24 @@
     <button onClick="{{ rulesTap }}" style="background:none;border:1px solid rgba(240,216,154,.3);color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11px;width:26px;height:26px;border-radius:50%;cursor:pointer">?</button>
   </div>
 
-  <div style="position:absolute;top:42px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px">
-    <sc-for list="{{ skyCards }}" as="c" hint-placeholder-count="5">
-      <div style="{{ c.style }}">
-        <sc-if value="{{ c.ringOn }}" hint-placeholder-val="{{ false }}">
-          <span style="{{ c.ringStyle }}"></span>
-        </sc-if>
-      </div>
-    </sc-for>
-  </div>
+  <sc-if value="{{ skyHandOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:42px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px">
+      <sc-for list="{{ skyCards }}" as="c" hint-placeholder-count="5">
+        <div style="{{ c.style }}">
+          <sc-if value="{{ c.ringOn }}" hint-placeholder-val="{{ false }}">
+            <span style="{{ c.ringStyle }}"></span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ tutOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:34px;left:50%;transform:translateX(-50%);width:620px;text-align:center;z-index:5;pointer-events:none;display:flex;flex-direction:column;gap:5px">
+      <div style="font-family:'Varela Round',sans-serif;font-size:12.5px;color:#FFB000">{{ tutTitle }}</div>
+      <div style="font-size:11.5px;line-height:1.65;color:#D8C89C;text-wrap:pretty">{{ tutWhy }}</div>
+    </div>
+    <button onClick="{{ tutSkipTap }}" style="position:absolute;top:8px;right:12px;z-index:7;background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
+  </sc-if>
 
   <div style="position:absolute;top:166px;left:50%;transform:translateX(-50%);width:1900px;height:1900px;border-radius:50%;background:radial-gradient(closest-side, transparent 95.2%, rgba(240,216,154,.11) 97%, rgba(186,196,255,.08) 98.2%, transparent 99.6%);filter:blur(3px);pointer-events:none"></div>
   <div style="position:absolute;top:178px;left:50%;transform:translateX(-50%);width:1840px;height:1840px;border-radius:50%;background:radial-gradient(closest-side, transparent 94.4%, rgba(96,74,186,.07) 96.8%, transparent 99%);filter:blur(9px);pointer-events:none"></div>
@@ -177,18 +400,43 @@
     </div>
   </sc-if>
   <div style="position:absolute;top:262px;left:0;right:0;text-align:center;min-height:18px;font-size:12px;color:#D8C89C">{{ logLine }}</div>
+  <sc-if value="{{ countFxOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:6;pointer-events:none">
+      <sc-for list="{{ cfLights }}" as="d" hint-placeholder-count="4">
+        <span style="{{ d.style }}"></span>
+      </sc-for>
+      <div style="{{ cfOrbYou }}"><span style="{{ cfNumStyle }}">{{ cfYouN }}</span></div>
+      <div style="{{ cfOrbSky }}"><span style="{{ cfNumStyle }}">{{ cfSkyN }}</span></div>
+    </div>
+  </sc-if>
 
-  <sc-if value="{{ peekOn }}" hint-placeholder-val="{{ false }}">
-    <div style="{{ peekStyle }}">
-      <div style="background:rgba(10,7,3,.94);border:1px solid rgba(240,216,154,.18);border-radius:8px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.55)">
-        <div style="display:flex;flex-direction:column;gap:2px">
-          <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;line-height:1.15;color:{{ peekTitleC }}">{{ peekTitle }}</span>
-          <span style="font-size:9.5px;color:#9A8A5E">{{ peekWho }}</span>
+  <sc-if value="{{ zoomOn }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ zoomStyle }}">
+      <sc-if value="{{ zoomBackOn }}" hint-placeholder-val="{{ false }}">
+        <div style="width:210px;height:284px;border-radius:14px;background:linear-gradient(160deg,#1E1810,#0B0703);border:1px solid rgba(255,176,0,.4);box-shadow:0 18px 50px rgba(0,0,0,.75)"></div>
+      </sc-if>
+      <sc-if value="{{ zoomCardOn }}" hint-placeholder-val="{{ true }}">
+        <div style="width:210px;height:284px;border-radius:14px;position:relative;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid {{ zoomBorder }};box-shadow:0 18px 50px rgba(0,0,0,.78), 0 6px 18px rgba(0,0,0,.5)">
+          <div style="position:absolute;top:10px;left:10px;right:10px;bottom:10px;border-radius:9px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.12)"></div>
+          <svg viewBox="0 0 100 100" style="position:absolute;top:34px;left:47px;width:116px;height:90px;opacity:.95;animation:mzEmblemBreathe 7s ease-in-out infinite">
+            <sc-for list="{{ zoomShapes }}" as="p" hint-placeholder-count="2">
+              <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+            </sc-for>
+          </svg>
+          <div style="position:absolute;top:14px;left:19px;font-size:23px;color:{{ zoomNumC }};text-shadow:0 0 6px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)">{{ zoomL }}</div>
+          <div style="position:absolute;bottom:12px;right:19px;font-size:23px;color:{{ zoomNumC }};text-shadow:0 0 6px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)">{{ zoomR }}</div>
+          <div style="position:absolute;top:128px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.1;color:#F2EAD6;padding:0 16px">{{ zoomName }}</div>
+          <div style="position:absolute;top:160px;left:0;right:0;padding:0 22px;font-size:12px;line-height:1.55;color:#D8C89C;text-align:center;text-wrap:pretty">{{ zoomMove }}</div>
+          <div style="position:absolute;bottom:15px;left:0;right:0;text-align:center;font-size:9.5px;color:#9A8A5E;padding:0 40px">{{ zoomWho }}</div>
         </div>
-        <sc-for list="{{ peekLines }}" as="p" hint-placeholder-count="2">
-          <div style="font-size:11px;line-height:1.6;color:#D8C89C;text-align:left;text-wrap:pretty;margin-top:8px">{{ p.t }}</div>
-        </sc-for>
-      </div>
+      </sc-if>
+      <sc-if value="{{ zoomNotesOn }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ zoomNotesStyle }}">
+          <sc-for list="{{ zoomNotes }}" as="p" hint-placeholder-count="1">
+            <div style="background:rgba(10,7,3,.92);border:1px solid rgba(240,216,154,.16);border-radius:7px;padding:8px 10px;font-size:10.5px;line-height:1.5;color:#D8C89C;text-align:left;text-wrap:pretty">{{ p.t }}</div>
+          </sc-for>
+        </div>
+      </sc-if>
     </div>
   </sc-if>
 
@@ -232,16 +480,222 @@
           <span style="{{ s.style }}"></span>
         </sc-for>
       </div>
+      <div style="{{ elevDayStyle }}"></div>
       <div style="{{ elevGroundStyle }}"></div>
       <div style="{{ elevRimStyle }}"></div>
+      <div style="{{ edFarStyle }}"><svg viewBox="0 0 932 64" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <g fill="#0A0704">
+          <rect x="52" y="26" width="26" height="38"></rect>
+          <rect x="332" y="12" width="24" height="52"></rect><path d="M336 12 h16 l-8 -9 z"></path><path d="M344 3 v-7" stroke="#0A0704" stroke-width="1.5"></path>
+          <rect x="512" y="22" width="20" height="42"></rect>
+          <rect x="788" y="18" width="28" height="46"></rect><rect x="812" y="30" width="14" height="34"></rect>
+        </g>
+        <path d="M0 64 V40 h74 v-7 h30 v7 h58 v10 h66 v-14 h44 v8 h92 v-6 h52 v10 h74 v-16 h40 v12 h88 v-8 h60 v10 h70 v-12 h46 v9 h72 v7 h66 V64 Z" fill="#0C0805"></path>
+        <g stroke="rgba(240,216,154,.13)" stroke-width="1" fill="#0C0805">
+          <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
+          <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
+        </g>
+      </svg></div>
+      <div style="{{ edMidStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#100A06"></path>
+        <g fill="#100A06" stroke="rgba(240,216,154,.15)" stroke-width="1">
+          <rect x="120" y="34" width="9" height="8"></rect><rect x="308" y="38" width="9" height="8"></rect><rect x="700" y="50" width="9" height="8"></rect>
+          <path d="M498 42 v-14 M516 42 v-14"></path><rect x="491" y="12" width="32" height="16" rx="2"></rect><path d="M489 12 h36 l-18 -9 z"></path>
+        </g>
+        <g stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none">
+          <path d="M156 62 h44 M156 74 h44 M156 86 h44 M160 62 l-4 12 M196 74 l-4 12"></path>
+        </g>
+        <path d="M60 26 q400 18 812 -4" fill="none" stroke="rgba(240,216,154,.1)" stroke-width="1"></path>
+        <g fill="#0D0906" style="animation:mzPigeon 12s ease-in-out infinite">
+          <circle cx="380" cy="32" r="2.2"></circle><circle cx="383.5" cy="30" r="1.2"></circle>
+          <circle cx="406" cy="34" r="2.2"></circle><circle cx="409.5" cy="32" r="1.2"></circle>
+          <circle cx="452" cy="33" r="2"></circle><circle cx="455" cy="31.2" r="1.1"></circle>
+        </g>
+        <g fill="#0D0906" stroke="rgba(240,216,154,.13)" stroke-width="1">
+          <rect x="140" y="52" width="11" height="7"></rect><rect x="448" y="58" width="11" height="7"></rect><rect x="836" y="56" width="11" height="7"></rect>
+        </g>
+        <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
+          <path d="M748 58 v-16 M742 46 h12 M744 50 h8"></path>
+        </g>
+      </svg></div>
+      <div style="{{ edNearStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <path d="M0 150 V96 h180 v-8 h120 v8 h150 v-6 h130 v6 h352 V150 Z" fill="#140D07"></path>
+        <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
+          <path d="M24 96 h132 M204 88 h72 M330 96 h96 M474 90 h82 M600 96 h120"></path>
+        </g>
+        <path d="M40 34 Q 240 76 466 60 Q 700 44 892 30" fill="none" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+        <g fill="#0E0906" stroke="rgba(240,216,154,.24)" stroke-width="1">
+          <path d="M110 48 v6 M190 57 v6 M280 62 v6 M370 64 v6 M460 61 v6 M560 56 v6 M660 50 v6 M760 42 v6 M850 33 v6" stroke="rgba(240,216,154,.14)"></path>
+          <circle cx="110" cy="61" r="7"></circle><circle cx="190" cy="70" r="7"></circle><circle cx="280" cy="75" r="7"></circle><circle cx="370" cy="77" r="7"></circle><circle cx="460" cy="74" r="7"></circle><circle cx="560" cy="69" r="7"></circle><circle cx="660" cy="63" r="7"></circle><circle cx="760" cy="55" r="7"></circle><circle cx="850" cy="46" r="7"></circle>
+        </g>
+        <g stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none">
+          <path d="M866 70 V150 M920 70 V150 M866 92 h54 M866 116 h54 M866 140 h54 M916 70 l-46 22 M916 92 l-46 24 M916 116 l-46 24"></path>
+        </g>
+        <g fill="none" stroke="rgba(240,216,154,.15)" stroke-width="1">
+          <rect x="42" y="112" width="92" height="38"></rect>
+          <path d="M46 120 h84 M46 128 h84 M46 136 h84 M46 144 h84"></path>
+          <rect x="636" y="116" width="74" height="34"></rect>
+          <path d="M640 124 h66 M640 132 h66 M640 140 h66"></path>
+        </g>
+        <g fill="#0F0A06" stroke="rgba(240,216,154,.2)" stroke-width=".8">
+          <rect x="206" y="104" width="9" height="13" transform="rotate(-4 210 110)"></rect>
+          <rect x="219" y="106" width="9" height="12" transform="rotate(3 223 112)"></rect>
+          <rect x="560" y="102" width="10" height="14" transform="rotate(-3 565 109)"></rect>
+        </g>
+        <g style="animation:mzSway 13s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0">
+          <path d="M330 88 v6" stroke="rgba(240,216,154,.3)" stroke-width="1"></path>
+          <rect x="322" y="94" width="16" height="46" rx="2" fill="#120C07" stroke="rgba(240,216,154,.26)" stroke-width="1"></rect>
+          <path d="M326 102 h8 M330 98 v9 M326 114 h8 M330 114 v9 M326 130 h8" stroke="rgba(240,216,154,.3)" stroke-width="1" fill="none"></path>
+        </g>
+        <g style="animation:mzSway 15s ease-in-out -6s infinite;transform-box:fill-box;transform-origin:50% 0">
+          <path d="M612 90 v5" stroke="rgba(240,216,154,.28)" stroke-width="1"></path>
+          <rect x="605" y="95" width="14" height="38" rx="2" fill="#120C07" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+          <path d="M608 102 h8 M612 99 v8 M608 112 h8 M612 112 v7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
+        </g>
+        <g fill="#0B0705">
+          <ellipse cx="164" cy="146" rx="11" ry="7"></ellipse><ellipse cx="179" cy="148" rx="8" ry="5.5"></ellipse>
+          <rect x="190" y="134" width="13" height="16" rx="1.5"></rect><ellipse cx="196.5" cy="134" rx="7.5" ry="2.6"></ellipse>
+        </g>
+        <g style="animation:mzSteam 9s ease-in infinite">
+          <ellipse cx="724" cy="130" rx="7" ry="4.5" fill="rgba(216,200,168,.10)"></ellipse>
+        </g>
+        <g style="animation:mzSteam 11.5s ease-in -4.5s infinite">
+          <ellipse cx="732" cy="132" rx="9" ry="5" fill="rgba(216,200,168,.08)"></ellipse>
+        </g>
+        <g style="animation:mzScrap 18s linear infinite">
+          <path d="M-24 141 l7 -3 l2 5 l-7 3 z" fill="rgba(216,200,168,.3)"></path>
+        </g>
+        <g style="animation:mzRat 26s linear infinite">
+          <g transform="translate(-40 0)">
+            <ellipse cx="0" cy="147" rx="7" ry="3.4" fill="#0B0705"></ellipse><circle cx="6.5" cy="146" r="2.2" fill="#0B0705"></circle>
+            <path d="M-7 147 q-8 3 -14 -1" stroke="#0B0705" stroke-width="1.2" fill="none"></path>
+          </g>
+        </g>
+        <g fill="rgba(216,200,168,.18)">
+          <path d="M300 142 l7 -3 l3 4 l-7 3 z M508 146 l6 -3 l3 4 l-6 3 z M694 141 l7 -2 l2 4 l-7 3 z"></path>
+        </g>
+        <ellipse cx="420" cy="147" rx="30" ry="3.5" fill="rgba(216,200,168,.04)" stroke="rgba(240,216,154,.1)" stroke-width="1" style="animation:mzPuddle 9s ease-in-out -3s infinite"></ellipse>
+      </svg></div>
+      <div style="{{ edWallLStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
+        <rect x="188" y="34" width="50" height="396" fill="#0A0705"></rect>
+        <path d="M186 60 h56" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
+        <path d="M0 46 h200 v384 h-200 z" fill="#0E0906"></path>
+        <path d="M0 46 h200 M8 40 h184 M22 34 h60" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
+        <g fill="#0E0906" stroke="rgba(240,216,154,.15)" stroke-width="1">
+          <path d="M36 34 v-10 M52 34 v-10"></path><rect x="30" y="10" width="28" height="15" rx="2"></rect><path d="M28 10 h32 l-16 -8 z"></path>
+          <rect x="118" y="26" width="12" height="8"></rect><rect x="146" y="26" width="12" height="8"></rect>
+        </g>
+        <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+          <path d="M14 96 h10 M30 96 h10 M46 96 h10 M22 104 h10 M38 104 h10 M14 112 h10 M30 112 h10"></path>
+          <path d="M96 210 h10 M112 210 h10 M104 218 h10 M120 218 h10 M96 226 h10 M112 226 h10"></path>
+          <path d="M22 262 h10 M38 262 h10 M30 270 h10 M46 270 h10"></path>
+        </g>
+        <g stroke="rgba(240,216,154,.1)" stroke-width="1" fill="none">
+          <rect x="22" y="70" width="13" height="17"></rect><rect x="52" y="70" width="13" height="17"></rect><rect x="82" y="70" width="13" height="17"></rect><rect x="112" y="70" width="13" height="17"></rect><rect x="142" y="70" width="13" height="17"></rect>
+          <rect x="22" y="126" width="13" height="17"></rect><rect x="52" y="126" width="13" height="17"></rect><rect x="112" y="126" width="13" height="17"></rect><rect x="142" y="126" width="13" height="17"></rect>
+          <rect x="22" y="182" width="13" height="17"></rect><rect x="82" y="182" width="13" height="17"></rect><rect x="142" y="182" width="13" height="17"></rect>
+        </g>
+        <rect x="82" y="126" width="13" height="17" fill="rgba(255,214,150,.32)" style="animation:mzWindow 21s ease-in-out infinite"></rect>
+        <g stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none">
+          <path d="M162 92 h32 M162 148 h32 M162 204 h32 M162 260 h32 M166 92 v168 M190 92 v168 M190 92 l-24 56 M190 148 l-24 56 M190 204 l-24 56"></path>
+          <path d="M178 260 v96 M186 272 h-16 M186 292 h-16 M186 312 h-16 M186 332 h-16 M186 348 h-16"></path>
+        </g>
+        <circle cx="182" cy="362" r="1.6" fill="rgba(216,200,168,.7)" style="animation:mzDrip 7s linear infinite"></circle>
+        <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
+          <path d="M26 322 q16 -20 34 -6 q14 11 30 -3" stroke-width="3"></path>
+          <path d="M44 338 q12 9 26 2" stroke-width="2"></path>
+          <path d="M38 330 v10 M58 336 v8 M74 332 v7" stroke-width="1"></path>
+        </g>
+        <path d="M14 350 L114 330 L118 338 L18 358 z" fill="#0F0A06" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+        <rect x="18" y="352" width="100" height="52" fill="#0B0705" stroke="rgba(240,216,154,.18)" stroke-width="1"></rect>
+        <path d="M38 352 v52 M66 352 v52 M94 352 v52" stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none"></path>
+        <g style="animation:mzTail 9s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%">
+          <path d="M106 346 q13 -3 11 -17" stroke="#0B0705" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+        </g>
+        <path d="M82 350 q-6 -15 5 -21 q-2 -7 4 -9 l2 -4 l3 4 h5 l3 -4 l2 4 q6 3 5 10 q10 7 5 20 z" fill="#0B0705"></path>
+        <ellipse cx="132" cy="400" rx="12" ry="7" fill="#0B0705"></ellipse>
+        <ellipse cx="148" cy="403" rx="9" ry="5.5" fill="#0B0705"></ellipse>
+        <path d="M126 388 l8 -4 l3 5 l-8 4 z" fill="rgba(216,200,168,.22)"></path>
+        <ellipse cx="168" cy="414" rx="24" ry="4.5" fill="rgba(216,200,168,.05)" stroke="rgba(240,216,154,.12)" stroke-width="1" style="animation:mzPuddle 8s ease-in-out infinite"></ellipse>
+        <g style="animation:mzSway 14s ease-in-out -3s infinite;transform-box:fill-box;transform-origin:50% 0">
+          <path d="M178 178 h14" stroke="rgba(240,216,154,.24)" stroke-width="1"></path>
+          <rect x="186" y="178" width="15" height="42" rx="2" fill="#130D08" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+          <path d="M190 186 h7 M193.5 183 v9 M190 198 h7 M193.5 198 v8 M190 210 h7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
+        </g>
+        <path d="M12 46 v384" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
+      </svg></div>
+      <div style="{{ edWallRStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
+        <rect x="12" y="30" width="52" height="400" fill="#0A0705"></rect>
+        <path d="M10 56 h58" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
+        <path d="M50 42 h200 v388 h-200 z" fill="#0E0906"></path>
+        <path d="M50 42 h200 M58 36 h184" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
+        <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
+          <path d="M140 36 v-22 M134 20 h12 M136 27 h8"></path>
+          <rect x="180" y="30" width="12" height="8" fill="#0E0906"></rect><rect x="206" y="30" width="12" height="8" fill="#0E0906"></rect>
+        </g>
+        <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+          <path d="M188 96 h10 M204 96 h10 M196 104 h10 M212 104 h10 M188 112 h10 M204 112 h10"></path>
+          <path d="M100 206 h10 M116 206 h10 M108 214 h10 M124 214 h10"></path>
+          <path d="M196 258 h10 M212 258 h10 M204 266 h10"></path>
+        </g>
+        <g stroke="rgba(240,216,154,.1)" stroke-width="1" fill="none">
+          <rect x="96" y="66" width="13" height="17"></rect><rect x="126" y="66" width="13" height="17"></rect><rect x="156" y="66" width="13" height="17"></rect><rect x="186" y="66" width="13" height="17"></rect><rect x="216" y="66" width="13" height="17"></rect>
+          <rect x="96" y="122" width="13" height="17"></rect><rect x="126" y="122" width="13" height="17"></rect><rect x="186" y="122" width="13" height="17"></rect><rect x="216" y="122" width="13" height="17"></rect>
+          <rect x="126" y="178" width="13" height="17"></rect><rect x="156" y="178" width="13" height="17"></rect><rect x="216" y="178" width="13" height="17"></rect>
+        </g>
+        <g stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none">
+          <path d="M56 100 h32 M56 156 h32 M56 212 h32 M56 268 h32 M60 100 v168 M84 100 v168 M60 100 l24 56 M60 156 l24 56 M60 212 l24 56"></path>
+          <path d="M72 268 v88 M80 280 h-16 M80 300 h-16 M80 320 h-16 M80 340 h-16"></path>
+        </g>
+        <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
+          <path d="M148 328 q18 -18 38 -4 q-14 16 -34 8" stroke-width="3"></path>
+          <path d="M160 342 v9 M178 346 v7 M196 338 v8" stroke-width="1"></path>
+        </g>
+        <path d="M140 356 q52 10 104 0" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
+        <path d="M140 356 v58 M192 360 v54 M244 356 v58" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
+        <path d="M140 366 l104 30 M140 384 l104 28 M140 402 l58 14 M244 366 l-104 30 M244 384 l-104 28 M244 402 l-58 14" stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none"></path>
+        <ellipse cx="115" cy="372" rx="15" ry="4" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1" transform="rotate(-8 115 372)"></ellipse>
+        <rect x="100" y="374" width="28" height="38" rx="3" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1"></rect>
+        <path d="M108 378 v30 M114 378 v30 M120 378 v30" stroke="rgba(240,216,154,.07)" stroke-width="1" fill="none"></path>
+        <g fill="#0D0906" stroke="rgba(240,216,154,.14)" stroke-width="1">
+          <rect x="58" y="392" width="32" height="20"></rect><path d="M58 399 h32 M58 406 h32"></path>
+          <rect x="62" y="376" width="27" height="16"></rect><path d="M62 382 h27 M62 388 h27"></path>
+        </g>
+        <g style="animation:mzSteam 8.5s ease-in -2s infinite"><ellipse cx="76" cy="416" rx="7" ry="4" fill="rgba(216,200,168,.09)"></ellipse></g>
+        <g style="animation:mzSteam 11s ease-in -6.5s infinite"><ellipse cx="84" cy="418" rx="9" ry="4.5" fill="rgba(216,200,168,.07)"></ellipse></g>
+        <g style="animation:mzSway 16s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0">
+          <path d="M58 132 h-14" stroke="rgba(240,216,154,.22)" stroke-width="1"></path>
+          <rect x="42" y="132" width="15" height="38" rx="2" fill="#130D08" stroke="rgba(240,216,154,.22)" stroke-width="1"></rect>
+          <path d="M46 140 h7 M49.5 137 v9 M46 152 h7 M49.5 152 v7" stroke="rgba(240,216,154,.26)" stroke-width="1" fill="none"></path>
+        </g>
+        <path d="M56 42 v388" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
+      </svg></div>
+      <div style="{{ edOverStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <path d="M-8 34 C 250 96, 690 92, 940 28" fill="none" stroke="rgba(240,216,154,.16)" stroke-width="1"></path>
+        <g fill="#0E0906" stroke="rgba(240,216,154,.22)" stroke-width="1">
+          <g style="animation:mzSway 11s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M172 58 v7"></path><circle cx="172" cy="73" r="8"></circle><path d="M168 65 h8"></path></g>
+          <g style="animation:mzSway 13s ease-in-out -4s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M338 84 v7"></path><circle cx="338" cy="99" r="8"></circle><path d="M334 91 h8"></path></g>
+          <g style="animation:mzSway 12s ease-in-out -7s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M560 86 v7"></path><circle cx="560" cy="101" r="8"></circle><path d="M556 93 h8"></path></g>
+          <g style="animation:mzSway 14s ease-in-out -2s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M742 62 v7"></path><circle cx="742" cy="77" r="8"></circle><path d="M738 69 h8"></path></g>
+        </g>
+        <path d="M-8 14 C 300 44, 640 42, 940 10" fill="none" stroke="rgba(240,216,154,.12)" stroke-width="1"></path>
+        <g fill="#0F0A06" stroke="rgba(240,216,154,.14)" stroke-width="1">
+          <g style="animation:mzSway 10s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M196 30 v5"></path><path d="M188 35 h17 v20 l-8.5 6 l-8.5 -6 z"></path></g>
+          <g style="animation:mzSway 12s ease-in-out -5s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M430 41 v5"></path><path d="M421 46 h18 v24 l-9 5 l-9 -5 z"></path></g>
+          <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z"></path></g>
+        </g>
+      </svg></div>
+      <div style="{{ elevWorldStyle }}"></div>
 
       <div style="position:absolute;left:64px;top:76px;display:flex;flex-direction:column;align-items:flex-start">
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:58px;line-height:1;color:#F2EAD6;animation:mzFadeUp .6s ease .06s both">manzil</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:11px;animation:mzFadeUp .6s ease .18s both">a card game against the sky</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:11px;animation:mzFadeUp .6s ease .18s both">a card game under the sky</div>
         <button onClick="{{ menuPlayTap }}" style="margin-top:26px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .32s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">{{ menuPlayLabel }}</button>
         <div style="display:flex;gap:22px;margin-top:20px;animation:mzFadeUp .6s ease .46s both">
           <button onClick="{{ rulesTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">how to play</button>
-          <button onClick="{{ menuSetTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the table</button>
+          <button onClick="{{ menuDeckTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your twelve</button>
+          <button onClick="{{ menuLegendTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the legend</button>
+          <button onClick="{{ menuTutTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your five</button>
         </div>
       </div>
 
@@ -296,7 +750,7 @@
   </sc-if>
   <sc-if value="{{ setOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:8;animation:mzFadeUp .35s ease both">
-      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ the well</button>
+      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;animation:mzFadeUp .5s ease both">the table</div>
       <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:8px">how the road is laid. a road is the locked game; the rest are research previews</div>
       <div style="display:flex;gap:10px;margin-top:20px">
@@ -318,19 +772,19 @@
         </sc-for>
       </div>
       <div style="display:flex;gap:26px;margin-top:38px">
-        <a href="Manzil - Rules & Cards.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s ease" style-hover="border-color:rgba(240,216,154,.5)">the rules sheet →</a>
+        <a href="Manzil - Rules &amp; Cards.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s ease" style-hover="border-color:rgba(240,216,154,.5)">the rules sheet →</a>
         <a href="Manzil - A User's Manual.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s ease" style-hover="border-color:rgba(240,216,154,.5)">a user's manual →</a>
       </div>
     </div>
   </sc-if>
   <sc-if value="{{ deckOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;z-index:4;animation:mzFadeUp .3s ease both">
-      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ the well</button>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your pack, <span style="color:#F0D89A">{{ deckCount }}</span> of 12</div>
-      <div style="font-size:10px;color:#9A8A5E">five are dealt from your pack at the start of every board, face up. face-down cards are still on the road: win their mansion's night to turn them.</div>
+      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your twelve</div>
+      <div style="font-size:10px;color:#9A8A5E">five are dealt from your pack at the start of every board, face up. grey cards are asleep at level one: win a card's own mansion night and it wakes.</div>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:660px;margin-top:2px">
         <sc-for list="{{ deckCards }}" as="c" hint-placeholder-count="28">
-          <div onClick="{{ c.onTap }}" style="{{ c.style }}" style-hover="transform:translateY(-3px)">
+          <div onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" style="{{ c.style }}" style-hover="transform:translateY(-3px)">
             <sc-if value="{{ c.backOn }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:4px;border-radius:4px;border:1px solid rgba(154,138,94,.25);display:flex;align-items:center;justify-content:center;color:rgba(154,138,94,.4);font-size:11px">✦</div>
             </sc-if>
@@ -390,7 +844,7 @@
         a card's two numbers are its two sides: left fights left, right fights right. your ground is parchment; the sky's is amber. her hand is open: tonight's planets, five lights you can tell apart. the lead alternates each round.<br>
         <span style="color:#9A8A5E">a card's numbers never change: it fights the same on its first night as its hundredth. levels wake its signature at 2, then wear away the labels: a new card says everything, level 2 drops the name, level 3 drops the move, level 4 is nearly all art. hold any card to read it in full. the throne is two-faced; choose on lodge.</span><br>
         <span style="color:#FFFDF5">dominion:</span> a card lodged on its own mansion glows and counts as two at the count. the ground keeps it, whoever claims the card. her planets hold dominion where they truly stand tonight.<br>
-        <span style="color:#FFFDF5">first nights:</span> an unclaimed mansion's night is the walkers' road: eight single boards against other walkers' hands, each reading deeper than the last, then the sky herself at the top, best of five, wearing the mansion's own rule. fall off and the ladder waits where you left it. the climb is the ground rising into space.
+        <span style="color:#FFFDF5">first nights:</span> an unclaimed mansion's night is the walkers' road: eight single boards against other walkers' hands, each reading deeper than the last, then the sky herself at the top, best of five, wearing the mansion's own rule. beat her and the mansion is claimed, its card waking at level 2. fall off and the ladder waits where you left it. the climb is daylight rising into open space.
         <span style="color:#FFFDF5">after the claim:</span> the mansion is yours and its nights go back to the walkers, best of five. the sky herself returns only when the moon crosses one of your chart's own mansions, and then she stays for a whole match.
       </div>
     </div>
@@ -421,6 +875,195 @@
       </sc-if>
     </div>
   </sc-if>
+  <sc-if value="{{ pintroOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:0 90px">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .6s ease both">before the road: one walked board</div>
+      <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .12s both">your five stand ready. one board, every move called: the lit card goes to the lit ground. lodge it and watch what it does. nothing is staked.</div>
+      <div style="font-size:11.5px;line-height:1.75;color:#9A8A5E;max-width:460px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">when the road fills, the lights gather into two orbs, one for each side. the orbs meet, and the bigger count stands. own more of the nine: that is the whole game.</div>
+      <button onClick="{{ pStartTap }}" style="margin-top:6px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">walk the board</button>
+      <button onClick="{{ pSkipTap }}" style="background:none;border:none;padding:4px 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ birthOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 34px 22px">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;color:#F2EAD6;animation:mzFadeUp .9s ease both">star shard</div>
+      <div style="font-size:12.5px;line-height:1.55;color:#9A8A5E;text-align:center;animation:mzFadeUp .9s ease .1s both">the sky wrote something the minute you arrived.<br>tell us the minute.</div>
+      <div style="display:flex;flex-direction:column;gap:14px;width:100%;max-width:330px;animation:mzFadeUp .9s ease .2s both">
+        <div style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">born on
+          <div style="display:flex;gap:10px">
+            <div style="position:relative;flex:1.3">
+              <select value="{{ bDateMVal }}" onChange="{{ bSetDateM }}" style="{{ bSelectStyle }}">
+                <option value="" disabled selected>month</option>
+                <sc-for list="{{ bMonthOptions }}" as="o" hint-placeholder-count="12">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+              <span style="{{ bChevronStyle }}">⌄</span>
+            </div>
+            <div style="position:relative;flex:1">
+              <select value="{{ bDateDVal }}" onChange="{{ bSetDateD }}" style="{{ bSelectStyle }}">
+                <option value="" disabled selected>day</option>
+                <sc-for list="{{ bDayOptions }}" as="o" hint-placeholder-count="31">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+              <span style="{{ bChevronStyle }}">⌄</span>
+            </div>
+            <div style="position:relative;flex:1.2">
+              <select value="{{ bDateYVal }}" onChange="{{ bSetDateY }}" style="{{ bSelectStyle }}">
+                <option value="" disabled selected>year</option>
+                <sc-for list="{{ bYearOptions }}" as="o" hint-placeholder-count="6">
+                  <option value="{{ o.value }}">{{ o.label }}</option>
+                </sc-for>
+              </select>
+              <span style="{{ bChevronStyle }}">⌄</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="position:relative;flex:1">
+                <select value="{{ bTimeHVal }}" onChange="{{ bSetTimeH }}" style="{{ bTimeSelectStyle }}" disabled="{{ bTimeSelectDisabled }}">
+                  <option value="" disabled selected>hh</option>
+                  <sc-for list="{{ bHourOptions }}" as="o" hint-placeholder-count="12">
+                    <option value="{{ o.value }}">{{ o.label }}</option>
+                  </sc-for>
+                </select>
+                <span style="{{ bChevronStyle }}">⌄</span>
+              </div>
+              <span style="color:#9A8A5E;font-size:16px">:</span>
+              <div style="position:relative;flex:1">
+                <select value="{{ bTimeMinVal }}" onChange="{{ bSetTimeMin }}" style="{{ bTimeSelectStyle }}" disabled="{{ bTimeSelectDisabled }}">
+                  <option value="" disabled selected>mm</option>
+                  <sc-for list="{{ bMinuteOptions }}" as="o" hint-placeholder-count="60">
+                    <option value="{{ o.value }}">{{ o.label }}</option>
+                  </sc-for>
+                </select>
+                <span style="{{ bChevronStyle }}">⌄</span>
+              </div>
+              <div style="position:relative;flex:1.1">
+                <select value="{{ bTimeAPVal }}" onChange="{{ bSetTimeAP }}" style="{{ bTimeSelectStyle }}" disabled="{{ bTimeSelectDisabled }}">
+                  <option value="" disabled selected>—</option>
+                  <option value="AM">am</option>
+                  <option value="PM">pm</option>
+                </select>
+                <span style="{{ bChevronStyle }}">⌄</span>
+              </div>
+            </div>
+          </div>
+          <button onClick="{{ bTimeToggle }}" style="{{ bTimeBtnStyle }}">{{ bTimeMark }} i don't know my birth time</button>
+        </div>
+        <sc-if value="{{ bManualOff }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">in
+          <sc-if value="{{ bPlaceChosen }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(240,216,154,.3);padding:6px 2px">
+              <span style="font-family:'Varela Round',sans-serif;font-size:15px;color:#F2EAD6">{{ bPlaceConfirmedLine }}</span>
+              <button onClick="{{ bChangePlace }}" style="background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;padding:0;white-space:nowrap">change</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ bPlaceNotChosen }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px;align-items:flex-end">
+              <input placeholder="portland, oregon" value="{{ bQueryVal }}" onChange="{{ bSetQuery }}" style="flex:1;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none">
+              <button onClick="{{ bSearchTap }}" style="background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:11.5px;padding:8px 14px;cursor:pointer;white-space:nowrap">{{ bSearchLabel }}</button>
+            </div>
+            <sc-if value="{{ bHasResults }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;margin-top:4px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.03);max-height:120px;overflow-y:auto">
+                <sc-for list="{{ bCityRows }}" as="r" hint-placeholder-count="4">
+                  <div onClick="{{ r.pick }}" style="padding:9px 12px;font-family:'Varela Round',sans-serif;font-size:13px;color:#F2EAD6;cursor:pointer;border-bottom:1px solid rgba(240,216,154,.1)">{{ r.label }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ bManualOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex:1">lat
+            <input placeholder="45.52" inputmode="decimal" value="{{ bLatVal }}" onChange="{{ bSetLat }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none;width:100%">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex:1">lon
+            <input placeholder="-122.68" inputmode="decimal" value="{{ bLonVal }}" onChange="{{ bSetLon }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none;width:100%">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex:1">utc offset
+            <input placeholder="-7" inputmode="decimal" value="{{ bTzVal }}" onChange="{{ bSetTz }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none;width:100%">
+          </label>
+        </div>
+        </sc-if>
+        <button onClick="{{ bToggleManual }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E">{{ bManualToggleLabel }}</button>
+      </div>
+      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:330px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five mansions are read from it: your sun, moon, mercury, venus and mars. computed on this device, kept on this device.</div>
+      <div style="min-height:12px;font-size:11px;color:#FFB000">{{ bErr }}</div>
+      <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}">cast your five</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ tut5On }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ tutNext }}" style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:48px;padding:0 90px">
+      <div style="width:210px;height:284px;flex:none;border-radius:14px;position:relative;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.6);box-shadow:0 18px 50px rgba(0,0,0,.78), 0 0 16px rgba(240,216,154,.22);animation:mzFadeUp .5s ease both">
+        <div style="position:absolute;top:10px;left:10px;right:10px;bottom:10px;border-radius:9px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.12)"></div>
+        <svg viewBox="0 0 100 100" style="position:absolute;top:44px;left:47px;width:116px;height:98px;opacity:.95;animation:mzEmblemBreathe 7s ease-in-out infinite">
+          <sc-for list="{{ tutShapes }}" as="p" hint-placeholder-count="2">
+            <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+          </sc-for>
+        </svg>
+        <div style="position:absolute;top:14px;left:19px;font-size:23px;color:#F0D89A;text-shadow:0 0 6px rgba(4,3,2,.95)">{{ tutL }}</div>
+        <div style="position:absolute;bottom:12px;right:19px;font-size:23px;color:#F0D89A;text-shadow:0 0 6px rgba(4,3,2,.95)">{{ tutR }}</div>
+        <div style="position:absolute;top:160px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.1;color:#F2EAD6;padding:0 16px">{{ tutName }}</div>
+        <div style="position:absolute;bottom:15px;left:0;right:0;text-align:center;font-size:9.5px;color:#9A8A5E">level 2 · its move is awake</div>
+      </div>
+      <div style="max-width:370px;display:flex;flex-direction:column;gap:13px">
+        <div style="font-size:10.5px;color:#9A8A5E;animation:mzFadeUp .5s ease both">{{ tutCount }}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:25px;line-height:1.25;color:#F2EAD6;animation:mzFadeUp .5s ease .08s both">{{ tutSource }}</div>
+        <div style="font-size:12.5px;line-height:1.75;color:#D8C89C;text-wrap:pretty;animation:mzFadeUp .5s ease .16s both">{{ tutMovePlain }}</div>
+        <div style="font-size:11.5px;line-height:1.75;color:#9A8A5E;border-top:1px solid rgba(240,216,154,.12);padding-top:12px;text-wrap:pretty;animation:mzFadeUp .5s ease .24s both">{{ tutLesson }}</div>
+        <div style="font-size:10.5px;color:rgba(154,138,94,.75);animation:mzFadeUp .9s ease 1s both">tap to go on</div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ tut7On }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;padding:0 60px">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .6s ease both">seven more walk with you</div>
+      <div style="display:flex;gap:9px;animation:mzFadeUp .6s ease .12s both">
+        <sc-for list="{{ tutSeven }}" as="c" hint-placeholder-count="7">
+          <div style="flex:none;width:58px;height:78px;border-radius:6px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid rgba(154,138,94,.4)">
+            <svg viewBox="0 0 100 100" style="position:absolute;top:5px;left:14px;width:30px;height:26px;opacity:.85">
+              <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
+                <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+              </sc-for>
+            </svg>
+            <div style="position:absolute;top:4px;left:7px;font-size:10px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.l }}</div>
+            <div style="position:absolute;bottom:4px;right:7px;font-size:10px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.r }}</div>
+            <div style="position:absolute;top:56%;left:0;right:0;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:9.5px;color:#F2EAD6;text-align:center;line-height:1.05;padding:0 5px">{{ c.name }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">these seven are asleep at level one: numbers only, no move yet. win a card's own mansion night and it wakes: level two, move on. that's how cards grow here. nothing is bought, you walk it.</div>
+      <div style="font-size:11.5px;line-height:1.8;color:#9A8A5E;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .3s both">tonight's road has nine steps: eight other walkers, each one reading the board deeper than the last, then the sky herself at the top. beat her and the empty district is yours.</div>
+      <button onClick="{{ tut7Go }}" style="margin-top:6px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">to the district</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ legendOn }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ legendTap }}" style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);overflow:hidden;z-index:9;cursor:pointer">
+      <div style="position:absolute;inset:0;opacity:.5;pointer-events:none">
+        <sc-for list="{{ stars }}" as="s" hint-placeholder-count="8">
+          <span style="{{ s.style }}"></span>
+        </sc-for>
+      </div>
+      <sc-if value="{{ legendStoryOn }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;display:flex;justify-content:center;align-items:center;padding:0 130px">
+          <div style="{{ legendTextStyle }}">{{ legendText }}</div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:24px;text-align:center;font-size:10.5px;color:rgba(154,138,94,.75);animation:mzFadeUp .9s ease 1.6s both">tap to go on</div>
+        <button onClick="{{ legendSkipTap }}" style="position:absolute;top:16px;right:20px;background:none;border:none;padding:6px 0;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the story</button>
+      </sc-if>
+      <sc-if value="{{ legendDoorOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:22px">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;animation:mzFadeUp .9s ease both">the road begins at <span style="color:#FFB000">the {{ tonightName }}</span></div>
+          <button onClick="{{ legendDoorTap }}" style="background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .9s ease .5s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">open the door ✦</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
   <sc-if value="{{ endOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:rgba(4,3,2,.86);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;gap:40px;z-index:7;animation:mzFadeUp .35s ease both">
       <div style="text-align:center;max-width:320px">
@@ -429,7 +1072,7 @@
         <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;margin-top:8px">{{ endLine }}</div>
         <div style="display:flex;gap:12px;justify-content:center;margin-top:18px">
           <button onClick="{{ menuPlayTap }}" style="background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:background .3s ease" style-hover="background:rgba(240,216,154,.22)">play the night again</button>
-          <button onClick="{{ menuBackTap }}" style="background:none;border:1px solid rgba(154,138,94,.4);color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:border-color .3s ease, color .3s ease" style-hover="border-color:rgba(240,216,154,.6);color:#D8C89C">the well</button>
+          <button onClick="{{ menuBackTap }}" style="background:none;border:1px solid rgba(154,138,94,.4);color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:border-color .3s ease, color .3s ease" style-hover="border-color:rgba(240,216,154,.6);color:#D8C89C">the district</button>
         </div>
       </div>
       <sc-if value="{{ endWonOn }}" hint-placeholder-val="{{ false }}">
@@ -513,7 +1156,7 @@ class Component extends DCLogic {
       else { this.setState({ drag: null, dragOver: null }); this._commitPlace(p.id, i, false, "you"); }
     } else this.setState({ drag: null, dragOver: null, sel: null });
   }
-  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearTimeout(this._aiT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); }
+  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearTimeout(this._aiT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); }
   _fxKind(id) { return ({ 6: "sweep", 102: "sweep", 5: "flash", 14: "flash", 18: "pulse", 103: "pulse", 10: "rise", 3: "sparkle", 17: "sparkle", 27: "sparkle", 8: "mist", 15: "mist", 101: "lock", 104: "flicker", 105: "swell" })[id] || "shimmer"; }
   _castFor(fx) {
     const c = fx.owner === "sky" ? "255,176,0" : "240,216,154";
@@ -584,21 +1227,36 @@ class Component extends DCLogic {
   _deckState() {
     // the pack: up to twelve you carry, dealt five a board (handoff §3, 22 aug 2026)
     let five = null;
-    try { const s = JSON.parse(localStorage.getItem("manzil-walking-twelve")); if (Array.isArray(s) && s.length >= 5 && s.every(x => x >= 1 && x <= 28)) five = s; } catch (e) {}
-    if (!five) try { const s = JSON.parse(localStorage.getItem("manzil-walking-five")); if (Array.isArray(s) && s.length >= 5 && s.every(x => x >= 1 && x <= 28)) five = s; } catch (e) {}
-    if (!five) five = [6, 10, 17, 18, 5];
+    try { const s = JSON.parse(localStorage.getItem("manzil-ed-pack")); if (Array.isArray(s) && s.length >= 5 && s.every(x => x >= 1 && x <= 28)) five = s; } catch (e) {}
+    if (!five) five = this._chartFive().slice();
     const C0 = this._cards();
-    five = five.filter(id => C0[id] && !C0[id].loan);
+    five = five.filter(id => C0[id] && id <= 28);
     const ownedIds = Object.keys(C0).map(Number).filter(id => id <= 28 && !C0[id].loan);
     ownedIds.forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
+    // the sky's loan fills the pack to twelve from day one (user, 22 aug 2026) - the measured stand-in twelve
+    [4, 3, 19, 7, 26, 12, 14].forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
     five = five.slice(0, 12);
-    return { phase: "menu", pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "" };
+    let seen = false; try { seen = !!localStorage.getItem("manzil-ed-legend"); } catch (e) {}
+    const born = !!this._birth();
+    return { phase: seen ? (born ? "menu" : "birth") : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, countFx: null };
+  }
+  _countCeremony(done) {
+    const slots = this.state.slots;
+    const [cy, cs] = this._counts(slots);
+    const winner = this._boardWinner(slots);
+    this.setState({ countFx: { you: cy, sky: cs, winner, step: 0 } });
+    this._cfA = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 1 } } : {}), 80);
+    this._cfB = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 2 } } : {}), 1750);
+    this._cfC = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 3 } } : {}), 2500);
+    this._cfE = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 4 } } : {}), 3250);
+    this._cfD = setTimeout(() => { this.setState({ countFx: null }); done(); }, 4050);
   }
   _freshMatch(hand) { return { ...this._freshRound(1, "you", hand, true), round: 1, roundWins: [], phase: "play", chosen: hand.slice() }; }
   // five dealt from the pack at the start of every board, face up: randomness before the board, in the open
+  _boardN() { try { return parseInt(localStorage.getItem("manzil-ed-boardn")) || 0; } catch (e) { return 0; } }
   _deal(pack, round) {
     if (!pack || pack.length <= 5) return (pack || []).slice();
-    let h = this._nightSeed(700 + round);
+    let h = this._nightSeed(700 + round + this._boardN() * 97);
     const rnd = () => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return h / 4294967296; };
     const bag = pack.slice(), out = [], t = this._tonight();
     if (this.props.dealGuarantee !== false && bag.includes(t)) out.push(bag.splice(bag.indexOf(t), 1)[0]); // tonight's mansion walks with you
@@ -607,6 +1265,7 @@ class Component extends DCLogic {
   }
   _freshRound(round, leader, pack, asc) {
     const hand = this._deal(pack, round);
+    if (pack && pack.length > 5) { try { localStorage.setItem("manzil-ed-boardn", String(this._boardN() + 1)); } catch (e) {} }
     let sky = [101, 102, 103, 104, 105], len = 9;
     if (asc && this.props.matchAscent) { // the ascent: three planets on a short road, her full five by board three
       let n = Math.min(5, 2 + round);
@@ -661,11 +1320,11 @@ class Component extends DCLogic {
       28: { ab: "thread", abText: "holds both ends" },
     };
     const owned = {};
-    [5, 6, 10, 17, 18].forEach(id => { owned[id] = { lvl: 2, ...ABS[id] }; }); // your chart's five ship awake
+    this._chartFive().forEach(id => { owned[id] = { lvl: 2, ...ABS[id] }; }); // your chart's five ship awake
     if (all) for (let i2 = 1; i2 <= 28; i2++) if (!owned[i2]) owned[i2] = { lvl: 2, ...ABS[i2] };
     let claims = {};
-    try { claims = JSON.parse(localStorage.getItem("starshard-claims")) || {}; } catch (e) {}
-    Object.keys(claims).forEach(k => { const id = parseInt(k); if (id >= 1 && id <= 28 && !owned[id]) owned[id] = { lvl: 1, won: claims[k], ...(ABS[id] || {}) }; });
+    try { claims = JSON.parse(localStorage.getItem("manzil-ed-claims")) || {}; } catch (e) {}
+    Object.keys(claims).forEach(k => { const id = parseInt(k); if (id >= 1 && id <= 28 && !owned[id]) owned[id] = { lvl: 2, won: claims[k], ...(ABS[id] || {}) }; }); // a claim wakes the card: level 2 the night you take it
     const C = {};
     pool.forEach((p, idx) => {
       const id = idx + 1, o = owned[id];
@@ -699,34 +1358,94 @@ class Component extends DCLogic {
   _tonight() {
     const o = this.props.tonightMansion;
     if (o >= 1 && o <= 28) return o;
-    if (window.ManzilEphem) return window.ManzilEphem.tonight().id; // real moon, computed on device
-    return (Math.floor(Date.now() / 86400000) % 28) + 1;
+    return 21; // this build is one level: the empty district
   }
   _boardM(i) { return ((this._tonight() - 1 + i) % 28) + 1; }
   _mName(id) { return this._cards()[id].name.replace("The ", "").toLowerCase(); }
-  _claims() { try { return JSON.parse(localStorage.getItem("starshard-claims")) || {}; } catch (e) { return {}; } }
+  _claims() { try { return JSON.parse(localStorage.getItem("manzil-ed-claims")) || {}; } catch (e) { return {}; } }
+  _birth() { try { return JSON.parse(localStorage.getItem("manzil-ed-birth")); } catch (e) { return null; } }
+  _chartFive() { const b = this._birth(); return b && Array.isArray(b.five) && b.five.length === 5 ? b.five : [5, 6, 10, 17, 18]; }
+  _castFive(dt) {
+    const P = window.ManzilEphem, p = P.planets(dt);
+    const rows = ["sun", "moon", "mercury", "venus", "mars"].map(n => ({ p: n, m: P.idOf(p[n]) }));
+    const five = []; rows.forEach(r => { if (!five.includes(r.m)) five.push(r.m); });
+    const fill = [];
+    ["jupiter", "saturn"].forEach(n => { const id = P.idOf(p[n]); if (five.length < 5 && !five.includes(id)) { five.push(id); fill.push({ p: n, m: id }); } });
+    let step = 1; while (five.length < 5) { const id = ((five[five.length - 1] + step - 1) % 28) + 1; if (!five.includes(id)) { five.push(id); fill.push({ p: "the road", m: id }); } step++; }
+    return { rows, five, fill };
+  }
+  _simpleMove(id) { return {
+    1: "if the other side gets to go first, the gate jumps in and takes the very first turn instead. once a board.",
+    2: "both cards standing next to the bearer fight +1 while it stands.",
+    3: "counts as two cards at the final count, wherever it stands.",
+    4: "its left number becomes a copy of whatever number faces it from the left.",
+    5: "the space it lands on stays yours to the end of the board, even if the card itself gets taken.",
+    6: "on its own mansion, a tie can't take the storm. equal numbers just bounce off: beat it or leave it.",
+    7: "the first time it gets taken, it comes back to your hand instead. once a board.",
+    8: "their cards next to it fight -1 while the road is less than half full.",
+    9: "when you play the glance, the next card they play fights -1.",
+    10: "it has two faces: when you play it, you pick which number points which way.",
+    11: "both its numbers get +1 while it stands between two cards.",
+    12: "when it lands, it spins a neighbor enemy card around: strong number facing away from you.",
+    13: "once a board, you can pick it up and set it down somewhere else.",
+    14: "nothing can lower its numbers. ever.",
+    15: "it can't be taken on the turn it lands: their answer comes one turn late.",
+    16: "whatever takes the claws fights -1 for the rest of the board.",
+    17: "on the first or last space of the road, it counts as two at the count.",
+    18: "while the heart stands, nothing can lower any of your cards' numbers.",
+    19: "if it's the first card you play on a board, it fights +1 all board long.",
+    20: "when the flock takes a card, your cards next to it fight +1 for the rest of the board.",
+    21: "counts as two at the count while none of your cards touch it. it likes standing alone.",
+    22: "when they play a card right next to it, the listener strikes first.",
+    23: "when the drum takes a card, that card attacks its next neighbor too. dominoes.",
+    24: "it can't be taken while only its attacker stands beside it.",
+    25: "it shuts the loudest mansion next to it: that space counts for nobody at the end.",
+    26: "your cards landing next to it are safe on their first turn.",
+    27: "once a board, tap the guide then another of your cards: the two swap places.",
+    28: "the first and last mansions of the road count for whoever holds the thread.",
+  }[id] || ""; }
+  _tutLesson(i) { return [
+    "how fighting works: every card has two numbers. the left one fights the card on its left, the right one fights the card on its right. bigger number takes the card.",
+    "every card has a move. moves are asleep at level one and wake at level two. all five of yours are already awake.",
+    "one more thing: a card standing on its OWN mansion counts as two at the end. the board names each space, so watch for yours.",
+    "ties matter here: equal numbers TAKE the card, both ways. and if the final count is tied, the night goes to you.",
+    "the board is the next nine mansions of the moon's road. when all nine spaces fill, whoever holds more of them wins the board.",
+  ][i] || ""; }
+  _saveBirth(dt, dateStr, timeStr) {
+    if (!dt || isNaN(dt.getTime()) || !window.ManzilEphem) return null;
+    const cast = this._castFive(dt);
+    const pool = []; for (let i = 1; i <= 28; i++) if (!cast.five.includes(i)) pool.push(i);
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+    const pack = cast.five.concat(pool.slice(0, 7));
+    try {
+      localStorage.setItem("manzil-ed-birth", JSON.stringify({ date: dateStr, time: timeStr || null, five: cast.five, rows: cast.rows, fill: cast.fill }));
+      localStorage.setItem("manzil-ed-pack", JSON.stringify(pack));
+    } catch (e) {}
+    this._C = null;
+    return pack;
+  }
   _recordWin() {
     try {
       const t = this._tonight();
       const claims = this._claims();
-      if (!claims[t]) { claims[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("starshard-claims", JSON.stringify(claims)); this._C = null; }
-      const g = parseInt(localStorage.getItem("starshard-game-shards")) || 0;
-      localStorage.setItem("starshard-game-shards", String(g + 1));
+      if (!claims[t]) { claims[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-ed-claims", JSON.stringify(claims)); this._C = null; }
+      const g = parseInt(localStorage.getItem("manzil-ed-shards")) || 0;
+      localStorage.setItem("manzil-ed-shards", String(g + 1));
     } catch (e) {}
   }
   _mansions() { return Array.from({ length: ((this.state && this.state.slots && this.state.slots.length) || 9) }, (_, i) => "the " + this._mName(this._boardM(i))); }
-  _peekFor(k) {
+  _zoomFor(k) {
     k = String(k);
     const C = this._cards();
     let s = null, i = null, c;
     if (k[0] === "s") { i = +k.slice(1); s = this.state.slots[i]; if (!s) return null; c = C[s.id];
-      if (s.owner === "sky" && this._bossRule() === "veil") return { title: "closed", who: "the sky's", color: "#FFB000", lines: [{ t: "the veil's night: her lodged cards close again once played." }] };
+      if (s.owner === "sky" && this._bossRule() === "veil") return { back: true, notes: [{ t: "the veil's night: her lodged cards close again once played." }] };
     }
     else { c = C[+k.slice(1)]; if (!c) return null; }
     const you = s ? s.owner === "you" : true;
-    const lines = [];
+    const lines = [], notes = [];
     if (!s && c.twoFaced && this._abilityOn(c)) lines.push("two-faced. you choose which number faces which way when it lodges.");
-    else if (c.ab && (c.who === "sky" || this._abilityOn(c))) {
+    else if (c.ab) {
       const t = {
         gate: "it lodges before her lead. once a board, when the sky leads, the gate takes the first turn.",
         bearer: "your neighbors gain +1. both cards it stands beside fight one higher while it stands.",
@@ -764,27 +1483,51 @@ class Component extends DCLogic {
       }[c.ab];
       if (t) lines.push(t);
     }
-    if (s && s.ground) lines.push("the blaze's mark: this mansion counts as yours, whoever holds the card.");
-    if (s && this._isHome(s.id, i)) lines.push("✦ dominion: lodged on its own mansion, it counts as two at the count, whoever holds it.");
+    if (c.who === "you" && c.ab && !this._abilityOn(c)) notes.push("asleep at level one: numbers only. win this card's own mansion night to wake its move.");
+    if (s && s.ground) notes.push("the blaze's mark: this mansion counts as yours, whoever holds the card.");
+    if (s && this._isHome(s.id, i)) notes.push("✦ dominion: lodged on its own mansion, it counts as two at the count, whoever holds it.");
     let who = c.who === "sky" ? (c.walker ? "a walker's" : "the sky's") : s && !you ? "claimed by the sky" : "";
-    if (c.who === "you") who += (who ? " · " : "") + (c.loan ? "the sky's loan" : "level " + c.lvl);
-    return { title: c.name.toLowerCase(), who, color: you ? "#F0D89A" : "#FFB000", lines: lines.map(t => ({ t })) };
+    if (c.who === "you") who += (who ? " · " : "") + "level " + c.lvl;
+    return {
+      name: c.name.toLowerCase(), move: lines.join(" "), who,
+      l: s ? this._faceOf(this.state.slots, i, -1) : c.l, r: s ? this._faceOf(this.state.slots, i, 1) : c.r,
+      shapes: window.ManzilArt ? window.ManzilArt.get(s ? (s.id >= 200 ? s.id - 200 : s.id) : +k.slice(1)) : [],
+      numC: you ? "#F0D89A" : "#FFB000",
+      border: you ? (c.loan ? "rgba(154,138,94,.45)" : c.lvl >= 3 ? "#F0D89A" : "rgba(240,216,154,.55)") : "rgba(255,176,0,.55)",
+      notes: notes.map(t => ({ t })),
+    };
   }
-  _peekStyle(k, st) {
-    const W = 232, base = "position:absolute;width:" + W + "px;z-index:6;pointer-events:none;animation:mzHandIn .2s ease both;";
-    if (k == null) return base + "left:-999px;top:0";
+  _zoomPlace(k, st) {
+    const W = 210, H = 284, NW = 150, GAP = 10;
+    const base = "position:absolute;width:" + W + "px;height:" + H + "px;z-index:30;pointer-events:none;animation:mzHandIn .15s ease both;";
+    if (k == null) return { wrap: base + "left:-999px;top:0", notes: "display:none" };
     k = String(k);
-    const cl = (x) => Math.max(14, Math.min(932 - W - 14, x));
+    const clx = (x) => Math.max(10, Math.min(932 - W - 10, x));
+    if (k[0] === "d") {
+      const dk = (st.deckSel || []), idx = Math.max(dk.indexOf(+k.slice(1)), 0), perRow = 10;
+      const row = Math.floor(idx / perRow), col = idx - row * perRow, rowN = Math.min(dk.length - row * perRow, perRow);
+      const rowW = rowN * 64 - 6, cardX = 466 - rowW / 2 + col * 64 + 29;
+      const right = cardX < 466;
+      const left = clx(right ? cardX + 44 : cardX - 44 - W);
+      return { wrap: base + "left:" + left + "px;top:73px", notes: "position:absolute;top:50%;transform:translateY(-50%);width:" + NW + "px;display:flex;flex-direction:column;gap:6px;" + (right ? "left:" + (W + GAP) + "px" : "right:" + (W + GAP) + "px") };
+    }
+    let left, top;
     if (k[0] === "s") {
       const i = +k.slice(1), L = st.slots.length;
       const total = L * 86 + (L - 1) * 5, edge = 466 - total / 2;
       const cx = edge + i * 91 + 43, cy = 132 + Math.pow(i - 4, 2) * 4;
-      const right = i <= (L - 1) / 2;
-      return base + "left:" + cl(right ? cx + 52 : cx - 52 - W) + "px;top:" + Math.min(cy + 4, 300) + "px";
+      left = clx(i <= (L - 1) / 2 ? cx + 54 : cx - 54 - W);
+      top = Math.max(12, Math.min(430 - H - 12, cy - 70));
+    } else {
+      const idx = st.hand.indexOf(+k.slice(1)), n = st.hand.length;
+      const edge = 466 - (n * 80 + (n - 1) * 12) / 2;
+      left = clx(edge + (idx < 0 ? 0 : idx) * 92 + 40 - W / 2);
+      top = 430 - H - 128;
     }
-    const idx = st.hand.indexOf(+k.slice(1)), n = st.hand.length;
-    const cx = 466 - n * 40 + (idx < 0 ? 0 : idx) * 80 + 40;
-    return base + "left:" + cl(cx - W / 2) + "px;bottom:136px";
+    let nRight = left + W / 2 < 466;
+    if (nRight && left + W + GAP + NW > 924) nRight = false;
+    if (!nRight && left - GAP - NW < 8) nRight = true;
+    return { wrap: base + "left:" + left + "px;top:" + top + "px", notes: "position:absolute;top:50%;transform:translateY(-50%);width:" + NW + "px;display:flex;flex-direction:column;gap:6px;" + (nRight ? "left:" + (W + GAP) + "px" : "right:" + (W + GAP) + "px") };
   }
   _abilityOn(c) { return c.ab && c.lvl >= 2; }
   _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 28: "thread", 24: "void" })[this._tonight()] || null; }
@@ -799,36 +1542,49 @@ class Component extends DCLogic {
     { name: "the quiet one", hand: [206, 215, 218, 221, 224] },
   ]; }
   _walkerFor(t) { const w = this._walkers(); return w[t % w.length]; }
-  _specialNight(t) { return [5, 6, 10, 17, 18].indexOf(t) >= 0; }
+  _specialNight(t) { return this._chartFive().indexOf(t) >= 0; }
   _replyW() {
     const st = this.state;
+    if (st && st.practice) return 3;
     if (!st) return 8;
     if (st.road) return st.roadBoss ? 14 : [3, 4, 5, 6, 7, 8, 9, 11][Math.min(st.roadRung || 0, 7)];
     if (st.nightSky) return 12;
     if (st.nightWalker) return 10;
     return 8;
   }
-  _rungs() { try { return JSON.parse(localStorage.getItem("manzil-road-rungs")) || {}; } catch (e) { return {}; } }
-  _saveRung(m, k) { try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-road-rungs", JSON.stringify(r)); } catch (e) {} }
+  _legend() { return [
+    "fourteen centuries ago, two courts played for the honor of the world.",
+    "from india came a game carried like a riddle: sixty-four houses, an army on each side, and a letter daring the court of persia to read its logic or pay tribute. the persian sage bozorgmehr read it in three days.",
+    "then he answered in kind. he built a board on the year itself: thirty pieces for the nights of the month, dice for the turning of day and night, and sent it back. the indian court could not read it.",
+    "chess was the mind at war; backgammon was fortune thrown and the world continues to play them both ever since.",
+    "the legend keeps a quieter page. a third board came to both courts unsigned, from the star-readers whose art was falling out of favor. it was built on the moon's own road: the twenty-eight mansions, one crossed each night.",
+    "it flattered no king. its board was the actual sky, so no court could own it, and a game no court can own is a game every court buries. the star-readers called each night's house by its old name.",
+    "manzil.",
+  ]; }
+  _legendDone() { try { localStorage.setItem("manzil-ed-legend", "1"); } catch (e) {} this.setState({ phase: this._birth() ? "menu" : "birth" }); }
+  _rungs() { try { return JSON.parse(localStorage.getItem("manzil-ed-rungs")) || {}; } catch (e) { return {}; } }
+  _saveRung(m, k) { try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-ed-rungs", JSON.stringify(r)); } catch (e) {} }
   _elev() {
     const st = this.state;
-    if (!st) return 8;
+    if (!st) return 0;
     if (st.road) return st.roadBoss ? 8 : Math.min(st.roadRung || 0, 7);
     if (st.phase === "menu" || st.phase === "deck" || st.phase === "set" || st.phase === "intro") {
       const t = this._tonight();
-      return this._cards()[t].loan ? Math.min(this._rungs()[t] || 0, 8) : 8;
+      return this._cards()[t].loan ? Math.min(this._rungs()[t] || 0, 7) : 0;
     }
-    return 8;
+    return 0;
   }
   _elevSpec() {
     const e = this._elev();
     return {
       e,
       air: [1, .88, .74, .6, .47, .35, .24, .12, 0][e],
+      day: [1, .68, .4, .2, .09, .03, 0, 0, 0][e],
       gh: [98, 86, 74, 63, 52, 42, 32, 20, 0][e],
       go: [1, .92, .84, .74, .64, .54, .42, .24, 0][e],
-      sd: [.12, .22, .33, .43, .54, .65, .76, .88, 1][e],
-      name: ["the ground", "the low air", "the dusk", "the cloud line", "the high air", "the cold air", "the thin air", "the edge of the air", "the sky herself"][e],
+      sd: [0, .14, .3, .43, .54, .65, .76, .88, 1][e],
+      wo: [0, 0, 0, 0, 0, .12, .3, .6, 1][e],
+      name: ["the daylit ground", "the low air", "the dusk", "the cloud line", "the high air", "the cold air", "the thin air", "the edge of the air", "above the world"][e],
     };
   }
   _freshRoadStep(k, hand) {
@@ -1060,7 +1816,34 @@ class Component extends DCLogic {
     });
     return best ? best.score : null;
   }
+  _tutMove() {
+    const st = this.state;
+    if (!st || !st.practice || !st.tutor || st.phase !== "play" || st.turn !== "you" || st.busy) return null;
+    const id = st.hand[0]; if (!id) return null;
+    const C = this._cards(), c = C[id];
+    const empt = st.slots.map((x, i) => x ? -1 : i).filter(i => i >= 0 && this._legalSlot(st.slots, i));
+    if (!empt.length) return null;
+    const homeI = empt.find(i => (c.homeM || id) === this._boardM(i));
+    if (homeI !== undefined) return { id, i: homeI, why: "that ground is its own mansion: lodged there it counts as two." };
+    let best = null;
+    empt.forEach(i => {
+      [-1, 1].forEach(d => {
+        const k = this._nb(i, d); if (k < 0 || !st.slots[k] || st.slots[k].owner !== "sky") return;
+        const mine = d === 1 ? c.r : c.l, theirs = d === 1 ? st.slots[k].l : st.slots[k].r;
+        if (mine > theirs && (!best || mine - theirs > best.gap)) best = { id, i, gap: mine - theirs, why: "its " + mine + " faces a " + theirs + ". bigger claims smaller: lodge it and take the card." };
+      });
+    });
+    if (best) return best;
+    const safe = empt.filter(i => [-1, 1].every(d => { const k = this._nb(i, d); return k < 0 || !st.slots[k] || st.slots[k].owner === "you"; }));
+    const pool = safe.length ? safe : empt;
+    const mid = pool.reduce((a, b) => Math.abs(b - (st.slots.length - 1) / 2) < Math.abs(a - (st.slots.length - 1) / 2) ? b : a);
+    return { id, i: mid, why: safe.length ? "no fight to win this turn: claim quiet ground where nothing answers back." : "hold the middle: more neighbors, more fights it can win." };
+  }
   _commitPlace(cardId, i, rev, who) {
+    if (who === "you") {
+      const tf = this._tutMove();
+      if (tf && (cardId !== tf.id || i !== tf.i)) { this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
+    }
     const c = this._cards()[cardId];
     const seq = this._resolve(this.state.slots, cardId, i, rev, who).seq;
     this._fxN = (this._fxN || 0) + 1;
@@ -1105,7 +1888,8 @@ class Component extends DCLogic {
         if (s.slots.every(x => x)) {
           st.turn = "over";
           st.roundWins = s.roundWins.concat(this._boardWinner(s.slots));
-          this._endT = setTimeout(() => {
+          this._endT = setTimeout(() => this._countCeremony(() => {
+            if (this.state.practice && this.state.tutor) { this._clearSeq(); this.setState({ ...this._deckState(), phase: "tut7" }); return; }
             if (this.state.road && !this.state.roadBoss) {
               const last = this.state.roundWins[this.state.roundWins.length - 1];
               const t2 = this._tonight();
@@ -1115,13 +1899,13 @@ class Component extends DCLogic {
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
-            if (w >= 3) { this._recordWin(); this.setState({ phase: "won" }); }
+            if (w >= 3) { if (!this.state.practice) this._recordWin(); this.setState({ phase: "won" }); }
             else if (l >= 3) this.setState({ phase: this.state.road ? "roadlost" : "lost" });
             else {
               this.setState({ phase: "round" });
               this._roundT = setTimeout(() => this._exitRound(), 3800);
             }
-          }, 1300);
+          }), 900);
         } else {
           st.turn = who === "you" ? "sky" : "you";
         }
@@ -1212,6 +1996,7 @@ class Component extends DCLogic {
       return { style: "width:7px;height:7px;transform:rotate(45deg);display:inline-block;" + (r === "you" ? "background:#F0D89A" : r === "sky" ? "background:#FFB000" : r === "draw" ? "background:rgba(154,138,94,.55)" : "border:1px solid rgba(154,138,94,.6)") };
     });
     const roundWinner = st.turn === "over" && st.slots.every(x => x) ? this._boardWinner(st.slots) : null;
+    const tutF = this._tutMove();
     const slots = st.slots.map((s, i) => {
       const empty = !s;
       const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
@@ -1235,9 +2020,9 @@ class Component extends DCLogic {
         mname: this._mansions()[i],
         emptyOn: empty, cardOn: !empty && !veiled, veilOn: veiled,
         cname: s ? C[s.id].name.toLowerCase() : "",
-        nameOn: !!s && lv < 2, homeOn: !!home,
+        nameOn: !!s && lv < 3, homeOn: !!home,
         homeStyle: "position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1;color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + ";text-shadow:0 0 7px " + (s && s.owner === "sky" ? "rgba(255,176,0,.85)" : "rgba(240,216,154,.85)"),
-        artStyle: "position:absolute;opacity:.9;" + (lv >= 4 ? "top:9px;left:9px;width:68px;height:86px" : lv >= 3 ? "top:17px;left:9px;width:68px;height:78px" : lv >= 2 ? "top:17px;left:14px;width:58px;height:54px" : "top:7px;left:19px;width:48px;height:40px") + (s ? ";animation:mzEmblemBreathe " + (6.5 + (s.id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(s.id % 7)) + "s infinite" : ""),
+        artStyle: "position:absolute;opacity:.9;" + (lv >= 4 ? "top:9px;left:9px;width:68px;height:86px" : lv >= 3 ? "top:17px;left:9px;width:68px;height:78px" : "top:7px;left:19px;width:48px;height:40px") + (s ? ";animation:mzEmblemBreathe " + (6.5 + (s.id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(s.id % 7)) + "s infinite" : ""),
         shapes: s && window.ManzilArt ? window.ManzilArt.get(s.id >= 200 ? s.id - 200 : s.id) : [],
         emptyShapes: !s && window.ManzilArt ? window.ManzilArt.get(this._boardM(i)) : [],
         l: s ? fL : "", r: s ? fR : "",
@@ -1251,11 +2036,11 @@ class Component extends DCLogic {
         }))(this._station(st.slots, i)),
         onPeek: () => {
           if (!this.state.slots[i]) return;
-          clearTimeout(this._holdT); clearTimeout(this._graceT);
+          clearTimeout(this._holdT);
           if (this.state.peek) this.setState({ peek: "s" + i });
-          else this._holdT = setTimeout(() => this.setState({ peek: "s" + i }), 850);
+          else this._holdT = setTimeout(() => this.setState({ peek: "s" + i }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); clearTimeout(this._graceT); this._graceT = setTimeout(() => { if (this.state.peek) this.setState({ peek: null }); }, 260); },
+        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
         onHold: () => { if (!this.state.slots[i]) return; clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: "s" + i }), 400); },
         onTap: () => {
           if (this._dragDid) return;
@@ -1284,7 +2069,7 @@ class Component extends DCLogic {
         },
         style: "width:86px;height:112px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .3s ease;" +
           (empty
-            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.5)" : selOn ? "rgba(240,216,154,.2)" : "rgba(240,216,154,.09)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".16" : selOn ? ".09" : ".035") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "")
+            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.5)" : selOn ? "rgba(240,216,154,.2)" : "rgba(240,216,154,.09)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".16" : selOn ? ".09" : ".035") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "") + (tutF && i === tutF.i ? ";border:1.5px dashed #FFB000;background:radial-gradient(55% 45% at 50% 50%, rgba(255,176,0,.13), transparent 72%);box-shadow:0 0 16px rgba(255,176,0,.3)" : "")
             : "border:1.5px solid " + (s.owner === "you" ? "#F0D89A" : "#FFB000") + ";background:linear-gradient(160deg," + (s.owner === "you" ? "#241B08" : "#2A1A02") + ",#0B0703);box-shadow:0 4px 12px rgba(0,0,0,.55)" + (home ? ", 0 0 14px rgba(240,216,154,.5)" : "") +
               (i === st.dropIdx ? ";animation:mzDrop .34s cubic-bezier(.22,1,.36,1) both" : i === st.flipIdx ? ";animation:mzFlip3d .5s cubic-bezier(.22,1,.36,1) both" : (roundWinner && s.owner === roundWinner ? ";animation:mzWinGlow 1.1s ease-in-out infinite" : ""))),
       };
@@ -1308,7 +2093,7 @@ class Component extends DCLogic {
         style: "position:relative;width:" + c.s + "px;height:" + c.s + "px;border-radius:50%;background:" + c.bg + ";margin:0 8px;align-self:center;box-shadow:0 0 12px " + c.glow + ", 0 3px 8px rgba(0,0,0,.5);transform-origin:center bottom;transform:rotate(" + ((k - (skyN0 - 1) / 2) * 2.2).toFixed(1) + "deg) translateY(" + (-Math.abs(k - (skyN0 - 1) / 2) * 3.6).toFixed(1) + "px);animation:mzOrbDrift " + (6 + k * 0.9).toFixed(1) + "s ease-in-out " + (-k * 1.4).toFixed(1) + "s infinite" + (skyThinking ? ",mzShimmer 1.2s ease-in-out infinite" : ""),
       };
     });
-    const frame = (lvl) => lvl >= 4 ? { b: "#FFFDF5", c: "#FFFDF5", glow: ", 0 0 16px rgba(240,216,154,.3)" } : lvl === 3 ? { b: "#F0D89A", c: "#F0D89A", glow: "" } : lvl === 2 ? { b: "rgba(240,216,154,.55)", c: "rgba(240,216,154,.85)", glow: "" } : { b: "rgba(240,216,154,.28)", c: "", glow: "" };
+    const frame = (lvl) => lvl >= 4 ? { b: "#FFFDF5", c: "#FFFDF5", glow: ", 0 0 16px rgba(240,216,154,.3)" } : lvl === 3 ? { b: "#F0D89A", c: "#F0D89A", glow: "" } : lvl === 2 ? { b: "rgba(240,216,154,.55)", c: "rgba(240,216,154,.85)", glow: ", 0 0 14px rgba(240,216,154,.22)" } : { b: "rgba(240,216,154,.28)", c: "", glow: "" };
     const n = st.hand.length;
     let _hy = 0, _hs = 0; st.slots.forEach(x => { if (x) (x.owner === "you" ? _hy++ : _hs++); });
     const heartBehind = _hs > _hy;
@@ -1322,21 +2107,21 @@ class Component extends DCLogic {
       const numSty = (pos) => "position:absolute;" + pos + ";font-size:" + (c.lvl >= 4 ? 9 : 11) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)";
       return {
         name: c.name.toLowerCase(), ln: cl, rn: cr,
-        nameOn: c.lvl < 2,
-        artStyle: "position:absolute;opacity:.9;" + (c.lvl >= 4 ? "top:8px;left:8px;width:64px;height:78px" : c.lvl >= 3 ? "top:17px;left:8px;width:64px;height:74px" : c.lvl === 2 ? "top:13px;left:14px;width:52px;height:44px" : "top:9px;left:18px;width:44px;height:34px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
+        nameOn: c.lvl < 3,
+        artStyle: "position:absolute;opacity:.9;" + (c.lvl >= 4 ? "top:8px;left:8px;width:64px;height:78px" : c.lvl >= 3 ? "top:17px;left:8px;width:64px;height:74px" : "top:9px;left:18px;width:44px;height:34px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
         lnStyle: numSty(c.lvl >= 4 ? "top:6px;left:9px" : "top:8px;left:11px"),
         rnStyle: numSty(c.lvl >= 4 ? "bottom:6px;right:9px" : "bottom:8px;right:11px"),
         shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
         cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
         ability: this._abilityOn(c) && c.lvl === 2 ? c.abText : "",
         onPeek: () => {
-          clearTimeout(this._holdT); clearTimeout(this._graceT);
+          clearTimeout(this._holdT);
           if (this.state.peek) this.setState({ peek: "h" + id });
-          else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 850);
+          else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); clearTimeout(this._graceT); this._graceT = setTimeout(() => { if (this.state.peek) this.setState({ peek: null }); }, 260); },
+        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
         onHold: () => { clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
-        onDown: (e) => this._startDrag(id, e),
+        onDown: (e) => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
         onTap: () => { if (this._dragDid) return; clearTimeout(this._holdT); const st2 = this.state.peek ? { peek: null } : {}; if (st.turn === "you" && st.phase === "play" && !st.busy) st2.sel = seld ? null : id; this.setState(st2); },
         hover: dragMe ? "" : "transform:rotate(" + rot + "deg) translateY(-16px) scale(1.05);z-index:9",
         style: "flex:none;width:80px;height:108px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;touch-action:none;background:linear-gradient(160deg, #241B08, #0B0703);transform-origin:bottom center;" +
@@ -1347,7 +2132,8 @@ class Component extends DCLogic {
             : "transform:rotate(" + rot + "deg) translateY(" + (seld ? -20 : 0) + "px)" + (seld ? " scale(1.12)" : "") + ";" +
               "z-index:" + (seld ? 9 : i) + ";" +
               "animation:mzCardDrift " + (7.5 + i * 0.9).toFixed(1) + "s ease-in-out " + (-i * 1.6).toFixed(1) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzHandIn .45s ease " + (420 + i * 80) + "ms both" : "") + ";") +
-          (seld || dragMe ? "border:1px solid #FFFDF5;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 16px rgba(240,216,154,.35)" : "border:1px solid " + (c.loan ? "rgba(154,138,94,.4)" : f.b) + ";box-shadow:0 8px 20px rgba(0,0,0,.6)" + (c.loan ? "" : f.glow)),
+          (seld || dragMe ? "border:1px solid #FFFDF5;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 16px rgba(240,216,154,.35)" : "border:1px solid " + (c.loan ? "rgba(154,138,94,.4)" : f.b) + ";box-shadow:0 8px 20px rgba(0,0,0,.6)" + (c.loan ? "" : f.glow)) +
+          (tutF ? (id === tutF.id ? ";border:1px solid #FFB000;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 18px rgba(255,176,0,.45)" : ";opacity:.38;filter:saturate(.6)") : ""),
       };
     });
     const ev = this._elevSpec();
@@ -1367,13 +2153,55 @@ class Component extends DCLogic {
       starDimStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.sd,
       elevGroundStyle: "position:absolute;left:0;right:0;bottom:0;pointer-events:none;transition:height 1.6s ease, opacity 1.6s ease;height:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to top, #090603 0%, #0C0805 58%, rgba(62,44,24,.9) 100%)",
       elevRimStyle: "position:absolute;left:0;right:0;height:1px;pointer-events:none;transition:bottom 1.6s ease, opacity 1.6s ease;bottom:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to right, transparent, rgba(255,190,120,.3) 22%, rgba(255,214,150,.5) 50%, rgba(255,190,120,.3) 78%, transparent)",
+      elevDayStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.day + ";background:radial-gradient(10% 17% at 74% 71%, rgba(255,240,198,.9), rgba(255,208,120,.38) 42%, transparent 72%), linear-gradient(to top, rgba(255,206,128,.30) 0%, rgba(210,160,108,.20) 26%, rgba(134,126,162,.15) 58%, rgba(98,106,150,.12) 100%)",
+      elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.wo + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.15), 0 -3px 16px rgba(255,198,116,.18)",
+      ...((f => {
+        if (!f) return { countFxOn: false, cfLights: [], cfOrbYou: "display:none", cfOrbSky: "display:none", cfNumStyle: "", cfYouN: "", cfSkyN: "" };
+        const L = st.slots.length, edge = 466 - (L * 86 + (L - 1) * 5) / 2;
+        const oy = { x: 466, y: 324 }, os = { x: 466, y: 86 }, mx = 466, my = 205;
+        const lights = [];
+        st.slots.forEach((s, i) => {
+          if (!s) return;
+          const w = this._station(st.slots, i);
+          const who = (w && w.who) || s.owner;
+          if (w && w.w === 0) return;
+          const x = edge + i * 91 + 43, y = 258 + Math.pow(i - (L - 1) / 2, 2) * 3;
+          const o = who === "you" ? oy : os, c = who === "you" ? "240,216,154" : "255,176,0";
+          lights.push({ style: "position:absolute;left:" + (x - 3) + "px;top:" + y + "px;width:6px;height:6px;border-radius:50%;background:rgba(" + c + ",.95);box-shadow:0 0 10px rgba(" + c + ",.8);transition:transform .8s cubic-bezier(.5,0,.4,1) " + (i * 45) + "ms, opacity .3s ease " + (800 + i * 45) + "ms;" + (f.step >= 1 ? "transform:translate(" + (o.x - x) + "px," + (o.y - y) + "px);opacity:0" : "") });
+        });
+        const orb = (o, mine) => {
+          const isWin = (mine === f.winner) || (f.winner !== "you" && f.winner !== "sky" && mine === "you");
+          const c = mine === "you" ? "240,216,154" : "255,176,0";
+          const dx = mx - o.x, dy = my - o.y;
+          let t = "";
+          if (f.step === 2) t = "transform:translate(" + dx + "px," + dy + "px);";
+          if (f.step >= 3) t = isWin
+            ? (f.step >= 4 ? "transform:translate(" + (dx + 430) + "px," + (dy - 330) + "px) scale(.2);opacity:0;" : "transform:translate(" + dx + "px," + dy + "px) scale(1.24);")
+            : "transform:translate(" + dx + "px," + dy + "px) scale(2.1);opacity:0;";
+          return "position:absolute;left:" + (o.x - 26) + "px;top:" + (o.y - 26) + "px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:" + (isWin ? 2 : 1) + ";background:radial-gradient(circle at 36% 30%, rgba(" + c + ",.95), rgba(" + c + ",.28) 62%, transparent 78%);box-shadow:0 0 26px rgba(" + c + ",.65);transition:transform .7s cubic-bezier(.55,0,.45,1), opacity .55s ease;opacity:" + (f.step >= 1 ? 1 : 0) + ";" + t;
+        };
+        return { countFxOn: true, cfLights: lights, cfOrbYou: orb(oy, "you"), cfOrbSky: orb(os, "sky"),
+          cfNumStyle: "font-family:'Varela Round',sans-serif;font-size:19px;color:#120C05;opacity:" + (f.step >= 1 ? 1 : 0) + ";transition:opacity .4s ease .3s",
+          cfYouN: f.you, cfSkyN: f.sky };
+      })(st.countFx)),
+      edFarStyle: "position:absolute;left:0;right:0;height:64px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 6, 0) + "px;transform:translateY(" + ev.e * 10 + "px);opacity:" + [.75, .75, .72, .68, .6, .4, .15, 0, 0][ev.e],
+      edMidStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 14, -10) + "px;transform:translateY(" + ev.e * 24 + "px);opacity:" + [.95, .85, .7, .5, .28, .1, 0, 0, 0][ev.e],
+      edNearStyle: "position:absolute;left:0;right:0;height:150px;bottom:-4px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 62 + "px);opacity:" + [.95, .55, .2, 0, 0, 0, 0, 0, 0][ev.e],
+      edWallLStyle: "position:absolute;left:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (-ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
+      edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
+      edOverStyle: "position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 185 + "px);opacity:" + [1, .8, .3, 0, 0, 0, 0, 0, 0][ev.e],
       youN, skyN, matchPips, slots, skyCards, handCards,
+      skyHandOn: !!(st.roadBoss || st.nightSky),
+      tutOn: !!(st.practice && st.tutor && st.phase === "play" && !st.countFx),
+      tutTitle: tutF ? ((() => { const b = this._birth() || {}; const ss = ((b.rows) || []).filter(r => r.m === tutF.id).map(r => r.p); return ss.length ? "your " + ss[0] + "'s card: " : ""; })() + "the " + this._mName(tutF.id)) : "",
+      tutWhy: tutF ? this._simpleMove(tutF.id) + " " + tutF.why : "the district answers. watch what it claims.",
+      tutSkipTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "tut7" }); },
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
-      ...((p => ({ peekOn: !!p, peekTitle: p ? p.title : "", peekWho: p ? p.who : "", peekTitleC: p ? p.color : "#F0D89A", peekLines: p ? p.lines : [], peekStyle: this._peekStyle(st.peek, st) }))(st.peek != null && st.phase === "play" ? this._peekFor(st.peek) : null)),
+      ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back), zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
       logLine: st.log,
       castOn: !!st.castFx,
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
-      turnLine: skyThinking ? "the sky is thinking…" : "",
+      turnLine: skyThinking ? ((st.road ? (st.roadBoss ? "the sky" : st.roadWalker || "the walker") : st.nightSky ? "the sky" : st.nightWalker || "the sky") + " is thinking…") : "",
       deckOn: st.phase === "deck",
       roadTag: st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : this._elevSpec().name + " · " + st.roadWalker) : st.nightSky ? "the sky herself returns" : st.nightWalker ? st.nightWalker + " sits tonight" : "",
       roadTagC: st.roadBoss || st.nightSky ? "#FFB000" : "#9A8A5E",
@@ -1382,44 +2210,157 @@ class Component extends DCLogic {
       temperLine: st.nightSky && st.phase !== "deck" && st.phase !== "menu" ? ({ mars: "mars stands closest: the sky picks the biggest fight", saturn: "saturn stands closest: the sky guards", venus: "venus stands closest: the sky keeps company", mercury: "mercury stands closest: the sky roams", jupiter: "jupiter stands closest: the sky spends big" })[this._temper()] : "",
       introL: C[this._tonight()].l, introR: C[this._tonight()].r, introName: C[this._tonight()].name.toLowerCase(),
       introShapes: (window.ManzilArt ? window.ManzilArt.get(this._tonight()) : []),
-      deckCards: (st.pool || []).map(id => {
+      deckCards: (st.deckSel || []).map(id => {
         const tonight = this._tonight();
         const c = C[id];
         const on = st.deckSel.includes(id);
         const f = frame(c.lvl);
         return {
-          name: c.name, ln: c.l, rn: c.r,
-          faceOn: !c.loan, backOn: !!c.loan,
-          nameOn: c.lvl < 2,
+          name: c.name.toLowerCase(), ln: c.l, rn: c.r,
+          faceOn: true, backOn: false,
+          nameOn: c.lvl < 3,
           cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
-          artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:6px;left:6px;width:46px;height:56px" : c.lvl >= 3 ? "top:12px;left:8px;width:42px;height:40px" : c.lvl === 2 ? "top:9px;left:11px;width:36px;height:32px" : "top:5px;left:14px;width:30px;height:26px"),
+          artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:6px;left:6px;width:46px;height:56px" : c.lvl >= 3 ? "top:12px;left:8px;width:42px;height:40px" : "top:5px;left:14px;width:30px;height:26px"),
           lnStyle: "position:absolute;top:4px;left:7px;font-size:" + (c.lvl >= 4 ? 8 : 10) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
           rnStyle: "position:absolute;bottom:4px;right:7px;font-size:" + (c.lvl >= 4 ? 8 : 10) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
           shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
           ringOn: id === tonight,
           ringStyle: "position:absolute;inset:-2px;border-radius:8px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;transition:opacity .3s ease;opacity:.6",
-          onTap: () => {
-            if (c.loan) return;
-            const sel = st.deckSel.includes(id) ? st.deckSel.filter(x => x !== id) : (st.deckSel.length < 12 ? st.deckSel.concat(id) : st.deckSel);
-            this.setState({ deckSel: sel });
-          },
+          onTap: () => {},
+          onPeek: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: "d" + id }); else this._holdT = setTimeout(() => this.setState({ peek: "d" + id }), 500); },
+          onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
+          onHold: () => { clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: "d" + id }), 400); },
           style: "width:58px;height:78px;border-radius:6px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);transition:border-color .2s ease, opacity .2s ease;" +
-            (c.loan ? "border:1px solid rgba(154,138,94,.22);opacity:.45;cursor:default" : "cursor:pointer;" + (on ? "border:1.5px solid #F0D89A;box-shadow:0 6px 16px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154,.18)" : "border:1px solid " + f.b + ";opacity:.8")),
+            "cursor:pointer;" + (on ? (c.loan ? "border:1.5px solid rgba(154,138,94,.8);box-shadow:0 6px 16px rgba(0,0,0,.55)" : "border:1.5px solid #F0D89A;box-shadow:0 6px 16px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154,.18)") : "border:1px solid " + (c.loan ? "rgba(154,138,94,.3)" : f.b) + ";opacity:" + (c.loan ? ".55" : ".8")),
         };
       }),
       menuOn: st.phase === "menu",
       setOn: st.phase === "set",
+      legendOn: st.phase === "legend",
+      legendStoryOn: (st.legendBeat || 0) <= 6,
+      legendDoorOn: (st.legendBeat || 0) >= 7,
+      legendText: this._legend()[Math.min(st.legendBeat || 0, 6)],
+      legendTextStyle: "max-width:620px;font-family:'Cormorant Garamond',serif;font-weight:" + ((st.legendBeat || 0) === 6 ? "600" : "500") + ";font-size:" + ((st.legendBeat || 0) === 0 ? "27" : (st.legendBeat || 0) === 6 ? "46" : "19.5") + "px;line-height:1.8;color:#F0D89A;text-align:" + ((st.legendBeat || 0) === 0 || (st.legendBeat || 0) === 6 ? "center" : "left") + ";text-wrap:pretty;animation:" + ((st.legendBeat || 0) % 2 ? "mzFadeUp2" : "mzFadeUp") + " .9s ease both",
+      legendTap: () => { if (this.state.phase !== "legend") return; this.setState(s => ({ legendBeat: Math.min((s.legendBeat || 0) + 1, 7) })); },
+      legendSkipTap: (e) => { e.stopPropagation(); this._legendDone(); },
+      legendDoorTap: (e) => { e.stopPropagation(); this._legendDone(); },
+      menuLegendTap: () => this.setState({ phase: "legend", legendBeat: 0 }),
+      birthOn: st.phase === "birth", tut5On: st.phase === "tut5", tut7On: st.phase === "tut7",
+      bErr: st.bErr || "",
+      ...((() => {
+        const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+        const bDaysInMonth = (m, y) => { const mm = m ? parseInt(m, 10) : 2, yy = y ? parseInt(y, 10) : 2000; return new Date(yy, mm, 0).getDate(); };
+        const bMonthOptions = MO.map((label, i) => ({ value: String(i + 1).padStart(2, "0"), label }));
+        const dayCount = bDaysInMonth(st.bDateM, st.bDateY);
+        const bDayOptions = Array.from({ length: dayCount }, (_, i) => { const v = String(i + 1).padStart(2, "0"); return { value: v, label: String(i + 1) }; });
+        const nowYear = new Date().getFullYear();
+        const bYearOptions = Array.from({ length: nowYear - 1919 }, (_, i) => { const y = String(nowYear - i); return { value: y, label: y }; });
+        const bHourOptions = Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }));
+        const bMinuteOptions = Array.from({ length: 60 }, (_, i) => { const v = String(i).padStart(2, "0"); return { value: v, label: v }; });
+        const selStyle = "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:7px 16px 7px 2px;outline:none;cursor:pointer";
+        const timeSelStyle = "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:15px;padding:7px 16px 7px 2px;outline:none;cursor:pointer;" + (st.bTimeU ? "color:rgba(154,138,94,.4)" : "color:#F2EAD6");
+        return {
+          bMonthOptions, bDayOptions, bYearOptions, bHourOptions, bMinuteOptions,
+          bSelectStyle: selStyle, bTimeSelectStyle: timeSelStyle, bTimeSelectDisabled: !!st.bTimeU,
+          bChevronStyle: "position:absolute;right:2px;top:7px;pointer-events:none;color:#9A8A5E;font-size:10px",
+          bDateMVal: st.bDateM || "", bDateDVal: st.bDateD || "", bDateYVal: st.bDateY || "",
+          bSetDateY: (e) => this.setState(s => { const y = e.target.value, d = parseInt(s.bDateD, 10) > bDaysInMonth(s.bDateM, y) ? "" : s.bDateD; return { bDateY: y, bDateD: d, bErr: "" }; }),
+          bSetDateM: (e) => this.setState(s => { const m = e.target.value, d = parseInt(s.bDateD, 10) > bDaysInMonth(m, s.bDateY) ? "" : s.bDateD; return { bDateM: m, bDateD: d, bErr: "" }; }),
+          bSetDateD: (e) => this.setState({ bDateD: e.target.value, bErr: "" }),
+          bTimeHVal: st.bTimeH || "", bTimeMinVal: st.bTimeMin || "", bTimeAPVal: st.bTimeAP || "",
+          bSetTimeH: (e) => this.setState({ bTimeH: e.target.value, bErr: "" }),
+          bSetTimeMin: (e) => this.setState({ bTimeMin: e.target.value, bErr: "" }),
+          bSetTimeAP: (e) => this.setState({ bTimeAP: e.target.value, bErr: "" }),
+        };
+      })()),
+      bTimeToggle: () => this.setState(s => ({ bTimeU: !s.bTimeU, bErr: "" })),
+      bTimeMark: st.bTimeU ? "☑" : "☐",
+      bTimeBtnStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;" + (st.bTimeU ? "color:#F0D89A" : "color:#9A8A5E"),
+      bPlaceChosen: !!st.bPlace, bPlaceNotChosen: !st.bPlace,
+      bPlaceConfirmedLine: st.bPlace ? (st.bPlace.name + ", " + st.bPlace.region) : "",
+      bChangePlace: () => this.setState({ bPlace: null, bQuery: "", bCityResults: [] }),
+      bQueryVal: st.bQuery || "", bSetQuery: (e) => this.setState({ bQuery: e.target.value, bErr: "" }),
+      bSearchLabel: st.bSearching ? "searching…" : "search",
+      bSearchTap: async () => {
+        const q = (this.state.bQuery || "").trim();
+        if (!q) return;
+        this.setState({ bSearching: true, bCityResults: [], bErr: "" });
+        try {
+          const url = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=6&language=en&format=json";
+          const r = await fetch(url);
+          const j = await r.json();
+          const res = (j.results || []).map(x => ({ name: x.name, region: [x.admin1, x.country].filter(Boolean).join(", ") }));
+          this.setState({ bSearching: false, bCityResults: res, bErr: res.length ? "" : "no place found by that name. try a different spelling, or enter coordinates manually" });
+        } catch (e) {
+          this.setState({ bSearching: false, bErr: "the star atlas is unreachable. try again, or enter coordinates manually" });
+        }
+      },
+      bHasResults: (st.bCityResults || []).length > 0,
+      bCityRows: (st.bCityResults || []).map(r => ({ label: r.name + ", " + r.region, pick: () => this.setState({ bPlace: r, bCityResults: [], bQuery: r.name + ", " + r.region }) })),
+      bManualOn: !!st.bManualMode, bManualOff: !st.bManualMode,
+      bManualToggleLabel: st.bManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
+      bToggleManual: () => this.setState(s => ({ bManualMode: !s.bManualMode, bErr: "" })),
+      bLatVal: st.bLat || "", bLonVal: st.bLon || "", bTzVal: st.bTz || "",
+      bSetLat: (e) => this.setState({ bLat: e.target.value, bErr: "" }),
+      bSetLon: (e) => this.setState({ bLon: e.target.value, bErr: "" }),
+      bSetTz: (e) => this.setState({ bTz: e.target.value, bErr: "" }),
+      bCastStyle: "font-family:'Varela Round',sans-serif;font-size:12.5px;padding:14px 32px;cursor:pointer;transition:all .4s ease;" + (st.bDateY && st.bDateM && st.bDateD && ((st.bTimeH && st.bTimeMin && st.bTimeAP) || st.bTimeU) ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A" : "background:none;border:1px solid rgba(240,216,154,.25);color:#9A8A5E"),
+      birthCastTap: () => {
+        const s0 = this.state;
+        if (!s0.bDateY || !s0.bDateM || !s0.bDateD) { this.setState({ bErr: "the sky needs the full date" }); return; }
+        if (!s0.bTimeU && !(s0.bTimeH && s0.bTimeMin && s0.bTimeAP)) { this.setState({ bErr: "the sky needs the full time, or check the box" }); return; }
+        const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+        const y = parseInt(s0.bDateY, 10), m = parseInt(s0.bDateM, 10) - 1, d = parseInt(s0.bDateD, 10);
+        const dt = new Date(y, m, d);
+        const ds = d + " " + MO[m] + " " + y;
+        let ts = null;
+        if (!s0.bTimeU) {
+          let h = parseInt(s0.bTimeH, 10) % 12;
+          if (s0.bTimeAP === "PM") h += 12;
+          dt.setHours(h, parseInt(s0.bTimeMin, 10), 0, 0);
+          ts = String(h).padStart(2, "0") + ":" + s0.bTimeMin;
+        } else dt.setHours(12, 0, 0, 0);
+        const pack = this._saveBirth(dt, ds, ts);
+        if (!pack) { this.setState({ bErr: "the sky can't read that date" }); return; }
+        this.setState({ phase: "pintro", deckSel: pack, bErr: "" });
+      },
+      ...((() => {
+        if (st.phase !== "tut5") return { tutShapes: [], tutL: "", tutR: "", tutName: "", tutCount: "", tutSource: "", tutMovePlain: "", tutLesson: "" };
+        const b = this._birth() || {}, five = this._chartFive(), i = Math.min(st.tutI || 0, 4), id = five[i], c = C[id];
+        const srcs = (b.rows || []).filter(r => r.m === id).map(r => r.p);
+        const fillSrc = (b.fill || []).find(r => r.m === id);
+        const src = srcs.length > 1 ? "your " + srcs.join(" and ") + " stand here, together" : srcs.length ? "your " + srcs[0] + " stands here" : fillSrc ? (fillSrc.p === "the road" ? "the road completes your five" : fillSrc.p + " completes your five") : "";
+        return {
+          tutShapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
+          tutL: c.l, tutR: c.r, tutName: c.name.toLowerCase(),
+          tutCount: "card " + (i + 1) + " of your five",
+          tutSource: src,
+          tutMovePlain: "its move: " + this._simpleMove(id),
+          tutLesson: this._tutLesson(i),
+        };
+      })()),
+      tutNext: () => this.setState(s => (s.tutI || 0) < 4 ? { tutI: (s.tutI || 0) + 1 } : { phase: "tut7" }),
+      tutSeven: (st.phase === "tut7" ? (st.deckSel || []).filter(id => !this._chartFive().includes(id)) : []).map(id => { const c2 = C[id]; return { name: c2.name.toLowerCase(), l: c2.l, r: c2.r, shapes: window.ManzilArt ? window.ManzilArt.get(id) : [] }; }),
+      tut7Go: () => this.setState({ phase: "menu" }),
+      pintroOn: st.phase === "pintro",
+      pStartTap: () => {
+        this._clearSeq();
+        const hand = this._chartFive().slice();
+        this.setState({ ...this._deckState(), ...this._freshRound(1, "you", hand), round: 1, roundWins: [], phase: "play", chosen: hand.slice(), sky: this._walkers()[0].hand.slice(), road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "the district's hand", practice: true, tutor: true });
+        this._afterDeal();
+      },
+      pSkipTap: () => this.setState({ phase: "tut7" }),
       menuPlayLabel: C[this._tonight()].loan ? "walk the road ✦" : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
-      menuNight: "tonight · the " + this._mName(this._tonight()),
-      fiveLabel: (st.deckSel || []).length >= 5 ? "tonight's first five" : "choose your pack",
+      menuNight: "the first climb · the " + this._mName(this._tonight()),
+      fiveLabel: (st.deckSel || []).length >= 5 ? "your next five" : "choose your pack",
       fiveCards: (() => {
         const out = this._deal(st.deckSel || [], 1).map((id, i) => {
           const c = C[id], f = frame(c.lvl);
           return {
             on: true, name: c.name.toLowerCase(), ln: c.l, rn: c.r,
-            nameOn: c.lvl < 2, cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
+            nameOn: c.lvl < 3, cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
             shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
-            artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:8px;left:8px;width:56px;height:70px" : c.lvl >= 3 ? "top:15px;left:10px;width:52px;height:48px" : c.lvl === 2 ? "top:12px;left:14px;width:44px;height:40px" : "top:7px;left:17px;width:38px;height:32px"),
+            artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:8px;left:8px;width:56px;height:70px" : c.lvl >= 3 ? "top:15px;left:10px;width:52px;height:48px" : "top:7px;left:17px;width:38px;height:32px"),
             lnStyle: "position:absolute;top:5px;left:9px;font-size:" + (c.lvl >= 4 ? 9 : 12) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
             rnStyle: "position:absolute;bottom:5px;right:9px;font-size:" + (c.lvl >= 4 ? 9 : 12) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
             onTap: () => this.setState({ phase: "deck" }),
@@ -1431,25 +2372,27 @@ class Component extends DCLogic {
       })(),
       menuLine: (() => {
         const t = this._tonight();
-        if (C[t].loan) return ev.e === 0 ? "unclaimed. the road starts on the ground and ends with the sky herself." : "unclaimed. you left the road in " + ev.name + ", the sky herself still above.";
+        if (C[t].loan) return ev.e === 0 ? "unclaimed. nine stand between you and this mansion: eight walkers, each reading deeper than the last, then the sky herself above the world. beat her and it is yours." : "unclaimed. you left the road in " + ev.name + ", the sky herself still above.";
         if (this._specialNight(t)) return "claimed, and the sky herself returns tonight: best of five at her table. " + (({ mars: "mars stands closest, so she picks the biggest fight.", saturn: "saturn stands closest, so she guards.", venus: "venus stands closest, so she keeps company.", mercury: "mercury stands closest, so she roams.", jupiter: "jupiter stands closest, so she spends big." })[this._temper()] || "");
         return "claimed. " + this._walkerFor(t).name + " sits at the table tonight, best of five.";
       })(),
       menuPlayTap: () => {
         if (st.deckSel.length < 5) { this.setState({ phase: "deck" }); return; }
-        try { localStorage.setItem("manzil-walking-twelve", JSON.stringify(st.deckSel)); } catch (e) {}
+        try { localStorage.setItem("manzil-ed-pack", JSON.stringify(st.deckSel)); } catch (e) {}
         this._clearSeq();
         this.setState({ phase: "intro" });
         this._introT = setTimeout(() => this._startMatch(), 2400);
       },
       menuSetTap: () => this.setState({ phase: "set" }),
+      menuDeckTap: () => this.setState({ phase: "deck" }),
+      menuTutTap: () => this.setState({ phase: "pintro" }),
       menuBackTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), deckSel: st.deckSel }); },
       shapeBtns: ["a road", "wrapped: edges touch", "contiguous: lodge beside the lodged"].map(o => ({ label: o, tap: () => this._setOpt("shape", o), style: this._setBtn(this._shape() === o) })),
       setBtns: [["your own", false], ["all 28, awake", true]].map(o => ({ label: o[0], tap: () => { this._setOpt("ownAll", o[1]); this.setState({ deckSel: this._deckState().deckSel }); }, style: this._setBtn((this._opts().ownAll != null ? this._opts().ownAll : !!this.props.ownAll) === o[1]) })),
       faceBtns: [0, 1, 2, 3, 4].map(v => ({ label: v === 0 ? "true levels" : "L" + v, tap: () => this._setOpt("level", v), style: this._setBtn((this._opts().level != null ? this._opts().level : (this.props.forceLevel || 0)) === v) })),
       deckStartTap: () => {
         if (st.deckSel.length < 5) return;
-        try { localStorage.setItem("manzil-walking-twelve", JSON.stringify(st.deckSel)); } catch (e) {}
+        try { localStorage.setItem("manzil-ed-pack", JSON.stringify(st.deckSel)); } catch (e) {}
         this._clearSeq();
         this.setState({ phase: "intro" });
         this._introT = setTimeout(() => this._startMatch(), 2400);
@@ -1480,12 +2423,14 @@ class Component extends DCLogic {
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       endWonOn: endWon,
       endMark: endWon ? "#FFB000" : "rgba(240,216,154,.5)",
-      endTitle: st.phase === "roadlost" ? "the night rests"
+      endTitle: st.practice ? (endWon ? "the practice is yours, " + mw + " boards to " + ms : "the district's hand takes the practice, " + ms + " to " + mw)
+        : st.phase === "roadlost" ? "the night rests"
         : endWon ? (st.road ? "the " + this._mName(this._tonight()) + " is claimed" : (st.nightSky ? "you held the sky, " : "the night is yours, ") + mw + " boards to " + ms)
         : (st.nightWalker ? st.nightWalker + " takes the night, " : "the sky holds the mansion, ") + ms + " to " + mw,
-      endLine: st.phase === "roadlost" ? "nothing lost. the ladder waits where you left it, and the road gives its shard regardless."
-        : endWon ? (st.road ? "its card joins your deck, named and dated. the ladder here is done forever." : "")
-        : "nothing lost. she deals again tomorrow.",
+      endLine: st.practice ? "nothing was staked. the road above is the real thing: eight walkers, then the sky, and the district's card at the top."
+        : st.phase === "roadlost" ? "nothing lost. the ladder waits where you left it, and the road gives its shard regardless."
+        : endWon ? (st.road ? "its card is named and dated, and it wakes at level 2: its move is live from tonight. the ladder here is done forever." : "")
+        : "nothing lost. the table deals again tomorrow.",
     };
   }
 }
