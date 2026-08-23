@@ -29,7 +29,7 @@
   @keyframes mzReadyGlow{0%,100%{box-shadow:0 0 8px rgba(255,176,0,.25)}50%{box-shadow:0 0 22px rgba(255,176,0,.55)}}
   @keyframes mzFadeOut{from{opacity:1}to{opacity:0}}
   @keyframes mzSlotIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
-  @keyframes mzHandIn{from{opacity:0}to{opacity:1}}
+  @keyframes mzHandIn{0%{opacity:0;translate:150px -190px;rotate:14deg;scale:.72}60%{opacity:1}100%{opacity:1;translate:0 0;rotate:0deg;scale:1}}
   @keyframes bsBreathe{0%,100%{opacity:1}50%{opacity:.5}}
   @keyframes bsTwinkle{0%,100%{opacity:.95}50%{opacity:.25}}
   @keyframes bsDrift{0%,100%{transform:translateX(-2.5px)}50%{transform:translateX(2.5px)}}
@@ -68,6 +68,9 @@
   @keyframes mzPigeon{0%,91%,100%{transform:translateY(0)}94%{transform:translateY(-3px)}}
   @keyframes mzWindow{0%,78%,100%{opacity:.32}84%{opacity:.05}90%{opacity:.26}}
   @keyframes mzScrap{0%,68%{transform:translate(0,0) rotate(0deg);opacity:0}71%{opacity:.75}99%{opacity:0}100%{transform:translate(760px,-10px) rotate(300deg);opacity:0}}
+  @keyframes mzNeon{0%,86%,100%{opacity:.07}88%{opacity:.85}90%{opacity:.14}93%{opacity:.7}96%{opacity:.07}}
+  @keyframes mzCardWake{0%{transform:scale(.55) translateY(46px);opacity:0}55%{transform:scale(1.16) translateY(-8px);opacity:1}100%{transform:scale(1) translateY(0);opacity:1}}
+  @keyframes mzLvlLight{0%,55%{background:rgba(240,216,154,.1);box-shadow:none}72%{background:#FFB000;box-shadow:0 0 20px rgba(255,176,0,.85);transform:rotate(45deg) scale(1.75)}100%{background:#FFB000;box-shadow:0 0 10px rgba(255,176,0,.5);transform:rotate(45deg) scale(1.1)}}
   @keyframes mzTail{0%,86%,100%{transform:rotate(0deg)}90%{transform:rotate(-16deg)}95%{transform:rotate(5deg)}}
   @keyframes mzDrip{0%,58%{transform:translateY(0);opacity:0}62%{opacity:.7}80%{opacity:.7}86%,100%{transform:translateY(58px);opacity:0}}
   @keyframes mzPuddle{0%,100%{opacity:.75}50%{opacity:.3}}
@@ -90,21 +93,21 @@
   <div style="{{ elevGroundStyle }}"></div>
   <div style="{{ elevRimStyle }}"></div>
   <div style="{{ edFarStyle }}"><svg viewBox="0 0 932 64" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-    <g fill="#0A0704">
+    <g fill="#2C3852">
       <rect x="52" y="26" width="26" height="38"></rect>
-      <rect x="332" y="12" width="24" height="52"></rect><path d="M336 12 h16 l-8 -9 z"></path><path d="M344 3 v-7" stroke="#0A0704" stroke-width="1.5"></path>
+      <rect x="332" y="12" width="24" height="52"></rect><path d="M336 12 h16 l-8 -9 z"></path><path d="M344 3 v-7" stroke="#2C3852" stroke-width="1.5"></path>
       <rect x="512" y="22" width="20" height="42"></rect>
       <rect x="788" y="18" width="28" height="46"></rect><rect x="812" y="30" width="14" height="34"></rect>
     </g>
-    <path d="M0 64 V40 h74 v-7 h30 v7 h58 v10 h66 v-14 h44 v8 h92 v-6 h52 v10 h74 v-16 h40 v12 h88 v-8 h60 v10 h70 v-12 h46 v9 h72 v7 h66 V64 Z" fill="#0C0805"></path>
-    <g stroke="rgba(240,216,154,.13)" stroke-width="1" fill="#0C0805">
+    <path d="M0 64 V40 h74 v-7 h30 v7 h58 v10 h66 v-14 h44 v8 h92 v-6 h52 v10 h74 v-16 h40 v12 h88 v-8 h60 v10 h70 v-12 h46 v9 h72 v7 h66 V64 Z" fill="#222B44"></path>
+    <g stroke="rgba(240,216,154,.13)" stroke-width="1" fill="#222B44">
       <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
       <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
     </g>
   </svg></div>
   <div style="{{ edMidStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-    <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#100A06"></path>
-    <g fill="#100A06" stroke="rgba(240,216,154,.15)" stroke-width="1">
+    <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#3D2318"></path>
+    <g fill="#3D2318" stroke="rgba(240,216,154,.15)" stroke-width="1">
       <rect x="120" y="34" width="9" height="8"></rect><rect x="308" y="38" width="9" height="8"></rect><rect x="700" y="50" width="9" height="8"></rect>
       <path d="M498 42 v-14 M516 42 v-14"></path><rect x="491" y="12" width="32" height="16" rx="2"></rect><path d="M489 12 h36 l-18 -9 z"></path>
     </g>
@@ -117,7 +120,7 @@
       <circle cx="406" cy="34" r="2.2"></circle><circle cx="409.5" cy="32" r="1.2"></circle>
       <circle cx="452" cy="33" r="2"></circle><circle cx="455" cy="31.2" r="1.1"></circle>
     </g>
-    <g fill="#0D0906" stroke="rgba(240,216,154,.13)" stroke-width="1">
+    <g fill="#362220" stroke="rgba(240,216,154,.18)" stroke-width="1">
       <rect x="140" y="52" width="11" height="7"></rect><rect x="448" y="58" width="11" height="7"></rect><rect x="836" y="56" width="11" height="7"></rect>
     </g>
     <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
@@ -125,7 +128,7 @@
     </g>
   </svg></div>
   <div style="{{ edNearStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-    <path d="M0 150 V96 h180 v-8 h120 v8 h150 v-6 h130 v6 h352 V150 Z" fill="#140D07"></path>
+    <path d="M0 150 V96 h180 v-8 h120 v8 h150 v-6 h130 v6 h352 V150 Z" fill="#2B1B12"></path>
     <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
       <path d="M24 96 h132 M204 88 h72 M330 96 h96 M474 90 h82 M600 96 h120"></path>
     </g>
@@ -138,24 +141,24 @@
       <path d="M866 70 V150 M920 70 V150 M866 92 h54 M866 116 h54 M866 140 h54 M916 70 l-46 22 M916 92 l-46 24 M916 116 l-46 24"></path>
     </g>
     <g fill="none" stroke="rgba(240,216,154,.15)" stroke-width="1">
-      <rect x="42" y="112" width="92" height="38"></rect>
-      <path d="M46 120 h84 M46 128 h84 M46 136 h84 M46 144 h84"></path>
-      <rect x="636" y="116" width="74" height="34"></rect>
-      <path d="M640 124 h66 M640 132 h66 M640 140 h66"></path>
+      <rect x="42" y="112" width="92" height="38" fill="rgba(58,116,100,.24)" stroke="rgba(118,196,172,.6)"></rect>
+      <path d="M46 120 h84 M46 128 h84 M46 136 h84 M46 144 h84" stroke="rgba(118,196,172,.45)"></path>
+      <rect x="636" y="116" width="74" height="34" fill="rgba(58,116,100,.2)" stroke="rgba(118,196,172,.52)"></rect>
+      <path d="M640 124 h66 M640 132 h66 M640 140 h66" stroke="rgba(118,196,172,.4)"></path>
     </g>
     <g fill="#0F0A06" stroke="rgba(240,216,154,.2)" stroke-width=".8">
-      <rect x="206" y="104" width="9" height="13" transform="rotate(-4 210 110)"></rect>
-      <rect x="219" y="106" width="9" height="12" transform="rotate(3 223 112)"></rect>
-      <rect x="560" y="102" width="10" height="14" transform="rotate(-3 565 109)"></rect>
+      <rect x="206" y="104" width="9" height="13" transform="rotate(-4 210 110)" fill="#A63A25"></rect>
+      <rect x="219" y="106" width="9" height="12" transform="rotate(3 223 112)" fill="#BC8D2C"></rect>
+      <rect x="560" y="102" width="10" height="14" transform="rotate(-3 565 109)" fill="#417565"></rect>
     </g>
     <g style="animation:mzSway 13s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0">
       <path d="M330 88 v6" stroke="rgba(240,216,154,.3)" stroke-width="1"></path>
-      <rect x="322" y="94" width="16" height="46" rx="2" fill="#120C07" stroke="rgba(240,216,154,.26)" stroke-width="1"></rect>
+      <rect x="322" y="94" width="16" height="46" rx="2" fill="#8E2E1E" stroke="rgba(240,216,154,.55)" stroke-width="1"></rect>
       <path d="M326 102 h8 M330 98 v9 M326 114 h8 M330 114 v9 M326 130 h8" stroke="rgba(240,216,154,.3)" stroke-width="1" fill="none"></path>
     </g>
     <g style="animation:mzSway 15s ease-in-out -6s infinite;transform-box:fill-box;transform-origin:50% 0">
       <path d="M612 90 v5" stroke="rgba(240,216,154,.28)" stroke-width="1"></path>
-      <rect x="605" y="95" width="14" height="38" rx="2" fill="#120C07" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+      <rect x="605" y="95" width="14" height="38" rx="2" fill="#803425" stroke="rgba(240,216,154,.5)" stroke-width="1"></rect>
       <path d="M608 102 h8 M612 99 v8 M608 112 h8 M612 112 v7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
     </g>
     <g fill="#0B0705">
@@ -180,18 +183,18 @@
     <g fill="rgba(216,200,168,.18)">
       <path d="M300 142 l7 -3 l3 4 l-7 3 z M508 146 l6 -3 l3 4 l-6 3 z M694 141 l7 -2 l2 4 l-7 3 z"></path>
     </g>
-    <ellipse cx="420" cy="147" rx="30" ry="3.5" fill="rgba(216,200,168,.04)" stroke="rgba(240,216,154,.1)" stroke-width="1" style="animation:mzPuddle 9s ease-in-out -3s infinite"></ellipse>
+    <ellipse cx="420" cy="147" rx="30" ry="3.5" fill="rgba(96,150,176,.10)" stroke="rgba(150,196,214,.2)" stroke-width="1" style="animation:mzPuddle 9s ease-in-out -3s infinite"></ellipse>
   </svg></div>
   <div style="{{ edWallLStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
-    <rect x="188" y="34" width="50" height="396" fill="#0A0705"></rect>
+    <rect x="188" y="34" width="50" height="396" fill="#26130B"></rect>
     <path d="M186 60 h56" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
-    <path d="M0 46 h200 v384 h-200 z" fill="#0E0906"></path>
+    <path d="M0 46 h200 v384 h-200 z" fill="#3C2015"></path>
     <path d="M0 46 h200 M8 40 h184 M22 34 h60" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
-    <g fill="#0E0906" stroke="rgba(240,216,154,.15)" stroke-width="1">
+    <g fill="#33201A" stroke="rgba(240,216,154,.2)" stroke-width="1">
       <path d="M36 34 v-10 M52 34 v-10"></path><rect x="30" y="10" width="28" height="15" rx="2"></rect><path d="M28 10 h32 l-16 -8 z"></path>
       <rect x="118" y="26" width="12" height="8"></rect><rect x="146" y="26" width="12" height="8"></rect>
     </g>
-    <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+    <g stroke="rgba(230,150,110,.18)" stroke-width="1" fill="none">
       <path d="M14 96 h10 M30 96 h10 M46 96 h10 M22 104 h10 M38 104 h10 M14 112 h10 M30 112 h10"></path>
       <path d="M96 210 h10 M112 210 h10 M104 218 h10 M120 218 h10 M96 226 h10 M112 226 h10"></path>
       <path d="M22 262 h10 M38 262 h10 M30 270 h10 M46 270 h10"></path>
@@ -208,12 +211,12 @@
     </g>
     <circle cx="182" cy="362" r="1.6" fill="rgba(216,200,168,.7)" style="animation:mzDrip 7s linear infinite"></circle>
     <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
-      <path d="M26 322 q16 -20 34 -6 q14 11 30 -3" stroke-width="3"></path>
-      <path d="M44 338 q12 9 26 2" stroke-width="2"></path>
+      <path d="M26 322 q16 -20 34 -6 q14 11 30 -3" stroke-width="3" stroke="rgba(98,196,175,.5)"></path>
+      <path d="M44 338 q12 9 26 2" stroke-width="2" stroke="rgba(98,196,175,.38)"></path>
       <path d="M38 330 v10 M58 336 v8 M74 332 v7" stroke-width="1"></path>
     </g>
-    <path d="M14 350 L114 330 L118 338 L18 358 z" fill="#0F0A06" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
-    <rect x="18" y="352" width="100" height="52" fill="#0B0705" stroke="rgba(240,216,154,.18)" stroke-width="1"></rect>
+    <path d="M14 350 L114 330 L118 338 L18 358 z" fill="#31543C" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+    <rect x="18" y="352" width="100" height="52" fill="#2B4A35" stroke="rgba(240,216,154,.18)" stroke-width="1"></rect>
     <path d="M38 352 v52 M66 352 v52 M94 352 v52" stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none"></path>
     <g style="animation:mzTail 9s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%">
       <path d="M106 346 q13 -3 11 -17" stroke="#0B0705" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
@@ -222,24 +225,24 @@
     <ellipse cx="132" cy="400" rx="12" ry="7" fill="#0B0705"></ellipse>
     <ellipse cx="148" cy="403" rx="9" ry="5.5" fill="#0B0705"></ellipse>
     <path d="M126 388 l8 -4 l3 5 l-8 4 z" fill="rgba(216,200,168,.22)"></path>
-    <ellipse cx="168" cy="414" rx="24" ry="4.5" fill="rgba(216,200,168,.05)" stroke="rgba(240,216,154,.12)" stroke-width="1" style="animation:mzPuddle 8s ease-in-out infinite"></ellipse>
+    <ellipse cx="168" cy="414" rx="24" ry="4.5" fill="rgba(96,150,176,.12)" stroke="rgba(150,196,214,.22)" stroke-width="1" style="animation:mzPuddle 8s ease-in-out infinite"></ellipse>
     <g style="animation:mzSway 14s ease-in-out -3s infinite;transform-box:fill-box;transform-origin:50% 0">
       <path d="M178 178 h14" stroke="rgba(240,216,154,.24)" stroke-width="1"></path>
-      <rect x="186" y="178" width="15" height="42" rx="2" fill="#130D08" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+      <rect x="186" y="178" width="15" height="42" rx="2" fill="#872B1D" stroke="rgba(240,216,154,.52)" stroke-width="1"></rect>
       <path d="M190 186 h7 M193.5 183 v9 M190 198 h7 M193.5 198 v8 M190 210 h7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
     </g>
     <path d="M12 46 v384" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
   </svg></div>
   <div style="{{ edWallRStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
-    <rect x="12" y="30" width="52" height="400" fill="#0A0705"></rect>
+    <rect x="12" y="30" width="52" height="400" fill="#24120C"></rect>
     <path d="M10 56 h58" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
-    <path d="M50 42 h200 v388 h-200 z" fill="#0E0906"></path>
+    <path d="M50 42 h200 v388 h-200 z" fill="#391D12"></path>
     <path d="M50 42 h200 M58 36 h184" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
     <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
       <path d="M140 36 v-22 M134 20 h12 M136 27 h8"></path>
-      <rect x="180" y="30" width="12" height="8" fill="#0E0906"></rect><rect x="206" y="30" width="12" height="8" fill="#0E0906"></rect>
+      <rect x="180" y="30" width="12" height="8" fill="#33201A"></rect><rect x="206" y="30" width="12" height="8" fill="#33201A"></rect>
     </g>
-    <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+    <g stroke="rgba(230,150,110,.18)" stroke-width="1" fill="none">
       <path d="M188 96 h10 M204 96 h10 M196 104 h10 M212 104 h10 M188 112 h10 M204 112 h10"></path>
       <path d="M100 206 h10 M116 206 h10 M108 214 h10 M124 214 h10"></path>
       <path d="M196 258 h10 M212 258 h10 M204 266 h10"></path>
@@ -254,16 +257,16 @@
       <path d="M72 268 v88 M80 280 h-16 M80 300 h-16 M80 320 h-16 M80 340 h-16"></path>
     </g>
     <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
-      <path d="M148 328 q18 -18 38 -4 q-14 16 -34 8" stroke-width="3"></path>
+      <path d="M148 328 q18 -18 38 -4 q-14 16 -34 8" stroke-width="3" stroke="rgba(216,112,152,.48)"></path>
       <path d="M160 342 v9 M178 346 v7 M196 338 v8" stroke-width="1"></path>
     </g>
     <path d="M140 356 q52 10 104 0" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
     <path d="M140 356 v58 M192 360 v54 M244 356 v58" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
     <path d="M140 366 l104 30 M140 384 l104 28 M140 402 l58 14 M244 366 l-104 30 M244 384 l-104 28 M244 402 l-58 14" stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none"></path>
-    <ellipse cx="115" cy="372" rx="15" ry="4" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1" transform="rotate(-8 115 372)"></ellipse>
-    <rect x="100" y="374" width="28" height="38" rx="3" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1"></rect>
+    <ellipse cx="115" cy="372" rx="15" ry="4" fill="#37444F" stroke="rgba(240,216,154,.16)" stroke-width="1" transform="rotate(-8 115 372)"></ellipse>
+    <rect x="100" y="374" width="28" height="38" rx="3" fill="#37444F" stroke="rgba(240,216,154,.16)" stroke-width="1"></rect>
     <path d="M108 378 v30 M114 378 v30 M120 378 v30" stroke="rgba(240,216,154,.07)" stroke-width="1" fill="none"></path>
-    <g fill="#0D0906" stroke="rgba(240,216,154,.14)" stroke-width="1">
+    <g fill="#4E3220" stroke="rgba(240,216,154,.2)" stroke-width="1">
       <rect x="58" y="392" width="32" height="20"></rect><path d="M58 399 h32 M58 406 h32"></path>
       <rect x="62" y="376" width="27" height="16"></rect><path d="M62 382 h27 M62 388 h27"></path>
     </g>
@@ -271,14 +274,19 @@
     <g style="animation:mzSteam 11s ease-in -6.5s infinite"><ellipse cx="84" cy="418" rx="9" ry="4.5" fill="rgba(216,200,168,.07)"></ellipse></g>
     <g style="animation:mzSway 16s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0">
       <path d="M58 132 h-14" stroke="rgba(240,216,154,.22)" stroke-width="1"></path>
-      <rect x="42" y="132" width="15" height="38" rx="2" fill="#130D08" stroke="rgba(240,216,154,.22)" stroke-width="1"></rect>
+      <rect x="42" y="132" width="15" height="38" rx="2" fill="#7A3124" stroke="rgba(240,216,154,.48)" stroke-width="1"></rect>
       <path d="M46 140 h7 M49.5 137 v9 M46 152 h7 M49.5 152 v7" stroke="rgba(240,216,154,.26)" stroke-width="1" fill="none"></path>
     </g>
+    <g style="animation:mzNeon 9s linear infinite">
+      <path d="M70 162 h16 M78 162 v82" stroke="rgba(255,110,150,.18)" stroke-width="6" fill="none" stroke-linecap="round" style="filter:blur(3px)"></path>
+      <path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(255,130,165,.6)" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
+    </g>
+    <path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(240,216,154,.08)" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
     <path d="M56 42 v388" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
   </svg></div>
   <div style="{{ edOverStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
     <path d="M-8 34 C 250 96, 690 92, 940 28" fill="none" stroke="rgba(240,216,154,.16)" stroke-width="1"></path>
-    <g fill="#0E0906" stroke="rgba(240,216,154,.22)" stroke-width="1">
+    <g fill="#8A2A18" stroke="rgba(240,216,154,.45)" stroke-width="1">
       <g style="animation:mzSway 11s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M172 58 v7"></path><circle cx="172" cy="73" r="8"></circle><path d="M168 65 h8"></path></g>
       <g style="animation:mzSway 13s ease-in-out -4s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M338 84 v7"></path><circle cx="338" cy="99" r="8"></circle><path d="M334 91 h8"></path></g>
       <g style="animation:mzSway 12s ease-in-out -7s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M560 86 v7"></path><circle cx="560" cy="101" r="8"></circle><path d="M556 93 h8"></path></g>
@@ -286,19 +294,20 @@
     </g>
     <path d="M-8 14 C 300 44, 640 42, 940 10" fill="none" stroke="rgba(240,216,154,.12)" stroke-width="1"></path>
     <g fill="#0F0A06" stroke="rgba(240,216,154,.14)" stroke-width="1">
-      <g style="animation:mzSway 10s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M196 30 v5"></path><path d="M188 35 h17 v20 l-8.5 6 l-8.5 -6 z"></path></g>
-      <g style="animation:mzSway 12s ease-in-out -5s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M430 41 v5"></path><path d="M421 46 h18 v24 l-9 5 l-9 -5 z"></path></g>
-      <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z"></path></g>
+      <g style="animation:mzSway 10s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M196 30 v5"></path><path d="M188 35 h17 v20 l-8.5 6 l-8.5 -6 z" fill="#547B8C"></path></g>
+      <g style="animation:mzSway 12s ease-in-out -5s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M430 41 v5"></path><path d="M421 46 h18 v24 l-9 5 l-9 -5 z" fill="#95392B"></path></g>
+      <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z" fill="#B0A272"></path></g>
     </g>
   </svg></div>
   <div style="{{ elevWorldStyle }}"></div>
   <div style="{{ breatheStyle }}"></div>
 
   <div style="position:absolute;top:12px;left:20px;display:flex;align-items:baseline;gap:10px">
-    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#F2EAD6">manzil</span>
-    <span style="font-size:10px;color:#9A8A5E">for the {{ tonightName }}</span>
-    <span style="font-size:10px;color:{{ roadTagC }}">{{ roadTag }}</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:{{ oppC }}">{{ oppName }}</span>
     <span style="font-size:10px;color:#9A8A5E">{{ temperLine }}</span>
+  </div>
+  <div style="position:absolute;top:12px;left:0;right:0;display:flex;justify-content:center;pointer-events:none">
+    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;color:#F2EAD6">the {{ tonightName }}</span>
   </div>
   <div style="position:absolute;top:12px;right:20px;display:flex;align-items:center;gap:12px">
     <span style="display:flex;gap:4px;align-items:center">
@@ -321,16 +330,18 @@
     </div>
   </sc-if>
   <sc-if value="{{ tutOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;top:34px;left:50%;transform:translateX(-50%);width:620px;text-align:center;z-index:5;pointer-events:none;display:flex;flex-direction:column;gap:5px">
+    <div style="position:absolute;top:46px;left:50%;transform:translateX(-50%);width:620px;text-align:center;z-index:5;pointer-events:none;display:flex;flex-direction:column;gap:5px">
       <div style="font-family:'Varela Round',sans-serif;font-size:12.5px;color:#FFB000">{{ tutTitle }}</div>
       <div style="font-size:11.5px;line-height:1.65;color:#D8C89C;text-wrap:pretty">{{ tutWhy }}</div>
     </div>
     <button onClick="{{ tutSkipTap }}" style="position:absolute;top:8px;right:12px;z-index:7;background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
   </sc-if>
 
-  <div style="position:absolute;top:166px;left:50%;transform:translateX(-50%);width:1900px;height:1900px;border-radius:50%;background:radial-gradient(closest-side, transparent 95.2%, rgba(240,216,154,.11) 97%, rgba(186,196,255,.08) 98.2%, transparent 99.6%);filter:blur(3px);pointer-events:none"></div>
-  <div style="position:absolute;top:178px;left:50%;transform:translateX(-50%);width:1840px;height:1840px;border-radius:50%;background:radial-gradient(closest-side, transparent 94.4%, rgba(96,74,186,.07) 96.8%, transparent 99%);filter:blur(9px);pointer-events:none"></div>
-  <div style="position:absolute;top:178px;left:50%;transform:translateX(-50%);width:1840px;height:1840px;border-radius:50%;pointer-events:none;background:conic-gradient(from 0deg, transparent 0 38%, rgba(240,216,154,.05) 44%, rgba(186,196,255,.035) 47%, transparent 53%);filter:blur(7px);-webkit-mask:radial-gradient(closest-side, transparent 91%, #000 95% 99%, transparent 100%);mask:radial-gradient(closest-side, transparent 91%, #000 95% 99%, transparent 100%);animation:mzBandTurn 110s linear infinite"></div>
+  <div style="{{ ringWrapStyle }}">
+    <div style="position:absolute;top:166px;left:50%;transform:translateX(-50%);width:1900px;height:1900px;border-radius:50%;background:radial-gradient(closest-side, transparent 95.2%, rgba(240,216,154,.11) 97%, rgba(186,196,255,.08) 98.2%, transparent 99.6%);filter:blur(3px)"></div>
+    <div style="position:absolute;top:178px;left:50%;transform:translateX(-50%);width:1840px;height:1840px;border-radius:50%;background:radial-gradient(closest-side, transparent 94.4%, rgba(96,74,186,.07) 96.8%, transparent 99%);filter:blur(9px)"></div>
+    <div style="position:absolute;top:178px;left:50%;transform:translateX(-50%);width:1840px;height:1840px;border-radius:50%;background:conic-gradient(from 0deg, transparent 0 38%, rgba(240,216,154,.05) 44%, rgba(186,196,255,.035) 47%, transparent 53%);filter:blur(7px);-webkit-mask:radial-gradient(closest-side, transparent 91%, #000 95% 99%, transparent 100%);mask:radial-gradient(closest-side, transparent 91%, #000 95% 99%, transparent 100%);animation:mzBandTurn 110s linear infinite"></div>
+  </div>
   <div style="position:absolute;inset:0;pointer-events:none">
     <span style="position:absolute;left:112px;top:236px;width:2px;height:2px;border-radius:50%;background:rgba(240,216,154,.35);animation:bsTwinkle 4.2s ease-in-out 0s infinite"></span>
     <span style="position:absolute;left:186px;top:210px;width:1px;height:1px;border-radius:50%;background:rgba(186,196,255,.4);animation:bsTwinkle 5.1s ease-in-out .7s infinite"></span>
@@ -343,6 +354,7 @@
     <span style="position:absolute;left:768px;top:216px;width:2px;height:2px;border-radius:50%;background:rgba(242,234,214,.28);animation:bsTwinkle 4.4s ease-in-out 1.8s infinite"></span>
     <span style="position:absolute;left:836px;top:240px;width:1px;height:1px;border-radius:50%;background:rgba(255,190,170,.3);animation:bsTwinkle 5.8s ease-in-out 3.1s infinite"></span>
   </div>
+  <div style="position:absolute;top:118px;left:50%;transform:translateX(-50%);width:880px;height:220px;border-radius:50%;background:radial-gradient(50% 55% at 50% 50%, rgba(8,5,3,.5), rgba(8,5,3,.28) 55%, transparent 78%);pointer-events:none"></div>
   <div style="position:absolute;top:132px;left:50%;transform:translateX(-50%);display:flex;gap:5px">
     <sc-for list="{{ slots }}" as="s" hint-placeholder-count="9">
       <div style="{{ s.wrapStyle }}">
@@ -484,21 +496,21 @@
       <div style="{{ elevGroundStyle }}"></div>
       <div style="{{ elevRimStyle }}"></div>
       <div style="{{ edFarStyle }}"><svg viewBox="0 0 932 64" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-        <g fill="#0A0704">
+        <g fill="#2C3852">
           <rect x="52" y="26" width="26" height="38"></rect>
-          <rect x="332" y="12" width="24" height="52"></rect><path d="M336 12 h16 l-8 -9 z"></path><path d="M344 3 v-7" stroke="#0A0704" stroke-width="1.5"></path>
+          <rect x="332" y="12" width="24" height="52"></rect><path d="M336 12 h16 l-8 -9 z"></path><path d="M344 3 v-7" stroke="#2C3852" stroke-width="1.5"></path>
           <rect x="512" y="22" width="20" height="42"></rect>
           <rect x="788" y="18" width="28" height="46"></rect><rect x="812" y="30" width="14" height="34"></rect>
         </g>
-        <path d="M0 64 V40 h74 v-7 h30 v7 h58 v10 h66 v-14 h44 v8 h92 v-6 h52 v10 h74 v-16 h40 v12 h88 v-8 h60 v10 h70 v-12 h46 v9 h72 v7 h66 V64 Z" fill="#0C0805"></path>
-        <g stroke="rgba(240,216,154,.13)" stroke-width="1" fill="#0C0805">
+        <path d="M0 64 V40 h74 v-7 h30 v7 h58 v10 h66 v-14 h44 v8 h92 v-6 h52 v10 h74 v-16 h40 v12 h88 v-8 h60 v10 h70 v-12 h46 v9 h72 v7 h66 V64 Z" fill="#222B44"></path>
+        <g stroke="rgba(240,216,154,.13)" stroke-width="1" fill="#222B44">
           <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
           <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
         </g>
       </svg></div>
       <div style="{{ edMidStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-        <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#100A06"></path>
-        <g fill="#100A06" stroke="rgba(240,216,154,.15)" stroke-width="1">
+        <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#3D2318"></path>
+        <g fill="#3D2318" stroke="rgba(240,216,154,.15)" stroke-width="1">
           <rect x="120" y="34" width="9" height="8"></rect><rect x="308" y="38" width="9" height="8"></rect><rect x="700" y="50" width="9" height="8"></rect>
           <path d="M498 42 v-14 M516 42 v-14"></path><rect x="491" y="12" width="32" height="16" rx="2"></rect><path d="M489 12 h36 l-18 -9 z"></path>
         </g>
@@ -511,7 +523,7 @@
           <circle cx="406" cy="34" r="2.2"></circle><circle cx="409.5" cy="32" r="1.2"></circle>
           <circle cx="452" cy="33" r="2"></circle><circle cx="455" cy="31.2" r="1.1"></circle>
         </g>
-        <g fill="#0D0906" stroke="rgba(240,216,154,.13)" stroke-width="1">
+        <g fill="#362220" stroke="rgba(240,216,154,.18)" stroke-width="1">
           <rect x="140" y="52" width="11" height="7"></rect><rect x="448" y="58" width="11" height="7"></rect><rect x="836" y="56" width="11" height="7"></rect>
         </g>
         <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
@@ -519,7 +531,7 @@
         </g>
       </svg></div>
       <div style="{{ edNearStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-        <path d="M0 150 V96 h180 v-8 h120 v8 h150 v-6 h130 v6 h352 V150 Z" fill="#140D07"></path>
+        <path d="M0 150 V96 h180 v-8 h120 v8 h150 v-6 h130 v6 h352 V150 Z" fill="#2B1B12"></path>
         <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
           <path d="M24 96 h132 M204 88 h72 M330 96 h96 M474 90 h82 M600 96 h120"></path>
         </g>
@@ -532,24 +544,24 @@
           <path d="M866 70 V150 M920 70 V150 M866 92 h54 M866 116 h54 M866 140 h54 M916 70 l-46 22 M916 92 l-46 24 M916 116 l-46 24"></path>
         </g>
         <g fill="none" stroke="rgba(240,216,154,.15)" stroke-width="1">
-          <rect x="42" y="112" width="92" height="38"></rect>
-          <path d="M46 120 h84 M46 128 h84 M46 136 h84 M46 144 h84"></path>
-          <rect x="636" y="116" width="74" height="34"></rect>
-          <path d="M640 124 h66 M640 132 h66 M640 140 h66"></path>
+          <rect x="42" y="112" width="92" height="38" fill="rgba(58,116,100,.24)" stroke="rgba(118,196,172,.6)"></rect>
+          <path d="M46 120 h84 M46 128 h84 M46 136 h84 M46 144 h84" stroke="rgba(118,196,172,.45)"></path>
+          <rect x="636" y="116" width="74" height="34" fill="rgba(58,116,100,.2)" stroke="rgba(118,196,172,.52)"></rect>
+          <path d="M640 124 h66 M640 132 h66 M640 140 h66" stroke="rgba(118,196,172,.4)"></path>
         </g>
         <g fill="#0F0A06" stroke="rgba(240,216,154,.2)" stroke-width=".8">
-          <rect x="206" y="104" width="9" height="13" transform="rotate(-4 210 110)"></rect>
-          <rect x="219" y="106" width="9" height="12" transform="rotate(3 223 112)"></rect>
-          <rect x="560" y="102" width="10" height="14" transform="rotate(-3 565 109)"></rect>
+          <rect x="206" y="104" width="9" height="13" transform="rotate(-4 210 110)" fill="#A63A25"></rect>
+          <rect x="219" y="106" width="9" height="12" transform="rotate(3 223 112)" fill="#BC8D2C"></rect>
+          <rect x="560" y="102" width="10" height="14" transform="rotate(-3 565 109)" fill="#417565"></rect>
         </g>
         <g style="animation:mzSway 13s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0">
           <path d="M330 88 v6" stroke="rgba(240,216,154,.3)" stroke-width="1"></path>
-          <rect x="322" y="94" width="16" height="46" rx="2" fill="#120C07" stroke="rgba(240,216,154,.26)" stroke-width="1"></rect>
+          <rect x="322" y="94" width="16" height="46" rx="2" fill="#8E2E1E" stroke="rgba(240,216,154,.55)" stroke-width="1"></rect>
           <path d="M326 102 h8 M330 98 v9 M326 114 h8 M330 114 v9 M326 130 h8" stroke="rgba(240,216,154,.3)" stroke-width="1" fill="none"></path>
         </g>
         <g style="animation:mzSway 15s ease-in-out -6s infinite;transform-box:fill-box;transform-origin:50% 0">
           <path d="M612 90 v5" stroke="rgba(240,216,154,.28)" stroke-width="1"></path>
-          <rect x="605" y="95" width="14" height="38" rx="2" fill="#120C07" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+          <rect x="605" y="95" width="14" height="38" rx="2" fill="#803425" stroke="rgba(240,216,154,.5)" stroke-width="1"></rect>
           <path d="M608 102 h8 M612 99 v8 M608 112 h8 M612 112 v7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
         </g>
         <g fill="#0B0705">
@@ -574,18 +586,18 @@
         <g fill="rgba(216,200,168,.18)">
           <path d="M300 142 l7 -3 l3 4 l-7 3 z M508 146 l6 -3 l3 4 l-6 3 z M694 141 l7 -2 l2 4 l-7 3 z"></path>
         </g>
-        <ellipse cx="420" cy="147" rx="30" ry="3.5" fill="rgba(216,200,168,.04)" stroke="rgba(240,216,154,.1)" stroke-width="1" style="animation:mzPuddle 9s ease-in-out -3s infinite"></ellipse>
+        <ellipse cx="420" cy="147" rx="30" ry="3.5" fill="rgba(96,150,176,.10)" stroke="rgba(150,196,214,.2)" stroke-width="1" style="animation:mzPuddle 9s ease-in-out -3s infinite"></ellipse>
       </svg></div>
       <div style="{{ edWallLStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
-        <rect x="188" y="34" width="50" height="396" fill="#0A0705"></rect>
+        <rect x="188" y="34" width="50" height="396" fill="#26130B"></rect>
         <path d="M186 60 h56" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
-        <path d="M0 46 h200 v384 h-200 z" fill="#0E0906"></path>
+        <path d="M0 46 h200 v384 h-200 z" fill="#3C2015"></path>
         <path d="M0 46 h200 M8 40 h184 M22 34 h60" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
-        <g fill="#0E0906" stroke="rgba(240,216,154,.15)" stroke-width="1">
+        <g fill="#33201A" stroke="rgba(240,216,154,.2)" stroke-width="1">
           <path d="M36 34 v-10 M52 34 v-10"></path><rect x="30" y="10" width="28" height="15" rx="2"></rect><path d="M28 10 h32 l-16 -8 z"></path>
           <rect x="118" y="26" width="12" height="8"></rect><rect x="146" y="26" width="12" height="8"></rect>
         </g>
-        <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+        <g stroke="rgba(230,150,110,.18)" stroke-width="1" fill="none">
           <path d="M14 96 h10 M30 96 h10 M46 96 h10 M22 104 h10 M38 104 h10 M14 112 h10 M30 112 h10"></path>
           <path d="M96 210 h10 M112 210 h10 M104 218 h10 M120 218 h10 M96 226 h10 M112 226 h10"></path>
           <path d="M22 262 h10 M38 262 h10 M30 270 h10 M46 270 h10"></path>
@@ -602,12 +614,12 @@
         </g>
         <circle cx="182" cy="362" r="1.6" fill="rgba(216,200,168,.7)" style="animation:mzDrip 7s linear infinite"></circle>
         <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
-          <path d="M26 322 q16 -20 34 -6 q14 11 30 -3" stroke-width="3"></path>
-          <path d="M44 338 q12 9 26 2" stroke-width="2"></path>
+          <path d="M26 322 q16 -20 34 -6 q14 11 30 -3" stroke-width="3" stroke="rgba(98,196,175,.5)"></path>
+          <path d="M44 338 q12 9 26 2" stroke-width="2" stroke="rgba(98,196,175,.38)"></path>
           <path d="M38 330 v10 M58 336 v8 M74 332 v7" stroke-width="1"></path>
         </g>
-        <path d="M14 350 L114 330 L118 338 L18 358 z" fill="#0F0A06" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
-        <rect x="18" y="352" width="100" height="52" fill="#0B0705" stroke="rgba(240,216,154,.18)" stroke-width="1"></rect>
+        <path d="M14 350 L114 330 L118 338 L18 358 z" fill="#31543C" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+        <rect x="18" y="352" width="100" height="52" fill="#2B4A35" stroke="rgba(240,216,154,.18)" stroke-width="1"></rect>
         <path d="M38 352 v52 M66 352 v52 M94 352 v52" stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none"></path>
         <g style="animation:mzTail 9s ease-in-out infinite;transform-box:fill-box;transform-origin:0% 100%">
           <path d="M106 346 q13 -3 11 -17" stroke="#0B0705" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
@@ -616,24 +628,24 @@
         <ellipse cx="132" cy="400" rx="12" ry="7" fill="#0B0705"></ellipse>
         <ellipse cx="148" cy="403" rx="9" ry="5.5" fill="#0B0705"></ellipse>
         <path d="M126 388 l8 -4 l3 5 l-8 4 z" fill="rgba(216,200,168,.22)"></path>
-        <ellipse cx="168" cy="414" rx="24" ry="4.5" fill="rgba(216,200,168,.05)" stroke="rgba(240,216,154,.12)" stroke-width="1" style="animation:mzPuddle 8s ease-in-out infinite"></ellipse>
+        <ellipse cx="168" cy="414" rx="24" ry="4.5" fill="rgba(96,150,176,.12)" stroke="rgba(150,196,214,.22)" stroke-width="1" style="animation:mzPuddle 8s ease-in-out infinite"></ellipse>
         <g style="animation:mzSway 14s ease-in-out -3s infinite;transform-box:fill-box;transform-origin:50% 0">
           <path d="M178 178 h14" stroke="rgba(240,216,154,.24)" stroke-width="1"></path>
-          <rect x="186" y="178" width="15" height="42" rx="2" fill="#130D08" stroke="rgba(240,216,154,.24)" stroke-width="1"></rect>
+          <rect x="186" y="178" width="15" height="42" rx="2" fill="#872B1D" stroke="rgba(240,216,154,.52)" stroke-width="1"></rect>
           <path d="M190 186 h7 M193.5 183 v9 M190 198 h7 M193.5 198 v8 M190 210 h7" stroke="rgba(240,216,154,.28)" stroke-width="1" fill="none"></path>
         </g>
         <path d="M12 46 v384" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
       </svg></div>
       <div style="{{ edWallRStyle }}"><svg viewBox="0 0 250 430" preserveAspectRatio="xMidYMin meet" style="width:100%;height:100%;display:block">
-        <rect x="12" y="30" width="52" height="400" fill="#0A0705"></rect>
+        <rect x="12" y="30" width="52" height="400" fill="#24120C"></rect>
         <path d="M10 56 h58" stroke="rgba(240,216,154,.12)" stroke-width="1" fill="none"></path>
-        <path d="M50 42 h200 v388 h-200 z" fill="#0E0906"></path>
+        <path d="M50 42 h200 v388 h-200 z" fill="#391D12"></path>
         <path d="M50 42 h200 M58 36 h184" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
         <g stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none">
           <path d="M140 36 v-22 M134 20 h12 M136 27 h8"></path>
-          <rect x="180" y="30" width="12" height="8" fill="#0E0906"></rect><rect x="206" y="30" width="12" height="8" fill="#0E0906"></rect>
+          <rect x="180" y="30" width="12" height="8" fill="#33201A"></rect><rect x="206" y="30" width="12" height="8" fill="#33201A"></rect>
         </g>
-        <g stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none">
+        <g stroke="rgba(230,150,110,.18)" stroke-width="1" fill="none">
           <path d="M188 96 h10 M204 96 h10 M196 104 h10 M212 104 h10 M188 112 h10 M204 112 h10"></path>
           <path d="M100 206 h10 M116 206 h10 M108 214 h10 M124 214 h10"></path>
           <path d="M196 258 h10 M212 258 h10 M204 266 h10"></path>
@@ -648,16 +660,16 @@
           <path d="M72 268 v88 M80 280 h-16 M80 300 h-16 M80 320 h-16 M80 340 h-16"></path>
         </g>
         <g stroke="rgba(240,216,154,.09)" fill="none" stroke-linecap="round">
-          <path d="M148 328 q18 -18 38 -4 q-14 16 -34 8" stroke-width="3"></path>
+          <path d="M148 328 q18 -18 38 -4 q-14 16 -34 8" stroke-width="3" stroke="rgba(216,112,152,.48)"></path>
           <path d="M160 342 v9 M178 346 v7 M196 338 v8" stroke-width="1"></path>
         </g>
         <path d="M140 356 q52 10 104 0" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
         <path d="M140 356 v58 M192 360 v54 M244 356 v58" stroke="rgba(240,216,154,.14)" stroke-width="1" fill="none"></path>
         <path d="M140 366 l104 30 M140 384 l104 28 M140 402 l58 14 M244 366 l-104 30 M244 384 l-104 28 M244 402 l-58 14" stroke="rgba(240,216,154,.06)" stroke-width="1" fill="none"></path>
-        <ellipse cx="115" cy="372" rx="15" ry="4" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1" transform="rotate(-8 115 372)"></ellipse>
-        <rect x="100" y="374" width="28" height="38" rx="3" fill="#0B0705" stroke="rgba(240,216,154,.16)" stroke-width="1"></rect>
+        <ellipse cx="115" cy="372" rx="15" ry="4" fill="#37444F" stroke="rgba(240,216,154,.16)" stroke-width="1" transform="rotate(-8 115 372)"></ellipse>
+        <rect x="100" y="374" width="28" height="38" rx="3" fill="#37444F" stroke="rgba(240,216,154,.16)" stroke-width="1"></rect>
         <path d="M108 378 v30 M114 378 v30 M120 378 v30" stroke="rgba(240,216,154,.07)" stroke-width="1" fill="none"></path>
-        <g fill="#0D0906" stroke="rgba(240,216,154,.14)" stroke-width="1">
+        <g fill="#4E3220" stroke="rgba(240,216,154,.2)" stroke-width="1">
           <rect x="58" y="392" width="32" height="20"></rect><path d="M58 399 h32 M58 406 h32"></path>
           <rect x="62" y="376" width="27" height="16"></rect><path d="M62 382 h27 M62 388 h27"></path>
         </g>
@@ -665,14 +677,19 @@
         <g style="animation:mzSteam 11s ease-in -6.5s infinite"><ellipse cx="84" cy="418" rx="9" ry="4.5" fill="rgba(216,200,168,.07)"></ellipse></g>
         <g style="animation:mzSway 16s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0">
           <path d="M58 132 h-14" stroke="rgba(240,216,154,.22)" stroke-width="1"></path>
-          <rect x="42" y="132" width="15" height="38" rx="2" fill="#130D08" stroke="rgba(240,216,154,.22)" stroke-width="1"></rect>
+          <rect x="42" y="132" width="15" height="38" rx="2" fill="#7A3124" stroke="rgba(240,216,154,.48)" stroke-width="1"></rect>
           <path d="M46 140 h7 M49.5 137 v9 M46 152 h7 M49.5 152 v7" stroke="rgba(240,216,154,.26)" stroke-width="1" fill="none"></path>
         </g>
-        <path d="M56 42 v388" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
+        <g style="animation:mzNeon 9s linear infinite">
+      <path d="M70 162 h16 M78 162 v82" stroke="rgba(255,110,150,.18)" stroke-width="6" fill="none" stroke-linecap="round" style="filter:blur(3px)"></path>
+      <path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(255,130,165,.6)" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
+    </g>
+    <path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(240,216,154,.08)" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
+    <path d="M56 42 v388" stroke="rgba(240,216,154,.06)" stroke-width="2"></path>
       </svg></div>
       <div style="{{ edOverStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
         <path d="M-8 34 C 250 96, 690 92, 940 28" fill="none" stroke="rgba(240,216,154,.16)" stroke-width="1"></path>
-        <g fill="#0E0906" stroke="rgba(240,216,154,.22)" stroke-width="1">
+        <g fill="#8A2A18" stroke="rgba(240,216,154,.45)" stroke-width="1">
           <g style="animation:mzSway 11s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M172 58 v7"></path><circle cx="172" cy="73" r="8"></circle><path d="M168 65 h8"></path></g>
           <g style="animation:mzSway 13s ease-in-out -4s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M338 84 v7"></path><circle cx="338" cy="99" r="8"></circle><path d="M334 91 h8"></path></g>
           <g style="animation:mzSway 12s ease-in-out -7s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M560 86 v7"></path><circle cx="560" cy="101" r="8"></circle><path d="M556 93 h8"></path></g>
@@ -680,26 +697,27 @@
         </g>
         <path d="M-8 14 C 300 44, 640 42, 940 10" fill="none" stroke="rgba(240,216,154,.12)" stroke-width="1"></path>
         <g fill="#0F0A06" stroke="rgba(240,216,154,.14)" stroke-width="1">
-          <g style="animation:mzSway 10s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M196 30 v5"></path><path d="M188 35 h17 v20 l-8.5 6 l-8.5 -6 z"></path></g>
-          <g style="animation:mzSway 12s ease-in-out -5s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M430 41 v5"></path><path d="M421 46 h18 v24 l-9 5 l-9 -5 z"></path></g>
-          <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z"></path></g>
+          <g style="animation:mzSway 10s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M196 30 v5"></path><path d="M188 35 h17 v20 l-8.5 6 l-8.5 -6 z" fill="#547B8C"></path></g>
+          <g style="animation:mzSway 12s ease-in-out -5s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M430 41 v5"></path><path d="M421 46 h18 v24 l-9 5 l-9 -5 z" fill="#95392B"></path></g>
+          <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z" fill="#B0A272"></path></g>
         </g>
       </svg></div>
       <div style="{{ elevWorldStyle }}"></div>
 
-      <div style="position:absolute;left:64px;top:76px;display:flex;flex-direction:column;align-items:flex-start">
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:58px;line-height:1;color:#F2EAD6;animation:mzFadeUp .6s ease .06s both">manzil</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#9A8A5E;margin-top:11px;animation:mzFadeUp .6s ease .18s both">a card game under the sky</div>
-        <button onClick="{{ menuPlayTap }}" style="margin-top:26px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .32s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">{{ menuPlayLabel }}</button>
-        <div style="display:flex;gap:22px;margin-top:20px;animation:mzFadeUp .6s ease .46s both">
-          <button onClick="{{ rulesTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">how to play</button>
-          <button onClick="{{ menuDeckTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your twelve</button>
-          <button onClick="{{ menuLegendTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the legend</button>
-          <button onClick="{{ menuTutTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your five</button>
+      <sc-if value="{{ doorUiOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:radial-gradient(58% 54% at 50% 46%, rgba(7,4,2,.68), rgba(7,4,2,.2) 68%, transparent 88%)"></div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:22px">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;text-shadow:0 2px 18px rgba(5,3,2,.9);animation:mzFadeUp .9s ease both">the road begins at <span style="color:#FFB000">the {{ tonightName }}</span></div>
+          <button onClick="{{ legendDoorTap }}" style="background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .9s ease .5s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">open the door ✦</button>
         </div>
+      </sc-if>
+      <sc-if value="{{ menuUiOn }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;background:radial-gradient(46% 62% at 50% 52%, rgba(7,4,2,.55), rgba(7,4,2,.16) 68%, transparent 90%);pointer-events:none"></div>
+      <div style="position:absolute;left:26px;top:20px;display:flex;flex-direction:column;animation:mzFadeUp .6s ease .06s both">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1;color:#F2EAD6">manzil</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E;margin-top:5px">a card game under the sky</div>
       </div>
-
-      <div style="position:absolute;right:80px;top:54px;width:240px;display:flex;flex-direction:column;align-items:center;gap:12px;animation:mzFadeUp .7s ease .42s both">
+      <div style="position:absolute;left:0;right:0;top:26px;bottom:58px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px">
         <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22);animation:mzCardDrift 9s ease-in-out infinite">
           <div style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
           <svg viewBox="0 0 100 100" style="position:absolute;top:16px;left:27px;width:50px;height:44px;opacity:.9">
@@ -711,41 +729,17 @@
           <div style="position:absolute;bottom:10px;right:13px;font-size:15px;color:#F0D89A">{{ introR }}</div>
           <div style="position:absolute;top:74px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#F2EAD6;padding:0 8px;line-height:1.1">{{ introName }}</div>
         </div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:12px;color:#FFB000">{{ menuNight }}</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.75;color:#9A8A5E;text-align:center;text-wrap:pretty">{{ menuLine }}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;line-height:1;color:#F2EAD6;text-shadow:0 2px 14px rgba(5,3,2,.85);animation:mzFadeUp .6s ease .14s both">the {{ tonightName }}</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#FFB000;animation:mzFadeUp .6s ease .22s both">{{ menuNight }}</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:11px;line-height:1.7;color:#D8C89C;text-align:center;text-wrap:pretty;max-width:410px;text-shadow:0 1px 8px rgba(5,3,2,.8);animation:mzFadeUp .6s ease .3s both">{{ menuLine }}</div>
+        <button onClick="{{ menuPlayTap }}" style="margin-top:4px;background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .38s both" style-hover="background:rgba(255,176,0,.2);box-shadow:0 0 26px rgba(255,176,0,.25)">{{ menuPlayLabel }}</button>
       </div>
-
-      <div style="position:absolute;left:0;right:0;bottom:22px;display:flex;flex-direction:column;align-items:center;gap:9px;animation:mzFadeUp .7s ease .56s both">
-        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:rgba(154,138,94,.85)">{{ fiveLabel }}</div>
-        <div style="display:flex;gap:10px">
-          <sc-for list="{{ fiveCards }}" as="c" hint-placeholder-count="5">
-            <div onClick="{{ c.onTap }}" style="{{ c.style }}" style-hover="transform:translateY(-7px)">
-              <sc-if value="{{ c.on }}" hint-placeholder-val="{{ true }}">
-                <div style="position:absolute;inset:4px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
-                <svg viewBox="0 0 100 100" style="{{ c.artStyle }}">
-                  <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
-                    <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-                  </sc-for>
-                </svg>
-                <div style="{{ c.lnStyle }}">{{ c.ln }}</div>
-                <div style="{{ c.rnStyle }}">{{ c.rn }}</div>
-                <sc-if value="{{ c.nameOn }}" hint-placeholder-val="{{ true }}">
-                  <div style="position:absolute;top:60%;left:0;right:0;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:11px;color:#F2EAD6;text-align:center;line-height:1.05;padding:0 6px">{{ c.name }}</div>
-                </sc-if>
-                <sc-if value="{{ c.cornersOn }}" hint-placeholder-val="{{ false }}">
-                  <span style="position:absolute;top:-1px;left:-1px;width:6px;height:6px;border-top:1.5px solid {{ c.frameC }};border-left:1.5px solid {{ c.frameC }};border-radius:6px 0 0 0"></span>
-                  <span style="position:absolute;top:-1px;right:-1px;width:6px;height:6px;border-top:1.5px solid {{ c.frameC }};border-right:1.5px solid {{ c.frameC }};border-radius:0 6px 0 0"></span>
-                  <span style="position:absolute;bottom:-1px;left:-1px;width:6px;height:6px;border-bottom:1.5px solid {{ c.frameC }};border-left:1.5px solid {{ c.frameC }};border-radius:0 0 0 6px"></span>
-                  <span style="position:absolute;bottom:-1px;right:-1px;width:6px;height:6px;border-bottom:1.5px solid {{ c.frameC }};border-right:1.5px solid {{ c.frameC }};border-radius:0 0 6px 0"></span>
-                </sc-if>
-                <sc-if value="{{ c.innerOn }}" hint-placeholder-val="{{ false }}">
-                  <span style="position:absolute;inset:3px;border-radius:5px;border:1px solid rgba(240,216,154,.22);pointer-events:none"></span>
-                </sc-if>
-              </sc-if>
-            </div>
-          </sc-for>
-        </div>
+      <div style="position:absolute;left:0;right:0;bottom:18px;display:flex;justify-content:center;gap:28px;animation:mzFadeUp .6s ease .5s both">
+        <button onClick="{{ rulesTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">how to play</button>
+        <button onClick="{{ menuDeckTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your hand</button>
+        <button onClick="{{ menuLegendTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the legend</button>
       </div>
+      </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{ setOn }}" hint-placeholder-val="{{ false }}">
@@ -780,8 +774,9 @@
   <sc-if value="{{ deckOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;z-index:4;animation:mzFadeUp .3s ease both">
       <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your twelve</div>
-      <div style="font-size:10px;color:#9A8A5E">five are dealt from your pack at the start of every board, face up. grey cards are asleep at level one: win a card's own mansion night and it wakes.</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your hand</div>
+      <div style="font-size:10px;color:#9A8A5E">twelve walk with you. five are dealt face up at the start of every board. grey cards are asleep at level one: win a card's own mansion night and it wakes.</div>
+      <button onClick="{{ menuTutTap }}" style="background:none;border:none;padding:2px 0 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">walk the practice board again ›</button>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:660px;margin-top:2px">
         <sc-for list="{{ deckCards }}" as="c" hint-placeholder-count="28">
           <div onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" style="{{ c.style }}" style-hover="transform:translateY(-3px)">
@@ -833,7 +828,10 @@
         
         <div style="position:absolute;inset:-2px;border-radius:10px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.8"><span style="position:absolute;inset:-40%;background:conic-gradient(rgba(255,176,0,0) 0deg 270deg, #FFB000 330deg, rgba(255,176,0,0) 360deg);animation:mzRingSpin 2s linear infinite"></span></div>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6;animation:mzFadeUp .5s ease .5s both">match the sky for the {{ tonightName }}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6;animation:mzFadeUp .5s ease .5s both">{{ introTitle }}</div>
+      <sc-if value="{{ introSubOn }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#9A8A5E;animation:mzFadeUp .5s ease .72s both">{{ introSub }}</div>
+      </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{ rulesOn }}" hint-placeholder-val="{{ false }}">
@@ -1056,12 +1054,6 @@
         <div style="position:absolute;left:0;right:0;bottom:24px;text-align:center;font-size:10.5px;color:rgba(154,138,94,.75);animation:mzFadeUp .9s ease 1.6s both">tap to go on</div>
         <button onClick="{{ legendSkipTap }}" style="position:absolute;top:16px;right:20px;background:none;border:none;padding:6px 0;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the story</button>
       </sc-if>
-      <sc-if value="{{ legendDoorOn }}" hint-placeholder-val="{{ false }}">
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:22px">
-          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;animation:mzFadeUp .9s ease both">the road begins at <span style="color:#FFB000">the {{ tonightName }}</span></div>
-          <button onClick="{{ legendDoorTap }}" style="background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .9s ease .5s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">open the door ✦</button>
-        </div>
-      </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{ endOn }}" hint-placeholder-val="{{ false }}">
@@ -1077,8 +1069,15 @@
       </div>
       <sc-if value="{{ endWonOn }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div style="font-size:10.5px;color:#9A8A5E">the {{ tonightName }}, claimed and dated tonight</div>
-          <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22)">
+          <div style="font-size:10.5px;color:#9A8A5E">{{ endWonTag }}</div>
+          <sc-if value="{{ wakePipsOn }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:9px;align-items:center">
+              <sc-for list="{{ wakePips }}" as="p" hint-placeholder-count="4">
+                <span style="{{ p.style }}"></span>
+              </sc-for>
+            </div>
+          </sc-if>
+          <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22);animation:mzCardWake .9s cubic-bezier(.22,1,.36,1) both">
             <div style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
             <svg viewBox="0 0 100 100" style="position:absolute;top:14px;left:27px;width:50px;height:40px;opacity:.9">
               <sc-for list="{{ introShapes }}" as="p" hint-placeholder-count="2">
@@ -1210,7 +1209,7 @@ class Component extends DCLogic {
     this._introX = setTimeout(() => {
       const five = this.state.deckSel;
       const t = this._tonight();
-      if (this._cards()[t].loan) {
+      if (this._mlvl(t) < 4 && !this._climbDoneTonight(t)) {
         const k = Math.min(this._rungs()[t] || 0, 8);
         const step = this._freshRoadStep(k, five);
         this.setState({ ...this._deckState(), ...step, deckSel: five });
@@ -1218,6 +1217,7 @@ class Component extends DCLogic {
         if (step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
       } else {
         const step = this._freshNightMatch(five);
+        step.freeNight = this._mlvl(t) < 4;
         this.setState({ ...this._deckState(), ...step, deckSel: five });
         this._afterDeal();
         if (step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
@@ -1235,10 +1235,10 @@ class Component extends DCLogic {
     ownedIds.forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
     // the sky's loan fills the pack to twelve from day one (user, 22 aug 2026) - the measured stand-in twelve
     [4, 3, 19, 7, 26, 12, 14].forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
-    five = five.slice(0, 12);
+    five = five.slice(0, 13); // the district's own card joins as a thirteenth on first climb
     let seen = false; try { seen = !!localStorage.getItem("manzil-ed-legend"); } catch (e) {}
     const born = !!this._birth();
-    return { phase: seen ? (born ? "menu" : "birth") : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, countFx: null };
+    return { phase: seen ? (born ? "menu" : "birth") : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, freeNight: false, countFx: null };
   }
   _countCeremony(done) {
     const slots = this.state.slots;
@@ -1320,11 +1320,11 @@ class Component extends DCLogic {
       28: { ab: "thread", abText: "holds both ends" },
     };
     const owned = {};
-    this._chartFive().forEach(id => { if (id !== 21) owned[id] = { lvl: 2, ...ABS[id] }; }); // your chart's five ship awake (21 excluded: this build's one level always walks the road first, even if the empty district is one of your own five)
+    this._chartFive().forEach(id => { if (id === 21) return; owned[id] = { lvl: 2, ...ABS[id] }; }); // your chart's five ship awake; m21 always walks its road in this build
     if (all) for (let i2 = 1; i2 <= 28; i2++) if (!owned[i2]) owned[i2] = { lvl: 2, ...ABS[i2] };
     let claims = {};
     try { claims = JSON.parse(localStorage.getItem("manzil-ed-claims")) || {}; } catch (e) {}
-    Object.keys(claims).forEach(k => { const id = parseInt(k); if (id >= 1 && id <= 28 && !owned[id]) owned[id] = { lvl: 2, won: claims[k], ...(ABS[id] || {}) }; }); // a claim wakes the card: level 2 the night you take it
+    Object.keys(claims).forEach(k => { const id = parseInt(k); if (id >= 1 && id <= 28 && !owned[id]) owned[id] = { lvl: Math.min(Math.max(1, this._mlvl(id)), 4), won: claims[k], ...(ABS[id] || {}) }; }); // won at level one; each further climb wakes it one level the night you take it
     const C = {};
     pool.forEach((p, idx) => {
       const id = idx + 1, o = owned[id];
@@ -1363,6 +1363,8 @@ class Component extends DCLogic {
   _boardM(i) { return ((this._tonight() - 1 + i) % 28) + 1; }
   _mName(id) { return this._cards()[id].name.replace("The ", "").toLowerCase(); }
   _claims() { try { return JSON.parse(localStorage.getItem("manzil-ed-claims")) || {}; } catch (e) { return {}; } }
+  _mlvl(t) { try { return (JSON.parse(localStorage.getItem("manzil-ed-mlvl")) || {})[t] || 0; } catch (e) { return 0; } }
+  _climbDoneTonight(t) { try { const m = JSON.parse(localStorage.getItem("manzil-ed-lastclimb")) || {}; return m[t] === new Date().toISOString().slice(0, 10); } catch (e) { return false; } }
   _birth() { try { return JSON.parse(localStorage.getItem("manzil-ed-birth")); } catch (e) { return null; } }
   _chartFive() { const b = this._birth(); return b && Array.isArray(b.five) && b.five.length === 5 ? b.five : [5, 6, 10, 17, 18]; }
   _castFive(dt) {
@@ -1427,8 +1429,19 @@ class Component extends DCLogic {
   _recordWin() {
     try {
       const t = this._tonight();
+      if (this.state.road) {
+        // the mansion has levels (user, 22 aug 2026): each walked road wakes the card one level; the claim is L4
+        let m = {}; try { m = JSON.parse(localStorage.getItem("manzil-ed-mlvl")) || {}; } catch (e) {}
+        m[t] = Math.min((m[t] || 0) + 1, 4);
+        localStorage.setItem("manzil-ed-mlvl", JSON.stringify(m));
+        if (m[t] === 1) { try { const p = JSON.parse(localStorage.getItem("manzil-ed-pack")); if (Array.isArray(p) && p.indexOf(t) < 0) { p.push(t); localStorage.setItem("manzil-ed-pack", JSON.stringify(p)); } } catch (e) {} } // the won card joins the deck at level one
+        const r = this._rungs(); r[t] = 0; localStorage.setItem("manzil-ed-rungs", JSON.stringify(r));
+        let lc = {}; try { lc = JSON.parse(localStorage.getItem("manzil-ed-lastclimb")) || {}; } catch (e) {}
+        lc[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-ed-lastclimb", JSON.stringify(lc));
+      }
       const claims = this._claims();
-      if (!claims[t]) { claims[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-ed-claims", JSON.stringify(claims)); this._C = null; }
+      if (!claims[t]) { claims[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-ed-claims", JSON.stringify(claims)); }
+      this._C = null;
       const g = parseInt(localStorage.getItem("manzil-ed-shards")) || 0;
       localStorage.setItem("manzil-ed-shards", String(g + 1));
     } catch (e) {}
@@ -1532,14 +1545,14 @@ class Component extends DCLogic {
   _abilityOn(c) { return c.ab && c.lvl >= 2; }
   _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 28: "thread", 24: "void" })[this._tonight()] || null; }
   _walkers() { return [
-    { name: "imra", hand: [201, 202, 208, 211, 227] },
-    { name: "sef", hand: [203, 207, 212, 219, 222] },
-    { name: "odel", hand: [204, 214, 213, 226, 216] },
-    { name: "tesh", hand: [205, 209, 217, 223, 225] },
-    { name: "ruen", hand: [202, 210, 216, 220, 228] },
-    { name: "brann", hand: [206, 215, 218, 210, 220] },
-    { name: "mave", hand: [201, 213, 219, 224, 226] },
-    { name: "the quiet one", hand: [206, 215, 218, 221, 224] },
+    { name: "imra", line: "imra plays her first number and hopes.", hand: [201, 202, 208, 211, 227] },
+    { name: "sef", line: "sef counts the ground before he lodges.", hand: [203, 207, 212, 219, 222] },
+    { name: "odel", line: "odel waits for you to reach too far.", hand: [204, 214, 213, 226, 216] },
+    { name: "tesh", line: "tesh trades small and keeps the corners.", hand: [205, 209, 217, 223, 225] },
+    { name: "ruen", line: "ruen reads your hand back to you.", hand: [202, 210, 216, 220, 228] },
+    { name: "brann", line: "brann picks the fight you least want.", hand: [206, 215, 218, 210, 220] },
+    { name: "mave", line: "mave gives nothing away twice.", hand: [201, 213, 219, 224, 226] },
+    { name: "the quiet one", line: "the quiet one has walked this road more than anyone.", hand: [206, 215, 218, 221, 224] },
   ]; }
   _walkerFor(t) { const w = this._walkers(); return w[t % w.length]; }
   _specialNight(t) { return this._chartFive().indexOf(t) >= 0; }
@@ -1547,7 +1560,7 @@ class Component extends DCLogic {
     const st = this.state;
     if (st && st.practice) return 3;
     if (!st) return 8;
-    if (st.road) return st.roadBoss ? 14 : [3, 4, 5, 6, 7, 8, 9, 11][Math.min(st.roadRung || 0, 7)];
+    if (st.road) return (st.roadBoss ? 14 : [3, 4, 5, 6, 7, 8, 9, 11][Math.min(st.roadRung || 0, 7)]) + this._mlvl(this._tonight()) * 2;
     if (st.nightSky) return 12;
     if (st.nightWalker) return 10;
     return 8;
@@ -1570,7 +1583,7 @@ class Component extends DCLogic {
     if (st.road) return st.roadBoss ? 8 : Math.min(st.roadRung || 0, 7);
     if (st.phase === "menu" || st.phase === "deck" || st.phase === "set" || st.phase === "intro") {
       const t = this._tonight();
-      return this._cards()[t].loan ? Math.min(this._rungs()[t] || 0, 7) : 0;
+      return this._mlvl(t) < 4 ? Math.min(this._rungs()[t] || 0, 7) : 0;
     }
     return 0;
   }
@@ -1899,7 +1912,7 @@ class Component extends DCLogic {
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
-            if (w >= 3) { if (!this.state.practice) this._recordWin(); this.setState({ phase: "won" }); }
+            if (w >= 3) { if (!this.state.practice && !this.state.freeNight) this._recordWin(); this.setState({ phase: "won" }); }
             else if (l >= 3) this.setState({ phase: this.state.road ? "roadlost" : "lost" });
             else {
               this.setState({ phase: "round" });
@@ -1991,7 +2004,7 @@ class Component extends DCLogic {
 
     const mw = st.roundWins.filter(x => x === "you").length;
     const ms = st.roundWins.filter(x => x === "sky").length;
-    const matchPips = st.road && !st.roadBoss ? [] : Array.from({ length: Math.max(5, st.roundWins.length) }, (_, i) => {
+    const matchPips = (st.road && !st.roadBoss) || st.practice ? [] : Array.from({ length: Math.max(5, st.roundWins.length) }, (_, i) => {
       const r = st.roundWins[i];
       return { style: "width:7px;height:7px;transform:rotate(45deg);display:inline-block;" + (r === "you" ? "background:#F0D89A" : r === "sky" ? "background:#FFB000" : r === "draw" ? "background:rgba(154,138,94,.55)" : "border:1px solid rgba(154,138,94,.6)") };
     });
@@ -2069,7 +2082,7 @@ class Component extends DCLogic {
         },
         style: "width:86px;height:112px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .3s ease;" +
           (empty
-            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.5)" : selOn ? "rgba(240,216,154,.2)" : "rgba(240,216,154,.09)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".16" : selOn ? ".09" : ".035") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "") + (tutF && i === tutF.i ? ";border:1.5px dashed #FFB000;background:radial-gradient(55% 45% at 50% 50%, rgba(255,176,0,.13), transparent 72%);box-shadow:0 0 16px rgba(255,176,0,.3)" : "")
+            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.6)" : selOn ? "rgba(240,216,154,.3)" : "rgba(240,216,154,.2)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".2" : selOn ? ".12" : ".07") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "") + (tutF && i === tutF.i ? ";border:1.5px dashed #FFB000;background:radial-gradient(55% 45% at 50% 50%, rgba(255,176,0,.13), transparent 72%);box-shadow:0 0 16px rgba(255,176,0,.3)" : "")
             : "border:1.5px solid " + (s.owner === "you" ? "#F0D89A" : "#FFB000") + ";background:linear-gradient(160deg," + (s.owner === "you" ? "#241B08" : "#2A1A02") + ",#0B0703);box-shadow:0 4px 12px rgba(0,0,0,.55)" + (home ? ", 0 0 14px rgba(240,216,154,.5)" : "") +
               (i === st.dropIdx ? ";animation:mzDrop .34s cubic-bezier(.22,1,.36,1) both" : i === st.flipIdx ? ";animation:mzFlip3d .5s cubic-bezier(.22,1,.36,1) both" : (roundWinner && s.owner === roundWinner ? ";animation:mzWinGlow 1.1s ease-in-out infinite" : ""))),
       };
@@ -2131,7 +2144,7 @@ class Component extends DCLogic {
             ? "transform:translate(" + st.drag.dx.toFixed(1) + "px," + (st.drag.dy - 12).toFixed(1) + "px) scale(1.06);z-index:30;pointer-events:none;"
             : "transform:rotate(" + rot + "deg) translateY(" + (seld ? -20 : 0) + "px)" + (seld ? " scale(1.12)" : "") + ";" +
               "z-index:" + (seld ? 9 : i) + ";" +
-              "animation:mzCardDrift " + (7.5 + i * 0.9).toFixed(1) + "s ease-in-out " + (-i * 1.6).toFixed(1) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzHandIn .45s ease " + (420 + i * 80) + "ms both" : "") + ";") +
+              "animation:mzCardDrift " + (7.5 + i * 0.9).toFixed(1) + "s ease-in-out " + (-i * 1.6).toFixed(1) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzHandIn .55s cubic-bezier(.3,1.2,.4,1) " + (380 + i * 110) + "ms both" : "") + ";") +
           (seld || dragMe ? "border:1px solid #FFFDF5;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 16px rgba(240,216,154,.35)" : "border:1px solid " + (c.loan ? "rgba(154,138,94,.4)" : f.b) + ";box-shadow:0 8px 20px rgba(0,0,0,.6)" + (c.loan ? "" : f.glow)) +
           (tutF ? (id === tutF.id ? ";border:1px solid #FFB000;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 18px rgba(255,176,0,.45)" : ";opacity:.38;filter:saturate(.6)") : ""),
       };
@@ -2190,6 +2203,19 @@ class Component extends DCLogic {
       edWallLStyle: "position:absolute;left:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (-ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
       edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
       edOverStyle: "position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 185 + "px);opacity:" + [1, .8, .3, 0, 0, 0, 0, 0, 0][ev.e],
+      ringWrapStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [.12, .18, .28, .42, .58, .72, .85, 1, 1][ev.e],
+      ...((() => {
+        const t0 = this._tonight();
+        if (this._mlvl(t0) < 4 && !this._climbDoneTonight(t0)) {
+          const k0 = Math.min(this._rungs()[t0] || 0, 8);
+          if (k0 >= 8) return { introTitle: "the sky herself, above the world", introSubOn: true, introSub: "she has read every hand that reached her. best of five." };
+          const w0 = this._walkers()[k0];
+          return { introTitle: w0.name + " stands on the road", introSubOn: true, introSub: w0.line };
+        }
+        return { introTitle: "match the sky for the " + this._mName(t0), introSubOn: false, introSub: "" };
+      })()),
+      oppName: st.practice ? "the district's hand" : st.road && !st.roadBoss ? ((this._walkers()[st.roadRung] || {}).name || "") : (st.roadBoss || this._specialNight(this._tonight())) && (st.phase === "play" || st.phase === "round") ? "the sky herself" : st.phase === "play" || st.phase === "round" ? (st.nightWalker || "") : "",
+      oppC: (st.roadBoss || (this._specialNight(this._tonight()) && !st.road && !st.practice)) ? "#FFB000" : "#9A8A5E",
       youN, skyN, matchPips, slots, skyCards, handCards,
       skyHandOn: !!(st.roadBoss || st.nightSky),
       tutOn: !!(st.practice && st.tutor && st.phase === "play" && !st.countFx),
@@ -2234,9 +2260,11 @@ class Component extends DCLogic {
             "cursor:pointer;" + (on ? (c.loan ? "border:1.5px solid rgba(154,138,94,.8);box-shadow:0 6px 16px rgba(0,0,0,.55)" : "border:1.5px solid #F0D89A;box-shadow:0 6px 16px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154,.18)") : "border:1px solid " + (c.loan ? "rgba(154,138,94,.3)" : f.b) + ";opacity:" + (c.loan ? ".55" : ".8")),
         };
       }),
-      menuOn: st.phase === "menu",
+      menuOn: st.phase === "menu" || (st.phase === "legend" && (st.legendBeat || 0) >= 7),
+      menuUiOn: st.phase === "menu",
+      doorUiOn: st.phase === "legend" && (st.legendBeat || 0) >= 7,
       setOn: st.phase === "set",
-      legendOn: st.phase === "legend",
+      legendOn: st.phase === "legend" && (st.legendBeat || 0) <= 6,
       legendStoryOn: (st.legendBeat || 0) <= 6,
       legendDoorOn: (st.legendBeat || 0) >= 7,
       legendText: this._legend()[Math.min(st.legendBeat || 0, 6)],
@@ -2350,8 +2378,8 @@ class Component extends DCLogic {
         this._afterDeal();
       },
       pSkipTap: () => this.setState({ phase: "tut7" }),
-      menuPlayLabel: C[this._tonight()].loan ? "walk the road ✦" : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
-      menuNight: "the first climb · the " + this._mName(this._tonight()),
+      menuPlayLabel: this._mlvl(this._tonight()) < 4 ? (this._climbDoneTonight(this._tonight()) ? "sit at the table ✦" : "walk the road ✦") : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
+      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight" : ["the first climb", "the second climb", "the third climb", "the last climb", "claimed"][Math.min(this._mlvl(this._tonight()), 4)]) + " · the " + this._mName(this._tonight()),
       fiveLabel: (st.deckSel || []).length >= 5 ? "your next five" : "choose your pack",
       fiveCards: (() => {
         const out = this._deal(st.deckSel || [], 1).map((id, i) => {
@@ -2372,7 +2400,15 @@ class Component extends DCLogic {
       })(),
       menuLine: (() => {
         const t = this._tonight();
-        if (C[t].loan) return ev.e === 0 ? "unclaimed. nine stand between you and this mansion: eight walkers, each reading deeper than the last, then the sky herself above the world. beat her and it is yours." : "unclaimed. you left the road in " + ev.name + ", the sky herself still above.";
+        const ml = this._mlvl(t);
+        if (ml < 4) {
+          if (this._climbDoneTonight(t)) return "walked tonight: the card stands at level " + ml + ". the table is open, nothing staked. the road re-arms when the moon returns.";
+          if (ev.e !== 0) return "you left the road in " + ev.name + ", the sky herself still above.";
+          if (ml === 0) return "beat eight walkers, other players' hands walked before you, then the sky herself: the district's card is yours.";
+          if (ml === 1) return "the card walks with you at level 1, numbers only. the road re-arms deeper. three climbs to wake it fully.";
+          if (ml === 2) return "the card is awake at level 2: its move is live. two climbs remain.";
+          return "the card stands at level 3. the last climb: beat the sky once more and the district is claimed.";
+        }
         if (this._specialNight(t)) return "claimed, and the sky herself returns tonight: best of five at her table. " + (({ mars: "mars stands closest, so she picks the biggest fight.", saturn: "saturn stands closest, so she guards.", venus: "venus stands closest, so she keeps company.", mercury: "mercury stands closest, so she roams.", jupiter: "jupiter stands closest, so she spends big." })[this._temper()] || "");
         return "claimed. " + this._walkerFor(t).name + " sits at the table tonight, best of five.";
       })(),
@@ -2422,14 +2458,17 @@ class Component extends DCLogic {
       ],
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       endWonOn: endWon,
+      wakePipsOn: endWon && !!st.road,
+      wakePips: (ml3 => [1, 2, 3, 4].map(l => ({ style: "width:8px;height:8px;transform:rotate(45deg);display:inline-block;" + (l < Math.max(1, ml3) ? "background:rgba(240,216,154,.85)" : l === Math.max(1, ml3) ? "background:rgba(240,216,154,.1);animation:mzLvlLight 1.5s ease 1s both" : "background:rgba(240,216,154,.1);border:1px solid rgba(240,216,154,.2)") })))(this._mlvl(this._tonight())),
+      endWonTag: (m2 => st.road ? (m2 >= 4 ? "the " + this._mName(this._tonight()) + ", claimed and dated tonight" : "the " + this._mName(this._tonight()) + "'s card, at level " + Math.max(1, m2) + " tonight") : "the " + this._mName(this._tonight()))(this._mlvl(this._tonight())),
       endMark: endWon ? "#FFB000" : "rgba(240,216,154,.5)",
       endTitle: st.practice ? (endWon ? "the practice is yours, " + mw + " boards to " + ms : "the district's hand takes the practice, " + ms + " to " + mw)
         : st.phase === "roadlost" ? "the night rests"
-        : endWon ? (st.road ? "the " + this._mName(this._tonight()) + " is claimed" : (st.nightSky ? "you held the sky, " : "the night is yours, ") + mw + " boards to " + ms)
+        : endWon ? (st.road ? ((m2 => m2 >= 4 ? "the " + this._mName(this._tonight()) + " is claimed" : m2 === 1 ? "the " + this._mName(this._tonight()) + "'s card is won" : "the road is walked")(this._mlvl(this._tonight()))) : (st.nightSky ? "you held the sky, " : "the night is yours, ") + mw + " boards to " + ms)
         : (st.nightWalker ? st.nightWalker + " takes the night, " : "the sky holds the mansion, ") + ms + " to " + mw,
       endLine: st.practice ? "nothing was staked. the road above is the real thing: eight walkers, then the sky, and the district's card at the top."
         : st.phase === "roadlost" ? "nothing lost. the ladder waits where you left it, and the road gives its shard regardless."
-        : endWon ? (st.road ? "its card is named and dated, and it wakes at level 2: its move is live from tonight. the ladder here is done forever." : "")
+        : endWon ? (st.road ? ((ml2 => ml2 >= 4 ? "the card stands at level four, named and dated. the district is yours: its table opens tomorrow." : ml2 === 1 ? "the district's card joins your hand at level one, numbers only. the road re-arms, and everyone on it reads deeper. three climbs to wake it fully." : ml2 === 2 ? "the card wakes at level 2: its move is live from tonight. two climbs remain." : "the card sharpens to level 3. one climb between you and the claim.")(this._mlvl(this._tonight()))) : st.freeNight ? "nothing was staked: the road's work was done tonight. the moon moves on tomorrow." : "")
         : "nothing lost. the table deals again tomorrow.",
     };
   }
