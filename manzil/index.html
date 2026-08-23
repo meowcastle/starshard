@@ -105,6 +105,56 @@
       <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
     </g>
   </svg></div>
+  <div style="{{ edTowerStyle }}"><svg viewBox="0 0 932 330" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <g fill="#1B2334">
+      <rect x="6" y="236" width="64" height="94"></rect>
+      <rect x="894" y="222" width="38" height="108"></rect>
+    </g>
+    <g fill="#1E2740">
+      <rect x="158" y="120" width="86" height="210"></rect>
+      <rect x="798" y="176" width="106" height="154"></rect>
+    </g>
+    <path d="M186 120 l-5 -13 M216 120 l5 -13" stroke="#1E2740" stroke-width="2" fill="none"></path>
+    <rect x="183" y="82" width="34" height="26" rx="2" fill="#232C46"></rect>
+    <path d="M180 82 h40 l-20 -11 z" fill="#232C46"></path>
+    <path d="M834 176 l-4 -11 M862 176 l4 -11" stroke="#1E2740" stroke-width="2" fill="none"></path>
+    <rect x="832" y="140" width="32" height="25" rx="2" fill="#232C46"></rect>
+    <path d="M829 140 h38 l-19 -10 z" fill="#232C46"></path>
+    <g stroke="rgba(240,216,154,.07)" stroke-width="1" fill="none">
+      <path d="M170 140 h62 M170 158 h62 M170 176 h62 M170 194 h62 M170 212 h62 M170 230 h62 M170 248 h62 M170 266 h62 M170 284 h62"></path>
+      <path d="M810 196 h82 M810 214 h82 M810 232 h82 M810 250 h82 M810 268 h82 M810 286 h82"></path>
+    </g>
+    <g fill="#232C46">
+      <rect x="64" y="150" width="88" height="180"></rect>
+      <rect x="76" y="96" width="64" height="54"></rect>
+      <rect x="88" y="62" width="40" height="34"></rect>
+      <rect x="99" y="40" width="18" height="22"></rect>
+    </g>
+    <path d="M108 40 V14" stroke="#232C46" stroke-width="2.5" fill="none"></path>
+    <circle cx="108" cy="12" r="1.8" fill="rgba(255,124,110,.85)" style="animation:bsBlink 6s linear infinite"></circle>
+    <g stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none">
+      <path d="M78 160 v160 M92 160 v160 M106 160 v160 M120 160 v160 M134 160 v160"></path>
+      <path d="M88 100 v46 M104 100 v46 M120 100 v46"></path>
+    </g>
+    <g fill="#232C46">
+      <rect x="672" y="74" width="98" height="256"></rect>
+      <rect x="690" y="46" width="62" height="28"></rect>
+    </g>
+    <path d="M706 46 V12 M738 46 V26" stroke="#232C46" stroke-width="2" fill="none"></path>
+    <circle cx="706" cy="10" r="1.8" fill="rgba(255,124,110,.85)" style="animation:bsBlink 7.4s linear -2s infinite"></circle>
+    <g stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none">
+      <path d="M686 88 v242 M700 88 v242 M714 88 v242 M728 88 v242 M742 88 v242 M756 88 v242"></path>
+    </g>
+    <g fill="rgba(255,214,150,.26)">
+      <rect x="93" y="188" width="6" height="8"></rect>
+      <rect x="121" y="252" width="6" height="8"></rect>
+      <rect x="176" y="222" width="7" height="7"></rect>
+      <rect x="729" y="140" width="6" height="9"></rect>
+      <rect x="687" y="236" width="6" height="9"></rect>
+      <rect x="845" y="238" width="7" height="7"></rect>
+    </g>
+    <rect x="701" y="182" width="6" height="9" fill="rgba(255,214,150,.34)" style="animation:mzWindow 17s ease-in-out infinite"></rect>
+  </svg></div>
   <div style="{{ edMidStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
     <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#3D2318"></path>
     <g fill="#3D2318" stroke="rgba(240,216,154,.15)" stroke-width="1">
@@ -337,6 +387,19 @@
     <button onClick="{{ tutSkipTap }}" style="position:absolute;top:8px;right:12px;z-index:7;background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
   </sc-if>
 
+  <sc-if value="{{ climbOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:16px;top:100px;display:flex;flex-direction:column;align-items:center;z-index:4;pointer-events:none">
+      <span style="{{ climbStarStyle }}">✦</span>
+      <span style="width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:8px solid rgba(12,8,4,.78);margin-top:4px"></span>
+      <div style="width:24px;padding:6px 0 7px;display:flex;flex-direction:column-reverse;align-items:center;gap:6px;background:linear-gradient(180deg, rgba(12,8,4,.78), rgba(12,8,4,.42));border:1px solid rgba(240,216,154,.16);border-top:none">
+        <sc-for list="{{ climbCells }}" as="w" hint-placeholder-count="8">
+          <span style="{{ w.style }}"></span>
+        </sc-for>
+      </div>
+      <span style="width:32px;height:2px;background:rgba(240,216,154,.22);margin-top:2px"></span>
+    </div>
+  </sc-if>
+
   <div style="{{ ringWrapStyle }}">
     <div style="position:absolute;top:166px;left:50%;transform:translateX(-50%);width:1900px;height:1900px;border-radius:50%;background:radial-gradient(closest-side, transparent 95.2%, rgba(240,216,154,.11) 97%, rgba(186,196,255,.08) 98.2%, transparent 99.6%);filter:blur(3px)"></div>
     <div style="position:absolute;top:178px;left:50%;transform:translateX(-50%);width:1840px;height:1840px;border-radius:50%;background:radial-gradient(closest-side, transparent 94.4%, rgba(96,74,186,.07) 96.8%, transparent 99%);filter:blur(9px)"></div>
@@ -454,7 +517,7 @@
 
   <div style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;z-index:2">
     <sc-for list="{{ handCards }}" as="c" hint-placeholder-count="5">
-      <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
+      <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" data-mzhand="{{ c.hid }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
         <div style="position:absolute;top:5px;left:5px;right:5px;bottom:5px;border-radius:4px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
         <svg viewBox="0 0 100 100" style="{{ c.artStyle }}">
           <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
@@ -507,6 +570,56 @@
           <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
           <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
         </g>
+      </svg></div>
+      <div style="{{ edTowerStyle }}"><svg viewBox="0 0 932 330" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <g fill="#1B2334">
+          <rect x="6" y="236" width="64" height="94"></rect>
+          <rect x="894" y="222" width="38" height="108"></rect>
+        </g>
+        <g fill="#1E2740">
+          <rect x="158" y="120" width="86" height="210"></rect>
+          <rect x="798" y="176" width="106" height="154"></rect>
+        </g>
+        <path d="M186 120 l-5 -13 M216 120 l5 -13" stroke="#1E2740" stroke-width="2" fill="none"></path>
+        <rect x="183" y="82" width="34" height="26" rx="2" fill="#232C46"></rect>
+        <path d="M180 82 h40 l-20 -11 z" fill="#232C46"></path>
+        <path d="M834 176 l-4 -11 M862 176 l4 -11" stroke="#1E2740" stroke-width="2" fill="none"></path>
+        <rect x="832" y="140" width="32" height="25" rx="2" fill="#232C46"></rect>
+        <path d="M829 140 h38 l-19 -10 z" fill="#232C46"></path>
+        <g stroke="rgba(240,216,154,.07)" stroke-width="1" fill="none">
+          <path d="M170 140 h62 M170 158 h62 M170 176 h62 M170 194 h62 M170 212 h62 M170 230 h62 M170 248 h62 M170 266 h62 M170 284 h62"></path>
+          <path d="M810 196 h82 M810 214 h82 M810 232 h82 M810 250 h82 M810 268 h82 M810 286 h82"></path>
+        </g>
+        <g fill="#232C46">
+          <rect x="64" y="150" width="88" height="180"></rect>
+          <rect x="76" y="96" width="64" height="54"></rect>
+          <rect x="88" y="62" width="40" height="34"></rect>
+          <rect x="99" y="40" width="18" height="22"></rect>
+        </g>
+        <path d="M108 40 V14" stroke="#232C46" stroke-width="2.5" fill="none"></path>
+        <circle cx="108" cy="12" r="1.8" fill="rgba(255,124,110,.85)" style="animation:bsBlink 6s linear infinite"></circle>
+        <g stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none">
+          <path d="M78 160 v160 M92 160 v160 M106 160 v160 M120 160 v160 M134 160 v160"></path>
+          <path d="M88 100 v46 M104 100 v46 M120 100 v46"></path>
+        </g>
+        <g fill="#232C46">
+          <rect x="672" y="74" width="98" height="256"></rect>
+          <rect x="690" y="46" width="62" height="28"></rect>
+        </g>
+        <path d="M706 46 V12 M738 46 V26" stroke="#232C46" stroke-width="2" fill="none"></path>
+        <circle cx="706" cy="10" r="1.8" fill="rgba(255,124,110,.85)" style="animation:bsBlink 7.4s linear -2s infinite"></circle>
+        <g stroke="rgba(240,216,154,.08)" stroke-width="1" fill="none">
+          <path d="M686 88 v242 M700 88 v242 M714 88 v242 M728 88 v242 M742 88 v242 M756 88 v242"></path>
+        </g>
+        <g fill="rgba(255,214,150,.26)">
+          <rect x="93" y="188" width="6" height="8"></rect>
+          <rect x="121" y="252" width="6" height="8"></rect>
+          <rect x="176" y="222" width="7" height="7"></rect>
+          <rect x="729" y="140" width="6" height="9"></rect>
+          <rect x="687" y="236" width="6" height="9"></rect>
+          <rect x="845" y="238" width="7" height="7"></rect>
+        </g>
+        <rect x="701" y="182" width="6" height="9" fill="rgba(255,214,150,.34)" style="animation:mzWindow 17s ease-in-out infinite"></rect>
       </svg></div>
       <div style="{{ edMidStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
         <path d="M0 96 V52 h96 v-10 h44 v10 h72 v16 h96 v-22 h58 v14 h110 v-10 h64 v18 h92 v-26 h52 v16 h96 v-8 h74 v10 h78 V96 Z" fill="#3D2318"></path>
@@ -707,7 +820,8 @@
       <sc-if value="{{ doorUiOn }}" hint-placeholder-val="{{ false }}">
         <div style="position:absolute;inset:0;background:radial-gradient(58% 54% at 50% 46%, rgba(7,4,2,.68), rgba(7,4,2,.2) 68%, transparent 88%)"></div>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:22px">
-          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;text-shadow:0 2px 18px rgba(5,3,2,.9);animation:mzFadeUp .9s ease both">the road begins at <span style="color:#FFB000">the {{ tonightName }}</span></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;text-shadow:0 2px 18px rgba(5,3,2,.9);animation:mzFadeUp .9s ease both">tonight the moon stands in <span style="color:#FFB000">the {{ tonightName }}</span></div>
+          <div style="font-family:'Varela Round',sans-serif;font-size:11.5px;line-height:1.8;color:#D8C89C;text-align:center;text-wrap:pretty;max-width:430px;text-shadow:0 1px 8px rgba(5,3,2,.85);animation:mzFadeUp .9s ease .25s both">the moon keeps twenty-eight houses and sleeps in one a night: the mansions. every mansion is a level of this game, and its card is the prize. tonight's is the first.</div>
           <button onClick="{{ legendDoorTap }}" style="background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .9s ease .5s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">open the door ✦</button>
         </div>
       </sc-if>
@@ -775,7 +889,7 @@
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;z-index:4;animation:mzFadeUp .3s ease both">
       <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your hand</div>
-      <div style="font-size:10px;color:#9A8A5E">twelve walk with you. five are dealt face up at the start of every board. grey cards are asleep at level one: win a card's own mansion night and it wakes.</div>
+      <div style="font-size:10px;color:#9A8A5E">twelve walk with you; five are dealt face up each board. grey cards are asleep at level one, numbers only. every mansion is a level: walk a card's own level and its move wakes.</div>
       <button onClick="{{ menuTutTap }}" style="background:none;border:none;padding:2px 0 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">walk the practice board again ›</button>
       <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:660px;margin-top:2px">
         <sc-for list="{{ deckCards }}" as="c" hint-placeholder-count="28">
@@ -838,11 +952,11 @@
     <div onClick="{{ rulesTap }}" style="position:absolute;inset:0;background:rgba(4,3,2,.85);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;z-index:8;cursor:pointer;animation:mzFadeUp .2s ease both">
       <div style="max-width:540px;padding:0 40px;font-size:12.5px;line-height:2;color:#D8C89C">
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6;margin-bottom:10px">the whole game</div>
-        <span style="color:#FFFDF5">take turns lodging cards on the nine mansions ahead of her. where cards touch, the bigger number claims the smaller. own most of the nine when the road is full. first to three boards takes the mansion.</span><br>
-        a card's two numbers are its two sides: left fights left, right fights right. your ground is parchment; the sky's is amber. her hand is open: tonight's planets, five lights you can tell apart. the lead alternates each round.<br>
+        <span style="color:#FFFDF5">the board is the moon's road: the nine mansions ahead of her, the houses she crosses one a night. you and the sky, the hand that deals the planets, take turns setting cards on them. where cards touch, the bigger number claims the smaller. own most of the nine when the road is full. first to three boards takes the night.</span><br>
+        a card's two numbers are its two sides: left fights left, right fights right. equal numbers claim too: a tie takes the card. your ground is parchment; the sky's is amber. her hand is open: tonight's planets, five lights you can tell apart. the lead alternates each round.<br>
         <span style="color:#9A8A5E">a card's numbers never change: it fights the same on its first night as its hundredth. levels wake its signature at 2, then wear away the labels: a new card says everything, level 2 drops the name, level 3 drops the move, level 4 is nearly all art. hold any card to read it in full. the throne is two-faced; choose on lodge.</span><br>
         <span style="color:#FFFDF5">dominion:</span> a card lodged on its own mansion glows and counts as two at the count. the ground keeps it, whoever claims the card. her planets hold dominion where they truly stand tonight.<br>
-        <span style="color:#FFFDF5">first nights:</span> an unclaimed mansion's night is the walkers' road: eight single boards against other walkers' hands, each reading deeper than the last, then the sky herself at the top, best of five, wearing the mansion's own rule. beat her and the mansion is claimed, its card waking at level 2. fall off and the ladder waits where you left it. the climb is daylight rising into open space.
+        <span style="color:#FFFDF5">the climb:</span> an unclaimed mansion's night is a road of nine steps: eight single boards against other players' hands, each reading deeper than the last, then the sky herself at the top, best of five. beat her and the mansion's card is won at level one. the road re-arms with the moon; each new climb wakes the card one level, and at level four the mansion is claimed for good. fall off and the ladder waits where you left it.
         <span style="color:#FFFDF5">after the claim:</span> the mansion is yours and its nights go back to the walkers, best of five. the sky herself returns only when the moon crosses one of your chart's own mansions, and then she stays for a whole match.
       </div>
     </div>
@@ -876,8 +990,8 @@
   <sc-if value="{{ pintroOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:0 90px">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .6s ease both">before the road: one walked board</div>
-      <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .12s both">your five stand ready. one board, every move called: the lit card goes to the lit ground. lodge it and watch what it does. nothing is staked.</div>
-      <div style="font-size:11.5px;line-height:1.75;color:#9A8A5E;max-width:460px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">when the road fills, the lights gather into two orbs, one for each side. the orbs meet, and the bigger count stands. own more of the nine: that is the whole game.</div>
+      <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .12s both">the district lends you five awake cards: the same five it lends everyone who walks here. every move is called. the lit card goes to the lit ground, and the words say why.</div>
+      <div style="font-size:11.5px;line-height:1.75;color:#9A8A5E;max-width:470px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">the basics: left number fights left, right fights right, bigger claims smaller, and a tie takes the card. own most of the nine grounds when the road fills. the rest, the walk shows you.</div>
       <button onClick="{{ pStartTap }}" style="margin-top:6px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">walk the board</button>
       <button onClick="{{ pSkipTap }}" style="background:none;border:none;padding:4px 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
     </div>
@@ -990,32 +1104,35 @@
         </sc-if>
         <button onClick="{{ bToggleManual }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E">{{ bManualToggleLabel }}</button>
       </div>
-      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:330px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five mansions are read from it: your sun, moon, mercury, venus and mars. computed on this device, kept on this device.</div>
+      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:330px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it: the mansions where your sun, moon, mercury, venus and mars stood. computed on this device, kept on this device.</div>
       <div style="min-height:12px;font-size:11px;color:#FFB000">{{ bErr }}</div>
       <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}">cast your five</button>
     </div>
   </sc-if>
   <sc-if value="{{ tut5On }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ tutNext }}" style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:48px;padding:0 90px">
-      <div style="width:210px;height:284px;flex:none;border-radius:14px;position:relative;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.6);box-shadow:0 18px 50px rgba(0,0,0,.78), 0 0 16px rgba(240,216,154,.22);animation:mzFadeUp .5s ease both">
-        <div style="position:absolute;top:10px;left:10px;right:10px;bottom:10px;border-radius:9px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.12)"></div>
-        <svg viewBox="0 0 100 100" style="position:absolute;top:44px;left:47px;width:116px;height:98px;opacity:.95;animation:mzEmblemBreathe 7s ease-in-out infinite">
-          <sc-for list="{{ tutShapes }}" as="p" hint-placeholder-count="2">
-            <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-          </sc-for>
-        </svg>
-        <div style="position:absolute;top:14px;left:19px;font-size:23px;color:#F0D89A;text-shadow:0 0 6px rgba(4,3,2,.95)">{{ tutL }}</div>
-        <div style="position:absolute;bottom:12px;right:19px;font-size:23px;color:#F0D89A;text-shadow:0 0 6px rgba(4,3,2,.95)">{{ tutR }}</div>
-        <div style="position:absolute;top:160px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.1;color:#F2EAD6;padding:0 16px">{{ tutName }}</div>
-        <div style="position:absolute;bottom:15px;left:0;right:0;text-align:center;font-size:9.5px;color:#9A8A5E">level 2 · its move is awake</div>
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:15px;padding:0 70px">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;color:#F2EAD6;animation:mzFadeUp .6s ease both">your five, cast</div>
+      <div style="font-size:11px;color:#9A8A5E;animation:mzFadeUp .6s ease .08s both">born {{ revealDate }}: one card for where each planet stood</div>
+      <div style="display:flex;gap:16px;animation:mzFadeUp .6s ease .16s both">
+        <sc-for list="{{ revealCards }}" as="c" hint-placeholder-count="5">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="width:84px;height:112px;border-radius:7px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid rgba(240,216,154,.55);box-shadow:0 8px 22px rgba(0,0,0,.6), 0 0 14px rgba(240,216,154,.18)">
+              <div style="position:absolute;top:5px;left:5px;right:5px;bottom:5px;border-radius:4px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
+              <svg viewBox="0 0 100 100" style="position:absolute;top:9px;left:19px;width:46px;height:36px;opacity:.9">
+                <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
+                  <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+                </sc-for>
+              </svg>
+              <div style="position:absolute;top:6px;left:9px;font-size:12px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.l }}</div>
+              <div style="position:absolute;bottom:6px;right:9px;font-size:12px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.r }}</div>
+              <div style="position:absolute;top:48px;left:0;right:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:11.5px;color:#F2EAD6;text-align:center;line-height:1.1;padding:0 8px">{{ c.name }}</div>
+            </div>
+            <div style="font-size:9.5px;color:#F0D89A">{{ c.src }}</div>
+          </div>
+        </sc-for>
       </div>
-      <div style="max-width:370px;display:flex;flex-direction:column;gap:13px">
-        <div style="font-size:10.5px;color:#9A8A5E;animation:mzFadeUp .5s ease both">{{ tutCount }}</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:25px;line-height:1.25;color:#F2EAD6;animation:mzFadeUp .5s ease .08s both">{{ tutSource }}</div>
-        <div style="font-size:12.5px;line-height:1.75;color:#D8C89C;text-wrap:pretty;animation:mzFadeUp .5s ease .16s both">{{ tutMovePlain }}</div>
-        <div style="font-size:11.5px;line-height:1.75;color:#9A8A5E;border-top:1px solid rgba(240,216,154,.12);padding-top:12px;text-wrap:pretty;animation:mzFadeUp .5s ease .24s both">{{ tutLesson }}</div>
-        <div style="font-size:10.5px;color:rgba(154,138,94,.75);animation:mzFadeUp .9s ease 1s both">tap to go on</div>
-      </div>
+      <div style="font-size:11.5px;line-height:1.75;color:#D8C89C;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .24s both">five mansions, read from your birth sky: these cards are yours for good, and their moves are already awake. hold any card, any time, to read it in full.</div>
+      <button onClick="{{ revealGo }}" style="margin-top:2px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 28px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">go on ✦</button>
     </div>
   </sc-if>
   <sc-if value="{{ tut7On }}" hint-placeholder-val="{{ false }}">
@@ -1035,8 +1152,8 @@
           </div>
         </sc-for>
       </div>
-      <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">these seven are asleep at level one: numbers only, no move yet. win a card's own mansion night and it wakes: level two, move on. that's how cards grow here. nothing is bought, you walk it.</div>
-      <div style="font-size:11.5px;line-height:1.8;color:#9A8A5E;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .3s both">tonight's road has nine steps: eight other walkers, each one reading the board deeper than the last, then the sky herself at the top. beat her and the empty district is yours.</div>
+      <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">the practiced hand goes back to the district. yours is the five from your birth sky plus these seven on loan, asleep at level one: numbers only, no move yet. every mansion is a level; walk a card's own level and its move wakes. nothing here is bought.</div>
+      <div style="font-size:11.5px;line-height:1.8;color:#9A8A5E;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .3s both">tonight's climb has nine steps: eight walkers, other players' hands walked before you, then the sky herself, the one who deals the planets. beat her and the empty district's card joins your hand.</div>
       <button onClick="{{ tut7Go }}" style="margin-top:6px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">to the district</button>
     </div>
   </sc-if>
@@ -1238,7 +1355,7 @@ class Component extends DCLogic {
     five = five.slice(0, 13); // the district's own card joins as a thirteenth on first climb
     let seen = false; try { seen = !!localStorage.getItem("manzil-ed-legend"); } catch (e) {}
     const born = !!this._birth();
-    return { phase: seen ? (born ? "menu" : "birth") : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, freeNight: false, countFx: null };
+    return { phase: seen ? (born ? "menu" : "birth") : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null };
   }
   _countCeremony(done) {
     const slots = this.state.slots;
@@ -1281,7 +1398,8 @@ class Component extends DCLogic {
     const fl = Math.max(0, Math.min(4, (this._opts().level != null ? this._opts().level : (this.props.forceLevel || 0))));
     const wake = (this.state && this.state.ascentWake) || 0;
     const all = this._opts().ownAll != null ? this._opts().ownAll : !!this.props.ownAll;
-    const ck = fl + ":" + wake + ":" + (all ? 1 : 0);
+    const demo = !!(this.state && this.state.practice && this.state.tutor);
+    const ck = fl + ":" + wake + ":" + (all ? 1 : 0) + ":" + (demo ? 1 : 0);
     if (this._C && this._Cfl === ck) return this._C;
     this._Cfl = ck;
     // canon epithets (research/mansion-names.md); values derived from research/mansions-table.json:
@@ -1321,6 +1439,7 @@ class Component extends DCLogic {
     };
     const owned = {};
     this._chartFive().forEach(id => { if (id === 21) return; owned[id] = { lvl: 2, ...ABS[id] }; }); // your chart's five ship awake; m21 always walks its road in this build
+    if (demo) this._demoHand().forEach(id => { if (!owned[id]) owned[id] = { lvl: 2, ...ABS[id] }; }); // the practice walk teaches on the district's lent five, awake for the lesson
     if (all) for (let i2 = 1; i2 <= 28; i2++) if (!owned[i2]) owned[i2] = { lvl: 2, ...ABS[i2] };
     let claims = {};
     try { claims = JSON.parse(localStorage.getItem("manzil-ed-claims")) || {}; } catch (e) {}
@@ -1406,13 +1525,6 @@ class Component extends DCLogic {
     27: "once a board, tap the guide then another of your cards: the two swap places.",
     28: "the first and last mansions of the road count for whoever holds the thread.",
   }[id] || ""; }
-  _tutLesson(i) { return [
-    "how fighting works: every card has two numbers. the left one fights the card on its left, the right one fights the card on its right. bigger number takes the card.",
-    "every card has a move. moves are asleep at level one and wake at level two. all five of yours are already awake.",
-    "one more thing: a card standing on its OWN mansion counts as two at the end. the board names each space, so watch for yours.",
-    "ties matter here: equal numbers TAKE the card, both ways. and if the final count is tied, the night goes to you.",
-    "the board is the next nine mansions of the moon's road. when all nine spaces fill, whoever holds more of them wins the board.",
-  ][i] || ""; }
   _saveBirth(dt, dateStr, timeStr) {
     if (!dt || isNaN(dt.getTime()) || !window.ManzilEphem) return null;
     const cast = this._castFive(dt);
@@ -1829,28 +1941,27 @@ class Component extends DCLogic {
     });
     return best ? best.score : null;
   }
+  _demoHand() { return [22, 8, 6, 17, 28]; }
+  _demoSky() { return [209, 223, 226, 224, 216]; }
+  // the practice walk: one authored board, the same for everyone, scripted on BOTH sides so every
+  // signature lands the same lesson every run (user, 23 aug 2026: fixed hand, show the moves)
+  _demoScript() { return [
+    { w: "you", id: 22, i: 1, t: "your opener: the listener", why: "this is the listener's own mansion: lodged at home, a card counts as two at the count. and while it stands, it strikes whatever she lands beside it." },
+    { w: "sky", id: 209, i: 0, t: "the district answers", why: "she lands beside the listener. the listener strikes first: its seven claims her six before her card even settles." },
+    { w: "you", id: 8, i: 4, t: "the ghost takes quiet ground", why: "no fight here. the ghost's move is a field: her cards beside it fight one lower while the road is under half full." },
+    { w: "sky", id: 223, i: 3, t: "she tests the ghost", why: "her seven meets the ghost's seven, and a tie takes the card: this should hurt. but the ghost dims her to six. the move just saved the card." },
+    { w: "you", id: 6, i: 2, t: "the storm eats", why: "the storm's six beats her five: bigger claims smaller. that is the spine of every fight on the road." },
+    { w: "sky", id: 226, i: 5, t: "she claims one back", why: "the road is past half full, so the ghost's dimming is spent: her seven takes it. and her card stands on its own mansion: dominion, it counts as two. read conditions." },
+    { w: "you", id: 17, i: 8, t: "the crown takes the edge", why: "the crown counts as two on the road's first or last ground. the count is the whole game: own most of the nine when it fills." },
+    { w: "sky", id: 224, i: 7, t: "she guards", why: "a nine, planted where nothing of yours can reach it. some cards you don't fight. you count around them." },
+    { w: "you", id: 28, i: 6, t: "the thread ends it", why: "its six ties her six, and a tie claims. the tie-claimed card then strikes its own neighbors: her seven takes the ghost back for you. chains end boards." },
+  ]; }
   _tutMove() {
     const st = this.state;
     if (!st || !st.practice || !st.tutor || st.phase !== "play" || st.turn !== "you" || st.busy) return null;
-    const id = st.hand[0]; if (!id) return null;
-    const C = this._cards(), c = C[id];
-    const empt = st.slots.map((x, i) => x ? -1 : i).filter(i => i >= 0 && this._legalSlot(st.slots, i));
-    if (!empt.length) return null;
-    const homeI = empt.find(i => (c.homeM || id) === this._boardM(i));
-    if (homeI !== undefined) return { id, i: homeI, why: "that ground is its own mansion: lodged there it counts as two." };
-    let best = null;
-    empt.forEach(i => {
-      [-1, 1].forEach(d => {
-        const k = this._nb(i, d); if (k < 0 || !st.slots[k] || st.slots[k].owner !== "sky") return;
-        const mine = d === 1 ? c.r : c.l, theirs = d === 1 ? st.slots[k].l : st.slots[k].r;
-        if (mine > theirs && (!best || mine - theirs > best.gap)) best = { id, i, gap: mine - theirs, why: "its " + mine + " faces a " + theirs + ". bigger claims smaller: lodge it and take the card." };
-      });
-    });
-    if (best) return best;
-    const safe = empt.filter(i => [-1, 1].every(d => { const k = this._nb(i, d); return k < 0 || !st.slots[k] || st.slots[k].owner === "you"; }));
-    const pool = safe.length ? safe : empt;
-    const mid = pool.reduce((a, b) => Math.abs(b - (st.slots.length - 1) / 2) < Math.abs(a - (st.slots.length - 1) / 2) ? b : a);
-    return { id, i: mid, why: safe.length ? "no fight to win this turn: claim quiet ground where nothing answers back." : "hold the middle: more neighbors, more fights it can win." };
+    const sc = this._demoScript()[st.tutStep || 0];
+    if (!sc || sc.w !== "you" || st.slots[sc.i] || st.hand.indexOf(sc.id) < 0) return null;
+    return { id: sc.id, i: sc.i, t: sc.t, why: sc.why };
   }
   _commitPlace(cardId, i, rev, who) {
     if (who === "you") {
@@ -1866,6 +1977,7 @@ class Component extends DCLogic {
       const { slots, soft } = this._lodge(s.slots, cardId, i, rev, who);
       return {
         slots, busy: true, dropIdx: i, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null, pick: null,
+        tutStep: s.practice && s.tutor ? (s.tutStep || 0) + 1 : s.tutStep,
         glanceOn: who === "you" ? (c.ab === "glance" && this._on(c)) : false,
         log: soft.length ? "venus softens her neighbors." : "",
         castFx: { id: cardId, owner: who, n: this._fxN },
@@ -1958,6 +2070,10 @@ class Component extends DCLogic {
   _skyMove() {
     const st = this.state;
     if (st.phase !== "play" || st.turn !== "sky") return;
+    if (st.practice && st.tutor) { // the walked board is scripted on her side too: same lesson every run
+      const sc = this._demoScript()[st.tutStep || 0];
+      if (sc && sc.w === "sky" && !st.slots[sc.i] && st.sky.indexOf(sc.id) >= 0) { this._commitPlace(sc.id, sc.i, false, "sky"); return; }
+    }
     const C = this._cards();
     const temper = (st.road || st.nightWalker) ? null : this._temper(); // only the sky has a temper: it rests on road rungs and walker nights
     const moves = [];
@@ -2119,6 +2235,7 @@ class Component extends DCLogic {
       const f = frame(c.lvl);
       const numSty = (pos) => "position:absolute;" + pos + ";font-size:" + (c.lvl >= 4 ? 9 : 11) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)";
       return {
+        hid: id,
         name: c.name.toLowerCase(), ln: cl, rn: cr,
         nameOn: c.lvl < 3,
         artStyle: "position:absolute;opacity:.9;" + (c.lvl >= 4 ? "top:8px;left:8px;width:64px;height:78px" : c.lvl >= 3 ? "top:17px;left:8px;width:64px;height:74px" : "top:9px;left:18px;width:44px;height:34px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
@@ -2200,10 +2317,14 @@ class Component extends DCLogic {
       edFarStyle: "position:absolute;left:0;right:0;height:64px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 6, 0) + "px;transform:translateY(" + ev.e * 10 + "px);opacity:" + [.75, .75, .72, .68, .6, .4, .15, 0, 0][ev.e],
       edMidStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 14, -10) + "px;transform:translateY(" + ev.e * 24 + "px);opacity:" + [.95, .85, .7, .5, .28, .1, 0, 0, 0][ev.e],
       edNearStyle: "position:absolute;left:0;right:0;height:150px;bottom:-4px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 62 + "px);opacity:" + [.95, .55, .2, 0, 0, 0, 0, 0, 0][ev.e],
+      edTowerStyle: "position:absolute;left:0;right:0;height:330px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 14, -10) + "px;transform:translateY(" + ev.e * 34 + "px);opacity:" + [.92, .9, .85, .74, .34, .08, 0, 0, 0][ev.e],
       edWallLStyle: "position:absolute;left:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (-ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
       edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
       edOverStyle: "position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 185 + "px);opacity:" + [1, .8, .3, 0, 0, 0, 0, 0, 0][ev.e],
       ringWrapStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [.12, .18, .28, .42, .58, .72, .85, 1, 1][ev.e],
+      climbOn: !!(st.road && (st.phase === "play" || st.phase === "over" || st.phase === "round")),
+      climbStarStyle: st.roadBoss ? "font-size:13px;line-height:1;color:#FFB000;text-shadow:0 0 12px rgba(255,176,0,.85);animation:mzBreathe 2s ease-in-out infinite" : "font-size:11px;line-height:1;color:rgba(240,216,154,.45)",
+      climbCells: Array.from({ length: 8 }, (_, k) => { const cur = !st.roadBoss && k === (st.roadRung || 0); const done = st.roadBoss || k < (st.roadRung || 0); return { style: "width:9px;height:11px;border:1px solid " + (cur ? "#FFB000;background:#FFB000;box-shadow:0 0 10px rgba(255,176,0,.8);animation:mzBreathe 2.2s ease-in-out infinite" : done ? "rgba(255,214,150,.6);background:rgba(255,214,150,.5);box-shadow:0 0 8px rgba(255,214,150,.35)" : "rgba(240,216,154,.22);background:rgba(240,216,154,.04)") }; }),
       ...((() => {
         const t0 = this._tonight();
         if (this._mlvl(t0) < 4 && !this._climbDoneTonight(t0)) {
@@ -2219,8 +2340,8 @@ class Component extends DCLogic {
       youN, skyN, matchPips, slots, skyCards, handCards,
       skyHandOn: !!(st.roadBoss || st.nightSky),
       tutOn: !!(st.practice && st.tutor && st.phase === "play" && !st.countFx),
-      tutTitle: tutF ? ((() => { const b = this._birth() || {}; const ss = ((b.rows) || []).filter(r => r.m === tutF.id).map(r => r.p); return ss.length ? "your " + ss[0] + "'s card: " : ""; })() + "the " + this._mName(tutF.id)) : "",
-      tutWhy: tutF ? this._simpleMove(tutF.id) + " " + tutF.why : "the district answers. watch what it claims.",
+      tutTitle: tutF ? tutF.t : ((sc) => sc && sc.w === "sky" ? sc.t : "the district answers")(st.practice && st.tutor ? this._demoScript()[st.tutStep || 0] : null),
+      tutWhy: tutF ? tutF.why : ((sc) => sc && sc.w === "sky" ? sc.why : "watch what it claims.")(st.practice && st.tutor ? this._demoScript()[st.tutStep || 0] : null),
       tutSkipTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "tut7" }); },
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
       ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back), zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
@@ -2348,33 +2469,26 @@ class Component extends DCLogic {
           dt.setHours(h, parseInt(s0.bTimeMin, 10), 0, 0);
           ts = String(h).padStart(2, "0") + ":" + s0.bTimeMin;
         } else dt.setHours(12, 0, 0, 0);
-        const pack = this._saveBirth(dt, ds, ts);
+        const pack = this._saveBirth(dt, ds, this.state.bTimeU ? null : ts);
         if (!pack) { this.setState({ bErr: "the sky can't read that date" }); return; }
         this.setState({ phase: "tut5", tutI: 0, deckSel: pack, bErr: "" });
       },
-      ...((() => {
-        if (st.phase !== "tut5") return { tutShapes: [], tutL: "", tutR: "", tutName: "", tutCount: "", tutSource: "", tutMovePlain: "", tutLesson: "" };
-        const b = this._birth() || {}, five = this._chartFive(), i = Math.min(st.tutI || 0, 4), id = five[i], c = C[id];
-        const srcs = (b.rows || []).filter(r => r.m === id).map(r => r.p);
-        const fillSrc = (b.fill || []).find(r => r.m === id);
-        const src = srcs.length > 1 ? "your " + srcs.join(" and ") + " stand here, together" : srcs.length ? "your " + srcs[0] + " stands here" : fillSrc ? (fillSrc.p === "the road" ? "the road completes your five" : fillSrc.p + " completes your five") : "";
-        return {
-          tutShapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
-          tutL: c.l, tutR: c.r, tutName: c.name.toLowerCase(),
-          tutCount: "card " + (i + 1) + " of your five",
-          tutSource: src,
-          tutMovePlain: "its move: " + this._simpleMove(id),
-          tutLesson: this._tutLesson(i),
-        };
-      })()),
-      tutNext: () => this.setState(s => (s.tutI || 0) < 4 ? { tutI: (s.tutI || 0) + 1 } : { phase: "pintro" }),
+      revealDate: (this._birth() || {}).date || "",
+      revealCards: (st.phase === "tut5" ? this._chartFive() : []).map(id => {
+        const c2 = C[id], b = this._birth() || {};
+        const srcs = ((b.rows) || []).filter(r => r.m === id).map(r => r.p);
+        const f2 = ((b.fill) || []).find(r => r.m === id);
+        return { name: c2.name.toLowerCase(), l: c2.l, r: c2.r, shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
+          src: srcs.length ? "your " + srcs.join(" + ") : f2 ? (f2.p === "the road" ? "the road's gift" : "your " + f2.p) : "" };
+      }),
+      revealGo: () => this.setState({ phase: "pintro" }),
       tutSeven: (st.phase === "tut7" ? (st.deckSel || []).filter(id => !this._chartFive().includes(id)) : []).map(id => { const c2 = C[id]; return { name: c2.name.toLowerCase(), l: c2.l, r: c2.r, shapes: window.ManzilArt ? window.ManzilArt.get(id) : [] }; }),
       tut7Go: () => this.setState({ phase: "menu" }),
       pintroOn: st.phase === "pintro",
       pStartTap: () => {
         this._clearSeq();
-        const hand = this._chartFive().slice();
-        this.setState({ ...this._deckState(), ...this._freshRound(1, "you", hand), round: 1, roundWins: [], phase: "play", chosen: hand.slice(), sky: this._walkers()[0].hand.slice(), road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "the district's hand", practice: true, tutor: true });
+        const hand = this._demoHand();
+        this.setState({ ...this._deckState(), ...this._freshRound(1, "you", hand), round: 1, roundWins: [], phase: "play", chosen: hand.slice(), sky: this._demoSky(), road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "the district's hand", practice: true, tutor: true, tutStep: 0 });
         this._afterDeal();
       },
       pSkipTap: () => this.setState({ phase: "tut7" }),
@@ -2404,7 +2518,7 @@ class Component extends DCLogic {
         if (ml < 4) {
           if (this._climbDoneTonight(t)) return "walked tonight: the card stands at level " + ml + ". the table is open, nothing staked. the road re-arms when the moon returns.";
           if (ev.e !== 0) return "you left the road in " + ev.name + ", the sky herself still above.";
-          if (ml === 0) return "beat eight walkers, other players' hands walked before you, then the sky herself: the district's card is yours.";
+          if (ml === 0) return "eight walkers stand on the road, other players' hands walked before you. above them: the sky herself, the one who deals the planets. beat all nine and the district's card is yours.";
           if (ml === 1) return "the card walks with you at level 1, numbers only. the road re-arms deeper. three climbs to wake it fully.";
           if (ml === 2) return "the card is awake at level 2: its move is live. two climbs remain.";
           return "the card stands at level 3. the last climb: beat the sky once more and the district is claimed.";
