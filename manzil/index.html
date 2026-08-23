@@ -2126,12 +2126,22 @@ class Component extends DCLogic {
     });
     const roundWinner = st.turn === "over" && st.slots.every(x => x) ? this._boardWinner(st.slots) : null;
     const tutF = this._tutMove();
+    // grabbed-card preview: while dragging over a legal empty slot, show neighbors' numbers
+    // as they'd read if the card actually landed there, so the player never computes it by
+    // hand; reverts the instant the drag ends or moves off that slot (nothing is persisted).
+    const previewSlots = (() => {
+      if (!st.drag || st.dragOver == null || st.slots[st.dragOver]) return st.slots;
+      const c = this._cards()[st.drag.id];
+      const preview = st.slots.slice();
+      preview[st.dragOver] = { id: st.drag.id, l: c.l, r: c.r, owner: "you", age: 0 };
+      return preview;
+    })();
     const slots = st.slots.map((s, i) => {
       const empty = !s;
       const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
       const selOn = st.sel !== null && st.turn === "you" && st.phase === "play" && !st.busy && this._legalSlot(st.slots, i);
       let tag = "", tagColor = "#9A8A5E";
-      const fL = s ? this._faceOf(st.slots, i, -1) : 0, fR = s ? this._faceOf(st.slots, i, 1) : 0;
+      const fL = s ? this._faceOf(previewSlots, i, -1) : 0, fR = s ? this._faceOf(previewSlots, i, 1) : 0;
       if (s) {
         const c = C[s.id];
         if (s.ground && s.owner !== s.ground) { tag = "the ground stays yours"; tagColor = "#F0D89A"; }
