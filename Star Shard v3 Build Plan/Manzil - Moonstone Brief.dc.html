@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta charset="utf-8">
+<title>manzil · the moonstone, on paper</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Varela+Round&amp;display=swap" rel="stylesheet">
+<script src="./doc-page.js"></script>
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  body { margin:0; font-family:'Varela Round',sans-serif; color:#2A2216; }
+  doc-page p, doc-page div, doc-page span, doc-page strong { font-family:'Varela Round',sans-serif; }
+  doc-page h1, doc-page h2 { font-family:'Cormorant Garamond',serif; }
+  a { color:#8A5E10; text-decoration:none; }
+  a:hover { color:#B87A00; }
+</style>
+</helmet>
+<doc-page margin="0.85in">
+  <div slot="footer" style="font-size:9.5pt;color:#9A8A6E;display:flex;justify-content:space-between;padding:0 0 0.3in"><span>manzil · a game under the sky</span><span>the moonstone brief · august 2026</span></div>
+
+  <div style="font-size:10pt;color:#8A7A5E">manzil · design brief</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34pt;line-height:1.05;color:#241B08;margin:6pt 0 0">the moonstone</h1>
+  <p style="font-size:12pt;line-height:1.7;color:#4A3E28;max-width:5.6in;margin:12pt 0 0">the stake mechanic: one stone that lets either side raise what a night is worth. designed on paper, 19 august 2026. not yet dealt into the game: it plays ten paper matches and one sim round first.</p>
+
+  <div style="border-left:2.5pt solid #B87A00;padding:4pt 0 4pt 14pt;margin:28pt 0;max-width:5.6in;break-inside:avoid">
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17pt;line-height:1.4;color:#241B08">the road never changes. only what the night is worth.</div>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19pt;color:#241B08;margin:26pt 0 8pt">how it works</h2>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt"><strong style="color:#241B08">the call.</strong> before any board of a match, either side may call the sky: this board counts two at the match. zero new rules touch the road itself. the cards, the stations, the count: all unchanged.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt"><strong style="color:#241B08">the answer.</strong> the other side answers. accept, and the board is played for two pips. let it stand, and the board falls to the caller uncontested for one, and the road moves on.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0"><strong style="color:#241B08">the limit.</strong> nothing beyond the match is ever at stake. no shards, no levels, no claims, no time. a first-to-three match has room for one call and one answer raise, and the stone itself shows where the night stands:</p>
+
+  <div style="display:flex;flex-direction:column;gap:9pt;margin:16pt 0 0;max-width:6in;break-inside:avoid">
+    <div style="display:grid;grid-template-columns:22pt 110pt 1fr;gap:10pt;align-items:center;font-size:11.5pt;line-height:1.55">
+      <svg viewBox="0 0 20 20" style="width:15pt;height:15pt"><circle cx="10" cy="10" r="8" fill="none" stroke="#241B08" stroke-width="1.4"></circle></svg>
+      <span style="color:#241B08">new moon</span><span style="color:#5A4E38">at rest. either side may call before a board begins.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:22pt 110pt 1fr;gap:10pt;align-items:center;font-size:11.5pt;line-height:1.55">
+      <svg viewBox="0 0 20 20" style="width:15pt;height:15pt"><circle cx="10" cy="10" r="8" fill="#241B08"></circle><circle cx="6.5" cy="10" r="7.2" fill="#FFFFFF"></circle></svg>
+      <span style="color:#241B08">waxing crescent</span><span style="color:#5A4E38">you called, she accepted. the board counts two, and the stone is hers: only she may raise again.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:22pt 110pt 1fr;gap:10pt;align-items:center;font-size:11.5pt;line-height:1.55">
+      <svg viewBox="0 0 20 20" style="width:15pt;height:15pt"><circle cx="10" cy="10" r="8" fill="#241B08"></circle><circle cx="13.5" cy="10" r="7.2" fill="#FFFFFF"></circle></svg>
+      <span style="color:#241B08">waning crescent</span><span style="color:#5A4E38">she called, you accepted. the board counts two, and the stone is yours.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:22pt 110pt 1fr;gap:10pt;align-items:center;font-size:11.5pt;line-height:1.55">
+      <svg viewBox="0 0 20 20" style="width:15pt;height:15pt"><circle cx="10" cy="10" r="8" fill="#B87A00"></circle></svg>
+      <span style="color:#241B08">full moon</span><span style="color:#5A4E38">the answer raise, from whoever holds the stone: the match rides on this board. accept, or let the match stand to the caller.</span>
+    </div>
+  </div>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19pt;color:#241B08;margin:28pt 0 8pt">what it changes</h2>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt"><strong style="color:#241B08">the match length becomes chosen, not fixed.</strong> a confident night ends in two boards. a tight night goes the distance because both sides keep answering. the nightly ritual only ever compresses: calls end matches early, declines skip boards entirely.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt"><strong style="color:#241B08">a second game of judgment appears.</strong> the road tests arithmetic: which number beats which, where the count stands. the stone tests estimation: is this board winnable enough to double, from what you can see of her five? calling well is a skill the road itself never asks for.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt"><strong style="color:#241B08">her judgment finally leaks.</strong> her hand is closed but her calling rule is printed and learnable: she calls from a hand edge, accepts while behind or even, lets marginal boards stand when ahead. when the stone turns, you have learned something true about the five she hides. the one hidden thing in the game leaks, and only through her judgment.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt"><strong style="color:#241B08">the cards change the call math.</strong> the gathered stars counts two wherever it lands: the safest call in the deck rides with it. the blaze holds its ground: one point guaranteed makes a call cheaper to back. a tie-prone road is a storm road: call it. and on her side, an early call usually means saturn's locked ground; her jupiter nights pull her threshold closer, so expect the stone.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0"><strong style="color:#241B08">what it never touches.</strong> the 28 road-shards are never staked and never gated by the stone. levels, claims, and time stay off the table entirely. and a declined call must read as the road moving on, never as retreat: "you let this board stand." nothing lost, no streak language, no second ask.</p>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19pt;color:#241B08;margin:28pt 0 8pt">the lineage, and the evidence so far</h2>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt">the stone is backgammon's doubling cube called into the sky: a 1920s invention that vogue called "a new stimulus" when it arrived. the modern proof is marvel snap, whose snap mechanic, the same cube by its designers' own account, is widely read as the highest-tension idea in current card games. manzil's own legend already tells the backgammon lineage, so the stone arrives as an heirloom, not an import.</p>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0">early simulation on the walkers' road (first-to-five matches with the cube dealt in) landed a careful player near 64% of matches, a casual player near 8%, with matches averaging 4.3 boards: the stone widens the skill gap, which is what a judgment mechanic should do, and why it needs its own tuning round before it ships.</p>
+
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19pt;color:#241B08;margin:28pt 0 8pt">where it stands</h2>
+  <p style="font-size:12pt;line-height:1.75;color:#3A3020;max-width:5.9in;margin:0 0 10pt">designed on paper and deliberately unshipped. before any code: ten paper matches between players who know the road, and the sim brief's experiment five run through the conformant engine port. her call threshold is a dial, tuned match by match until the judgment gets interesting.</p>
+  <div style="border:1pt solid #D8CCAE;padding:12pt 14pt;max-width:5.9in;break-inside:avoid">
+    <div style="font-size:10pt;color:#8A5E10;margin-bottom:6pt">kill it if</div>
+    <div style="font-size:11.5pt;line-height:1.7;color:#5A4E38">the correct answer to her call is always the same (no judgment left) · declines read as guilt · calls fall under one in five matches once the novelty fades · anyone at the table wants to stake more than the match. never.</div>
+  </div>
+  <p style="font-size:11pt;line-height:1.7;color:#8A7A5E;max-width:5.9in;margin:12pt 0 0">open flags: whether the stone wakes on its own on threshold nights · whether it arrives with the game or after the first claimed mansion · the name itself, which must not collide with the 28's own moon language.</p>
+</doc-page>
+</x-dc>
+</body>
+</html>
