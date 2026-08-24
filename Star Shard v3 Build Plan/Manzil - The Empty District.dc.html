@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>window.__mzRetry=function(f){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src="./"+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js");if(!window.ManzilArt)window.__mzRetry("manzil-art2.js");if(!window.ManzilEphem)window.__mzRetry("ephemeris2.js")};</script>
+<script>window.__mzRetry=function(f){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src="./"+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js");if(!window.ManzilArt)window.__mzRetry("manzil-art2.js");if(!window.ManzilEphem)window.__mzRetry("ephemeris2.js");if(!window.io)window.__mzRetry("socket-io-client.js")};</script>
 <script src="./support.js" onerror="__mzRetry('support.js')"></script>
+<script src="./socket-io-client.js" onerror="__mzRetry('socket-io-client.js')"></script>
 <script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
 </head>
 <body>
@@ -21,6 +22,13 @@
   @keyframes mzNumPulse{0%{transform:translateY(-50%) scale(1)}40%{transform:translateY(-50%) scale(1.8)}100%{transform:translateY(-50%) scale(1)}}
   @keyframes mzWinGlow{0%,100%{box-shadow:0 0 6px rgba(255,176,0,.35)}50%{box-shadow:0 0 20px rgba(255,176,0,.85)}}
   @keyframes mzBreathe{0%,100%{opacity:.35}50%{opacity:.9}}
+  @keyframes mzBtnBreathe{0%,100%{filter:drop-shadow(0 0 3px rgba(255,176,0,.1))}50%{filter:drop-shadow(0 0 13px rgba(255,176,0,.38))}}
+  @keyframes mzCfFlash{0%{transform:scale(.3);opacity:1}100%{transform:scale(2.2);opacity:0}}
+  @keyframes mzCfShock{0%{transform:scale(.2);opacity:1}100%{transform:scale(3.4);opacity:0}}
+  @keyframes mzCfSpark{0%{transform:translateX(6px);opacity:1}100%{transform:translateX(96px);opacity:0}}
+  @keyframes mzCfCount{0%{opacity:0;transform:translateY(8px) scale(.7)}22%{opacity:1;transform:translateY(0) scale(1.18)}100%{opacity:0;transform:translateY(-28px) scale(1)}}
+  @keyframes mzCfStamp{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+  @keyframes mzCapRise{0%{opacity:0;transform:translateY(8px)}14%{opacity:1}62%{opacity:1;transform:translateY(-10px)}100%{opacity:0;transform:translateY(-20px)}}
   @keyframes mzWalkerIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
   @keyframes mzCastFling{0%{transform:rotate(-5deg) translateX(-3px)}30%{transform:rotate(7deg) translateX(6px) translateY(2px)}100%{transform:none}}
   @keyframes mzCastFlingB{0%{transform:rotate(-5deg) translateX(-3px)}30%{transform:rotate(7deg) translateX(6px) translateY(2px)}100%{transform:none}}
@@ -534,7 +542,7 @@
     </div>
   </sc-if>
   <sc-if value="{{ walkerFigOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;top:30px;left:50%;transform:translateX(-50%);width:120px;height:84px;pointer-events:none">
+    <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:94px;height:66px;pointer-events:none">
       <div style="position:absolute;left:50%;bottom:1px;transform:translateX(-50%);width:58px;height:7px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%, rgba(6,4,2,.5), transparent 72%)"></div>
       <div style="width:100%;height:100%;opacity:{{ figOp }};animation:mzWalkerIdle 6s ease-in-out infinite">
         <div style="{{ figCastStyle }}">
@@ -558,26 +566,38 @@
     </div>
   </sc-if>
 
-  <div style="position:absolute;top:12px;left:20px;display:flex;align-items:baseline;gap:10px">
-    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:{{ oppC }}">{{ oppName }}</span>
-    <span style="font-size:10px;color:#9A8A5E">{{ temperLine }}</span>
-  </div>
-  <div style="position:absolute;top:12px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none">
-    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;color:#F2EAD6">the {{ tonightName }}</span>
+  <sc-if value="{{ matchHdrOn }}" hint-placeholder-val="{{ true }}">
+  <div style="position:absolute;top:12px;left:20px;display:flex;flex-direction:column;gap:3px;pointer-events:none">
+    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#D8C89C">the {{ tonightName }}</span>
     <sc-if value="{{ roadTag }}" hint-placeholder-val="{{ false }}">
       <span style="font-size:9.5px;color:{{ roadTagC }}">{{ roadTag }}</span>
     </sc-if>
   </div>
-  <div style="position:absolute;top:12px;right:20px;display:flex;align-items:center;gap:12px">
-    <span style="display:flex;gap:4px;align-items:center">
+  <div style="{{ oppPlateStyle }}">
+    <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:{{ oppC }};text-shadow:0 1px 10px rgba(5,3,2,.9)">{{ oppName }}</span>
+    <sc-if value="{{ temperLine }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:10px;color:#9A8A5E;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ temperLine }}</span>
+    </sc-if>
+    <sc-if value="{{ pipsInPlate }}" hint-placeholder-val="{{ true }}">
+    <span style="display:flex;gap:4px;align-items:center;justify-content:center">
       <sc-for list="{{ matchPips }}" as="p" hint-placeholder-count="5">
         <span style="{{ p.style }}"></span>
       </sc-for>
     </span>
+    </sc-if>
+    <span style="font-size:10px;color:#9A8A5E;min-height:13px;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ turnLine }}</span>
   </div>
+  <sc-if value="{{ pipsTopRight }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;top:18px;right:22px;display:flex;gap:4px;align-items:center;pointer-events:none;z-index:2">
+      <sc-for list="{{ matchPips }}" as="p" hint-placeholder-count="5">
+        <span style="{{ p.style }}"></span>
+      </sc-for>
+    </div>
+  </sc-if>
+  </sc-if>
 
   <sc-if value="{{ skyHandOn }}" hint-placeholder-val="{{ true }}">
-    <div style="position:absolute;top:54px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px">
+    <div style="position:absolute;top:66px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px">
       <sc-for list="{{ skyCards }}" as="c" hint-placeholder-count="5">
         <div style="{{ c.style }}">
           <sc-if value="{{ c.ringOn }}" hint-placeholder-val="{{ false }}">
@@ -588,7 +608,7 @@
     </div>
   </sc-if>
   <sc-if value="{{ duelHandOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;top:54px;left:0;right:0;display:flex;justify-content:center;align-items:flex-start;gap:8px;z-index:3">
+    <div style="position:absolute;top:66px;left:0;right:0;display:flex;justify-content:center;align-items:flex-start;gap:8px;z-index:3">
       <sc-for list="{{ duelCards }}" as="c" hint-placeholder-count="5">
         <div onClick="{{ c.onTap }}" style="{{ c.style }}">
           <div style="position:absolute;top:4px;left:7px;font-size:10.5px;color:#FFB000;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.l }}</div>
@@ -603,19 +623,18 @@
       <div style="font-family:'Varela Round',sans-serif;font-size:12.5px;color:#FFB000">{{ tutTitle }}</div>
       <div style="font-size:11.5px;line-height:1.65;color:#D8C89C;text-wrap:pretty">{{ tutWhy }}</div>
     </div>
-    <button onClick="{{ tutSkipTap }}" style="position:absolute;top:8px;right:12px;z-index:7;background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
+    <button onClick="{{ tutSkipTap }}" style="position:absolute;top:8px;right:12px;z-index:7;background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">skip the walk</button>
   </sc-if>
 
   <sc-if value="{{ climbOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;right:16px;top:100px;display:flex;flex-direction:column;align-items:center;z-index:4;pointer-events:none">
-      <span style="{{ climbStarStyle }}">✦</span>
-      <span style="width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:8px solid rgba(12,8,4,.78);margin-top:4px"></span>
-      <div style="width:24px;padding:6px 0 7px;display:flex;flex-direction:column-reverse;align-items:center;gap:6px;background:linear-gradient(180deg, rgba(12,8,4,.78), rgba(12,8,4,.42));border:1px solid rgba(240,216,154,.16);border-top:none">
+    <div style="position:absolute;right:12px;top:92px;display:flex;flex-direction:column;align-items:center;z-index:4;pointer-events:none">
+      <span style="{{ climbStarStyle }}">☽</span>
+      <div style="position:relative;display:flex;flex-direction:column-reverse;align-items:center;gap:8px;margin-top:7px;padding:3px 0">
+        <span style="position:absolute;top:0;bottom:0;left:50%;width:1px;margin-left:-0.5px;background:linear-gradient(180deg, rgba(240,216,154,.28), rgba(240,216,154,.04))"></span>
         <sc-for list="{{ climbCells }}" as="w" hint-placeholder-count="8">
           <span style="{{ w.style }}"></span>
         </sc-for>
       </div>
-      <span style="width:32px;height:2px;background:rgba(240,216,154,.22);margin-top:2px"></span>
     </div>
   </sc-if>
 
@@ -708,17 +727,29 @@
       </svg>
     </div>
   </sc-if>
-  <div style="position:absolute;top:262px;left:0;right:0;text-align:center;min-height:18px;font-size:12px;color:#D8C89C">{{ logLine }}</div>
+  <div style="position:absolute;top:269px;left:0;right:0;text-align:center;min-height:15px;font-size:10.5px;color:#C9B891;text-shadow:0 1px 6px rgba(5,3,2,.95), 0 0 14px rgba(5,3,2,.8);pointer-events:none;z-index:5;transition:opacity .5s ease">{{ logLine }}</div>
+  <sc-for list="{{ capsList }}" as="cp" hint-placeholder-count="2">
+    <div style="{{ cp.style }}">{{ cp.t }}</div>
+  </sc-for>
   <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
     <div style="{{ toastStyle }}">{{ toastText }}</div>
   </sc-if>
   <sc-if value="{{ countFxOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;z-index:6;pointer-events:none">
+    <div style="{{ cfWrapStyle }}">
+      <div style="{{ cfVeil }}"></div>
       <sc-for list="{{ cfLights }}" as="d" hint-placeholder-count="4">
-        <span style="{{ d.style }}"></span>
+        <div style="{{ d.style }}">{{ d.t }}</div>
       </sc-for>
-      <div style="{{ cfOrbYou }}"><span style="{{ cfNumStyle }}">{{ cfYouN }}</span></div>
-      <div style="{{ cfOrbSky }}"><span style="{{ cfNumStyle }}">{{ cfSkyN }}</span></div>
+      <div style="{{ cfOrbYou }}">{{ cfYouN }}</div>
+      <div style="{{ cfOrbSky }}">{{ cfSkyN }}</div>
+      <sc-if value="{{ cfBoomOn }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ cfFlash }}"></div>
+        <div style="{{ cfRing }}"></div>
+        <sc-for list="{{ cfSparks }}" as="k" hint-placeholder-count="6">
+          <span style="{{ k.style }}"><span style="{{ k.inner }}"></span></span>
+        </sc-for>
+        <div style="{{ cfStamp }}"><span style="{{ cfStampNumStyle }}">{{ cfStampT }}</span><span style="{{ cfVerdictStyle }}">{{ cfVerdictT }}</span></div>
+      </sc-if>
     </div>
   </sc-if>
 
@@ -792,7 +823,6 @@
     </sc-for>
   </div>
   <div style="position:absolute;left:20px;bottom:20px;display:flex;flex-direction:column;gap:6px">
-    <span style="font-size:10px;color:#9A8A5E;min-height:13px">{{ turnLine }}</span>
   </div>
 
   <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}">
@@ -1141,92 +1171,226 @@
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:22px">
           <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;text-shadow:0 2px 18px rgba(5,3,2,.9);animation:mzFadeUp .9s ease both">tonight the moon stands in <span style="color:#FFB000">the {{ tonightName }}</span></div>
           <div style="font-family:'Varela Round',sans-serif;font-size:11.5px;line-height:1.8;color:#D8C89C;text-align:center;text-wrap:pretty;max-width:430px;text-shadow:0 1px 8px rgba(5,3,2,.85);animation:mzFadeUp .9s ease .25s both">the moon keeps twenty-eight houses and sleeps in one a night: the mansions. every mansion is a level of this game, and its card is the prize. tonight's is the first.</div>
-          <button onClick="{{ legendDoorTap }}" style="background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .9s ease .5s both" style-hover="background:rgba(255,176,0,.18);box-shadow:0 0 26px rgba(255,176,0,.22)">open the door ✦</button>
+          <button onClick="{{ legendDoorTap }}" style="background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease;animation:mzFadeUp .9s ease .5s backwards, mzBtnBreathe 3.4s ease-in-out 1.8s infinite" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">open the door ✦</button>
         </div>
       </sc-if>
       <sc-if value="{{ menuUiOn }}" hint-placeholder-val="{{ true }}">
-      <div style="position:absolute;inset:0;background:radial-gradient(46% 62% at 50% 52%, rgba(7,4,2,.55), rgba(7,4,2,.16) 68%, transparent 90%);pointer-events:none"></div>
-      <div style="position:absolute;left:26px;top:20px;display:flex;flex-direction:column;animation:mzFadeUp .6s ease .06s both">
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1;color:#F2EAD6">manzil</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E;margin-top:5px">a card game under the sky</div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:290px;background:radial-gradient(58% 92% at 50% 104%, rgba(7,4,2,.4), transparent 74%);pointer-events:none"></div>
+      <div style="position:absolute;left:0;right:0;top:58px;display:flex;flex-direction:column;align-items:center;gap:9px;pointer-events:none">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1;color:#F2EAD6;text-shadow:0 2px 16px rgba(5,3,2,.9);animation:mzFadeUp .6s ease .08s both">the {{ tonightName }}</div>
+
+        <div style="font-family:'Varela Round',sans-serif;font-size:11px;line-height:1.7;color:#D8C89C;text-align:center;text-wrap:pretty;max-width:380px;text-shadow:0 1px 8px rgba(5,3,2,.85);animation:mzFadeUp .6s ease .24s both">{{ menuLine }}</div>
+        <sc-if value="{{ menuMemoOn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;text-align:center;text-shadow:0 1px 8px rgba(5,3,2,.85);animation:mzFadeUp .6s ease .3s both">{{ menuMemo }}</div>
+        </sc-if>
       </div>
-      <div style="position:absolute;left:0;right:0;top:26px;bottom:58px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px">
-        <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22);animation:mzCardDrift 9s ease-in-out infinite">
-          <div style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
-          <svg viewBox="0 0 100 100" style="position:absolute;top:16px;left:27px;width:50px;height:44px;opacity:.9">
+      <button onClick="{{ menuModeTap }}" style="position:absolute;left:296px;right:296px;top:206px;bottom:0;background:none;border:none;padding:0;cursor:pointer;transition:filter .15s ease, transform .12s ease" style-hover="filter:brightness(1.3)" style-active="filter:brightness(.92);transform:translateY(2px)">
+        <div style="position:absolute;inset:0;clip-path:polygon(50% 0%, 88% 100%, 12% 100%);background:linear-gradient(0deg, rgba(255,176,0,.26), rgba(255,176,0,.1) 46%, rgba(255,176,0,.02) 82%, transparent);animation:mzBreathe 4.2s ease-in-out infinite"></div>
+        <div style="position:absolute;left:0;right:0;bottom:-14px;height:56px;background:radial-gradient(50% 100% at 50% 100%, rgba(255,176,0,.28), transparent 72%);pointer-events:none"></div>
+        <sc-for list="{{ roadDots }}" as="d" hint-placeholder-count="9">
+          <div style="{{ d.style }}">{{ d.t }}</div>
+        </sc-for>
+        <div style="position:absolute;left:0;right:0;bottom:18px;text-align:center;font-family:'Varela Round',sans-serif;font-size:13.5px;color:#FFB000;text-shadow:0 0 14px rgba(255,176,0,.55), 0 1px 6px rgba(5,3,2,.9);animation:mzBtnBreathe 3.4s ease-in-out 1.2s infinite">play the night ✦</div>
+      </button>
+      <button onClick="{{ recordTap }}" style="position:absolute;right:24px;bottom:16px;background:none;border:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:filter .15s ease, transform .12s ease;animation:mzFadeUp .6s ease .45s both" style-hover="filter:brightness(1.3);transform:translateY(-2px)" style-active="filter:brightness(.9);transform:translateY(1px)">
+        <svg viewBox="0 0 72 72" style="width:56px;height:56px">
+          <circle cx="36" cy="36" r="33" fill="none" stroke="#F0D89A" stroke-width="1.6" pathLength="56" stroke-dasharray="0.55 1.45" opacity=".65"></circle>
+          <circle cx="36" cy="36" r="27" fill="none" stroke="#F0D89A" stroke-width=".6" opacity=".4"></circle>
+          <circle cx="36" cy="36" r="18" fill="none" stroke="#F0D89A" stroke-width=".5" opacity=".28"></circle>
+          <sc-for list="{{ shardLines }}" as="ln" hint-placeholder-count="4">
+            <line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="{{ ln.c }}" stroke-width=".55" opacity="{{ ln.o }}"></line>
+          </sc-for>
+          <sc-for list="{{ shardDots }}" as="d" hint-placeholder-count="5">
+            <circle cx="{{ d.x }}" cy="{{ d.y }}" r="{{ d.r }}" fill="{{ d.c }}"></circle>
+          </sc-for>
+        </svg>
+        <span style="color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:10.5px">your star shard ›</span>
+      </button>
+      </sc-if>
+      <sc-if value="{{ modeUiOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:radial-gradient(62% 84% at 50% 54%, rgba(7,4,2,.62), rgba(7,4,2,.28) 70%, transparent 92%);pointer-events:none;z-index:3"></div>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;z-index:4">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;color:#F2EAD6;text-shadow:0 2px 16px rgba(5,3,2,.9);animation:mzFadeUp .5s ease both">the night is open</div>
+        <div style="display:flex;gap:16px;animation:mzFadeUp .5s ease .12s both">
+          <button onClick="{{ menuPlayTap }}" style="width:258px;background:linear-gradient(180deg, rgba(255,176,0,.1), rgba(255,176,0,.03));border:1px solid #FFB000;border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 10px 24px rgba(0,0,0,.5);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.18), rgba(255,176,0,.07));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 26px rgba(255,176,0,.26), 0 12px 26px rgba(0,0,0,.55)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.16)">
+            <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;color:#F2EAD6">the moon's road</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:10px;color:#FFB000">{{ menuNight }}</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.65;color:#D8C89C;text-wrap:pretty">{{ menuLine }}</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:12px;color:#FFB000;margin-top:auto;padding-top:8px">{{ menuPlayLabel }}</span>
+          </button>
+          <button onClick="{{ menuDuelTap }}" style="width:258px;background:linear-gradient(180deg, rgba(240,216,154,.08), rgba(240,216,154,.02));border:1px solid rgba(240,216,154,.6);border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;box-shadow:0 3px 0 rgba(40,32,14,.95), 0 10px 24px rgba(0,0,0,.5);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(240,216,154,.15), rgba(240,216,154,.05));box-shadow:0 4px 0 rgba(40,32,14,.95), 0 0 22px rgba(240,216,154,.22), 0 12px 26px rgba(0,0,0,.55)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(40,32,14,.95), 0 0 10px rgba(240,216,154,.14)">
+            <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;color:#F2EAD6">two hands, one table</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E">nothing staked</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.65;color:#D8C89C;text-wrap:pretty">another player across the table, best of five, over the moon's true road tonight.</span>
+            <span style="font-family:'Varela Round',sans-serif;font-size:12px;color:#F0D89A;margin-top:auto;padding-top:8px">sit down ✦</span>
+          </button>
+        </div>
+        <button onClick="{{ modeBackTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease .2s both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">‹ the street</button>
+      </div>
+      </sc-if>
+      <sc-if value="{{ recordUiOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:radial-gradient(62% 84% at 50% 54%, rgba(7,4,2,.66), rgba(7,4,2,.3) 70%, transparent 92%);pointer-events:none;z-index:3"></div>
+      <button onClick="{{ modeBackTap }}" style="z-index:4;position:absolute;left:22px;top:16px;background:none;border:none;padding:4px 0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">‹ the street</button>
+      <div style="z-index:4;position:absolute;left:60px;right:60px;top:36px;bottom:88px;display:flex;align-items:center;justify-content:space-between;gap:32px">
+      <div style="width:292px;display:flex;flex-direction:column;align-items:flex-start;gap:10px">
+        <svg viewBox="0 0 72 72" style="width:72px;height:72px;margin-bottom:2px;animation:mzFadeUp .5s ease both">
+          <circle cx="36" cy="36" r="33" fill="none" stroke="#F0D89A" stroke-width="1.4" pathLength="56" stroke-dasharray="0.55 1.45" opacity=".55"></circle>
+          <circle cx="36" cy="36" r="27" fill="none" stroke="#F0D89A" stroke-width=".5" opacity=".3"></circle>
+          <sc-for list="{{ shardLines }}" as="ln2" hint-placeholder-count="4">
+            <line x1="{{ ln2.x1 }}" y1="{{ ln2.y1 }}" x2="{{ ln2.x2 }}" y2="{{ ln2.y2 }}" stroke="{{ ln2.c }}" stroke-width=".55" opacity="{{ ln2.o }}"></line>
+          </sc-for>
+          <sc-for list="{{ shardDots }}" as="d2" hint-placeholder-count="5">
+            <circle cx="{{ d2.x }}" cy="{{ d2.y }}" r="{{ d2.r }}" fill="{{ d2.c }}"></circle>
+          </sc-for>
+        </svg>
+        <a href="Star Shard v4.dc.html" style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E;letter-spacing:.02em;text-decoration:none;cursor:pointer;text-shadow:0 1px 8px rgba(5,3,2,.85);transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease .04s both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">your star shard ›</a>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1.05;color:#F2EAD6;text-wrap:balance;text-shadow:0 2px 16px rgba(5,3,2,.9), 0 0 30px rgba(240,216,154,.25);animation:mzFadeUp .5s ease .08s both">{{ recShard }}</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.7;color:#9A8A5E;text-wrap:pretty;text-shadow:0 1px 8px rgba(5,3,2,.85);animation:mzFadeUp .5s ease .14s both">{{ recCastLine }}</div>
+      </div>
+      <button onClick="{{ menuDeckTap }}" style="background: none; border: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; transition: filter .15s ease; animation: mzFadeUp .5s ease .18s both" style-hover="filter:brightness(1.25)" style-active="filter:brightness(.9)">
+        <div style="width:126px;height:170px;border-radius:10px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #FFB000;box-shadow:0 14px 34px rgba(0,0,0,.64), 0 0 34px rgba(255,176,0,.34);animation:mzCardDrift 9s ease-in-out infinite">
+          <div style="position:absolute;top:7px;left:7px;right:7px;bottom:7px;border-radius:6px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.1)"></div>
+          <svg viewBox="0 0 100 100" style="position:absolute;top:24px;left:34px;width:58px;height:52px;opacity:.9">
             <sc-for list="{{ introShapes }}" as="p" hint-placeholder-count="2">
               <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
             </sc-for>
           </svg>
-          <div style="position:absolute;top:10px;left:13px;font-size:15px;color:#F0D89A">{{ introL }}</div>
-          <div style="position:absolute;bottom:10px;right:13px;font-size:15px;color:#F0D89A">{{ introR }}</div>
-          <div style="position:absolute;top:74px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#F2EAD6;padding:0 8px;line-height:1.1">{{ introName }}</div>
+          <div style="position:absolute;top:11px;left:13px;font-size:17px;color:#F0D89A">{{ introL }}</div>
+          <div style="position:absolute;bottom:11px;right:13px;font-size:17px;color:#F0D89A">{{ introR }}</div>
+          <div style="position:absolute;top:94px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;color:#F2EAD6;padding:0 9px;line-height:1.15">{{ introName }}</div>
         </div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;line-height:1;color:#F2EAD6;text-shadow:0 2px 14px rgba(5,3,2,.85);animation:mzFadeUp .6s ease .14s both">the {{ tonightName }}</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#FFB000;animation:mzFadeUp .6s ease .22s both">{{ menuNight }}</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:11px;line-height:1.7;color:#D8C89C;text-align:center;text-wrap:pretty;max-width:410px;text-shadow:0 1px 8px rgba(5,3,2,.8);animation:mzFadeUp .6s ease .3s both">{{ menuLine }}</div>
-        <sc-if value="{{ menuMemoOn }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;text-align:center;text-shadow:0 1px 8px rgba(5,3,2,.8);animation:mzFadeUp .6s ease .34s both">{{ menuMemo }}</div>
-        </sc-if>
-        <button onClick="{{ menuPlayTap }}" style="margin-top:4px;background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .38s both" style-hover="background:rgba(255,176,0,.2);box-shadow:0 0 26px rgba(255,176,0,.25)">{{ menuPlayLabel }}</button>
+        <span style="color:#FFB000;font-family:'Varela Round',sans-serif;font-size:10px;text-shadow:0 1px 8px rgba(5,3,2,.85)">on the table tonight</span>
+        <span style="color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:11px">your cards ›</span>
+      </button>
+      <div style="width:228px;display:flex;flex-direction:column;gap:9px;padding:14px 18px;background:linear-gradient(170deg, rgba(20,14,6,.72), rgba(10,7,3,.6));border:1px solid rgba(240,216,154,.16);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(240,216,154,.06);animation:mzFadeUp .5s ease .16s both">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="flex:1;height:1px;background:linear-gradient(90deg, transparent, rgba(240,216,154,.28))"></span>
+          <span style="font-family:'Varela Round',sans-serif;font-size:9px;letter-spacing:.06em;color:#9A8A5E">the ledger</span>
+          <span style="flex:1;height:1px;background:linear-gradient(90deg, rgba(240,216,154,.28), transparent)"></span>
+        </div>
+        <sc-for list="{{ recStats }}" as="s2" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;align-items:baseline;gap:10px">
+              <span style="{{ s2.ls }}">{{ s2.l }}</span>
+              <span style="flex:1;border-bottom:1px dotted rgba(240,216,154,.14);transform:translateY(-3px)"></span>
+              <span style="{{ s2.ns }}">{{ s2.n }}</span>
+            </div>
+            <sc-if value="{{ s2.sub }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'Varela Round',sans-serif;font-size:9px;color:#6E6244;line-height:1.5">{{ s2.sub }}</span>
+            </sc-if>
+          </div>
+        </sc-for>
       </div>
-      <div style="position:absolute;left:0;right:0;bottom:18px;display:flex;justify-content:center;gap:28px;animation:mzFadeUp .6s ease .5s both">
-        <button onClick="{{ menuDeckTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your cards</button>
-        <button onClick="{{ menuDuelTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">two hands</button>
-        <button onClick="{{ menuLegendTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the legend</button>
+      </div>
+      
+      <div style="z-index:4;position:absolute;left:0;right:0;bottom:16px;display:flex;flex-direction:column;align-items:center;gap:7px;animation:mzFadeUp .5s ease .24s both">
+        <div style="display:flex;gap:4px">
+          <sc-for list="{{ recLedger }}" as="lg" hint-placeholder-count="28">
+            <div style="{{ lg.style }}" title="{{ lg.t }}"></div>
+          </sc-for>
+        </div>
+        <span style="font-family:'Varela Round',sans-serif;font-size:9px;color:#6E6244;text-shadow:0 1px 8px rgba(5,3,2,.85)">the twenty-eight roads · tonight's ringed</span>
       </div>
       </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{ setOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:8;animation:mzFadeUp .35s ease both">
-      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
+      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">‹ back</button>
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;animation:mzFadeUp .5s ease both">the table</div>
       <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:8px">how the road is laid. a road is the locked game; the rest are research previews</div>
       <div style="display:flex;gap:10px;margin-top:20px">
         <sc-for list="{{ shapeBtns }}" as="b" hint-placeholder-count="3">
-          <button onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</button>
+          <button onClick="{{ b.tap }}" style="{{ b.style }}" style-hover="color:#F0D89A;border-color:rgba(240,216,154,.6)" style-active="transform:translateY(2px)">{{ b.label }}</button>
         </sc-for>
       </div>
       <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:32px">the set · which mansions you carry. all 28 hands you the whole slate at level 2, every signature awake, to read the cards and the deal</div>
       <div style="display:flex;gap:10px;margin-top:12px">
         <sc-for list="{{ setBtns }}" as="b" hint-placeholder-count="2">
-          <button onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</button>
+          <button onClick="{{ b.tap }}" style="{{ b.style }}" style-hover="color:#F0D89A;border-color:rgba(240,216,154,.6)" style-active="transform:translateY(2px)">{{ b.label }}</button>
         </sc-for>
       </div>
 
       <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E;margin-top:32px">card faces · preview every owned card at a level</div>
       <div style="display:flex;gap:10px;margin-top:12px">
         <sc-for list="{{ faceBtns }}" as="b" hint-placeholder-count="5">
-          <button onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</button>
+          <button onClick="{{ b.tap }}" style="{{ b.style }}" style-hover="color:#F0D89A;border-color:rgba(240,216,154,.6)" style-active="transform:translateY(2px)">{{ b.label }}</button>
         </sc-for>
       </div>
       <div style="display:flex;gap:26px;margin-top:38px">
-        <a href="Manzil - Rules &amp; Cards.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s ease" style-hover="border-color:rgba(240,216,154,.5)">the rules sheet →</a>
-        <a href="Manzil - A User's Manual.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s ease" style-hover="border-color:rgba(240,216,154,.5)">a user's manual →</a>
+        <a href="Manzil - Rules &amp; Cards.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s ease" style-hover="border-color:rgba(240,216,154,.5)">the rules sheet →</a>
+        <a href="Manzil - A User's Manual.dc.html" style="font-family:'Varela Round',sans-serif;font-size:11.5px;color:#F0D89A;text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s ease" style-hover="border-color:rgba(240,216,154,.5)">a user's manual →</a>
       </div>
     </div>
   </sc-if>
   <sc-if value="{{ deckOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;z-index:9;animation:mzFadeUp .3s ease both">
-      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
-      <button onClick="{{ menuTutTap }}" style="position:absolute;bottom:15px;left:50%;transform:translateX(-50%);background:none;border:none;color:rgba(154,138,94,.7);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">walk the practice board again ›</button>
-      <div style="display:flex;align-items:baseline;gap:9px;animation:mzFadeUp .5s ease both">
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6">your cards</div>
-        <div style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E">{{ deckCount }} of 28</div>
+    <div style="position:absolute;inset:0;background:radial-gradient(80% 110% at 50% 118%, #17122B 0%, #0B0916 48%, #050309 100%);overflow:hidden;z-index:9;animation:mzFadeUp .3s ease both">
+      <div style="position:absolute;left:-8%;top:32%;width:116%;height:120px;transform:rotate(-9deg);background:linear-gradient(180deg, transparent, rgba(186,196,255,.05) 40%, rgba(240,216,154,.04) 60%, transparent);pointer-events:none"></div>
+      <div style="position:absolute;inset:-50px;animation:mzStarDrift 110s linear infinite alternate;pointer-events:none">
+        <sc-for list="{{ deckStars }}" as="sp" hint-placeholder-count="30"><span style="{{ sp.style }}"></span></sc-for>
       </div>
-      <div style="font-size:10px;color:#9A8A5E;max-width:600px;text-align:center;line-height:1.5;text-wrap:pretty">one for each of the moon's houses. five are dealt to your hand each board; face-down cards join when their road is walked.</div>
-      <div style="display:flex;gap:7px;margin-top:4px">
-        <sc-for list="{{ lvlChips }}" as="b" hint-placeholder-count="4">
-          <button onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}<span style="{{ b.nStyle }}">{{ b.n }}</span></button>
-        </sc-for>
+
+      <div style="position:absolute;left:50%;top:222px;width:664px;height:268px;margin-left:-332px;margin-top:-134px;border-radius:50%;border:1px solid rgba(240,216,154,.1);pointer-events:none"></div>
+      <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">{{ deckBackLabel }}</button>
+      <button onClick="{{ menuTutTap }}" style="position:absolute;bottom:15px;left:50%;transform:translateX(-50%);background:none;border:none;color:rgba(154,138,94,.7);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">walk the practice board again ›</button>
+      <div style="position:absolute;left:0;right:0;top:11px;display:flex;flex-direction:column;align-items:center;gap:4px;z-index:6;pointer-events:none">
+        <div style="display:flex;gap:7px">
+          <sc-for list="{{ lvlChips }}" as="b" hint-placeholder-count="4">
+            <button onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" onClick="{{ b.tap }}" style="{{ b.style }};pointer-events:auto">{{ b.label }}<span style="{{ b.nStyle }}">{{ b.n }}</span></button>
+          </sc-for>
+        </div>
+        <div style="font-size:10px;color:rgba(154,138,94,.95);max-width:560px;text-align:center;line-height:1.5;min-height:13px">{{ lvlLine }}</div>
       </div>
-      <div style="font-size:10px;color:rgba(154,138,94,.95);max-width:560px;text-align:center;line-height:1.5;min-height:14px">{{ lvlLine }}</div>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:600px;margin-top:1px">
+      <div style="position:absolute;left:50%;top:222px;transform:translate(-50%,-50%);width:330px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;pointer-events:none;z-index:5">
+        <sc-if value="{{ deckFocusOn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1;color:#F2EAD6;text-shadow:0 0 22px rgba(240,216,154,.3);animation:mzFadeUp .18s ease both">{{ focusName }}</div>
+          <div style="font-family:'Varela Round',sans-serif;font-size:10px;color:#FFB000;animation:mzFadeUp .18s ease both">{{ focusTier }}</div>
+          <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.7;color:#D8C89C;text-wrap:pretty;animation:mzFadeUp .18s ease both">{{ focusMove }}</div>
+        </sc-if>
+        <sc-if value="{{ deckRestOn }}" hint-placeholder-val="{{ true }}">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;line-height:1;color:#F2EAD6">your sky</div>
+          <div style="font-family:'Varela Round',sans-serif;font-size:10px;line-height:1.7;color:#9A8A5E;text-wrap:pretty">{{ deckSkyShort }}</div>
+          <div style="font-family:'Varela Round',sans-serif;font-size:10px;line-height:1.7;color:#9A8A5E;text-wrap:pretty;margin-top:2px">{{ deckProphecy }}</div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ deckShowOn }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ deckShowClose }}" style="position:absolute;inset:0;z-index:120;background:rgba(4,3,6,.8);backdrop-filter:blur(3px);display:flex;justify-content:center;align-items:center;gap:36px;cursor:pointer;animation:mzFadeUp .18s ease both">
+          <div style="{{ dsCardStyle }}">
+            <sc-if value="{{ dsFaceOn }}" hint-placeholder-val="{{ true }}">
+              <svg viewBox="0 0 100 100" style="{{ dsArtStyle }}">
+                <sc-for list="{{ dsShapes }}" as="p" hint-placeholder-count="2">
+                  <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+                </sc-for>
+              </svg>
+              <div style="position:absolute;top:12px;left:17px;font-size:21px;color:#F0D89A;text-shadow:0 0 5px rgba(4,3,2,.95)">{{ dsL }}</div>
+              <div style="position:absolute;bottom:12px;right:17px;font-size:21px;color:#F0D89A;text-shadow:0 0 5px rgba(4,3,2,.95)">{{ dsR }}</div>
+              <sc-if value="{{ dsNameOn }}" hint-placeholder-val="{{ true }}">
+                <div style="position:absolute;top:56%;left:0;right:0;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;color:#F2EAD6;text-align:center;line-height:1.1;padding:0 14px">{{ dsName }}</div>
+              </sc-if>
+              <div style="position:absolute;bottom:11px;left:0;right:0;display:flex;justify-content:center;gap:6px">
+                <sc-for list="{{ dsPips }}" as="pp" hint-placeholder-count="4">
+                  <span style="{{ pp.style }}"></span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ dsBackOn }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:10px;border-radius:7px;border:1px solid rgba(154,138,94,.28);display:flex;align-items:center;justify-content:center;color:rgba(154,138,94,.45);font-size:24px">✦</div>
+            </sc-if>
+          </div>
+          <div style="width:250px;display:flex;flex-direction:column;gap:9px;text-align:left">
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1;color:#F2EAD6;text-shadow:0 0 24px rgba(240,216,154,.3)">{{ dsName }}</div>
+            <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:#FFB000">{{ dsTier }}</div>
+            <div style="font-family:'Varela Round',sans-serif;font-size:11px;line-height:1.75;color:#D8C89C;text-wrap:pretty">{{ dsMove }}</div>
+            <div style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E">{{ dsHouse }}</div>
+            <div style="font-family:'Varela Round',sans-serif;font-size:9.5px;color:rgba(154,138,94,.6);margin-top:5px">tap anywhere to close</div>
+          </div>
+        </div>
+      </sc-if>
+      <div style="position:absolute;inset:0;pointer-events:none">
         <sc-for list="{{ deckCards }}" as="c" hint-placeholder-count="28">
-          <div onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" style="{{ c.style }}" style-hover="transform:translateY(-3px)">
+          <div onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" style="{{ c.style }};pointer-events:auto" style-hover="{{ c.hover }}">
             <sc-if value="{{ c.backOn }}" hint-placeholder-val="{{ false }}">
-              <div style="position:absolute;inset:4px;border-radius:4px;border:1px solid rgba(154,138,94,.25);display:flex;align-items:center;justify-content:center;color:rgba(154,138,94,.4);font-size:11px">✦</div>
+              <div style="position:absolute;inset:3px;border-radius:50%;border:1px solid rgba(154,138,94,.22);display:flex;align-items:center;justify-content:center;color:rgba(154,138,94,.4);font-size:9px">✦</div>
             </sc-if>
             <sc-if value="{{ c.faceOn }}" hint-placeholder-val="{{ true }}">
               <svg viewBox="0 0 100 100" style="{{ c.artStyle }}">
@@ -1237,8 +1401,13 @@
               <div style="{{ c.lnStyle }}">{{ c.ln }}</div>
               <div style="{{ c.rnStyle }}">{{ c.rn }}</div>
               <sc-if value="{{ c.pgOn }}" hint-placeholder-val="{{ false }}">
-                <span style="position:absolute;bottom:4px;left:6px;font-size:8.5px;color:rgba(240,216,154,.6)">{{ c.pg }}</span>
+                <span style="position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:#1C1408;border:1px solid rgba(255,176,0,.5);display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(255,196,61,.9);text-shadow:0 0 6px rgba(255,176,0,.5)">{{ c.pg }}</span>
               </sc-if>
+              <div style="position:absolute;bottom:-8px;left:0;right:0;display:flex;justify-content:center;gap:2.5px;pointer-events:none">
+                <sc-for list="{{ c.pips }}" as="pp" hint-placeholder-count="4">
+                  <span style="{{ pp.style }}"></span>
+                </sc-for>
+              </div>
               <sc-if value="{{ c.nameOn }}" hint-placeholder-val="{{ true }}">
                 <div style="position:absolute;top:56%;left:0;right:0;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:9.5px;color:#F2EAD6;text-align:center;line-height:1.05;padding:0 5px">{{ c.name }}</div>
               </sc-if>
@@ -1298,8 +1467,8 @@
     <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(4,3,2,0) 0 46%, rgba(4,3,2,.55) 60%, rgba(4,3,2,.93) 74%, rgba(4,3,2,.97) 100%);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:10px;padding-bottom:26px;z-index:5;animation:mzFadeUp .2s ease both">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#F2EAD6">the throne is two-faced. which number faces which way?</div>
       <div style="display:flex;gap:14px;margin-top:2px">
-        <button onClick="{{ faceSeat }}" style="background:rgba(240,216,154,.08);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 26px;cursor:pointer;line-height:1.7">the seat<br><span style="font-size:15px;color:#F2EAD6">6 | 9</span></button>
-        <button onClick="{{ faceSerpent }}" style="background:rgba(240,216,154,.08);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 26px;cursor:pointer;line-height:1.7">the serpent<br><span style="font-size:15px;color:#F2EAD6">9 | 6</span></button>
+        <button onClick="{{ faceSeat }}" style="background:linear-gradient(180deg, rgba(240,216,154,.16), rgba(240,216,154,.05));border:1px solid #F0D89A;border-radius:5px;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 26px;cursor:pointer;line-height:1.7;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(240,216,154,.24), rgba(240,216,154,.09));box-shadow:0 4px 0 rgba(38,30,12,.95), 0 0 18px rgba(240,216,154,.22), 0 9px 20px rgba(0,0,0,.45)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">the seat<br><span style="font-size:15px;color:#F2EAD6">6 | 9</span></button>
+        <button onClick="{{ faceSerpent }}" style="background:linear-gradient(180deg, rgba(240,216,154,.16), rgba(240,216,154,.05));border:1px solid #F0D89A;border-radius:5px;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 26px;cursor:pointer;line-height:1.7;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(240,216,154,.24), rgba(240,216,154,.09));box-shadow:0 4px 0 rgba(38,30,12,.95), 0 0 18px rgba(240,216,154,.22), 0 9px 20px rgba(0,0,0,.45)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">the serpent<br><span style="font-size:15px;color:#F2EAD6">9 | 6</span></button>
       </div>
     </div>
   </sc-if>
@@ -1314,7 +1483,7 @@
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;align-items:center">
           <div style="font-size:11px;color:#9A8A5E">the road turns between boards. take one, or tap past.</div>
           <sc-for list="{{ ascentBtns }}" as="b" hint-placeholder-count="3">
-            <div onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}</div>
+            <div onClick="{{ b.tap }}" style="{{ b.style }}" style-hover="color:#F0D89A;border-color:rgba(240,216,154,.6)" style-active="transform:translateY(2px)">{{ b.label }}</div>
           </sc-for>
         </div>
       </sc-if>
@@ -1328,121 +1497,64 @@
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .6s ease both">before the road: one walked board</div>
       <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .12s both">the district lends you five awake cards: the same five it lends everyone who walks here. every move is called. the lit card goes to the lit ground, and the words say why.</div>
       <div style="font-size:11.5px;line-height:1.75;color:#9A8A5E;max-width:470px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">the basics: left number fights left, right fights right, bigger claims smaller, and a tie takes the card. own most of the nine grounds when the road fills. the rest, the walk shows you.</div>
-      <button onClick="{{ pStartTap }}" style="margin-top:6px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">walk the board</button>
-      <button onClick="{{ pSkipTap }}" style="background:none;border:none;padding:4px 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the walk</button>
+      <button onClick="{{ pStartTap }}" style="margin-top:6px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">walk the board</button>
+      <button onClick="{{ pSkipTap }}" style="background:none;border:none;padding:4px 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">skip the walk</button>
     </div>
   </sc-if>
   <sc-if value="{{ birthOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 34px 22px">
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;color:#F2EAD6;animation:mzFadeUp .9s ease both">star shard</div>
-      <div style="font-size:12.5px;line-height:1.55;color:#9A8A5E;text-align:center;animation:mzFadeUp .9s ease .1s both">the sky wrote something the minute you arrived.<br>tell us the minute.</div>
-      <div style="display:flex;flex-direction:column;gap:14px;width:100%;max-width:330px;animation:mzFadeUp .9s ease .2s both">
-        <div style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">born on
-          <div style="display:flex;gap:10px">
-            <div style="position:relative;flex:1.3">
-              <select value="{{ bDateMVal }}" onChange="{{ bSetDateM }}" style="{{ bSelectStyle }}">
-                <option value="" disabled selected>month</option>
-                <sc-for list="{{ bMonthOptions }}" as="o" hint-placeholder-count="12">
-                  <option value="{{ o.value }}">{{ o.label }}</option>
-                </sc-for>
-              </select>
-              <span style="{{ bChevronStyle }}">⌄</span>
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px">
+      <button onClick="{{ acctToggleModeM }}" style="position:absolute;top:16px;right:20px;background:none;border:none;padding:6px 0;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease;text-align:right;max-width:150px" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">{{ acctModeToggleLabelM }}</button>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .9s ease both">star shard</div>
+      <div style="font-size:12px;line-height:1.55;color:#9A8A5E;text-align:center;animation:mzFadeUp .9s ease .1s both">{{ acctSublineM }}</div>
+      <div style="display:flex;gap:34px;align-items:flex-start;margin-top:2px;animation:mzFadeUp .9s ease .2s both">
+      <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:7px;width:248px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">born on</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#F2EAD6">{{ bPicked }}</span>
+          </div>
+          <div style="border:1px solid rgba(240,216,154,.16);border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <button onClick="{{ bPrevTap }}" style="background:none;border:none;padding:2px 8px;cursor:pointer;color:#9A8A5E;font-size:13px;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">‹</button>
+              <button onClick="{{ bHeadTap }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Cormorant Garamond',serif;font-size:14.5px;color:#F0D89A;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#FFFDF5;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFB000">{{ bHead }}</button>
+              <button onClick="{{ bNextTap }}" style="background:none;border:none;padding:2px 8px;cursor:pointer;color:#9A8A5E;font-size:13px;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">›</button>
             </div>
-            <div style="position:relative;flex:1">
-              <select value="{{ bDateDVal }}" onChange="{{ bSetDateD }}" style="{{ bSelectStyle }}">
-                <option value="" disabled selected>day</option>
-                <sc-for list="{{ bDayOptions }}" as="o" hint-placeholder-count="31">
-                  <option value="{{ o.value }}">{{ o.label }}</option>
-                </sc-for>
-              </select>
-              <span style="{{ bChevronStyle }}">⌄</span>
-            </div>
-            <div style="position:relative;flex:1.2">
-              <select value="{{ bDateYVal }}" onChange="{{ bSetDateY }}" style="{{ bSelectStyle }}">
-                <option value="" disabled selected>year</option>
-                <sc-for list="{{ bYearOptions }}" as="o" hint-placeholder-count="6">
-                  <option value="{{ o.value }}">{{ o.label }}</option>
-                </sc-for>
-              </select>
-              <span style="{{ bChevronStyle }}">⌄</span>
+            <div style="{{ bGridStyle }}">
+              <sc-for list="{{ bCells }}" as="cl" hint-placeholder-count="12">
+                <button onClick="{{ cl.tap }}" style="{{ cl.style }}" style-active="transform:scale(.88)">{{ cl.t }}</button>
+              </sc-for>
             </div>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
-            <div style="display:flex;align-items:center;gap:8px">
-              <div style="position:relative;flex:1">
-                <select value="{{ bTimeHVal }}" onChange="{{ bSetTimeH }}" style="{{ bTimeSelectStyle }}" disabled="{{ bTimeSelectDisabled }}">
-                  <option value="" disabled selected>hh</option>
-                  <sc-for list="{{ bHourOptions }}" as="o" hint-placeholder-count="12">
-                    <option value="{{ o.value }}">{{ o.label }}</option>
-                  </sc-for>
-                </select>
-                <span style="{{ bChevronStyle }}">⌄</span>
-              </div>
-              <span style="color:#9A8A5E;font-size:16px">:</span>
-              <div style="position:relative;flex:1">
-                <select value="{{ bTimeMinVal }}" onChange="{{ bSetTimeMin }}" style="{{ bTimeSelectStyle }}" disabled="{{ bTimeSelectDisabled }}">
-                  <option value="" disabled selected>mm</option>
-                  <sc-for list="{{ bMinuteOptions }}" as="o" hint-placeholder-count="60">
-                    <option value="{{ o.value }}">{{ o.label }}</option>
-                  </sc-for>
-                </select>
-                <span style="{{ bChevronStyle }}">⌄</span>
-              </div>
-              <div style="position:relative;flex:1.1">
-                <select value="{{ bTimeAPVal }}" onChange="{{ bSetTimeAP }}" style="{{ bTimeSelectStyle }}" disabled="{{ bTimeSelectDisabled }}">
-                  <option value="" disabled selected>—</option>
-                  <option value="AM">am</option>
-                  <option value="PM">pm</option>
-                </select>
-                <span style="{{ bChevronStyle }}">⌄</span>
-              </div>
-            </div>
-          </div>
-          <button onClick="{{ bTimeToggle }}" style="{{ bTimeBtnStyle }}">{{ bTimeMark }} i don't know my birth time</button>
-        </div>
-        <sc-if value="{{ bManualOff }}" hint-placeholder-val="{{ true }}">
-        <div style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">in
-          <sc-if value="{{ bPlaceChosen }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(240,216,154,.3);padding:6px 2px">
-              <span style="font-family:'Varela Round',sans-serif;font-size:15px;color:#F2EAD6">{{ bPlaceConfirmedLine }}</span>
-              <button onClick="{{ bChangePlace }}" style="background:none;border:none;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;padding:0;white-space:nowrap">change</button>
-            </div>
-          </sc-if>
-          <sc-if value="{{ bPlaceNotChosen }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;gap:8px;align-items:flex-end">
-              <input placeholder="portland, oregon" value="{{ bQueryVal }}" onChange="{{ bSetQuery }}" style="flex:1;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none">
-              <button onClick="{{ bSearchTap }}" style="background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:11.5px;padding:8px 14px;cursor:pointer;white-space:nowrap">{{ bSearchLabel }}</button>
-            </div>
-            <sc-if value="{{ bHasResults }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;flex-direction:column;margin-top:4px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.03);max-height:120px;overflow-y:auto">
-                <sc-for list="{{ bCityRows }}" as="r" hint-placeholder-count="4">
-                  <div onClick="{{ r.pick }}" style="padding:9px 12px;font-family:'Varela Round',sans-serif;font-size:13px;color:#F2EAD6;cursor:pointer;border-bottom:1px solid rgba(240,216,154,.1)">{{ r.label }}</div>
-                </sc-for>
-              </div>
-            </sc-if>
-          </sc-if>
-        </div>
+      </sc-if>
+        <div style="display:flex;flex-direction:column;gap:6px;width:180px">
+        <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
+          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
+            <input placeholder="4:42 pm" value="{{ bTime }}" onChange="{{ bTimeChange }}" style="{{ bTimeInputStyle }}">
+          </label>
+          <button onClick="{{ bTimeToggle }}" style="{{ bTimeBtnStyle }}" style-active="transform:translateY(1px)">{{ bTimeMark }} i don't know my birth time</button>
+          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">in
+            <input placeholder="portland, oregon" value="{{ bPlace }}" onChange="{{ bPlaceChange }}" style="{{ bTimeInputStyle }}">
+          </label>
         </sc-if>
-        <sc-if value="{{ bManualOn }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:10px">
-          <label style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex:1">lat
-            <input placeholder="45.52" inputmode="decimal" value="{{ bLatVal }}" onChange="{{ bSetLat }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none;width:100%">
+          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">email
+            <input type="email" placeholder="you@somewhere.com" value="{{ bEmail }}" onChange="{{ bEmailChange }}" style="{{ bTimeInputStyle }}">
           </label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex:1">lon
-            <input placeholder="-122.68" inputmode="decimal" value="{{ bLonVal }}" onChange="{{ bSetLon }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none;width:100%">
+        <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
+          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">username
+            <input placeholder="3-20 letters, numbers, _" value="{{ acctUsernameVal }}" onChange="{{ acctSetUsername }}" style="{{ bTimeInputStyle }}">
           </label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;flex:1">utc offset
-            <input placeholder="-7" inputmode="decimal" value="{{ bTzVal }}" onChange="{{ bSetTz }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:6px 2px;outline:none;width:100%">
+        </sc-if>
+          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">password
+            <input type="password" placeholder="{{ acctPassPlaceholderM }}" value="{{ acctPasswordVal }}" onChange="{{ acctSetPassword }}" style="{{ bTimeInputStyle }}">
           </label>
         </div>
-        </sc-if>
-        <button onClick="{{ bToggleManual }}" style="background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:10.5px;color:#9A8A5E">{{ bManualToggleLabel }}</button>
       </div>
-      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:330px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it: the mansions where your sun, moon, mercury, venus and mars stood. computed on this device, kept on this device.</div>
-      <div style="min-height:12px;font-size:11px;color:#FFB000">{{ bErr }}</div>
-      <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}">cast your five</button>
+      <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:470px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it. your place sets your rising on the star shard side. this account is shared with your star shard chart — nothing about your birth leaves your device until you make one.</div>
+      </sc-if>
+      <div style="min-height:12px;font-size:11px;color:#FFB000;line-height:1">{{ bErr }}</div>
+      <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">{{ acctSubmitLabelM }}</button>
     </div>
   </sc-if>
   <sc-if value="{{ tut5On }}" hint-placeholder-val="{{ false }}">
@@ -1468,7 +1580,7 @@
         </sc-for>
       </div>
       <div style="font-size:11.5px;line-height:1.75;color:#D8C89C;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .24s both">five mansions, read from your birth sky: these cards are yours for good, and their moves are already awake. hold any card, any time, to read it in full.</div>
-      <button onClick="{{ revealGo }}" style="margin-top:2px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 28px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">go on ✦</button>
+      <button onClick="{{ revealGo }}" style="margin-top:2px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 28px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">go on ✦</button>
     </div>
   </sc-if>
   <sc-if value="{{ tut7On }}" hint-placeholder-val="{{ false }}">
@@ -1490,7 +1602,7 @@
       </div>
       <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .2s both">the practiced hand goes back to the district. yours is the five from your birth sky plus these seven on loan, asleep at level one: numbers only, no move yet. every mansion is a level; walk a card's own level and its move wakes. nothing here is bought.</div>
       <div style="font-size:11.5px;line-height:1.8;color:#9A8A5E;max-width:520px;text-align:center;text-wrap:pretty;animation:mzFadeUp .6s ease .3s both">tonight's climb has nine steps: eight walkers, other players' hands walked before you, then the sky herself, the one who deals the planets. beat her and the empty district's card joins your hand.</div>
-      <button onClick="{{ tut7Go }}" style="margin-top:6px;background:rgba(255,176,0,.1);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.18)">to the district</button>
+      <button onClick="{{ tut7Go }}" style="margin-top:6px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:13px 30px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">to the district</button>
     </div>
   </sc-if>
   <sc-if value="{{ legendOn }}" hint-placeholder-val="{{ false }}">
@@ -1505,7 +1617,7 @@
           <div style="{{ legendTextStyle }}">{{ legendText }}</div>
         </div>
         <div style="position:absolute;left:0;right:0;bottom:24px;text-align:center;font-size:10.5px;color:rgba(154,138,94,.75);animation:mzFadeUp .9s ease 1.6s both">tap to go on</div>
-        <button onClick="{{ legendSkipTap }}" style="position:absolute;top:16px;right:20px;background:none;border:none;padding:6px 0;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">skip the story</button>
+        <button onClick="{{ legendSkipTap }}" style="position:absolute;top:16px;right:20px;background:none;border:none;padding:6px 0;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">skip the story</button>
       </sc-if>
     </div>
   </sc-if>
@@ -1514,7 +1626,7 @@
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;animation:mzFadeUp .5s ease .1s both">the open tables</div>
       <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .5s ease .2s both">battles are random: a free hand under the same sky, found for you. when no one is free, the sky pilots a signed hand herself. the match is played on the heart of the archer, sagittarius a*, over the moon's true road tonight, and the ground deepens every board. your five deals fresh from your own twelve, at their true levels. nothing is staked.</div>
       <sc-if value="{{ lobbyIdleOn }}" hint-placeholder-val="{{ true }}">
-        <button onClick="{{ duelSeekTap }}" style="margin-top:10px;background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.2)">find a battle ✦</button>
+        <button onClick="{{ duelSeekTap }}" style="margin-top:10px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">find a battle ✦</button>
       </sc-if>
       <sc-if value="{{ seekOn }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:10px;display:flex;align-items:center;gap:10px;min-height:44px">
@@ -1529,8 +1641,8 @@
           <span style="font-size:10.5px;color:rgba(154,138,94,.75);animation:mzBreathe 1.4s ease-in-out infinite">the table is dealt…</span>
         </div>
       </sc-if>
-      <button onClick="{{ duelSeatLink }}" style="background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">same device? pass and play ›</button>
-      <button onClick="{{ duelBackTap }}" style="background:none;border:none;padding:2px;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">back to the district</button>
+      <button onClick="{{ duelSeatLink }}" style="background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">same device? pass and play ›</button>
+      <button onClick="{{ duelBackTap }}" style="background:none;border:none;padding:2px;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">{{ duelBackLabel }}</button>
     </div>
   </sc-if>
   <sc-if value="{{ duelSeatOn }}" hint-placeholder-val="{{ false }}">
@@ -1547,8 +1659,8 @@
           <input value="{{ duelB }}" onChange="{{ duelBTyp }}" placeholder="a name" style="width:150px;background:none;border:none;border-bottom:1px solid rgba(255,176,0,.4);color:#FFB000;font-family:'Varela Round',sans-serif;font-size:14px;text-align:center;padding:6px 4px;outline:none">
         </div>
       </div>
-      <button onClick="{{ duelGo2Tap }}" style="margin-top:8px;background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;transition:background .35s ease" style-hover="background:rgba(255,176,0,.2)">deal the table ✦</button>
-      <button onClick="{{ duelBackTap }}" style="background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">back to the district</button>
+      <button onClick="{{ duelGo2Tap }}" style="margin-top:8px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">deal the table ✦</button>
+      <button onClick="{{ duelBackTap }}" style="background:none;border:none;padding:4px;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">{{ duelBackLabel }}</button>
     </div>
   </sc-if>
   <sc-if value="{{ endOn }}" hint-placeholder-val="{{ false }}">
@@ -1561,8 +1673,8 @@
           <div style="font-size:11px;line-height:1.7;color:#9A8A5E;margin-top:10px">{{ endRcpt }}</div>
         </sc-if>
         <div style="display:flex;gap:12px;justify-content:center;margin-top:18px">
-          <button onClick="{{ menuPlayTap }}" style="background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:background .3s ease" style-hover="background:rgba(240,216,154,.22)">{{ endPlayLabel }}</button>
-          <button onClick="{{ menuBackTap }}" style="background:none;border:1px solid rgba(154,138,94,.4);color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:border-color .3s ease, color .3s ease" style-hover="border-color:rgba(240,216,154,.6);color:#D8C89C">the district</button>
+          <button onClick="{{ menuPlayTap }}" style="background:linear-gradient(180deg, rgba(240,216,154,.16), rgba(240,216,154,.05));border:1px solid #F0D89A;border-radius:5px;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(240,216,154,.24), rgba(240,216,154,.09));box-shadow:0 4px 0 rgba(38,30,12,.95), 0 0 18px rgba(240,216,154,.22), 0 9px 20px rgba(0,0,0,.45)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">{{ endPlayLabel }}</button>
+          <button onClick="{{ menuBackTap }}" style="background:none;border:1px solid rgba(154,138,94,.4);border-radius:5px;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:transform .12s ease, border-color .15s ease, color .15s ease" style-hover="transform:translateY(-1px);border-color:rgba(240,216,154,.6);color:#D8C89C" style-active="transform:translateY(2px)">the district</button>
         </div>
       </div>
       <sc-if value="{{ endWonOn }}" hint-placeholder-val="{{ false }}">
@@ -1598,16 +1710,51 @@
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;dealGuarantee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;tonight's mansion is always in the five dealt from your pack (handoff §3, open call)&quot;},&quot;ownAll&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;own all 28 at level 2: every signature awake, for reading the whole slate&quot;},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = real moon tonight; 1-28 forces a mansion&quot;},&quot;forceLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = true levels; 1-4 previews every owned card at that level&quot;},&quot;forceTemper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto (real sky)&quot;,&quot;mars&quot;,&quot;saturn&quot;,&quot;venus&quot;,&quot;mercury&quot;,&quot;jupiter&quot;],&quot;default&quot;:&quot;auto (real sky)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;the night's temper: her bias on rated-equal moves (jupiter also carries the simmed w=30 mercy). auto = the planet most exact to tonight's moon. rests on road nights&quot;},&quot;roadShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a road&quot;,&quot;wrapped: edges touch&quot;,&quot;contiguous: lodge beside the lodged&quot;],&quot;default&quot;:&quot;a road&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;board geometry: the locked open road, thread's wrap (slots 1 and 9 fight each other), or placement restricted to slots touching a lodged card (first lodge free)&quot;},&quot;matchAscent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;handoff §5 prompt: her hand grows 3 to 5 across the match on a road that grows with it, one choice offered between boards. untested; road nights unaffected. the outer on board five is not dealt&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;you&quot;,&quot;the sky&quot;,&quot;a draw&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;you&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a level board count. relocked 20 aug 2026 to you (the flip-density pass)&quot;}}">
 class Component extends DCLogic {
   constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
-  componentDidMount() {
+  async componentDidMount() {
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
     this._mountT = setTimeout(() => this.forceUpdate(), 400);
     this._clockT = setInterval(() => { if (this.state.phase === "menu") this.forceUpdate(); }, 30000);
+
+    // Manzil requires a real account now — this is the async half of the
+    // gate (the sync half is _deckState()'s phase computation, which never
+    // trusts local-only signals into "menu" anymore). A returning, still-
+    // logged-in visitor gets flipped past the account screen once this
+    // resolves; a fresh device on an existing account gets its birth data
+    // pulled from the server instead of asked for again.
+    this.api = await import("./api.js");
+    const who = await this.api.me();
+    if (!who) return;
+    this.setState({ authEmail: who.email, authUsername: who.username });
+    if (!this._birth()) {
+      const birth = await this.api.getBirth();
+      if (birth && birth.birthDate) this._hydrateBirthFromServer(birth);
+    }
+    if (this._birth() && this.state.phase === "birth") this.setState({ phase: "menu" });
+  }
+  // Rebuilds the local birth cache (chart-owned mansions, pack seed) from
+  // the server's birth_data row — the path a login on a fresh browser
+  // takes, since Manzil's own progress (claims/pack/levels) stays local-
+  // only by design, but identity/birth data now lives on the account.
+  _hydrateBirthFromServer(b) {
+    const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+    const [y, m, d] = b.birthDate.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    if (b.birthTimeKnown && b.birthTime) {
+      const [hh, mm] = b.birthTime.split(":").map(Number);
+      dt.setHours(hh, mm, 0, 0);
+    } else {
+      dt.setHours(12, 0, 0, 0);
+    }
+    const dateStr = d + " " + MO[m - 1] + " " + y;
+    const timeStr = b.birthTimeKnown && b.birthTime ? b.birthTime : null;
+    this._saveBirth(dt, dateStr, timeStr, b.placeName || "");
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this._onResize); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf); clearInterval(this._tiltI);
+    if (this._sock) { this._sock.disconnect(); this._sock = null; }
   }
   _startDrag(id, e) {
     if (this.state.phase !== "play" || this.state.turn !== "you" || this.state.busy) return;
@@ -1660,7 +1807,7 @@ class Component extends DCLogic {
       else { this.setState({ drag: null, dragOver: null }); this._commitPlace(p.id, i, false, "you"); }
     } else this.setState({ drag: null, dragOver: null, sel: null });
   }
-  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearTimeout(this._aiT); clearTimeout(this._gazeT); clearTimeout(this._seekT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); }
+  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearTimeout(this._logT); clearTimeout(this._aiT); clearTimeout(this._gazeT); clearTimeout(this._seekT); clearTimeout(this._botFallbackT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); }
   _fxKind(id) { return ({ 6: "sweep", 102: "sweep", 5: "flash", 14: "flash", 18: "pulse", 103: "pulse", 10: "rise", 3: "sparkle", 17: "sparkle", 27: "sparkle", 8: "mist", 15: "mist", 101: "lock", 104: "flicker", 105: "swell" })[id] || "shimmer"; }
   _castFor(fx) {
     const c = fx.owner === "sky" ? "255,176,0" : "240,216,154";
@@ -1683,6 +1830,7 @@ class Component extends DCLogic {
   _afterDeal() { clearTimeout(this._dealT); this._dealT = setTimeout(() => this.setState({ dealt: true }), 1100); }
   _advanceRound() {
     const st = this.state;
+    if (st.duel && st.duel.mode === "pvp") { this.setState({ roundExit: false }); return; } // the server deals the next board on its own timing — see _enterPvpBoard, which jumps straight to "play" whenever board_start arrives, racing this harmlessly
     if (st.road && !st.roadBoss) {
       const k = Math.min(this._rungs()[this._tonight()] || 0, 8);
       this._clearSeq();
@@ -1697,7 +1845,8 @@ class Component extends DCLogic {
     this._clearSeq();
     const fr = this._freshRound(r, nextLeader, st.chosen, !st.nightWalker && !st.road && !st.duel);
     if (st.nightWalker) fr.sky = this._walkerFor(this._tonight()).hand.slice();
-    if (st.duel) fr.sky = (st.chosenB || []).slice();
+    if (st.duel && st.duel.mode === "seat") fr.sky = (st.chosenB || []).slice(); // the far hand is fixed all match, same five every round
+    if (st.duel && st.duel.mode === "bot") fr.sky = this._deal(st.chosenB || [], r); // her pool, dealt fresh each round like yours
     this.setState({ ...fr, round: r, roundWins: st.roundWins, phase: "play", selB: null });
     this._afterDeal();
     if (nextLeader === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
@@ -1743,52 +1892,251 @@ class Component extends DCLogic {
     [4, 3, 19, 7, 26, 12, 14].forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
     five = five.slice(0, 13); // the district's own card joins as a thirteenth on first climb
     let seen = false; try { seen = !!localStorage.getItem("manzil-ed-legend"); } catch (e) {}
-    const born = !!this._birth();
-    return { phase: seen ? (born ? "menu" : "birth") : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null, duel: null, chosenB: null, selB: null };
+    // Manzil now requires a real account to play (24 Aug 2026) — local
+    // birth-cache presence used to be enough to reach "menu" straight from
+    // the constructor, but that can't be trusted for gating anymore. The
+    // "birth" phase now doubles as the account screen; componentDidMount's
+    // async api.me() check is what actually advances a returning, still-
+    // logged-in visitor past it — see the "menu" flip there.
+    return { phase: seen ? "birth" : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null, duel: null, chosenB: null, selB: null,
+      acctMode: "signup", acctUsername: "", acctPassword: "", acctError: "", acctBusy: false, authEmail: null, authUsername: null };
   }
   _duelSaved() { try { return JSON.parse(localStorage.getItem("manzil-ed-duelnames")) || {}; } catch (e) { return {}; } }
-  _roster() { return [
-    { name: "vess", line: "vess plays the long count.", five: [214, 209, 203, 226, 218] },
-    { name: "koda", line: "koda never answers the same way twice.", five: [201, 215, 222, 208, 227] },
-    { name: "amara", line: "amara has read every road once.", five: [205, 219, 211, 224, 216] },
-    { name: "jun", line: "jun waits, then takes the middle.", five: [202, 213, 220, 206, 228] },
-    { name: "petra", line: "petra counts your hand before hers.", five: [204, 210, 217, 223, 212] },
-    { name: "noor", line: "noor plays the edges like home ground.", five: [207, 221, 225, 210, 219] }
-  ]; }
-  _startDuel(mode, opp) {
+  // pass-and-play only now — real matchmaking is _duelName()/_ensureSocket()/_enterPvpBoard() below
+  _startDuel() {
     const st = this.state, saved = this._duelSaved();
     const a = (((st.duelA !== undefined ? st.duelA : saved.a) || "").trim()) || "your hand";
     const pack = (st.deckSel || []).filter(id => id >= 1 && id <= 28);
-    let b, mySide, farSide;
-    if (mode === "seat") {
-      b = (((st.duelB !== undefined ? st.duelB : saved.b) || "").trim()) || "the far hand";
-      const sh = pack.slice();
-      for (let i = sh.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = sh[i]; sh[i] = sh[j]; sh[j] = t; }
-      farSide = sh.slice(0, 5).map(x => 200 + x); // the far hand borrows five of yours, asleep
-      mySide = sh.slice(5);
-      if (mySide.length < 5) mySide = sh.slice(0, 5);
-    } else {
-      b = opp.name;
-      farSide = opp.five.slice();
-      mySide = pack.length >= 5 ? pack : Array.from({ length: 5 }, (_, i) => i + 1);
-    }
-    try { localStorage.setItem("manzil-ed-duelnames", JSON.stringify({ a, b: mode === "seat" ? b : (saved.b || "") })); } catch (e) {}
+    const b = (((st.duelB !== undefined ? st.duelB : saved.b) || "").trim()) || "the far hand";
+    const sh = pack.slice();
+    for (let i = sh.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = sh[i]; sh[i] = sh[j]; sh[j] = t; }
+    const farSide = sh.slice(0, 5).map(x => 200 + x); // the far hand borrows five of yours, asleep
+    let mySide = sh.slice(5);
+    if (mySide.length < 5) mySide = sh.slice(0, 5);
+    try { localStorage.setItem("manzil-ed-duelnames", JSON.stringify({ a, b })); } catch (e) {}
     const rt = window.ManzilEphem && ManzilEphem.mansionOf ? ManzilEphem.mansionOf("moon") : 0;
     const dt = rt >= 1 && rt <= 28 ? rt : 21; // the first station is the moon's real mansion tonight
     this._clearSeq();
-    this.setState({ ...this._deckState(), ...this._freshRound(1, "you", mySide), phase: "play", chosen: mySide.slice(), chosenB: farSide.slice(), sky: farSide.slice(), round: 1, roundWins: [], road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, freeNight: false, duel: { a, b, mode, t: dt, opp: mode === "net" ? opp : null }, duelA: a, duelB: st.duelB, deckSel: st.deckSel, duelSeek: null });
+    this.setState({ ...this._deckState(), ...this._freshRound(1, "you", mySide), phase: "play", chosen: mySide.slice(), chosenB: farSide.slice(), sky: farSide.slice(), round: 1, roundWins: [], road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, freeNight: false, duel: { a, b, mode: "seat", t: dt }, duelA: a, duelB: st.duelB, deckSel: st.deckSel, duelSeek: null });
     this._afterDeal();
+  }
+  // -- real matchmaking (Socket.io) ---------------------------------------
+  _duelName() {
+    const saved = this._duelSaved();
+    return (((this.state.duelA !== undefined ? this.state.duelA : saved.a) || "").trim()) || "your hand";
+  }
+  _apiBase() { return typeof location !== "undefined" ? "https://api." + location.hostname : ""; }
+  _ensureSocket() {
+    if (this._sock) return this._sock;
+    if (!window.io) return null; // not loaded yet (see __mzHeal's retry) — the "find a battle" button just won't respond
+    // Manzil requires an account now — the lobby authenticates purely off
+    // the session cookie (withCredentials) and rejects anyone without one;
+    // there's no guest token to present anymore (see manzil-lobby.js).
+    const sock = window.io(this._apiBase(), { path: "/socket.io", withCredentials: true });
+    // Belt-and-suspenders: the phase-gate should make this unreachable
+    // logged out, but a session expiring between page load and tapping
+    // "find a battle" is a real race, not a hypothetical one.
+    sock.on("auth_required", () => { this.setState({ phase: "birth", duelSeek: null, acctError: "your session ended — sign in again" }); sock.disconnect(); this._sock = null; });
+    sock.on("queued", msg => { if (this.state.phase === "duel1") this.setState({ duelSeek: { stage: "seek", position: msg.position } }); });
+    sock.on("queue_cancelled", () => { if (this.state.duelSeek && this.state.duelSeek.stage === "seek") this.setState({ duelSeek: null }); });
+    sock.on("matched", msg => {
+      clearTimeout(this._seekT);
+      clearTimeout(this._botFallbackT);
+      this._pvpFoundAt = Date.now();
+      this._pvpMatchId = msg.matchId;
+      this.setState({ duelSeek: { stage: "found", opp: { name: msg.opponent } } });
+      sock.emit("match_ready_ack", { matchId: msg.matchId });
+    });
+    sock.on("board_start", msg => {
+      if (this.state.phase === "duel1") {
+        const wait = Math.max(0, 900 - (Date.now() - (this._pvpFoundAt || 0))); // hold the "found" beat, same pacing the old fixed 1700ms delay gave
+        this._seekT = setTimeout(() => this._enterPvpBoard(msg), wait);
+      } else {
+        this._enterPvpBoard(msg);
+      }
+    });
+    sock.on("move_confirmed", msg => {
+      if (!this.state.duel || this.state.duel.mode !== "pvp" || this.state.duel.matchId !== msg.matchId) return;
+      this._pendingNextTurn = msg.nextTurn;
+      this._commitPlaceRemote(msg);
+    });
+    sock.on("move_rejected", () => { this.setState({ busy: false }); });
+    sock.on("board_result", msg => {
+      if (!this.state.duel || this.state.duel.matchId !== msg.matchId) return;
+      this._lastBoardResult = msg;
+      this._maybeShowBoardResult();
+    });
+    sock.on("match_result", msg => {
+      if (!this.state.duel || this.state.duel.matchId !== msg.matchId) return;
+      this._lastMatchResult = msg;
+      this._maybeShowBoardResult();
+    });
+    sock.on("opponent_disconnected", msg => {
+      if (!this.state.duel || this.state.duel.matchId !== msg.matchId) return;
+      this.setState({ toast: { t: "the far hand's connection dropped — sixty seconds to return.", n: (this._fxN = (this._fxN || 0) + 1) } });
+    });
+    sock.on("opponent_reconnected", msg => {
+      if (!this.state.duel || this.state.duel.matchId !== msg.matchId) return;
+      this.setState({ toast: { t: "the far hand returns.", n: (this._fxN = (this._fxN || 0) + 1) } });
+    });
+    sock.on("match_abandoned", msg => {
+      if (this.state.duelSeek && this.state.duelSeek.stage) { this.setState({ phase: "duel1", duelSeek: null }); return; }
+      if (!this.state.duel || (msg.matchId && this.state.duel.matchId !== msg.matchId)) return;
+      this._clearSeq();
+      this.setState({ phase: "duel1", duel: null, duelSeek: null, log: "the far hand left the table." });
+    });
+    this._sock = sock;
+    return sock;
+  }
+  // the queue-timeout fallback: a made-up hand, not the sky herself — the sky is the road's
+  // boss (full planets, 2-ply lookahead), too strong for a casual stand-in duel. These play
+  // five asleep (200+id, no signature) mansion cards each, same convention seat mode already
+  // uses for the "far hand" — a real fight, just not the endgame one.
+  _botOpponents() { return [
+    { name: "vess", line: "vess plays the long count." },
+    { name: "koda", line: "koda never answers the same way twice." },
+    { name: "amara", line: "amara has read every road once." },
+    { name: "jun", line: "jun waits, then takes the middle." },
+    { name: "petra", line: "petra counts your hand before hers." },
+    { name: "noor", line: "noor plays the edges like home ground." },
+  ]; }
+  // her pool for a bot duel: same size and the same awake/asleep split as your own pack, so she
+  // grows with you rather than sitting fixed. "Awake" only exists per mansion id (whichever ones
+  // you've actually claimed and leveled past 1) — there's no separate bot-side leveling — so her
+  // awake cards are real ids too, just preferring ones outside your own pack where enough exist,
+  // so the two hands aren't card-for-card mirrors. Falls back to reuse when they must be.
+  _botPack(mySide) {
+    const C = this._cards();
+    const nAwake = mySide.filter(id => C[id] && C[id].lvl >= 2).length;
+    const nAsleep = Math.max(0, mySide.length - nAwake);
+    const all = Array.from({ length: 28 }, (_, i) => i + 1);
+    const awakeAll = all.filter(id => C[id].lvl >= 2);
+    const asleepAll = all.filter(id => C[id].lvl < 2);
+    const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+    const pick = (pool, n) => {
+      const outside = shuffle(pool.filter(id => !mySide.includes(id)));
+      const inside = shuffle(pool.filter(id => mySide.includes(id)));
+      return outside.concat(inside).slice(0, n);
+    };
+    return shuffle(pick(awakeAll, nAwake).concat(pick(asleepAll, nAsleep)));
+  }
+  _duelSeekTap() {
+    const sock = this._ensureSocket();
+    if (!sock) return;
+    clearTimeout(this._seekT);
+    clearTimeout(this._botFallbackT);
+    this.setState({ duelSeek: { stage: "seek" } });
+    const pack = (this.state.deckSel || []).filter(id => id >= 1 && id <= 28);
+    sock.emit("queue_join", { pack: pack.length ? pack : Array.from({ length: 13 }, (_, i) => i + 1) });
+    // no free hand within ~25s: the sky pilots a signed hand herself, per the lobby's own copy
+    this._botFallbackT = setTimeout(() => {
+      if (this.state.phase !== "duel1" || !this.state.duelSeek || this.state.duelSeek.stage !== "seek") return;
+      sock.emit("queue_cancel", {});
+      const opts = this._botOpponents();
+      const opp = opts[Math.floor(Math.random() * opts.length)];
+      this.setState({ duelSeek: { stage: "found", opp } });
+      this._seekT = setTimeout(() => { if (this.state.phase === "duel1") this._startBotDuel(opp); }, 900);
+    }, 25000);
+  }
+  _startBotDuel(opp) {
+    const st = this.state;
+    const a = this._duelName();
+    const pack = (st.deckSel || []).filter(id => id >= 1 && id <= 28);
+    const mySide = pack.length >= 5 ? pack : Array.from({ length: 5 }, (_, i) => i + 1);
+    const rt = window.ManzilEphem && ManzilEphem.mansionOf ? ManzilEphem.mansionOf("moon") : 0;
+    const dt = rt >= 1 && rt <= 28 ? rt : 21;
+    this._clearSeq();
+    const prevBot = st.duel && st.duel.mode === "bot" ? st.duel : null;
+    const chosen = opp || (prevBot && this._botOpponents().find(o => o.name === prevBot.b)) || this._botOpponents()[0];
+    // chosenB carries her full pool into every later round — _advanceRound() deals a fresh
+    // five from it each round, same as your own hand deals from `chosen`. Storing only a
+    // dealt five here (rather than the pool) is what let round 2 deal her an empty hand before.
+    const botPack = this._botPack(mySide);
+    const fr = this._freshRound(1, "you", mySide);
+    fr.sky = this._deal(botPack, 1);
+    const bName = chosen.name;
+    this.setState({ ...this._deckState(), ...fr, phase: "play", chosen: mySide.slice(), chosenB: botPack, round: 1, roundWins: [], road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, freeNight: false, duel: { a, b: bName, mode: "bot", t: dt }, duelSeek: null });
+    this._afterDeal();
+  }
+  _enterPvpBoard(msg) {
+    this._clearSeq();
+    const oppName = (this.state.duelSeek && this.state.duelSeek.opp && this.state.duelSeek.opp.name) || (this.state.duel && this.state.duel.b) || "the far hand";
+    const slots = msg.slots; // server-authoritative already, incl. slot.pf — renderVals reads it directly for pvp boards
+    this.setState({
+      ...this._deckState(), phase: "play", round: msg.round, leader: msg.leader, turn: msg.turn,
+      hand: msg.hand, sky: msg.oppHand, slots, roundWins: msg.roundWins.slice(), dealt: false,
+      chosen: msg.hand.slice(), chosenB: msg.oppHand.slice(),
+      road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "",
+      practice: false, tutor: false, freeNight: false,
+      duel: { a: this._duelName(), b: oppName, mode: "pvp", matchId: msg.matchId, t: msg.tonight },
+      duelSeek: null,
+    });
+    this._afterDeal();
+  }
+  _proposeMove(cardId, i, rev) {
+    const st = this.state;
+    if (!st.duel || st.duel.mode !== "pvp" || !this._sock) return;
+    this.setState({ sel: null, face: null, busy: true });
+    this._sock.emit("place", { matchId: st.duel.matchId, cardId, slot: i, rev: !!rev });
+  }
+  _commitPlaceRemote(msg) {
+    const preSlots = this.state.slots;
+    const flipped = new Set(msg.flips.map(f => f.to));
+    const slots = msg.slots.map((s, idx) => {
+      if (!s) return null;
+      if (flipped.has(idx) && preSlots[idx]) return { ...preSlots[idx], pf: s.pf }; // hold the pre-move owner until _step reveals each flip; face value is already current
+      return s;
+    });
+    // the end screen's "biggest chain" receipt line reads this._beats — a server-replayed
+    // flip must feed it the same as a locally-resolved one, or every pvp match's receipt
+    // falls back to "the count was won a station at a time" regardless of what happened.
+    const flipsN = msg.flips.filter(x => x.ret == null).length;
+    if (!preSlots.some(x => x) && !this.state.roundWins.length) this._beats = [];
+    if (flipsN >= 1) this._beats = (this._beats || []).concat({ who: msg.side, id: msg.cardId, i: msg.slot, f: flipsN });
+    this._fxN = (this._fxN || 0) + 1;
+    clearTimeout(this._castT);
+    this._castT = setTimeout(() => this.setState({ castFx: null }), 950);
+    this.setState({
+      slots, busy: true, dropIdx: msg.slot, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null,
+      castFx: { id: msg.cardId, owner: msg.side, n: this._fxN },
+      hand: msg.side === "you" ? this.state.hand.filter(x => x !== msg.cardId) : this.state.hand,
+      sky: msg.side === "sky" ? this.state.sky.filter(x => x !== msg.cardId) : this.state.sky,
+    }, () => this._step(msg.flips, 0, msg.side));
+  }
+  _finishRemote(who) {
+    const t = setTimeout(() => {
+      const nextTurn = this._pendingNextTurn;
+      this._pendingNextTurn = undefined;
+      this.setState({ busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, shakeFx: false, turn: nextTurn || this.state.turn });
+      if (nextTurn == null) { this._animDone = true; this._maybeShowBoardResult(); }
+    }, 260);
+    this._seq.push(t);
+  }
+  _maybeShowBoardResult() {
+    if (!this._animDone || !this._lastBoardResult) return;
+    const br = this._lastBoardResult; this._lastBoardResult = null; this._animDone = false;
+    this.setState({ roundWins: br.roundWins, turn: "over" }, () => {
+      this._countCeremony(() => {
+        if (this._lastMatchResult) {
+          const mr = this._lastMatchResult; this._lastMatchResult = null;
+          this.setState({ phase: mr.winner === "you" ? "won" : "lost" });
+        } else {
+          this.setState({ phase: "round" });
+        }
+      });
+    });
   }
   _countCeremony(done) {
     const slots = this.state.slots;
     const [cy, cs] = this._counts(slots);
     const winner = this._boardWinner(slots);
-    this.setState({ countFx: { you: cy, sky: cs, winner, step: 0 } });
+    this.setState({ countFx: { you: cy, sky: cs, winner, step: 0, sweep: -1 } });
     this._cfA = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 1 } } : {}), 80);
-    this._cfB = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 2 } } : {}), 1750);
-    this._cfC = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 3 } } : {}), 2500);
-    this._cfE = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 4 } } : {}), 3250);
-    this._cfD = setTimeout(() => { this.setState({ countFx: null }); done(); }, 4050);
+    for (let i = 0; i < slots.length; i++) this._seq.push(setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, sweep: i } } : {}), 300 + i * 135));
+    const tBoom = 300 + slots.length * 135 + 330;
+    this._cfC = setTimeout(() => { this._buzz && this._buzz([12, 40, 16]); this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 3, sweep: slots.length - 1 } } : {}); }, tBoom);
+    this._cfE = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 4 } } : {}), tBoom + 1900);
+    this._cfD = setTimeout(() => { this.setState({ countFx: null }); done(); }, tBoom + 2600);
   }
   _freshMatch(hand) { return { ...this._freshRound(1, "you", hand, true), round: 1, roundWins: [], phase: "play", chosen: hand.slice() }; }
   // five dealt from the pack at the start of every board, face up: randomness before the board, in the open
@@ -1956,14 +2304,24 @@ class Component extends DCLogic {
     27: "once a board, tap the guide then another of your cards: the two swap places.",
     28: "the first and last mansions of the road count for whoever holds the thread.",
   }[id] || ""; }
-  _saveBirth(dt, dateStr, timeStr) {
+  // Shared enabled-check for the account/birth screen's submit button and
+  // its tap handler, so the two can't drift — signup needs the full form,
+  // login only needs email + password.
+  _acctFormOk(st) {
+    const email = (st.bEmail || "").trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || (st.acctPassword || "").length < 8) return false;
+    if (st.acctMode === "login") return true;
+    if (!/^[a-z0-9_]{3,20}$/.test((st.acctUsername || "").trim().toLowerCase())) return false;
+    return st.bY != null && st.bM != null && st.bD != null && ((st.bTime || "").trim() || st.bTimeU);
+  }
+  _saveBirth(dt, dateStr, timeStr, place) {
     if (!dt || isNaN(dt.getTime()) || !window.ManzilEphem) return null;
     const cast = this._castFive(dt);
     const pool = []; for (let i = 1; i <= 28; i++) if (!cast.five.includes(i)) pool.push(i);
     for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
     const pack = cast.five.concat(pool.slice(0, 7));
     try {
-      localStorage.setItem("manzil-ed-birth", JSON.stringify({ date: dateStr, time: timeStr || null, five: cast.five, rows: cast.rows, fill: cast.fill }));
+      localStorage.setItem("manzil-ed-birth", JSON.stringify({ date: dateStr, time: timeStr || null, place: (place || "").trim() || null, five: cast.five, rows: cast.rows, fill: cast.fill }));
       localStorage.setItem("manzil-ed-pack", JSON.stringify(pack));
     } catch (e) {}
     this._C = null;
@@ -2050,7 +2408,7 @@ class Component extends DCLogic {
     if (s && s.ground) notes.push("the blaze's mark: this mansion counts as yours, whoever holds the card.");
     if (s && this._isHome(s.id, i)) notes.push("✦ dominion: lodged on its own mansion, it counts as two at the count, whoever holds it.");
     let who = c.who === "sky" ? (c.walker ? "a walker's" : "the sky's") : s && !you ? "claimed by the sky" : "";
-    if (c.who === "you") who += (who ? " · " : "") + "level " + c.lvl;
+    if (c.who === "you") who += (who ? " · " : "") + (["claimed", "awake", "familiar", "unleashed"][c.lvl - 1] || "claimed");
     if (c.who === "you" && c.planet) who += c.planet === "the road" ? " · from the road" : " · your " + c.planet;
     return {
       name: c.name.toLowerCase(), move: lines.join(" "), who,
@@ -2154,14 +2512,18 @@ class Component extends DCLogic {
     "it flattered no king. its board was the actual sky, so no court could own it, and a game no court can own is a game every court buries. the star-readers called each night's house by its old name.",
     "manzil.",
   ]; }
-  _legendDone() { try { localStorage.setItem("manzil-ed-legend", "1"); } catch (e) {} this.setState({ phase: this._birth() ? "menu" : "birth" }); }
+  // Always lands on "birth" (the account screen), never straight to "menu"
+  // — local birth-cache presence isn't proof of login anymore. A
+  // logged-in returning visitor gets flipped to "menu" by
+  // componentDidMount's async api.me() check instead, once it resolves.
+  _legendDone() { try { localStorage.setItem("manzil-ed-legend", "1"); } catch (e) {} this.setState({ phase: "birth" }); }
   _rungs() { try { return JSON.parse(localStorage.getItem("manzil-ed-rungs")) || {}; } catch (e) { return {}; } }
   _saveRung(m, k) { try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-ed-rungs", JSON.stringify(r)); } catch (e) {} }
   _elev() {
     const st = this.state;
     if (!st) return 0;
     if (st.road) return st.roadBoss ? 8 : Math.min(st.roadRung || 0, 7);
-    if (st.phase === "menu" || st.phase === "deck" || st.phase === "set" || st.phase === "intro") {
+    if (st.phase === "menu" || st.phase === "mode" || st.phase === "record" || st.phase === "deck" || st.phase === "set" || st.phase === "intro") {
       const t = this._tonight();
       return this._mlvl(t) < 4 ? Math.min(this._rungs()[t] || 0, 7) : 0;
     }
@@ -2196,8 +2558,8 @@ class Component extends DCLogic {
   }
   _opts() { if (!this._opt) { try { this._opt = JSON.parse(localStorage.getItem("manzil-settings")) || {}; } catch (e) { this._opt = {}; } } return this._opt; }
   _setOpt(k, v) { this._opt = { ...this._opts(), [k]: v }; try { localStorage.setItem("manzil-settings", JSON.stringify(this._opt)); } catch (e) {} this._C = null; this.forceUpdate(); }
-  _setBtn(on) { return "background:none;border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";font-family:'Varela Round',sans-serif;font-size:11px;padding:8px 14px;cursor:pointer"; }
-  _shape() { return this._opts().shape || this.props.roadShape || "a road"; }
+  _setBtn(on) { return "background:none;border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";border-radius:4px;transition:color .15s ease, border-color .15s ease, transform .12s ease;font-family:'Varela Round',sans-serif;font-size:11px;padding:8px 14px;cursor:pointer"; }
+  _shape() { if (this.state && this.state.duel && this.state.duel.mode === "pvp") return "a road"; return this._opts().shape || this.props.roadShape || "a road"; } // pvp is always the plain, unwrapped board server-side — the experimental shape toggle mustn't disagree with it
   _nb(i, dir) {
     const L = ((this.state && this.state.slots && this.state.slots.length) || 9);
     if (this._shape() === "wrapped: edges touch" || this._bossRule() === "thread") return (i + dir + L) % L;
@@ -2435,6 +2797,7 @@ class Component extends DCLogic {
     return { id: sc.id, i: sc.i, t: sc.t, why: sc.why };
   }
   _commitPlace(cardId, i, rev, who) {
+    if (who === "you" && this.state.duel && this.state.duel.mode === "pvp") { this._proposeMove(cardId, i, rev); return; }
     if (who === "you") {
       const tf = this._tutMove();
       if (tf && (cardId !== tf.id || i !== tf.i)) { this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
@@ -2459,7 +2822,7 @@ class Component extends DCLogic {
         slots, busy: true, dropIdx: i, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null, pick: null,
         tutStep: s.practice && s.tutor ? (s.tutStep || 0) + 1 : s.tutStep,
         glanceOn: who === "you" ? (c.ab === "glance" && this._on(c)) : false,
-        log: soft.length ? "venus softens her neighbors." : "",
+        log: soft.length ? "venus softens her neighbors." : "", caps: [],
         castFx: { id: cardId, owner: who, n: this._fxN },
         toast: this._toastT ? { t: this._toastT, n: this._fxN * 10 } : s.toast,
         hand: who === "you" ? s.hand.filter(x => x !== cardId) : s.hand,
@@ -2468,21 +2831,25 @@ class Component extends DCLogic {
     }, () => this._step(seq, 0, who));
   }
   _step(seq, k, who) {
-    if (k >= seq.length) { this._finish(who); return; }
+    if (k >= seq.length) {
+      if (this.state.duel && this.state.duel.mode === "pvp") this._finishRemote(who); else this._finish(who);
+      return;
+    }
     const t = setTimeout(() => {
+      clearTimeout(this._logT); this._logT = setTimeout(() => this.setState({ log: "" }), 3400);
       this.setState(s => {
         const it = seq[k];
         if (!s.slots[it.to] || !s.slots[it.from]) return {};
         if (it.ret) { // the return comes home rather than change hands
           const sl = s.slots.slice().map(x => x ? { ...x } : x);
           sl[it.to] = null;
-          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", hand: s.hand.concat([it.ret]), toast: { t: "the return comes home.", n: (s.toast ? s.toast.n : 0) + 1 }, log: (s.log ? s.log + "  " : "") + "the return comes home." };
+          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", hand: s.hand.concat([it.ret]), toast: { t: "the return comes home.", n: (s.toast ? s.toast.n : 0) + 1 }, caps: (s.caps || []).concat([{ i: it.to, t: "the return comes home" }]) };
         }
         const slots = s.slots.slice().map(x => x ? { ...x } : x);
         slots[it.to] = { ...slots[it.to], owner: it.owner };
         const aName = this._cards()[slots[it.from].id].name.toLowerCase();
         const tName = this._cards()[slots[it.to].id].name.toLowerCase();
-        return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", shakeFx: k === 0 && this._shakeOn ? true : s.shakeFx, toast: it.sig ? { t: it.sig, n: (s.toast ? s.toast.n : 0) + 1 } : s.toast, log: (s.log ? s.log + "  " : "") + aName + " claims " + tName + "." };
+        return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", shakeFx: k === 0 && this._shakeOn ? true : s.shakeFx, toast: it.sig ? { t: it.sig, n: (s.toast ? s.toast.n : 0) + 1 } : s.toast, caps: (s.caps || []).concat([{ i: it.to, t: "claimed by " + aName }]) };
       }, () => this._step(seq, k + 1, who));
     }, k === 0 ? 320 : 400);
     this._seq.push(t);
@@ -2513,8 +2880,9 @@ class Component extends DCLogic {
             if (w >= 3) { this._buzz([10, 60, 18]); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, true); this.setState({ phase: "won" }); }
             else if (l >= 3) { this._buzz(24); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false); this.setState({ phase: this.state.road ? "roadlost" : "lost" }); }
             else {
-              this.setState({ phase: "round" });
-              this._roundT = setTimeout(() => this._exitRound(), 3800);
+              const asc = !!this.props.matchAscent && !this.state.road && !!this.state.nightSky && !this.state.ascentChosen;
+              if (asc) { this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
+              else { this._roundX = setTimeout(() => this._advanceRound(), 240); }
             }
           }), 900);
         } else {
@@ -2555,7 +2923,7 @@ class Component extends DCLogic {
   }
   _skyMove() {
     const st = this.state;
-    if (st.duel && st.duel.mode !== "net") return; // pass-and-play: the far hand is a person, not her
+    if (st.duel && st.duel.mode !== "bot") return; // seat is pass-and-play, pvp is a remote human — only "bot" (no free hand found) actually wants the local AI
     if (st.phase !== "play" || st.turn !== "sky") return;
     if (st.practice && st.tutor) { // the walked board is scripted on her side too: same lesson every run
       const sc = this._demoScript()[st.tutStep || 0];
@@ -2621,12 +2989,18 @@ class Component extends DCLogic {
     });
     const roundWinner = st.turn === "over" && st.slots.every(x => x) ? this._boardWinner(st.slots) : null;
     const tutF = this._tutMove();
+    const pvpBoard = !!(st.duel && st.duel.mode === "pvp");
     const slots = st.slots.map((s, i) => {
       const empty = !s;
       const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
       const selOn = st.sel !== null && st.turn === "you" && st.phase === "play" && !st.busy && this._legalSlot(st.slots, i);
       let tag = "", tagColor = "#9A8A5E";
-      const fL = s ? this._faceOf(st.slots, i, -1) : 0, fR = s ? this._faceOf(st.slots, i, 1) : 0;
+      // PvP boards never recompute a face locally — the client's own _faceOf() is the pre-Phase-1
+      // seat-locked version (deliberately left that way for single-device modes), so an opponent's
+      // bearer/ghost/heart/void/veil/chamber would silently misrender. The server ships the current,
+      // fully-symmetric face per slot as slot.pf; use it directly instead.
+      const fL = s ? (pvpBoard && s.pf ? s.pf.l : this._faceOf(st.slots, i, -1)) : 0;
+      const fR = s ? (pvpBoard && s.pf ? s.pf.r : this._faceOf(st.slots, i, 1)) : 0;
       if (s) {
         const c = C[s.id];
         if (s.ground && s.owner !== s.ground) { tag = "the ground stays yours"; tagColor = "#F0D89A"; }
@@ -2800,33 +3174,41 @@ class Component extends DCLogic {
       elevDayStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.day + ";background:radial-gradient(10% 17% at 74% 71%, rgba(255,240,198,.9), rgba(255,208,120,.38) 42%, transparent 72%), linear-gradient(to top, rgba(255,206,128,.30) 0%, rgba(210,160,108,.20) 26%, rgba(134,126,162,.15) 58%, rgba(98,106,150,.12) 100%)",
       elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.wo + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.24), 0 -4px 18px rgba(255,198,116,.26)",
       ...((f => {
-        if (!f) return { countFxOn: false, cfLights: [], cfOrbYou: "display:none", cfOrbSky: "display:none", cfNumStyle: "", cfYouN: "", cfSkyN: "" };
-        const L = st.slots.length, edge = 466 - (L * 86 + (L - 1) * 5) / 2;
-        const oy = { x: 466, y: 324 }, os = { x: 466, y: 86 }, mx = 466, my = 205;
-        const lights = [];
+        if (!f) return { countFxOn: false, cfLights: [], cfOrbYou: "display:none", cfOrbSky: "display:none", cfYouN: "", cfSkyN: "", cfWrapStyle: "", cfBoomOn: false, cfFlash: "", cfRing: "", cfSparks: [], cfStamp: "", cfStampT: "", cfVeil: "", cfVerdictT: "", cfVerdictStyle: "", cfStampNumStyle: "" };
+        const L = st.slots.length, edge = 466 - (L * 86 + (L - 1) * 5) / 2, mx = 466, my = 200;
+        const sw = f.sweep == null ? -1 : f.sweep, boom = f.step >= 3;
+        let cy2 = 0, cs2 = 0; const pulses = [];
         st.slots.forEach((s, i) => {
           if (!s) return;
           const w = this._station(st.slots, i);
           const who = (w && w.who) || s.owner;
-          if (w && w.w === 0) return;
-          const x = edge + i * 91 + 43, y = 258 + Math.pow(i - (L - 1) / 2, 2) * 3;
-          const o = who === "you" ? oy : os, c = who === "you" ? "240,216,154" : "255,176,0";
-          lights.push({ style: "position:absolute;left:" + (x - 3) + "px;top:" + y + "px;width:6px;height:6px;border-radius:50%;background:rgba(" + c + ",.95);box-shadow:0 0 10px rgba(" + c + ",.8);transition:transform .8s cubic-bezier(.5,0,.4,1) " + (i * 45) + "ms, opacity .3s ease " + (800 + i * 45) + "ms;" + (f.step >= 1 ? "transform:translate(" + (o.x - x) + "px," + (o.y - y) + "px);opacity:0" : "") });
+          const wt = w ? w.w : 1;
+          if (wt === 0 || i > sw) return;
+          who === "you" ? cy2 += wt : cs2 += wt;
+          const x = edge + i * 91 + 43, y = 148 + Math.pow(i - (L - 1) / 2, 2) * 3;
+          const c = who === "you" ? "240,216,154" : "255,176,0";
+          pulses.push({ t: "+" + wt, style: "position:absolute;left:" + (x - 30) + "px;top:" + (y - 16) + "px;width:60px;height:32px;line-height:32px;text-align:center;font-family:'Varela Round',sans-serif;font-size:13px;color:rgb(" + c + ");text-shadow:0 0 12px rgba(" + c + ",.85);background:radial-gradient(circle, rgba(" + c + ",.16), transparent 70%);border-radius:50%;animation:mzCfCount 1.1s ease-out both;pointer-events:none" });
         });
-        const orb = (o, mine) => {
-          const isWin = (mine === f.winner) || (f.winner !== "you" && f.winner !== "sky" && mine === "you");
-          const c = mine === "you" ? "240,216,154" : "255,176,0";
-          const dx = mx - o.x, dy = my - o.y;
-          let t = "";
-          if (f.step === 2) t = "transform:translate(" + dx + "px," + dy + "px);";
-          if (f.step >= 3) t = isWin
-            ? (f.step >= 4 ? "transform:translate(" + (dx + 430) + "px," + (dy - 330) + "px) scale(.2);opacity:0;" : "transform:translate(" + dx + "px," + dy + "px) scale(1.24);")
-            : "transform:translate(" + dx + "px," + dy + "px) scale(2.1);opacity:0;";
-          return "position:absolute;left:" + (o.x - 26) + "px;top:" + (o.y - 26) + "px;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:" + (isWin ? 2 : 1) + ";background:radial-gradient(circle at 36% 30%, rgba(" + c + ",.95), rgba(" + c + ",.28) 62%, transparent 78%);box-shadow:0 0 26px rgba(" + c + ",.65);transition:transform .7s cubic-bezier(.55,0,.45,1), opacity .55s ease;opacity:" + (f.step >= 1 ? 1 : 0) + ";" + t;
-        };
-        return { countFxOn: true, cfLights: lights, cfOrbYou: orb(oy, "you"), cfOrbSky: orb(os, "sky"),
-          cfNumStyle: "font-family:'Varela Round',sans-serif;font-size:19px;color:#120C05;opacity:" + (f.step >= 1 ? 1 : 0) + ";transition:opacity .4s ease .3s",
-          cfYouN: f.you, cfSkyN: f.sky };
+        const dN = f.you - f.sky;
+        const wc = f.winner === "sky" ? "255,176,0" : "240,216,154";
+        const diffT = (dN > 0 ? "+" : dN < 0 ? "−" : "") + Math.abs(dN);
+        const num = (x, mine) => "position:absolute;left:" + (x - 44) + "px;top:90px;width:88px;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;line-height:1;color:rgb(" + (mine === "you" ? "240,216,154" : "255,176,0") + ");text-shadow:0 0 24px rgba(" + (mine === "you" ? "240,216,154" : "255,176,0") + ",.75), 0 2px 8px rgba(5,3,2,.85);transition:opacity .45s ease, filter .45s ease;pointer-events:none;" + (boom ? "opacity:0;filter:blur(6px);" : "opacity:" + (f.step >= 1 ? 1 : 0) + ";");
+        return { countFxOn: true, cfLights: pulses, cfOrbYou: num(112, "you"), cfOrbSky: num(820, "sky"),
+          cfWrapStyle: "position:absolute;inset:0;z-index:6;pointer-events:none" + (f.step === 3 ? ";animation:mzShake .42s cubic-bezier(.36,.07,.19,.97) both" : ""),
+          cfVeil: "position:absolute;inset:0;background:rgba(6,4,2," + (boom && f.step < 4 ? ".45" : "0") + ");backdrop-filter:blur(" + (boom && f.step < 4 ? 7 : 0) + "px);-webkit-backdrop-filter:blur(" + (boom && f.step < 4 ? 7 : 0) + "px);transition:background .4s ease, backdrop-filter .5s ease, -webkit-backdrop-filter .5s ease;pointer-events:none",
+          cfVerdictT: f.winner === "sky" ? "the round goes to " + (st.duel ? st.duel.b : "the sky") : f.winner === "you" ? (st.duel ? "the round goes to " + st.duel.a : "the round goes to you") : "the round stands even",
+          cfVerdictStyle: boom ? "margin-top:10px;font-family:'Varela Round',sans-serif;font-size:14px;letter-spacing:.02em;color:rgb(" + wc + ");text-shadow:0 0 16px rgba(" + wc + ",.6), 0 1px 6px rgba(5,3,2,.9);opacity:" + (f.step >= 4 ? 0 : 1) + ";transition:opacity .5s ease" : "",
+          cfBoomOn: boom,
+          cfFlash: boom ? "position:absolute;left:" + (mx - 42) + "px;top:" + (my - 42) + "px;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle, rgba(255,253,245,.9), rgba(" + wc + ",.4) 55%, transparent 75%);animation:mzCfFlash .45s ease-out both" : "",
+          cfRing: boom ? "position:absolute;left:" + (mx - 80) + "px;top:" + (my - 80) + "px;width:160px;height:160px;border-radius:50%;border:1.5px solid rgba(" + wc + ",.8);box-shadow:0 0 18px rgba(" + wc + ",.45);animation:mzCfShock .75s cubic-bezier(.2,.7,.3,1) both" : "",
+          cfSparks: boom ? Array.from({ length: 10 }, (_, k) => ({
+            style: "position:absolute;left:" + (mx - 3) + "px;top:" + (my - 3) + "px;width:6px;height:6px;transform:rotate(" + (k * 36 + 8) + "deg)",
+            inner: "display:block;width:6px;height:6px;border-radius:50%;background:rgba(" + wc + ",.95);box-shadow:0 0 10px rgba(" + wc + ",.85);animation:mzCfSpark ." + (5 + ((k * 3) % 3)) + "5s cubic-bezier(.15,.6,.3,1) both"
+          })) : [],
+          cfStamp: boom ? "position:absolute;left:0;right:0;top:" + (my - 92) + "px;display:flex;flex-direction:column;align-items:center;pointer-events:none;" + (f.step >= 4 ? "opacity:0;transform:translateY(-46px);transition:opacity .6s ease, transform .7s ease" : "animation:mzCfStamp .42s cubic-bezier(.2,2.2,.4,1) both") : "",
+          cfStampNumStyle: "font-family:'Cormorant Garamond',serif;font-weight:600;font-size:128px;line-height:1;color:rgb(" + wc + ");text-shadow:0 0 44px rgba(" + wc + ",.85), 0 0 12px rgba(" + wc + ",.5), 0 3px 14px rgba(5,3,2,.9)",
+          cfStampT: diffT,
+          cfYouN: cy2, cfSkyN: cs2 };
       })(st.countFx)),
       edFarStyle: "position:absolute;left:0;right:0;height:64px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 6, 0) + "px;transform:translateY(" + ev.e * 10 + "px);opacity:" + [.75, .75, .72, .68, .6, .4, .15, 0, 0][ev.e],
       edMidStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 14, -10) + "px;transform:translateY(" + ev.e * 24 + "px);opacity:" + [.95, .85, .7, .5, .28, .1, 0, 0, 0][ev.e],
@@ -2854,8 +3236,8 @@ class Component extends DCLogic {
       edMoonStyle: "position:absolute;left:66%;top:8%;width:58px;height:58px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (8 - ev.e) * 12 + "px);opacity:" + [0, 0, 0, 0, 0, 0, 0, .22, 1][ev.e],
       ringWrapStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [.12, .18, .28, .42, .58, .72, .85, 1, 1][ev.e],
       climbOn: !!(st.road && (st.phase === "play" || st.phase === "over" || st.phase === "round")),
-      climbStarStyle: st.roadBoss ? "font-size:13px;line-height:1;color:#FFB000;text-shadow:0 0 12px rgba(255,176,0,.85);animation:mzBreathe 2s ease-in-out infinite" : "font-size:11px;line-height:1;color:rgba(240,216,154,.45)",
-      climbCells: Array.from({ length: 8 }, (_, k) => { const cur = !st.roadBoss && k === (st.roadRung || 0); const done = st.roadBoss || k < (st.roadRung || 0); return { style: "width:9px;height:11px;border:1px solid " + (cur ? "#FFB000;background:#FFB000;box-shadow:0 0 10px rgba(255,176,0,.8);animation:mzBreathe 2.2s ease-in-out infinite" : done ? "rgba(255,214,150,.6);background:rgba(255,214,150,.5);box-shadow:0 0 8px rgba(255,214,150,.35)" : "rgba(240,216,154,.22);background:rgba(240,216,154,.04)") }; }),
+      climbStarStyle: st.roadBoss ? "font-size:15px;line-height:1;color:#FFB000;text-shadow:0 0 14px rgba(255,176,0,.9);animation:mzBreathe 2s ease-in-out infinite" : "font-size:13px;line-height:1;color:rgba(240,216,154,.45)",
+      climbCells: Array.from({ length: 8 }, (_, k) => { const cur = !st.roadBoss && k === (st.roadRung || 0); const done = st.roadBoss || k < (st.roadRung || 0); return { style: "position:relative;width:7px;height:7px;border-radius:50%;border:1px solid " + (cur ? "#FFB000;background:#FFB000;box-shadow:0 0 12px rgba(255,176,0,.9);animation:mzBreathe 2.2s ease-in-out infinite" : done ? "rgba(255,214,150,.65);background:rgba(255,214,150,.55);box-shadow:0 0 8px rgba(255,214,150,.4)" : "rgba(240,216,154,.3);background:rgba(12,8,4,.6)") }; }),
       ...((() => {
         const t0 = this._tonight();
         if (this._mlvl(t0) < 4 && !this._climbDoneTonight(t0)) {
@@ -2870,6 +3252,8 @@ class Component extends DCLogic {
       oppName: st.duel ? st.duel.b : st.practice ? "the district's hand" : st.road && !st.roadBoss ? ((this._walkers()[st.roadRung] || {}).name || "") : (st.roadBoss || this._specialNight(this._tonight())) && (st.phase === "play" || st.phase === "round") ? "the sky herself" : st.phase === "play" || st.phase === "round" ? (st.nightWalker || "") : "",
       oppC: st.duel ? "#FFB000" : (st.roadBoss || (this._specialNight(this._tonight()) && !st.road && !st.practice)) ? "#FFB000" : "#9A8A5E",
       youN, skyN, matchPips, slots, skyCards, handCards,
+      pipsInPlate: !(st.roadBoss || st.nightSky),
+      pipsTopRight: !!(st.roadBoss || st.nightSky) && matchPips.length > 0 && (st.phase === "play" || st.phase === "round" || st.phase === "won" || st.phase === "lost"),
       skyHandOn: !!(st.roadBoss || st.nightSky),
       ...((() => {
         const w = st.practice ? null : (st.road && !st.roadBoss) ? this._walkers()[st.roadRung] : (!st.road && !st.nightSky && st.nightWalker) ? this._walkers().find(x => x.name === st.nightWalker) : null;
@@ -2879,6 +3263,7 @@ class Component extends DCLogic {
         const gk = w ? ({ "imra": "Fling", "tesh": "Fling", "sef": "Press", "ruen": "Press", "odel": "Press", "brann": "Slam", "mave": "Still", "the quiet one": "Still" })[w.name] || "Press" : "";
         return {
           walkerFigOn: !!f, figPaths: f ? f.p : [], figOp: f ? f.op : 1,
+          oppPlateStyle: "position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;z-index:2;top:" + (f ? "80px" : "10px"),
           figCastStyle: "width:100%;height:100%" + (wc ? ";transform-origin:center 88%;animation:mzCast" + gk + ab + " .7s cubic-bezier(.3,.9,.4,1) both" : ""),
           castFxOn: !!wc,
           castLinesStyle: wc ? "position:absolute;inset:0;pointer-events:none;transform-origin:76% 45%;animation:mzCastLines" + ab + " .5s ease-out both" : "",
@@ -2893,17 +3278,19 @@ class Component extends DCLogic {
       tutWhy: tutF ? tutF.why : ((sc) => sc && sc.w === "sky" ? sc.why : "watch what it claims.")(st.practice && st.tutor ? this._demoScript()[st.tutStep || 0] : null),
       tutSkipTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "tut7" }); },
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
+      matchHdrOn: st.phase === "play" || st.phase === "round" || st.phase === "over",
       ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back && !z.station), zoomStationOn: !!(z && z.station), zoomStName: z && z.station && z.name || "", zoomStSub: z && z.sub || "", zoomStLine: z && z.station && z.line || "", zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
       logLine: st.log,
+      capsList: (st.caps || []).map(cp => { const Lc = st.slots.length, ec = 466 - (Lc * 86 + (Lc - 1) * 5) / 2; const x = ec + cp.i * 91 + 43, y = 112 + (cp.i % 2 ? 22 : 0) + Math.pow(cp.i - (Lc - 1) / 2, 2) * 3; return { t: cp.t, style: "position:absolute;left:" + (x - 70) + "px;top:" + y + "px;width:140px;text-align:center;font-size:10px;color:#D8C89C;text-shadow:0 1px 6px rgba(5,3,2,.95), 0 0 12px rgba(5,3,2,.8);z-index:5;pointer-events:none;animation:mzCapRise 2.3s ease-out both" }; }),
       zoomInnerStyle: "width:210px;height:284px;transform:scale(" + (st.peek && String(st.peek)[0] === "d" ? 1 : .6) + ");transform-origin:top left",
       toastOn: !!st.toast,
       toastText: st.toast ? st.toast.t : "",
       toastStyle: st.toast ? "position:absolute;top:60px;left:50%;transform:translateX(-50%);max-width:430px;text-align:center;font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;text-shadow:0 0 12px rgba(240,216,154,.35), 0 1px 6px rgba(4,3,2,.9);pointer-events:none;z-index:7;animation:" + (st.toast.n % 2 ? "mzToastA" : "mzToastB") + " 1.7s ease both" : "",
       castOn: !!st.castFx,
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
-      turnLine: st.duel && st.phase === "play" ? (st.turn === "you" ? (st.busy ? "" : st.duel.a + " to play") : st.duel.mode === "net" ? st.duel.b + " is thinking…" : st.busy ? "" : st.duel.b + " to play") : skyThinking ? ((st.road ? (st.roadBoss ? "the sky" : st.roadWalker || "the walker") : st.nightSky ? "the sky" : st.nightWalker || "the sky") + " is thinking…") : "",
+      turnLine: st.duel && st.phase === "play" ? (st.turn === "you" ? (st.busy ? "" : st.duel.a + " to play") : (st.duel.mode === "pvp" || st.duel.mode === "bot") ? st.duel.b + " is thinking…" : st.busy ? "" : st.duel.b + " to play") : skyThinking ? ((st.road ? (st.roadBoss ? "the sky" : st.roadWalker || "the walker") : st.nightSky ? "the sky" : st.nightWalker || "the sky") + " is thinking…") : "",
       deckOn: st.phase === "deck",
-      roadTag: st.duel ? "sagittarius a* · " + ["the approach", "the dust lanes", "the disk", "the ring", "the horizon"][Math.min((st.roundWins || []).length, 4)] + " · nothing staked" : st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? "the sky herself · " + ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : this._elevSpec().name + " · " + st.roadWalker) : st.nightSky ? "the sky herself returns" : st.nightWalker ? st.nightWalker + " sits tonight" : "",
+      roadTag: st.duel ? "sagittarius a* · " + ["the approach", "the dust lanes", "the disk", "the ring", "the horizon"][Math.min((st.roundWins || []).length, 4)] + " · nothing staked" : st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : this._elevSpec().name) : st.nightSky ? "she returns to the table" : st.nightWalker ? "at the table tonight" : "",
       roadTagC: st.roadBoss || st.nightSky ? "#FFB000" : "#9A8A5E",
       deckCount: (st.deckSel || []).length,
       tonightName: this._mName(this._tonight()),
@@ -2914,7 +3301,7 @@ class Component extends DCLogic {
         const n = (st.deckSel || []).filter(x => (C[x] || {}).lvl === L).length;
         const on = (st.lvlPin || st.lvlHover) === L;
         return {
-          label: "level " + L, n: n,
+          label: ["claimed", "awake", "familiar", "unleashed"][L - 1], n: n,
           enter: () => this.setState({ lvlHover: L }),
           leave: () => this.setState({ lvlHover: null }),
           tap: () => this.setState({ lvlPin: st.lvlPin === L ? null : L }),
@@ -2923,40 +3310,166 @@ class Component extends DCLogic {
         };
       }),
       lvlLine: (L => L ? [
-        "level 1: numbers only. the move still sleeps.",
-        "level 2: the card's move wakes.",
-        "level 3: the card sheds its labels.",
-        "level 4: the mansion is yours for good. a new specialty opens for the card.",
+        "claimed: the road walked once. numbers only; the move still sleeps.",
+        "awake: the card's move is up and fighting.",
+        "familiar: the card sheds its labels. you know it by sight now.",
+        "unleashed: the mansion is yours for good. a new specialty opens for the card.",
       ][L - 1] + ((st.deckSel || []).some(x => (C[x] || {}).lvl === L) ? "" : " none of yours stand here yet.") : "")(st.lvlPin || st.lvlHover || 0),
+      ...((() => {
+        const t = this._tonight();
+        const wd = n => ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty","twenty-one","twenty-two","twenty-three","twenty-four","twenty-five","twenty-six","twenty-seven","twenty-eight"][n] || String(n);
+        const owned = (st.deckSel || []).length;
+        let bp = null; try { bp = JSON.parse(localStorage.getItem("manzil-ed-birth")); } catch (e) {}
+        const sun = bp && Array.isArray(bp.rows) ? bp.rows.find(r => r.p === "sun") : null;
+        let proph = "the moon stands in the " + this._mName(t) + " tonight.";
+        if (sun) { const away = (sun.m - t + 28) % 28;
+          proph = away === 0 ? "the moon stands in your sun's own house, the " + this._mName(sun.m) + ", tonight."
+            : "the moon stands in the " + this._mName(t) + " tonight. she reaches your sun's house, the " + this._mName(sun.m) + ", " + (away === 1 ? "tomorrow night." : "in " + wd(away) + " nights.");
+        }
+        return {
+          deckSkyLine: "the moon keeps twenty-eight houses. " + wd(owned) + (owned === 1 ? " has" : " have") + " opened " + (owned === 1 ? "its" : "their") + " doors to you; the rest are still asleep. five walk with you to every board.",
+          deckSkyShort: wd(owned) + " of her twenty-eight houses have opened their doors to you.",
+          deckStars: Array.from({ length: 34 }, (_, i) => ({ style: "position:absolute;left:" + ((i * 137.508 + 7) % 100).toFixed(1) + "%;top:" + ((i * 61.8 + 13) % 100).toFixed(1) + "%;width:" + (i % 4 === 0 ? 1.5 : 1) + "px;height:" + (i % 4 === 0 ? 1.5 : 1) + "px;border-radius:50%;background:rgba(" + (i % 5 === 0 ? "186,196,255" : "242,234,214") + "," + (0.3 + (i % 4) * 0.12).toFixed(2) + ")" + (i % 3 === 0 ? ";animation:bsTwinkle " + (5 + i % 4) + "s ease-in-out " + ((i % 7) * 0.7).toFixed(1) + "s infinite" : "") })),
+          ...((sid => {
+            const empty = { deckShowOn: false, deckShowClose: () => {}, dsCardStyle: "", dsArtStyle: "", dsShapes: [], dsL: "", dsR: "", dsName: "", dsNameOn: false, dsPips: [], dsFaceOn: false, dsBackOn: false, dsTier: "", dsMove: "", dsHouse: "" };
+            if (sid == null) return empty;
+            const own2 = (st.deckSel || []).includes(sid), c2 = C[sid] || {}, aw = (sid - t + 28) % 28, lv2 = c2.lvl || 1;
+            const base = { deckShowOn: true, deckShowClose: () => this.setState({ deckShow: null }), dsName: "the " + this._mName(sid), dsHouse: "one of the moon's twenty-eight houses · " + (aw === 0 ? "hers tonight" : aw === 1 ? "hers tomorrow night" : "hers in " + wd(aw) + " nights") };
+            if (!own2) return { ...empty, ...base, dsBackOn: true, dsTier: "still asleep",
+              dsMove: "its face stays dark until its road is walked. " + (aw === 0 ? "the road stands open tonight." : "the moon brings its night " + (aw === 1 ? "tomorrow." : "in " + wd(aw) + " nights.")),
+              dsCardStyle: "position:relative;width:190px;height:248px;border-radius:12px;background:linear-gradient(160deg, #100C14, #060409);border:1px solid rgba(154,138,94,.3);box-shadow:0 18px 44px rgba(0,0,0,.7)" };
+            return { ...base, deckShowOn: true, dsFaceOn: true, dsBackOn: false,
+              dsShapes: window.ManzilArt ? window.ManzilArt.get(sid) : [], dsL: c2.l, dsR: c2.r, dsNameOn: lv2 < 3,
+              dsArtStyle: "position:absolute;opacity:.88;" + (lv2 >= 4 ? "top:21px;left:21px;width:162px;height:198px" : lv2 >= 3 ? "top:42px;left:28px;width:148px;height:141px" : "top:14px;left:42px;width:105px;height:91px"),
+              dsPips: Array.from({ length: 4 }, (_, pi) => ({ style: "width:5px;height:5px;border-radius:50%;background:" + (pi < lv2 ? (lv2 >= 4 ? "#FFB000" : "rgba(240,216,154,.85)") : "rgba(240,216,154,.18)") + (pi < lv2 && lv2 >= 4 ? ";box-shadow:0 0 5px rgba(255,176,0,.7)" : "") })),
+              dsTier: (["claimed", "awake", "familiar", "unleashed"][lv2 - 1]) + (c2.planet ? " · your " + c2.planet : c2.loan ? " · walks with you on loan" : ""),
+              dsMove: (lv2 >= 2 ? "" : "its move still sleeps: ") + (this._simpleMove(sid) || ""),
+              dsCardStyle: "position:relative;width:190px;height:248px;border-radius:12px;cursor:default;" + (lv2 >= 4 ? "background:linear-gradient(160deg, #2C2109, #0D0904);border:1.5px solid #F0D89A;animation:mzWinGlow 3.6s ease-in-out infinite" : "background:linear-gradient(160deg, " + (c2.planet ? "#2A1E09" : "#241B08") + ", #0B0703);border:1.5px solid #F0D89A;box-shadow:0 18px 44px rgba(0,0,0,.7), 0 0 22px rgba(240,216,154,.22)") };
+          })(st.deckShow)),
+          ...((fk => {
+            if (!fk) return { deckFocusOn: false, deckRestOn: true, focusName: "", focusTier: "", focusMove: "" };
+            if (fk.dark) return { deckFocusOn: true, deckRestOn: false, focusName: "the " + this._mName(fk.id), focusTier: "still asleep",
+              focusMove: fk.away === 0 ? "the moon stands here tonight. walk its road and the door opens." : "the moon stands here " + (fk.away === 1 ? "tomorrow night." : "in " + wd(fk.away) + " nights.") };
+            const c2 = C[fk.id] || {};
+            return { deckFocusOn: true, deckRestOn: false, focusName: "the " + this._mName(fk.id),
+              focusTier: (["claimed", "awake", "familiar", "unleashed"][(c2.lvl || 1) - 1]) + (c2.planet ? " · your " + c2.planet : c2.loan ? " · walks with you on loan" : ""),
+              focusMove: (c2.lvl || 1) >= 2 ? (this._simpleMove(fk.id) || "") : "its move still sleeps: " + (this._simpleMove(fk.id) || "") };
+          })(st.deckFocus)),
+          deckProphecy: proph,
+          deckMoonStyle: "position:absolute;left:456px;top:52px;width:20px;height:20px;border-radius:50%;z-index:70;pointer-events:none;background:radial-gradient(circle at 38% 34%, #F2E6C4, #C9B685 58%, #8F7E55);box-shadow:0 0 14px rgba(240,216,154,.5), 0 0 34px rgba(240,216,154,.22);animation:mzBreathe 5.5s ease-in-out infinite",
+        };
+      })()),
       deckCards: Array.from({ length: 28 }, (_, k) => k + 1).map(id => {
         const tonight = this._tonight();
         const c = C[id];
         const owned = (st.deckSel || []).includes(id);
         const hl = st.lvlPin || st.lvlHover;
-        const ringStyle = "position:absolute;inset:-2px;border-radius:8px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;transition:opacity .3s ease;opacity:.6";
-        if (!owned) return { name: "", ln: "", rn: "", faceOn: false, backOn: true, nameOn: false, cornersOn: false, innerOn: false, frameC: "", artStyle: "", lnStyle: "", rnStyle: "", shapes: [],
-          ringOn: id === tonight, ringStyle, onTap: () => {}, onPeek: () => {}, onPeekEnd: () => {}, onHold: () => {},
-          style: "width:54px;height:70px;box-sizing:border-box;border-radius:6px;position:relative;background:linear-gradient(160deg, #150F08, #080502);border:1px solid rgba(154,138,94,.2);transition:opacity .3s ease;opacity:" + (hl ? ".14" : ".7") };
+        const off = (id - tonight + 28) % 28;
+        const th = off * Math.PI * 2 / 28, sn = Math.sin(th), csn = Math.cos(th);
+        const sz = owned ? 46 : 36;
+        const ax = Math.round(466 + 332 * sn) - sz / 2, ay = Math.round(222 - 134 * csn) - sz / 2;
+        const zi = 40 - Math.min(off, 28 - off);
+        const arcPos = "position:absolute;left:" + ax + "px;top:" + ay + "px;z-index:" + zi + ";";
+        const arcHover = "transform:translate(" + Math.round(26 * sn) + "px," + Math.round(-26 * csn) + "px) scale(1.55);z-index:95";
+        const away = (id - tonight + 28) % 28;
+        const ringStyle = "position:absolute;inset:-3px;border-radius:50%;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;transition:opacity .3s ease;opacity:.6";
+        if (!owned) {
+        return { name: "", ln: "", rn: "", faceOn: false, backOn: true, nameOn: false, cornersOn: false, innerOn: false, frameC: "", artStyle: "", lnStyle: "", rnStyle: "", shapes: [], pips: [], backSub: "",
+          ringOn: id === tonight, ringStyle, onTap: () => this.setState({ deckShow: id }),
+          onPeek: () => this.setState({ deckFocus: { dark: true, id, away } }),
+          onPeekEnd: () => this.setState({ deckFocus: null }),
+          onHold: () => this.setState({ deckFocus: { dark: true, id, away } }), hover: arcHover,
+          style: arcPos + "width:36px;height:36px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle at 40% 34%, #14101C, #070409);border:1px solid rgba(154,138,94,.24);transition:opacity .2s ease, transform .16s cubic-bezier(.3,1.4,.4,1);cursor:pointer;opacity:" + (hl ? ".14" : ".7") }; }
         const f = frame(c.lvl);
         return {
-          name: c.name.toLowerCase(), ln: c.l, rn: c.r,
+          name: c.name.toLowerCase(), ln: c.l, rn: c.r, backSub: "",
           faceOn: true, backOn: false,
-          nameOn: c.lvl < 3,
-          cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
-          artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:6px;left:6px;width:46px;height:56px" : c.lvl >= 3 ? "top:12px;left:8px;width:42px;height:40px" : "top:4px;left:12px;width:30px;height:26px"),
-          lnStyle: "position:absolute;top:4px;left:7px;font-size:" + (c.lvl >= 4 ? 8 : 10) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
-          rnStyle: "position:absolute;bottom:4px;right:7px;font-size:" + (c.lvl >= 4 ? 8 : 10) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
+          pips: Array.from({ length: 4 }, (_, pi) => ({ style: "width:3px;height:3px;border-radius:50%;background:" + (pi < c.lvl ? (c.lvl >= 4 ? "#FFB000" : "rgba(240,216,154,.85)") : "rgba(240,216,154,.18)") + (pi < c.lvl && c.lvl >= 4 ? ";box-shadow:0 0 4px rgba(255,176,0,.7)" : "") })),
+          nameOn: false,
+          cornersOn: false, innerOn: false, frameC: f.c,
+          artStyle: "position:absolute;top:6px;left:6px;width:32px;height:32px;opacity:.92",
+          lnStyle: "display:none", rnStyle: "display:none",
           shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
           ringOn: id === tonight, ringStyle,
-          onTap: () => {},
-          onPeek: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: "d" + id }); else this._holdT = setTimeout(() => this.setState({ peek: "d" + id }), 500); },
-          onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
-          onHold: () => { clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: "d" + id }), 400); },
-          style: "width:54px;height:70px;box-sizing:border-box;border-radius:6px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);transition:border-color .2s ease, opacity .3s ease, transform .3s ease, box-shadow .3s ease;cursor:pointer;" + (c.loan ? "border:1.5px solid rgba(154,138,94,.8);box-shadow:0 6px 16px rgba(0,0,0,.55)" : "border:1.5px solid #F0D89A;box-shadow:0 6px 16px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154,.18)") + (hl ? (c.lvl === hl ? ";transform:translateY(-3px);box-shadow:0 9px 20px rgba(0,0,0,.65), 0 0 16px rgba(240,216,154,.3)" : ";opacity:.18") : ""),
+          onTap: () => this.setState({ deckShow: id }),
+          onPeek: () => { clearTimeout(this._holdT); this.setState({ deckFocus: { id } }); },
+          onPeekEnd: () => { clearTimeout(this._holdT); this.setState({ deckFocus: null }); },
+          onHold: () => { clearTimeout(this._holdT); this.setState({ deckFocus: { id } }); },
+          hover: arcHover,
+          style: arcPos + "width:46px;height:46px;box-sizing:border-box;border-radius:50%;transition:border-color .2s ease, opacity .2s ease, transform .16s cubic-bezier(.3,1.4,.4,1), box-shadow .2s ease;cursor:pointer;" +
+            (c.loan ? "background:radial-gradient(circle at 40% 34%, #241B08, #0B0703);border:1.5px solid rgba(154,138,94,.8);box-shadow:0 5px 14px rgba(0,0,0,.55)"
+              : c.lvl >= 4 ? "background:radial-gradient(circle at 40% 34%, #2C2109, #0D0904);border:1.5px solid #F0D89A;animation:mzWinGlow 3.6s ease-in-out infinite"
+              : "background:radial-gradient(circle at 40% 34%, " + (c.planet ? "#2A1E09" : "#241B08") + ", #0B0703);border:1.5px solid #F0D89A;box-shadow:0 5px 14px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154," + (c.planet ? ".32" : ".18") + ")") +
+            (hl ? (c.lvl === hl ? ";transform:scale(1.18);box-shadow:0 9px 20px rgba(0,0,0,.65), 0 0 16px rgba(240,216,154,.3)" : ";opacity:.18") : ""),
         };
       }),
-      menuOn: st.phase === "menu" || (st.phase === "legend" && (st.legendBeat || 0) >= 7),
+      menuOn: st.phase === "menu" || st.phase === "mode" || st.phase === "record" || (st.phase === "legend" && (st.legendBeat || 0) >= 7),
       menuUiOn: st.phase === "menu",
+      modeUiOn: st.phase === "mode",
+      recordUiOn: st.phase === "record",
+      menuModeTap: () => this.setState({ phase: "mode" }),
+      recordTap: () => this.setState({ phase: "record" }),
+      modeBackTap: () => this.setState({ phase: "menu" }),
+      roadDots: (() => {
+        const t = this._tonight(), done = this._mlvl(t) >= 4;
+        const r = done ? 9 : Math.min(this._rungs()[t] || 0, 8);
+        return Array.from({ length: 9 }, (_, i) => {
+          const sky = i === 8, passed = i < r, cur = !done && i === r;
+          const top = (78 - i * 8.6).toFixed(1), sz = (8 - i * 0.55).toFixed(1);
+          const col = cur ? "#FFB000" : passed ? "rgba(240,216,154,.9)" : "rgba(240,216,154,.3)";
+          let s = "position:absolute;left:50%;top:" + top + "%;transform:translateX(-50%);";
+          if (sky) s += "font-size:" + (cur ? 15 : 11) + "px;line-height:1;color:" + col + (cur || passed ? ";text-shadow:0 0 10px rgba(255,176,0,.8)" : "") + (cur ? ";animation:mzBreathe 2.6s ease-in-out infinite" : "");
+          else s += "width:" + sz + "px;height:" + sz + "px;border-radius:50%;background:" + col + ";" + (cur ? "box-shadow:0 0 12px rgba(255,176,0,.9);animation:mzWinGlow 2.2s ease-in-out infinite" : passed ? "box-shadow:0 0 7px rgba(255,176,0,.4)" : "");
+          return { style: s, t: sky ? "✦" : "" };
+        });
+      })(),
+      ...((() => {
+        let ml = {}, wr = {}, pk = [];
+        try { ml = JSON.parse(localStorage.getItem("manzil-ed-mlvl")) || {}; } catch (e) {}
+        try { wr = JSON.parse(localStorage.getItem("manzil-ed-wrec")) || {}; } catch (e) {}
+        try { pk = JSON.parse(localStorage.getItem("manzil-ed-pack")) || []; } catch (e) {}
+        const climbs = Object.values(ml).reduce((a, b) => a + Math.min(b || 0, 4), 0);
+        const claimed = Object.values(ml).filter(v => v >= 4).length;
+        const w = Object.values(wr).reduce((a, x) => a + (x.w || 0), 0);
+        const l = Object.values(wr).reduce((a, x) => a + (x.l || 0), 0);
+        const b3 = this._birth() || {};
+        const t3 = this._tonight();
+        const recLedger = Array.from({ length: 28 }, (_, i) => {
+          const m = i + 1, lv = Math.min(ml[m] || 0, 4);
+          const op = [.14, .34, .54, .74, .95][lv];
+          let s = "width:9px;height:9px;border-radius:2px;background:rgba(240,216,154," + op + ");";
+          if (lv >= 4) s += "box-shadow:0 0 7px rgba(240,216,154,.55);";
+          if (m === t3) s += "box-shadow:0 0 0 1px #FFB000" + (lv >= 4 ? ", 0 0 7px rgba(240,216,154,.55)" : "") + ";";
+          return { style: s, t: "the " + this._mName(m) + (lv >= 4 ? " · claimed" : lv > 0 ? " · level " + lv : "") };
+        });
+        const _ls = (op) => "font-family:'Varela Round',sans-serif;font-size:10px;color:" + (op ? "#D8C89C" : "#9A8A5E") + ";text-shadow:0 1px 8px rgba(5,3,2,.85)";
+        const _ns = (big, amber) => "font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + (big ? 27 : 19) + "px;line-height:1;color:" + (amber ? "#FFB000" : "#F2EAD6") + ";text-align:right;text-shadow:0 2px 12px rgba(5,3,2,.9)" + (amber ? ", 0 0 12px rgba(255,176,0,.28)" : "");
+        return { recLedger,
+        ...((() => {
+          const rows = Array.isArray(b3.rows) ? b3.rows : [];
+          const sun = rows.find(r => r.p === "sun"), moon = rows.find(r => r.p === "moon");
+          if (sun && moon) return {
+            recShard: "the " + this._mName(sun.m) + " of the " + this._mName(moon.m),
+            recCastLine: "the sun stands in the " + this._mName(sun.m) + ", the moon in the " + this._mName(moon.m),
+          };
+          return { recShard: "your walk begins", recCastLine: "cast your five and the sky will name you" };
+        })()),
+        recStats: [
+          { n: claimed, l: "mansions claimed", ls: _ls(1), ns: _ns(1, 1), sub: "a road walked to its fourth climb: the card is yours for good", subOn: true },
+          { n: climbs, l: "climbs finished", ls: _ls(1), ns: _ns(1, 0), sub: false, subOn: false },
+          { n: pk.length, l: "cards in your hand", ls: _ls(0), ns: _ns(0, 0), sub: false, subOn: false },
+          { n: w + " – " + l, l: "boards won · lost", ls: _ls(0), ns: _ns(0, 0), sub: false, subOn: false },
+        ] };
+      })()),
+      ...((() => { // the glyph is the player's own sky: their five at true mansion positions
+        const b = this._birth();
+        const rows = b && Array.isArray(b.rows) && b.rows.length ? b.rows : ["sun", "moon", "mercury", "venus", "mars"].map((p, i) => ({ p, m: [5, 6, 10, 17, 18][i] }));
+        const pt = (m, rad) => { const a = ((m - 0.5) * 360 / 28 - 90) * Math.PI / 180; return { x: +(36 + rad * Math.cos(a)).toFixed(2), y: +(36 + rad * Math.sin(a)).toFixed(2) }; };
+        const dots = rows.map(r => { const q = pt(r.m, 27); return { x: q.x, y: q.y, r: r.p === "sun" ? 1.8 : 1.4, c: r.p === "sun" ? "#FFB000" : "#F0D89A" }; });
+        const lines = [];
+        for (let i = 0; i < dots.length; i++) { const a2 = dots[i], b2 = dots[(i + 1) % dots.length]; if (a2.x === b2.x && a2.y === b2.y) continue; lines.push({ x1: a2.x, y1: a2.y, x2: b2.x, y2: b2.y, c: i === 0 ? "#FFB000" : "#F0D89A", o: i === 0 ? ".55" : ".38" }); }
+        return { shardDots: dots, shardLines: lines };
+      })()),
       doorUiOn: st.phase === "legend" && (st.legendBeat || 0) >= 7,
       setOn: st.phase === "set",
       legendOn: st.phase === "legend" && (st.legendBeat || 0) <= 6,
@@ -2969,83 +3482,109 @@ class Component extends DCLogic {
       legendDoorTap: (e) => { e.stopPropagation(); this._legendDone(); },
       menuLegendTap: () => this.setState({ phase: "legend", legendBeat: 0 }),
       birthOn: st.phase === "birth", tut5On: st.phase === "tut5", tut7On: st.phase === "tut7",
-      bErr: st.bErr || "",
+      bTime: st.bTime || "", bErr: st.bErr || st.acctError || "",
+      acctSignupOn: st.acctMode !== "login",
+      acctSublineM: st.acctMode === "login" ? "welcome back. sign in to pick up your walk." : "the sky wrote something the minute you arrived. tell us the minute.",
+      acctUsernameVal: st.acctUsername || "",
+      acctSetUsername: (e) => this.setState({ acctUsername: e.target.value, bErr: "" }),
+      acctPasswordVal: st.acctPassword || "",
+      acctSetPassword: (e) => this.setState({ acctPassword: e.target.value, bErr: "" }),
+      acctPassPlaceholderM: st.acctMode === "login" ? "your password" : "at least 8 characters",
+      acctSubmitLabelM: st.acctBusy ? "…" : (st.acctMode === "login" ? "sign in" : "cast your five"),
+      acctToggleModeM: () => this.setState(s => ({ acctMode: s.acctMode === "login" ? "signup" : "login", bErr: "" })),
+      acctModeToggleLabelM: st.acctMode === "login" ? "new here? create an account instead" : "already have a shard? sign in instead",
       ...((() => {
+        if (st.phase !== "birth") return { bCells: [], bHead: "", bGridStyle: "display:none", bPicked: "", bPrevTap: () => {}, bNextTap: () => {}, bHeadTap: () => {} };
         const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-        const bDaysInMonth = (m, y) => { const mm = m ? parseInt(m, 10) : 2, yy = y ? parseInt(y, 10) : 2000; return new Date(yy, mm, 0).getDate(); };
-        const bMonthOptions = MO.map((label, i) => ({ value: String(i + 1).padStart(2, "0"), label }));
-        const dayCount = bDaysInMonth(st.bDateM, st.bDateY);
-        const bDayOptions = Array.from({ length: dayCount }, (_, i) => { const v = String(i + 1).padStart(2, "0"); return { value: v, label: String(i + 1) }; });
-        const nowYear = new Date().getFullYear();
-        const bYearOptions = Array.from({ length: nowYear - 1919 }, (_, i) => { const y = String(nowYear - i); return { value: y, label: y }; });
-        const bHourOptions = Array.from({ length: 12 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }));
-        const bMinuteOptions = Array.from({ length: 60 }, (_, i) => { const v = String(i).padStart(2, "0"); return { value: v, label: v }; });
-        const selStyle = "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:7px 16px 7px 2px;outline:none;cursor:pointer";
-        const timeSelStyle = "width:100%;appearance:none;-webkit-appearance:none;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);font-family:'Varela Round',sans-serif;font-size:15px;padding:7px 16px 7px 2px;outline:none;cursor:pointer;" + (st.bTimeU ? "color:rgba(154,138,94,.4)" : "color:#F2EAD6");
+        const step = st.bStep || "y", pe = st.bPageEnd || 2012;
+        const sel = "background:rgba(240,216,154,.1);border:1px solid #F0D89A;color:#F0D89A";
+        const base = "background:none;border:1px solid transparent;border-radius:3px;padding:5px 0;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;color:#D8C89C;transition:all .25s ease";
+        const dayBase = base.replace("padding:5px 0", "padding:3px 0").replace("font-size:11px", "font-size:10.5px");
+        let cells = [], head = "", hint = "";
+        if (step === "y") {
+          head = (pe - 11) + " – " + pe; hint = "pick the year";
+          for (let y = pe - 11; y <= pe; y++) cells.push({ t: "" + y, style: base + (st.bY === y ? ";" + sel : ""), tap: ((yy) => () => this.setState({ bY: yy, bStep: "m", bErr: "" }))(y) });
+        } else if (step === "m") {
+          head = "" + st.bY; hint = "pick the month";
+          MO.forEach((n, i) => cells.push({ t: n.slice(0, 3), style: base + (st.bM === i ? ";" + sel : ""), tap: () => this.setState({ bM: i, bStep: "d", bErr: "" }) }));
+        } else {
+          head = MO[st.bM] + " " + st.bY; hint = "pick the day";
+          const off = new Date(st.bY, st.bM, 1).getDay(), n = new Date(st.bY, st.bM + 1, 0).getDate();
+          for (let i = 0; i < off; i++) cells.push({ t: "", style: "background:none;border:none;padding:3px 0", tap: () => {} });
+          for (let d = 1; d <= n; d++) cells.push({ t: "" + d, style: dayBase + (st.bD === d ? ";" + sel : ""), tap: ((dd) => () => this.setState({ bD: dd, bErr: "" }))(d) });
+        }
+        const done = st.bY != null && st.bM != null && st.bD != null;
         return {
-          bMonthOptions, bDayOptions, bYearOptions, bHourOptions, bMinuteOptions,
-          bSelectStyle: selStyle, bTimeSelectStyle: timeSelStyle, bTimeSelectDisabled: !!st.bTimeU,
-          bChevronStyle: "position:absolute;right:2px;top:7px;pointer-events:none;color:#9A8A5E;font-size:10px",
-          bDateMVal: st.bDateM || "", bDateDVal: st.bDateD || "", bDateYVal: st.bDateY || "",
-          bSetDateY: (e) => this.setState(s => { const y = e.target.value, d = parseInt(s.bDateD, 10) > bDaysInMonth(s.bDateM, y) ? "" : s.bDateD; return { bDateY: y, bDateD: d, bErr: "" }; }),
-          bSetDateM: (e) => this.setState(s => { const m = e.target.value, d = parseInt(s.bDateD, 10) > bDaysInMonth(m, s.bDateY) ? "" : s.bDateD; return { bDateM: m, bDateD: d, bErr: "" }; }),
-          bSetDateD: (e) => this.setState({ bDateD: e.target.value, bErr: "" }),
-          bTimeHVal: st.bTimeH || "", bTimeMinVal: st.bTimeMin || "", bTimeAPVal: st.bTimeAP || "",
-          bSetTimeH: (e) => this.setState({ bTimeH: e.target.value, bErr: "" }),
-          bSetTimeMin: (e) => this.setState({ bTimeMin: e.target.value, bErr: "" }),
-          bSetTimeAP: (e) => this.setState({ bTimeAP: e.target.value, bErr: "" }),
+          bCells: cells, bHead: head,
+          bGridStyle: "display:grid;grid-template-columns:repeat(" + (step === "d" ? 7 : 4) + ",1fr);gap:" + (step === "d" ? 2 : 4) + "px",
+          bPicked: done ? st.bD + " " + MO[st.bM] + " " + st.bY : hint,
+          bPrevTap: () => this.setState(s => { const t = s.bStep || "y"; if (t === "y") return { bPageEnd: Math.max((s.bPageEnd || 2012) - 12, 1891) }; if (t === "m") return { bY: s.bY - 1 }; let m = s.bM - 1, y = s.bY; if (m < 0) { m = 11; y--; } return { bM: m, bY: y, bD: null }; }),
+          bNextTap: () => this.setState(s => { const t = s.bStep || "y"; if (t === "y") return { bPageEnd: Math.min((s.bPageEnd || 2012) + 12, 2026) }; if (t === "m") return { bY: s.bY + 1 }; let m = s.bM + 1, y = s.bY; if (m > 11) { m = 0; y++; } return { bM: m, bY: y, bD: null }; }),
+          bHeadTap: () => this.setState(s => (s.bStep || "y") === "d" ? { bStep: "m" } : { bStep: "y" }),
         };
       })()),
+      bTimeChange: (e) => this.setState({ bTime: e.target.value, bErr: "" }),
+      bPlace: st.bPlace || "",
+      bPlaceChange: (e) => this.setState({ bPlace: e.target.value, bErr: "" }),
+      bEmail: st.bEmail || "",
+      bEmailChange: (e) => this.setState({ bEmail: e.target.value, bErr: "" }),
+      deckBackLabel: st.navFrom === "record" ? "‹ your walk" : "‹ the street",
+      duelBackLabel: st.navFrom === "mode" ? "‹ the open night" : "‹ the street",
       bTimeToggle: () => this.setState(s => ({ bTimeU: !s.bTimeU, bErr: "" })),
       bTimeMark: st.bTimeU ? "☑" : "☐",
-      bTimeBtnStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11px;" + (st.bTimeU ? "color:#F0D89A" : "color:#9A8A5E"),
-      bPlaceChosen: !!st.bPlace, bPlaceNotChosen: !st.bPlace,
-      bPlaceConfirmedLine: st.bPlace ? (st.bPlace.name + ", " + st.bPlace.region) : "",
-      bChangePlace: () => this.setState({ bPlace: null, bQuery: "", bCityResults: [] }),
-      bQueryVal: st.bQuery || "", bSetQuery: (e) => this.setState({ bQuery: e.target.value, bErr: "" }),
-      bSearchLabel: st.bSearching ? "searching…" : "search",
-      bSearchTap: async () => {
-        const q = (this.state.bQuery || "").trim();
-        if (!q) return;
-        this.setState({ bSearching: true, bCityResults: [], bErr: "" });
-        try {
-          const url = "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(q) + "&count=6&language=en&format=json";
-          const r = await fetch(url);
-          const j = await r.json();
-          const res = (j.results || []).map(x => ({ name: x.name, region: [x.admin1, x.country].filter(Boolean).join(", ") }));
-          this.setState({ bSearching: false, bCityResults: res, bErr: res.length ? "" : "no place found by that name. try a different spelling, or enter coordinates manually" });
-        } catch (e) {
-          this.setState({ bSearching: false, bErr: "the star atlas is unreachable. try again, or enter coordinates manually" });
-        }
-      },
-      bHasResults: (st.bCityResults || []).length > 0,
-      bCityRows: (st.bCityResults || []).map(r => ({ label: r.name + ", " + r.region, pick: () => this.setState({ bPlace: r, bCityResults: [], bQuery: r.name + ", " + r.region }) })),
-      bManualOn: !!st.bManualMode, bManualOff: !st.bManualMode,
-      bManualToggleLabel: st.bManualMode ? "‹ search for a city instead" : "enter coordinates manually instead",
-      bToggleManual: () => this.setState(s => ({ bManualMode: !s.bManualMode, bErr: "" })),
-      bLatVal: st.bLat || "", bLonVal: st.bLon || "", bTzVal: st.bTz || "",
-      bSetLat: (e) => this.setState({ bLat: e.target.value, bErr: "" }),
-      bSetLon: (e) => this.setState({ bLon: e.target.value, bErr: "" }),
-      bSetTz: (e) => this.setState({ bTz: e.target.value, bErr: "" }),
-      bCastStyle: "font-family:'Varela Round',sans-serif;font-size:12.5px;padding:14px 32px;cursor:pointer;transition:all .4s ease;" + (st.bDateY && st.bDateM && st.bDateD && ((st.bTimeH && st.bTimeMin && st.bTimeAP) || st.bTimeU) ? "background:rgba(240,216,154,.12);border:1px solid #F0D89A;color:#F0D89A" : "background:none;border:1px solid rgba(240,216,154,.25);color:#9A8A5E"),
-      birthCastTap: () => {
+      bTimeBtnStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;" + (st.bTimeU ? "color:#F0D89A" : "color:#9A8A5E"),
+      bTimeInputStyle: "background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:5px 2px;outline:none;width:100%;transition:opacity .3s ease;" + (st.bTimeU ? "opacity:.3;pointer-events:none" : ""),
+      bCastStyle: "font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 32px;cursor:pointer;border-radius:5px;transition:transform .12s ease, box-shadow .12s ease, background .2s ease, color .2s ease, border-color .2s ease;" + (this._acctFormOk(st) ? "background:linear-gradient(180deg, rgba(240,216,154,.2), rgba(240,216,154,.07));border:1px solid #F0D89A;color:#F0D89A;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4), 0 0 18px rgba(240,216,154,.18)" : "background:none;border:1px solid rgba(240,216,154,.25);color:#9A8A5E"),
+      birthCastTap: async () => {
         const s0 = this.state;
-        if (!s0.bDateY || !s0.bDateM || !s0.bDateD) { this.setState({ bErr: "the sky needs the full date" }); return; }
-        if (!s0.bTimeU && !(s0.bTimeH && s0.bTimeMin && s0.bTimeAP)) { this.setState({ bErr: "the sky needs the full time, or check the box" }); return; }
+        if (s0.acctBusy || !this._acctFormOk(s0)) return;
+        const em = (s0.bEmail || "").trim().toLowerCase();
+        const password = s0.acctPassword;
+        this.setState({ acctBusy: true, bErr: "" });
+
+        if (s0.acctMode === "login") {
+          try {
+            const res = await this.api.login(em, password);
+            this.setState({ authEmail: res.email, authUsername: res.username, acctBusy: false, acctPassword: "" });
+            if (!this._birth()) {
+              const birth = await this.api.getBirth();
+              if (birth && birth.birthDate) this._hydrateBirthFromServer(birth);
+            }
+            this.setState({ phase: "menu", deckSel: (this._deckState()).deckSel });
+          } catch (e) {
+            this.setState({ acctBusy: false, bErr: this.api.loginError(e.code) });
+          }
+          return;
+        }
+
+        if (s0.bY == null || s0.bM == null || s0.bD == null) { this.setState({ acctBusy: false, bErr: "the sky needs the full date" }); return; }
+        const username = (s0.acctUsername || "").trim().toLowerCase();
         const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-        const y = parseInt(s0.bDateY, 10), m = parseInt(s0.bDateM, 10) - 1, d = parseInt(s0.bDateD, 10);
-        const dt = new Date(y, m, d);
-        const ds = d + " " + MO[m] + " " + y;
-        let ts = null;
-        if (!s0.bTimeU) {
-          let h = parseInt(s0.bTimeH, 10) % 12;
-          if (s0.bTimeAP === "PM") h += 12;
-          dt.setHours(h, parseInt(s0.bTimeMin, 10), 0, 0);
-          ts = String(h).padStart(2, "0") + ":" + s0.bTimeMin;
+        const dt = new Date(s0.bY, s0.bM, s0.bD);
+        const ds = s0.bD + " " + MO[s0.bM] + " " + s0.bY;
+        const ts = (s0.bTime || "").trim();
+        const timeKnown = !s0.bTimeU;
+        if (timeKnown && ts) {
+          const m = ts.match(/(\d{1,2})[:.]?(\d{2})?\s*(am|pm)?/i);
+          if (m) { let h = parseInt(m[1]); const mm = m[2] ? parseInt(m[2]) : 0; const ap = m[3] ? m[3].toLowerCase() : null; if (ap === "pm" && h < 12) h += 12; if (ap === "am" && h === 12) h = 0; dt.setHours(h, mm, 0, 0); }
+          else dt.setHours(12, 0, 0, 0);
         } else dt.setHours(12, 0, 0, 0);
-        const pack = this._saveBirth(dt, ds, ts);
-        if (!pack) { this.setState({ bErr: "the sky can't read that date" }); return; }
-        this.setState({ phase: "tut5", tutI: 0, deckSel: pack, bErr: "" });
+        const birthDate = s0.bY + "-" + String(s0.bM + 1).padStart(2, "0") + "-" + String(s0.bD).padStart(2, "0");
+        const birthTime = timeKnown && dt ? String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0") : null;
+
+        try {
+          const res = await this.api.signup(em, password, {
+            username, birthDate, birthTime, birthTimeKnown: timeKnown,
+            placeName: (s0.bPlace || "").trim() || null,
+          });
+          try { localStorage.setItem("manzil-ed-email", em); } catch (e) {}
+          const pack = this._saveBirth(dt, ds, timeKnown ? ts : null, s0.bPlace);
+          if (!pack) { this.setState({ acctBusy: false, bErr: "the sky can't read that date" }); return; }
+          this.setState({ authEmail: res.email, authUsername: res.username, phase: "tut5", tutI: 0, deckSel: pack, acctBusy: false, acctPassword: "", bErr: "" });
+        } catch (e) {
+          if (e.code === "email_taken") { this.setState({ acctMode: "login", acctBusy: false, bErr: "that email already has a shard. sign in instead" }); return; }
+          this.setState({ acctBusy: false, bErr: this.api.signupError(e.code) });
+        }
       },
       revealDate: (this._birth() || {}).date || "",
       revealCards: (st.phase === "tut5" ? this._chartFive() : []).map(id => {
@@ -3077,7 +3616,7 @@ class Component extends DCLogic {
         return wk.name + " has turned you back " + (rec.l === 1 ? "once" : rec.l === 2 ? "twice" : rec.l + " times") + ". the rung waits.";
       })())),
       menuPlayLabel: this._mlvl(this._tonight()) < 4 ? (this._climbDoneTonight(this._tonight()) ? "sit at the table ✦" : "walk the road ✦") : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
-      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight · the moon returns in " + this._moonIn() : ["the first climb", "the second climb", "the third climb", "the last climb", "the table"][Math.min(this._mlvl(this._tonight()), 4)]) + " · the " + this._mName(this._tonight()),
+      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight · the moon returns in " + this._moonIn() : ["the first climb", "the second climb", "the third climb", "the last climb", "the table"][Math.min(this._mlvl(this._tonight()), 4)] + ((r => r > 0 && this._mlvl(this._tonight()) < 4 ? " · rung " + (r + 1) + " of 9" : "")(Math.min(this._rungs()[this._tonight()] || 0, 8)))),
       fiveLabel: (st.deckSel || []).length >= 5 ? "your next five" : "choose your pack",
       fiveCards: (() => {
         const out = this._deal(st.deckSel || [], 1).map((id, i) => {
@@ -3111,7 +3650,9 @@ class Component extends DCLogic {
         return this._walkerFor(t).name + " sits at the table tonight, best of five.";
       })(),
       menuPlayTap: () => {
-        if (this.state.duel) { const d = this.state.duel; this._startDuel(d.mode, d.opp || { name: d.b, five: (this.state.chosenB || []).slice() }); return; }
+        if (this.state.duel && this.state.duel.mode === "pvp") { this.setState({ phase: "duel1", duel: null, duelSeek: null }); return; } // no auto-rematch queue in v1 — back to the lobby to find someone new
+        if (this.state.duel && this.state.duel.mode === "bot") { this._startBotDuel(); return; }
+        if (this.state.duel) { this._startDuel(); return; }
         if (st.deckSel.length < 5) { this.setState({ phase: "deck" }); return; }
         try { localStorage.setItem("manzil-ed-pack", JSON.stringify(st.deckSel)); } catch (e) {}
         this._clearSeq();
@@ -3119,8 +3660,8 @@ class Component extends DCLogic {
         this._introT = setTimeout(() => this._startMatch(), 2400);
       },
       menuSetTap: () => this.setState({ phase: "set" }),
-      menuDeckTap: () => this.setState({ phase: "deck" }),
-      menuDuelTap: () => this.setState({ phase: "duel1", duelSeek: null }),
+      menuDeckTap: () => this.setState({ phase: "deck", navFrom: st.phase === "record" ? "record" : "menu" }),
+      menuDuelTap: () => this.setState({ phase: "duel1", duelSeek: null, navFrom: st.phase === "mode" ? "mode" : "menu" }),
       duelLobbyOn: st.phase === "duel1",
       duelSeatOn: st.phase === "duel2",
       lobbyIdleOn: !st.duelSeek,
@@ -3128,14 +3669,20 @@ class Component extends DCLogic {
       foundOn: !!(st.duelSeek && st.duelSeek.stage === "found"),
       foundName: (st.duelSeek && st.duelSeek.opp && st.duelSeek.opp.name) || "",
       foundLine: (st.duelSeek && st.duelSeek.opp && st.duelSeek.opp.line) || "",
-      duelSeekTap: () => { clearTimeout(this._seekT); this.setState({ duelSeek: { stage: "seek" } }); this._seekT = setTimeout(() => { const r = this._roster(); const opp = r[Math.floor(Math.random() * r.length)]; this.setState({ duelSeek: { stage: "found", opp } }); this._seekT = setTimeout(() => { if (this.state.phase === "duel1") this._startDuel("net", opp); }, 1700); }, 1600); },
+      duelSeekTap: () => this._duelSeekTap(),
       duelSeatLink: () => this.setState({ phase: "duel2" }),
-      duelGo2Tap: () => this._startDuel("seat"),
+      duelGo2Tap: () => this._startDuel(),
       duelA: st.duelA !== undefined ? st.duelA : (this._duelSaved().a || ""),
       duelB: st.duelB !== undefined ? st.duelB : (this._duelSaved().b || ""),
       duelATyp: (e) => this.setState({ duelA: e.target.value }),
       duelBTyp: (e) => this.setState({ duelB: e.target.value }),
-      duelBackTap: () => { clearTimeout(this._seekT); this.setState({ phase: "menu", duelSeek: null }); },
+      duelBackTap: () => {
+        clearTimeout(this._seekT);
+        clearTimeout(this._botFallbackT);
+        if (this._sock && st.duelSeek && st.duelSeek.stage === "seek") this._sock.emit("queue_cancel", {});
+        if (this._sock && st.duelSeek && st.duelSeek.stage === "found" && this._pvpMatchId) { this._sock.emit("leave_match", { matchId: this._pvpMatchId }); this._pvpMatchId = null; }
+        this.setState({ phase: st.navFrom === "mode" ? "mode" : "menu", duelSeek: null, navFrom: null });
+      },
       ...((rnd => { const f = (on) => "position:absolute;inset:0;pointer-events:none;transition:opacity 1.8s ease;opacity:" + (on ? 1 : 0); return {
         duelArenaOn: !!st.duel,
         arenaS1: f(rnd === 0), arenaS2: f(rnd === 1), arenaS3: f(rnd === 2), arenaS4: f(rnd === 3), arenaS5: f(rnd === 4)
@@ -3147,7 +3694,7 @@ class Component extends DCLogic {
         style: "flex:none;width:56px;height:74px;border-radius:6px;position:relative;cursor:" + (may ? "pointer" : "default") + ";background:linear-gradient(160deg,#2A1A02,#0B0703);opacity:" + (may || st.turn !== "sky" ? "1" : "1") + ";transition:transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease;transform:translateY(" + (selOn ? "8px" : "0") + ")" + (selOn ? " scale(1.1)" : "") + ";border:1px solid " + (selOn ? "#FFFDF5" : "rgba(255,176,0,.55)") + ";box-shadow:" + (selOn ? "0 10px 24px rgba(0,0,0,.7), 0 0 16px rgba(255,176,0,.4)" : "0 6px 16px rgba(0,0,0,.55)")
       }; }) : [],
       menuTutTap: () => this.setState({ phase: "pintro" }),
-      menuBackTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), deckSel: st.deckSel }); },
+      menuBackTap: () => { this._clearSeq(); const back = st.phase === "deck" && st.navFrom === "record" ? "record" : "menu"; this.setState({ ...this._deckState(), deckSel: st.deckSel, phase: back, navFrom: null }); },
       shapeBtns: ["a road", "wrapped: edges touch", "contiguous: lodge beside the lodged"].map(o => ({ label: o, tap: () => this._setOpt("shape", o), style: this._setBtn(this._shape() === o) })),
       setBtns: [["your own", false], ["all 28, awake", true]].map(o => ({ label: o[0], tap: () => { this._setOpt("ownAll", o[1]); this.setState({ deckSel: this._deckState().deckSel }); }, style: this._setBtn((this._opts().ownAll != null ? this._opts().ownAll : !!this.props.ownAll) === o[1]) })),
       faceBtns: [0, 1, 2, 3, 4].map(v => ({ label: v === 0 ? "true levels" : "L" + v, tap: () => this._setOpt("level", v), style: this._setBtn((this._opts().level != null ? this._opts().level : (this.props.forceLevel || 0)) === v) })),
@@ -3174,7 +3721,7 @@ class Component extends DCLogic {
       roundWalkerOn: st.phase === "round" && !!st.road && !st.roadBoss && lastRound === "you" && !!st.roadWalker && st.roadRung < 8,
       roundWalkerLine: ((this._walkers().find(x => x.name === st.roadWalker) || {}).defeat) || "",
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
-      roundTitle: st.duel ? (lastRound === "draw" ? "the board splits: a draw" : (lastRound === "you" ? st.duel.a : st.duel.b) + " takes the board") : st.road && !st.roadBoss ? (st.roadRung >= 7 ? "the air thins. the sky herself waits." : (st.roadWalker || "the walker") + " steps aside") : (lastRound === "you" ? "round " + st.round + " is yours" : lastRound === "draw" ? "round " + st.round + " stands even" : "the sky takes round " + st.round),
+      roundTitle: st.duel ? "the board rests" : st.road && !st.roadBoss ? (st.roadRung >= 7 ? "the air thins. the sky herself waits." : (st.roadWalker || "the walker") + " steps aside") : "round " + st.round,
       nextRoundTap: () => this._exitRound(),
       ascentOn: !!this.props.matchAscent && !st.road && !!st.nightSky && st.phase === "round" && !st.ascentChosen,
       ascentNote: (st.phase === "round" && st.ascentChosen && st.ascentNote) || "",
@@ -3185,7 +3732,7 @@ class Component extends DCLogic {
       ],
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       endWonOn: endWon && !st.duel,
-      endPlayLabel: st.duel ? "deal the table again" : "play the night again",
+      endPlayLabel: st.duel && st.duel.mode === "pvp" ? "find another battle ✦" : st.duel ? "deal the table again" : "play the night again",
       wakePipsOn: endWon && !!st.road,
       wakePips: (ml3 => [1, 2, 3, 4].map(l => ({ style: "width:8px;height:8px;transform:rotate(45deg);display:inline-block;" + (l < Math.max(1, ml3) ? "background:rgba(240,216,154,.85)" : l === Math.max(1, ml3) ? "background:rgba(240,216,154,.1);animation:mzLvlLight 1.5s ease 1s both" : "background:rgba(240,216,154,.1);border:1px solid rgba(240,216,154,.2)") })))(this._mlvl(this._tonight())),
       endWonTag: (m2 => st.road ? (m2 >= 4 ? "the " + this._mName(this._tonight()) + ", claimed and dated tonight" : "the " + this._mName(this._tonight()) + "'s card, at level " + Math.max(1, m2) + " tonight") : "the " + this._mName(this._tonight()))(this._mlvl(this._tonight())),

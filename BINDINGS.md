@@ -5,7 +5,7 @@ Every name the markup reads out of `renderVals()`.
 **Generated — do not hand-edit.** Regenerate with `npm run bindings`
 after every Claude Design handoff.
 
-**405 bindings, 353 top-level.**
+**408 bindings, 356 top-level.**
 
 ## Rule
 
@@ -79,6 +79,7 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `acctSendStyle` | component state |
 | `acctSetEmail` | component state |
 | `acctSetPassword` | component state |
+| `acctSetUsername` | component state |
 | `acctSkip` | component state |
 | `acctStatusAction` | component state |
 | `acctStatusLine` | component state |
@@ -87,6 +88,8 @@ Each is `windows.js` → `createWindowOps().winVals(key)`, returning
 | `acctSubmit` | component state |
 | `acctSubmitLabel` | component state |
 | `acctToggleMode` | component state |
+| `acctUsernameOn` | component state |
+| `acctUsernameVal` | component state |
 | `addChartOpen` | component state |
 | `addTime` | component state |
 | `addTimeOpen` | component state |

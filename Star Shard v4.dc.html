@@ -840,6 +840,11 @@
       <label style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#9A8A5E;margin-top:28px">email
         <input placeholder="you@somewhere.com" value="{{ acctEmailVal }}" onChange="{{ acctSetEmail }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
       </label>
+      <sc-if value="{{ acctUsernameOn }}" hint-placeholder-val="{{ false }}">
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#9A8A5E;margin-top:22px">username
+        <input placeholder="3-20 letters, numbers, underscores" value="{{ acctUsernameVal }}" onChange="{{ acctSetUsername }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
+      </label>
+      </sc-if>
       <label style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#9A8A5E;margin-top:22px">password
         <input type="password" placeholder="{{ acctPassPlaceholder }}" value="{{ acctPasswordVal }}" onChange="{{ acctSetPassword }}" style="background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:17px;padding:8px 2px;outline:none;width:100%">
       </label>
@@ -882,12 +887,12 @@ class Component extends DCLogic {
     ncError: "", ncCasting: false,
     birthRecast: null, addTimeOpen: false, atTimeH: "", atTimeMin: "", atTimeAP: "", atError: "", atCasting: false,
     obCasting: false, obCastStep: 0, prevTab: null, shardSt: 0, shardStage: 0, walkAnim: 0,
-    acct: null, acctEmail: "", acctPassword: "", acctMode: "signup", acctError: "", acctBusy: false,
+    acct: null, acctEmail: "", acctPassword: "", acctUsername: "", acctMode: "signup", acctError: "", acctBusy: false,
     gamePushed: false, owned: false, shareCopied: false,
     // real engine state (replaces the export's hardcoded sample chart)
     ready: false, sigChart: null, sigil: null, sigName: "", sigRecollection: [],
     sigArrival: null, sigWeek: null, sigFindings: null, sigWheelPoints: null, sigWheelRuler: null,
-    sigHouses: null, sigPattern: null, authEmail: null,
+    sigHouses: null, sigPattern: null, authEmail: null, authUsername: null,
     sndCast: null, sndRelation: null, sndLight: null, sndSounding: null,
   };
 
@@ -941,7 +946,7 @@ class Component extends DCLogic {
     this.setState({ ready: true }, () => { if (this.state.sigChart) this.refreshAll(); });
 
     const who = await this.api.me();
-    if (who) { this.setState({ authEmail: who.email }); this.loadAndMergeAccount(); }
+    if (who) { this.setState({ authEmail: who.email, authUsername: who.username }); this.loadAndMergeAccount(); }
   }
 
   componentWillUnmount() {
@@ -1220,15 +1225,39 @@ class Component extends DCLogic {
   acctSubmit = async () => {
     const s = this.state;
     if (s.acctBusy) return;
-    const email = s.acctEmail.trim(), password = s.acctPassword;
+    const email = s.acctEmail.trim(), password = s.acctPassword, username = s.acctUsername.trim().toLowerCase();
     if (!email.includes("@") || password.length < 8) {
       this.setState({ acctError: "email and a password of at least 8 characters, both real" });
       return;
     }
+    if (s.acctMode === "signup") {
+      if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+        this.setState({ acctError: "usernames are 3-20 letters, numbers or underscores" });
+        return;
+      }
+      if (!s.birthRecast) {
+        this.setState({ acctError: "cast your chart first, then come back to keep it" });
+        return;
+      }
+    }
     this.setState({ acctBusy: true, acctError: "" });
     try {
-      const res = s.acctMode === "signup" ? await this.api.signup(email, password) : await this.api.login(email, password);
-      this.setState({ authEmail: res.email, acct: "done", acctBusy: false, acctPassword: "" });
+      let res;
+      if (s.acctMode === "signup") {
+        // birthRecast already carries everything the account needs
+        // (V4:1076-1085's comment explains why it's kept in this shape) —
+        // reshape it into the signup contract rather than asking again.
+        const r = s.birthRecast;
+        const birthDate = `${r.y}-${String(r.m).padStart(2, "0")}-${String(r.d).padStart(2, "0")}`;
+        res = await this.api.signup(email, password, {
+          username, birthDate, birthTimeKnown: s.timeKnown !== false,
+          placeName: s.obPlace ? `${s.obPlace.name}, ${s.obPlace.region}` : null,
+          lat: r.lat ?? null, lon: r.lon ?? null, tz: r.tz ?? null,
+        });
+      } else {
+        res = await this.api.login(email, password);
+      }
+      this.setState({ authEmail: res.email, authUsername: res.username, acct: "done", acctBusy: false, acctPassword: "" });
       if (s.sigil) this.api.saveSigil(s.sigil);
       this.loadAndMergeAccount();
     } catch (e) {
@@ -1248,7 +1277,7 @@ class Component extends DCLogic {
     // still filled in — someone who just logged out already has an
     // account, "create your account" would be the wrong first move, and
     // re-typing the email they were just shown is friction with no point.
-    this.setState({ authEmail: null, acct: null, acctMode: "login", acctEmail: email || "", acctPassword: "" });
+    this.setState({ authEmail: null, authUsername: null, acct: null, acctMode: "login", acctEmail: email || "", acctPassword: "" });
   };
 
   // -- account: sigil + recollection sync, mirrors Star Shard v3.dc.html's
@@ -1671,7 +1700,8 @@ class Component extends DCLogic {
       t,
       style: "font-family:'Varela Round',sans-serif;font-size:12px;text-align:center;transition:opacity .5s ease,color .5s ease;" + (cs >= i + 1 ? "opacity:1;color:#F0D89A" : "opacity:.18;color:#9A8A5E"),
     }));
-    const acctOk = this.state.acctEmail.includes("@") && this.state.acctPassword.length >= 8;
+    const acctOk = this.state.acctEmail.includes("@") && this.state.acctPassword.length >= 8 &&
+      (this.state.acctMode !== "signup" || /^[a-z0-9_]{3,20}$/.test(this.state.acctUsername.trim().toLowerCase()));
 
     // -- the shard: hero, combination, mansion portraits, signature,
     // becoming, farlight — real corpus/combos/findings, port plan §5.
@@ -1751,6 +1781,9 @@ class Component extends DCLogic {
       acctSubline: this.state.acctMode === "signup" ? "an account carries it: every fragment, every night walked, on any screen you open." : "sign in to pick up where you left off.",
       acctEmailVal: this.state.acctEmail,
       acctSetEmail: (e) => this.setState({ acctEmail: e.target.value, acctError: "" }),
+      acctUsernameOn: this.state.acctMode === "signup",
+      acctUsernameVal: this.state.acctUsername,
+      acctSetUsername: (e) => this.setState({ acctUsername: e.target.value, acctError: "" }),
       acctPasswordVal: this.state.acctPassword,
       acctSetPassword: (e) => this.setState({ acctPassword: e.target.value, acctError: "" }),
       acctPassPlaceholder: this.state.acctMode === "signup" ? "at least 8 characters" : "your password",
@@ -1761,9 +1794,12 @@ class Component extends DCLogic {
       acctModeToggleLabel: this.state.acctMode === "signup" ? "already have a shard? sign in instead" : "new here? create an account instead",
       acctToggleMode: () => this.setState(st => ({ acctMode: st.acctMode === "signup" ? "login" : "signup", acctError: "" })),
       acctSkip: () => this.setState({ acct: "skip", acctPassword: "", acctError: "" }),
-      acctStatusLine: this.state.authEmail ? `signed in as ${this.state.authEmail}` : "not signed in · this shard lives on this device only",
-      acctStatusAction: this.state.authEmail ? "log out" : "keep your shard →",
-      acctStatusTap: this.state.authEmail ? this.acctLogout : () => this.setState({ acct: "ask" }),
+      acctStatusLine: this.state.authEmail ? `signed in as @${this.state.authUsername || this.state.authEmail}` : "not signed in · this shard lives on this device only",
+      // Signing up needs birthRecast (the chart's raw birth facts) to send
+      // with the account — nothing to send before onboarding ever ran, so
+      // the "keep your shard" entry point stays inert until a chart exists.
+      acctStatusAction: this.state.authEmail ? "log out" : (this.state.sigChart ? "keep your shard →" : ""),
+      acctStatusTap: this.state.authEmail ? this.acctLogout : (this.state.sigChart ? () => this.setState({ acct: "ask" }) : () => {}),
       payOn: (this.props.nightEight ?? false) && !this.state.owned && tab === "tonight",
       ownIt: () => this.setState({ owned: true }),
       // Manzil ("the covered well") is explicitly WIP and out of scope for

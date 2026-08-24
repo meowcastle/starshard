@@ -2,10 +2,15 @@
 //
 // OWNER: Claude Code. Do not edit from Claude Design.
 //
-// PRIVACY: birth date, birth time and birth coordinates are never sent to the
-// Star Shard backend. The chart is computed in the browser by astro.js. The
-// only outbound call carrying user input is the Open-Meteo city lookup, which
-// receives a place name and nothing else. Keep it that way.
+// PRIVACY (revised 24 Aug 2026 — Justin's call): the chart is still always
+// computed in the browser by astro.js, and a visitor who never creates an
+// account still sends nothing birth-related anywhere — that part of the old
+// "never sent" claim is unchanged. But Manzil now requires a real account to
+// play at all, and creating ANY account (from Manzil or Star Shard) sends
+// birth date/time/place to the backend and stores it there (see signup()'s
+// extra fields and getBirth()/saveBirth() below) — cross-app continuity and
+// Manzil's gate both depend on it. Don't restate the old "never sent, ever"
+// claim without checking this comment first.
 
 export const API_BASE = typeof location !== 'undefined' ? `https://api.${location.hostname}` : '';
 
@@ -51,17 +56,41 @@ export async function geocode(query) {
 
 // --- accounts --------------------------------------------------------------
 
-/** Resolves to { email } when signed in, or null when not. Never throws. */
+/** Resolves to { email, username } when signed in, or null when not. Never throws. */
 export async function me() {
   try { return await call('/api/me'); } catch (e) { return null; }
 }
 
-export async function signup(email, password) {
-  return call('/api/auth/signup', { method: 'POST', body: { email, password } });
+/** extra carries the account-required fields Manzil's gate needs:
+ * { username, birthDate, birthTime, birthTimeKnown, placeName, lat, lon, tz }.
+ * Only username + birthDate are required server-side; the rest are optional
+ * (Manzil's own birth screen has no geocoding — see getBirth/saveBirth). */
+export async function signup(email, password, extra = {}) {
+  return call('/api/auth/signup', { method: 'POST', body: { email, password, ...extra } });
 }
 
 export async function login(email, password) {
   return call('/api/auth/login', { method: 'POST', body: { email, password } });
+}
+
+// --- birth data (server-side, per account) ----------------------------------
+// Manzil's chart-owned cards and Star Shard's chart both start from this —
+// see the revised PRIVACY note above for why this now exists server-side.
+
+/** Resolves to the saved birth object, or null (no account, or none saved
+ * yet). Never throws. */
+export async function getBirth() {
+  try {
+    const j = await call('/api/me/birth');
+    return j && typeof j.birth === 'object' ? j.birth : null;
+  } catch (e) { return null; }
+}
+
+/** Never throws — matches saveSigil's "a failed sync must not interrupt the
+ * flow" precedent. Upserts; used both at signup and later to upgrade a
+ * Manzil-only row with Star Shard's fuller geocoded place/lat/lon/tz. */
+export async function saveBirth(fields) {
+  try { await call('/api/me/birth', { method: 'PUT', body: fields }); } catch (e) {}
 }
 
 /** Never throws — logging out locally must always succeed. */
@@ -187,6 +216,9 @@ export async function postGuestbook(name, msg, stamp) {
 
 const AUTH_COPY = {
   email_taken: 'that email already has a shard account ♡',
+  username_taken: 'that name\'s taken, try another ♡',
+  invalid_username: 'usernames are 3-20 letters, numbers or underscores ♡',
+  invalid_birth_date: 'that birth date doesn\'t look right ♡',
   too_many_requests: 'too many tries, please wait a bit and try again ♡',
   unreachable: 'the shard server is unreachable, try again ♡',
   invalid_or_expired_token: 'that reset link is invalid or expired, request a new one ♡',

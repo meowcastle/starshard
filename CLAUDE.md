@@ -129,8 +129,17 @@ ruleset for a minigame ("Manzil": road-building solitaire against the
 moon's 28-station walk) with a working prototype
 (`Star Shard v3 Build Plan/Manzil - Prototype.dc.html`), separate from
 the road-shards (its wins award a distinct "game-shard" set; the 28
-never become skill-gated, per the ethics floor below). None of it is
-built on Code's side yet. Its own rules doc (`Manzil - Rules & Cards.dc.html`)
+never become skill-gated, per the ethics floor below). This is stale —
+Code has since built a real Socket.io matchmaking lobby + PvP validator
+(`starshard-api/lib/manzil-lobby.js`/`manzil-engine.js`) for the deployed
+copy (`Star Shard v3 Build Plan/Manzil - The Empty District.dc.html`,
+synced to `manzil/index.html`), and, as of 24 Aug 2026, **Manzil requires
+the same account as Star Shard to play at all** — email, password, a
+username, and real birth date/time/place, enforced both by the client's
+phase-gate and server-side by the lobby rejecting any socket without a
+valid session cookie (see the Privacy invariant below for why birth data
+now lives server-side). Star Shard itself stays account-optional,
+unchanged. Its own rules doc (`Manzil - Rules & Cards.dc.html`)
 still describes an earlier, superseded ruleset (banking/points, a
 112-card deck) rather than the locked one — read the locked description
 in the Build Plan's own `CLAUDE.md`, not the rules file, until that's
@@ -258,12 +267,39 @@ mansions/               generated: 28 static permalink pages + index + OG
 
 ## Invariants
 
-- **Privacy.** Birth date, time and coordinates are computed in the browser and
-  are never sent to our backend. The only outbound call carrying user input is
-  the Open-Meteo city lookup, which gets a place name and nothing else. This is
-  the product's strongest differentiating claim — do not break it. (Storing the
-  *derived* sigil object server-side per account is allowed by COSMOLOGY §7;
-  storing birth data is not.)
+- **Privacy — reversed 24 Aug 2026, on purpose.** This invariant used to read
+  *"birth date, time and coordinates are computed in the browser and are never
+  sent to our backend"*, and called that the product's strongest differentiating
+  claim. **That rule is dead.** Manzil now requires an account to play and that
+  account is Star Shard's, so real birth date/time/place lives server-side in
+  `birth_data`, written transactionally alongside `users` at signup. Justin was
+  asked directly, given the conflict, and chose full birth data over a narrower
+  age-gate-only version. Do not "restore" the old rule because you found it
+  quoted somewhere older — `OWNERSHIP.md`, `DESIGN-BRIEF.md` and
+  `docs/archive/REVIEW.md` all still carry the pre-reversal phrasing and are
+  wrong until edited.
+
+  What replaces it. These are the enforceable parts:
+
+  1. **`api.js` is still the only thing that may call `fetch()`.** Unchanged,
+     and it matters more now rather than less.
+  2. **Store inputs, derive everything else.** A chart is a deterministic
+     function of its inputs, so `birth_data` holds the inputs and nothing
+     downstream of them. The *derived* sigil keeps its table (COSMOLOGY §7).
+     Do not add tables that cache readings, transits or interpretations — each
+     one widens the deletion surface and buys nothing we can't recompute.
+  3. **Deletion and export are obligations now, not courtesies.**
+     `DELETE /api/me` and `GET /api/me/export` are what GDPR Art. 15/17 and App
+     Store review 5.1.1(v) get satisfied by. Every new user-scoped table carries
+     `ON DELETE CASCADE` to `users` *and* appears in the export. One without the
+     other is a bug, not a follow-up.
+  4. **`birth_date` is an age signal, and that is a compliance trigger.** The
+     moment signup stores a date of birth, this codebase has actual knowledge of
+     whether a user is under 13. Read it for gating and nothing else. See the
+     ethics floor's minors clause below.
+  5. **The surviving claim is "it explains itself", not "we never see it".**
+     `PLATFORM.md` leads on explainability and buy-it-once; both survive intact.
+     No product copy may say or imply that birth data stays in the browser.
 - **No logic in the markup.** If you want a computation inside `{{ }}`, it goes
   in a module and comes back through `renderVals()`.
 - **`astro.js` is verified, not vibes.** See below before you "improve" it.
@@ -400,13 +436,20 @@ unavailability.
   Keeper yet (only the birth-day one, a different value that happens to
   share the name) — not because it's still blocked. Build it when the
   "road-kin" topology feature actually needs it.
-- **W6.** The account system runs a password database; with reveal state and
-  Recollection it now stores real progression. Still no email verification,
-  no account deletion, no data export — and a quarter of the audience is
-  13–17. This needs a decision before public launch; raise it, don't decide
-  it. **v4's onboarding assumes email magic-link auth instead of the
-  password system** — a real conflict with W6, not a resolution of it;
-  don't port that part of v4 without Justin's call.
+- **W6, escalated (24 Aug 2026).** Account deletion and data export both
+  shipped (`DELETE /api/me`, `GET /api/me/export`) — two of the original
+  three gaps are closed. Still no email verification. But the account system
+  itself just grew real teeth: Manzil now *requires* an account to play at
+  all, and signup requires a real birth date + email + a chosen username —
+  not optional profile fields, the price of entry to a free game — for an
+  audience that's ~25% aged 13–17. That's a materially higher compliance bar
+  (COPPA-adjacent) than "an optional password database" ever was, and no age
+  gate exists at signup to act on the birth date being collected. This is
+  Justin's shipped call, not something to quietly paper over — raise it again
+  before wide launch, don't assume this note means it's handled. **v4's
+  onboarding assumes email magic-link auth instead of the password system**
+  — a real conflict with W6, not a resolution of it; don't port that part of
+  v4 without Justin's call.
 - **The nakshatra alignment** (`research/corpus-mansions.md`'s own
   escalation section) — this corpus pairs nakshatra *n* with mansion *n*
   by ordinal index; the classical Sino-Indian correspondence doesn't

@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
+  username VARCHAR(32) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   token_version INT NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -55,6 +56,28 @@ CREATE TABLE IF NOT EXISTS recollection (
   kindled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_recollection_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   UNIQUE KEY uniq_user_station_step (user_id, station, step)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Manzil now requires an account to play (Justin's call, 24 Aug 2026) and
+-- that account is shared with Star Shard. Real birth date/time/place now
+-- lives server-side per account, alongside the Sigil's derived-only data
+-- above — a deliberate reversal of the old "birth data never leaves the
+-- browser" rule (see CLAUDE.md's Privacy invariant). Fields beyond
+-- birth_date stay nullable: Manzil's own birth screen has no geocoding,
+-- so only a date is guaranteed at signup; place/lat/lon/tz fill in later
+-- via PUT /api/me/birth when a fuller onboarding (Star Shard's) supplies
+-- them.
+CREATE TABLE IF NOT EXISTS birth_data (
+  user_id INT NOT NULL PRIMARY KEY,
+  birth_date DATE NOT NULL,
+  birth_time TIME NULL,
+  birth_time_known TINYINT(1) NOT NULL DEFAULT 1,
+  place_name VARCHAR(255) NULL,
+  lat DECIMAL(8,5) NULL,
+  lon DECIMAL(8,5) NULL,
+  tz VARCHAR(64) NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_birth_data_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS guestbook_entries (

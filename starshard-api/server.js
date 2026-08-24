@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const http = require('http');
 const crypto = require('crypto');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -8,6 +9,8 @@ const jwt = require('jsonwebtoken');
 const mysql = require('mysql2/promise');
 const rateLimit = require('express-rate-limit');
 const { Resend } = require('resend');
+const { Server: SocketIOServer } = require('socket.io');
+const { createManzilLobby } = require('./lib/manzil-lobby');
 
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -134,6 +137,44 @@ function setSessionCookie(res, userId, tokenVersion) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
+const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const MIN_BIRTH_YEAR = 1900;
+
+// Manzil requires a real account (Justin's call, 24 Aug 2026) and that
+// account now carries actual birth date/time/place server-side — see
+// CLAUDE.md's Privacy invariant for why this is a deliberate reversal,
+// not scope creep. Only birthDate is required everywhere; Manzil's own
+// birth screen has no geocoding, so place/lat/lon/tz stay optional here
+// and can be upgraded later via PUT /api/me/birth once a fuller
+// onboarding (Star Shard's) supplies them.
+function parseBirthFields(body) {
+  const { birthDate, birthTime, birthTimeKnown, placeName, lat, lon, tz } = body || {};
+  if (typeof birthDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return null;
+  const [y, m, d] = birthDate.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  const currentYear = new Date().getUTCFullYear();
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
+  if (y < MIN_BIRTH_YEAR || y > currentYear) return null;
+
+  const timeKnown = birthTimeKnown !== false;
+  let time = null;
+  if (timeKnown && birthTime !== undefined && birthTime !== null) {
+    if (typeof birthTime !== 'string' || !TIME_RE.test(birthTime)) return null;
+    time = birthTime;
+  }
+
+  const nullOr = (v, ok) => v === undefined || v === null || ok(v);
+  if (!nullOr(placeName, v => typeof v === 'string' && v.length <= 255)) return null;
+  if (!nullOr(lat, v => typeof v === 'number' && v >= -90 && v <= 90)) return null;
+  if (!nullOr(lon, v => typeof v === 'number' && v >= -180 && v <= 180)) return null;
+  if (!nullOr(tz, v => typeof v === 'string' && v.length <= 64)) return null;
+
+  return {
+    birthDate, birthTime: time, birthTimeKnown: timeKnown,
+    placeName: placeName ?? null, lat: lat ?? null, lon: lon ?? null, tz: tz ?? null,
+  };
+}
 
 const signupLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -184,29 +225,50 @@ const deleteAccountLimiter = rateLimit({
 const GUESTBOOK_STAMPS = new Set(['⭐', '🎀', '🌙', '💿', '✿']);
 
 app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
-  const { email, password } = req.body || {};
-  if (typeof email !== 'string' || typeof password !== 'string') {
+  const { email, password, username } = req.body || {};
+  if (typeof email !== 'string' || typeof password !== 'string' || typeof username !== 'string') {
     return res.status(400).json({ error: 'invalid_input' });
   }
   const normalizedEmail = email.trim().toLowerCase();
+  const normalizedUsername = username.trim().toLowerCase();
   if (!EMAIL_RE.test(normalizedEmail) || password.length < 8) {
     return res.status(400).json({ error: 'invalid_input' });
   }
+  if (!USERNAME_RE.test(normalizedUsername)) {
+    return res.status(400).json({ error: 'invalid_username' });
+  }
+  const birth = parseBirthFields(req.body);
+  if (!birth) return res.status(400).json({ error: 'invalid_birth_date' });
 
   const passwordHash = await bcrypt.hash(password, 12);
+  // A signup writes to two tables (users, birth_data) that must both land
+  // or neither should — the first transaction in this file, needed so a
+  // birth_data failure can't leave an orphaned, birth-data-less users row.
+  const conn = await pool.getConnection();
   try {
-    const [result] = await pool.execute(
-      'INSERT INTO users (email, password_hash) VALUES (?, ?)',
-      [normalizedEmail, passwordHash]
+    await conn.beginTransaction();
+    const [result] = await conn.execute(
+      'INSERT INTO users (email, username, password_hash) VALUES (?, ?, ?)',
+      [normalizedEmail, normalizedUsername, passwordHash]
     );
+    await conn.execute(
+      'INSERT INTO birth_data (user_id, birth_date, birth_time, birth_time_known, place_name, lat, lon, tz) ' +
+      'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [result.insertId, birth.birthDate, birth.birthTime, birth.birthTimeKnown ? 1 : 0, birth.placeName, birth.lat, birth.lon, birth.tz]
+    );
+    await conn.commit();
     setSessionCookie(res, result.insertId, 0);
-    res.status(201).json({ email: normalizedEmail });
+    res.status(201).json({ email: normalizedEmail, username: normalizedUsername });
   } catch (e) {
+    await conn.rollback();
     if (e && e.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({ error: 'email_taken' });
+      const onUsername = typeof e.sqlMessage === 'string' && e.sqlMessage.includes('username');
+      return res.status(409).json({ error: onUsername ? 'username_taken' : 'email_taken' });
     }
     console.error(e);
     res.status(500).json({ error: 'server_error' });
+  } finally {
+    conn.release();
   }
 }));
 
@@ -218,7 +280,7 @@ app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   const normalizedEmail = email.trim().toLowerCase();
 
   const [rows] = await pool.execute(
-    'SELECT id, password_hash, token_version FROM users WHERE email = ?',
+    'SELECT id, username, password_hash, token_version FROM users WHERE email = ?',
     [normalizedEmail]
   );
   const user = rows[0];
@@ -228,7 +290,7 @@ app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
   setSessionCookie(res, user.id, user.token_version);
-  res.json({ email: normalizedEmail });
+  res.json({ email: normalizedEmail, username: user.username });
 }));
 
 app.post('/api/auth/logout', wrap(async (req, res) => {
@@ -337,10 +399,50 @@ app.get('/api/me', wrap(async (req, res) => {
   } catch (e) {
     return res.status(401).json({ error: 'not_authenticated' });
   }
-  const [rows] = await pool.execute('SELECT email, token_version FROM users WHERE id = ?', [payload.uid]);
+  const [rows] = await pool.execute('SELECT email, username, token_version FROM users WHERE id = ?', [payload.uid]);
   const user = rows[0];
   if (!user || user.token_version !== payload.tv) return res.status(401).json({ error: 'not_authenticated' });
-  res.json({ email: user.email });
+  res.json({ email: user.email, username: user.username });
+}));
+
+// Manzil's own birth screen has no geocoding, so a fresh device/browser
+// on an existing account needs a way to rehydrate birth-derived local
+// state (chart-owned mansions) without re-asking. Star Shard's fuller
+// onboarding (real geocoded lat/lon/tz) upgrades the row via PUT below
+// rather than this account's birth_date/time being asked twice.
+app.get('/api/me/birth', requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute(
+    'SELECT birth_date, birth_time, birth_time_known, place_name, lat, lon, tz FROM birth_data WHERE user_id = ?',
+    [req.userId]
+  );
+  const row = rows[0];
+  if (!row) return res.json({ birth: null });
+  res.json({
+    birth: {
+      birthDate: row.birth_date instanceof Date ? row.birth_date.toISOString().slice(0, 10) : row.birth_date,
+      birthTime: row.birth_time,
+      birthTimeKnown: !!row.birth_time_known,
+      placeName: row.place_name,
+      lat: row.lat === null ? null : Number(row.lat),
+      lon: row.lon === null ? null : Number(row.lon),
+      tz: row.tz,
+    },
+  });
+}));
+
+app.put('/api/me/birth', requireAuth, wrap(async (req, res) => {
+  const birth = parseBirthFields(req.body);
+  if (!birth) return res.status(400).json({ error: 'invalid_birth_date' });
+
+  await pool.execute(
+    'INSERT INTO birth_data (user_id, birth_date, birth_time, birth_time_known, place_name, lat, lon, tz) ' +
+    'VALUES (?, ?, ?, ?, ?, ?, ?, ?) ' +
+    'ON DUPLICATE KEY UPDATE birth_date = VALUES(birth_date), birth_time = VALUES(birth_time), ' +
+    'birth_time_known = VALUES(birth_time_known), place_name = VALUES(place_name), ' +
+    'lat = VALUES(lat), lon = VALUES(lon), tz = VALUES(tz)',
+    [req.userId, birth.birthDate, birth.birthTime, birth.birthTimeKnown ? 1 : 0, birth.placeName, birth.lat, birth.lon, birth.tz]
+  );
+  res.status(204).end();
 }));
 
 // Everything this account owns, for the user to keep — W6's "no data
@@ -350,11 +452,15 @@ app.get('/api/me', wrap(async (req, res) => {
 // user, not on a hot path, so four small queries over one wide join is the
 // simpler and more honest shape here.
 app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
-  const [[user], [state], [deckRow], [sigilRow], recollection] = await Promise.all([
-    pool.execute('SELECT email, created_at FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
+  const [[user], [state], [deckRow], [sigilRow], [birthRow], recollection] = await Promise.all([
+    pool.execute('SELECT email, username, created_at FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT state_json FROM window_state WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT deck_json FROM deck WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT sigil_json FROM sigil WHERE user_id = ?', [req.userId]).then(([r]) => r),
+    pool.execute(
+      'SELECT birth_date, birth_time, birth_time_known, place_name, lat, lon, tz FROM birth_data WHERE user_id = ?',
+      [req.userId]
+    ).then(([r]) => r),
     pool.execute(
       'SELECT station, step, cast_context_json, kindled_at FROM recollection WHERE user_id = ? ORDER BY kindled_at',
       [req.userId]
@@ -365,10 +471,16 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
   res.setHeader('Content-Disposition', 'attachment; filename="star-shard-data.json"');
   res.json({
     email: user.email,
+    username: user.username,
     accountCreatedAt: user.created_at,
     windowState: state ? parseOr(state.state_json, null) : null,
     deck: deckRow ? parseOr(deckRow.deck_json, null) : null,
     sigil: sigilRow ? parseOr(sigilRow.sigil_json, null) : null,
+    birth: birthRow ? {
+      birthDate: birthRow.birth_date, birthTime: birthRow.birth_time,
+      birthTimeKnown: !!birthRow.birth_time_known, placeName: birthRow.place_name,
+      lat: birthRow.lat, lon: birthRow.lon, tz: birthRow.tz,
+    } : null,
     recollection: recollection.map(r => ({
       station: r.station, step: r.step,
       castContext: parseOr(r.cast_context_json, {}),
@@ -658,6 +770,20 @@ process.on('unhandledRejection', err => {
   console.error('[starshard-api] unhandled rejection', err);
 });
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`starshard-api listening on 127.0.0.1:${PORT}`);
+// Socket.io rides the same HTTP server/port as the REST API (one process,
+// one listener) — its own CORS is configured separately from the hand-
+// rolled Express middleware above, but reuses the same ALLOWED_ORIGINS.
+// Plain `ws` would be lighter, but whether the production reverse proxy
+// passes a WebSocket upgrade through is unverified; Socket.io's automatic
+// long-polling fallback rides the plain-HTTPS path already proven to
+// work, so this is the safer default for now (see the Manzil lobby plan).
+const httpServer = http.createServer(app);
+const io = new SocketIOServer(httpServer, {
+  cors: { origin: ALLOWED_ORIGINS, credentials: true },
+  path: '/socket.io',
+});
+createManzilLobby(io, { jwtSecret: JWT_SECRET });
+
+httpServer.listen(PORT, '127.0.0.1', () => {
+  console.log(`starshard-api listening on 127.0.0.1:${PORT} (http + socket.io)`);
 });
