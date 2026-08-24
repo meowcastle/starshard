@@ -73,6 +73,21 @@
   @keyframes mzTail{0%,86%,100%{transform:rotate(0deg)}90%{transform:rotate(-16deg)}95%{transform:rotate(5deg)}}
   @keyframes mzDrip{0%,58%{transform:translateY(0);opacity:0}62%{opacity:.7}80%{opacity:.7}86%,100%{transform:translateY(58px);opacity:0}}
   @keyframes mzPuddle{0%,100%{opacity:.75}50%{opacity:.3}}
+  @keyframes mzCloudX{0%,100%{transform:translateX(-30px)}50%{transform:translateX(30px)}}
+  @keyframes mzGeese{0%{transform:translate(-170px,28px);opacity:0}5%{opacity:.85}92%{opacity:.85}100%{transform:translate(1080px,-30px);opacity:0}}
+  @keyframes mzPlane{0%{transform:translateX(1000px)}100%{transform:translateX(-200px)}}
+  @keyframes mzSat{0%{transform:translate(-30px,110px)}100%{transform:translate(970px,-80px)}}
+  @keyframes mzShoot{0%,90%{opacity:0;transform:rotate(150deg) translateX(0)}92%{opacity:.85}97%,100%{opacity:0;transform:rotate(150deg) translateX(230px)}}
+  @keyframes mzAurora{0%,100%{opacity:.35;transform:skewX(-9deg)}50%{opacity:1;transform:skewX(-2deg) translateX(16px)}}
+  @keyframes mzWindLn{0%{transform:translateX(-44px);opacity:0}22%{opacity:.8}78%{opacity:.8}100%{transform:translateX(52px);opacity:0}}
+  @keyframes mzShake{0%,100%{translate:0 0}18%{translate:3px -2px}36%{translate:-3px 2px}54%{translate:2px -2px}72%{translate:-2px 1px}88%{translate:1px 0}}
+  @keyframes mzImpact{0%{opacity:.9;transform:scale(.5)}100%{opacity:0;transform:scale(1.45)}}
+  @keyframes mzDustA{0%{opacity:.9;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(-15px,-17px) scale(.4)}}
+  @keyframes mzDustB{0%{opacity:.9;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(14px,-13px) scale(.4)}}
+  @keyframes mzDustC{0%{opacity:.85;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(5px,-21px) scale(.45)}}
+  @keyframes mzToastA{0%{opacity:0;transform:translate(-50%,7px)}12%{opacity:1;transform:translate(-50%,0)}82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,0)}}
+  @keyframes mzToastB{0%{opacity:0;transform:translate(-50%,7px)}12%{opacity:1;transform:translate(-50%,0)}82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,0)}}
+  @keyframes mzWinOn{0%{opacity:0}70%{opacity:1}100%{opacity:.9}}
 </style>
 <script src="manzil-art2.js"></script>
 <script src="ephemeris2.js"></script>
@@ -83,14 +98,39 @@
 <div style="{{ frameScaleStyle }}">
 <div data-screen-label="manzil" data-mzstage="1" style="width:932px;height:430px;position:relative;overflow:hidden;background:radial-gradient(55% 45% at 74% 16%, rgba(240,216,154,.05), transparent 62%), radial-gradient(70% 40% at 50% 0%, rgba(64,104,210,.13), transparent 68%), radial-gradient(48% 42% at 12% 72%, rgba(96,74,186,.14), transparent 65%), radial-gradient(40% 36% at 88% 62%, rgba(52,128,168,.12), transparent 65%), radial-gradient(36% 30% at 34% 10%, rgba(186,84,110,.09), transparent 65%), radial-gradient(30% 26% at 62% 92%, rgba(70,170,120,.07), transparent 65%), linear-gradient(115deg, transparent 40%, rgba(240,216,154,.05) 52%, transparent 64%), radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%)">
   <div style="{{ elevAirStyle }}"></div>
+  <div style="{{ edDuskStyle }}"></div>
+  <div style="{{ edColdStyle }}"></div>
   <div style="{{ starDimStyle }}">
     <sc-for list="{{ stars }}" as="s" hint-placeholder-count="8">
       <span style="{{ s.style }}"></span>
     </sc-for>
   </div>
+  <div style="{{ edMilkyStyle }}"></div>
+  <div style="{{ edStars2Style }}"><svg viewBox="0 0 932 430" style="width:100%;height:100%;display:block">
+    <g fill="rgba(242,234,214,.5)"><circle cx="52" cy="30" r="0.9"></circle><circle cx="120" cy="96" r="0.7"></circle><circle cx="176" cy="52" r="1"></circle><circle cx="238" cy="140" r="0.7"></circle><circle cx="290" cy="24" r="0.8"></circle><circle cx="344" cy="112" r="0.7"></circle><circle cx="402" cy="58" r="1"></circle><circle cx="452" cy="150" r="0.7"></circle><circle cx="512" cy="36" r="0.9"></circle><circle cx="568" cy="120" r="0.7"></circle><circle cx="628" cy="70" r="1"></circle><circle cx="688" cy="24" r="0.8"></circle><circle cx="742" cy="132" r="0.7"></circle><circle cx="800" cy="84" r="0.9"></circle><circle cx="858" cy="40" r="0.7"></circle><circle cx="908" cy="118" r="0.8"></circle><circle cx="84" cy="196" r="0.7"></circle><circle cx="212" cy="228" r="0.8"></circle><circle cx="358" cy="196" r="0.7"></circle><circle cx="586" cy="212" r="0.8"></circle><circle cx="716" cy="188" r="0.7"></circle><circle cx="874" cy="222" r="0.8"></circle></g>
+    <circle cx="150" cy="150" r="1.1" fill="rgba(170,190,255,.7)" style="animation:bsTwinkle 4s ease-in-out infinite"></circle>
+    <circle cx="470" cy="90" r="1.1" fill="rgba(242,234,214,.75)" style="animation:bsTwinkle 5s ease-in-out -2s infinite"></circle>
+    <circle cx="770" cy="60" r="1.1" fill="rgba(255,190,170,.7)" style="animation:bsTwinkle 6s ease-in-out -1s infinite"></circle>
+  </svg></div>
+  <div style="{{ edAuroraStyle }}">
+    <div style="position:absolute;left:13%;top:-5%;width:160px;height:56%;background:linear-gradient(to bottom, rgba(118,196,172,.22), rgba(118,196,172,.06) 58%, transparent);filter:blur(7px);animation:mzAurora 16s ease-in-out infinite"></div>
+    <div style="position:absolute;left:31%;top:-7%;width:110px;height:48%;background:linear-gradient(to bottom, rgba(96,74,186,.22), transparent 70%);filter:blur(8px);animation:mzAurora 20s ease-in-out -8s infinite"></div>
+    <div style="position:absolute;right:15%;top:-5%;width:140px;height:44%;background:linear-gradient(to bottom, rgba(118,196,172,.16), transparent 64%);filter:blur(8px);animation:mzAurora 23s ease-in-out -14s infinite"></div>
+  </div>
   <div style="{{ elevDayStyle }}"></div>
   <div style="{{ elevGroundStyle }}"></div>
   <div style="{{ elevRimStyle }}"></div>
+  <div style="{{ edGridStyle }}"><svg viewBox="0 0 932 120" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <g fill="rgba(255,198,116,.5)"><rect x="36" y="84" width="2" height="2"></rect><rect x="88" y="102" width="2" height="2"></rect><rect x="132" y="74" width="2" height="2"></rect><rect x="186" y="96" width="2" height="2"></rect><rect x="238" y="110" width="2" height="2"></rect><rect x="286" y="80" width="2" height="2"></rect><rect x="352" y="100" width="2" height="2"></rect><rect x="418" y="88" width="2" height="2"></rect><rect x="470" y="108" width="2" height="2"></rect><rect x="522" y="78" width="2" height="2"></rect><rect x="588" y="98" width="2" height="2"></rect><rect x="642" y="112" width="2" height="2"></rect><rect x="694" y="84" width="2" height="2"></rect><rect x="748" y="104" width="2" height="2"></rect><rect x="806" y="76" width="2" height="2"></rect><rect x="862" y="94" width="2" height="2"></rect><rect x="902" y="110" width="2" height="2"></rect></g>
+    <g fill="rgba(255,214,150,.8)"><rect x="160" y="88" width="2.5" height="2.5" style="animation:mzWindow 13s ease-in-out infinite"></rect><rect x="500" y="92" width="2.5" height="2.5"></rect><rect x="720" y="96" width="2.5" height="2.5" style="animation:mzWindow 17s ease-in-out -6s infinite"></rect></g>
+    <g fill="rgba(170,190,255,.45)"><rect x="270" y="104" width="2" height="2"></rect><rect x="610" y="82" width="2" height="2"></rect><rect x="840" y="108" width="2" height="2"></rect></g>
+  </svg></div>
+  <div style="{{ edLitStyle }}"><div style="position:absolute;left:16%;right:16%;bottom:0;height:64px;background:radial-gradient(50% 100% at 50% 100%, rgba(255,176,80,.15), transparent 75%)"></div><svg viewBox="0 0 932 120" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <g fill="rgba(255,206,130,.92)"><rect x="52" y="88" width="2.5" height="3" style="animation:mzWinOn .8s ease .2s both"></rect><rect x="104" y="98" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.3s both"></rect><rect x="148" y="78" width="2.5" height="3" style="animation:mzWinOn .8s ease .7s both"></rect><rect x="204" y="92" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.1s both"></rect><rect x="252" y="106" width="2.5" height="3" style="animation:mzWinOn .8s ease .4s both"></rect><rect x="302" y="84" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.7s both"></rect><rect x="338" y="102" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.6s both"></rect><rect x="398" y="94" width="2.5" height="3" style="animation:mzWinOn .8s ease .9s both"></rect><rect x="438" y="80" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.9s both"></rect><rect x="484" y="104" width="2.5" height="3" style="animation:mzWinOn .8s ease .5s both"></rect><rect x="536" y="86" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.4s both"></rect><rect x="576" y="100" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.1s both"></rect><rect x="622" y="108" width="2.5" height="3" style="animation:mzWinOn .8s ease .3s both"></rect><rect x="668" y="90" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.5s both"></rect><rect x="712" y="82" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.2s both"></rect><rect x="762" y="98" width="2.5" height="3" style="animation:mzWinOn .8s ease .6s both"></rect><rect x="818" y="88" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.8s both"></rect><rect x="872" y="102" width="2.5" height="3" style="animation:mzWinOn .8s ease 1s both"></rect><rect x="906" y="112" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.8s both"></rect></g>
+  </svg></div><div style="{{ edCloudBStyle }}"><div style="position:absolute;inset:0;animation:mzCloudX 58s ease-in-out infinite"><svg viewBox="0 0 932 70" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <g fill="#100905" opacity="0.85"><ellipse cx="140" cy="46" rx="120" ry="9"></ellipse><ellipse cx="480" cy="52" rx="150" ry="10"></ellipse><ellipse cx="810" cy="44" rx="110" ry="8"></ellipse></g>
+    <path d="M40 40 q50 -9 100 -6 q60 -8 120 2 M360 46 q60 -10 130 -6 q60 -7 110 3 M720 38 q50 -8 95 -4 q40 -5 80 3" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
+  </svg></div></div>
   <div style="{{ edFarStyle }}"><svg viewBox="0 0 932 64" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
     <g fill="#2C3852">
       <rect x="52" y="26" width="26" height="38"></rect>
@@ -103,6 +143,16 @@
       <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
       <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
     </g>
+  </svg></div>
+  <div style="{{ edBridgeStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <path d="M-10 118 H942" stroke="#33405E" stroke-width="5" fill="none"></path>
+    <path d="M-10 112 H942" stroke="rgba(240,216,154,.15)" stroke-width="1" fill="none"></path>
+    <g fill="#33405E"><rect x="288" y="44" width="7" height="76"></rect><rect x="301" y="44" width="7" height="76"></rect><rect x="285" y="54" width="26" height="4"></rect><rect x="285" y="76" width="26" height="4"></rect><rect x="285" y="98" width="26" height="4"></rect><rect x="618" y="44" width="7" height="76"></rect><rect x="631" y="44" width="7" height="76"></rect><rect x="615" y="54" width="26" height="4"></rect><rect x="615" y="76" width="26" height="4"></rect><rect x="615" y="98" width="26" height="4"></rect></g>
+    <path d="M-20 64 Q140 116 298 50 M298 50 Q463 126 628 50 M628 50 Q790 116 950 64" stroke="#3D4C6E" stroke-width="1.6" fill="none"></path>
+    <path d="M338 74 V113 M378 90 V113 M418 102 V113 M463 107 V113 M508 102 V113 M548 90 V113 M588 74 V113" stroke="#3D4C6E" stroke-width="1" fill="none"></path>
+    <g fill="rgba(255,214,150,.5)"><circle cx="120" cy="108" r="1.2"></circle><circle cx="220" cy="108" r="1.2"></circle><circle cx="420" cy="108" r="1.2"></circle><circle cx="540" cy="108" r="1.2"></circle><circle cx="740" cy="108" r="1.2"></circle><circle cx="850" cy="108" r="1.2"></circle></g>
+    <circle cx="291.5" cy="39" r="1.8" fill="rgba(255,120,90,.85)" style="animation:bsRare 5s ease-in-out infinite"></circle>
+    <circle cx="621.5" cy="39" r="1.8" fill="rgba(255,120,90,.85)" style="animation:bsRare 5s ease-in-out -2.4s infinite"></circle>
   </svg></div>
   <div style="{{ edTowerStyle }}"><svg viewBox="0 0 932 330" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
     <g fill="#1B2334">
@@ -326,7 +376,7 @@
       <rect x="42" y="132" width="15" height="38" rx="2" fill="#7A3124" stroke="rgba(240,216,154,.48)" stroke-width="1"></rect>
       <path d="M46 140 h7 M49.5 137 v9 M46 152 h7 M49.5 152 v7" stroke="rgba(240,216,154,.26)" stroke-width="1" fill="none"></path>
     </g>
-    <g style="animation:mzNeon 9s linear infinite">
+    <sc-if value="{{ claimedOn }}"><g><path d="M70 162 h16 M78 162 v82" stroke="rgba(255,120,158,.5)" stroke-width="7" fill="none" stroke-linecap="round" style="filter:blur(4px)"></path><path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(255,152,182,.95)" stroke-width="1.6" fill="none" stroke-linecap="round"></path></g></sc-if><g style="animation:mzNeon 9s linear infinite">
       <path d="M70 162 h16 M78 162 v82" stroke="rgba(255,110,150,.18)" stroke-width="6" fill="none" stroke-linecap="round" style="filter:blur(3px)"></path>
       <path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(255,130,165,.6)" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
     </g>
@@ -348,6 +398,42 @@
       <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z" fill="#B0A272"></path></g>
     </g>
   </svg></div>
+  <div style="{{ edCloudAStyle }}">
+    <div style="position:absolute;left:-30px;top:186px;width:300px;height:70px;animation:mzCloudX 36s ease-in-out infinite"><svg viewBox="0 0 300 70" style="width:100%;height:100%;display:block">
+      <g fill="#140D08" opacity="0.88"><ellipse cx="80" cy="42" rx="72" ry="17"></ellipse><ellipse cx="170" cy="34" rx="80" ry="20"></ellipse><ellipse cx="238" cy="46" rx="58" ry="14"></ellipse></g>
+      <path d="M20 34 q34 -16 78 -12 q30 -14 84 -10 q50 -4 96 12" stroke="rgba(240,216,154,.22)" stroke-width="1" fill="none"></path>
+    </svg></div>
+    <div style="position:absolute;right:-40px;top:214px;width:280px;height:64px;animation:mzCloudX 44s ease-in-out -18s infinite"><svg viewBox="0 0 280 64" style="width:100%;height:100%;display:block">
+      <g fill="#140D08" opacity="0.88"><ellipse cx="70" cy="38" rx="62" ry="15"></ellipse><ellipse cx="160" cy="30" rx="72" ry="18"></ellipse><ellipse cx="226" cy="42" rx="50" ry="12"></ellipse></g>
+      <path d="M16 30 q30 -14 70 -10 q28 -12 76 -8 q44 -4 84 10" stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none"></path>
+    </svg></div>
+  </div>
+  <div style="{{ edGeeseStyle }}"><div style="width:64px;height:36px;animation:mzGeese 27s linear infinite"><svg viewBox="0 0 64 36" style="width:100%;height:100%;display:block">
+    <path d="M46 16 l5 3 l5 -3 M32 8 l5 3 l5 -3 M32 24 l5 3 l5 -3 M18 2 l5 3 l5 -3 M18 30 l5 3 l5 -3" stroke="rgba(230,220,196,.6)" stroke-width="1.4" fill="none" stroke-linecap="round"></path>
+  </svg></div></div>
+  <div style="{{ edPlaneStyle }}"><div style="position:absolute;left:0;top:0;animation:mzPlane 46s linear infinite">
+    <div style="position:absolute;left:4px;top:0;width:56px;height:1px;background:linear-gradient(to right, rgba(200,214,255,.3), transparent)"></div>
+    <div style="position:absolute;left:0;top:-1px;width:2.5px;height:2.5px;border-radius:50%;background:rgba(242,234,214,.85)"></div>
+    <div style="position:absolute;left:-4px;top:-1px;width:2.5px;height:2.5px;border-radius:50%;background:rgba(255,120,90,.95);animation:bsRare 2.2s linear infinite"></div>
+  </div></div>
+  <div style="{{ edWindStyle }}">
+    <div style="position:absolute;left:12%;top:26%;width:96px;height:1px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(230,220,196,.5), transparent);animation:mzWindLn 6.5s ease-in-out infinite"></div>
+    <div style="position:absolute;left:60%;top:37%;width:120px;height:1px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(230,220,196,.42), transparent);animation:mzWindLn 8s ease-in-out -3s infinite"></div>
+    <div style="position:absolute;left:36%;top:47%;width:80px;height:1px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(230,220,196,.36), transparent);animation:mzWindLn 7s ease-in-out -5s infinite"></div>
+  </div>
+  <div style="{{ edSatStyle }}"><div style="position:absolute;left:0;top:40px;animation:mzSat 56s linear infinite"><div style="width:2.5px;height:2.5px;border-radius:50%;background:rgba(200,214,255,.9);box-shadow:0 0 5px rgba(200,214,255,.7);animation:bsTwinkle 2.6s ease-in-out infinite"></div></div></div>
+  <div style="{{ edShootStyle }}">
+    <div style="position:absolute;left:640px;top:56px;width:74px;height:1.5px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(242,234,214,.95));animation:mzShoot 14s linear -3s infinite"></div>
+    <div style="position:absolute;left:290px;top:36px;width:60px;height:1.5px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(242,234,214,.8));animation:mzShoot 23s linear -11s infinite"></div>
+  </div>
+  <div style="{{ edMoonStyle }}">
+    <div style="position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle, rgba(255,206,120,.3), rgba(255,176,0,.07) 55%, transparent 74%);animation:mzBreathe 5.5s ease-in-out infinite"></div>
+    <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 37% 32%, #F7EDD6, #E6D4A6 56%, #C6AE7A 90%);box-shadow:0 0 36px rgba(255,206,120,.45), inset -9px -8px 20px rgba(122,90,42,.55)">
+      <div style="position:absolute;left:56%;top:24%;width:11px;height:11px;border-radius:50%;background:rgba(168,138,90,.5);box-shadow:inset 1px 1px 2px rgba(96,70,34,.6)"></div>
+      <div style="position:absolute;left:26%;top:52%;width:8px;height:8px;border-radius:50%;background:rgba(168,138,90,.45);box-shadow:inset 1px 1px 2px rgba(96,70,34,.55)"></div>
+      <div style="position:absolute;left:58%;top:64%;width:5px;height:5px;border-radius:50%;background:rgba(168,138,90,.4)"></div>
+    </div>
+  </div>
   <div style="{{ elevWorldStyle }}"></div>
   <div style="{{ breatheStyle }}"></div>
 
@@ -364,7 +450,6 @@
         <span style="{{ p.style }}"></span>
       </sc-for>
     </span>
-    <button onClick="{{ rulesTap }}" style="background:none;border:1px solid rgba(240,216,154,.3);color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11px;width:26px;height:26px;border-radius:50%;cursor:pointer">?</button>
   </div>
 
   <sc-if value="{{ skyHandOn }}" hint-placeholder-val="{{ true }}">
@@ -427,6 +512,10 @@
               <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
             </sc-for>
           </svg>
+          <sc-if value="{{ s.domPrevOn }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1;color:#FFB000;text-shadow:0 0 7px rgba(255,176,0,.85);animation:mzBreathe 1.6s ease-in-out infinite">✦</span>
+            <div style="position:absolute;bottom:5px;left:0;right:0;font-size:7.5px;color:#FFB000;text-align:center;animation:mzBreathe 1.6s ease-in-out infinite">counts two here</div>
+          </sc-if>
         </sc-if>
         <sc-if value="{{ s.cardOn }}" hint-placeholder-val="{{ false }}">
           <svg viewBox="0 0 100 100" style="{{ s.artStyle }}">
@@ -443,6 +532,15 @@
             <span style="{{ s.homeStyle }}">✦</span>
           </sc-if>
           <div style="position:absolute;bottom:5px;left:0;right:0;font-size:7.5px;color:{{ s.tagColor }};text-align:center">{{ s.tag }}</div>
+          <sc-if value="{{ s.pgOn }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:4px;right:6px;font-size:8.5px;color:rgba(240,216,154,.6);text-shadow:0 0 4px rgba(4,3,2,.9)">{{ s.pg }}</span>
+          </sc-if>
+          <sc-if value="{{ s.castHere }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;inset:-9px;border-radius:12px;border:1.5px solid rgba(255,214,150,.75);animation:mzImpact .5s ease both;pointer-events:none"></div>
+            <span style="position:absolute;left:10px;bottom:6px;width:4px;height:4px;border-radius:50%;background:rgba(240,216,154,.8);animation:mzDustA .55s ease both;pointer-events:none"></span>
+            <span style="position:absolute;right:10px;bottom:6px;width:3.5px;height:3.5px;border-radius:50%;background:rgba(240,216,154,.75);animation:mzDustB .6s ease both;pointer-events:none"></span>
+            <span style="position:absolute;left:50%;bottom:3px;width:3px;height:3px;border-radius:50%;background:rgba(240,216,154,.7);animation:mzDustC .5s ease .05s both;pointer-events:none"></span>
+          </sc-if>
         </sc-if>
         <sc-if value="{{ s.veilOn }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;inset:5px;border-radius:4px;background:rgba(255,176,0,.05);border:1px solid rgba(255,176,0,.18);display:flex;align-items:center;justify-content:center;color:rgba(255,176,0,.4);font-size:12px">✦</div>
@@ -474,6 +572,9 @@
     </div>
   </sc-if>
   <div style="position:absolute;top:262px;left:0;right:0;text-align:center;min-height:18px;font-size:12px;color:#D8C89C">{{ logLine }}</div>
+  <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ toastStyle }}">{{ toastText }}</div>
+  </sc-if>
   <sc-if value="{{ countFxOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;z-index:6;pointer-events:none">
       <sc-for list="{{ cfLights }}" as="d" hint-placeholder-count="4">
@@ -486,6 +587,7 @@
 
   <sc-if value="{{ zoomOn }}" hint-placeholder-val="{{ false }}">
     <div style="{{ zoomStyle }}">
+      <div style="{{ zoomInnerStyle }}">
       <sc-if value="{{ zoomBackOn }}" hint-placeholder-val="{{ false }}">
         <div style="width:210px;height:284px;border-radius:14px;background:linear-gradient(160deg,#1E1810,#0B0703);border:1px solid rgba(255,176,0,.4);box-shadow:0 18px 50px rgba(0,0,0,.75)"></div>
       </sc-if>
@@ -504,6 +606,7 @@
           <div style="position:absolute;bottom:15px;left:0;right:0;text-align:center;font-size:9.5px;color:#9A8A5E;padding:0 40px">{{ zoomWho }}</div>
         </div>
       </sc-if>
+      </div>
       <sc-if value="{{ zoomNotesOn }}" hint-placeholder-val="{{ false }}">
         <div style="{{ zoomNotesStyle }}">
           <sc-for list="{{ zoomNotes }}" as="p" hint-placeholder-count="1">
@@ -525,6 +628,9 @@
         </svg>
         <div style="{{ c.lnStyle }}">{{ c.ln }}</div>
         <div style="{{ c.rnStyle }}">{{ c.rn }}</div>
+        <sc-if value="{{ c.pgOn }}" hint-placeholder-val="{{ false }}">
+          <span style="position:absolute;bottom:8px;left:11px;font-size:9.5px;color:rgba(240,216,154,.62);text-shadow:0 0 4px rgba(4,3,2,.9)">{{ c.pg }}</span>
+        </sc-if>
         <sc-if value="{{ c.cornersOn }}" hint-placeholder-val="{{ false }}">
           <span style="position:absolute;top:-1px;left:-1px;width:7px;height:7px;border-top:1.5px solid {{ c.frameC }};border-left:1.5px solid {{ c.frameC }};border-radius:7px 0 0 0"></span>
           <span style="position:absolute;top:-1px;right:-1px;width:7px;height:7px;border-top:1.5px solid {{ c.frameC }};border-right:1.5px solid {{ c.frameC }};border-radius:0 7px 0 0"></span>
@@ -549,14 +655,39 @@
   <sc-if value="{{ menuOn }}" hint-placeholder-val="{{ true }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);overflow:hidden;z-index:8;animation:mzFadeUp .35s ease both">
       <div style="{{ elevAirStyle }}"></div>
+      <div style="{{ edDuskStyle }}"></div>
+      <div style="{{ edColdStyle }}"></div>
       <div style="{{ starDimStyle }}">
         <sc-for list="{{ stars }}" as="s" hint-placeholder-count="8">
           <span style="{{ s.style }}"></span>
         </sc-for>
       </div>
+      <div style="{{ edMilkyStyle }}"></div>
+      <div style="{{ edStars2Style }}"><svg viewBox="0 0 932 430" style="width:100%;height:100%;display:block">
+        <g fill="rgba(242,234,214,.5)"><circle cx="52" cy="30" r="0.9"></circle><circle cx="120" cy="96" r="0.7"></circle><circle cx="176" cy="52" r="1"></circle><circle cx="238" cy="140" r="0.7"></circle><circle cx="290" cy="24" r="0.8"></circle><circle cx="344" cy="112" r="0.7"></circle><circle cx="402" cy="58" r="1"></circle><circle cx="452" cy="150" r="0.7"></circle><circle cx="512" cy="36" r="0.9"></circle><circle cx="568" cy="120" r="0.7"></circle><circle cx="628" cy="70" r="1"></circle><circle cx="688" cy="24" r="0.8"></circle><circle cx="742" cy="132" r="0.7"></circle><circle cx="800" cy="84" r="0.9"></circle><circle cx="858" cy="40" r="0.7"></circle><circle cx="908" cy="118" r="0.8"></circle><circle cx="84" cy="196" r="0.7"></circle><circle cx="212" cy="228" r="0.8"></circle><circle cx="358" cy="196" r="0.7"></circle><circle cx="586" cy="212" r="0.8"></circle><circle cx="716" cy="188" r="0.7"></circle><circle cx="874" cy="222" r="0.8"></circle></g>
+        <circle cx="150" cy="150" r="1.1" fill="rgba(170,190,255,.7)" style="animation:bsTwinkle 4s ease-in-out infinite"></circle>
+        <circle cx="470" cy="90" r="1.1" fill="rgba(242,234,214,.75)" style="animation:bsTwinkle 5s ease-in-out -2s infinite"></circle>
+        <circle cx="770" cy="60" r="1.1" fill="rgba(255,190,170,.7)" style="animation:bsTwinkle 6s ease-in-out -1s infinite"></circle>
+      </svg></div>
+      <div style="{{ edAuroraStyle }}">
+        <div style="position:absolute;left:13%;top:-5%;width:160px;height:56%;background:linear-gradient(to bottom, rgba(118,196,172,.22), rgba(118,196,172,.06) 58%, transparent);filter:blur(7px);animation:mzAurora 16s ease-in-out infinite"></div>
+        <div style="position:absolute;left:31%;top:-7%;width:110px;height:48%;background:linear-gradient(to bottom, rgba(96,74,186,.22), transparent 70%);filter:blur(8px);animation:mzAurora 20s ease-in-out -8s infinite"></div>
+        <div style="position:absolute;right:15%;top:-5%;width:140px;height:44%;background:linear-gradient(to bottom, rgba(118,196,172,.16), transparent 64%);filter:blur(8px);animation:mzAurora 23s ease-in-out -14s infinite"></div>
+      </div>
       <div style="{{ elevDayStyle }}"></div>
       <div style="{{ elevGroundStyle }}"></div>
       <div style="{{ elevRimStyle }}"></div>
+      <div style="{{ edGridStyle }}"><svg viewBox="0 0 932 120" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <g fill="rgba(255,198,116,.5)"><rect x="36" y="84" width="2" height="2"></rect><rect x="88" y="102" width="2" height="2"></rect><rect x="132" y="74" width="2" height="2"></rect><rect x="186" y="96" width="2" height="2"></rect><rect x="238" y="110" width="2" height="2"></rect><rect x="286" y="80" width="2" height="2"></rect><rect x="352" y="100" width="2" height="2"></rect><rect x="418" y="88" width="2" height="2"></rect><rect x="470" y="108" width="2" height="2"></rect><rect x="522" y="78" width="2" height="2"></rect><rect x="588" y="98" width="2" height="2"></rect><rect x="642" y="112" width="2" height="2"></rect><rect x="694" y="84" width="2" height="2"></rect><rect x="748" y="104" width="2" height="2"></rect><rect x="806" y="76" width="2" height="2"></rect><rect x="862" y="94" width="2" height="2"></rect><rect x="902" y="110" width="2" height="2"></rect></g>
+        <g fill="rgba(255,214,150,.8)"><rect x="160" y="88" width="2.5" height="2.5" style="animation:mzWindow 13s ease-in-out infinite"></rect><rect x="500" y="92" width="2.5" height="2.5"></rect><rect x="720" y="96" width="2.5" height="2.5" style="animation:mzWindow 17s ease-in-out -6s infinite"></rect></g>
+        <g fill="rgba(170,190,255,.45)"><rect x="270" y="104" width="2" height="2"></rect><rect x="610" y="82" width="2" height="2"></rect><rect x="840" y="108" width="2" height="2"></rect></g>
+      </svg></div>
+      <div style="{{ edLitStyle }}"><div style="position:absolute;left:16%;right:16%;bottom:0;height:64px;background:radial-gradient(50% 100% at 50% 100%, rgba(255,176,80,.15), transparent 75%)"></div><svg viewBox="0 0 932 120" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+    <g fill="rgba(255,206,130,.92)"><rect x="52" y="88" width="2.5" height="3" style="animation:mzWinOn .8s ease .2s both"></rect><rect x="104" y="98" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.3s both"></rect><rect x="148" y="78" width="2.5" height="3" style="animation:mzWinOn .8s ease .7s both"></rect><rect x="204" y="92" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.1s both"></rect><rect x="252" y="106" width="2.5" height="3" style="animation:mzWinOn .8s ease .4s both"></rect><rect x="302" y="84" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.7s both"></rect><rect x="338" y="102" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.6s both"></rect><rect x="398" y="94" width="2.5" height="3" style="animation:mzWinOn .8s ease .9s both"></rect><rect x="438" y="80" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.9s both"></rect><rect x="484" y="104" width="2.5" height="3" style="animation:mzWinOn .8s ease .5s both"></rect><rect x="536" y="86" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.4s both"></rect><rect x="576" y="100" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.1s both"></rect><rect x="622" y="108" width="2.5" height="3" style="animation:mzWinOn .8s ease .3s both"></rect><rect x="668" y="90" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.5s both"></rect><rect x="712" y="82" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.2s both"></rect><rect x="762" y="98" width="2.5" height="3" style="animation:mzWinOn .8s ease .6s both"></rect><rect x="818" y="88" width="2.5" height="3" style="animation:mzWinOn .8s ease 1.8s both"></rect><rect x="872" y="102" width="2.5" height="3" style="animation:mzWinOn .8s ease 1s both"></rect><rect x="906" y="112" width="2.5" height="3" style="animation:mzWinOn .8s ease 2.8s both"></rect></g>
+  </svg></div><div style="{{ edCloudBStyle }}"><div style="position:absolute;inset:0;animation:mzCloudX 58s ease-in-out infinite"><svg viewBox="0 0 932 70" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <g fill="#100905" opacity="0.85"><ellipse cx="140" cy="46" rx="120" ry="9"></ellipse><ellipse cx="480" cy="52" rx="150" ry="10"></ellipse><ellipse cx="810" cy="44" rx="110" ry="8"></ellipse></g>
+        <path d="M40 40 q50 -9 100 -6 q60 -8 120 2 M360 46 q60 -10 130 -6 q60 -7 110 3 M720 38 q50 -8 95 -4 q40 -5 80 3" stroke="rgba(240,216,154,.16)" stroke-width="1" fill="none"></path>
+      </svg></div></div>
       <div style="{{ edFarStyle }}"><svg viewBox="0 0 932 64" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
         <g fill="#2C3852">
           <rect x="52" y="26" width="26" height="38"></rect>
@@ -569,6 +700,16 @@
           <path d="M236 40 v-11 M252 40 v-11"></path><rect x="230" y="17" width="28" height="13" rx="2"></rect><path d="M228 17 h32 l-16 -8 z"></path>
           <path d="M652 36 v-10 M666 36 v-10"></path><rect x="646" y="14" width="26" height="13" rx="2"></rect><path d="M644 14 h30 l-15 -7 z"></path>
         </g>
+      </svg></div>
+      <div style="{{ edBridgeStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+        <path d="M-10 118 H942" stroke="#33405E" stroke-width="5" fill="none"></path>
+        <path d="M-10 112 H942" stroke="rgba(240,216,154,.15)" stroke-width="1" fill="none"></path>
+        <g fill="#33405E"><rect x="288" y="44" width="7" height="76"></rect><rect x="301" y="44" width="7" height="76"></rect><rect x="285" y="54" width="26" height="4"></rect><rect x="285" y="76" width="26" height="4"></rect><rect x="285" y="98" width="26" height="4"></rect><rect x="618" y="44" width="7" height="76"></rect><rect x="631" y="44" width="7" height="76"></rect><rect x="615" y="54" width="26" height="4"></rect><rect x="615" y="76" width="26" height="4"></rect><rect x="615" y="98" width="26" height="4"></rect></g>
+        <path d="M-20 64 Q140 116 298 50 M298 50 Q463 126 628 50 M628 50 Q790 116 950 64" stroke="#3D4C6E" stroke-width="1.6" fill="none"></path>
+        <path d="M338 74 V113 M378 90 V113 M418 102 V113 M463 107 V113 M508 102 V113 M548 90 V113 M588 74 V113" stroke="#3D4C6E" stroke-width="1" fill="none"></path>
+        <g fill="rgba(255,214,150,.5)"><circle cx="120" cy="108" r="1.2"></circle><circle cx="220" cy="108" r="1.2"></circle><circle cx="420" cy="108" r="1.2"></circle><circle cx="540" cy="108" r="1.2"></circle><circle cx="740" cy="108" r="1.2"></circle><circle cx="850" cy="108" r="1.2"></circle></g>
+        <circle cx="291.5" cy="39" r="1.8" fill="rgba(255,120,90,.85)" style="animation:bsRare 5s ease-in-out infinite"></circle>
+        <circle cx="621.5" cy="39" r="1.8" fill="rgba(255,120,90,.85)" style="animation:bsRare 5s ease-in-out -2.4s infinite"></circle>
       </svg></div>
       <div style="{{ edTowerStyle }}"><svg viewBox="0 0 932 330" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
         <g fill="#1B2334">
@@ -792,7 +933,7 @@
           <rect x="42" y="132" width="15" height="38" rx="2" fill="#7A3124" stroke="rgba(240,216,154,.48)" stroke-width="1"></rect>
           <path d="M46 140 h7 M49.5 137 v9 M46 152 h7 M49.5 152 v7" stroke="rgba(240,216,154,.26)" stroke-width="1" fill="none"></path>
         </g>
-        <g style="animation:mzNeon 9s linear infinite">
+        <sc-if value="{{ claimedOn }}"><g><path d="M70 162 h16 M78 162 v82" stroke="rgba(255,120,158,.5)" stroke-width="7" fill="none" stroke-linecap="round" style="filter:blur(4px)"></path><path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(255,152,182,.95)" stroke-width="1.6" fill="none" stroke-linecap="round"></path></g></sc-if><g style="animation:mzNeon 9s linear infinite">
       <path d="M70 162 h16 M78 162 v82" stroke="rgba(255,110,150,.18)" stroke-width="6" fill="none" stroke-linecap="round" style="filter:blur(3px)"></path>
       <path d="M70 162 h16 M78 162 v82 M71 182 h14 M71 202 h14 M71 222 h14" stroke="rgba(255,130,165,.6)" stroke-width="1.5" fill="none" stroke-linecap="round"></path>
     </g>
@@ -814,6 +955,42 @@
           <g style="animation:mzSway 11s ease-in-out -8s infinite;transform-box:fill-box;transform-origin:50% 0"><path d="M650 38 v5"></path><path d="M643 43 h14 v16 l-7 5 l-7 -5 z" fill="#B0A272"></path></g>
         </g>
       </svg></div>
+      <div style="{{ edCloudAStyle }}">
+        <div style="position:absolute;left:-30px;top:186px;width:300px;height:70px;animation:mzCloudX 36s ease-in-out infinite"><svg viewBox="0 0 300 70" style="width:100%;height:100%;display:block">
+          <g fill="#140D08" opacity="0.88"><ellipse cx="80" cy="42" rx="72" ry="17"></ellipse><ellipse cx="170" cy="34" rx="80" ry="20"></ellipse><ellipse cx="238" cy="46" rx="58" ry="14"></ellipse></g>
+          <path d="M20 34 q34 -16 78 -12 q30 -14 84 -10 q50 -4 96 12" stroke="rgba(240,216,154,.22)" stroke-width="1" fill="none"></path>
+        </svg></div>
+        <div style="position:absolute;right:-40px;top:214px;width:280px;height:64px;animation:mzCloudX 44s ease-in-out -18s infinite"><svg viewBox="0 0 280 64" style="width:100%;height:100%;display:block">
+          <g fill="#140D08" opacity="0.88"><ellipse cx="70" cy="38" rx="62" ry="15"></ellipse><ellipse cx="160" cy="30" rx="72" ry="18"></ellipse><ellipse cx="226" cy="42" rx="50" ry="12"></ellipse></g>
+          <path d="M16 30 q30 -14 70 -10 q28 -12 76 -8 q44 -4 84 10" stroke="rgba(240,216,154,.2)" stroke-width="1" fill="none"></path>
+        </svg></div>
+      </div>
+      <div style="{{ edGeeseStyle }}"><div style="width:64px;height:36px;animation:mzGeese 27s linear infinite"><svg viewBox="0 0 64 36" style="width:100%;height:100%;display:block">
+        <path d="M46 16 l5 3 l5 -3 M32 8 l5 3 l5 -3 M32 24 l5 3 l5 -3 M18 2 l5 3 l5 -3 M18 30 l5 3 l5 -3" stroke="rgba(230,220,196,.6)" stroke-width="1.4" fill="none" stroke-linecap="round"></path>
+      </svg></div></div>
+      <div style="{{ edPlaneStyle }}"><div style="position:absolute;left:0;top:0;animation:mzPlane 46s linear infinite">
+        <div style="position:absolute;left:4px;top:0;width:56px;height:1px;background:linear-gradient(to right, rgba(200,214,255,.3), transparent)"></div>
+        <div style="position:absolute;left:0;top:-1px;width:2.5px;height:2.5px;border-radius:50%;background:rgba(242,234,214,.85)"></div>
+        <div style="position:absolute;left:-4px;top:-1px;width:2.5px;height:2.5px;border-radius:50%;background:rgba(255,120,90,.95);animation:bsRare 2.2s linear infinite"></div>
+      </div></div>
+      <div style="{{ edWindStyle }}">
+        <div style="position:absolute;left:12%;top:26%;width:96px;height:1px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(230,220,196,.5), transparent);animation:mzWindLn 6.5s ease-in-out infinite"></div>
+        <div style="position:absolute;left:60%;top:37%;width:120px;height:1px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(230,220,196,.42), transparent);animation:mzWindLn 8s ease-in-out -3s infinite"></div>
+        <div style="position:absolute;left:36%;top:47%;width:80px;height:1px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(230,220,196,.36), transparent);animation:mzWindLn 7s ease-in-out -5s infinite"></div>
+      </div>
+      <div style="{{ edSatStyle }}"><div style="position:absolute;left:0;top:40px;animation:mzSat 56s linear infinite"><div style="width:2.5px;height:2.5px;border-radius:50%;background:rgba(200,214,255,.9);box-shadow:0 0 5px rgba(200,214,255,.7);animation:bsTwinkle 2.6s ease-in-out infinite"></div></div></div>
+      <div style="{{ edShootStyle }}">
+        <div style="position:absolute;left:640px;top:56px;width:74px;height:1.5px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(242,234,214,.95));animation:mzShoot 14s linear -3s infinite"></div>
+        <div style="position:absolute;left:290px;top:36px;width:60px;height:1.5px;border-radius:2px;background:linear-gradient(to right, transparent, rgba(242,234,214,.8));animation:mzShoot 23s linear -11s infinite"></div>
+      </div>
+      <div style="{{ edMoonStyle }}">
+        <div style="position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle, rgba(255,206,120,.3), rgba(255,176,0,.07) 55%, transparent 74%);animation:mzBreathe 5.5s ease-in-out infinite"></div>
+        <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 37% 32%, #F7EDD6, #E6D4A6 56%, #C6AE7A 90%);box-shadow:0 0 36px rgba(255,206,120,.45), inset -9px -8px 20px rgba(122,90,42,.55)">
+          <div style="position:absolute;left:56%;top:24%;width:11px;height:11px;border-radius:50%;background:rgba(168,138,90,.5);box-shadow:inset 1px 1px 2px rgba(96,70,34,.6)"></div>
+          <div style="position:absolute;left:26%;top:52%;width:8px;height:8px;border-radius:50%;background:rgba(168,138,90,.45);box-shadow:inset 1px 1px 2px rgba(96,70,34,.55)"></div>
+          <div style="position:absolute;left:58%;top:64%;width:5px;height:5px;border-radius:50%;background:rgba(168,138,90,.4)"></div>
+        </div>
+      </div>
       <div style="{{ elevWorldStyle }}"></div>
 
       <sc-if value="{{ doorUiOn }}" hint-placeholder-val="{{ false }}">
@@ -848,8 +1025,7 @@
         <button onClick="{{ menuPlayTap }}" style="margin-top:4px;background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;transition:background .35s ease, box-shadow .35s ease;animation:mzFadeUp .6s ease .38s both" style-hover="background:rgba(255,176,0,.2);box-shadow:0 0 26px rgba(255,176,0,.25)">{{ menuPlayLabel }}</button>
       </div>
       <div style="position:absolute;left:0;right:0;bottom:18px;display:flex;justify-content:center;gap:28px;animation:mzFadeUp .6s ease .5s both">
-        <button onClick="{{ rulesTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">how to play</button>
-        <button onClick="{{ menuDeckTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your hand</button>
+        <button onClick="{{ menuDeckTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">your cards</button>
         <button onClick="{{ menuLegendTap }}" style="background:none;border:none;padding:0;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">the legend</button>
       </div>
       </sc-if>
@@ -885,12 +1061,21 @@
     </div>
   </sc-if>
   <sc-if value="{{ deckOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;z-index:4;animation:mzFadeUp .3s ease both">
+    <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;z-index:9;animation:mzFadeUp .3s ease both">
       <button onClick="{{ menuBackTap }}" style="position:absolute;top:18px;left:20px;background:none;border:none;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:11.5px;cursor:pointer;padding:6px 0;transition:color .3s ease" style-hover="color:#F0D89A">‹ back</button>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6;animation:mzFadeUp .5s ease both">your hand</div>
-      <div style="font-size:10px;color:#9A8A5E">twelve walk with you; five are dealt face up each board. grey cards are asleep at level one, numbers only. every mansion is a level: walk a card's own level and its move wakes.</div>
-      <button onClick="{{ menuTutTap }}" style="background:none;border:none;padding:2px 0 0;color:rgba(154,138,94,.75);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">walk the practice board again ›</button>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:660px;margin-top:2px">
+      <button onClick="{{ menuTutTap }}" style="position:absolute;bottom:15px;left:50%;transform:translateX(-50%);background:none;border:none;color:rgba(154,138,94,.7);font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;transition:color .3s ease" style-hover="color:#F0D89A">walk the practice board again ›</button>
+      <div style="display:flex;align-items:baseline;gap:9px;animation:mzFadeUp .5s ease both">
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6">your cards</div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E">{{ deckCount }} of 28</div>
+      </div>
+      <div style="font-size:10px;color:#9A8A5E;max-width:600px;text-align:center;line-height:1.5;text-wrap:pretty">one for each of the moon's houses. five are dealt to your hand each board; face-down cards join when their road is walked.</div>
+      <div style="display:flex;gap:7px;margin-top:4px">
+        <sc-for list="{{ lvlChips }}" as="b" hint-placeholder-count="4">
+          <button onMouseEnter="{{ b.enter }}" onMouseLeave="{{ b.leave }}" onClick="{{ b.tap }}" style="{{ b.style }}">{{ b.label }}<span style="{{ b.nStyle }}">{{ b.n }}</span></button>
+        </sc-for>
+      </div>
+      <div style="font-size:10px;color:rgba(154,138,94,.95);max-width:560px;text-align:center;line-height:1.5;min-height:14px">{{ lvlLine }}</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:600px;margin-top:1px">
         <sc-for list="{{ deckCards }}" as="c" hint-placeholder-count="28">
           <div onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" style="{{ c.style }}" style-hover="transform:translateY(-3px)">
             <sc-if value="{{ c.backOn }}" hint-placeholder-val="{{ false }}">
@@ -904,6 +1089,9 @@
               </svg>
               <div style="{{ c.lnStyle }}">{{ c.ln }}</div>
               <div style="{{ c.rnStyle }}">{{ c.rn }}</div>
+              <sc-if value="{{ c.pgOn }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute;bottom:4px;left:6px;font-size:8.5px;color:rgba(240,216,154,.6)">{{ c.pg }}</span>
+              </sc-if>
               <sc-if value="{{ c.nameOn }}" hint-placeholder-val="{{ true }}">
                 <div style="position:absolute;top:56%;left:0;right:0;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:9.5px;color:#F2EAD6;text-align:center;line-height:1.05;padding:0 5px">{{ c.name }}</div>
               </sc-if>
@@ -923,7 +1111,6 @@
           </div>
         </sc-for>
       </div>
-      <button onClick="{{ deckStartTap }}" style="{{ deckStartStyle }}">{{ deckStartLabel }}</button>
     </div>
   </sc-if>
   <sc-if value="{{ introOn }}" hint-placeholder-val="{{ false }}">
@@ -973,6 +1160,9 @@
     <div onClick="{{ nextRoundTap }}" style="{{ roundOverStyle }}">
       <div style="font-size:20px;color:{{ roundMark }}">✦</div>
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6">{{ roundTitle }}</div>
+      <sc-if value="{{ roundWalkerOn }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;animation:mzFadeUp .6s ease .3s both">{{ roundWalkerLine }}</div>
+      </sc-if>
       <sc-if value="{{ ascentOn }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;align-items:center">
           <div style="font-size:11px;color:#9A8A5E">the road turns between boards. take one, or tap past.</div>
@@ -1220,9 +1410,10 @@ class Component extends DCLogic {
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
     this._mountT = setTimeout(() => this.forceUpdate(), 400);
+    this._clockT = setInterval(() => { if (this.state.phase === "menu") this.forceUpdate(); }, 30000);
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this._onResize); this._clearSeq();
+    window.removeEventListener("resize", this._onResize); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf);
   }
@@ -1454,6 +1645,11 @@ class Component extends DCLogic {
       if (fl && o) lvl = fl;
       C[id] = { name: p[0], l, r, who: "you", lvl, loan: !o, ab: (o && o.ab) || null, abText: (o && o.abText) || "", twoFaced: !!(o && o.twoFaced), won: o && o.won };
     });
+    const bb = this._birth();
+    const pm = {};
+    if (bb && Array.isArray(bb.rows)) { bb.rows.forEach(r => { if (pm[r.m] === undefined) pm[r.m] = r.p; }); (bb.fill || []).forEach(r => { if (pm[r.m] === undefined) pm[r.m] = r.p; }); }
+    else this._chartFive().forEach((m, k) => { if (pm[m] === undefined) pm[m] = ["sun", "moon", "mercury", "venus", "mars"][k]; });
+    Object.keys(pm).forEach(k => { if (C[k] && !C[k].loan) C[k].planet = pm[k]; });
     // her planets hold dominion where they truly stand tonight (real ephemeris; fixed fallback)
     const PH = (window.ManzilEphem && ManzilEphem.mansionOf)
       ? { saturn: ManzilEphem.mansionOf("saturn"), mars: ManzilEphem.mansionOf("mars"), venus: ManzilEphem.mansionOf("venus"), mercury: ManzilEphem.mansionOf("mercury"), jupiter: ManzilEphem.mansionOf("jupiter") }
@@ -1483,6 +1679,8 @@ class Component extends DCLogic {
   _claims() { try { return JSON.parse(localStorage.getItem("manzil-ed-claims")) || {}; } catch (e) { return {}; } }
   _mlvl(t) { try { return (JSON.parse(localStorage.getItem("manzil-ed-mlvl")) || {})[t] || 0; } catch (e) { return 0; } }
   _climbDoneTonight(t) { try { const m = JSON.parse(localStorage.getItem("manzil-ed-lastclimb")) || {}; return m[t] === new Date().toISOString().slice(0, 10); } catch (e) { return false; } }
+  _moonIn() { const now = new Date(); const mid = new Date(now); mid.setHours(24, 0, 0, 0); const m = Math.max(1, Math.round((mid - now) / 60000)); const h = Math.floor(m / 60); return h > 0 ? h + "h " + (m % 60) + "m" : m + "m"; }
+  _pglyph(p) { return { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄", "the road": "✦" }[p] || ""; }
   _birth() { try { return JSON.parse(localStorage.getItem("manzil-ed-birth")); } catch (e) { return null; } }
   _chartFive() { const b = this._birth(); return b && Array.isArray(b.five) && b.five.length === 5 ? b.five : [5, 6, 10, 17, 18]; }
   _castFive(dt) {
@@ -1612,6 +1810,7 @@ class Component extends DCLogic {
     if (s && this._isHome(s.id, i)) notes.push("✦ dominion: lodged on its own mansion, it counts as two at the count, whoever holds it.");
     let who = c.who === "sky" ? (c.walker ? "a walker's" : "the sky's") : s && !you ? "claimed by the sky" : "";
     if (c.who === "you") who += (who ? " · " : "") + "level " + c.lvl;
+    if (c.who === "you" && c.planet) who += c.planet === "the road" ? " · from the road" : " · your " + c.planet;
     return {
       name: c.name.toLowerCase(), move: lines.join(" "), who,
       l: s ? this._faceOf(this.state.slots, i, -1) : c.l, r: s ? this._faceOf(this.state.slots, i, 1) : c.r,
@@ -1622,17 +1821,18 @@ class Component extends DCLogic {
     };
   }
   _zoomPlace(k, st) {
-    const W = 210, H = 284, NW = 150, GAP = 10;
-    const base = "position:absolute;width:" + W + "px;height:" + H + "px;z-index:30;pointer-events:none;animation:mzHandIn .15s ease both;";
+    const zsc = k != null && String(k)[0] === "d" ? 1 : .6;
+    const W = Math.round(210 * zsc), H = Math.round(284 * zsc), NW = 150, GAP = 10;
+    const base = "position:absolute;width:" + W + "px;height:" + H + "px;z-index:30;pointer-events:none;";
     if (k == null) return { wrap: base + "left:-999px;top:0", notes: "display:none" };
     k = String(k);
     const clx = (x) => Math.max(10, Math.min(932 - W - 10, x));
     if (k[0] === "d") {
-      const dk = (st.deckSel || []), idx = Math.max(dk.indexOf(+k.slice(1)), 0), perRow = 10;
-      const row = Math.floor(idx / perRow), col = idx - row * perRow, rowN = Math.min(dk.length - row * perRow, perRow);
-      const rowW = rowN * 64 - 6, cardX = 466 - rowW / 2 + col * 64 + 29;
+      const idx = +k.slice(1) - 1, perRow = 10;
+      const row = Math.floor(idx / perRow), col = idx - row * perRow, rowN = row === 2 ? 8 : 10;
+      const rowW = rowN * 60 - 6, cardX = 466 - rowW / 2 + col * 60 + 27;
       const right = cardX < 466;
-      const left = clx(right ? cardX + 44 : cardX - 44 - W);
+      const left = clx(right ? cardX + 41 : cardX - 41 - W);
       return { wrap: base + "left:" + left + "px;top:73px", notes: "position:absolute;top:50%;transform:translateY(-50%);width:" + NW + "px;display:flex;flex-direction:column;gap:6px;" + (right ? "left:" + (W + GAP) + "px" : "right:" + (W + GAP) + "px") };
     }
     let left, top;
@@ -1645,8 +1845,9 @@ class Component extends DCLogic {
     } else {
       const idx = st.hand.indexOf(+k.slice(1)), n = st.hand.length;
       const edge = 466 - (n * 80 + (n - 1) * 12) / 2;
-      left = clx(edge + (idx < 0 ? 0 : idx) * 92 + 40 - W / 2);
-      top = 430 - H - 128;
+      const cx = edge + (idx < 0 ? 0 : idx) * 92 + 40;
+      left = clx(cx < 466 ? cx - 12 - W : cx + 12);
+      top = 430 - H - 52;
     }
     let nRight = left + W / 2 < 466;
     if (nRight && left + W + GAP + NW > 924) nRight = false;
@@ -1656,14 +1857,14 @@ class Component extends DCLogic {
   _abilityOn(c) { return c.ab && c.lvl >= 2; }
   _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 28: "thread", 24: "void" })[this._tonight()] || null; }
   _walkers() { return [
-    { name: "imra", line: "imra plays her first number and hopes.", hand: [201, 202, 208, 211, 227] },
-    { name: "sef", line: "sef counts the ground before he lodges.", hand: [203, 207, 212, 219, 222] },
-    { name: "odel", line: "odel waits for you to reach too far.", hand: [204, 214, 213, 226, 216] },
-    { name: "tesh", line: "tesh trades small and keeps the corners.", hand: [205, 209, 217, 223, 225] },
-    { name: "ruen", line: "ruen reads your hand back to you.", hand: [202, 210, 216, 220, 228] },
-    { name: "brann", line: "brann picks the fight you least want.", hand: [206, 215, 218, 210, 220] },
-    { name: "mave", line: "mave gives nothing away twice.", hand: [201, 213, 219, 224, 226] },
-    { name: "the quiet one", line: "the quiet one has walked this road more than anyone.", hand: [206, 215, 218, 221, 224] },
+    { name: "imra", line: "imra plays her first number and hopes.", react: "imra plays faster now.", defeat: "imra bows. the road goes on.", hand: [201, 202, 208, 211, 227] },
+    { name: "sef", line: "sef counts the ground before he lodges.", react: "sef counts again, slower.", defeat: "sef nods at the ground you kept.", hand: [203, 207, 212, 219, 222] },
+    { name: "odel", line: "odel waits for you to reach too far.", react: "odel stops waiting.", defeat: "odel: you reached, and it held.", hand: [204, 214, 213, 226, 216] },
+    { name: "tesh", line: "tesh trades small and keeps the corners.", react: "tesh gives up a corner.", defeat: "tesh trades you the night.", hand: [205, 209, 217, 223, 225] },
+    { name: "ruen", line: "ruen reads your hand back to you.", react: "ruen misread that one.", defeat: "ruen reads your walk back with respect.", hand: [202, 210, 216, 220, 228] },
+    { name: "brann", line: "brann picks the fight you least want.", react: "brann found the fight he wanted.", defeat: "brann wanted this fight. you ended it.", hand: [206, 215, 218, 210, 220] },
+    { name: "mave", line: "mave gives nothing away twice.", react: "mave gave that one away.", defeat: "mave gives you this one, once.", hand: [201, 213, 219, 224, 226] },
+    { name: "the quiet one", line: "the quiet one has walked this road more than anyone.", react: "the quiet one says nothing.", defeat: "the quiet one steps aside.", hand: [206, 215, 218, 221, 224] },
   ]; }
   _walkerFor(t) { const w = this._walkers(); return w[t % w.length]; }
   _specialNight(t) { return this._chartFive().indexOf(t) >= 0; }
@@ -1804,6 +2005,7 @@ class Component extends DCLogic {
     // the single source of lodge truth: placement, ages, blaze ground, turning, venus soften
     const C = this._cards(); const c = C[cardId];
     const own = side || c.who;
+    const sigs = [];
     const slots = slotsIn.slice().map(x => x ? { ...x, age: (x.age || 0) + 1 } : x);
     const first = !slotsIn.some(x => x && x.owner === own);
     slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, age: 0, first };
@@ -1815,7 +2017,7 @@ class Component extends DCLogic {
       [-1, 1].forEach(d => { const k = this._nb(i, d); if (k < 0 || !slots[k] || slots[k].owner !== "sky") return;
         const face = d === 1 ? slots[k].l : slots[k].r, back = d === 1 ? slots[k].r : slots[k].l;
         if (face > back && face - back > bv) { bv = face - back; best = k; } });
-      if (best >= 0) slots[best] = { ...slots[best], l: slots[best].r, r: slots[best].l, turned: true };
+      if (best >= 0) { slots[best] = { ...slots[best], l: slots[best].r, r: slots[best].l, turned: true }; sigs.push("the turning spins her hardest fighter."); }
     }
     const soft = [];
     if (c.ab === "venus") {
@@ -1827,35 +2029,37 @@ class Component extends DCLogic {
         if (slots[t][key] > 1) { slots[t] = { ...slots[t], [key]: slots[t][key] - 1 }; soft.push(t); }
       });
     }
-    return { slots, soft };
+    if (soft.length) sigs.push("venus softens her neighbors.");
+    return { slots, soft, sigs };
   }
   _resolve(slotsIn, cardId, i, rev, side) {
     const C = this._cards();
-    const { slots, soft } = this._lodge(slotsIn, cardId, i, rev, side);
+    const { slots, soft, sigs } = this._lodge(slotsIn, cardId, i, rev, side);
     const queue = [];
     if ((side || C[cardId].who) === "sky") for (const d of [-1, 1]) { // the listener strikes what lands beside it
       const k = this._nb(i, d);
-      if (k >= 0 && slots[k] && slots[k].owner === "you" && C[slots[k].id].ab === "listener" && this._on(C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
+      if (k >= 0 && slots[k] && slots[k].owner === "you" && C[slots[k].id].ab === "listener" && this._on(C[slots[k].id])) queue.push({ from: k, to: i, dir: -d, sig: "the listener strikes first." });
     }
     queue.push({ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 });
     const seq = [];
     while (queue.length) {
-      const { from, to, dir } = queue.shift();
+      const cur = queue.shift();
+      const { from, to, dir } = cur;
       if (to < 0 || !slots[from] || !slots[to]) continue;
       const res = this._tryFlip(slots, from, to, dir);
       if (!res) continue;
-      if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id, owner: "you" }); slots[to] = null; continue; }
-      seq.push({ from, to, dir, owner: slots[to].owner });
+      if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id, owner: "you", sig: cur.sig }); slots[to] = null; continue; }
+      seq.push({ from, to, dir, owner: slots[to].owner, sig: cur.sig });
       if (res === "tie") { // combo: a card flipped by a tie attacks its own neighbours
-        for (const d of [-1, 1]) { const far = this._nb(to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d }); }
+        for (const d of [-1, 1]) { const far = this._nb(to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d, sig: "taken by a tie, it strikes its neighbors." }); }
       }
       const fromAb = C[slots[from].id].ab;
       if (fromAb === "mars" || (fromAb === "drum" && this._on(C[slots[from].id]))) { // the strike carries one further
         const far = this._nb(to, dir);
-        if (far >= 0) queue.push({ from: to, to: far, dir });
+        if (far >= 0) queue.push({ from: to, to: far, dir, sig: fromAb === "mars" ? "mars carries the strike onward." : "the drum carries the strike onward." });
       }
     }
-    return { slots, seq, soft };
+    return { slots, seq, soft, sigs };
   }
   _isHome(cardId, slotIdx) {
     const c = this._cards()[cardId];
@@ -1968,7 +2172,12 @@ class Component extends DCLogic {
       if (tf && (cardId !== tf.id || i !== tf.i)) { this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
     }
     const c = this._cards()[cardId];
-    const seq = this._resolve(this.state.slots, cardId, i, rev, who).seq;
+    const rr = this._resolve(this.state.slots, cardId, i, rev, who);
+    const seq = rr.seq;
+    const flipsN = seq.filter(x => !x.ret).length;
+    this._shakeOn = flipsN >= 2;
+    this._reactPend = who === "sky" && flipsN >= 2 && !this.state.reactDone && !this.state.roadBoss && !this.state.nightSky ? (this.state.roadWalker || this.state.nightWalker) : null;
+    this._toastT = (rr.sigs && rr.sigs[0]) || (who === "you" && c.ab === "glance" && this._on(c) ? "the glance: her next card fights -1." : null);
     this._fxN = (this._fxN || 0) + 1;
     clearTimeout(this._castT);
     this._castT = setTimeout(() => this.setState({ castFx: null }), 950);
@@ -1980,6 +2189,7 @@ class Component extends DCLogic {
         glanceOn: who === "you" ? (c.ab === "glance" && this._on(c)) : false,
         log: soft.length ? "venus softens her neighbors." : "",
         castFx: { id: cardId, owner: who, n: this._fxN },
+        toast: this._toastT ? { t: this._toastT, n: this._fxN * 10 } : s.toast,
         hand: who === "you" ? s.hand.filter(x => x !== cardId) : s.hand,
         sky: who === "sky" ? s.sky.filter(x => x !== cardId) : s.sky,
       };
@@ -1994,13 +2204,13 @@ class Component extends DCLogic {
         if (it.ret) { // the return comes home rather than change hands
           const sl = s.slots.slice().map(x => x ? { ...x } : x);
           sl[it.to] = null;
-          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", hand: s.hand.concat([it.ret]), log: (s.log ? s.log + "  " : "") + "the return comes home." };
+          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", hand: s.hand.concat([it.ret]), toast: { t: "the return comes home.", n: (s.toast ? s.toast.n : 0) + 1 }, log: (s.log ? s.log + "  " : "") + "the return comes home." };
         }
         const slots = s.slots.slice().map(x => x ? { ...x } : x);
         slots[it.to] = { ...slots[it.to], owner: it.owner };
         const aName = this._cards()[slots[it.from].id].name.toLowerCase();
         const tName = this._cards()[slots[it.to].id].name.toLowerCase();
-        return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", log: (s.log ? s.log + "  " : "") + aName + " claims " + tName + "." };
+        return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", shakeFx: k === 0 && this._shakeOn ? true : s.shakeFx, toast: it.sig ? { t: it.sig, n: (s.toast ? s.toast.n : 0) + 1 } : s.toast, log: (s.log ? s.log + "  " : "") + aName + " claims " + tName + "." };
       }, () => this._step(seq, k + 1, who));
     }, k === 0 ? 320 : 400);
     this._seq.push(t);
@@ -2008,7 +2218,12 @@ class Component extends DCLogic {
   _finish(who) {
     const t = setTimeout(() => {
       this.setState(s => {
-        const st = { busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null };
+        const st = { busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, shakeFx: false };
+        if (this._reactPend) {
+          const w = this._walkers().find(x => x.name === this._reactPend);
+          if (w && w.react) { st.toast = { t: w.react, n: (s.toast ? s.toast.n : 0) + 1 }; st.reactDone = true; }
+          this._reactPend = null;
+        }
         if (s.slots.every(x => x)) {
           st.turn = "over";
           st.roundWins = s.roundWins.concat(this._boardWinner(s.slots));
@@ -2125,22 +2340,12 @@ class Component extends DCLogic {
     });
     const roundWinner = st.turn === "over" && st.slots.every(x => x) ? this._boardWinner(st.slots) : null;
     const tutF = this._tutMove();
-    // grabbed-card preview: while dragging over a legal empty slot, show neighbors' numbers
-    // as they'd read if the card actually landed there, so the player never computes it by
-    // hand; reverts the instant the drag ends or moves off that slot (nothing is persisted).
-    const previewSlots = (() => {
-      if (!st.drag || st.dragOver == null || st.slots[st.dragOver]) return st.slots;
-      const c = this._cards()[st.drag.id];
-      const preview = st.slots.slice();
-      preview[st.dragOver] = { id: st.drag.id, l: c.l, r: c.r, owner: "you", age: 0 };
-      return preview;
-    })();
     const slots = st.slots.map((s, i) => {
       const empty = !s;
       const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
       const selOn = st.sel !== null && st.turn === "you" && st.phase === "play" && !st.busy && this._legalSlot(st.slots, i);
       let tag = "", tagColor = "#9A8A5E";
-      const fL = s ? this._faceOf(previewSlots, i, -1) : 0, fR = s ? this._faceOf(previewSlots, i, 1) : 0;
+      const fL = s ? this._faceOf(st.slots, i, -1) : 0, fR = s ? this._faceOf(st.slots, i, 1) : 0;
       if (s) {
         const c = C[s.id];
         if (s.ground && s.owner !== s.ground) { tag = "the ground stays yours"; tagColor = "#F0D89A"; }
@@ -2151,14 +2356,18 @@ class Component extends DCLogic {
       const lv = !s ? 1 : C[s.id].who === "you" ? C[s.id].lvl : (C.skyLv || 3);
       const numBase = (side) => "position:absolute;" + side + ":" + (lv >= 4 ? 4 : 5) + "px;top:50%;transform:translateY(-50%);font-size:" + (lv >= 4 ? 9 : 11) + "px;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95);color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + (st.duelI === i && st.duelSide === (side === "left" ? "l" : "r") ? ";animation:mzNumPulse .45s ease both" : "");
       const home = s && this._isHome(s.id, i);
+      const domPrev = empty && ((selOn && this._boardM(i) === st.sel) || (st.phase === "play" && !st.busy && st.hov != null && this._boardM(i) === st.hov && this._legalSlot(st.slots, i)));
       return {
-        wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top",
+        wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
         idx: i,
         num: String(20 + i),
         mname: this._mansions()[i],
         emptyOn: empty, cardOn: !empty && !veiled, veilOn: veiled,
         cname: s ? C[s.id].name.toLowerCase() : "",
-        nameOn: !!s && lv < 3, homeOn: !!home,
+        nameOn: !!s && lv < 3, homeOn: !!home, domPrevOn: domPrev,
+        castHere: !empty && st.dropIdx === i && !!st.castFx,
+        pgOn: !!(s && s.id < 200 && C[s.id] && C[s.id].planet && C[s.id].who === "you"),
+        pg: s && s.id < 200 && C[s.id] ? this._pglyph(C[s.id].planet) : "",
         homeStyle: "position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1;color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + ";text-shadow:0 0 7px " + (s && s.owner === "sky" ? "rgba(255,176,0,.85)" : "rgba(240,216,154,.85)"),
         artStyle: "position:absolute;opacity:.9;" + (lv >= 4 ? "top:9px;left:9px;width:68px;height:86px" : lv >= 3 ? "top:17px;left:9px;width:68px;height:78px" : "top:7px;left:19px;width:48px;height:40px") + (s ? ";animation:mzEmblemBreathe " + (6.5 + (s.id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(s.id % 7)) + "s infinite" : ""),
         shapes: s && window.ManzilArt ? window.ManzilArt.get(s.id >= 200 ? s.id - 200 : s.id) : [],
@@ -2207,9 +2416,9 @@ class Component extends DCLogic {
         },
         style: "width:86px;height:112px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .3s ease;" +
           (empty
-            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.6)" : selOn ? "rgba(240,216,154,.3)" : "rgba(240,216,154,.2)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".2" : selOn ? ".12" : ".07") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "") + (tutF && i === tutF.i ? ";border:1.5px dashed #FFB000;background:radial-gradient(55% 45% at 50% 50%, rgba(255,176,0,.13), transparent 72%);box-shadow:0 0 16px rgba(255,176,0,.3)" : "")
+            ? "border:1px solid " + (st.dragOver === i ? "rgba(240,216,154,.6)" : selOn ? "rgba(240,216,154,.3)" : "rgba(240,216,154,.2)") + ";background:radial-gradient(55% 45% at 50% 50%, rgba(240,216,154," + (st.dragOver === i ? ".2" : selOn ? ".12" : ".07") + "), transparent 72%);gap:5px;transition:background .3s ease;animation:mzRoadBreathe " + (5 + (i % 3) * 0.8) + "s ease-in-out " + (i * 0.55).toFixed(2) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzSlotIn .5s cubic-bezier(.22,1,.36,1) " + (i * 45) + "ms both" : "") + (domPrev ? ";border:1px solid rgba(255,176,0,.6);background:radial-gradient(55% 45% at 50% 50%, rgba(255,176,0,.12), transparent 72%);animation:mzWinGlow 1.7s ease-in-out infinite" : "") + (tutF && i === tutF.i ? ";border:1.5px dashed #FFB000;background:radial-gradient(55% 45% at 50% 50%, rgba(255,176,0,.13), transparent 72%);box-shadow:0 0 16px rgba(255,176,0,.3)" : "")
             : "border:1.5px solid " + (s.owner === "you" ? "#F0D89A" : "#FFB000") + ";background:linear-gradient(160deg," + (s.owner === "you" ? "#241B08" : "#2A1A02") + ",#0B0703);box-shadow:0 4px 12px rgba(0,0,0,.55)" + (home ? ", 0 0 14px rgba(240,216,154,.5)" : "") +
-              (i === st.dropIdx ? ";animation:mzDrop .34s cubic-bezier(.22,1,.36,1) both" : i === st.flipIdx ? ";animation:mzFlip3d .5s cubic-bezier(.22,1,.36,1) both" : (roundWinner && s.owner === roundWinner ? ";animation:mzWinGlow 1.1s ease-in-out infinite" : ""))),
+              (i === st.dropIdx ? ";animation:mzDrop .34s cubic-bezier(.22,1,.36,1) both" : i === st.flipIdx ? ";animation:mzFlip3d .5s cubic-bezier(.22,1,.36,1) both" : (roundWinner && s.owner === roundWinner ? ";animation:mzWinGlow 1.1s ease-in-out infinite" : "")) + (st.duelI === i ? ";box-shadow:0 4px 12px rgba(0,0,0,.55), 0 0 20px rgba(255,176,0,.5)" : "")),
       };
     });
     const skyThinking = st.phase === "play" && st.turn === "sky";
@@ -2245,6 +2454,7 @@ class Component extends DCLogic {
       const numSty = (pos) => "position:absolute;" + pos + ";font-size:" + (c.lvl >= 4 ? 9 : 11) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)";
       return {
         hid: id,
+        pgOn: !!c.planet, pg: this._pglyph(c.planet),
         name: c.name.toLowerCase(), ln: cl, rn: cr,
         nameOn: c.lvl < 3,
         artStyle: "position:absolute;opacity:.9;" + (c.lvl >= 4 ? "top:8px;left:8px;width:64px;height:78px" : c.lvl >= 3 ? "top:17px;left:8px;width:64px;height:74px" : "top:9px;left:18px;width:44px;height:34px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
@@ -2255,11 +2465,12 @@ class Component extends DCLogic {
         ability: this._abilityOn(c) && c.lvl === 2 ? c.abText : "",
         onPeek: () => {
           clearTimeout(this._holdT);
+          this.setState({ hov: id });
           if (this.state.peek) this.setState({ peek: "h" + id });
           else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
-        onHold: () => { clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
+        onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); },
+        onHold: () => { clearTimeout(this._holdT); this.setState({ hov: id }); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
         onDown: (e) => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
         onTap: () => { if (this._dragDid) return; clearTimeout(this._holdT); const st2 = this.state.peek ? { peek: null } : {}; if (st.turn === "you" && st.phase === "play" && !st.busy) st2.sel = seld ? null : id; this.setState(st2); },
         hover: dragMe ? "" : "transform:rotate(" + rot + "deg) translateY(-16px) scale(1.05);z-index:9",
@@ -2288,12 +2499,12 @@ class Component extends DCLogic {
           style: "position:absolute;left:" + p[0] + "%;top:" + p[1] + "%;width:" + p[2] + "px;height:" + p[2] + "px;border-radius:50%;background:rgba(" + hue + "," + (p[2] > 1.4 ? ".8" : ".5") + ");animation:bsTwinkle " + (3 + (i % 5)) + "s ease-in-out " + (i * .6) + "s infinite" + (p[2] > 1.9 ? ";box-shadow:0 0 6px rgba(" + hue + ",.55)" : ""),
         };
       }),
-      elevAirStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.air + ";background:radial-gradient(78% 38% at 50% 106%, rgba(255,198,116,.15), transparent 62%), linear-gradient(to top, rgba(255,166,72,.10) 0%, rgba(198,118,66,.07) 14%, rgba(122,88,134,.05) 32%, transparent 54%)",
+      elevAirStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.air + ";background:radial-gradient(78% 38% at 50% 106%, rgba(255,198,116,.19), transparent 62%), linear-gradient(to top, rgba(255,166,72,.13) 0%, rgba(198,118,66,.09) 14%, rgba(122,88,134,.06) 32%, transparent 54%)",
       starDimStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.sd,
       elevGroundStyle: "position:absolute;left:0;right:0;bottom:0;pointer-events:none;transition:height 1.6s ease, opacity 1.6s ease;height:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to top, #090603 0%, #0C0805 58%, rgba(62,44,24,.9) 100%)",
-      elevRimStyle: "position:absolute;left:0;right:0;height:1px;pointer-events:none;transition:bottom 1.6s ease, opacity 1.6s ease;bottom:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to right, transparent, rgba(255,190,120,.3) 22%, rgba(255,214,150,.5) 50%, rgba(255,190,120,.3) 78%, transparent)",
+      elevRimStyle: "position:absolute;left:0;right:0;height:1px;pointer-events:none;transition:bottom 1.6s ease, opacity 1.6s ease;bottom:" + ev.gh + "px;opacity:" + ev.go + ";background:linear-gradient(to right, transparent, rgba(255,190,120,.4) 22%, rgba(255,214,150,.62) 50%, rgba(255,190,120,.4) 78%, transparent)",
       elevDayStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.day + ";background:radial-gradient(10% 17% at 74% 71%, rgba(255,240,198,.9), rgba(255,208,120,.38) 42%, transparent 72%), linear-gradient(to top, rgba(255,206,128,.30) 0%, rgba(210,160,108,.20) 26%, rgba(134,126,162,.15) 58%, rgba(98,106,150,.12) 100%)",
-      elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.wo + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.15), 0 -3px 16px rgba(255,198,116,.18)",
+      elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.wo + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.24), 0 -4px 18px rgba(255,198,116,.26)",
       ...((f => {
         if (!f) return { countFxOn: false, cfLights: [], cfOrbYou: "display:none", cfOrbSky: "display:none", cfNumStyle: "", cfYouN: "", cfSkyN: "" };
         const L = st.slots.length, edge = 466 - (L * 86 + (L - 1) * 5) / 2;
@@ -2330,6 +2541,23 @@ class Component extends DCLogic {
       edWallLStyle: "position:absolute;left:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (-ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
       edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e],
       edOverStyle: "position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 185 + "px);opacity:" + [1, .8, .3, 0, 0, 0, 0, 0, 0][ev.e],
+      edDuskStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, .5, .9, .62, .32, .12, 0, 0, 0][ev.e] + ";background:linear-gradient(to top, rgba(196,92,66,.16) 0%, rgba(186,84,110,.13) 22%, rgba(122,66,134,.09) 46%, transparent 68%)",
+      edColdStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, .18, .34, .5, .64, .74, .82][ev.e] + ";background:linear-gradient(to bottom, rgba(24,36,84,.34) 0%, rgba(30,46,98,.2) 26%, rgba(52,88,150,.07) 52%, transparent 74%)",
+      edMilkyStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .1, .3, .58, .85][ev.e] + ";background:linear-gradient(118deg, transparent 30%, rgba(242,234,214,.05) 43%, rgba(242,234,214,.11) 50%, rgba(170,190,255,.07) 57%, transparent 70%)",
+      edStars2Style: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, .12, .28, .5, .75, 1][ev.e],
+      edAuroraStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .15, .5, .8, .4][ev.e],
+      edGridStyle: "position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + ev.e * 9 + "px);opacity:" + [.4, .55, .65, .68, .56, .38, .18, 0, 0][ev.e],
+      claimedOn: this._mlvl(this._tonight()) >= 4,
+      edLitStyle: "position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + ev.e * 9 + "px);opacity:" + (this._mlvl(this._tonight()) >= 4 ? [.95, .8, .65, .5, .3, .12, 0, 0, 0][ev.e] : 0),
+      edCloudBStyle: "position:absolute;left:0;right:0;height:70px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease, bottom 1.6s ease;bottom:" + (ev.gh + 22) + "px;transform:translateY(" + (ev.e - 3) * 26 + "px);opacity:" + [0, 0, .2, .6, .75, .5, .16, 0, 0][ev.e],
+      edBridgeStyle: "position:absolute;left:0;right:0;height:150px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 10, 0) + "px;transform:translateY(" + ev.e * 22 + "px);opacity:" + [0, .12, .45, .7, .5, .18, 0, 0, 0][ev.e],
+      edCloudAStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (ev.e - 4) * 44 + "px);opacity:" + [0, 0, .1, .48, .75, .55, .15, 0, 0][ev.e],
+      edGeeseStyle: "position:absolute;left:0;right:0;top:104px;height:40px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (ev.e - 2) * 34 + "px);opacity:" + [0, .45, .75, .6, .22, 0, 0, 0, 0][ev.e],
+      edPlaneStyle: "position:absolute;left:0;right:0;top:128px;height:6px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (ev.e - 5) * 30 + "px);opacity:" + [0, 0, 0, .15, .55, .78, .5, .12, 0][ev.e],
+      edWindStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, .1, .3, .55, .78, .45, .1][ev.e],
+      edSatStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, 0, .25, .7, .95][ev.e],
+      edShootStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .2, .5, .8, 1][ev.e],
+      edMoonStyle: "position:absolute;left:66%;top:8%;width:58px;height:58px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (8 - ev.e) * 12 + "px);opacity:" + [0, 0, 0, 0, 0, 0, 0, .22, 1][ev.e],
       ringWrapStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [.12, .18, .28, .42, .58, .72, .85, 1, 1][ev.e],
       climbOn: !!(st.road && (st.phase === "play" || st.phase === "over" || st.phase === "round")),
       climbStarStyle: st.roadBoss ? "font-size:13px;line-height:1;color:#FFB000;text-shadow:0 0 12px rgba(255,176,0,.85);animation:mzBreathe 2s ease-in-out infinite" : "font-size:11px;line-height:1;color:rgba(240,216,154,.45)",
@@ -2355,6 +2583,10 @@ class Component extends DCLogic {
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
       ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back), zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
       logLine: st.log,
+      zoomInnerStyle: "width:210px;height:284px;transform:scale(" + (st.peek && String(st.peek)[0] === "d" ? 1 : .6) + ");transform-origin:top left",
+      toastOn: !!st.toast,
+      toastText: st.toast ? st.toast.t : "",
+      toastStyle: st.toast ? "position:absolute;top:60px;left:50%;transform:translateX(-50%);max-width:430px;text-align:center;font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;text-shadow:0 0 12px rgba(240,216,154,.35), 0 1px 6px rgba(4,3,2,.9);pointer-events:none;z-index:7;animation:" + (st.toast.n % 2 ? "mzToastA" : "mzToastB") + " 1.7s ease both" : "",
       castOn: !!st.castFx,
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
       turnLine: skyThinking ? ((st.road ? (st.roadBoss ? "the sky" : st.roadWalker || "the walker") : st.nightSky ? "the sky" : st.nightWalker || "the sky") + " is thinking…") : "",
@@ -2366,28 +2598,49 @@ class Component extends DCLogic {
       temperLine: st.nightSky && st.phase !== "deck" && st.phase !== "menu" ? ({ mars: "mars stands closest: the sky picks the biggest fight", saturn: "saturn stands closest: the sky guards", venus: "venus stands closest: the sky keeps company", mercury: "mercury stands closest: the sky roams", jupiter: "jupiter stands closest: the sky spends big" })[this._temper()] : "",
       introL: C[this._tonight()].l, introR: C[this._tonight()].r, introName: C[this._tonight()].name.toLowerCase(),
       introShapes: (window.ManzilArt ? window.ManzilArt.get(this._tonight()) : []),
-      deckCards: (st.deckSel || []).map(id => {
+      lvlChips: [1, 2, 3, 4].map(L => {
+        const n = (st.deckSel || []).filter(x => (C[x] || {}).lvl === L).length;
+        const on = (st.lvlPin || st.lvlHover) === L;
+        return {
+          label: "level " + L, n: n,
+          enter: () => this.setState({ lvlHover: L }),
+          leave: () => this.setState({ lvlHover: null }),
+          tap: () => this.setState({ lvlPin: st.lvlPin === L ? null : L }),
+          nStyle: "font-size:8.5px;margin-left:6px;opacity:" + (n === 0 ? ".4" : ".75"),
+          style: "display:flex;align-items:center;background:" + (on ? "rgba(240,216,154,.07)" : "none") + ";border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";font-family:'Varela Round',sans-serif;font-size:9.5px;padding:4px 12px;border-radius:999px;cursor:pointer;transition:all .25s ease",
+        };
+      }),
+      lvlLine: (L => L ? [
+        "level 1: numbers only. the move still sleeps.",
+        "level 2: the card's move wakes.",
+        "level 3: the card sheds its labels.",
+        "level 4: the mansion is yours for good. a new specialty opens for the card.",
+      ][L - 1] + ((st.deckSel || []).some(x => (C[x] || {}).lvl === L) ? "" : " none of yours stand here yet.") : "")(st.lvlPin || st.lvlHover || 0),
+      deckCards: Array.from({ length: 28 }, (_, k) => k + 1).map(id => {
         const tonight = this._tonight();
         const c = C[id];
-        const on = st.deckSel.includes(id);
+        const owned = (st.deckSel || []).includes(id);
+        const hl = st.lvlPin || st.lvlHover;
+        const ringStyle = "position:absolute;inset:-2px;border-radius:8px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;transition:opacity .3s ease;opacity:.6";
+        if (!owned) return { name: "", ln: "", rn: "", faceOn: false, backOn: true, nameOn: false, cornersOn: false, innerOn: false, frameC: "", artStyle: "", lnStyle: "", rnStyle: "", shapes: [],
+          ringOn: id === tonight, ringStyle, onTap: () => {}, onPeek: () => {}, onPeekEnd: () => {}, onHold: () => {},
+          style: "width:54px;height:70px;box-sizing:border-box;border-radius:6px;position:relative;background:linear-gradient(160deg, #150F08, #080502);border:1px solid rgba(154,138,94,.2);transition:opacity .3s ease;opacity:" + (hl ? ".14" : ".7") };
         const f = frame(c.lvl);
         return {
           name: c.name.toLowerCase(), ln: c.l, rn: c.r,
           faceOn: true, backOn: false,
           nameOn: c.lvl < 3,
           cornersOn: c.lvl >= 2, innerOn: c.lvl >= 3, frameC: f.c,
-          artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:6px;left:6px;width:46px;height:56px" : c.lvl >= 3 ? "top:12px;left:8px;width:42px;height:40px" : "top:5px;left:14px;width:30px;height:26px"),
+          artStyle: "position:absolute;opacity:.85;" + (c.lvl >= 4 ? "top:6px;left:6px;width:46px;height:56px" : c.lvl >= 3 ? "top:12px;left:8px;width:42px;height:40px" : "top:4px;left:12px;width:30px;height:26px"),
           lnStyle: "position:absolute;top:4px;left:7px;font-size:" + (c.lvl >= 4 ? 8 : 10) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
           rnStyle: "position:absolute;bottom:4px;right:7px;font-size:" + (c.lvl >= 4 ? 8 : 10) + "px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)",
           shapes: window.ManzilArt ? window.ManzilArt.get(id) : [],
-          ringOn: id === tonight,
-          ringStyle: "position:absolute;inset:-2px;border-radius:8px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;transition:opacity .3s ease;opacity:.6",
+          ringOn: id === tonight, ringStyle,
           onTap: () => {},
           onPeek: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: "d" + id }); else this._holdT = setTimeout(() => this.setState({ peek: "d" + id }), 500); },
           onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
           onHold: () => { clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: "d" + id }), 400); },
-          style: "width:58px;height:78px;border-radius:6px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);transition:border-color .2s ease, opacity .2s ease;" +
-            "cursor:pointer;" + (on ? (c.loan ? "border:1.5px solid rgba(154,138,94,.8);box-shadow:0 6px 16px rgba(0,0,0,.55)" : "border:1.5px solid #F0D89A;box-shadow:0 6px 16px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154,.18)") : "border:1px solid " + (c.loan ? "rgba(154,138,94,.3)" : f.b) + ";opacity:" + (c.loan ? ".55" : ".8")),
+          style: "width:54px;height:70px;box-sizing:border-box;border-radius:6px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);transition:border-color .2s ease, opacity .3s ease, transform .3s ease, box-shadow .3s ease;cursor:pointer;" + (c.loan ? "border:1.5px solid rgba(154,138,94,.8);box-shadow:0 6px 16px rgba(0,0,0,.55)" : "border:1.5px solid #F0D89A;box-shadow:0 6px 16px rgba(0,0,0,.55), 0 0 12px rgba(240,216,154,.18)") + (hl ? (c.lvl === hl ? ";transform:translateY(-3px);box-shadow:0 9px 20px rgba(0,0,0,.65), 0 0 16px rgba(240,216,154,.3)" : ";opacity:.18") : ""),
         };
       }),
       menuOn: st.phase === "menu" || (st.phase === "legend" && (st.legendBeat || 0) >= 7),
@@ -2478,7 +2731,7 @@ class Component extends DCLogic {
           dt.setHours(h, parseInt(s0.bTimeMin, 10), 0, 0);
           ts = String(h).padStart(2, "0") + ":" + s0.bTimeMin;
         } else dt.setHours(12, 0, 0, 0);
-        const pack = this._saveBirth(dt, ds, this.state.bTimeU ? null : ts);
+        const pack = this._saveBirth(dt, ds, ts);
         if (!pack) { this.setState({ bErr: "the sky can't read that date" }); return; }
         this.setState({ phase: "tut5", tutI: 0, deckSel: pack, bErr: "" });
       },
@@ -2502,7 +2755,7 @@ class Component extends DCLogic {
       },
       pSkipTap: () => this.setState({ phase: "tut7" }),
       menuPlayLabel: this._mlvl(this._tonight()) < 4 ? (this._climbDoneTonight(this._tonight()) ? "sit at the table ✦" : "walk the road ✦") : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
-      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight" : ["the first climb", "the second climb", "the third climb", "the last climb", "claimed"][Math.min(this._mlvl(this._tonight()), 4)]) + " · the " + this._mName(this._tonight()),
+      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight · the moon returns in " + this._moonIn() : ["the first climb", "the second climb", "the third climb", "the last climb", "the table"][Math.min(this._mlvl(this._tonight()), 4)]) + " · the " + this._mName(this._tonight()),
       fiveLabel: (st.deckSel || []).length >= 5 ? "your next five" : "choose your pack",
       fiveCards: (() => {
         const out = this._deal(st.deckSel || [], 1).map((id, i) => {
@@ -2530,10 +2783,10 @@ class Component extends DCLogic {
           if (ml === 0) return "eight walkers stand on the road, other players' hands walked before you. above them: the sky herself, the one who deals the planets. beat all nine and the district's card is yours.";
           if (ml === 1) return "the card walks with you at level 1, numbers only. the road re-arms deeper. three climbs to wake it fully.";
           if (ml === 2) return "the card is awake at level 2: its move is live. two climbs remain.";
-          return "the card stands at level 3. the last climb: beat the sky once more and the district is claimed.";
+          return "the card stands at level 3. the last climb: beat the sky once more and the district is yours for good.";
         }
-        if (this._specialNight(t)) return "claimed, and the sky herself returns tonight: best of five at her table. " + (({ mars: "mars stands closest, so she picks the biggest fight.", saturn: "saturn stands closest, so she guards.", venus: "venus stands closest, so she keeps company.", mercury: "mercury stands closest, so she roams.", jupiter: "jupiter stands closest, so she spends big." })[this._temper()] || "");
-        return "claimed. " + this._walkerFor(t).name + " sits at the table tonight, best of five.";
+        if (this._specialNight(t)) return "the sky herself returns tonight: best of five at her table. " + (({ mars: "mars stands closest, so she picks the biggest fight.", saturn: "saturn stands closest, so she guards.", venus: "venus stands closest, so she keeps company.", mercury: "mercury stands closest, so she roams.", jupiter: "jupiter stands closest, so she spends big." })[this._temper()] || "");
+        return this._walkerFor(t).name + " sits at the table tonight, best of five.";
       })(),
       menuPlayTap: () => {
         if (st.deckSel.length < 5) { this.setState({ phase: "deck" }); return; }
@@ -2569,6 +2822,8 @@ class Component extends DCLogic {
       faceSeat: () => st.face && this._commitPlace(st.face.id, st.face.i, false, "you"),
       faceSerpent: () => st.face && this._commitPlace(st.face.id, st.face.i, true, "you"),
       roundOverOn: st.phase === "round",
+      roundWalkerOn: st.phase === "round" && !!st.road && !st.roadBoss && lastRound === "you" && !!st.roadWalker && st.roadRung < 8,
+      roundWalkerLine: ((this._walkers().find(x => x.name === st.roadWalker) || {}).defeat) || "",
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
       roundTitle: st.road && !st.roadBoss ? (st.roadRung >= 7 ? "the air thins. the sky herself waits." : (st.roadWalker || "the walker") + " steps aside") : (lastRound === "you" ? "round " + st.round + " is yours" : lastRound === "draw" ? "round " + st.round + " stands even" : "the sky takes round " + st.round),
       nextRoundTap: () => this._exitRound(),
