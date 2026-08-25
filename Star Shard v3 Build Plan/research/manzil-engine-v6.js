@@ -1,11 +1,40 @@
-// manzil engine v6 — a port of "Manzil - Prototype.dc.html" as shipped 22 august 2026.
+// manzil engine v6 — a port of "Manzil - Prototype.dc.html" as shipped 22 august 2026,
+// plus the 25 august 2026 slate rewrite (20 signatures rebuilt) rebased onto this file's own
+// owner-relative fixes rather than the pre-24-Aug lineage Design's own port branched from.
 // scope: the whole live ruleset. all 28 mansion signatures, her five planets, the base laws
 // (ties flip · a tie-flip attacks both its own neighbours · tied counts are yours), dominion,
 // jupiter's counts-two, the dealt five, and her two-ply reply at a per-rung reading depth.
 //
+// the 25 aug rewrite, card by card (rebased — see docs/handoffs/NOTE-TO-CODE-slate-rebase.md):
+//   bearer   keeps the ground beside it (lodge or claim)     was: neighbours +1
+//   follower answers when its side is claimed                was: copies the left face
+//   storm    no tie takes it, anywhere                        was: only on its own mansion
+//   return   bounded: once, on its own ground                 was: unbounded
+//   ghost    first opposing card that lodges beside it, -2    was: -1 field while road <half full
+//   glance   her next card -2                                 was: -1
+//   mane     counts for whoever holds both its neighbours,    was: +1 between two
+//            single-player only (g.maneFair neutralizes for PvP, see mkGame/manzil-lobby.js)
+//   hand     steps aside to the first open ground on the road was: a tap-driven relocation
+//   jewel    floor of 7, still immune to softening            was: cannot be softened
+//   veil     turns the first card that lodges beside it       was: safe on the turn it lands
+//   claws    its claimer fights -2                             was: -1
+//   crown    counts two beside its own ground                 was: counts two on the two edges
+//   heart    counts two while its side holds less of the road was: cannot be softened
+//   flock    what it claims turns as it joins                 was: neighbours +1 on claim
+//   district counts two AND silences both sides               was: counts two while untouched
+//   drum     answers what's taken from its side, anywhere     was: its claim struck onward
+//   void     everything beside it fights -1                   was: safe while alone
+//   hideaway its own ground counts two                        was: silenced the loudest neighbour
+//   guide    trades the two grounds beside it as it lands     was: a tap-driven swap
+//   throne   twoFaced now gates on lvl>=2 (a harness/engine bug: it made the asleep and awake
+//            arms of any awake/asleep comparison identical). its "turn in place" is a tap on
+//            your own turn — player tempo the sim still doesn't model; unlisted above.
+//
 // deliberate deviations from the prototype, all of them player-side tempo the sim cannot use:
-//   the hand (13) and the guide (27) are tap-driven relocations. they lodge as plain cards here.
-//   her seeded tie-break (FNV over the date) is replaced by lowest-index, so runs are repeatable.
+//   the throne's turn-in-place (see above) is not modelled.
+//   her seeded tie-break (FNV over the date) is replaced by a deterministic hash over the move
+//   itself (id, slot, face), not hand order — see moveKey() — so runs are repeatable and a
+//   card's measured worth can't depend on where it sits in the hand.
 //   tempers are omitted: they are a tie-break filter above the same seed.
 // everything else is line-for-line the shipped behaviour. conformance vectors: see VECTORS below.
 
@@ -43,7 +72,7 @@ function makeCards(opts) {
     } else { // the re-baseline: what used to be L3, from night one, and levels never touch numbers again
       if (l <= r) l = Math.min(9, l + 1); else r = Math.min(9, r + 1);
     }
-    C[id] = { id, name: p[0], l, r, ab: o.silence === id ? null : p[3], lvl, who: "you", twoFaced: p[3] === "throne", homeM: id };
+    C[id] = { id, name: p[0], l, r, ab: o.silence === id ? null : p[3], lvl, who: "you", twoFaced: p[3] === "throne" && lvl >= 2, homeM: id };
   });
   Object.keys(PLANETS).forEach(k => { C[k] = { ...PLANETS[k], id: +k, who: "sky", lvl: 3 }; });
   if (o.homes) Object.keys(o.homes).forEach(k => { C[k] = { ...C[k], homeM: o.homes[k] }; });
@@ -58,9 +87,14 @@ function mkGame(cfg) {
     turn: cfg.leader || "you", retUsed: false, glanceOn: false,
     depth: cfg.depth == null ? 8 : cfg.depth, tieRule: cfg.tieRule || "you",
     jupiterMode: cfg.jupiterMode || "always", stats: { flips: 0, leads: 0 },
+    // the mane's single-player asymmetry (see slotW) must not carry into PvP, same reason
+    // as tieRule above — whichever seat is locally labeled "you" would get a free advantage.
+    maneFair: cfg.maneFair || false,
   };
-  // the gate lodges before her lead
-  if (g.turn === "sky" && g.you.some(id => on(g, g.C[id]) && g.C[id].ab === "gate")) g.turn = "you";
+  // the gate lodges before her lead — either hand's gate seizes the lead, not just "you"'s
+  const hasGate = ids => ids.some(id => on(g, g.C[id]) && g.C[id].ab === "gate");
+  if (g.turn === "sky" && hasGate(g.you)) g.turn = "you";
+  else if (g.turn === "you" && hasGate(g.sky)) g.turn = "sky";
   return g;
 }
 const on = (g, c) => !!c && !!c.ab && (c.who === "sky" || c.lvl >= 2);
@@ -68,43 +102,35 @@ const nb = (g, i, d) => { const k = i + d; return k >= 0 && k < g.len ? k : -1; 
 const boardM = (g, i) => ((g.tonight - 1 + i) % 28) + 1;
 const isHome = (g, id, i) => (g.C[id].homeM || id) === boardM(g, i);
 
-function hasAwake(g, slots, ab, own) {
-  return slots.some(s => s && s.owner === own && g.C[s.id].ab === ab && on(g, g.C[s.id]));
-}
+// the hard light: the jewel is immune to softening (see faceOf's floor-of-7 too)
 function noSoften(g, slots, i) {
-  const s = slots[i]; if (!s || s.owner !== "you") return false;
+  const s = slots[i]; if (!s) return false;
   const c = g.C[s.id];
-  if (c.ab === "jewel" && on(g, c)) return true;
-  return hasAwake(g, slots, "heart", "you");
+  return c.ab === "jewel" && on(g, c);
 }
 // every face modifier in the slate, resolved live
 function faceOf(g, slots, i, dir) {
   const s = slots[i]; if (!s) return 0;
   const c = g.C[s.id];
   let v = dir === 1 ? s.r : s.l;
-  if (c.ab === "follower" && on(g, c) && dir === -1) { const k = nb(g, i, -1); if (k >= 0 && slots[k]) v = Math.max(v, slots[k].r); }
   let d = 0;
-  if (c.ab === "mane" && on(g, c)) { const a = nb(g, i, -1), b = nb(g, i, 1); if (a >= 0 && b >= 0 && slots[a] && slots[b]) d += 1; }
   if (c.ab === "root" && on(g, c) && s.first) d += 1;
-  if (s.clawed) d -= 1;
-  if (s.flocked) d += 1;
-  if (s.glanced) d -= 1;
-  const filled = slots.filter(x => x).length;
+  if (s.clawed) d -= 2;
+  if (s.ghosted) d -= 2;
+  if (s.glanced) d -= 2;
   for (const dd of [-1, 1]) {
     const k = nb(g, i, dd); if (k < 0 || !slots[k]) continue;
     const n = g.C[slots[k].id]; if (!on(g, n)) continue;
-    if (n.ab === "bearer" && slots[k].owner === s.owner && s.owner === "you") d += 1;
-    if (n.ab === "ghost" && slots[k].owner === "you" && s.owner === "sky" && filled < 5) d -= 1;
+    if (n.ab === "void") d -= 1;
   }
   if (d < 0 && noSoften(g, slots, i)) d = 0;
+  if (c.ab === "jewel" && on(g, c)) return Math.max(7, v + d);
   return Math.max(1, v + d);
 }
 function safeNow(g, slots, ti) {
-  const t = slots[ti]; if (!t || t.owner !== "you") return false;
-  const c = g.C[t.id], age = t.age || 0;
-  if (c.ab === "veil" && on(g, c) && age <= 1) return true;
-  if (c.ab === "void" && on(g, c)) { let n = 0; for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k >= 0 && slots[k]) n++; } if (n <= 1) return true; }
-  if (age <= 1) for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k < 0 || !slots[k] || slots[k].owner !== "you") continue; const n = g.C[slots[k].id]; if (n.ab === "chamber" && on(g, n)) return true; }
+  const t = slots[ti]; if (!t) return false;
+  const age = t.age || 0;
+  if (age <= 1) for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k < 0 || !slots[k] || slots[k].owner !== t.owner) continue; const n = g.C[slots[k].id]; if (n.ab === "chamber" && on(g, n)) return true; }
   return false;
 }
 function tryFlip(g, slots, ai, ti, dir) {
@@ -112,15 +138,19 @@ function tryFlip(g, slots, ai, ti, dir) {
   if (!t || !a || t.owner === a.owner) return false;
   const aC = g.C[a.id], tC = g.C[t.id];
   const av = faceOf(g, slots, ai, dir), tv = faceOf(g, slots, ti, -dir);
-  const stormFace = tC.ab === "storm" && on(g, tC) && isHome(g, t.id, ti);
+  const stormFace = tC.ab === "storm" && on(g, tC); // ties never take the storm, wherever it stands
   const tie = av === tv && !stormFace;
   if (!(av > tv || tie)) return false;
   if (tC.ab === "saturn") return false;
   if (safeNow(g, slots, ti)) return false;
-  if (tC.ab === "return" && on(g, tC) && t.came === false) return "return";
+  if (tC.ab === "return" && on(g, tC) && t.came === false && isHome(g, t.id, ti)) return "return";
   t.owner = a.owner;
   if (tC.ab === "claws" && on(g, tC)) slots[ai] = { ...slots[ai], clawed: true };
-  if (aC.ab === "flock" && on(g, aC)) for (const d of [-1, 1]) { const k = nb(g, ai, d); if (k >= 0 && slots[k] && slots[k].owner === a.owner) slots[k] = { ...slots[k], flocked: true }; }
+  if (aC.ab === "flock" && on(g, aC)) slots[ti] = { ...slots[ti], l: slots[ti].r, r: slots[ti].l };
+  for (const d of [-1, 1]) { // the bearer: whatever it claims beside it, the ground locks to its own side
+    const k = nb(g, ti, d); if (k < 0 || !slots[k] || slots[k].owner !== a.owner) continue;
+    const n = g.C[slots[k].id]; if (n.ab === "bearer" && on(g, n)) slots[ti] = { ...slots[ti], ground: a.owner };
+  }
   return tie ? "tie" : true;
 }
 function lodge(g, slotsIn, cardId, i, rev, side) {
@@ -128,12 +158,12 @@ function lodge(g, slotsIn, cardId, i, rev, side) {
   const slots = slotsIn.slice().map(x => x ? { ...x, age: (x.age || 0) + 1 } : x);
   const first = !slotsIn.some(x => x && x.owner === own);
   slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, age: 0, first };
-  if (own === "sky" && g.glanceOn) slots[i].glanced = true;
-  if (own === "you" && c.ab === "blaze" && on(g, c)) slots[i].ground = "you";
-  if (own === "you" && c.ab === "return" && on(g, c)) slots[i].came = g.retUsed ? true : false;
-  if (own === "you" && c.ab === "turning" && on(g, c)) {
+  if (g.glanceOn && g.glanceOn !== own) slots[i].glanced = true;
+  if (c.ab === "blaze" && on(g, c)) slots[i].ground = own;
+  if (c.ab === "return" && on(g, c)) slots[i].came = g.retUsed ? true : false;
+  if (c.ab === "turning" && on(g, c)) {
     let best = -1, bv = 0;
-    [-1, 1].forEach(d => { const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner !== "sky") return;
+    [-1, 1].forEach(d => { const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner === own) return;
       const face = d === 1 ? slots[k].l : slots[k].r, back = d === 1 ? slots[k].r : slots[k].l;
       if (face > back && face - back > bv) { bv = face - back; best = k; } });
     if (best >= 0) slots[best] = { ...slots[best], l: slots[best].r, r: slots[best].l };
@@ -143,30 +173,61 @@ function lodge(g, slotsIn, cardId, i, rev, side) {
     const key = d === 1 ? "l" : "r";
     if (slots[t][key] > 1) slots[t] = { ...slots[t], [key]: slots[t][key] - 1 };
   });
+  if (c.ab === "guide" && on(g, c)) { // it trades the grounds beside it as it lands
+    const a = nb(g, i, -1), b = nb(g, i, 1);
+    if (a >= 0 && b >= 0 && slots[a] && slots[b]) {
+      const ta = { ...slots[a] }, tb2 = { ...slots[b] };
+      slots[a] = { ...tb2, age: ta.age }; slots[b] = { ...ta, age: tb2.age };
+    }
+  }
+  for (const d of [-1, 1]) { // lodged beside the bearer: the ground is its owner's from the start
+    const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner !== own) continue;
+    const n = g.C[slots[k].id]; if (n.ab === "bearer" && on(g, n)) slots[i].ground = own;
+  }
+  for (const d of [-1, 1]) { // the ghost chills, the veil turns, the hand steps aside — only ever an opponent's card
+    const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner === own) continue;
+    const n = g.C[slots[k].id]; if (!on(g, n)) continue;
+    if (n.ab === "ghost" && !slots[k].vused) { slots[k] = { ...slots[k], vused: true }; slots[i].ghosted = true; }
+    if (n.ab === "veil" && !slots[k].vused) { slots[k] = { ...slots[k], vused: true }; slots[i] = { ...slots[i], l: slots[i].r, r: slots[i].l }; }
+    if (n.ab === "hand" && !slots[k].moved) {
+      const away = slots.findIndex(x => !x);
+      if (away >= 0) { slots[away] = { ...slots[k], moved: true, age: 0 }; slots[k] = null; }
+    }
+  }
   return slots;
 }
 function resolve(g, slotsIn, cardId, i, rev, side) {
   const own = side || g.C[cardId].who;
   const slots = lodge(g, slotsIn, cardId, i, rev, side);
-  const queue = [], ret = [];
-  if (own === "sky") for (const d of [-1, 1]) { // the listener strikes what lands beside it
+  const queue = [], ret = [], seq = [];
+  for (const d of [-1, 1]) { // the listener strikes what lands beside it
     const k = nb(g, i, d);
-    if (k >= 0 && slots[k] && slots[k].owner === "you" && g.C[slots[k].id].ab === "listener" && on(g, g.C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
+    if (k >= 0 && slots[k] && slots[k].owner !== own && g.C[slots[k].id].ab === "listener" && on(g, g.C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
   }
   queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
-  let flips = 0;
-  while (queue.length) {
+  let flips = 0, guard = 0;
+  while (queue.length && guard++ < 60) {
     const { from, to, dir } = queue.shift();
     if (to < 0 || !slots[from] || !slots[to]) continue;
     const res = tryFlip(g, slots, from, to, dir);
     if (!res) continue;
     flips++;
-    if (res === "return") { ret.push(slots[to].id); slots[to] = null; continue; }
+    if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id }); ret.push(slots[to].id); slots[to] = null; continue; }
+    seq.push({ from, to, dir, owner: slots[to].owner });
     if (res === "tie") for (const d of [-1, 1]) { const far = nb(g, to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d }); }
-    const fromAb = g.C[slots[from].id].ab;
-    if (fromAb === "mars" || (fromAb === "drum" && on(g, g.C[slots[from].id]))) { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir }); }
+    const claimer = slots[from].owner, victim = claimer === "you" ? "sky" : "you";
+    if (!slots[to].drummed) { // the drum answers what's taken from its own side, from wherever it stands
+      const ks = slots.map((x, xi) => x && x.owner === victim && g.C[x.id].ab === "drum" && on(g, g.C[x.id]) ? xi : -1).filter(xi => xi >= 0);
+      if (ks.length) { const k = ks[0]; slots[to] = { ...slots[to], drummed: true }; queue.push({ from: k, to, dir: k > to ? -1 : 1 }); }
+    }
+    const fk = nb(g, to, 1);
+    if (fk >= 0 && slots[fk] && slots[fk].owner === victim && !slots[to].followed) {
+      const n = g.C[slots[fk].id];
+      if (n.ab === "follower" && on(g, n)) { slots[to] = { ...slots[to], followed: true }; queue.push({ from: fk, to, dir: -1 }); }
+    }
+    if (g.C[slots[from].id].ab === "mars") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir }); }
   }
-  return { slots, flips, ret };
+  return { slots, flips, ret, seq };
 }
 function slotW(g, slots, i, ctx) {
   const s = slots[i]; if (!s) return { who: null, w: 0 };
@@ -177,30 +238,39 @@ function slotW(g, slots, i, ctx) {
   let w = 1 + j + (home ? 1 : 0);
   if (on(g, c)) {
     if (c.ab === "gathered") w += 1;
-    if (c.ab === "crown" && (i === 0 || i === g.len - 1)) w += 1;
-    if (c.ab === "district") {
-      let touch = false;
-      for (const d of [-1, 1]) { const k = nb(g, i, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) touch = true; }
-      if (!touch) w += 1;
+    if (c.ab === "crown") { for (const d of [-1, 1]) { const k = nb(g, i, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) { w += 1; break; } } }
+    if (c.ab === "district") w += 1;
+    if (c.ab === "hideaway") w += 1;
+    if (c.ab === "heart") { // a comeback card: counts two while its own side holds less of the road
+      let mine = 0, theirs = 0;
+      slots.forEach(x => { if (!x) return; (x.ground || x.owner) === own ? mine++ : theirs++; });
+      if (theirs > mine) w += 1;
     }
   }
   let who = own;
   if (ctx && ctx.thread && (i === 0 || i === g.len - 1)) who = ctx.thread;
+  if (on(g, c) && c.ab === "mane") {
+    const a = nb(g, i, -1), b = nb(g, i, 1);
+    if (a >= 0 && b >= 0 && slots[a] && slots[b]) {
+      const oa = slots[a].ground || slots[a].owner, ob = slots[b].ground || slots[b].owner;
+      // single-player only: whoever holds both its neighbours gains the mane's count, but
+      // never the sky — measured 25 aug, a symmetric version favoured her by -3.0 net,
+      // because her own evaluation claims in pairs more often than the player does.
+      // g.maneFair (set true for PvP, see mkGame) restores the symmetric version so
+      // neither PvP seat gets a free advantage from whichever side is locally "you".
+      if (oa === ob && (g.maneFair || oa === "you")) who = oa;
+    }
+  }
   return { who, w };
 }
 function ctxOf(g, slots) {
   let thread = null;
   slots.forEach(s => { if (s && g.C[s.id].ab === "thread" && on(g, g.C[s.id])) thread = s.ground || s.owner; });
   const sil = {};
-  slots.forEach((s, i) => {
+  slots.forEach((s, i) => { // the empty district silences both sides of it
     if (!s) return; const c = g.C[s.id];
-    if (c.ab !== "hideaway" || !on(g, c)) return;
-    const own = s.ground || s.owner;
-    let best = -1, bw = -1;
-    [-1, 1].forEach(d => { const k = nb(g, i, d); if (k < 0 || !slots[k]) return;
-      const r = slotW(g, slots, k, null);
-      if (r.who && r.who !== own && r.w > bw) { bw = r.w; best = k; } });
-    if (best >= 0) sil[best] = true;
+    if (c.ab !== "district" || !on(g, c)) return;
+    [-1, 1].forEach(d => { const k = nb(g, i, d); if (k >= 0 && slots[k]) sil[k] = true; });
   });
   return { thread, sil };
 }
@@ -231,10 +301,19 @@ function bestYouReply(g, slots, hand) {
   return best;
 }
 // her move: greedy on the count, plus a two-ply reply term weighted by reading depth
+// A STABLE, HAND-ORDER-INDEPENDENT TIEBREAK.
+// The agents used a strict `>`, so among equally-scored moves whichever came FIRST IN HAND
+// ORDER won. That made the order of the five worth 17.9 points to careful play. Ties now
+// break on a hash of the move itself, so shuffling the hand cannot change the choice.
+function moveKey(g, id, i, rev) {
+  let h = (((id * 73856093) ^ (i * 19349663) ^ ((rev ? 1 : 0) * 83492791) ^ ((g.tonight || 1) * 2654435761)) >>> 0);
+  h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
+  return h >>> 0;
+}
 function skyMove(g) {
   let best = null;
   g.sky.forEach(id => {
-    const revs = g.C[id].ab === "mercury" ? [false, true] : [false];
+    const revs = (g.C[id].ab === "mercury" || g.C[id].twoFaced) ? [false, true] : [false];
     revs.forEach(rev => {
       legalSlots(g).forEach(i => {
         const r = resolve(g, g.slots, id, i, rev, "sky");
@@ -245,7 +324,8 @@ function skyMove(g) {
           const reply = bestYouReply(g, r.slots, g.you);
           if (reply !== null) score -= reply * g.depth;
         }
-        if (best === null || score > best.score) best = { id, i, rev, score, r };
+        const key = moveKey(g, id, i, rev);
+        if (best === null || score > best.score || (score === best.score && key > best.key)) best = { id, i, rev, score, r, key };
       });
     });
   });
@@ -269,7 +349,8 @@ function youMove(g) { // the careful player: same shape, so skill is one dial
           }));
           if (worst !== null) score -= worst * g.youDepth;
         }
-        if (best === null || score > best.score) best = { id, i, rev, score, r };
+        const key = moveKey(g, id, i, rev);
+        if (best === null || score > best.score || (score === best.score && key > best.key)) best = { id, i, rev, score, r, key };
       });
     });
   });
@@ -286,7 +367,7 @@ function playBoard(cfg) {
     g.slots = mv.r.slots; flips += mv.r.flips;
     if (side === "you") g.you = g.you.filter(x => x !== mv.id); else g.sky = g.sky.filter(x => x !== mv.id);
     if (mv.r.ret.length) { g.you = g.you.concat(mv.r.ret); g.retUsed = true; }
-    g.glanceOn = side === "you" && g.C[mv.id].ab === "glance" && on(g, g.C[mv.id]);
+    g.glanceOn = (g.C[mv.id].ab === "glance" && on(g, g.C[mv.id])) ? side : false;
     g.turn = side === "you" ? "sky" : "you";
   }
   const [you, sky] = counts(g, g.slots);
@@ -319,36 +400,83 @@ const VECTORS = [
   ["dominion counts two", g => { g.tonight = 1; g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 0 }; return counts(g, g.slots)[0]; }, 2],
   ["jupiter counts two", g => { g.slots[3] = { id: 105, owner: "sky", l: 7, r: 8, age: 0 }; return counts(g, g.slots)[1]; }, 2],
   ["the gate takes the lead", g => mkGame({ C: g.C, you: [1], sky: [101], leader: "sky" }).turn, "you"],
-  ["the bearer lifts yours", g => { g.slots[1] = { id: 2, owner: "you", l: 6, r: 4, age: 2 }; g.slots[2] = { id: 17, owner: "you", l: 6, r: 6, age: 2 }; return faceOf(g, g.slots, 2, 1); }, 7],
+  ["the bearer keeps the ground it's lodged beside", g => { g.slots[0] = { id: 2, owner: "you", l: 6, r: 4, age: 2 }; const s = lodge(g, g.slots, 17, 1, false, "you"); return s[1].ground; }, "you"],
+  ["the bearer keeps the ground it claims beside", g => { g.slots[0] = { id: 2, owner: "you", l: 6, r: 4, age: 2 }; g.slots[1] = { id: 20, owner: "sky", l: 1, r: 1, age: 3 }; const r = resolve(g, g.slots, 17, 2, false, "you"); return r.slots[1].ground; }, "you"],
   ["the gathered stars count two", g => { g.tonight = 9; g.slots[0] = { id: 3, owner: "you", l: 7, r: 6, age: 0 }; return counts(g, g.slots)[0]; }, 2],
-  ["the follower copies the left", g => { g.slots[0] = { id: 24, owner: "sky", l: 3, r: 9, age: 2 }; g.slots[1] = { id: 4, owner: "you", l: 7, r: 7, age: 0 }; return faceOf(g, g.slots, 1, -1); }, 9],
+  ["the follower answers when its side is claimed", g => {
+    g.slots[1] = { id: 6, owner: "sky", l: 1, r: 1, age: 3 }; g.slots[2] = { id: 4, owner: "sky", l: 9, r: 9, age: 3 };
+    const r = resolve(g, g.slots, 17, 0, false, "you"); return [r.slots[1].owner, r.flips].join("/");
+  }, "sky/2"],
   ["the blaze keeps its ground", g => { const s = lodge(g, g.slots, 5, 4, false, "you"); s[4].owner = "sky"; return slotW(g, s, 4, ctxOf(g, s)).who; }, "you"],
-  ["the storm cannot be tied at home", g => { g.tonight = 6; g.slots[0] = { id: 6, owner: "you", l: 8, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "you"],
-  ["the storm ties away from home", g => { g.tonight = 1; g.slots[0] = { id: 6, owner: "you", l: 8, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "sky"],
-  ["the return comes home once", g => { const s = lodge(g, g.slots, 7, 0, false, "you"); const r = resolve({ ...g, slots: s }, s, 101, 1, false, "sky"); return [r.slots[0], r.ret[0]].map(x => x === null ? "gone" : x).join("/"); }, "gone/7"],
-  ["the ghost dims hers early", g => { g.slots[1] = { id: 8, owner: "you", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 101, owner: "sky", l: 9, r: 5, age: 2 }; return faceOf(g, g.slots, 2, -1); }, 8],
-  ["the ghost fades on a full road", g => { for (let i = 0; i < 5; i++) g.slots[i] = { id: 20, owner: "you", l: 6, r: 6, age: 2 }; g.slots[1] = { id: 8, owner: "you", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 101, owner: "sky", l: 9, r: 5, age: 2 }; return faceOf(g, g.slots, 2, -1); }, 9],
-  ["the glance dims her next", g => { g.glanceOn = true; const s = lodge(g, g.slots, 101, 4, false, "sky"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 4],
-  ["the mane stands between two", g => { g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; g.slots[1] = { id: 11, owner: "you", l: 6, r: 5, age: 0 }; return faceOf(g, g.slots, 1, 1); }, 6],
+  ["the storm cannot be tied, anywhere (at home)", g => { g.tonight = 6; g.slots[0] = { id: 6, owner: "you", l: 8, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "you"],
+  ["the storm cannot be tied, anywhere (away)", g => { g.tonight = 1; g.slots[0] = { id: 6, owner: "you", l: 8, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "you"],
+  ["the return comes home once, on its own ground", g => { g.tonight = 7; const s = lodge(g, g.slots, 7, 0, false, "you"); const r = resolve({ ...g, tonight: 7, slots: s }, s, 101, 1, false, "sky"); return [r.slots[0] === null ? "gone" : "stayed", r.ret[0]].join("/"); }, "gone/7"],
+  ["the return does not trigger off its own ground", g => { g.tonight = 1; const s = lodge(g, g.slots, 7, 0, false, "you"); const r = resolve({ ...g, tonight: 1, slots: s }, s, 101, 1, false, "sky"); return r.slots[0] === null ? "gone" : "stayed"; }, "stayed"],
+  ["the ghost dims the first opposing lodge beside it, once", g => {
+    g.slots[1] = { id: 8, owner: "you", l: 6, r: 6, age: 2 };
+    const s1 = lodge(g, g.slots, 101, 2, false, "sky"); const f1 = faceOf({ ...g, slots: s1 }, s1, 2, -1);
+    const s2 = lodge({ ...g, slots: s1 }, s1, 102, 0, false, "sky"); const f2 = faceOf({ ...g, slots: s2 }, s2, 0, 1);
+    return f1 + "/" + f2;
+  }, "7/6"],
+  ["the glance dims her next by two", g => { g.glanceOn = true; const s = lodge(g, g.slots, 101, 4, false, "sky"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 3],
+  ["the mane: her card, you hold both sides, you gain it", g => { g.slots[1] = { id: 11, owner: "sky", l: 6, r: 5, age: 0 }; g.slots[0] = { id: 20, owner: "you", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "you", l: 6, r: 6, age: 2 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).who; }, "you"],
+  ["the mane: your card, sky holds both sides, stays yours", g => { g.slots[1] = { id: 11, owner: "you", l: 6, r: 5, age: 0 }; g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).who; }, "you"],
+  ["the mane: maneFair restores symmetry for PvP", g => { g.maneFair = true; g.slots[1] = { id: 11, owner: "you", l: 6, r: 5, age: 0 }; g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).who; }, "sky"],
   ["the turning turns her", g => { g.slots[1] = { id: 101, owner: "sky", l: 9, r: 5, age: 2 }; const s = lodge(g, g.slots, 12, 0, false, "you"); return s[1].l; }, 5],
   ["the jewel cannot be softened", g => { g.slots[0] = { id: 14, owner: "you", l: 7, r: 7, age: 2 }; const s = lodge(g, g.slots, 103, 1, false, "sky"); return s[0].r; }, 7],
-  ["the veil lands safe", g => { const s = lodge(g, g.slots, 15, 0, false, "you"); return resolve({ ...g, slots: s }, s, 101, 1, false, "sky").slots[0].owner; }, "you"],
-  ["the claws bleed their claimer", g => { g.slots[0] = { id: 16, owner: "you", l: 6, r: 6, age: 3 }; const r = resolve(g, g.slots, 101, 1, false, "sky"); return faceOf({ ...g, slots: r.slots }, r.slots, 1, 1); }, 4],
-  ["the crown counts two on an edge", g => { g.tonight = 20; g.slots[0] = { id: 17, owner: "you", l: 6, r: 6, age: 0 }; return counts(g, g.slots)[0]; }, 2],
-  ["the heart keeps yours from dimming", g => { g.slots[0] = { id: 18, owner: "you", l: 7, r: 7, age: 2 }; g.slots[1] = { id: 20, owner: "you", l: 6, r: 6, age: 2 }; const s = lodge(g, g.slots, 103, 2, false, "sky"); return s[1].r; }, 6],
+  ["the veil turns the first card that lodges beside it", g => { const s = lodge(g, g.slots, 15, 0, false, "you"); const s2 = lodge({ ...g, slots: s }, s, 101, 1, false, "sky"); return [s2[1].l, s2[1].r].join(","); }, "5,9"],
+  ["baseline: without the veil, no turn happens", g => { g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 3 }; const s2 = lodge(g, g.slots, 101, 1, false, "sky"); return [s2[1].l, s2[1].r].join(","); }, "9,5"],
+  ["the claws' claimer fights at -2", g => { g.slots[0] = { id: 16, owner: "you", l: 6, r: 6, age: 3 }; const r = resolve(g, g.slots, 101, 1, false, "sky"); return faceOf({ ...g, slots: r.slots }, r.slots, 1, 1); }, 3],
+  ["the crown counts two beside its own ground", g => { g.slots[0] = { id: 5, owner: "you", l: 5, r: 6, age: 0 }; g.slots[1] = { id: 17, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).w; }, 2],
+  ["the crown: no bonus with no ground beside it", g => { g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 0 }; g.slots[1] = { id: 17, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).w; }, 1],
+  ["the heart counts two while its side holds less of the road", g => { g.slots[0] = { id: 18, owner: "you", l: 7, r: 7, age: 0 }; g.slots[1] = { id: 20, owner: "sky", l: 6, r: 6, age: 0 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 2],
+  ["the heart: no bonus while ahead or even", g => { g.slots[0] = { id: 18, owner: "you", l: 7, r: 7, age: 0 }; g.slots[1] = { id: 20, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 1],
   ["the root opens higher", g => { const s = lodge(g, g.slots, 19, 3, false, "you"); return faceOf({ ...g, slots: s }, s, 3, 1); }, 8],
-  ["the flock lifts yours on a claim", g => { g.slots[0] = { id: 17, owner: "you", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 21, owner: "sky", l: 2, r: 8, age: 2 }; const r = resolve(g, g.slots, 20, 1, false, "you"); return faceOf({ ...g, slots: r.slots }, r.slots, 0, 1); }, 7],
-  ["the empty district counts two untouched", g => { g.tonight = 5; g.slots[4] = { id: 21, owner: "you", l: 2, r: 8, age: 0 }; g.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 0 }; return counts(g, g.slots)[0]; }, 2],
+  ["the flock turns what it claims as it joins", g => { g.slots[0] = { id: 20, owner: "sky", l: 2, r: 3, age: 3 }; const r = resolve(g, g.slots, 20, 1, false, "you"); return [r.slots[0].owner, r.slots[0].l, r.slots[0].r].join(","); }, "you,3,2"],
+  ["the empty district counts two, unconditionally", g => { g.tonight = 5; g.slots[4] = { id: 21, owner: "you", l: 2, r: 8, age: 0 }; g.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 0 }; return counts(g, g.slots)[0]; }, 2],
+  ["the empty district silences both sides of it", g => { g.slots[1] = { id: 21, owner: "you", l: 2, r: 8, age: 0 }; g.slots[0] = { id: 1, owner: "sky", l: 6, r: 5, age: 0 }; g.slots[2] = { id: 1, owner: "sky", l: 6, r: 5, age: 0 }; return counts(g, g.slots)[1]; }, 0],
   ["the listener strikes what lands", g => { g.slots[0] = { id: 22, owner: "you", l: 7, r: 4, age: 3 }; return resolve(g, g.slots, 21, 1, false, "sky").slots[1].owner; }, "you"],
-  ["the drum strikes onward", g => { g.slots[1] = { id: 20, owner: "sky", l: 6, r: 6, age: 3 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 3 }; const r = resolve(g, g.slots, 23, 0, false, "you"); return [r.slots[1].owner, r.slots[2].owner].join("/"); }, "you/you"],
-  ["the void stands alone", g => { const s = lodge(g, g.slots, 24, 4, false, "you"); return resolve({ ...g, slots: s }, s, 105, 5, false, "sky").slots[4].owner; }, "you"],
-  ["the hideaway closes the loudest beside it", g => { g.tonight = 26; g.slots[0] = { id: 25, owner: "you", l: 5, r: 6, age: 0 }; g.slots[1] = { id: 101, owner: "sky", l: 9, r: 5, age: 0 }; return counts(g, g.slots)[1]; }, 0],
+  ["the drum answers what's taken from its side, from wherever it stands", g => {
+    g.slots[8] = { id: 23, owner: "you", l: 9, r: 9, age: 3 }; g.slots[1] = { id: 20, owner: "you", l: 1, r: 1, age: 3 };
+    const r = resolve(g, g.slots, 101, 0, false, "sky"); return [r.slots[1] && r.slots[1].owner, r.flips].join("/");
+  }, "you/2"],
+  ["the void weakens everything beside it, either owner", g => {
+    g.slots[4] = { id: 24, owner: "you", l: 5, r: 6, age: 2 }; g.slots[3] = { id: 1, owner: "sky", l: 6, r: 5, age: 2 }; g.slots[5] = { id: 1, owner: "you", l: 6, r: 5, age: 2 };
+    return [faceOf(g, g.slots, 3, 1), faceOf(g, g.slots, 5, -1)].join(",");
+  }, "4,5"],
+  ["the hideaway counts its own ground two", g => { g.slots[0] = { id: 25, owner: "you", l: 5, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 2],
   ["the chamber shields a landing", g => { g.slots[0] = { id: 26, owner: "you", l: 7, r: 5, age: 3 }; const s = lodge(g, g.slots, 20, 1, false, "you"); return resolve({ ...g, slots: s }, s, 101, 2, false, "sky").slots[1].owner; }, "you"],
+  ["the guide trades the two grounds beside it as it lands", g => {
+    g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 5 }; g.slots[2] = { id: 2, owner: "sky", l: 6, r: 4, age: 7 };
+    const s = lodge(g, g.slots, 27, 1, false, "you");
+    return [s[0].id, s[0].owner, s[0].age, s[2].id, s[2].owner, s[2].age].join(",");
+  }, "2,sky,6,1,you,8"],
   ["the thread holds both ends", g => { g.slots[0] = { id: 101, owner: "sky", l: 9, r: 5, age: 0 }; g.slots[8] = { id: 102, owner: "sky", l: 8, r: 6, age: 0 }; g.slots[4] = { id: 28, owner: "you", l: 5, r: 6, age: 0 }; return counts(g, g.slots)[1]; }, 0],
   ["the casual agent's move", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "you", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; q.youDepth = 0; const m = youMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "18@7"],
-  ["the careful agent's move", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "you", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; q.youDepth = 8; const m = youMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "5@0"],
-  ["her move on the same board", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "sky", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; const m = skyMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "102@0"],
-  ["a full board plays out", g => { const r = playBoard({ C: g.C, tonight: 11, you: [5, 6, 10, 17, 18], sky: [101, 102, 103, 104, 105], leader: "sky", depth: 8, youDepth: 8 }); return r.winner + "/" + r.you + "/" + r.sky; }, "you/8/4"],
+  // Re-baselined for the moveKey tiebreak (item 1, 25 Aug handoff): all three were
+  // genuine ties under the old strict `>` compare, resolved by hand-order position.
+  // The new hash-based tiebreak picks a different (still valid) tied move.
+  ["the careful agent's move", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "you", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; q.youDepth = 8; const m = youMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "10@8"],
+  ["her move on the same board", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "sky", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; const m = skyMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "104@1"],
+  ["a full board plays out", g => { const r = playBoard({ C: g.C, tonight: 11, you: [5, 6, 10, 17, 18], sky: [101, 102, 103, 104, 105], leader: "sky", depth: 8, youDepth: 8 }); return r.winner + "/" + r.you + "/" + r.sky; }, "you/7/4"],
+
+  // owner-relative pass (24 aug 2026): every signature above is framed from the "you" seat.
+  // these mirror them from the "sky" seat to prove the fix isn't seat-locked either way.
+  ["[sky] the bearer keeps the ground it's lodged beside", g => { g.slots[0] = { id: 2, owner: "sky", l: 6, r: 4, age: 2 }; const s = lodge(g, g.slots, 17, 1, false, "sky"); return s[1].ground; }, "sky"],
+  ["[sky] the bearer keeps the ground it claims beside", g => { g.slots[0] = { id: 2, owner: "sky", l: 6, r: 4, age: 2 }; g.slots[1] = { id: 20, owner: "you", l: 1, r: 1, age: 3 }; const r = resolve(g, g.slots, 17, 2, false, "sky"); return r.slots[1].ground; }, "sky"],
+  ["[sky] the ghost dims the first opposing lodge, once", g => { g.slots[1] = { id: 8, owner: "sky", l: 6, r: 6, age: 2 }; const s1 = lodge(g, g.slots, 101, 2, false, "you"); return faceOf({ ...g, slots: s1 }, s1, 2, -1); }, 7],
+  ["[sky] the turning turns them", g => { g.slots[1] = { id: 101, owner: "you", l: 9, r: 5, age: 2 }; const s = lodge(g, g.slots, 12, 0, false, "sky"); return s[1].l; }, 5],
+  ["[sky] the jewel cannot be softened", g => { g.slots[0] = { id: 14, owner: "sky", l: 7, r: 7, age: 2 }; const s = lodge(g, g.slots, 103, 1, false, "you"); return s[0].r; }, 7],
+  ["[sky] the veil turns the first card that lodges beside it", g => { const s = lodge(g, g.slots, 15, 0, false, "sky"); const s2 = lodge({ ...g, slots: s }, s, 101, 1, false, "you"); return [s2[1].l, s2[1].r].join(","); }, "5,9"],
+  ["[sky] the heart counts two while its side holds less of the road", g => { g.slots[0] = { id: 18, owner: "sky", l: 7, r: 7, age: 0 }; g.slots[1] = { id: 20, owner: "you", l: 6, r: 6, age: 0 }; g.slots[2] = { id: 20, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 2],
+  ["[sky] the void weakens everything beside it too", g => { g.slots[4] = { id: 24, owner: "sky", l: 5, r: 6, age: 2 }; g.slots[3] = { id: 1, owner: "you", l: 6, r: 5, age: 2 }; return faceOf(g, g.slots, 3, 1); }, 4],
+  ["[sky] the listener strikes what lands", g => { g.slots[0] = { id: 22, owner: "sky", l: 7, r: 4, age: 3 }; return resolve(g, g.slots, 21, 1, false, "you").slots[1].owner; }, "sky"],
+  ["[sky] the chamber shields a landing", g => { g.slots[0] = { id: 26, owner: "sky", l: 7, r: 5, age: 3 }; const s = lodge(g, g.slots, 20, 1, false, "sky"); return resolve({ ...g, slots: s }, s, 101, 2, false, "you").slots[1].owner; }, "sky"],
+  ["[sky] the blaze keeps its ground", g => { const s = lodge(g, g.slots, 5, 4, false, "sky"); s[4].owner = "you"; return slotW(g, s, 4, ctxOf(g, s)).who; }, "sky"],
+  ["[sky] the return comes home once, on its own ground", g => { g.tonight = 7; const s = lodge(g, g.slots, 7, 0, false, "sky"); const r = resolve({ ...g, tonight: 7, slots: s }, s, 101, 1, false, "you"); return [r.slots[0] === null ? "gone" : "stayed", r.ret[0]].join("/"); }, "gone/7"],
+  ["[sky] the glance dims their next by two", g => { g.glanceOn = "sky"; const s = lodge(g, g.slots, 101, 4, false, "you"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 3],
+  ["the glance never dims its own caster", g => { g.glanceOn = "you"; const s = lodge(g, g.slots, 101, 4, false, "you"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 5],
+  ["[sky] the gate takes the lead", g => mkGame({ C: g.C, you: [101], sky: [1], leader: "you" }).turn, "sky"],
 ];
 function runVectors(opts) {
   const out = [];

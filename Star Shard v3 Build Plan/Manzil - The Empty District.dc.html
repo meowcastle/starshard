@@ -2232,7 +2232,11 @@ class Component extends DCLogic {
       len = Math.min(9, n * 2 + (leader === "you" ? 1 : 0));
     }
     const Cg = this._cards();
-    if (leader === "sky" && hand.some(id => Cg[id] && Cg[id].ab === "gate" && this._on(Cg[id]))) leader = "you"; // the gate lodges before her lead
+    const hasGate = ids => ids.some(id => Cg[id] && Cg[id].ab === "gate" && this._on(Cg[id]));
+    // the gate lodges before her lead — either hand's gate seizes the lead, not just yours
+    // (matters for duels: sky's seat there is a real player's own hand, not just planets)
+    if (leader === "sky" && hasGate(hand)) leader = "you";
+    else if (leader === "you" && hasGate(sky)) leader = "sky";
     return { retUsed: false, handUsed: false, guideUsed: false, glanceOn: false, pick: null, slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, log: "" };
   }
   _cards() {
@@ -2654,44 +2658,35 @@ class Component extends DCLogic {
     return [this._nb(i, -1), this._nb(i, 1)].some(k => k >= 0 && slots[k]);
   }
   _on(c) { return !!c && !!c.ab && (c.who === "sky" || (c.lvl >= 2 && !c.loan)); }
-  _hasAwake(slots, ab, own) {
-    const C = this._cards();
-    return slots.some(s => s && s.owner === own && C[s.id].ab === ab && this._on(C[s.id]));
-  }
+  // the hard light: the jewel is immune to softening (see _faceOf's floor-of-7 too)
   _noSoften(slots, i) {
-    const s = slots[i]; if (!s || s.owner !== "you") return false;
+    const s = slots[i]; if (!s) return false;
     const c = this._cards()[s.id];
-    if (c.ab === "jewel" && this._on(c)) return true;          // the hard light
-    return this._hasAwake(slots, "heart", "you");               // while the heart stands, none of yours dim
+    return c.ab === "jewel" && this._on(c);
   }
   // every face modifier in the slate, resolved live: the one place a number is read
   _faceOf(slots, i, dir) {
     const s = slots[i]; if (!s) return 0;
     const C = this._cards(), c = C[s.id];
     let v = dir === 1 ? s.r : s.l;
-    if (c.ab === "follower" && this._on(c) && dir === -1) { const k = this._nb(i, -1); if (k >= 0 && slots[k]) v = Math.max(v, slots[k].r); }
-    let d = 0, own = s.owner;
-    if (c.ab === "mane" && this._on(c)) { const a = this._nb(i, -1), b = this._nb(i, 1); if (a >= 0 && b >= 0 && slots[a] && slots[b]) d += 1; }
+    let d = 0;
     if (c.ab === "root" && this._on(c) && s.first) d += 1;
-    if (s.clawed) d -= 1;
-    if (s.flocked) d += 1;
-    if (s.glanced) d -= 1; // the glance saw it coming
-    const filled = slots.filter(x => x).length;
+    if (s.clawed) d -= 2;
+    if (s.ghosted) d -= 2;
+    if (s.glanced) d -= 2; // the glance saw it coming
     for (const dd of [-1, 1]) {
       const k = this._nb(i, dd); if (k < 0 || !slots[k]) continue;
       const n = C[slots[k].id]; if (!this._on(n)) continue;
-      if (n.ab === "bearer" && slots[k].owner === own && own === "you") d += 1;
-      if (n.ab === "ghost" && slots[k].owner === "you" && own === "sky" && filled < 5) d -= 1; // it fades as the road fills
+      if (n.ab === "void") d -= 1;
     }
     if (d < 0 && this._noSoften(slots, i)) d = 0;
+    if (c.ab === "jewel" && this._on(c)) return Math.max(7, v + d);
     return Math.max(1, v + d);
   }
   _safeNow(slots, ti, ai) {
-    const t = slots[ti]; if (!t || t.owner !== "you") return false;
-    const C = this._cards(), c = C[t.id], age = t.age || 0;
-    if (c.ab === "veil" && this._on(c) && age <= 1) return true;
-    if (c.ab === "void" && this._on(c)) { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && slots[k]) n++; } if (n <= 1) return true; } // only its attacker beside it: still alone
-    if (age <= 1) for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k < 0 || !slots[k] || slots[k].owner !== "you") continue; const n = C[slots[k].id]; if (n.ab === "chamber" && this._on(n)) return true; }
+    const t = slots[ti]; if (!t) return false;
+    const C = this._cards(), age = t.age || 0;
+    if (age <= 1) for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k < 0 || !slots[k] || slots[k].owner !== t.owner) continue; const n = C[slots[k].id]; if (n.ab === "chamber" && this._on(n)) return true; }
     return false;
   }
   _tryFlip(slots, ai, ti, dir) {
@@ -2700,17 +2695,21 @@ class Component extends DCLogic {
     const C = this._cards(), aC = C[a.id], tC = C[t.id];
     let av = this._faceOf(slots, ai, dir), tv = this._faceOf(slots, ti, -dir);
     if (this._bossRule() === "storm") { av = Math.max(1, av - 1); tv = Math.max(1, tv - 1); } // storm weather: all faces fight at -1
-    // base rule (adopted 20 aug 2026): ties flip. the storm's answer (addendum 7): no ties against it on its own mansion
-    const stormFace = tC.ab === "storm" && this._on(tC) && this._isHome(t.id, ti);
+    // base rule (adopted 20 aug 2026): ties flip. the storm's answer (25 aug rewrite): no ties take it, anywhere
+    const stormFace = tC.ab === "storm" && this._on(tC);
     const tie = av === tv && !stormFace;
     if (!(av > tv || tie)) return false;
     if (tC.ab === "saturn") return false;
     if (this._safeNow(slots, ti, ai)) return false;
     if (this._bossRule() === "void") { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && k !== ai && slots[k]) n++; } if (n === 0) return false; }
-    if (tC.ab === "return" && this._on(tC) && !t.came) return "return";  // it comes back once
+    if (tC.ab === "return" && this._on(tC) && !t.came && this._isHome(t.id, ti)) return "return";  // once, on its own ground
     t.owner = a.owner;
-    if (tC.ab === "claws" && this._on(tC)) slots[ai] = { ...slots[ai], clawed: true }; // its claimer bleeds
-    if (aC.ab === "flock" && this._on(aC)) for (const d of [-1, 1]) { const k = this._nb(ai, d); if (k >= 0 && slots[k] && slots[k].owner === a.owner) slots[k] = { ...slots[k], flocked: true }; }
+    if (tC.ab === "claws" && this._on(tC)) slots[ai] = { ...slots[ai], clawed: true }; // its claimer bleeds, -2
+    if (aC.ab === "flock" && this._on(aC)) slots[ti] = { ...slots[ti], l: slots[ti].r, r: slots[ti].l }; // it turns what it claims as it joins
+    for (const d of [-1, 1]) { // the bearer: whatever it claims beside it, the ground locks to its own side
+      const k = this._nb(ti, d); if (k < 0 || !slots[k] || slots[k].owner !== a.owner) continue;
+      const n = C[slots[k].id]; if (n.ab === "bearer" && this._on(n)) slots[ti] = { ...slots[ti], ground: a.owner };
+    }
     return tie ? "tie" : true;
   }
   _lodge(slotsIn, cardId, i, rev, side) {
@@ -2721,12 +2720,12 @@ class Component extends DCLogic {
     const slots = slotsIn.slice().map(x => x ? { ...x, age: (x.age || 0) + 1 } : x);
     const first = !slotsIn.some(x => x && x.owner === own);
     slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, age: 0, first };
-    if (own === "sky" && this.state && this.state.glanceOn) slots[i].glanced = true;
-    if (own === "you" && c.ab === "blaze" && this._on(c)) slots[i].ground = "you";
-    if (own === "you" && c.ab === "return" && this._on(c) && !(this.state && this.state.retUsed)) slots[i].came = false; else if (own === "you" && c.ab === "return") slots[i].came = true;
-    if (own === "you" && c.ab === "turning" && this._on(c)) { // turns the neighbour that fights it hardest
+    if (this.state && this.state.glanceOn && this.state.glanceOn !== own) slots[i].glanced = true;
+    if (c.ab === "blaze" && this._on(c)) slots[i].ground = own;
+    if (c.ab === "return" && this._on(c)) slots[i].came = !(this.state && this.state.retUsed);
+    if (c.ab === "turning" && this._on(c)) { // turns the neighbour that fights it hardest
       let best = -1, bv = 0;
-      [-1, 1].forEach(d => { const k = this._nb(i, d); if (k < 0 || !slots[k] || slots[k].owner !== "sky") return;
+      [-1, 1].forEach(d => { const k = this._nb(i, d); if (k < 0 || !slots[k] || slots[k].owner === own) return;
         const face = d === 1 ? slots[k].l : slots[k].r, back = d === 1 ? slots[k].r : slots[k].l;
         if (face > back && face - back > bv) { bv = face - back; best = k; } });
       if (best >= 0) { slots[best] = { ...slots[best], l: slots[best].r, r: slots[best].l, turned: true }; sigs.push("the turning spins her hardest fighter."); }
@@ -2742,33 +2741,59 @@ class Component extends DCLogic {
       });
     }
     if (soft.length) sigs.push("venus softens her neighbors.");
+    for (const d of [-1, 1]) { // lodged beside the bearer: the ground is its owner's from the start
+      const k = this._nb(i, d); if (k < 0 || !slots[k] || slots[k].owner !== own) continue;
+      const n = C[slots[k].id]; if (n.ab === "bearer" && this._on(n)) slots[i].ground = own;
+    }
+    // the ghost chills, the veil turns — only ever an opponent's card. (the hand and the guide
+    // stay tap-driven abilities here, not the 25 aug rewrite's automatic versions — see
+    // docs/handoffs for the open call on whether to replace them.)
+    for (const d of [-1, 1]) {
+      const k = this._nb(i, d); if (k < 0 || !slots[k] || slots[k].owner === own) continue;
+      const n = C[slots[k].id]; if (!this._on(n)) continue;
+      if (n.ab === "ghost" && !slots[k].vused) { slots[k] = { ...slots[k], vused: true }; slots[i].ghosted = true; }
+      if (n.ab === "veil" && !slots[k].vused) { slots[k] = { ...slots[k], vused: true }; slots[i] = { ...slots[i], l: slots[i].r, r: slots[i].l }; sigs.push("the veil turns what lodges beside it."); }
+    }
     return { slots, soft, sigs };
   }
   _resolve(slotsIn, cardId, i, rev, side) {
     const C = this._cards();
     const { slots, soft, sigs } = this._lodge(slotsIn, cardId, i, rev, side);
     const queue = [];
-    if ((side || C[cardId].who) === "sky") for (const d of [-1, 1]) { // the listener strikes what lands beside it
+    const lodgeOwn = side || C[cardId].who;
+    for (const d of [-1, 1]) { // the listener strikes what lands beside it — either owner's
       const k = this._nb(i, d);
-      if (k >= 0 && slots[k] && slots[k].owner === "you" && C[slots[k].id].ab === "listener" && this._on(C[slots[k].id])) queue.push({ from: k, to: i, dir: -d, sig: "the listener strikes first." });
+      if (k >= 0 && slots[k] && slots[k].owner !== lodgeOwn && C[slots[k].id].ab === "listener" && this._on(C[slots[k].id])) queue.push({ from: k, to: i, dir: -d, sig: "the listener strikes first." });
     }
     queue.push({ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 });
     const seq = [];
-    while (queue.length) {
+    let guard = 0;
+    while (queue.length && guard++ < 60) {
       const cur = queue.shift();
       const { from, to, dir } = cur;
       if (to < 0 || !slots[from] || !slots[to]) continue;
       const res = this._tryFlip(slots, from, to, dir);
       if (!res) continue;
-      if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id, owner: "you", sig: cur.sig }); slots[to] = null; continue; }
+      // the return comes home to whichever side actually owned it, not always "you" — see _step,
+      // which routes it into s.hand or s.sky by this same field.
+      if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id, owner: slots[to].owner, sig: cur.sig }); slots[to] = null; continue; }
       seq.push({ from, to, dir, owner: slots[to].owner, sig: cur.sig });
       if (res === "tie") { // combo: a card flipped by a tie attacks its own neighbours
         for (const d of [-1, 1]) { const far = this._nb(to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d, sig: "taken by a tie, it strikes its neighbors." }); }
       }
-      const fromAb = C[slots[from].id].ab;
-      if (fromAb === "mars" || (fromAb === "drum" && this._on(C[slots[from].id]))) { // the strike carries one further
+      const claimer = slots[from].owner, victim = claimer === "you" ? "sky" : "you";
+      if (!slots[to].drummed) { // the drum answers what's taken from its side, from wherever it stands
+        const ks = slots.map((x, xi) => x && x.owner === victim && C[x.id].ab === "drum" && this._on(C[x.id]) ? xi : -1).filter(xi => xi >= 0);
+        if (ks.length) { const k = ks[0]; slots[to] = { ...slots[to], drummed: true }; queue.push({ from: k, to, dir: k > to ? -1 : 1, sig: "the drum answers what was taken." }); }
+      }
+      const fk = this._nb(to, 1);
+      if (fk >= 0 && slots[fk] && slots[fk].owner === victim && !slots[to].followed) {
+        const n = C[slots[fk].id];
+        if (n.ab === "follower" && this._on(n)) { slots[to] = { ...slots[to], followed: true }; queue.push({ from: fk, to, dir: -1, sig: "the follower answers." }); }
+      }
+      if (C[slots[from].id].ab === "mars") { // the strike carries one further
         const far = this._nb(to, dir);
-        if (far >= 0) queue.push({ from: to, to: far, dir, sig: fromAb === "mars" ? "mars carries the strike onward." : "the drum carries the strike onward." });
+        if (far >= 0) queue.push({ from: to, to: far, dir, sig: "mars carries the strike onward." });
       }
     }
     return { slots, seq, soft, sigs };
@@ -2789,15 +2814,29 @@ class Component extends DCLogic {
     const own = s.ground || s.owner;
     if (this._on(c)) {
       if (c.ab === "gathered") w += 1;
-      if (c.ab === "crown" && (i === 0 || i === slots.length - 1)) w += 1;
-      if (c.ab === "district") { // untouched: nothing of its holder's beside it, alone in her half
-        let touch = false;
-        for (const d of [-1, 1]) { const k = this._nb(i, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) touch = true; }
-        if (!touch) w += 1;
+      if (c.ab === "crown") { for (const d of [-1, 1]) { const k = this._nb(i, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) { w += 1; break; } } }
+      if (c.ab === "district") w += 1; // counts two AND silences both sides of it (see _ctx)
+      if (c.ab === "hideaway") w += 1; // its own ground counts two
+      if (c.ab === "heart") { // a comeback card: counts two while its own side holds less of the road
+        let mine = 0, theirs = 0;
+        slots.forEach(x => { if (!x) return; (x.ground || x.owner) === own ? mine++ : theirs++; });
+        if (theirs > mine) w += 1;
       }
     }
     let who = own;
     if (ctx && ctx.thread && (i === 0 || i === slots.length - 1)) who = ctx.thread; // both ends of the road
+    if (this._on(c) && c.ab === "mane") {
+      const a = this._nb(i, -1), b = this._nb(i, 1);
+      if (a >= 0 && b >= 0 && slots[a] && slots[b]) {
+        const oa = slots[a].ground || slots[a].owner, ob = slots[b].ground || slots[b].owner;
+        // single-player only: whoever holds both its neighbours gains the mane's count, but
+        // never the sky (measured 25 aug — a symmetric version favoured her net -3.0, since
+        // her own evaluation claims in pairs more often). PvP must neutralize this the same
+        // way tieRule is neutralized elsewhere, or whichever seat is locally "you" wins for free.
+        const pvp = !!(this.state && this.state.duel && this.state.duel.mode === "pvp");
+        if (oa === ob && (pvp || oa === "you")) who = oa;
+      }
+    }
     return { who, w, thread: !!(ctx && ctx.thread && (i === 0 || i === slots.length - 1) && ctx.thread !== own) };
   }
   _ctx(slots) {
@@ -2805,15 +2844,10 @@ class Component extends DCLogic {
     let thread = null;
     slots.forEach(s => { if (s && C[s.id].ab === "thread" && this._on(C[s.id])) thread = s.ground || s.owner; });
     const sil = {};
-    slots.forEach((s, i) => { // the hideaway closes the loudest mansion beside it
+    slots.forEach((s, i) => { // the empty district silences both sides of it
       if (!s) return; const c = C[s.id];
-      if (c.ab !== "hideaway" || !this._on(c)) return;
-      const own = s.ground || s.owner;
-      let best = -1, bw = -1;
-      [-1, 1].forEach(d => { const k = this._nb(i, d); if (k < 0 || !slots[k]) return;
-        const r = this._slotW(slots, k, null);
-        if (r.who && r.who !== own && r.w > bw) { bw = r.w; best = k; } });
-      if (best >= 0) sil[best] = true;
+      if (c.ab !== "district" || !this._on(c)) return;
+      [-1, 1].forEach(d => { const k = this._nb(i, d); if (k >= 0 && slots[k]) sil[k] = true; });
     });
     return { thread, sil };
   }
@@ -2894,7 +2928,7 @@ class Component extends DCLogic {
     if (who === "sky" && !this.state.practice && ((this.state.road && !this.state.roadBoss) || (!this.state.road && !this.state.nightSky && this.state.nightWalker))) this._wCast = { n: (this._wCast ? this._wCast.n : 0) + 1, f: flipsN >= 2 };
     this._buzz(flipsN >= 2 ? [12, 46, 12] : 8);
     this._reactPend = who === "sky" && flipsN >= 2 && !this.state.reactDone && !this.state.roadBoss && !this.state.nightSky ? (this.state.roadWalker || this.state.nightWalker) : null;
-    this._toastT = (rr.sigs && rr.sigs[0]) || (who === "you" && c.ab === "glance" && this._on(c) ? "the glance: her next card fights -1." : null);
+    this._toastT = (rr.sigs && rr.sigs[0]) || (c.ab === "glance" && this._on(c) ? "the glance: the next card fights -2." : null);
     this._fxN = (this._fxN || 0) + 1;
     clearTimeout(this._castT);
     this._castT = setTimeout(() => this.setState({ castFx: null }), 950);
@@ -2903,7 +2937,7 @@ class Component extends DCLogic {
       return {
         slots, busy: true, dropIdx: i, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null, pick: null,
         tutStep: s.practice && s.tutor ? (s.tutStep || 0) + 1 : s.tutStep,
-        glanceOn: who === "you" ? (c.ab === "glance" && this._on(c)) : false,
+        glanceOn: (c.ab === "glance" && this._on(c)) ? who : false,
         log: soft.length ? "venus softens her neighbors." : "", caps: [],
         castFx: { id: cardId, owner: who, n: this._fxN },
         toast: this._toastT ? { t: this._toastT, n: this._fxN * 10 } : s.toast,
@@ -2922,10 +2956,11 @@ class Component extends DCLogic {
       this.setState(s => {
         const it = seq[k];
         if (!s.slots[it.to] || !s.slots[it.from]) return {};
-        if (it.ret) { // the return comes home rather than change hands
+        if (it.ret) { // the return comes home to whichever side it actually belongs to
           const sl = s.slots.slice().map(x => x ? { ...x } : x);
           sl[it.to] = null;
-          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", hand: s.hand.concat([it.ret]), toast: { t: "the return comes home.", n: (s.toast ? s.toast.n : 0) + 1 }, caps: (s.caps || []).concat([{ i: it.to, t: "the return comes home" }]) };
+          const homeKey = it.owner === "sky" ? "sky" : "hand";
+          return { slots: sl, retUsed: true, flipIdx: null, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", [homeKey]: s[homeKey].concat([it.ret]), toast: { t: "the return comes home.", n: (s.toast ? s.toast.n : 0) + 1 }, caps: (s.caps || []).concat([{ i: it.to, t: "the return comes home" }]) };
         }
         const slots = s.slots.slice().map(x => x ? { ...x } : x);
         slots[it.to] = { ...slots[it.to], owner: it.owner };
@@ -3020,7 +3055,12 @@ class Component extends DCLogic {
     const temper = (st.road || st.nightWalker || st.duel) ? null : this._temper(); // only the sky has a temper: it rests on road rungs, walker nights and player tables
     const moves = [];
     st.sky.forEach(id => {
-      const revOpts = C[id].ab === "mercury" ? [false, true] : [false];
+      // Bug (25 Aug handoff, item 2a): only Mercury's own reversal was
+      // considered here, so the sky's Throne could never turn in her own
+      // hand — the signature simply never fired for her. Every other move-
+      // generation path in this file (e.g. the player's own, line ~2846)
+      // already checks twoFaced; this one didn't.
+      const revOpts = (C[id].ab === "mercury" || C[id].twoFaced) ? [false, true] : [false];
       st.slots.forEach((s, i) => {
         if (s || !this._legalSlot(st.slots, i)) return;
         revOpts.forEach(rev => {

@@ -250,7 +250,11 @@ function createManzilLobby(io, { jwtSecret, pool }) {
     const skyHand = engine.deal(match.seats.sky.pack, seed + 2, match.tonight, true);
     match.game = engine.mkGame({
       C: match.C, tonight: match.tonight, len: BOARD_LEN,
-      you: youHand, sky: skyHand, leader, tieRule: 'a draw',
+      // maneFair: the mane's 25 Aug rewrite counts its slot for whoever holds both its
+      // neighbours, but single-player only ever lets "you" benefit (never the sky) — same
+      // reason tieRule below is neutralized: whichever seat is locally labeled "you" would
+      // otherwise get a free advantage over the real other player.
+      you: youHand, sky: skyHand, leader, tieRule: 'a draw', maneFair: true,
     });
     ['you', 'sky'].forEach(seat => {
       const snap = boardSnapshot(match, seat);
