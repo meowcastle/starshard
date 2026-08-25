@@ -147,7 +147,28 @@
           </div>
           <div style="flex:1.4;min-width:190px">
             <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">where</div>
-            <input value="{{ placeVal }}" onChange="{{ setPlace }}" placeholder="portland, oregon" style="{{ inputStyle }}">
+            <sc-if value="{{ placeChosen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(240,216,154,.3);padding:7px 2px 9px">
+                <span style="font-size:17px;color:#F2EAD6">{{ placeConfirmedLine }}</span>
+                <button onClick="{{ placeChangeTap }}" style="background:none;border:none;cursor:pointer;font-size:11.5px;color:#9A8A5E;padding:0;white-space:nowrap">change</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ placeNotChosen }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:8px;align-items:flex-end">
+                <input value="{{ placeVal }}" onChange="{{ setPlace }}" placeholder="portland, oregon" style="{{ inputStyle }}">
+                <button onClick="{{ placeSearchTap }}" style="background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12px;padding:7px 14px 9px;cursor:pointer;white-space:nowrap">{{ placeSearchLabel }}</button>
+              </div>
+              <sc-if value="{{ placeHasResults }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;margin-top:4px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.03)">
+                  <sc-for list="{{ placeCityRows }}" as="r" hint-placeholder-count="4">
+                    <div onClick="{{ r.pick }}" style="padding:10px 12px;font-size:13px;color:#F2EAD6;cursor:pointer;border-bottom:1px solid rgba(240,216,154,.1)">{{ r.label }}</div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ placeErrOn }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11px;color:#FFB000;padding-top:9px">{{ placeErr }}</div>
+              </sc-if>
+            </sc-if>
             <div style="font-size:11px;color:#9A8A5E;padding-top:9px">the town is enough. it sets where the sky stood</div>
           </div>
         </div>
@@ -273,7 +294,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:800},&quot;startPhase&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;intro&quot;,&quot;options&quot;:[&quot;intro&quot;,&quot;cast&quot;,&quot;cards&quot;,&quot;account&quot;,&quot;seven&quot;,&quot;signin&quot;,&quot;young&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;preview&quot;}}">
 class Component extends DCLogic {
-  state = { day: "", mon: "", yr: "", time: "", noTime: false, place: "", email: "", user: "", pass: "", sid: "", spass: "", phase: null, busy: false, castErr: "", acctErr: "", signinErr: "" };
+  state = { day: "", mon: "", yr: "", time: "", noTime: false, place: "", placeCityResults: [], placeSearching: false, placePick: null, placeErr: "", email: "", user: "", pass: "", sid: "", spass: "", phase: null, busy: false, castErr: "", acctErr: "", signinErr: "" };
   async componentDidMount() {
     this._rs = () => this.forceUpdate();
     window.addEventListener("resize", this._rs);
@@ -363,6 +384,25 @@ class Component extends DCLogic {
     if (n.getUTCMonth() < p.mi || (n.getUTCMonth() === p.mi && n.getUTCDate() < p.d)) a--;
     return a;
   }
+  // A real search-and-pick step, same proven pattern as Star Shard
+  // v4.dc.html's obSearch()/obCityResults — replacing a free-text field
+  // that used to be accepted as typed, with no confirmation it resolved
+  // to a real place. Manzil's own cast (_castFive) never needed
+  // coordinates, so this is display-only here (the picked name/region),
+  // but it's the same real api.geocode() lookup either way.
+  async placeSearch() {
+    const q = this.state.place.trim();
+    if (!q) return;
+    this.setState({ placeSearching: true, placeCityResults: [], placeErr: "" });
+    try {
+      const res = await this.api.geocode(q);
+      this.setState({ placeSearching: false, placeCityResults: res, placeErr: res.length ? "" : "no place found by that name. try a different spelling" });
+    } catch (e) {
+      this.setState({ placeSearching: false, placeErr: "the star atlas is unreachable. try again" });
+    }
+  }
+  placePickTap(r) { return () => this.setState({ placePick: r, placeCityResults: [], place: `${r.name}, ${r.region}` }); }
+  placeChangeTap() { this.setState({ placePick: null, place: "", placeCityResults: [] }); }
   renderVals() {
     const st = this.state, desk = window.innerWidth >= 900, ph = st.phase || this.props.startPhase || "intro";
     const P = this._parse(), dateDone = P.ok;
@@ -394,7 +434,7 @@ class Component extends DCLogic {
     const tm = tq.match(/^(\d{1,2}):(\d{2})\s*(am|pm)?$/);
     const timeValid = !!(tm && parseInt(tm[1], 10) >= (tm[3] ? 1 : 0) && parseInt(tm[1], 10) <= (tm[3] ? 12 : 23) && parseInt(tm[2], 10) <= 59);
     const timeOk = st.noTime || timeValid;
-    const placeOk = st.place.trim().length >= 2;
+    const placeOk = !!st.placePick;
     const emailOk = st.email.indexOf("@") > 0 && st.email.indexOf(".") > 1;
     const userOk = /^[a-z0-9_]{3,20}$/.test(st.user);
     const passOk = st.pass.length >= 8;
@@ -493,7 +533,14 @@ class Component extends DCLogic {
       timeBadOn: !st.noTime && tq.length > 2 && !timeValid,
       toggleNoTime: () => this.setState(s => ({ noTime: !s.noTime, time: s.noTime ? s.time : "" })),
       noTimeMark: st.noTime ? "☑" : "☐", noTimeC: st.noTime ? "#F0D89A" : "#9A8A5E",
-      placeVal: st.place, setPlace: bind("place"),
+      placeChosen: !!st.placePick, placeNotChosen: !st.placePick,
+      placeConfirmedLine: st.placePick ? `${st.placePick.name}, ${st.placePick.region}` : "",
+      placeChangeTap: () => this.placeChangeTap(),
+      placeVal: st.place, setPlace: (e) => this.setState({ place: e.target.value, placeErr: "" }),
+      placeSearchTap: () => this.placeSearch(), placeSearchLabel: st.placeSearching ? "searching…" : "search",
+      placeHasResults: st.placeCityResults.length > 0,
+      placeCityRows: st.placeCityResults.map(r => ({ label: `${r.name}, ${r.region}`, pick: this.placePickTap(r) })),
+      placeErrOn: !!st.placeErr, placeErr: st.placeErr,
       emailVal: st.email, setEmail: bind("email"),
       userVal: st.user, setUser: bind("user"),
       passVal: st.pass, setPass: bind("pass"),
@@ -527,7 +574,7 @@ class Component extends DCLogic {
             cast: {
               ...cast, pack, birthDate,
               birthTime: timeKnown ? String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0") : null,
-              birthTimeKnown: timeKnown, place: st.place.trim(),
+              birthTimeKnown: timeKnown, place: st.placePick ? `${st.placePick.name}, ${st.placePick.region}` : "",
             },
           });
         }).catch(e => {
