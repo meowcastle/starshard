@@ -787,6 +787,13 @@
       <div style="font-size:10px;color:rgba(154,138,94,.6);margin-top:12px">esc closes · settings will live here</div>
     </div>
   </sc-if>
+  <sc-if value="{{ shardSoonOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:60;background:rgba(4,3,2,.82);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;animation:mzFadeUp .25s ease both">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6">still being drawn.</div>
+      <div style="font-size:11.5px;color:#9A8A5E;margin-bottom:14px;max-width:280px;text-align:center;text-wrap:pretty">the full star shard reading isn't ready yet. this road already knows your five.</div>
+      <button onClick="{{ shardSoonCloseTap }}" style="padding:12px 34px;background:rgba(255,176,0,.1);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:13.5px;color:#FFB000">back to the table ✦</button>
+    </div>
+  </sc-if>
   <sc-if value="{{ zoomOn }}" hint-placeholder-val="{{ false }}">
     <div style="{{ zoomStyle }}">
       <div style="{{ zoomInnerStyle }}">
@@ -1277,7 +1284,7 @@
             <circle cx="{{ d2.x }}" cy="{{ d2.y }}" r="{{ d2.r }}" fill="{{ d2.c }}"></circle>
           </sc-for>
         </svg>
-        <a href="Star Shard v4.dc.html" style="font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E;letter-spacing:.02em;text-decoration:none;cursor:pointer;text-shadow:0 1px 8px rgba(5,3,2,.85);transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease .04s both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">your star shard ›</a>
+        <button onClick="{{ shardSoonTap }}" style="background:none;border:none;padding:0;font-family:'Varela Round',sans-serif;font-size:10px;color:#9A8A5E;letter-spacing:.02em;text-decoration:none;cursor:pointer;text-shadow:0 1px 8px rgba(5,3,2,.85);transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease .04s both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">your star shard ›</button>
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1.05;color:#F2EAD6;text-wrap:balance;text-shadow:0 2px 16px rgba(5,3,2,.9), 0 0 30px rgba(240,216,154,.25);animation:mzFadeUp .5s ease .08s both">{{ recShard }}</div>
         <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;line-height:1.7;color:#9A8A5E;text-wrap:pretty;text-shadow:0 1px 8px rgba(5,3,2,.85);animation:mzFadeUp .5s ease .14s both">{{ recCastLine }}</div>
       </div>
@@ -1949,7 +1956,7 @@ class Component extends DCLogic {
     // rarely-seen fallback: componentDidMount/_legendDone redirect an
     // unauthenticated visitor to the Portal before this would normally
     // render at all), and its one button just sends them there too.
-    return { phase: entry || (seen ? "birth" : "legend"), legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null, duel: null, chosenB: null, selB: null, pauseOn: false,
+    return { phase: entry || (seen ? "birth" : "legend"), legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null, duel: null, chosenB: null, selB: null, pauseOn: false, shardSoonOn: false,
       authEmail: null, authUsername: null };
   }
   // Prefers the real account's username (set at login/signup on the
@@ -3343,6 +3350,15 @@ class Component extends DCLogic {
       pauseOn: !!st.pauseOn,
       pauseKeepTap: () => this.setState({ pauseOn: false }),
       pauseLeaveTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "menu", pauseOn: false }); },
+      // The full Star Shard reading isn't wired to a Manzil-only account
+      // (no birth_data — see CLAUDE.md's two-tier privacy split), so this
+      // used to be a bare "Star Shard v4.dc.html" link that just 404'd
+      // once the root restructure moved that page to /star-shard/. An
+      // honest on-brand placeholder beats a dead link or a page that'd
+      // render with no real chart to show.
+      shardSoonOn: !!st.shardSoonOn,
+      shardSoonTap: () => this.setState({ shardSoonOn: true }),
+      shardSoonCloseTap: () => this.setState({ shardSoonOn: false }),
       ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back && !z.station), zoomStationOn: !!(z && z.station), zoomStName: z && z.station && z.name || "", zoomStSub: z && z.sub || "", zoomStLine: z && z.station && z.line || "", zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
       logLine: st.log,
       capsList: (st.caps || []).map(cp => { const Lc = st.slots.length, ec = 466 - (Lc * 86 + (Lc - 1) * 5) / 2; const x = ec + cp.i * 91 + 43, y = 112 + (cp.i % 2 ? 22 : 0) + Math.pow(cp.i - (Lc - 1) / 2, 2) * 3; return { t: cp.t, style: "position:absolute;left:" + (x - 70) + "px;top:" + y + "px;width:140px;text-align:center;font-size:10px;color:#D8C89C;text-shadow:0 1px 6px rgba(5,3,2,.95), 0 0 12px rgba(5,3,2,.8);z-index:5;pointer-events:none;animation:mzCapRise 2.3s ease-out both" }; }),
@@ -3639,7 +3655,14 @@ class Component extends DCLogic {
         return wk.name + " has turned you back " + (rec.l === 1 ? "once" : rec.l === 2 ? "twice" : rec.l + " times") + ". the rung waits.";
       })())),
       menuPlayLabel: this._mlvl(this._tonight()) < 4 ? (this._climbDoneTonight(this._tonight()) ? "sit at the table ✦" : "walk the road ✦") : this._specialNight(this._tonight()) ? "the sky herself waits ✦" : "sit at the table ✦",
-      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight · the moon returns in " + this._moonIn() : ["the first climb", "the second climb", "the third climb", "the last climb", "the table"][Math.min(this._mlvl(this._tonight()), 4)] + ((r => r > 0 && this._mlvl(this._tonight()) < 4 ? " · rung " + (r + 1) + " of 9" : "")(Math.min(this._rungs()[this._tonight()] || 0, 8)))),
+      // Altitude names the badge, never a rung count — the elevation law
+      // (CLAUDE.md: "progression is shown by altitude, never a counter").
+      // ev.name already carries this ("the daylit ground" through "the
+      // edge of the air" as tonight's rung climbs); this used to show
+      // "the first climb · rung N of 9" instead, a stale ordinal+counter
+      // that both violated the law and duplicated menuLine's own
+      // altitude-aware sentence right below it.
+      menuNight: (this._mlvl(this._tonight()) < 4 && this._climbDoneTonight(this._tonight()) ? "walked tonight · the moon returns in " + this._moonIn() : this._mlvl(this._tonight()) >= 4 ? "the table" : ev.name),
       fiveLabel: (st.deckSel || []).length >= 5 ? "your next five" : "choose your pack",
       fiveCards: (() => {
         const out = this._deal(st.deckSel || [], 1).map((id, i) => {
