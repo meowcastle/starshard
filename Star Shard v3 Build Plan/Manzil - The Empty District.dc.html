@@ -2549,7 +2549,16 @@ class Component extends DCLogic {
     { name: "the quiet one", line: "the quiet one has walked this road more than anyone.", react: "the quiet one says nothing.", defeat: "the quiet one steps aside.", hand: [206, 215, 218, 221, 224] },
   ]; }
   _walkerFor(t) { const w = this._walkers(); return w[t % w.length]; }
-  _specialNight(t) { return this._chartFive().indexOf(t) >= 0; }
+  // Special nights (the sky herself, skipping the walker climb) are meant
+  // to be rare: tonight's mansion happening to be one of your own chart's
+  // five, out of the moon's real 28-night cycle. _tonight() is hardcoded
+  // to mansion 21 for this prototype build (no real moon tracking, no
+  // other mansion levels built yet), so any account whose chart includes
+  // 21 hits "special" on literally every night, permanently skipping the
+  // only content that exists right now. Off while prototyping — flip back
+  // to the real check once _tonight() tracks the real moon and the other
+  // levels exist.
+  _specialNight(t) { return false; }
   _replyW() {
     const st = this.state;
     if (st && st.practice) return 3;
@@ -2945,8 +2954,13 @@ class Component extends DCLogic {
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
-            if (w >= 3) { this._buzz([10, 60, 18]); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, true); this.setState({ phase: "won" }); }
-            else if (l >= 3) { this._buzz(24); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false); this.setState({ phase: this.state.road ? "roadlost" : "lost" }); }
+            // A special night (nightSky true) fights "the sky herself" with
+            // nightWalker left "" (no walker name) — the ledger's win/loss
+            // total is a sum over _wrec()'s named entries, so a sky-herself
+            // result needs its own name here or it silently never counts.
+            const wname = this.state.nightSky ? "the sky herself" : this.state.nightWalker;
+            if (w >= 3) { this._buzz([10, 60, 18]); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && wname) this._saveWrec(wname, true); this.setState({ phase: "won" }); }
+            else if (l >= 3) { this._buzz(24); if (!this.state.practice && !this.state.road && wname) this._saveWrec(wname, false); this.setState({ phase: this.state.road ? "roadlost" : "lost" }); }
             else {
               const asc = !!this.props.matchAscent && !this.state.road && !!this.state.nightSky && !this.state.ascentChosen;
               if (asc) { this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
