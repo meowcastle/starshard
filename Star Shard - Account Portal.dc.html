@@ -599,6 +599,15 @@ class Component extends DCLogic {
         const c = st.cast, username = st.user.trim().toLowerCase();
         this.api.signup(st.email, st.pass, { username, birthDate: c.birthDate, five: c.five, pack: c.pack }).then(res => {
           try {
+            // Manzil's own climb/level progress (rungs, card levels, claims,
+            // board-seed, game-shards, win/loss records, the seen-legend
+            // flag) lives entirely in local storage, never the account —
+            // deleting an account server-side doesn't touch it. A brand
+            // new account has no history at all, so it shouldn't inherit
+            // whatever this browser was doing under a previous one (this
+            // is exactly what caused a fresh account to land straight in
+            // a "sky herself" road-boss fight instead of rung one).
+            ["manzil-ed-boardn", "manzil-ed-claims", "manzil-ed-duelnames", "manzil-ed-lastclimb", "manzil-ed-legend", "manzil-ed-mlvl", "manzil-ed-rungs", "manzil-ed-shards", "manzil-ed-wrec"].forEach(k => localStorage.removeItem(k));
             localStorage.setItem("manzil-ed-pack", JSON.stringify(c.pack));
             localStorage.setItem("manzil-ed-birth", JSON.stringify({ date: c.birthDate, time: c.birthTimeKnown ? c.birthTime : null, place: c.place || null, five: c.five, rows: c.rows, fill: c.fill }));
             localStorage.setItem("manzil-ed-user", username);
