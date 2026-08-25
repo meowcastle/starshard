@@ -21,6 +21,16 @@
   body{margin:0;background:#040302;font-family:'Varela Round',sans-serif;color:#F2EAD6;overflow:hidden}
   a{color:#F0D89A;text-decoration:none}
   a:hover{color:#FFFDF5}
+  /* The stage below scales visually via CSS transform (frameScaleStyle),
+     which never changes its 932x430 layout footprint — on any viewport
+     narrower than that, the un-scaled layout box still overflows the
+     document, and mobile WebKit/Blink allow rubber-band panning to that
+     overflow even with overflow:hidden above. Confining html/body to the
+     viewport with position:fixed removes any surface left to scroll.
+     Scoped to narrow viewports only so desktop is untouched. */
+  @media (max-width: 900px){
+    html, body{position:fixed;inset:0;width:100%;height:100%;overflow:hidden}
+  }
   [data-mzstage]{user-select:none;-webkit-user-select:none}
   [data-mzstage] input{user-select:text;-webkit-user-select:text}
   @keyframes mzFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -132,7 +142,7 @@
 <style>
 </style>
 </helmet>
-<div style="height:100vh;display:flex;justify-content:center;align-items:center;background:#040302">
+<div style="height:100vh;height:100dvh;display:flex;justify-content:center;align-items:center;background:#040302">
 <div style="{{ frameScaleStyle }}">
 <div data-screen-label="manzil" data-mzstage="1" style="width:932px;height:430px;position:relative;overflow:hidden;background:radial-gradient(55% 45% at 74% 16%, rgba(240,216,154,.05), transparent 62%), radial-gradient(70% 40% at 50% 0%, rgba(64,104,210,.13), transparent 68%), radial-gradient(48% 42% at 12% 72%, rgba(96,74,186,.14), transparent 65%), radial-gradient(40% 36% at 88% 62%, rgba(52,128,168,.12), transparent 65%), radial-gradient(36% 30% at 34% 10%, rgba(186,84,110,.09), transparent 65%), radial-gradient(30% 26% at 62% 92%, rgba(70,170,120,.07), transparent 65%), linear-gradient(115deg, transparent 40%, rgba(240,216,154,.05) 52%, transparent 64%), radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%)">
   <div style="{{ elevAirStyle }}"></div>
@@ -1718,7 +1728,19 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;dealGuarantee&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;tonight's mansion is always in the five dealt from your pack (handoff §3, open call)&quot;},&quot;ownAll&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;own all 28 at level 2: every signature awake, for reading the whole slate&quot;},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = real moon tonight; 1-28 forces a mansion&quot;},&quot;forceLevel&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:4,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;0 = true levels; 1-4 previews every owned card at that level&quot;},&quot;forceTemper&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto (real sky)&quot;,&quot;mars&quot;,&quot;saturn&quot;,&quot;venus&quot;,&quot;mercury&quot;,&quot;jupiter&quot;],&quot;default&quot;:&quot;auto (real sky)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;testing&quot;,&quot;description&quot;:&quot;the night's temper: her bias on rated-equal moves (jupiter also carries the simmed w=30 mercy). auto = the planet most exact to tonight's moon. rests on road nights&quot;},&quot;roadShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a road&quot;,&quot;wrapped: edges touch&quot;,&quot;contiguous: lodge beside the lodged&quot;],&quot;default&quot;:&quot;a road&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;board geometry: the locked open road, thread's wrap (slots 1 and 9 fight each other), or placement restricted to slots touching a lodged card (first lodge free)&quot;},&quot;matchAscent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;handoff §5 prompt: her hand grows 3 to 5 across the match on a road that grows with it, one choice offered between boards. untested; road nights unaffected. the outer on board five is not dealt&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;you&quot;,&quot;the sky&quot;,&quot;a draw&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;you&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a level board count. relocked 20 aug 2026 to you (the flip-density pass)&quot;}}">
 class Component extends DCLogic {
-  constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
+  constructor(p) {
+    super(p);
+    // Root now serves this file directly to every visitor, including
+    // logged-out ones (24 Aug restructure) — _deckState()'s legend/birth
+    // fallback would otherwise render synchronously, before
+    // componentDidMount's async auth check has a chance to redirect an
+    // unauthenticated visitor away. Hold the real computed phase and show
+    // nothing ("boot", no matching <sc-if> block) until auth resolves.
+    const s = this._deckState();
+    this._pendingPhase = s.phase;
+    this.state = { ...s, phase: "boot" };
+    this._seq = [];
+  }
   async componentDidMount() {
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
@@ -1743,7 +1765,7 @@ class Component extends DCLogic {
     this.api = await import("./api.js");
     const who = await this.api.me();
     if (!who) { window.location.href = "./account/"; return; }
-    this.setState({ authEmail: who.email, authUsername: who.username });
+    this.setState({ authEmail: who.email, authUsername: who.username, phase: this._pendingPhase });
     if (!this._birth()) {
       const pack = await this.api.getManzilPack();
       if (pack && Array.isArray(pack.five)) this._hydrateFromServerPack(pack);
