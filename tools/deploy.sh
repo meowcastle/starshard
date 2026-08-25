@@ -26,7 +26,7 @@ NODE_BIN=/volume2/@appstore/Node.js_v20/usr/local/bin/node
 # imported them client-side since "Star Shard v2 (archived).dc.html" — the
 # live page (v4) doesn't need them shipped as static assets. Verified by
 # grep across every .dc.html before removing them from here (18 Aug).
-FRONTEND_FILES="api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil-copy.js reading-copy.js transits.js stations.js astronomy-engine.js support.js sitemap.xml combos.js findings.js rates.js ios-frame.jsx four-skies.dc.html socket-io-client.js"
+FRONTEND_FILES="api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil-copy.js reading-copy.js transits.js stations.js astronomy-engine.js support.js sitemap.xml combos.js findings.js rates.js ios-frame.jsx four-skies.dc.html socket-io-client.js ephemeris2.js manzil-art2.js"
 
 # starshard-api/lib/*.js: the Manzil lobby's server-authoritative move
 # validator (manzil-lobby.js) and its synced copy of the rules engine
@@ -39,26 +39,38 @@ cd "$(dirname "$0")/.."
 
 deploy_frontend() {
   echo "==> index.html"
-  # "Star Shard v4.dc.html" is the live page (the calm-pass UI, wired to the
-  # real engine/corpus/combos — see CLAUDE.md's port-plan history). Prior
-  # generations stay in the repo as reference only, not deployed:
-  # "Star Shard v3.dc.html", "Star Shard v2 (archived).dc.html". See
-  # CLAUDE.md's receipt protocol.
-  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v4.dc.html"
+  # Manzil ("the empty district") is the live root page as of the 24 Aug
+  # restructure — Justin's call to give the minigame the whole staging
+  # domain rather than a /manzil/ subdirectory. Its own script tags are
+  # root-relative ("./support.js", bare "ephemeris2.js"/"manzil-art2.js"),
+  # which is exactly what a root deploy needs — no path rewriting, unlike
+  # star-shard/ below. Star Shard v4 (the astrology reading app that used
+  # to live here) moved to /star-shard/ rather than being dropped from
+  # staging; see that block below. See CLAUDE.md's receipt protocol.
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3 Build Plan/Manzil - The Empty District.dc.html"
   for f in $FRONTEND_FILES; do
     if [ -f "$f" ]; then
       echo "==> $f"
       ssh "$HOST" "cat > $FRONTEND_REMOTE/$f" < "$f"
     fi
   done
+  # star-shard/ — Star Shard v4, relocated off the root to make room for
+  # Manzil. star-shard/index.html is a generated-by-hand copy of
+  # "Star Shard v4.dc.html" with every root-relative reference (support.js,
+  # the 13 dynamic engine imports, ios-frame.jsx, four-skies.dc.html)
+  # rewritten to "../" — it lives one directory below the shared modules
+  # FRONTEND_FILES ships above. Keep it in sync by hand: there is no build
+  # step regenerating it from the source file.
+  echo "==> star-shard/"
+  ssh "$HOST" "mkdir -p $FRONTEND_REMOTE/star-shard"
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/star-shard/index.html" < "star-shard/index.html"
   # account/ — the signup-gate portal both Manzil and Star Shard share
-  # (24 Aug PM handoff). Its own ephemeris2.js copy avoids an ordering
-  # dependency on deploy_manzil having run first (manzil/'s own copy
-  # ships as part of that tar, not from here).
+  # (24 Aug PM handoff). Its ephemeris2.js reference is now "../ephemeris2.js",
+  # the same root copy FRONTEND_FILES ships above — no separate local copy
+  # to keep in sync since the 24 Aug root restructure.
   echo "==> account/"
   ssh "$HOST" "mkdir -p $FRONTEND_REMOTE/account"
   ssh "$HOST" "cat > $FRONTEND_REMOTE/account/index.html" < "account/index.html"
-  ssh "$HOST" "cat > $FRONTEND_REMOTE/account/ephemeris2.js" < "account/ephemeris2.js"
   echo "frontend deployed."
 }
 
@@ -82,10 +94,14 @@ deploy_manzil() {
   # tar-over-ssh, same reason as deploy_mansions: filenames inside manzil/
   # (the rules sheet, the user's manual) carry spaces/apostrophes/ampersands
   # that would break FRONTEND_FILES' plain space-separated word-splitting.
-  # Served at staging.starshard.net/manzil/ — its own doc-relative
-  # "../support.js" resolves against $FRONTEND_REMOTE, so deploy_frontend
-  # (which ships support.js there) must have run at least once already.
-  echo "==> manzil/ (game + rules sheet + user's manual)"
+  # As of the 24 Aug restructure the game itself no longer lives here — it
+  # deploys straight to the root via deploy_frontend above. This directory
+  # now holds only the reference docs (rules sheet, user's manual, the old
+  # non-live ephemeris.js/manzil-art.js pair they still load), served at
+  # staging.starshard.net/manzil/ — their own doc-relative "../support.js"
+  # resolves against $FRONTEND_REMOTE, so deploy_frontend must have run at
+  # least once already.
+  echo "==> manzil/ (rules sheet + user's manual, docs only — the game lives at /)"
   tar cf - manzil | ssh "$HOST" "mkdir -p $FRONTEND_REMOTE && tar xf - -C $FRONTEND_REMOTE"
   echo "manzil deployed."
 }

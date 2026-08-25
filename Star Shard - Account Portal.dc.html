@@ -447,11 +447,12 @@ class Component extends DCLogic {
           cardNextLabel: ci < 4 ? "next ›" : "keep them ›",
           cardNext: () => ci < 4 ? this.setState({ cardStep: ci + 1 }) : this.setState({ phase: "account" }),
           sevenBacks: [0, 1, 2, 3, 4, 5, 6].map(i => "width:44px;height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(240,216,154,.5);background:linear-gradient(160deg,#1A140A,#0A0603);border:1px solid rgba(240,216,154,.22);box-shadow:0 6px 16px rgba(0,0,0,.5);animation:spCardIn .5s ease " + (i * 90) + "ms both, spFloat " + (4 + i * .4) + "s ease-in-out " + (700 + i * 90) + "ms infinite alternate"),
-          // Sibling directories under the same deployed root (/account/,
-          // /manzil/) — the hash is Design's own handoff mechanism,
-          // already built into Manzil's _deckState() entry-routing.
-          tutGo: () => { window.location.href = "./manzil/#tutorial"; },
-          skipGo: () => { window.location.href = "./manzil/#legend"; },
+          // Manzil is the site root as of the 24 Aug restructure — the
+          // portal lives at /account/, one level down. The hash is
+          // Design's own handoff mechanism, already built into Manzil's
+          // _deckState() entry-routing.
+          tutGo: () => { window.location.href = "./#tutorial"; },
+          skipGo: () => { window.location.href = "./#legend"; },
         };
       })()),
       signinGo: () => this.setState({ phase: "signin" }),
@@ -561,7 +562,7 @@ class Component extends DCLogic {
         });
       },
       doneLine: "your five ride with " + (st.user || "you") + " now. the table is waiting.",
-      enterTap: () => { window.location.href = "./manzil/"; },
+      enterTap: () => { window.location.href = "./"; },
     };
   }
 }

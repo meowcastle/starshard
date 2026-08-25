@@ -29,16 +29,35 @@ The **front end was rebuilt from scratch** against this reboot; the engine
 modules and the database carried forward. The old four-shard flip flow
 (houses / archetype / mansion / weekday) is retired; its computations live
 on inside the Sigil. Status (updated 18 Aug): `Star Shard v4.dc.html`
-(repo root) is the live page now — the "calm pass" Design export, fully
-re-wired to the real engine/corpus/combos/findings pipeline (same pattern
-`Star Shard v3.dc.html` used: Design's markup, Code's script). `deploy.sh`
-ships it as `index.html`. **`Star Shard v3.dc.html` is retired** — per
-Justin's call ("v3 is outdated and not needed anymore"), it stays in the
-repo as historical reference only, same as `Star Shard v2 (archived).dc.html`,
-and is not deployed. `ios-frame.jsx` (repo root, copied from the Build
-Plan folder) is a real runtime dependency of v4's markup — the device-
-frame wrapper Design's export uses — not decoration; it ships in
-`FRONTEND_FILES` alongside the engine modules.
+is the "calm pass" Design export, fully re-wired to the real
+engine/corpus/combos/findings pipeline (same pattern `Star Shard
+v3.dc.html` used: Design's markup, Code's script). **`Star Shard
+v3.dc.html` is retired** — per Justin's call ("v3 is outdated and not
+needed anymore"), it stays in the repo as historical reference only,
+same as `Star Shard v2 (archived).dc.html`, and is not deployed.
+`ios-frame.jsx` (repo root, copied from the Build Plan folder) is a real
+runtime dependency of v4's markup — the device-frame wrapper Design's
+export uses — not decoration; it ships in `FRONTEND_FILES` alongside the
+engine modules.
+
+**URL layout on staging (restructured 24 Aug 2026, Justin's call):**
+Manzil ("the empty district") is now the site root
+(`staging.starshard.net/`) — `deploy.sh` ships `Star Shard v3 Build
+Plan/Manzil - The Empty District.dc.html` directly as `index.html`, no
+path rewriting needed since its own script tags are already
+root-relative (`./support.js`, bare `ephemeris2.js`/`manzil-art2.js`,
+both now also listed in `FRONTEND_FILES`). Star Shard v4 moved off the
+root to `/star-shard/` — `star-shard/index.html` is a hand-maintained
+copy of `Star Shard v4.dc.html` with every root-relative reference
+(`support.js`, the 13 dynamic engine imports, `ios-frame.jsx`,
+`four-skies.dc.html`) rewritten to `../`; there is no build step
+regenerating it, keep it in sync by hand on every v4 edit. The account
+gate lives at `/account/` (unchanged). `manzil/` (the subdirectory) now
+holds only the reference docs — the rules sheet and user's manual, plus
+the old non-live `ephemeris.js`/`manzil-art.js` pair they still load —
+the game itself no longer lives there; visiting the bare `/manzil/`
+path 403s (no index file), the doc pages themselves are still reachable
+by their exact filenames.
 
 v4's known gaps against the export, all deliberate scope calls made when
 it was ported (not oversights): the per-planet/angle detail cards show
@@ -131,9 +150,12 @@ moon's 28-station walk) with a working prototype
 the road-shards (its wins award a distinct "game-shard" set; the 28
 never become skill-gated, per the ethics floor below). This is stale —
 Code has since built a real Socket.io matchmaking lobby + PvP validator
-(`starshard-api/lib/manzil-lobby.js`/`manzil-engine.js`) for the deployed
-copy (`Star Shard v3 Build Plan/Manzil - The Empty District.dc.html`,
-synced to `manzil/index.html`), and, as of 24 Aug 2026, **Manzil requires
+(`starshard-api/lib/manzil-lobby.js`/`manzil-engine.js`) for
+`Star Shard v3 Build Plan/Manzil - The Empty District.dc.html`, which
+deploys **directly as the site root** (`index.html`) as of the 24 Aug
+2026 restructure — see "URL layout on staging" above; there is no
+longer a separate `manzil/index.html` deploy copy for the game. And, as
+of 24 Aug 2026, **Manzil requires
 the same account as Star Shard to play at all** — enforced server-side by
 both `/api/auth/signup` (age gate, `manzil_pack` write) and the lobby
 rejecting any socket without a valid session cookie. The account UI itself
