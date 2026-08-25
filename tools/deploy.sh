@@ -51,6 +51,14 @@ deploy_frontend() {
       ssh "$HOST" "cat > $FRONTEND_REMOTE/$f" < "$f"
     fi
   done
+  # account/ — the signup-gate portal both Manzil and Star Shard share
+  # (24 Aug PM handoff). Its own ephemeris2.js copy avoids an ordering
+  # dependency on deploy_manzil having run first (manzil/'s own copy
+  # ships as part of that tar, not from here).
+  echo "==> account/"
+  ssh "$HOST" "mkdir -p $FRONTEND_REMOTE/account"
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/account/index.html" < "account/index.html"
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/account/ephemeris2.js" < "account/ephemeris2.js"
   echo "frontend deployed."
 }
 

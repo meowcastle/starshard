@@ -62,7 +62,7 @@ function tryUidFromCookie(handshake, jwtSecret) {
   if (!m) return null;
   try {
     const payload = jwt.verify(decodeURIComponent(m[1]), jwtSecret);
-    if (payload && payload.uid != null) return { gid: 'u_' + payload.uid, displayName: null };
+    if (payload && payload.uid != null) return { gid: 'u_' + payload.uid, displayName: payload.username || null };
   } catch (e) { /* not signed in, or expired */ }
   return null;
 }
@@ -91,7 +91,12 @@ function makeLimiter() {
   };
 }
 
-function createManzilLobby(io, { jwtSecret }) {
+// Every gid is 'u_' + the numeric users.id since guest identities were
+// retired — safe to parse back out for report/block DB writes, which need
+// the real id, not the string form.
+function uidFromGid(gid) { return Number(gid.slice(2)); }
+
+function createManzilLobby(io, { jwtSecret, pool }) {
   const queue = []; // [{ gid, socketId, displayName, pack, joinedAt }]
   const matches = new Map(); // matchId -> match
   const gidToMatch = new Map(); // gid -> matchId
@@ -201,10 +206,34 @@ function createManzilLobby(io, { jwtSecret }) {
     }, READY_TIMEOUT_MS);
   }
 
-  function tryMatch() {
-    while (queue.length >= 2) {
-      const p1 = queue.shift(), p2 = queue.shift();
-      createMatch(p1, p2).catch(() => {});
+  // Both directions in one query — a block recorded by either side of a
+  // pair is enough to keep them apart.
+  async function isBlockedPair(gidA, gidB) {
+    const [rows] = await pool.execute(
+      'SELECT 1 FROM manzil_blocks WHERE (blocker_user_id = ? AND blocked_user_id = ?) ' +
+      'OR (blocker_user_id = ? AND blocked_user_id = ?) LIMIT 1',
+      [uidFromGid(gidA), uidFromGid(gidB), uidFromGid(gidB), uidFromGid(gidA)]
+    );
+    return rows.length > 0;
+  }
+
+  // Queues here are small (one NAS, one matchmaker) — an O(n^2) scan with a
+  // DB check per candidate pair is the right-sized answer, not an
+  // in-memory block cache. A blocked candidate stays queued rather than
+  // being paired; it just waits for the next tryMatch() pass instead.
+  async function tryMatch() {
+    let i = 0;
+    while (i < queue.length) {
+      let paired = false;
+      for (let j = i + 1; j < queue.length; j++) {
+        if (await isBlockedPair(queue[i].gid, queue[j].gid)) continue;
+        const [p1] = queue.splice(i, 1);
+        const [p2] = queue.splice(j - 1, 1);
+        createMatch(p1, p2).catch(() => {});
+        paired = true;
+        break;
+      }
+      if (!paired) i++;
     }
     queue.forEach((p, idx) => {
       const sock = gidToSocket.get(p.gid);
@@ -365,7 +394,7 @@ function createManzilLobby(io, { jwtSecret }) {
       const already = queue.findIndex(p => p.gid === identity.gid);
       if (already >= 0) queue.splice(already, 1);
       queue.push({ gid: identity.gid, displayName: identity.displayName, pack, joinedAt: Date.now() });
-      tryMatch();
+      tryMatch().catch(e => console.error('[manzil-lobby] tryMatch failed', e));
     });
 
     socket.on('queue_cancel', () => {
@@ -411,6 +440,33 @@ function createManzilLobby(io, { jwtSecret }) {
       if (!seat) return;
       emitTo(match, otherSeat(seat), 'match_abandoned', { matchId: match.id, reason: 'opponent_left' });
       endMatch(match, 'left');
+    });
+
+    // Reporting also blocks — the whole point of a block list is that the
+    // matchmaker skips it (see tryMatch/isBlockedPair above), so a report
+    // with no accompanying block would defeat its own purpose. Fire-and-
+    // forget from the caller's side; failures are logged, not surfaced,
+    // since there's no useful retry UI for this action.
+    socket.on('report_player', async msg => {
+      const match = matches.get(msg && msg.matchId);
+      if (!match) return;
+      const seat = seatFor(match, identity.gid);
+      if (!seat) return;
+      const reporterUid = uidFromGid(identity.gid);
+      const reportedUid = uidFromGid(match.seats[otherSeat(seat)].gid);
+      try {
+        await pool.execute(
+          'INSERT INTO manzil_reports (match_id, reporter_user_id, reported_user_id) VALUES (?, ?, ?)',
+          [match.id, reporterUid, reportedUid]
+        );
+        await pool.execute(
+          'INSERT IGNORE INTO manzil_blocks (blocker_user_id, blocked_user_id) VALUES (?, ?)',
+          [reporterUid, reportedUid]
+        );
+        socket.emit('reported', { matchId: match.id });
+      } catch (e) {
+        console.error('[manzil-lobby] report_player failed', e);
+      }
     });
 
     socket.on('disconnect', () => {

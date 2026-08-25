@@ -85,8 +85,12 @@ app.use(cookieParser());
 // wrapped in this, which routes failures to the error middleware at the bottom.
 const wrap = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
-function signSession(userId, tokenVersion) {
-  return jwt.sign({ uid: userId, tv: tokenVersion }, JWT_SECRET, { expiresIn: '90d' });
+// username rides along in the JWT purely so the Manzil lobby can show a
+// real display name without ever needing its own DB connection just for
+// that (see manzil-lobby.js's tryUidFromCookie). It's cosmetic, not an
+// auth claim — token_version is still what actually gates access.
+function signSession(userId, tokenVersion, username) {
+  return jwt.sign({ uid: userId, tv: tokenVersion, username }, JWT_SECRET, { expiresIn: '90d' });
 }
 
 // Verifies the JWT AND that its token version still matches the DB, so a
@@ -126,8 +130,8 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-function setSessionCookie(res, userId, tokenVersion) {
-  res.cookie(COOKIE_NAME, signSession(userId, tokenVersion), {
+function setSessionCookie(res, userId, tokenVersion, username) {
+  res.cookie(COOKIE_NAME, signSession(userId, tokenVersion, username), {
     httpOnly: true,
     secure: IS_PROD,
     sameSite: 'lax',
@@ -141,21 +145,42 @@ const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const MIN_BIRTH_YEAR = 1900;
 
-// Manzil requires a real account (Justin's call, 24 Aug 2026) and that
-// account now carries actual birth date/time/place server-side — see
-// CLAUDE.md's Privacy invariant for why this is a deliberate reversal,
-// not scope creep. Only birthDate is required everywhere; Manzil's own
-// birth screen has no geocoding, so place/lat/lon/tz stay optional here
-// and can be upgraded later via PUT /api/me/birth once a fuller
-// onboarding (Star Shard's) supplies them.
-function parseBirthFields(body) {
-  const { birthDate, birthTime, birthTimeKnown, placeName, lat, lon, tz } = body || {};
+// Shared date-parts validator — used both by parseBirthFields (Star
+// Shard's opt-in birth_data path) and computeAge (Manzil's age gate).
+// Rejects anything that isn't a real calendar date in a sane year range.
+function parseBirthDateParts(birthDate) {
   if (typeof birthDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return null;
   const [y, m, d] = birthDate.split('-').map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
   const currentYear = new Date().getUTCFullYear();
   if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return null;
   if (y < MIN_BIRTH_YEAR || y > currentYear) return null;
+  return { y, m, d };
+}
+
+// UTC-based so the 16th-birthday boundary is deterministic regardless of
+// the server's local timezone (24 Aug PM handoff §3). Returns null for an
+// unparseable date, an integer age otherwise.
+function computeAge(birthDate) {
+  const parts = parseBirthDateParts(birthDate);
+  if (!parts) return null;
+  const now = new Date();
+  const nowY = now.getUTCFullYear(), nowM = now.getUTCMonth() + 1, nowD = now.getUTCDate();
+  let age = nowY - parts.y;
+  const hadBirthdayThisYear = nowM > parts.m || (nowM === parts.m && nowD >= parts.d);
+  if (!hadBirthdayThisYear) age--;
+  return age;
+}
+
+const MIN_MANZIL_AGE = 16;
+
+// Star Shard's opt-in path only (PUT /api/me/birth) — Manzil signup never
+// calls this anymore, see the 24 Aug PM handoff §2. Only birthDate is
+// required everywhere; place/lat/lon/tz stay optional and can be upgraded
+// later once a fuller onboarding (Star Shard's) supplies them.
+function parseBirthFields(body) {
+  const { birthDate, birthTime, birthTimeKnown, placeName, lat, lon, tz } = body || {};
+  if (!parseBirthDateParts(birthDate)) return null;
 
   const timeKnown = birthTimeKnown !== false;
   let time = null;
@@ -176,7 +201,42 @@ function parseBirthFields(body) {
   };
 }
 
+// Manzil's signup fields: five integers (the chart-owned mansions) and the
+// twelve-card starting pack, both already computed client-side by
+// _castFive()/_saveBirth() — the server only re-validates the shape, per
+// the 24 Aug PM handoff §2's "store inputs" principle: these ARE the
+// inputs Manzil needs, nothing upstream of them (no raw birth data) is
+// stored for it.
+function parseManzilPack(body) {
+  const { five, pack } = body || {};
+  const validIds = arr => Array.isArray(arr) && arr.every(n => Number.isInteger(n) && n >= 1 && n <= 28);
+  if (!validIds(five) || five.length !== 5) return null;
+  if (!validIds(pack) || pack.length < 5 || pack.length > 12) return null;
+  return { five: [...new Set(five)], pack: [...new Set(pack)] };
+}
+
+// A short reserved-name list plus an optional, team-supplied wordlist
+// (research/username-blocklist.json — absent today, this ships with just
+// the reserved-name check until a real list exists). Checked at signup
+// only, never at display time, per the handoff's §6.2. Stripping digits/
+// underscores before comparing catches near-misses like "admin_1" or
+// "_staff_" without needing a fuzzy-match library.
+const RESERVED_USERNAMES = ['admin', 'administrator', 'mod', 'moderator', 'staff', 'support', 'starshard', 'manzil', 'root', 'system', 'official'];
+let USERNAME_BLOCKLIST_EXTRA = [];
+try { USERNAME_BLOCKLIST_EXTRA = require('../research/username-blocklist.json'); } catch (e) { /* optional */ }
+function isBlockedUsername(u) {
+  const norm = u.replace(/[_\d]/g, '');
+  return RESERVED_USERNAMES.some(w => norm.includes(w)) || USERNAME_BLOCKLIST_EXTRA.some(w => norm.includes(w));
+}
+
 const signupLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
+const ageCheckLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 8,
   standardHeaders: true,
@@ -224,6 +284,19 @@ const deleteAccountLimiter = rateLimit({
 // rather than trusting arbitrary client input.
 const GUESTBOOK_STAMPS = new Set(['⭐', '🎀', '🌙', '💿', '✿']);
 
+// Nothing is persisted on either branch — the client calls this right
+// after "cast your five" and before ever showing account fields, so a
+// 15-year-old never reaches a signup screen at all. Not a real barrier
+// (the client controls what it does with {ok}), which is fine per the
+// handoff's own framing: this is the documented reasonable-effort
+// standard, not enforcement. Signup re-checks the age itself regardless.
+app.post('/api/auth/age-check', ageCheckLimiter, wrap(async (req, res) => {
+  const { birthDate } = req.body || {};
+  const age = computeAge(birthDate);
+  if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
+  res.json({ ok: age >= MIN_MANZIL_AGE });
+}));
+
 app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   const { email, password, username } = req.body || {};
   if (typeof email !== 'string' || typeof password !== 'string' || typeof username !== 'string') {
@@ -234,16 +307,25 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   if (!EMAIL_RE.test(normalizedEmail) || password.length < 8) {
     return res.status(400).json({ error: 'invalid_input' });
   }
-  if (!USERNAME_RE.test(normalizedUsername)) {
+  if (!USERNAME_RE.test(normalizedUsername) || isBlockedUsername(normalizedUsername)) {
     return res.status(400).json({ error: 'invalid_username' });
   }
-  const birth = parseBirthFields(req.body);
-  if (!birth) return res.status(400).json({ error: 'invalid_birth_date' });
+  // Re-checked here regardless of whatever /api/auth/age-check answered
+  // earlier — the client is never trusted to have actually called it.
+  const age = computeAge(req.body && req.body.birthDate);
+  if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
+  if (age < MIN_MANZIL_AGE) return res.status(403).json({ error: 'too_young' });
+  const birthYear = Number(String(req.body.birthDate).slice(0, 4));
+
+  const manzilPack = parseManzilPack(req.body);
+  if (!manzilPack) return res.status(400).json({ error: 'invalid_input' });
 
   const passwordHash = await bcrypt.hash(password, 12);
-  // A signup writes to two tables (users, birth_data) that must both land
-  // or neither should — the first transaction in this file, needed so a
-  // birth_data failure can't leave an orphaned, birth-data-less users row.
+  // A signup writes to two tables (users, manzil_pack) that must both land
+  // or neither should. manzil_pack, not birth_data — see the 24 Aug PM
+  // handoff §2: Manzil stores five integers, never the birth date/time/
+  // place itself. birth_data stays exclusively the Star Shard opt-in path
+  // (PUT /api/me/birth).
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -252,12 +334,11 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
       [normalizedEmail, normalizedUsername, passwordHash]
     );
     await conn.execute(
-      'INSERT INTO birth_data (user_id, birth_date, birth_time, birth_time_known, place_name, lat, lon, tz) ' +
-      'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [result.insertId, birth.birthDate, birth.birthTime, birth.birthTimeKnown ? 1 : 0, birth.placeName, birth.lat, birth.lon, birth.tz]
+      'INSERT INTO manzil_pack (user_id, five_json, pack_json, birth_year) VALUES (?, ?, ?, ?)',
+      [result.insertId, JSON.stringify(manzilPack.five), JSON.stringify(manzilPack.pack), birthYear]
     );
     await conn.commit();
-    setSessionCookie(res, result.insertId, 0);
+    setSessionCookie(res, result.insertId, 0, normalizedUsername);
     res.status(201).json({ email: normalizedEmail, username: normalizedUsername });
   } catch (e) {
     await conn.rollback();
@@ -272,16 +353,22 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   }
 }));
 
+// Accepts EITHER email or username as the identifier — Star Shard v4's
+// account sheet only ever sends email; the Account Portal's signin screen
+// only collects a username (Manzil players sign in by the name they play
+// under, not their address). Both land here rather than splitting into
+// two routes, since the only difference is which column to match.
 app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
-  const { email, password } = req.body || {};
-  if (typeof email !== 'string' || typeof password !== 'string') {
+  const { email, username, password } = req.body || {};
+  const identifier = typeof username === 'string' ? username.trim().toLowerCase()
+    : typeof email === 'string' ? email.trim().toLowerCase() : null;
+  if (!identifier || typeof password !== 'string') {
     return res.status(400).json({ error: 'invalid_input' });
   }
-  const normalizedEmail = email.trim().toLowerCase();
 
   const [rows] = await pool.execute(
-    'SELECT id, username, password_hash, token_version FROM users WHERE email = ?',
-    [normalizedEmail]
+    'SELECT id, email, username, password_hash, token_version FROM users WHERE email = ? OR username = ?',
+    [identifier, identifier]
   );
   const user = rows[0];
   if (!user) return res.status(401).json({ error: 'invalid_credentials' });
@@ -289,8 +376,8 @@ app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   const ok = await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
-  setSessionCookie(res, user.id, user.token_version);
-  res.json({ email: normalizedEmail, username: user.username });
+  setSessionCookie(res, user.id, user.token_version, user.username);
+  res.json({ email: user.email, username: user.username });
 }));
 
 app.post('/api/auth/logout', wrap(async (req, res) => {
@@ -385,8 +472,8 @@ app.post('/api/auth/reset-password', resetPasswordLimiter, wrap(async (req, res)
     [reset.user_id]
   );
 
-  const [uRows] = await pool.execute('SELECT token_version FROM users WHERE id = ?', [reset.user_id]);
-  setSessionCookie(res, reset.user_id, uRows[0].token_version);
+  const [uRows] = await pool.execute('SELECT token_version, username FROM users WHERE id = ?', [reset.user_id]);
+  setSessionCookie(res, reset.user_id, uRows[0].token_version, uRows[0].username);
   res.status(204).end();
 }));
 
@@ -405,11 +492,13 @@ app.get('/api/me', wrap(async (req, res) => {
   res.json({ email: user.email, username: user.username });
 }));
 
-// Manzil's own birth screen has no geocoding, so a fresh device/browser
-// on an existing account needs a way to rehydrate birth-derived local
-// state (chart-owned mansions) without re-asking. Star Shard's fuller
-// onboarding (real geocoded lat/lon/tz) upgrades the row via PUT below
-// rather than this account's birth_date/time being asked twice.
+// Exclusively the Star Shard opt-in path since the 24 Aug PM handoff —
+// Manzil signup writes manzil_pack, never this table (see parseManzilPack
+// above and the signup route). GET here lets Star Shard's onboarding check
+// whether an account already has birth_data on file (e.g. a second device)
+// before asking again; PUT below is how it gets there in the first place,
+// or how a later, more complete cast (real geocoded lat/lon/tz) upgrades
+// an existing row.
 app.get('/api/me/birth', requireAuth, wrap(async (req, res) => {
   const [rows] = await pool.execute(
     'SELECT birth_date, birth_time, birth_time_known, place_name, lat, lon, tz FROM birth_data WHERE user_id = ?',
@@ -445,6 +534,21 @@ app.put('/api/me/birth', requireAuth, wrap(async (req, res) => {
   res.status(204).end();
 }));
 
+// Read-back for manzil_pack — the login-on-a-fresh-browser path, mirroring
+// GET /api/me/birth exactly. Signup already returns nothing beyond
+// {email, username}; this is what a client fetches afterward (or on a
+// second device) to rehydrate five/pack locally without asking again.
+app.get('/api/me/manzil-pack', requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute(
+    'SELECT five_json, pack_json FROM manzil_pack WHERE user_id = ?',
+    [req.userId]
+  );
+  const row = rows[0];
+  if (!row) return res.json({ pack: null });
+  const parseOr = (json, fallback) => { try { return JSON.parse(json); } catch (e) { return fallback; } };
+  res.json({ pack: { five: parseOr(row.five_json, []), pack: parseOr(row.pack_json, []) } });
+}));
+
 // Everything this account owns, for the user to keep — W6's "no data
 // export" gap. One query per table rather than a join: the tables don't
 // share a natural join key (window_state/deck/sigil are 1:1 on user_id,
@@ -452,13 +556,27 @@ app.put('/api/me/birth', requireAuth, wrap(async (req, res) => {
 // user, not on a hot path, so four small queries over one wide join is the
 // simpler and more honest shape here.
 app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
-  const [[user], [state], [deckRow], [sigilRow], [birthRow], recollection] = await Promise.all([
+  const [[user], [state], [deckRow], [sigilRow], [birthRow], [packRow], reports, blocks, recollection] = await Promise.all([
     pool.execute('SELECT email, username, created_at FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT state_json FROM window_state WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT deck_json FROM deck WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT sigil_json FROM sigil WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute(
       'SELECT birth_date, birth_time, birth_time_known, place_name, lat, lon, tz FROM birth_data WHERE user_id = ?',
+      [req.userId]
+    ).then(([r]) => r),
+    pool.execute(
+      'SELECT five_json, pack_json, birth_year FROM manzil_pack WHERE user_id = ?',
+      [req.userId]
+    ).then(([r]) => r),
+    // Only rows where this account is the actor (reporter/blocker), never
+    // the target — exporting your own data must not leak who reported you.
+    pool.execute(
+      'SELECT match_id, reported_user_id, created_at FROM manzil_reports WHERE reporter_user_id = ?',
+      [req.userId]
+    ).then(([r]) => r),
+    pool.execute(
+      'SELECT blocked_user_id, created_at FROM manzil_blocks WHERE blocker_user_id = ?',
       [req.userId]
     ).then(([r]) => r),
     pool.execute(
@@ -481,6 +599,12 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
       birthTimeKnown: !!birthRow.birth_time_known, placeName: birthRow.place_name,
       lat: birthRow.lat, lon: birthRow.lon, tz: birthRow.tz,
     } : null,
+    manzilPack: packRow ? {
+      five: parseOr(packRow.five_json, []), pack: parseOr(packRow.pack_json, []),
+      birthYear: packRow.birth_year,
+    } : null,
+    manzilReportsFiled: reports.map(r => ({ matchId: r.match_id, reportedUserId: r.reported_user_id, createdAt: r.created_at })),
+    manzilBlocks: blocks.map(b => ({ blockedUserId: b.blocked_user_id, createdAt: b.created_at })),
     recollection: recollection.map(r => ({
       station: r.station, step: r.step,
       castContext: parseOr(r.cast_context_json, {}),
@@ -782,7 +906,7 @@ const io = new SocketIOServer(httpServer, {
   cors: { origin: ALLOWED_ORIGINS, credentials: true },
   path: '/socket.io',
 });
-createManzilLobby(io, { jwtSecret: JWT_SECRET });
+createManzilLobby(io, { jwtSecret: JWT_SECRET, pool });
 
 httpServer.listen(PORT, '127.0.0.1', () => {
   console.log(`starshard-api listening on 127.0.0.1:${PORT} (http + socket.io)`);

@@ -17,6 +17,8 @@
   body{margin:0;background:#040302;font-family:'Varela Round',sans-serif;color:#F2EAD6;overflow:hidden}
   a{color:#F0D89A;text-decoration:none}
   a:hover{color:#FFFDF5}
+  [data-mzstage]{user-select:none;-webkit-user-select:none}
+  [data-mzstage] input{user-select:text;-webkit-user-select:text}
   @keyframes mzFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   @keyframes mzDrop{0%{opacity:.35;transform:scale(1.35)}55%{transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
   @keyframes mzFlip3d{0%{transform:perspective(420px) rotateY(0deg)}45%{transform:perspective(420px) rotateY(92deg)}100%{transform:perspective(420px) rotateY(0deg)}}
@@ -587,6 +589,14 @@
     </span>
     </sc-if>
     <span style="font-size:10px;color:#9A8A5E;min-height:13px;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ turnLine }}</span>
+    <sc-if value="{{ reportOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:8px;align-items:center;pointer-events:auto">
+        <button onClick="{{ reportTap }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:9px;color:rgba(154,138,94,.7);text-shadow:0 1px 8px rgba(5,3,2,.85)" style-hover="color:#F0D89A">{{ reportLabel }}</button>
+        <sc-if value="{{ reportConfirmOn }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ reportCancelTap }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:9px;color:rgba(154,138,94,.7);text-shadow:0 1px 8px rgba(5,3,2,.85)" style-hover="color:#F0D89A">never mind</button>
+        </sc-if>
+      </div>
+    </sc-if>
   </div>
   <sc-if value="{{ pipsTopRight }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;top:18px;right:22px;display:flex;gap:4px;align-items:center;pointer-events:none;z-index:2">
@@ -754,6 +764,15 @@
     </div>
   </sc-if>
 
+  <sc-if value="{{ pauseOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:60;background:rgba(4,3,2,.82);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;animation:mzFadeUp .25s ease both">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6">a breath.</div>
+      <div style="font-size:11.5px;color:#9A8A5E;margin-bottom:14px">the table holds while you stand away.</div>
+      <button onClick="{{ pauseKeepTap }}" style="padding:12px 34px;background:rgba(255,176,0,.1);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:13.5px;color:#FFB000">keep playing ✦</button>
+      <button onClick="{{ pauseLeaveTap }}" style="padding:10px 26px;background:none;border:1px solid rgba(240,216,154,.25);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:12.5px;color:#9A8A5E">leave the match</button>
+      <div style="font-size:10px;color:rgba(154,138,94,.6);margin-top:12px">esc closes · settings will live here</div>
+    </div>
+  </sc-if>
   <sc-if value="{{ zoomOn }}" hint-placeholder-val="{{ false }}">
     <div style="{{ zoomStyle }}">
       <div style="{{ zoomInnerStyle }}">
@@ -1504,11 +1523,9 @@
   </sc-if>
   <sc-if value="{{ birthOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);z-index:9;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px">
-      <button onClick="{{ acctToggleModeM }}" style="position:absolute;top:16px;right:20px;background:none;border:none;padding:6px 0;color:rgba(154,138,94,.6);font-family:'Varela Round',sans-serif;font-size:11px;cursor:pointer;transition:color .15s ease, text-shadow .15s ease;text-align:right;max-width:150px" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">{{ acctModeToggleLabelM }}</button>
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .9s ease both">star shard</div>
-      <div style="font-size:12px;line-height:1.55;color:#9A8A5E;text-align:center;animation:mzFadeUp .9s ease .1s both">{{ acctSublineM }}</div>
+      <div style="font-size:12px;line-height:1.55;color:#9A8A5E;text-align:center;animation:mzFadeUp .9s ease .1s both">the sky wrote something the minute you arrived. tell us the minute.</div>
       <div style="display:flex;gap:34px;align-items:flex-start;margin-top:2px;animation:mzFadeUp .9s ease .2s both">
-      <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex;flex-direction:column;gap:7px;width:248px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
             <span style="font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">born on</span>
@@ -1527,9 +1544,7 @@
             </div>
           </div>
         </div>
-      </sc-if>
         <div style="display:flex;flex-direction:column;gap:6px;width:180px">
-        <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
           <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E">at
             <input placeholder="4:42 pm" value="{{ bTime }}" onChange="{{ bTimeChange }}" style="{{ bTimeInputStyle }}">
           </label>
@@ -1537,25 +1552,14 @@
           <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">in
             <input placeholder="portland, oregon" value="{{ bPlace }}" onChange="{{ bPlaceChange }}" style="{{ bTimeInputStyle }}">
           </label>
-        </sc-if>
-          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">email
+          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">reached at
             <input type="email" placeholder="you@somewhere.com" value="{{ bEmail }}" onChange="{{ bEmailChange }}" style="{{ bTimeInputStyle }}">
-          </label>
-        <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
-          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">username
-            <input placeholder="3-20 letters, numbers, _" value="{{ acctUsernameVal }}" onChange="{{ acctSetUsername }}" style="{{ bTimeInputStyle }}">
-          </label>
-        </sc-if>
-          <label style="display:flex;flex-direction:column;gap:5px;font-family:'Varela Round',sans-serif;font-size:11px;color:#9A8A5E;margin-top:2px">password
-            <input type="password" placeholder="{{ acctPassPlaceholderM }}" value="{{ acctPasswordVal }}" onChange="{{ acctSetPassword }}" style="{{ bTimeInputStyle }}">
           </label>
         </div>
       </div>
-      <sc-if value="{{ acctSignupOn }}" hint-placeholder-val="{{ true }}">
-      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:470px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it. your place sets your rising on the star shard side. this account is shared with your star shard chart — nothing about your birth leaves your device until you make one.</div>
-      </sc-if>
+      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:470px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it, computed and kept on this device. your place sets your rising on the star shard side. the address gets one letter when the moon returns to a road you walk, nothing else.</div>
       <div style="min-height:12px;font-size:11px;color:#FFB000;line-height:1">{{ bErr }}</div>
-      <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">{{ acctSubmitLabelM }}</button>
+      <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">cast your five</button>
     </div>
   </sc-if>
   <sc-if value="{{ tut5On }}" hint-placeholder-val="{{ false }}">
@@ -1716,43 +1720,50 @@ class Component extends DCLogic {
     window.addEventListener("resize", this._onResize);
     this._mountT = setTimeout(() => this.forceUpdate(), 400);
     this._clockT = setInterval(() => { if (this.state.phase === "menu") this.forceUpdate(); }, 30000);
+    this._onKey = (e) => {
+      if (e.key !== "Escape") return;
+      const p = this.state.phase;
+      if (this.state.pauseOn) { this.setState({ pauseOn: false }); return; }
+      if (p === "play" || p === "round" || p === "over" || p === "won" || p === "lost" || p === "roadlost") this.setState({ pauseOn: true });
+    };
+    window.addEventListener("keydown", this._onKey);
 
-    // Manzil requires a real account now — this is the async half of the
-    // gate (the sync half is _deckState()'s phase computation, which never
-    // trusts local-only signals into "menu" anymore). A returning, still-
-    // logged-in visitor gets flipped past the account screen once this
-    // resolves; a fresh device on an existing account gets its birth data
-    // pulled from the server instead of asked for again.
+    // Manzil requires a real account now — the account UI itself lives on
+    // the separate Account Portal page (24 Aug PM handoff), not in this
+    // file. This is the async half of the gate that actually enforces it
+    // (the sync half is _deckState()'s phase computation, which never
+    // trusts local-only signals into "menu"): an unauthenticated visitor
+    // gets redirected to the Portal outright. A returning, still-logged-in
+    // visitor on a fresh browser gets its five/pack pulled back from the
+    // server instead of asked for again.
     this.api = await import("../api.js");
     const who = await this.api.me();
-    if (!who) return;
+    if (!who) { window.location.href = "../account/"; return; }
     this.setState({ authEmail: who.email, authUsername: who.username });
     if (!this._birth()) {
-      const birth = await this.api.getBirth();
-      if (birth && birth.birthDate) this._hydrateBirthFromServer(birth);
+      const pack = await this.api.getManzilPack();
+      if (pack && Array.isArray(pack.five)) this._hydrateFromServerPack(pack);
     }
     if (this._birth() && this.state.phase === "birth") this.setState({ phase: "menu" });
   }
-  // Rebuilds the local birth cache (chart-owned mansions, pack seed) from
-  // the server's birth_data row — the path a login on a fresh browser
-  // takes, since Manzil's own progress (claims/pack/levels) stays local-
-  // only by design, but identity/birth data now lives on the account.
-  _hydrateBirthFromServer(b) {
-    const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-    const [y, m, d] = b.birthDate.split("-").map(Number);
-    const dt = new Date(y, m - 1, d);
-    if (b.birthTimeKnown && b.birthTime) {
-      const [hh, mm] = b.birthTime.split(":").map(Number);
-      dt.setHours(hh, mm, 0, 0);
-    } else {
-      dt.setHours(12, 0, 0, 0);
-    }
-    const dateStr = d + " " + MO[m - 1] + " " + y;
-    const timeStr = b.birthTimeKnown && b.birthTime ? b.birthTime : null;
-    this._saveBirth(dt, dateStr, timeStr, b.placeName || "");
+  // Rebuilds the local chart-owned-card cache from the server's
+  // manzil_pack row — the path a login on a fresh browser takes, since
+  // Manzil's own progress (claims/levels) stays local-only by design, but
+  // the account's five/pack now lives server-side. No raw birth date/
+  // time/place comes back here by design (the two-tier privacy split —
+  // see CLAUDE.md's Privacy invariant) — this carries just enough for
+  // _chartFive() and the deck to resolve correctly; Manzil's other
+  // birth-derived display fields (revealDate, etc.) degrade gracefully
+  // when rows/fill/date are null, same fallbacks as always.
+  _hydrateFromServerPack(pack) {
+    try {
+      localStorage.setItem("manzil-ed-birth", JSON.stringify({ five: pack.five, date: null, time: null, place: null, rows: null, fill: null }));
+      if (Array.isArray(pack.pack) && pack.pack.length) localStorage.setItem("manzil-ed-pack", JSON.stringify(pack.pack));
+    } catch (e) {}
+    this._C = null;
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this._onResize); this._clearSeq(); clearInterval(this._clockT);
+    window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf); clearInterval(this._tiltI);
     if (this._sock) { this._sock.disconnect(); this._sock = null; }
@@ -1893,20 +1904,37 @@ class Component extends DCLogic {
     [4, 3, 19, 7, 26, 12, 14].forEach(id => { if (five.length < 12 && !five.includes(id)) five.push(id); });
     five = five.slice(0, 13); // the district's own card joins as a thirteenth on first climb
     let seen = false; try { seen = !!localStorage.getItem("manzil-ed-legend"); } catch (e) {}
-    // Manzil now requires a real account to play (24 Aug 2026) — local
-    // birth-cache presence used to be enough to reach "menu" straight from
-    // the constructor, but that can't be trusted for gating anymore. The
-    // "birth" phase now doubles as the account screen; componentDidMount's
-    // async api.me() check is what actually advances a returning, still-
-    // logged-in visitor past it — see the "menu" flip there.
-    return { phase: seen ? "birth" : "legend", legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null, duel: null, chosenB: null, selB: null,
-      acctMode: "signup", acctUsername: "", acctPassword: "", acctError: "", acctBusy: false, authEmail: null, authUsername: null };
+    // Portal entry routes (24 Aug PM handoff, Design's own mechanism): the
+    // Account Portal sets #tutorial or #legend after a real signup/login
+    // and this consumes it once (scrubbed via replaceState so a refresh
+    // doesn't re-trigger it). This is a routing hint, not an auth check —
+    // componentDidMount's async api.me() redirect (below) is what actually
+    // sends a visitor back to the Portal if the hash was reached without a
+    // real session.
+    let entry = null;
+    try { entry = { "#tutorial": "pintro", "#legend": "legend" }[window.location.hash] || null; } catch (e) {}
+    if (entry && !this._entryUsed) {
+      this._entryUsed = true;
+      try { window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch (e) {}
+    } else entry = null;
+    // Manzil requires a real account to play (24 Aug 2026); the account UI
+    // itself lives entirely on the Portal now (24 Aug PM handoff), not in
+    // this file — "birth" stays Design's plain cast screen (a vestigial,
+    // rarely-seen fallback: componentDidMount/_legendDone redirect an
+    // unauthenticated visitor to the Portal before this would normally
+    // render at all), and its one button just sends them there too.
+    return { phase: entry || (seen ? "birth" : "legend"), legendBeat: 0, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, countFx: null, duel: null, chosenB: null, selB: null, pauseOn: false,
+      authEmail: null, authUsername: null };
   }
+  // Prefers the real account's username (set at login/signup on the
+  // Account Portal) over the plain localStorage cache, falling back to
+  // "your hand" if neither exists (pass-and-play with no name typed).
+  _userName() { return this.state.authUsername || (() => { try { return (localStorage.getItem("manzil-ed-user") || "").trim(); } catch (e) { return ""; } })() || "your hand"; }
   _duelSaved() { try { return JSON.parse(localStorage.getItem("manzil-ed-duelnames")) || {}; } catch (e) { return {}; } }
   // pass-and-play only now — real matchmaking is _duelName()/_ensureSocket()/_enterPvpBoard() below
   _startDuel() {
     const st = this.state, saved = this._duelSaved();
-    const a = (((st.duelA !== undefined ? st.duelA : saved.a) || "").trim()) || "your hand";
+    const a = (((st.duelA !== undefined ? st.duelA : saved.a) || "").trim()) || this._userName();
     const pack = (st.deckSel || []).filter(id => id >= 1 && id <= 28);
     const b = (((st.duelB !== undefined ? st.duelB : saved.b) || "").trim()) || "the far hand";
     const sh = pack.slice();
@@ -1924,7 +1952,7 @@ class Component extends DCLogic {
   // -- real matchmaking (Socket.io) ---------------------------------------
   _duelName() {
     const saved = this._duelSaved();
-    return (((this.state.duelA !== undefined ? this.state.duelA : saved.a) || "").trim()) || "your hand";
+    return (((this.state.duelA !== undefined ? this.state.duelA : saved.a) || "").trim()) || this._userName();
   }
   _apiBase() { return typeof location !== "undefined" ? "https://api." + location.hostname : ""; }
   _ensureSocket() {
@@ -1937,7 +1965,7 @@ class Component extends DCLogic {
     // Belt-and-suspenders: the phase-gate should make this unreachable
     // logged out, but a session expiring between page load and tapping
     // "find a battle" is a real race, not a hypothetical one.
-    sock.on("auth_required", () => { this.setState({ phase: "birth", duelSeek: null, acctError: "your session ended — sign in again" }); sock.disconnect(); this._sock = null; });
+    sock.on("auth_required", () => { sock.disconnect(); this._sock = null; window.location.href = "../account/"; });
     sock.on("queued", msg => { if (this.state.phase === "duel1") this.setState({ duelSeek: { stage: "seek", position: msg.position } }); });
     sock.on("queue_cancelled", () => { if (this.state.duelSeek && this.state.duelSeek.stage === "seek") this.setState({ duelSeek: null }); });
     sock.on("matched", msg => {
@@ -1979,6 +2007,10 @@ class Component extends DCLogic {
     sock.on("opponent_reconnected", msg => {
       if (!this.state.duel || this.state.duel.matchId !== msg.matchId) return;
       this.setState({ toast: { t: "the far hand returns.", n: (this._fxN = (this._fxN || 0) + 1) } });
+    });
+    sock.on("reported", msg => {
+      if (!this.state.duel || this.state.duel.matchId !== msg.matchId) return;
+      this.setState({ reportConfirm: false, toast: { t: "reported. they won't be matched with you again.", n: (this._fxN = (this._fxN || 0) + 1) } });
     });
     sock.on("match_abandoned", msg => {
       if (this.state.duelSeek && this.state.duelSeek.stage) { this.setState({ phase: "duel1", duelSeek: null }); return; }
@@ -2305,16 +2337,6 @@ class Component extends DCLogic {
     27: "once a board, tap the guide then another of your cards: the two swap places.",
     28: "the first and last mansions of the road count for whoever holds the thread.",
   }[id] || ""; }
-  // Shared enabled-check for the account/birth screen's submit button and
-  // its tap handler, so the two can't drift — signup needs the full form,
-  // login only needs email + password.
-  _acctFormOk(st) {
-    const email = (st.bEmail || "").trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || (st.acctPassword || "").length < 8) return false;
-    if (st.acctMode === "login") return true;
-    if (!/^[a-z0-9_]{3,20}$/.test((st.acctUsername || "").trim().toLowerCase())) return false;
-    return st.bY != null && st.bM != null && st.bD != null && ((st.bTime || "").trim() || st.bTimeU);
-  }
   _saveBirth(dt, dateStr, timeStr, place) {
     if (!dt || isNaN(dt.getTime()) || !window.ManzilEphem) return null;
     const cast = this._castFive(dt);
@@ -2517,7 +2539,19 @@ class Component extends DCLogic {
   // — local birth-cache presence isn't proof of login anymore. A
   // logged-in returning visitor gets flipped to "menu" by
   // componentDidMount's async api.me() check instead, once it resolves.
-  _legendDone() { try { localStorage.setItem("manzil-ed-legend", "1"); } catch (e) {} this.setState({ phase: "birth" }); }
+  // By the time someone finishes tapping through the multi-beat legend,
+  // componentDidMount's async api.me() has almost certainly already
+  // resolved — safe to check authEmail synchronously here rather than
+  // re-awaiting. Not authenticated → the Portal; authenticated with a
+  // local pack cache already (a returning account) → straight to menu;
+  // authenticated with none (fresh from a device that skipped the hash
+  // route somehow) → the vestigial "birth" screen, which itself just
+  // redirects on tap.
+  _legendDone() {
+    try { localStorage.setItem("manzil-ed-legend", "1"); } catch (e) {}
+    if (!this.state.authEmail) { window.location.href = "../account/"; return; }
+    this.setState({ phase: this._birth() ? "menu" : "birth" });
+  }
   _rungs() { try { return JSON.parse(localStorage.getItem("manzil-ed-rungs")) || {}; } catch (e) { return {}; } }
   _saveRung(m, k) { try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-ed-rungs", JSON.stringify(r)); } catch (e) {} }
   _elev() {
@@ -3253,8 +3287,8 @@ class Component extends DCLogic {
       oppName: st.duel ? st.duel.b : st.practice ? "the district's hand" : st.road && !st.roadBoss ? ((this._walkers()[st.roadRung] || {}).name || "") : (st.roadBoss || this._specialNight(this._tonight())) && (st.phase === "play" || st.phase === "round") ? "the sky herself" : st.phase === "play" || st.phase === "round" ? (st.nightWalker || "") : "",
       oppC: st.duel ? "#FFB000" : (st.roadBoss || (this._specialNight(this._tonight()) && !st.road && !st.practice)) ? "#FFB000" : "#9A8A5E",
       youN, skyN, matchPips, slots, skyCards, handCards,
-      pipsInPlate: !(st.roadBoss || st.nightSky),
-      pipsTopRight: !!(st.roadBoss || st.nightSky) && matchPips.length > 0 && (st.phase === "play" || st.phase === "round" || st.phase === "won" || st.phase === "lost"),
+      pipsInPlate: !(st.roadBoss || st.nightSky || (st.duel && st.duel.mode !== "seat")),
+      pipsTopRight: !!(st.roadBoss || st.nightSky || (st.duel && st.duel.mode !== "seat")) && matchPips.length > 0 && (st.phase === "play" || st.phase === "round" || st.phase === "won" || st.phase === "lost"),
       skyHandOn: !!(st.roadBoss || st.nightSky),
       ...((() => {
         const w = st.practice ? null : (st.road && !st.roadBoss) ? this._walkers()[st.roadRung] : (!st.road && !st.nightSky && st.nightWalker) ? this._walkers().find(x => x.name === st.nightWalker) : null;
@@ -3280,6 +3314,9 @@ class Component extends DCLogic {
       tutSkipTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "tut7" }); },
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
       matchHdrOn: st.phase === "play" || st.phase === "round" || st.phase === "over",
+      pauseOn: !!st.pauseOn,
+      pauseKeepTap: () => this.setState({ pauseOn: false }),
+      pauseLeaveTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "menu", pauseOn: false }); },
       ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back && !z.station), zoomStationOn: !!(z && z.station), zoomStName: z && z.station && z.name || "", zoomStSub: z && z.sub || "", zoomStLine: z && z.station && z.line || "", zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
       logLine: st.log,
       capsList: (st.caps || []).map(cp => { const Lc = st.slots.length, ec = 466 - (Lc * 86 + (Lc - 1) * 5) / 2; const x = ec + cp.i * 91 + 43, y = 112 + (cp.i % 2 ? 22 : 0) + Math.pow(cp.i - (Lc - 1) / 2, 2) * 3; return { t: cp.t, style: "position:absolute;left:" + (x - 70) + "px;top:" + y + "px;width:140px;text-align:center;font-size:10px;color:#D8C89C;text-shadow:0 1px 6px rgba(5,3,2,.95), 0 0 12px rgba(5,3,2,.8);z-index:5;pointer-events:none;animation:mzCapRise 2.3s ease-out both" }; }),
@@ -3290,6 +3327,20 @@ class Component extends DCLogic {
       castOn: !!st.castFx,
       castShapes: st.castFx ? this._castFor(st.castFx) : [],
       turnLine: st.duel && st.phase === "play" ? (st.turn === "you" ? (st.busy ? "" : st.duel.a + " to play") : (st.duel.mode === "pvp" || st.duel.mode === "bot") ? st.duel.b + " is thinking…" : st.busy ? "" : st.duel.b + " to play") : skyThinking ? ((st.road ? (st.roadBoss ? "the sky" : st.roadWalker || "the walker") : st.nightSky ? "the sky" : st.nightWalker || "the sky") + " is thinking…") : "",
+      // A live PvP match only — no point reporting a bot or pass-and-play
+      // seat, there's no other account behind either. Two-tap confirm
+      // (tap "report" once to arm, again to actually send) rather than a
+      // native confirm() dialog, matching this file's own multi-stage
+      // interaction style elsewhere (duelSeek's stage machine).
+      reportOn: !!(st.duel && st.duel.mode === "pvp"),
+      reportLabel: st.reportConfirm ? "report the far hand? this also blocks them" : "report",
+      reportConfirmOn: !!st.reportConfirm,
+      reportTap: () => {
+        if (!st.reportConfirm) { this.setState({ reportConfirm: true }); return; }
+        if (st.duel && st.duel.matchId && this._sock) this._sock.emit("report_player", { matchId: st.duel.matchId });
+        this.setState({ reportConfirm: false });
+      },
+      reportCancelTap: () => this.setState({ reportConfirm: false }),
       deckOn: st.phase === "deck",
       roadTag: st.duel ? "sagittarius a* · " + ["the approach", "the dust lanes", "the disk", "the ring", "the horizon"][Math.min((st.roundWins || []).length, 4)] + " · nothing staked" : st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : this._elevSpec().name) : st.nightSky ? "she returns to the table" : st.nightWalker ? "at the table tonight" : "",
       roadTagC: st.roadBoss || st.nightSky ? "#FFB000" : "#9A8A5E",
@@ -3483,17 +3534,7 @@ class Component extends DCLogic {
       legendDoorTap: (e) => { e.stopPropagation(); this._legendDone(); },
       menuLegendTap: () => this.setState({ phase: "legend", legendBeat: 0 }),
       birthOn: st.phase === "birth", tut5On: st.phase === "tut5", tut7On: st.phase === "tut7",
-      bTime: st.bTime || "", bErr: st.bErr || st.acctError || "",
-      acctSignupOn: st.acctMode !== "login",
-      acctSublineM: st.acctMode === "login" ? "welcome back. sign in to pick up your walk." : "the sky wrote something the minute you arrived. tell us the minute.",
-      acctUsernameVal: st.acctUsername || "",
-      acctSetUsername: (e) => this.setState({ acctUsername: e.target.value, bErr: "" }),
-      acctPasswordVal: st.acctPassword || "",
-      acctSetPassword: (e) => this.setState({ acctPassword: e.target.value, bErr: "" }),
-      acctPassPlaceholderM: st.acctMode === "login" ? "your password" : "at least 8 characters",
-      acctSubmitLabelM: st.acctBusy ? "…" : (st.acctMode === "login" ? "sign in" : "cast your five"),
-      acctToggleModeM: () => this.setState(s => ({ acctMode: s.acctMode === "login" ? "signup" : "login", bErr: "" })),
-      acctModeToggleLabelM: st.acctMode === "login" ? "new here? create an account instead" : "already have a shard? sign in instead",
+      bTime: st.bTime || "", bErr: st.bErr || "",
       ...((() => {
         if (st.phase !== "birth") return { bCells: [], bHead: "", bGridStyle: "display:none", bPicked: "", bPrevTap: () => {}, bNextTap: () => {}, bHeadTap: () => {} };
         const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
@@ -3535,58 +3576,13 @@ class Component extends DCLogic {
       bTimeMark: st.bTimeU ? "☑" : "☐",
       bTimeBtnStyle: "background:none;border:none;padding:0;text-align:left;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:11.5px;" + (st.bTimeU ? "color:#F0D89A" : "color:#9A8A5E"),
       bTimeInputStyle: "background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-family:'Varela Round',sans-serif;font-size:15px;padding:5px 2px;outline:none;width:100%;transition:opacity .3s ease;" + (st.bTimeU ? "opacity:.3;pointer-events:none" : ""),
-      bCastStyle: "font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 32px;cursor:pointer;border-radius:5px;transition:transform .12s ease, box-shadow .12s ease, background .2s ease, color .2s ease, border-color .2s ease;" + (this._acctFormOk(st) ? "background:linear-gradient(180deg, rgba(240,216,154,.2), rgba(240,216,154,.07));border:1px solid #F0D89A;color:#F0D89A;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4), 0 0 18px rgba(240,216,154,.18)" : "background:none;border:1px solid rgba(240,216,154,.25);color:#9A8A5E"),
-      birthCastTap: async () => {
-        const s0 = this.state;
-        if (s0.acctBusy || !this._acctFormOk(s0)) return;
-        const em = (s0.bEmail || "").trim().toLowerCase();
-        const password = s0.acctPassword;
-        this.setState({ acctBusy: true, bErr: "" });
-
-        if (s0.acctMode === "login") {
-          try {
-            const res = await this.api.login(em, password);
-            this.setState({ authEmail: res.email, authUsername: res.username, acctBusy: false, acctPassword: "" });
-            if (!this._birth()) {
-              const birth = await this.api.getBirth();
-              if (birth && birth.birthDate) this._hydrateBirthFromServer(birth);
-            }
-            this.setState({ phase: "menu", deckSel: (this._deckState()).deckSel });
-          } catch (e) {
-            this.setState({ acctBusy: false, bErr: this.api.loginError(e.code) });
-          }
-          return;
-        }
-
-        if (s0.bY == null || s0.bM == null || s0.bD == null) { this.setState({ acctBusy: false, bErr: "the sky needs the full date" }); return; }
-        const username = (s0.acctUsername || "").trim().toLowerCase();
-        const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-        const dt = new Date(s0.bY, s0.bM, s0.bD);
-        const ds = s0.bD + " " + MO[s0.bM] + " " + s0.bY;
-        const ts = (s0.bTime || "").trim();
-        const timeKnown = !s0.bTimeU;
-        if (timeKnown && ts) {
-          const m = ts.match(/(\d{1,2})[:.]?(\d{2})?\s*(am|pm)?/i);
-          if (m) { let h = parseInt(m[1]); const mm = m[2] ? parseInt(m[2]) : 0; const ap = m[3] ? m[3].toLowerCase() : null; if (ap === "pm" && h < 12) h += 12; if (ap === "am" && h === 12) h = 0; dt.setHours(h, mm, 0, 0); }
-          else dt.setHours(12, 0, 0, 0);
-        } else dt.setHours(12, 0, 0, 0);
-        const birthDate = s0.bY + "-" + String(s0.bM + 1).padStart(2, "0") + "-" + String(s0.bD).padStart(2, "0");
-        const birthTime = timeKnown && dt ? String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0") : null;
-
-        try {
-          const res = await this.api.signup(em, password, {
-            username, birthDate, birthTime, birthTimeKnown: timeKnown,
-            placeName: (s0.bPlace || "").trim() || null,
-          });
-          try { localStorage.setItem("manzil-ed-email", em); } catch (e) {}
-          const pack = this._saveBirth(dt, ds, timeKnown ? ts : null, s0.bPlace);
-          if (!pack) { this.setState({ acctBusy: false, bErr: "the sky can't read that date" }); return; }
-          this.setState({ authEmail: res.email, authUsername: res.username, phase: "tut5", tutI: 0, deckSel: pack, acctBusy: false, acctPassword: "", bErr: "" });
-        } catch (e) {
-          if (e.code === "email_taken") { this.setState({ acctMode: "login", acctBusy: false, bErr: "that email already has a shard. sign in instead" }); return; }
-          this.setState({ acctBusy: false, bErr: this.api.signupError(e.code) });
-        }
-      },
+      bCastStyle: "font-family:'Varela Round',sans-serif;font-size:12.5px;padding:11px 32px;cursor:pointer;border-radius:5px;transition:transform .12s ease, box-shadow .12s ease, background .2s ease, color .2s ease, border-color .2s ease;background:linear-gradient(180deg, rgba(240,216,154,.2), rgba(240,216,154,.07));border:1px solid #F0D89A;color:#F0D89A;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4), 0 0 18px rgba(240,216,154,.18)",
+      // This screen is vestigial — the real cast/age-check/account flow
+      // lives entirely on the Account Portal (24 Aug PM handoff).
+      // componentDidMount/_legendDone redirect an unauthenticated visitor
+      // there before this would normally render at all; if it's somehow
+      // reached anyway, its one job is to send them to the real thing.
+      birthCastTap: () => { window.location.href = "../account/"; },
       revealDate: (this._birth() || {}).date || "",
       revealCards: (st.phase === "tut5" ? this._chartFive() : []).map(id => {
         const c2 = C[id], b = this._birth() || {};

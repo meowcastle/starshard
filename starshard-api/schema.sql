@@ -58,15 +58,15 @@ CREATE TABLE IF NOT EXISTS recollection (
   UNIQUE KEY uniq_user_station_step (user_id, station, step)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Manzil now requires an account to play (Justin's call, 24 Aug 2026) and
--- that account is shared with Star Shard. Real birth date/time/place now
--- lives server-side per account, alongside the Sigil's derived-only data
--- above — a deliberate reversal of the old "birth data never leaves the
--- browser" rule (see CLAUDE.md's Privacy invariant). Fields beyond
--- birth_date stay nullable: Manzil's own birth screen has no geocoding,
--- so only a date is guaranteed at signup; place/lat/lon/tz fill in later
--- via PUT /api/me/birth when a fuller onboarding (Star Shard's) supplies
--- them.
+-- Manzil requires an account to play (Justin's call, 24 Aug 2026) and that
+-- account is shared with Star Shard — but per the 24 Aug PM handoff, Manzil
+-- itself never touches this table. It exists exclusively for the Star Shard
+-- opt-in path (PUT /api/me/birth, when a user asks for a reading): full
+-- birth date/time/place, encrypted at the application layer. Manzil's own
+-- signup writes manzil_pack below instead — five integers, not a birth
+-- certificate. Fields beyond birth_date stay nullable since Star Shard's
+-- onboarding can supply them progressively (date first, place/lat/lon/tz
+-- once geocoded).
 CREATE TABLE IF NOT EXISTS birth_data (
   user_id INT NOT NULL PRIMARY KEY,
   birth_date DATE NOT NULL,
@@ -78,6 +78,45 @@ CREATE TABLE IF NOT EXISTS birth_data (
   tz VARCHAR(64) NULL,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_birth_data_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Manzil's entire dependency on the birth chart: _castFive() in the client
+-- reads b.five and nothing else, so this is pseudonymisation, not
+-- anonymisation — five integers 1-28 are still personal data under GDPR
+-- and still carry export/erasure obligations (see GET /api/me/export and
+-- this table's CASCADE below) — but a full dump of this table is not a
+-- dump of birth certificates the way birth_data would be. birth_year is
+-- for age re-derivation only; never store a full date here.
+CREATE TABLE IF NOT EXISTS manzil_pack (
+  user_id INT NOT NULL PRIMARY KEY,
+  five_json VARCHAR(64) NOT NULL,
+  pack_json VARCHAR(128) NOT NULL,
+  birth_year SMALLINT UNSIGNED NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_manzil_pack_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Reporting a match opponent also blocks them (manzil-lobby.js's
+-- report_player handler writes both rows together) — the point of a block
+-- list existing at all is that the matchmaker skips it, so a report with no
+-- accompanying block would defeat its own purpose.
+CREATE TABLE IF NOT EXISTS manzil_reports (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  match_id VARCHAR(32) NOT NULL,
+  reporter_user_id INT NOT NULL,
+  reported_user_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_manzil_reports_reporter FOREIGN KEY (reporter_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_manzil_reports_reported FOREIGN KEY (reported_user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS manzil_blocks (
+  blocker_user_id INT NOT NULL,
+  blocked_user_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (blocker_user_id, blocked_user_id),
+  CONSTRAINT fk_manzil_blocks_blocker FOREIGN KEY (blocker_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_manzil_blocks_blocked FOREIGN KEY (blocked_user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS guestbook_entries (

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>star shard — your account</title>
+<meta property="og:title" content="star shard — your account">
+<meta property="og:description" content="the account manzil and star shard share — five cards, cast once, kept forever.">
+<script src="./support.js"></script>
+<script src="./ephemeris2.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#040302;font-family:'Varela Round',sans-serif}
+  a{color:#FFB000;text-decoration:none}
+  a:hover{color:#F0D89A}
+  input{font-family:'Varela Round',sans-serif}
+  input::placeholder{color:rgba(154,138,94,.5)}
+  input:focus{outline:none;border-bottom-color:rgba(240,216,154,.75) !important}
+  @keyframes spFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes spRingIn{from{opacity:0;transform:rotate(-14deg) scale(.94)}to{opacity:1;transform:none}}
+  @keyframes spSpin{to{transform:rotate(360deg)}}
+  @keyframes spPulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes spCardIn{0%{opacity:0;transform:translateY(16px) scale(.86)}60%{opacity:1;transform:translateY(-3px) scale(1.03)}100%{opacity:1;transform:none}}
+  @keyframes spTwk{0%,100%{opacity:.95}50%{opacity:.3}}
+  @keyframes spNeb{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.07);opacity:1}}
+  @keyframes spComet{0%{transform:translate(0,0)}100%{transform:translate(-160px,44px)}}
+  @keyframes spDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(-30px)}}
+  @keyframes spGlow{0%,100%{opacity:.55}50%{opacity:.9}}
+  @keyframes spRingSlow{to{transform:rotate(360deg)}}
+  @keyframes spFloat{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+  @keyframes spBtnBreathe{0%,100%{box-shadow:0 0 18px rgba(255,176,0,.16)}50%{box-shadow:0 0 34px rgba(255,176,0,.34)}}
+  @keyframes spCardDrift{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-5px) rotate(.7deg)}}
+  @keyframes spEmb{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.01s !important;animation-iteration-count:1 !important;transition-duration:.01s !important}}
+</style>
+</helmet>
+<div style="min-height:100vh;position:relative;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);color:#F2EAD6;display:flex;justify-content:center;align-items:center">
+  <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 12% 6%, rgba(240,216,154,.85), transparent),radial-gradient(1px 1px at 68% 3%, rgba(248,244,230,.7), transparent),radial-gradient(2px 2px at 88% 10%, rgba(255,176,0,.6), transparent),radial-gradient(1px 1px at 30% 13%, rgba(248,244,230,.5), transparent),radial-gradient(1.5px 1.5px at 52% 7%, rgba(240,216,154,.6), transparent),radial-gradient(1px 1px at 79% 18%, rgba(248,244,230,.45), transparent),radial-gradient(1px 1px at 6% 40%, rgba(248,244,230,.35), transparent),radial-gradient(1.5px 1.5px at 94% 46%, rgba(240,216,154,.45), transparent),radial-gradient(1px 1px at 9% 78%, rgba(248,244,230,.3), transparent),radial-gradient(1.5px 1.5px at 92% 84%, rgba(240,216,154,.35), transparent)"></div>
+  <div style="{{ vIntroStyle }}">
+    <div style="position:absolute;left:-10%;top:16%;width:120%;height:130px;transform:rotate(-11deg);background:linear-gradient(180deg, transparent, rgba(242,234,214,.05) 35%, rgba(186,196,255,.06) 55%, transparent);filter:blur(3px);animation:spDrift 60s ease-in-out infinite"></div>
+    <div style="position:absolute;right:12%;top:13%;width:170px;height:120px">
+      <div style="position:absolute;inset:-30px;background:radial-gradient(50% 50% at 50% 50%, rgba(150,175,255,.12), transparent 70%);animation:spGlow 8s ease-in-out infinite"></div>
+      <div style="position:absolute;left:20px;top:44px;width:4px;height:4px;border-radius:50%;background:#DCE6FF;box-shadow:0 0 8px rgba(170,195,255,.9);animation:spTwk 5s ease-in-out infinite"></div>
+      <div style="position:absolute;left:52px;top:24px;width:5px;height:5px;border-radius:50%;background:#EAF0FF;box-shadow:0 0 10px rgba(170,195,255,.95);animation:spTwk 6.5s ease-in-out -2s infinite"></div>
+      <div style="position:absolute;left:84px;top:50px;width:4px;height:4px;border-radius:50%;background:#DCE6FF;box-shadow:0 0 8px rgba(170,195,255,.9);animation:spTwk 4.4s ease-in-out -1s infinite"></div>
+      <div style="position:absolute;left:104px;top:18px;width:3.5px;height:3.5px;border-radius:50%;background:#DCE6FF;box-shadow:0 0 7px rgba(170,195,255,.85);animation:spTwk 7s ease-in-out -3s infinite"></div>
+      <div style="position:absolute;left:128px;top:58px;width:5px;height:5px;border-radius:50%;background:#EAF0FF;box-shadow:0 0 10px rgba(170,195,255,.95);animation:spTwk 5.6s ease-in-out -2.4s infinite"></div>
+      <div style="position:absolute;left:64px;top:74px;width:3.5px;height:3.5px;border-radius:50%;background:#DCE6FF;box-shadow:0 0 7px rgba(170,195,255,.85);animation:spTwk 6s ease-in-out -4s infinite"></div>
+      <div style="position:absolute;left:42px;top:92px;width:3px;height:3px;border-radius:50%;background:#DCE6FF;box-shadow:0 0 6px rgba(170,195,255,.8);animation:spTwk 8s ease-in-out -1.6s infinite"></div>
+    </div>
+  </div>
+  <div style="{{ vCastStyle }}">
+    <div style="position:absolute;left:6%;top:14%;width:340px;height:260px;background:radial-gradient(50% 50% at 46% 50%, rgba(196,92,44,.16), transparent 70%);filter:blur(4px);animation:spNeb 13s ease-in-out infinite"></div>
+    <div style="position:absolute;left:12%;top:24%;width:260px;height:200px;background:radial-gradient(50% 50% at 55% 45%, rgba(101,143,131,.13), transparent 70%);filter:blur(5px);animation:spNeb 17s ease-in-out -5s infinite"></div>
+    <div style="position:absolute;left:16%;top:20%;width:180px;height:130px;background:radial-gradient(50% 50% at 50% 50%, rgba(240,216,154,.12), transparent 70%);filter:blur(2px);animation:spNeb 10s ease-in-out -3s infinite"></div>
+    <div style="position:absolute;left:calc(16% + 70px);top:calc(20% + 52px);width:4px;height:4px;border-radius:50%;background:#FFF6E0;box-shadow:0 0 10px rgba(255,220,150,.95);animation:spTwk 4s ease-in-out infinite"></div>
+    <div style="position:absolute;left:calc(16% + 108px);top:calc(20% + 30px);width:3px;height:3px;border-radius:50%;background:#FFEFC9;box-shadow:0 0 8px rgba(255,220,150,.85);animation:spTwk 5.5s ease-in-out -2s infinite"></div>
+    <div style="position:absolute;left:calc(16% + 40px);top:calc(20% + 84px);width:3px;height:3px;border-radius:50%;background:#FFEFC9;box-shadow:0 0 8px rgba(255,220,150,.85);animation:spTwk 6.2s ease-in-out -3.4s infinite"></div>
+  </div>
+  <div style="{{ vSignStyle }}">
+    <div style="position:absolute;right:10%;top:15%;width:300px;height:120px;animation:spComet 46s ease-in-out infinite alternate">
+      <div style="position:absolute;right:0;top:40px;width:7px;height:7px;border-radius:50%;background:#F4FAFF;box-shadow:0 0 16px rgba(190,215,255,1), 0 0 40px rgba(150,185,255,.5)"></div>
+      <div style="position:absolute;right:5px;top:41.5px;width:270px;height:4px;transform:rotate(8deg);transform-origin:right center;background:linear-gradient(to left, rgba(200,220,255,.55), rgba(160,190,255,.18) 45%, transparent);filter:blur(1px)"></div>
+      <div style="position:absolute;right:5px;top:39px;width:210px;height:9px;transform:rotate(13deg);transform-origin:right center;background:linear-gradient(to left, rgba(240,216,154,.3), rgba(240,216,154,.08) 50%, transparent);filter:blur(2.5px)"></div>
+    </div>
+  </div>
+  <div style="{{ vKeepStyle }}">
+    <div style="position:absolute;right:-160px;bottom:-220px;width:480px;height:480px;border-radius:50%;background:radial-gradient(60% 60% at 38% 32%, #2A1F0C, #0B0703 70%);box-shadow:inset 14px 18px 40px rgba(240,216,154,.14), 0 0 60px rgba(255,176,0,.08)"></div>
+    <div style="position:absolute;right:-260px;bottom:-140px;width:700px;height:190px;border:2px solid rgba(240,216,154,.22);border-radius:50%;transform:rotate(-24deg);filter:blur(.4px)"></div>
+    <div style="position:absolute;right:-240px;bottom:-128px;width:650px;height:172px;border:1px solid rgba(255,176,0,.16);border-radius:50%;transform:rotate(-24deg)"></div>
+    <div style="position:absolute;right:-290px;bottom:-156px;width:760px;height:210px;border:1px solid rgba(240,216,154,.1);border-radius:50%;transform:rotate(-24deg)"></div>
+  </div>
+  <div style="{{ vistaCapStyle }}">{{ vistaCap }}</div>
+  <sc-if value="{{ introOn }}" hint-placeholder-val="{{ true }}">
+    <div style="position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 28px;animation:spFadeUp .6s ease both;max-width:460px">
+      <div style="filter:drop-shadow(0 0 18px rgba(240,216,154,.28));animation:spRingIn .9s ease both">
+        <svg viewBox="0 0 120 120" style="width:190px;height:190px;display:block;animation:spRingSlow 150s linear infinite">
+          <sc-for list="{{ ringTicks }}" as="seg" hint-placeholder-count="14">
+            <path d="{{ seg.d }}" stroke="{{ seg.c }}" stroke-width="{{ seg.w }}" fill="none" style="transition:stroke .8s ease"></path>
+          </sc-for>
+          <sc-for list="{{ ringLines }}" as="ln" hint-placeholder-count="2">
+            <line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="rgba(240,216,154,.4)" stroke-width="1"></line>
+          </sc-for>
+          <sc-for list="{{ ringDots }}" as="dt" hint-placeholder-count="4">
+            <circle cx="{{ dt.cx }}" cy="{{ dt.cy }}" r="{{ dt.r }}" fill="{{ dt.f }}" stroke="{{ dt.s }}" stroke-width="{{ dt.sw }}"></circle>
+          </sc-for>
+        </svg>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:54px;line-height:1;color:#F2EAD6;margin-top:22px;animation:spFadeUp .6s ease .15s both">manzil</div>
+      <div style="font-size:14px;color:#D8C89C;margin-top:10px;animation:spFadeUp .6s ease .3s both">a card game under the sky</div>
+      <div style="font-size:14.5px;line-height:1.85;color:#C9BC96;margin-top:26px;max-width:340px;text-wrap:pretty;animation:spFadeUp .6s ease .48s both">every player carries five cards the sky wrote the minute they were born. to sit at the table, you need yours.</div>
+      <button onClick="{{ introGo }}" style="margin-top:32px;padding:14px 42px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:15px;color:#FFB000;animation:spFadeUp .6s ease .7s both, spBtnBreathe 3.6s ease-in-out 1.4s infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">find my five ✦</button>
+      <button onClick="{{ signinGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;margin-top:20px;padding:0">already have yours? <span style="color:#FFB000">sign in</span></button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ shellOn }}" hint-placeholder-val="{{ false }}">
+  <div style="{{ shellStyle }}">
+    <div style="{{ heroStyle }}">
+      <div style="filter:drop-shadow(0 0 18px rgba(240,216,154,.28));animation:spRingIn .8s ease both">
+        <svg viewBox="0 0 120 120" style="{{ ringSvgStyle }}">
+          <sc-for list="{{ ringTicks }}" as="seg" hint-placeholder-count="14">
+            <path d="{{ seg.d }}" stroke="{{ seg.c }}" stroke-width="{{ seg.w }}" fill="none" style="transition:stroke .8s ease"></path>
+          </sc-for>
+          <sc-for list="{{ ringLines }}" as="ln" hint-placeholder-count="2">
+            <line x1="{{ ln.x1 }}" y1="{{ ln.y1 }}" x2="{{ ln.x2 }}" y2="{{ ln.y2 }}" stroke="rgba(240,216,154,.4)" stroke-width="1"></line>
+          </sc-for>
+          <sc-for list="{{ ringDots }}" as="dt" hint-placeholder-count="4">
+            <circle cx="{{ dt.cx }}" cy="{{ dt.cy }}" r="{{ dt.r }}" fill="{{ dt.f }}" stroke="{{ dt.s }}" stroke-width="{{ dt.sw }}"></circle>
+          </sc-for>
+        </svg>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:{{ titleSize }}px;line-height:1;color:#F2EAD6;margin-top:18px">manzil</div>
+      <div style="font-size:14px;line-height:1.7;color:#D8C89C;margin-top:12px;max-width:300px;text-wrap:pretty">{{ heroLine }}</div>
+
+    </div>
+    <div style="{{ formStyle }}">
+      <sc-if value="{{ castOn }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <div style="animation:spFadeUp .5s ease both">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6">when were you born?</div>
+          <div style="font-size:12.5px;color:#9A8A5E;margin-top:6px">that is all the sky needs. type it in.</div>
+        </div>
+        <div style="display:flex;gap:18px;align-items:flex-end;animation:spFadeUp .5s ease .14s both">
+          <div style="width:64px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">day</div>
+            <input value="{{ dayVal }}" onChange="{{ setDay }}" placeholder="6" inputMode="numeric" maxLength="2" style="{{ dayStyle }}">
+          </div>
+          <div style="flex:1;min-width:110px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">month</div>
+            <input value="{{ monVal }}" onChange="{{ setMon }}" placeholder="june" style="{{ monStyle }}">
+          </div>
+          <div style="width:88px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">year</div>
+            <input value="{{ yrVal }}" onChange="{{ setYr }}" placeholder="1989" inputMode="numeric" maxLength="4" style="{{ yrStyle }}">
+          </div>
+        </div>
+        <div style="{{ rowTwoStyle }};animation:spFadeUp .5s ease .28s both">
+          <div style="flex:1;min-width:150px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">the time, if you know it</div>
+            <input value="{{ timeVal }}" onChange="{{ setTime }}" placeholder="4:42 pm" disabled="{{ timeOff }}" style="{{ timeInputStyle }}">
+            <sc-if value="{{ timeBadOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#C45C2C;padding-top:9px">a time looks like 4:42 pm</div></sc-if>
+            <button onClick="{{ toggleNoTime }}" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:9px 0 0;font-size:12px;color:{{ noTimeC }}"><span style="font-size:13px">{{ noTimeMark }}</span> i don't know it</button>
+          </div>
+          <div style="flex:1.4;min-width:190px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">where</div>
+            <input value="{{ placeVal }}" onChange="{{ setPlace }}" placeholder="portland, oregon" style="{{ inputStyle }}">
+            <div style="font-size:11px;color:#9A8A5E;padding-top:9px">the town is enough. it sets where the sky stood</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;animation:spFadeUp .5s ease .42s both">
+          <sc-if value="{{ castErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#FFB000">{{ castErr }}</div></sc-if>
+          <button onClick="{{ castTap }}" style="{{ castStyle }}" style-hover="{{ btnHover }}">{{ castLabel }}</button>
+          <button onClick="{{ signinGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;text-align:center;padding:0">already have your five? <span style="color:#FFB000">sign in</span></button>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ castingOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:380px;animation:spFadeUp .4s ease both">
+          <svg viewBox="0 0 60 60" style="width:54px;height:54px;animation:spSpin 2.6s linear infinite"><circle cx="30" cy="30" r="24" fill="none" stroke="rgba(240,216,154,.2)" stroke-width="2"></circle><path d="M 30 6 A 24 24 0 0 1 54 30" fill="none" stroke="#F0D89A" stroke-width="2" stroke-linecap="round"></path></svg>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;animation:spPulse 2.2s ease-in-out infinite">reading the sky</div>
+          <div style="font-size:12.5px;color:#9A8A5E">finding where the planets stood, the day you arrived</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ youngOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:380px;text-align:center;animation:spFadeUp .5s ease both">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.4;color:#F2EAD6;max-width:340px;text-wrap:pretty">the moon keeps her houses for you. come back when you are sixteen.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ cardsOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-height:420px;text-align:center;animation:spFadeUp .4s ease both">
+        <div style="display:flex;gap:7px;margin-bottom:24px">
+          <sc-for list="{{ cardDots }}" as="d" hint-placeholder-count="5"><div style="{{ d }}"></div></sc-for>
+        </div>
+        <div style="animation:spCardIn .5s ease both">
+        <div style="width:132px;height:178px;border-radius:10px;position:relative;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.55);box-shadow:0 14px 40px rgba(0,0,0,.65), 0 0 30px rgba(255,176,0,.12);animation:spCardDrift 5.5s ease-in-out .6s infinite">
+          <div style="position:absolute;top:8px;left:8px;right:8px;bottom:8px;border-radius:6px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.12)"></div>
+          <div style="position:absolute;top:0;left:0;right:0;bottom:38px;display:flex;align-items:center;justify-content:center;font-size:46px;color:#F0D89A;text-shadow:0 0 18px rgba(240,216,154,.4);animation:spEmb 7s ease-in-out infinite">{{ cardGlyph }}</div>
+          <div style="position:absolute;top:9px;left:13px;font-size:21px;color:#F2EAD6;text-shadow:0 0 6px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)">{{ cardL }}</div>
+          <div style="position:absolute;bottom:32px;right:13px;font-size:21px;color:#F2EAD6;text-shadow:0 0 6px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)">{{ cardR }}</div>
+          <div style="position:absolute;left:0;right:0;bottom:11px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#F2EAD6">{{ cardName }}</div>
+        </div>
+        </div>
+        <div style="font-size:10.5px;color:#9A8A5E;margin-top:12px">left side fights left · right side fights right</div>
+        <div style="font-size:12px;color:#FFB000;margin-top:20px">{{ cardSource }}</div>
+        <div style="font-size:14.5px;line-height:1.75;color:#D8C89C;margin-top:10px;max-width:320px;text-wrap:pretty">{{ cardMove }}</div>
+        <div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:14px;max-width:300px;text-wrap:pretty">{{ cardLesson }}</div>
+        <button onClick="{{ cardNext }}" style="margin-top:26px;padding:12px 34px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:14px;color:#FFB000;animation:spBtnBreathe 3.6s ease-in-out infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">{{ cardNextLabel }}</button>
+      </div>
+      </sc-if>
+      <sc-if value="{{ sevenOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:420px;text-align:center;animation:spFadeUp .5s ease both">
+        <div style="display:flex;gap:7px">
+          <sc-for list="{{ sevenBacks }}" as="c" hint-placeholder-count="7">
+            <div style="{{ c }}">✦</div>
+          </sc-for>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.25;color:#F2EAD6;margin-top:10px">the sky lends you seven more.</div>
+        <div style="font-size:13.5px;line-height:1.8;color:#D8C89C;max-width:340px;text-wrap:pretty">twelve cards walk with you: your five, awake, and seven asleep at level one, numbers only. win a card's own night and it wakes.</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px;align-items:center">
+          <button onClick="{{ tutGo }}" style="padding:13px 34px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:14px;color:#FFB000;animation:spBtnBreathe 3.6s ease-in-out infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">learn the game ✦</button>
+          <button onClick="{{ skipGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;padding:4px">straight to the sky ›</button>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ accountOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px;animation:spFadeUp .5s ease both">
+        <div style="text-align:center">
+          <div style="display:flex;justify-content:center;gap:9px;margin-bottom:18px">
+            <sc-for list="{{ fiveCards }}" as="c" hint-placeholder-count="5">
+              <div style="{{ c.style }}"><div style="font-size:15px;color:#F0D89A">{{ c.glyph }}</div><div style="font-size:9px;color:#9A8A5E;margin-top:5px;line-height:1.25">{{ c.name }}</div></div>
+            </sc-for>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.25;color:#F2EAD6">these five are yours.</div>
+          <div style="font-size:13.5px;color:#D8C89C;margin-top:6px">name yourself and they are kept.</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">username</div>
+          <input value="{{ userVal }}" onChange="{{ setUser }}" placeholder="lowercase letters, numbers, _" style="{{ inputStyle }}">
+          <div style="font-size:11px;line-height:1.65;color:#9A8A5E;padding-top:9px;text-wrap:pretty">lowercase letters, numbers and underscores. other players will see this, so pick a name and not your name.</div>
+        </div>
+        <div style="{{ rowTwoStyle }}">
+          <div style="flex:1.3;min-width:190px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">email</div>
+            <input value="{{ emailVal }}" onChange="{{ setEmail }}" placeholder="you@somewhere.com" type="email" style="{{ inputStyle }}">
+          </div>
+          <div style="flex:1;min-width:150px">
+            <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">password</div>
+            <input value="{{ passVal }}" onChange="{{ setPass }}" type="password" placeholder="········" style="{{ inputStyle }}">
+            <div style="font-size:11px;color:#9A8A5E;padding-top:9px">eight characters at least.</div>
+          </div>
+        </div>
+        <sc-if value="{{ acctErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#FFB000;text-align:center">{{ acctErr }}</div></sc-if>
+        <button onClick="{{ keepTap }}" style="{{ keepStyle }}" style-hover="{{ btnHover }}">{{ keepLabel }}</button>
+      </div>
+      </sc-if>
+      <sc-if value="{{ signinOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:26px;animation:spFadeUp .5s ease both;max-width:400px">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6">welcome back.</div>
+          <div style="font-size:12.5px;color:#9A8A5E;margin-top:6px">the sky is waiting.</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">username</div>
+          <input value="{{ idVal }}" onChange="{{ setId }}" style="{{ inputStyle }}">
+        </div>
+        <div>
+          <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">password</div>
+          <input value="{{ sPassVal }}" onChange="{{ setSPass }}" type="password" placeholder="········" style="{{ inputStyle }}">
+          <div style="padding-top:9px"><a href="#" style="font-size:11px;color:#9A8A5E">lost it? we'll send a road back in</a></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+          <sc-if value="{{ signinErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#FFB000">{{ signinErr }}</div></sc-if>
+          <button onClick="{{ signinTap }}" style="{{ signinStyle }}" style-hover="{{ btnHover }}">{{ signinLabel }}</button>
+          <button onClick="{{ castGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;text-align:center;padding:0">new here? <span style="color:#FFB000">find your five</span></button>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ doneOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:380px;text-align:center;animation:spFadeUp .5s ease both">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1.2;color:#F2EAD6">kept.</div>
+          <div style="font-size:13.5px;line-height:1.75;color:#D8C89C;max-width:320px;text-wrap:pretty">{{ doneLine }}</div>
+          <button onClick="{{ enterTap }}" style="margin-top:10px;padding:13px 34px;background:none;border:1px solid rgba(255,176,0,.55);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:14px;color:#FFB000;box-shadow:0 0 22px rgba(255,176,0,.18)">sit at the table ✦</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:800},&quot;startPhase&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;intro&quot;,&quot;options&quot;:[&quot;intro&quot;,&quot;cast&quot;,&quot;cards&quot;,&quot;account&quot;,&quot;seven&quot;,&quot;signin&quot;,&quot;young&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;preview&quot;}}">
+class Component extends DCLogic {
+  state = { day: "", mon: "", yr: "", time: "", noTime: false, place: "", email: "", user: "", pass: "", sid: "", spass: "", phase: null, busy: false, castErr: "", acctErr: "", signinErr: "" };
+  async componentDidMount() {
+    this._rs = () => this.forceUpdate();
+    window.addEventListener("resize", this._rs);
+    // A refresh must not present a fresh empty cast form to someone who
+    // already failed the age gate (§1 step 2's "reasonable-effort
+    // standard" — the whole point is not inviting a retry-loop).
+    let ageFail = false;
+    try { ageFail = !!localStorage.getItem("starshard-age-fail"); } catch (e) {}
+    if (ageFail && !this.state.phase) this.setState({ phase: "young" });
+    this.api = await import("./api.js");
+  }
+  componentWillUnmount() { window.removeEventListener("resize", this._rs); if (this._ct) clearTimeout(this._ct); }
+  // The real _castFive, ported from Manzil's own (Star Shard v3 Build
+  // Plan/Manzil - The Empty District.dc.html) — duplicated rather than
+  // shared, matching how manzil-engine.js is already a synced copy: the
+  // dc-runtime evaluates each page's script block independently, no
+  // cross-page ESM import is possible here.
+  _castFive(dt) {
+    const P = window.ManzilEphem, p = P.planets(dt);
+    const rows = ["sun", "moon", "mercury", "venus", "mars"].map(n => ({ p: n, m: P.idOf(p[n]) }));
+    const five = []; rows.forEach(r => { if (!five.includes(r.m)) five.push(r.m); });
+    const fill = [];
+    ["jupiter", "saturn"].forEach(n => { const id = P.idOf(p[n]); if (five.length < 5 && !five.includes(id)) { five.push(id); fill.push({ p: n, m: id }); } });
+    let step = 1; while (five.length < 5) { const id = ((five[five.length - 1] + step - 1) % 28) + 1; if (!five.includes(id)) { five.push(id); fill.push({ p: "the road", m: id }); } step++; }
+    return { rows, five, fill };
+  }
+  _buildPack(five) {
+    const pool = []; for (let i = 1; i <= 28; i++) if (!five.includes(i)) pool.push(i);
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+    return five.concat(pool.slice(0, 7));
+  }
+  // Base L/R numbers + names, ported from Manzil's own _cards() pool
+  // array with its re-baseline rule already applied (22 Aug 2026: every
+  // card carries what used to be its L3 numbers from night one — the
+  // lower side gets +1, or the left side on a tie). Move text ported
+  // from _simpleMove(). This is a small, deliberately-duplicated subset
+  // (name/numbers/one line) — Manzil's own full leveling/signature
+  // system doesn't apply before an account even exists.
+  _CARD_DATA = [
+    ["The Gate", 6, 6, "if the other side gets to go first, the gate jumps in and takes the very first turn instead. once a board."],
+    ["The Bearer", 6, 5, "both cards standing next to the bearer fight +1 while it stands."],
+    ["The Gathered Stars", 7, 7, "counts as two cards at the final count, wherever it stands."],
+    ["The Follower", 8, 7, "its left number becomes a copy of whatever number faces it from the left."],
+    ["The Blaze", 6, 6, "the space it lands on stays yours to the end of the board, even if the card itself gets taken."],
+    ["The Storm", 8, 6, "on its own mansion, a tie can't take the storm. equal numbers just bounce off: beat it or leave it."],
+    ["The Return", 7, 7, "the first time it gets taken, it comes back to your hand instead. once a board."],
+    ["The Ghost", 7, 6, "their cards next to it fight -1 while the road is less than half full."],
+    ["The Glance", 5, 6, "when you play the glance, the next card they play fights -1."],
+    ["The Throne", 7, 9, "it has two faces: when you play it, you pick which number points which way."],
+    ["The Mane", 6, 6, "both its numbers get +1 while it stands between two cards."],
+    ["The Turning", 7, 6, "when it lands, it spins a neighbor enemy card around: strong number facing away from you."],
+    ["The Hand", 7, 5, "once a board, you can pick it up and set it down somewhere else."],
+    ["The Jewel", 8, 7, "nothing can lower its numbers. ever."],
+    ["The Veil", 8, 3, "it can't be taken on the turn it lands: their answer comes one turn late."],
+    ["The Claws", 7, 6, "whatever takes the claws fights -1 for the rest of the board."],
+    ["The Crown", 7, 6, "on the first or last space of the road, it counts as two at the count."],
+    ["The Heart", 8, 7, "while the heart stands, nothing can lower any of your cards' numbers."],
+    ["The Root", 7, 7, "if it's the first card you play on a board, it fights +1 all board long."],
+    ["The Flock", 7, 6, "when the flock takes a card, your cards next to it fight +1 for the rest of the board."],
+    ["The Empty District", 3, 8, "counts as two at the count while none of your cards touch it. it likes standing alone."],
+    ["The Listener", 7, 5, "when they play a card right next to it, the listener strikes first."],
+    ["The Drum", 5, 7, "when the drum takes a card, that card attacks its next neighbor too. dominoes."],
+    ["The Void", 9, 3, "it can't be taken while only its attacker stands beside it."],
+    ["The Hideaway", 6, 6, "it shuts the loudest mansion next to it: that space counts for nobody at the end."],
+    ["The Chamber", 7, 6, "your cards landing next to it are safe on their first turn."],
+    ["The Guide", 6, 6, "once a board, tap the guide then another of your cards: the two swap places."],
+    ["The Thread", 6, 6, "the first and last mansions of the road count for whoever holds the thread."],
+  ];
+  _PLANET_GLYPH = { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄", "the road": "✦" };
+  _arc(r, a0, a1) {
+    const p = (a) => { const t = (a - 90) * Math.PI / 180; return (60 + r * Math.cos(t)).toFixed(2) + " " + (60 + r * Math.sin(t)).toFixed(2); };
+    return "M " + p(a0) + " A " + r + " " + r + " 0 " + (a1 - a0 > 180 ? 1 : 0) + " 1 " + p(a1);
+  }
+  _MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+  _parse() {
+    const s = this.state, d = parseInt(s.day, 10), y = parseInt(s.yr, 10);
+    const q = s.mon.trim().toLowerCase();
+    let mi = -1;
+    if (q.length >= 1) { const hits = this._MO.map((m, i) => [m, i]).filter(x => x[0].indexOf(q) === 0); if (hits.length === 1) mi = hits[0][1]; else if (q.length >= 3 && hits.length > 1) mi = hits[0][1]; }
+    if (/^\d{1,2}$/.test(q)) { const n = parseInt(q, 10); if (n >= 1 && n <= 12) mi = n - 1; }
+    const dOk = d >= 1 && mi >= 0 && y >= 1891 && y <= 2026 && d <= new Date(y, mi + 1, 0).getDate();
+    return { d, mi, y, ok: !!dOk };
+  }
+  _age(p) {
+    const n = new Date();
+    let a = n.getUTCFullYear() - p.y;
+    if (n.getUTCMonth() < p.mi || (n.getUTCMonth() === p.mi && n.getUTCDate() < p.d)) a--;
+    return a;
+  }
+  renderVals() {
+    const st = this.state, desk = window.innerWidth >= 900, ph = st.phase || this.props.startPhase || "intro";
+    const P = this._parse(), dateDone = P.ok;
+    const LESSONS = [
+      "cards fight with numbers. the bigger side claims the smaller.",
+      "your five are awake at level two. their moves are live from the first deal.",
+      "every mansion is a level. its card is the prize at the top.",
+      "on its own mansion night, a card counts two. that ground is its dominion.",
+      "the board is nine stations. hold the most when it fills and the night is yours.",
+    ];
+    const litSet = st.cast ? st.cast.five.map(id => id - 1) : [];
+    const pt = (r, a) => { const t = (a - 90) * Math.PI / 180; return [60 + r * Math.cos(t), 60 + r * Math.sin(t)]; };
+    const ringTicks = [];
+    for (let i = 0; i < 112; i++) {
+      const step = 360 / 112, a0 = i * step + 1, a1 = (i + 1) * step - 1;
+      const mid = ((i + .5) * step + 180) % 360 - 180;
+      const amber = litSet.indexOf(Math.floor(i / 4)) >= 0;
+      const lit = mid > -72 && mid < 116;
+      ringTicks.push({ d: this._arc(46, a0, a1), c: amber ? "#FFB000" : "rgba(240,216,154," + (lit ? ".85" : ".18") + ")", w: lit || amber ? 3.6 : 2.6 });
+    }
+    const ringDots = [
+      { a: -8, r: 53, sz: 4.6, f: "#F0D89A", s: "none", sw: 0 },
+      { a: 38, r: 52, sz: 4.2, f: "#FFB000", s: "none", sw: 0 },
+      { a: 262, r: 53, sz: 3.2, f: "#F0D89A", s: "none", sw: 0 },
+      { a: 215, r: 52, sz: 3.6, f: "none", s: "rgba(240,216,154,.65)", sw: 1.2 },
+    ].map(q => { const p = pt(q.r, q.a); return { cx: p[0].toFixed(1), cy: p[1].toFixed(1), r: q.sz, f: q.f, s: q.s, sw: q.sw }; });
+    const ringLines = [55, 128, 305].map(a => { const p1 = pt(39, a), p2 = pt(50, a); return { x1: p1[0].toFixed(1), y1: p1[1].toFixed(1), x2: p2[0].toFixed(1), y2: p2[1].toFixed(1) }; });
+    const tq = st.time.trim().toLowerCase();
+    const tm = tq.match(/^(\d{1,2}):(\d{2})\s*(am|pm)?$/);
+    const timeValid = !!(tm && parseInt(tm[1], 10) >= (tm[3] ? 1 : 0) && parseInt(tm[1], 10) <= (tm[3] ? 12 : 23) && parseInt(tm[2], 10) <= 59);
+    const timeOk = st.noTime || timeValid;
+    const placeOk = st.place.trim().length >= 2;
+    const emailOk = st.email.indexOf("@") > 0 && st.email.indexOf(".") > 1;
+    const userOk = /^[a-z0-9_]{3,20}$/.test(st.user);
+    const passOk = st.pass.length >= 8;
+    const keepArmed = emailOk && userOk && passOk;
+    const inputStyle = "width:100%;box-sizing:border-box;background:none;border:none;border-bottom:1px solid rgba(240,216,154,.3);color:#F2EAD6;font-size:17px;padding:7px 2px 9px;transition:border-color .3s ease";
+    const big = (ok, filled) => "width:100%;box-sizing:border-box;background:none;border:none;border-bottom:1.5px solid " + (filled ? (ok ? "rgba(240,216,154,.6)" : "rgba(196,92,44,.6)") : "rgba(240,216,154,.3)") + ";color:#F2EAD6;font-size:24px;font-family:'Cormorant Garamond',serif;font-weight:600;padding:4px 2px 8px;transition:border-color .3s ease";
+    const bind = (k) => (e) => this.setState({ [k]: e.target.value });
+    const btn = (armed) => "align-self:center;padding:14px 40px;background:" + (armed ? "rgba(255,176,0,.08)" : "none") + ";border:1px solid " + (armed ? "rgba(255,176,0,.6)" : "rgba(240,216,154,.22)") + ";border-radius:8px;cursor:" + (armed ? "pointer" : "default") + ";font-family:'Varela Round',sans-serif;font-size:15px;color:" + (armed ? "#FFB000" : "#9A8A5E") + ";transition:all .4s ease" + (armed ? ";animation:spBtnBreathe 3.6s ease-in-out infinite" : "");
+    return {
+      ...((() => {
+        const L = "position:absolute;inset:0;pointer-events:none;transition:opacity 1.8s ease;opacity:";
+        const vi = ph === "intro" ? 1 : 0, vc = (ph === "cast" || ph === "casting" || ph === "young") ? 1 : 0, vs = ph === "signin" ? 1 : 0, vk = (ph === "account" || ph === "done") ? 1 : 0;
+        const cap = ph === "intro" ? "the pleiades · the seven sisters" : ph === "signin" ? "halley's comet · it always comes back" : (ph === "cast" || ph === "casting") ? "the orion nebula · where stars are born" : (ph === "account" || ph === "done") ? "saturn · the keeper of rings" : "";
+        return {
+          vIntroStyle: L + vi, vCastStyle: L + vc, vSignStyle: L + vs, vKeepStyle: L + vk,
+          vistaCap: cap,
+          vistaCapStyle: "position:absolute;left:0;right:0;bottom:18px;text-align:center;pointer-events:none;font-size:10.5px;color:rgba(154,138,94,.75);transition:opacity 1.8s ease;opacity:" + (cap ? 1 : 0),
+        };
+      })()),
+      introOn: ph === "intro", shellOn: ph !== "intro",
+      introGo: () => this.setState({ phase: "cast" }),
+      ringTicks, ringDots, ringLines,
+      shellStyle: desk
+        ? "position:relative;display:flex;align-items:center;gap:70px;width:min(1020px, calc(100vw - 80px));padding:50px 0"
+        : "position:relative;display:flex;flex-direction:column;align-items:center;gap:34px;width:min(560px, calc(100vw - 48px));padding:54px 0 60px",
+      heroStyle: desk
+        ? "flex:0 0 340px;display:flex;flex-direction:column;align-items:center;text-align:center"
+        : "display:flex;flex-direction:column;align-items:center;text-align:center",
+      heroFootOn: desk,
+      ringSvgStyle: "display:block;width:" + (desk ? 190 : 108) + "px;height:" + (desk ? 190 : 108) + "px",
+      titleSize: desk ? 46 : 34,
+      heroLine: ph === "account" || ph === "done" ? "the sky wrote your five the minute you arrived. here they are." : "your star shard: five cards the sky wrote the minute you were born.",
+      formStyle: desk ? "flex:1;min-width:0" : "width:100%",
+      rowTwoStyle: "display:flex;gap:26px;flex-wrap:wrap",
+      castOn: ph === "cast", castingOn: ph === "casting", youngOn: ph === "young", accountOn: ph === "account", doneOn: ph === "done", signinOn: ph === "signin",
+      cardsOn: ph === "cards", sevenOn: ph === "seven",
+      ...((() => {
+        const cast = st.cast, ci = st.cardStep || 0;
+        const five = cast ? cast.five : [];
+        const mid = five[Math.min(ci, Math.max(0, five.length - 1))] || null;
+        const data = mid ? this._CARD_DATA[mid - 1] : null;
+        const row = cast ? cast.rows.find(r => r.m === mid) : null;
+        const fillEntry = cast && !row ? cast.fill.find(f => f.m === mid) : null;
+        const glyph = row ? (this._PLANET_GLYPH[row.p] || "✦") : (fillEntry ? (this._PLANET_GLYPH[fillEntry.p] || "✦") : "✦");
+        const source = row ? "your " + row.p + " stands here" : fillEntry ? (fillEntry.p === "the road" ? "the road's gift" : "your " + fillEntry.p + " stands here") : "";
+        return {
+          cardDots: five.map((_, i) => "width:7px;height:7px;border-radius:50%;transition:background .4s ease;background:" + (i <= ci ? "#FFB000" : "rgba(240,216,154,.2)")),
+          cardGlyph: glyph, cardName: data ? data[0].toLowerCase() : "", cardSource: source,
+          cardMove: data ? data[3] : "", cardLesson: LESSONS[Math.min(ci, 4)], cardL: data ? data[1] : "", cardR: data ? data[2] : "",
+          cardNextLabel: ci < 4 ? "next ›" : "keep them ›",
+          cardNext: () => ci < 4 ? this.setState({ cardStep: ci + 1 }) : this.setState({ phase: "account" }),
+          sevenBacks: [0, 1, 2, 3, 4, 5, 6].map(i => "width:44px;height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(240,216,154,.5);background:linear-gradient(160deg,#1A140A,#0A0603);border:1px solid rgba(240,216,154,.22);box-shadow:0 6px 16px rgba(0,0,0,.5);animation:spCardIn .5s ease " + (i * 90) + "ms both, spFloat " + (4 + i * .4) + "s ease-in-out " + (700 + i * 90) + "ms infinite alternate"),
+          // Sibling directories under the same deployed root (/account/,
+          // /manzil/) — the hash is Design's own handoff mechanism,
+          // already built into Manzil's _deckState() entry-routing.
+          tutGo: () => { window.location.href = "./manzil/#tutorial"; },
+          skipGo: () => { window.location.href = "./manzil/#legend"; },
+        };
+      })()),
+      signinGo: () => this.setState({ phase: "signin" }),
+      castGo: () => this.setState({ phase: "cast" }),
+      idVal: st.sid, setId: bind("sid"),
+      sPassVal: st.spass, setSPass: bind("spass"),
+      signinLabel: st.busy ? "…" : (st.sid.trim().length >= 3 && st.spass.length >= 8) ? "back to the table ✦" : "back to the table",
+      signinStyle: btn(st.sid.trim().length >= 3 && st.spass.length >= 8 && !st.busy),
+      signinErrOn: !!st.signinErr, signinErr: st.signinErr,
+      signinTap: () => {
+        if (!(st.sid.trim().length >= 3 && st.spass.length >= 8) || st.busy) return;
+        this.setState({ busy: true, signinErr: "" });
+        const username = st.sid.trim().toLowerCase();
+        this.api.loginWithUsername(username, st.spass).then(async (res) => {
+          const pack = await this.api.getManzilPack();
+          try {
+            if (pack) {
+              localStorage.setItem("manzil-ed-pack", JSON.stringify(pack.pack));
+              // _chartFive() reads manzil-ed-birth.five, not the pack key
+              // directly — a bare login has no raw birth date to offer, so
+              // this carries just enough for Manzil's own chart-owned-card
+              // logic to resolve correctly. rows/fill/date/time/place stay
+              // null; Manzil's own fallbacks handle that gracefully.
+              localStorage.setItem("manzil-ed-birth", JSON.stringify({ five: pack.five, date: null, time: null, place: null, rows: null, fill: null }));
+            }
+            localStorage.setItem("manzil-ed-user", res.username || username);
+          } catch (e) {}
+          this.setState({ busy: false, phase: "done" });
+        }).catch(e => {
+          this.setState({ busy: false, signinErr: this.api.loginError(e.code) });
+        });
+      },
+      dayVal: st.day, setDay: bind("day"), dayStyle: big(P.d >= 1 && P.d <= 31, st.day.length > 0),
+      monVal: st.mon, setMon: bind("mon"), monStyle: big(P.mi >= 0, st.mon.trim().length > 0),
+      yrVal: st.yr, setYr: bind("yr"), yrStyle: big(P.y >= 1891 && P.y <= 2026, st.yr.length === 4),
+      timeVal: st.time, setTime: bind("time"), timeOff: st.noTime,
+      timeInputStyle: inputStyle + (st.noTime ? ";opacity:.35" : (tq.length > 0 && !timeValid ? ";border-bottom-color:rgba(196,92,44,.6)" : "")),
+      timeBadOn: !st.noTime && tq.length > 2 && !timeValid,
+      toggleNoTime: () => this.setState(s => ({ noTime: !s.noTime, time: s.noTime ? s.time : "" })),
+      noTimeMark: st.noTime ? "☑" : "☐", noTimeC: st.noTime ? "#F0D89A" : "#9A8A5E",
+      placeVal: st.place, setPlace: bind("place"),
+      emailVal: st.email, setEmail: bind("email"),
+      userVal: st.user, setUser: bind("user"),
+      passVal: st.pass, setPass: bind("pass"),
+      inputStyle,
+      castErrOn: !!st.castErr, castErr: st.castErr,
+      castLabel: dateDone && timeOk && placeOk ? "find my five ✦" : "find my five",
+      castStyle: btn(dateDone && timeOk && placeOk),
+      castTap: () => {
+        if (!(dateDone && timeOk && placeOk) || st.busy) return;
+        this.setState({ phase: "casting", busy: true, castErr: "" });
+        const dt = new Date(P.y, P.mi, P.d);
+        const timeKnown = !st.noTime && timeValid;
+        if (timeKnown) {
+          let h = parseInt(tm[1], 10); const mm = parseInt(tm[2], 10); const ap = tm[3];
+          if (ap === "pm" && h < 12) h += 12; if (ap === "am" && h === 12) h = 0;
+          dt.setHours(h, mm, 0, 0);
+        } else dt.setHours(12, 0, 0, 0);
+        const birthDate = P.y + "-" + String(P.mi + 1).padStart(2, "0") + "-" + String(P.d).padStart(2, "0");
+        // A short minimum pacing alongside the real round-trip, so "reading
+        // the sky" reads as a beat rather than a network-speed flicker.
+        Promise.all([this.api.ageCheck(birthDate), new Promise(r => setTimeout(r, 900))]).then(([{ ok }]) => {
+          if (!ok) {
+            try { localStorage.setItem("starshard-age-fail", "1"); } catch (e) {}
+            this.setState({ phase: "young", busy: false });
+            return;
+          }
+          const cast = this._castFive(dt);
+          const pack = this._buildPack(cast.five);
+          this.setState({
+            phase: "cards", cardStep: 0, busy: false,
+            cast: {
+              ...cast, pack, birthDate,
+              birthTime: timeKnown ? String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0") : null,
+              birthTimeKnown: timeKnown, place: st.place.trim(),
+            },
+          });
+        }).catch(e => {
+          this.setState({ phase: "cast", busy: false, castErr: this.api.signupError(e.code) });
+        });
+      },
+      fiveCards: (st.cast ? st.cast.five : []).map((id, i) => {
+        const row = st.cast.rows.find(r => r.m === id);
+        return {
+          glyph: row ? (this._PLANET_GLYPH[row.p] || "✦") : "✦",
+          name: (this._CARD_DATA[id - 1] || ["?"])[0].toLowerCase(),
+          style: "width:56px;padding:10px 4px 8px;border-radius:7px;text-align:center;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.4);box-shadow:0 6px 18px rgba(0,0,0,.5);animation:spCardIn .6s ease " + (i * 130) + "ms both, spFloat " + (4.2 + i * .5) + "s ease-in-out " + (900 + i * 130) + "ms infinite alternate",
+        };
+      }),
+      btnHover: "transform:translateY(-2px)",
+      acctErrOn: !!st.acctErr, acctErr: st.acctErr,
+      keepLabel: st.busy ? "…" : (keepArmed ? "face the sky ✦" : "face the sky"),
+      keepStyle: btn(keepArmed && !st.busy),
+      keepTap: () => {
+        if (!keepArmed || st.busy || !st.cast) return;
+        this.setState({ busy: true, acctErr: "" });
+        const c = st.cast, username = st.user.trim().toLowerCase();
+        this.api.signup(st.email, st.pass, { username, birthDate: c.birthDate, five: c.five, pack: c.pack }).then(res => {
+          try {
+            localStorage.setItem("manzil-ed-pack", JSON.stringify(c.pack));
+            localStorage.setItem("manzil-ed-birth", JSON.stringify({ date: c.birthDate, time: c.birthTimeKnown ? c.birthTime : null, place: c.place || null, five: c.five, rows: c.rows, fill: c.fill }));
+            localStorage.setItem("manzil-ed-user", username);
+          } catch (e) {}
+          this.setState({ busy: false, phase: "seven" });
+        }).catch(e => {
+          this.setState({ busy: false, acctErr: this.api.signupError(e.code) });
+        });
+      },
+      doneLine: "your five ride with " + (st.user || "you") + " now. the table is waiting.",
+      enterTap: () => { window.location.href = "./manzil/"; },
+    };
+  }
+}
+</script>
+</body>
+</html>

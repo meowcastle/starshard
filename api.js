@@ -2,15 +2,17 @@
 //
 // OWNER: Claude Code. Do not edit from Claude Design.
 //
-// PRIVACY (revised 24 Aug 2026 — Justin's call): the chart is still always
-// computed in the browser by astro.js, and a visitor who never creates an
-// account still sends nothing birth-related anywhere — that part of the old
-// "never sent" claim is unchanged. But Manzil now requires a real account to
-// play at all, and creating ANY account (from Manzil or Star Shard) sends
-// birth date/time/place to the backend and stores it there (see signup()'s
-// extra fields and getBirth()/saveBirth() below) — cross-app continuity and
-// Manzil's gate both depend on it. Don't restate the old "never sent, ever"
-// claim without checking this comment first.
+// PRIVACY (revised 24 Aug PM 2026 — Justin's call, two tiers now): the chart
+// is still always computed in the browser by astro.js, and a visitor who
+// never creates an account still sends nothing birth-related anywhere —
+// that part of the old "never sent" claim is unchanged. Manzil requires a
+// real account to play, but signup() sends only five integers (the
+// chart-owned mansions) and a birth year for age re-derivation — never the
+// full birth date/time/place. Full birth data only reaches the backend via
+// getBirth()/saveBirth() below, and only when an account explicitly opts
+// into a Star Shard reading. Don't restate the old "never sent, ever" claim,
+// and don't assume signup() sends full birth data either — check this
+// comment first.
 
 export const API_BASE = typeof location !== 'undefined' ? `https://api.${location.hostname}` : '';
 
@@ -61,16 +63,37 @@ export async function me() {
   try { return await call('/api/me'); } catch (e) { return null; }
 }
 
-/** extra carries the account-required fields Manzil's gate needs:
- * { username, birthDate, birthTime, birthTimeKnown, placeName, lat, lon, tz }.
- * Only username + birthDate are required server-side; the rest are optional
- * (Manzil's own birth screen has no geocoding — see getBirth/saveBirth). */
+/** extra carries { username, birthDate, five, pack } — birthDate is
+ * re-validated server-side for the age gate but, per the two-tier privacy
+ * model, only its YEAR is stored (manzil_pack.birth_year); five/pack (the
+ * chart-owned mansions + starting deck) are what's actually persisted for
+ * Manzil. Call ageCheck() first — a client that skips straight to signup()
+ * with an under-16 birthDate still gets rejected (too_young), just later
+ * and with a worse UX, since the server never trusts the client to have
+ * called ageCheck() at all. */
 export async function signup(email, password, extra = {}) {
   return call('/api/auth/signup', { method: 'POST', body: { email, password, ...extra } });
 }
 
 export async function login(email, password) {
   return call('/api/auth/login', { method: 'POST', body: { email, password } });
+}
+
+/** Manzil's sign-in collects a username, not an email — the server's
+ * /api/auth/login accepts either, this just sends the right field. */
+export async function loginWithUsername(username, password) {
+  return call('/api/auth/login', { method: 'POST', body: { username, password } });
+}
+
+/** Resolves to { ok: boolean }. Nothing is persisted either way — this is
+ * the reasonable-effort age gate the Manzil cast screen calls right after
+ * "cast your five" and before ever showing account fields, so someone who
+ * fails it never reaches a signup screen. Not itself a security boundary;
+ * signup() re-checks server-side regardless. Throws on a malformed date
+ * (invalid_birth_date) — callers should already have validated the date
+ * client-side before this ever fires. */
+export async function ageCheck(birthDate) {
+  return call('/api/auth/age-check', { method: 'POST', body: { birthDate } });
 }
 
 // --- birth data (server-side, per account) ----------------------------------
@@ -91,6 +114,19 @@ export async function getBirth() {
  * Manzil-only row with Star Shard's fuller geocoded place/lat/lon/tz. */
 export async function saveBirth(fields) {
   try { await call('/api/me/birth', { method: 'PUT', body: fields }); } catch (e) {}
+}
+
+// --- manzil pack (five/pack, per account) -----------------------------------
+// The read-back path for a login on a fresh browser — Manzil's own
+// signup already computes five/pack client-side, so this only matters
+// afterward (a second device, or Manzil itself defensively on mount).
+
+/** Resolves to { five, pack } or null. Never throws. */
+export async function getManzilPack() {
+  try {
+    const j = await call('/api/me/manzil-pack');
+    return j && typeof j.pack === 'object' ? j.pack : null;
+  } catch (e) { return null; }
 }
 
 /** Never throws — logging out locally must always succeed. */
@@ -219,6 +255,10 @@ const AUTH_COPY = {
   username_taken: 'that name\'s taken, try another ♡',
   invalid_username: 'usernames are 3-20 letters, numbers or underscores ♡',
   invalid_birth_date: 'that birth date doesn\'t look right ♡',
+  // Manzil shows its own bespoke §8 copy for this inline rather than routing
+  // through signupError() — kept here anyway for whatever else calls
+  // signupError() with this code (logging, a future non-Manzil surface).
+  too_young: 'the moon keeps her houses for you. come back when you are sixteen.',
   too_many_requests: 'too many tries, please wait a bit and try again ♡',
   unreachable: 'the shard server is unreachable, try again ♡',
   invalid_or_expired_token: 'that reset link is invalid or expired, request a new one ♡',
