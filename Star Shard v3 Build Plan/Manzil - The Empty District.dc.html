@@ -3246,7 +3246,12 @@ class Component extends DCLogic {
     const lastRound = st.roundWins[st.roundWins.length - 1];
     const nextLeader = st.leader === "you" ? "sky" : "you";
     return {
-      frameScaleStyle: "transform:scale(" + Math.min(1, (window.innerWidth - 20) / 932, (window.innerHeight - 20) / 430).toFixed(3) + ");transform-origin:center center",
+      // No ceiling on the scale-up side: on any viewport wider than 932px
+      // (desktop) this fills the screen instead of centering the game at
+      // native size with black bars around it. Mobile is unaffected —
+      // its viewport is already narrower than 932px, so that ratio stays
+      // the binding (shrink-to-fit) constraint either way.
+      frameScaleStyle: "transform:scale(" + Math.min((window.innerWidth - 20) / 932, (window.innerHeight - 20) / 430).toFixed(3) + ");transform-origin:center center",
       breatheStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 90% at 50% 18%, rgba(255,176,0,.09), transparent 70%);transition:opacity .9s ease;opacity:" + (skyThinking ? "1" : "0") + (skyThinking ? ";animation:mzBreathe 2.6s ease-in-out infinite" : ""),
       stars: [[4, 12, 2], [11, 78, 1.5], [18, 34, 1], [27, 8, 1.5], [38, 88, 1], [45, 6, 2], [55, 92, 1.5], [61, 10, 1], [70, 84, 1], [76, 26, 2], [83, 64, 1], [88, 14, 1.5], [93, 46, 1], [96, 80, 1.5], [33, 20, 1], [66, 30, 1], [7, 48, 1], [22, 60, 1.5], [50, 16, 1], [58, 72, 1], [80, 42, 1.5], [97, 22, 1], [14, 16, 1], [42, 30, 1.5]].map((p, i) => {
         const hue = i % 3 === 1 ? "170,190,255" : i % 4 === 3 ? "255,190,170" : "242,234,214";
