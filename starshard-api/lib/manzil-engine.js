@@ -37,12 +37,34 @@
 //            your own turn — player tempo the sim still doesn't model; unlisted above.
 //
 // deliberate deviations from the prototype, all of them player-side tempo the sim cannot use:
-//   the throne's turn-in-place (see above) is not modelled.
+//   the throne's turn-in-place (see above) is not modelled outside tapMode (below).
 //   her seeded tie-break (FNV over the date) is replaced by a deterministic hash over the move
 //   itself (id, slot, face), not hand order — see moveKey() — so runs are repeatable and a
 //   card's measured worth can't depend on where it sits in the hand.
 //   tempers are omitted: they are a tie-break filter above the same seed.
 // everything else is line-for-line the shipped behaviour. conformance vectors: see VECTORS below.
+//
+// L3/L4 grants + the tap (merged 25 Aug from research/ref-tap.js, a downstream port onto this
+// exact file by a parallel research pass — docs/handoffs/HANDOFF-L34-MERGE-25AUG.md and
+// HANDOFF-TAP-MEASURED-25AUG.md). Everything below is OPT-IN: mkGame's new fields default to
+// off/"both"-inert, so no existing caller's behavior changes unless it sets them.
+//   grantSides/l4/grantOnly gate the four quadrant grants (guard/lead/turn/return), each live
+//   only at lvl>=3. Measured: only the turn (Seiryuu) does anything (+7.1); guard/lead/return
+//   are inside the noise floor as passive properties. grantOf() is the read path either way.
+//   tapMode replaces the three passive grants (not the turn) with a tap: once a card, free,
+//   in-place, no lodge signature fires twice. Measured to clear the skill-gap target ONLY when
+//   both open-fairness questions below are answered honestly — as first built it was borrowing
+//   ~20 points from an ownership loophole and her agent's inability to reply in kind:
+//     tapOwnCardsOnly should be true — false lets a captured card be tapped, and "the black
+//       tortoise comes home" on a captured card is a one-tap theft engine (confirmed live bug).
+//     skyCanTap should track whatever her hand actually is — inert today only because walker
+//       hands are L1 vanilla; the moment hands wake or PvP deals real levels this is worth 12pts.
+//   playBoard's own return-routing carried the exact "always g.you" bug fixed in the client's
+//   _step/_resolve today (a fourth instance of the same trap) — fixed here too, see the `back`
+//   variable in playBoard. L4 is explicitly UNDESIGNED (uncondition tested and made things
+//   worse); do not wire an L4 mechanic off this file without re-reading the handoff first.
+//   Hand size (hers grows 5→8 by level, the player's never does) is flagged as the actual lever
+//   that reaches the skill-gap target — not shipped, not this file's call, "deserves its own round."
 
 const POOL = [
   ["the gate", 6, 5, "gate"], ["the bearer", 6, 4, "bearer"], ["the gathered stars", 7, 6, "gathered"],
@@ -63,6 +85,29 @@ const PLANETS = {
   104: { name: "mercury", l: 6, r: 5, ab: "mercury", homeM: 8 },
   105: { name: "jupiter", l: 7, r: 8, ab: "jupiter", homeM: 2 },
 };
+
+// ---- L3/L4: the Four Symbols. mansions-table.json's fy_god column; mansion 2 is blank
+// there and belongs to Byakko by position.
+// g.grantSides decides WHOSE cards carry a grant: "you" | "both" | "sky" | "none".
+// g.l4 === "uncondition" drops each grant's positional condition (see the handoff — tested, worse).
+const QUADRANT = {};
+[[ "byakko",  [1,2,3,4,5,6,28],        "guard"  ],
+ [ "suzaku",  [7,8,9,10,11,12,13],     "lead"   ],
+ [ "seiryuu", [14,15,16,17,18,19,20],  "turn"   ],
+ [ "genbu",   [21,22,23,24,25,26,27],  "return" ]
+].forEach(([nm, ids, grant]) => ids.forEach(id => QUADRANT[id] = { nm, grant }));
+function quadGrant(id) { const q = QUADRANT[id]; return q ? q.grant : null; }
+function canTurn(g, id) { const c = g.C[id]; return !!(c.twoFaced || grantOf(g, c) === "turn"); }
+function grantOf(g, c) {
+  if (!c || c.lvl < 3) return null;
+  if (c.id >= 101 && c.id <= 105) return null;          // planets have no quadrant
+  const sides = g && g.grantSides ? g.grantSides : "both";
+  if (sides === "none") return null;
+  if (sides !== "both" && c.who !== sides) return null; // whose hand carries grants
+  const gr = quadGrant(c.homeM != null ? c.homeM : c.id);
+  if (g && g.grantOnly && gr !== g.grantOnly) return null;   // isolate one quadrant
+  return gr;
+}
 
 // lvl: 1 = asleep (numbers only), 2+ = signature awake. numbers are re-baselined by default (22 aug 2026);
 // pass legacyBase:true to reproduce the old level-climbing numbers.
@@ -92,13 +137,15 @@ function mkGame(cfg) {
     you: (cfg.you || []).slice(), sky: (cfg.sky || []).slice(),
     turn: cfg.leader || "you", retUsed: false, glanceOn: false,
     depth: cfg.depth == null ? 8 : cfg.depth, tieRule: cfg.tieRule || "you",
-    jupiterMode: cfg.jupiterMode || "always", stats: { flips: 0, leads: 0 },
+    jupiterMode: cfg.jupiterMode || "always", grantSides: cfg.grantSides || "both", l4: cfg.l4 || null, grantOnly: cfg.grantOnly || null,
+    tapMode: !!cfg.tapMode, skyCanTap: !!cfg.skyCanTap, tapCostsTurn: !!cfg.tapCostsTurn, tapOwnCardsOnly: !!cfg.tapOwnCardsOnly, tapped: {}, taps: 0, stats: { flips: 0, leads: 0 },
     // the mane's single-player asymmetry (see slotW) must not carry into PvP, same reason
     // as tieRule above — whichever seat is locally labeled "you" would get a free advantage.
     maneFair: cfg.maneFair || false,
   };
-  // the gate lodges before her lead — either hand's gate seizes the lead, not just "you"'s
-  const hasGate = ids => ids.some(id => on(g, g.C[id]) && g.C[id].ab === "gate");
+  // the gate lodges before her lead — either hand's gate seizes the lead, not just "you"'s.
+  // suzaku's lead grant does the same thing, but only outside tapMode (it becomes a tap there).
+  const hasGate = ids => ids.some(id => (on(g, g.C[id]) && g.C[id].ab === "gate") || (!g.tapMode && grantOf(g, g.C[id]) === "lead"));
   if (g.turn === "sky" && hasGate(g.you)) g.turn = "you";
   else if (g.turn === "you" && hasGate(g.sky)) g.turn = "sky";
   return g;
@@ -145,11 +192,15 @@ function tryFlip(g, slots, ai, ti, dir) {
   const aC = g.C[a.id], tC = g.C[t.id];
   const av = faceOf(g, slots, ai, dir), tv = faceOf(g, slots, ti, -dir);
   const stormFace = tC.ab === "storm" && on(g, tC); // ties never take the storm, wherever it stands
-  const tie = av === tv && !stormFace;
+  const tGrant = grantOf(g, tC);
+  const guarded = !g.tapMode && tGrant === "guard" && (g.l4 === "uncondition" || isHome(g, t.id, ti) ||
+    [-1, 1].some(d => { const k = nb(g, ti, d); return k >= 0 && isHome(g, t.id, k); }));
+  const tie = av === tv && !stormFace && !guarded;
   if (!(av > tv || tie)) return false;
   if (tC.ab === "saturn") return false;
   if (safeNow(g, slots, ti)) return false;
   if (tC.ab === "return" && on(g, tC) && t.came === false && isHome(g, t.id, ti)) return "return";
+  if (!g.tapMode && tGrant === "return" && !g.retUsed && (g.l4 === "uncondition" || isHome(g, t.id, ti))) return "return";
   t.owner = a.owner;
   if (tC.ab === "claws" && on(g, tC)) slots[ai] = { ...slots[ai], clawed: true };
   if (aC.ab === "flock" && on(g, aC)) slots[ti] = { ...slots[ti], l: slots[ti].r, r: slots[ti].l };
@@ -167,6 +218,7 @@ function lodge(g, slotsIn, cardId, i, rev, side) {
   if (g.glanceOn && g.glanceOn !== own) slots[i].glanced = true;
   if (c.ab === "blaze" && on(g, c)) slots[i].ground = own;
   if (c.ab === "return" && on(g, c)) slots[i].came = g.retUsed ? true : false;
+  if (grantOf(g, c) === "return") slots[i].came = g.retUsed ? true : false;
   if (c.ab === "turning" && on(g, c)) {
     let best = -1, bv = 0;
     [-1, 1].forEach(d => { const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner === own) return;
@@ -202,15 +254,8 @@ function lodge(g, slotsIn, cardId, i, rev, side) {
   }
   return slots;
 }
-function resolve(g, slotsIn, cardId, i, rev, side) {
-  const own = side || g.C[cardId].who;
-  const slots = lodge(g, slotsIn, cardId, i, rev, side);
-  const queue = [], ret = [], seq = [];
-  for (const d of [-1, 1]) { // the listener strikes what lands beside it
-    const k = nb(g, i, d);
-    if (k >= 0 && slots[k] && slots[k].owner !== own && g.C[slots[k].id].ab === "listener" && on(g, g.C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
-  }
-  queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
+function runCascade(g, slots, queue) {
+  const ret = [], seq = [];
   let flips = 0, guard = 0;
   while (queue.length && guard++ < 60) {
     const { from, to, dir } = queue.shift();
@@ -233,8 +278,49 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
     }
     if (g.C[slots[from].id].ab === "mars") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir }); }
   }
-  return { slots, flips, ret, seq };
+  return { flips, ret, seq };
 }
+function resolve(g, slotsIn, cardId, i, rev, side) {
+  const own = side || g.C[cardId].who;
+  const slots = lodge(g, slotsIn, cardId, i, rev, side);
+  const queue = [];
+  for (const d of [-1, 1]) { // the listener strikes what lands beside it
+    const k = nb(g, i, d);
+    if (k >= 0 && slots[k] && slots[k].owner !== own && g.C[slots[k].id].ab === "listener" && on(g, g.C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
+  }
+  queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
+  const out = runCascade(g, slots, queue);
+  return { slots, flips: out.flips, ret: out.ret, seq: out.seq };
+}
+// ---- the tap: one move kind, three quarters. Design's 25 Aug build (HANDOFF-TAP-MEASURED-25AUG.md).
+// vermilion bird strikes again from where it stands; white tiger locks its ground;
+// black tortoise comes home to be lodged again. azure dragon has no tap, by design.
+function tapKind(g, slots, i, own) {
+  const s = slots[i];
+  if (!g.tapMode || !s || s.owner !== own) return null;
+  if (g.tapped && g.tapped[s.id]) return null;
+  if (g.tapOwnCardsOnly && g.C[s.id].who !== own) return null;   // only cards that started in your hand
+  const gr = grantOf(g, g.C[s.id]);
+  if (gr === "lead")   return "strike";
+  if (gr === "guard")  return "lock";
+  if (gr === "return") return "home";
+  return null;
+}
+function doTap(g, slotsIn, i, own) {
+  const kind = tapKind(g, slotsIn, i, own);
+  if (!kind) return null;
+  const slots = slotsIn.slice().map(x => x ? { ...x } : x);
+  const id = slots[i].id;
+  if (kind === "lock") { slots[i].ground = own; return { slots, flips: 0, ret: [], seq: [], kind, id }; }
+  if (kind === "home") { slots[i] = null; return { slots, flips: 0, ret: [id], seq: [], kind, id }; }
+  // strike: turn first if it has two faces, then strike both neighbours from where it stands.
+  // nothing is lodged, so no lodge signature fires a second time.
+  if (canTurn(g, id)) { const t = slots[i].l; slots[i].l = slots[i].r; slots[i].r = t; }
+  const queue = [{ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 }];
+  const out = runCascade(g, slots, queue);
+  return { slots, flips: out.flips, ret: out.ret, seq: out.seq, kind, id };
+}
+const tapSlots = (g, own) => g.slots.map((s, i) => tapKind(g, g.slots, i, own) ? i : -1).filter(i => i >= 0);
 function slotW(g, slots, i, ctx) {
   const s = slots[i]; if (!s) return { who: null, w: 0 };
   if (ctx && ctx.sil[i]) return { who: null, w: 0, silent: true };
@@ -296,7 +382,7 @@ const legalSlots = (g) => g.slots.map((s, i) => s ? -1 : i).filter(i => i >= 0);
 function bestYouReply(g, slots, hand) {
   let best = null;
   hand.forEach(id => {
-    (g.C[id].twoFaced ? [false, true] : [false]).forEach(rev => {
+    (canTurn(g, id) ? [false, true] : [false]).forEach(rev => {
       slots.forEach((s, i) => {
         if (s) return;
         const [y, k] = counts(g, resolve(g, slots, id, i, rev, "you").slots);
@@ -319,7 +405,7 @@ function moveKey(g, id, i, rev) {
 function skyMove(g) {
   let best = null;
   g.sky.forEach(id => {
-    const revs = (g.C[id].ab === "mercury" || g.C[id].twoFaced) ? [false, true] : [false];
+    const revs = (g.C[id].ab === "mercury" || canTurn(g, id)) ? [false, true] : [false];
     revs.forEach(rev => {
       legalSlots(g).forEach(i => {
         const r = resolve(g, g.slots, id, i, rev, "sky");
@@ -335,12 +421,24 @@ function skyMove(g) {
       });
     });
   });
+  if (g.skyCanTap) tapSlots(g, "sky").forEach(i => {
+    const r = doTap(g, g.slots, i, "sky"); if (!r) return;
+    const [y, k] = counts(g, r.slots);
+    let score = (k - y) * 10;
+    if (g.depth > 0) {
+      const reply = bestYouReply(g, r.slots, g.you);
+      if (reply !== null) score -= reply * g.depth;
+    }
+    const key = moveKey(g, r.id, i, true);
+    if (best === null || score > best.score || (score === best.score && key > best.key))
+      best = { id: r.id, i, rev: false, score, r, key, tap: r.kind };
+  });
   return best;
 }
 function youMove(g) { // the careful player: same shape, so skill is one dial
   let best = null;
   g.you.forEach(id => {
-    (g.C[id].twoFaced ? [false, true] : [false]).forEach(rev => {
+    (canTurn(g, id) ? [false, true] : [false]).forEach(rev => {
       legalSlots(g).forEach(i => {
         const r = resolve(g, g.slots, id, i, rev, "you");
         const [y, k] = counts(g, r.slots);
@@ -360,24 +458,57 @@ function youMove(g) { // the careful player: same shape, so skill is one dial
       });
     });
   });
+  tapSlots(g, "you").forEach(i => {
+    const r = doTap(g, g.slots, i, "you"); if (!r) return;
+    const [y, k] = counts(g, r.slots);
+    let score = (y - k) * 10;
+    if (g.youDepth > 0) {
+      let worst = null;
+      g.sky.forEach(sid => legalSlots({ ...g, slots: r.slots }).forEach(si => {
+        if (r.slots[si]) return;
+        const r2 = resolve({ ...g, slots: r.slots }, r.slots, sid, si, false, "sky");
+        const [y2, k2] = counts(g, r2.slots);
+        if (worst === null || k2 - y2 > worst) worst = k2 - y2;
+      }));
+      if (worst !== null) score -= worst * g.youDepth;
+    }
+    const key = moveKey(g, r.id, i, true);
+    if (best === null || score > best.score || (score === best.score && key > best.key))
+      best = { id: r.id, i, rev: false, score, r, key, tap: r.kind };
+  });
   return best;
 }
 function playBoard(cfg) {
   const g = mkGame(cfg);
   g.youDepth = cfg.youDepth == null ? 8 : cfg.youDepth;
   let flips = 0, guard = 0;
-  while (g.slots.some(s => !s) && (g.you.length || g.sky.length) && guard++ < 40) {
+  while (g.slots.some(s => !s) && (g.you.length || g.sky.length) && guard++ < 80) {
     const side = g.turn;
     const mv = side === "you" ? (g.you.length ? youMove(g) : null) : (g.sky.length ? skyMove(g) : null);
     if (!mv) { g.turn = side === "you" ? "sky" : "you"; continue; }
+    if (mv.tap) {                       // free, and it does not hand the board back
+      g.slots = mv.r.slots; flips += mv.r.flips;
+      g.tapped[mv.id] = true;
+      if (mv.tap === "home") g[side] = g[side].concat([mv.id]);   // comes home to its own hand
+      if (mv.r.ret.length) { const back = side === "you" ? "sky" : "you"; g[back] = g[back].concat(mv.r.ret); g.retUsed = true; }
+      g.taps++;
+      if (!g.tapCostsTurn) continue;     // free: same side moves again
+      g.turn = side === "you" ? "sky" : "you";
+      continue;
+    }
     g.slots = mv.r.slots; flips += mv.r.flips;
     if (side === "you") g.you = g.you.filter(x => x !== mv.id); else g.sky = g.sky.filter(x => x !== mv.id);
-    if (mv.r.ret.length) { g.you = g.you.concat(mv.r.ret); g.retUsed = true; }
+    if (mv.r.ret.length) {   // a returning card belongs to the side that did NOT move
+      const back = side === "you" ? "sky" : "you";
+      g[back] = g[back].concat(mv.r.ret); g.retUsed = true;
+    }
     g.glanceOn = (g.C[mv.id].ab === "glance" && on(g, g.C[mv.id])) ? side : false;
     g.turn = side === "you" ? "sky" : "you";
   }
   const [you, sky] = counts(g, g.slots);
-  return { winner: boardWinner(g, g.slots), you, sky, flips, slots: g.slots };
+  // handsYou/handsSky expose the final hand contents (not the board tally above) — added so a
+  // returning card's destination is testable at all; see the two "comes home" vectors below.
+  return { winner: boardWinner(g, g.slots), you, sky, flips, taps: g.taps, slots: g.slots, handsYou: g.you, handsSky: g.sky };
 }
 
 // the five dealt from the pack: seeded, tonight's mansion first when it is carried
@@ -484,6 +615,116 @@ const VECTORS = [
   ["the glance never dims its own caster", g => { g.glanceOn = "you"; const s = lodge(g, g.slots, 101, 4, false, "you"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 5],
   ["[sky] the gate takes the lead", g => mkGame({ C: g.C, you: [101], sky: [1], leader: "you" }).turn, "sky"],
 ];
+
+// tap vectors: L3/L4 grants + the tap (merged 25 Aug, research/tapvec.js, 18/18 originally).
+// self-contained — each builds its own lvl:3 game rather than reusing the shared vector harness's
+// lvl:2 default, since grants and the tap are both inert below level 3.
+function mkTap(seat, extra) {
+  const C = makeCards({ lvl: 3 });
+  for (let i = 1; i <= 28; i++) C[200 + i] = { ...C[i], id: 200 + i, who: "sky", homeM: i };
+  return mkGame(Object.assign({ C, tonight: 1, len: 9, tapMode: true, skyCanTap: true, grantSides: "both" }, extra));
+}
+[["you", 9, 221], ["sky", 209, 21]].forEach(([seat, mine, theirs]) => {
+  VECTORS.push([`[${seat}] vermilion bird taps and strikes onward`, () => {
+    const g = mkTap(seat);
+    g.slots = lodge(g, g.slots, mine, 3, false, seat);
+    g.slots = lodge(g, g.slots, theirs, 4, false, seat === "you" ? "sky" : "you");
+    const before = g.slots[4].owner;
+    const r = doTap(g, g.slots, 3, seat);
+    return r && r.slots[4].owner === seat && before !== seat;
+  }, true]);
+});
+[["you", 10], ["sky", 210]].forEach(([seat, mine]) => {
+  VECTORS.push([`[${seat}] the throne turns, then strikes`, () => {
+    const g = mkTap(seat);
+    const theirs = seat === "you" ? 221 : 21;
+    g.slots = lodge(g, g.slots, mine, 3, false, seat);
+    g.slots = lodge(g, g.slots, theirs, 4, false, seat === "you" ? "sky" : "you");
+    const r = doTap(g, g.slots, 3, seat);
+    return r && r.slots[3].l === 9 && r.slots[4].owner === seat;
+  }, true]);
+});
+VECTORS.push(["the forced turn can cost the throne its strike", () => {
+  const g = mkTap("you");
+  g.slots = lodge(g, g.slots, 10, 3, false, "you");
+  g.slots = lodge(g, g.slots, 224, 4, false, "sky");   // the void, 9/3, left face 9
+  const r = doTap(g, g.slots, 3, "you");
+  return r && r.slots[4].owner === "sky";
+}, true]);
+[["you", 1], ["sky", 201]].forEach(([seat, mine]) => {
+  VECTORS.push([`[${seat}] white tiger taps and locks its ground`, () => {
+    const g = mkTap(seat);
+    g.slots = lodge(g, g.slots, mine, 2, false, seat);
+    const r = doTap(g, g.slots, 2, seat);
+    return r && r.slots[2].ground === seat;
+  }, true]);
+  VECTORS.push([`[${seat}] the locked ground still counts for its tapper`, () => {
+    const g = mkTap(seat);
+    g.slots = lodge(g, g.slots, mine, 2, false, seat);
+    const r = doTap(g, g.slots, 2, seat);
+    if (!r) return null;
+    const g2 = { ...g, slots: r.slots };
+    const after = resolve(g2, r.slots, seat === "you" ? 224 : 24, 3, false, seat === "you" ? "sky" : "you");
+    return slotW(g2, after.slots, 2, ctxOf(g2, after.slots)).who;
+  }, seat === "you" ? "you" : "sky"]);
+});
+[["you", 21], ["sky", 221]].forEach(([seat, mine]) => {
+  VECTORS.push([`[${seat}] black tortoise taps and leaves the board`, () => {
+    const g = mkTap(seat, { tonight: 21 });
+    g.slots = lodge(g, g.slots, mine, 5, false, seat);
+    const r = doTap(g, g.slots, 5, seat);
+    return r && r.slots[5] === null;
+  }, true]);
+  VECTORS.push([`[${seat}] and it is the tapper's own card coming home`, () => {
+    const g = mkTap(seat, { tonight: 21 });
+    g.slots = lodge(g, g.slots, mine, 5, false, seat);
+    const r = doTap(g, g.slots, 5, seat);
+    return r && r.ret[0];
+  }, mine]);
+});
+VECTORS.push(["azure dragon has no tap", () => {
+  const g = mkTap("you", { tonight: 14 });
+  g.slots = lodge(g, g.slots, 14, 1, false, "you");
+  return tapKind(g, g.slots, 1, "you");
+}, null]);
+VECTORS.push(["a card taps only once a board", () => {
+  const g = mkTap("you");
+  g.slots = lodge(g, g.slots, 1, 2, false, "you");
+  g.tapped = { 1: true };
+  return tapKind(g, g.slots, 2, "you");
+}, null]);
+VECTORS.push(["you cannot tap her card", () => {
+  const g = mkTap("you");
+  g.slots = lodge(g, g.slots, 201, 2, false, "sky");
+  return tapKind(g, g.slots, 2, "you");
+}, null]);
+VECTORS.push(["taps actually happen in a real board", () => {
+  const C = makeCards({ lvl: 3 });
+  for (let i = 1; i <= 28; i++) C[200 + i] = { ...C[i], id: 200 + i, who: "sky", homeM: i, lvl: 1, ab: null };
+  const r = playBoard({ C, you: [10, 1, 21, 14, 5], sky: [201, 202, 203, 204, 205],
+    tonight: 10, leader: "you", depth: 8, youDepth: 8, tapMode: true, grantSides: "both" });
+  return r.taps > 0;
+}, true]);
+VECTORS.push(["tapMode replaces the passive grants", () => {
+  const gg = mkTap("you", { tapMode: false });
+  return tapKind(gg, [{ id: 1, owner: "you" }], 0, "you");
+}, null]);
+
+// playBoard's own hand-bookkeeping (docs/handoffs/HANDOFF-L34-MERGE-25AUG.md §0): resolve()'s
+// `ret` was always correct, but playBoard used to route every return to g.you regardless of
+// owner. Neither of the two direct-resolve() return vectors above exercises this — they check
+// `ret`, not which hand playBoard puts it in. This is the seat where the bug actually showed:
+// sky owns the return card, "you" attacks it home, and the old code silently defected it to you.
+VECTORS.push(["[sky] playBoard returns her card to her own hand, not the mover's", () => {
+  const C = makeCards({ lvl: 2 });
+  const r = playBoard({ C, you: [101], sky: [7], tonight: 7, leader: "sky", depth: 0, youDepth: 0, len: 2 });
+  return r.slots[0] && r.slots[0].owner;
+}, "sky"]);
+VECTORS.push(["[you] playBoard returns your card to your own hand, not the mover's", () => {
+  const C = makeCards({ lvl: 2 });
+  const r = playBoard({ C, you: [7], sky: [101], tonight: 7, leader: "you", depth: 0, youDepth: 0, len: 2 });
+  return r.slots[0] && r.slots[0].owner;
+}, "you"]);
 function runVectors(opts) {
   const out = [];
   VECTORS.forEach(([name, fn, want]) => {
@@ -496,6 +737,6 @@ function runVectors(opts) {
   return out;
 }
 
-const API = { POOL, PLANETS, makeCards, mkGame, on, nb, isHome, faceOf, safeNow, tryFlip, lodge, resolve, counts, slotW, ctxOf, boardWinner, bestYouReply, skyMove, youMove, playBoard, deal, VECTORS, runVectors };
+const API = { POOL, QUADRANT, grantOf, quadGrant, canTurn, doTap, tapKind, tapSlots, runCascade, PLANETS, makeCards, mkGame, on, nb, isHome, faceOf, safeNow, tryFlip, lodge, resolve, counts, slotW, ctxOf, boardWinner, bestYouReply, skyMove, youMove, playBoard, deal, VECTORS, runVectors };
 if (typeof module !== "undefined") module.exports = API;
 if (typeof window !== "undefined") window.ManzilEngineV6 = API;
