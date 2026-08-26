@@ -46,11 +46,16 @@
 //
 // L3/L4 grants + the tap (merged 25 Aug from research/ref-tap.js, a downstream port onto this
 // exact file by a parallel research pass — docs/handoffs/HANDOFF-L34-MERGE-25AUG.md and
-// HANDOFF-TAP-MEASURED-25AUG.md). Everything below is OPT-IN: mkGame's new fields default to
-// off/"both"-inert, so no existing caller's behavior changes unless it sets them.
-//   grantSides/l4/grantOnly gate the four quadrant grants (guard/lead/turn/return), each live
-//   only at lvl>=3. Measured: only the turn (Seiryuu) does anything (+7.1); guard/lead/return
-//   are inside the noise floor as passive properties. grantOf() is the read path either way.
+// HANDOFF-TAP-MEASURED-25AUG.md; corrected 26 Aug per docs/handoffs/NOTE-bec8406-verification.md,
+// which caught two things the first merge commit got wrong — read both corrections before
+// trusting any claim in this block about what is or isn't live).
+//   grantSides defaults to "none" (fixed 26 Aug — it shipped defaulting to "both", which made the
+//   three passive grants a live trap: any future caller passing lvl:3 cards would have turned them
+//   on with no flag flipped and no one deciding it, harmless only because every caller today
+//   happens to build lvl:2 cards). l4/grantOnly further gate the four quadrant grants
+//   (guard/lead/turn/return), each live only at lvl>=3 and only once grantSides opts in. Measured:
+//   only the turn (Seiryuu) does anything (+7.1); guard/lead/return are inside the noise floor as
+//   passive properties. grantOf() is the read path either way.
 //   tapMode replaces the three passive grants (not the turn) with a tap: once a card, free,
 //   in-place, no lodge signature fires twice. Measured to clear the skill-gap target ONLY when
 //   both open-fairness questions below are answered honestly — as first built it was borrowing
@@ -61,6 +66,12 @@
 //       hands are L1 vanilla; the moment hands wake or PvP deals real levels this is worth 12pts.
 //   playBoard's own return-routing carried the exact "always g.you" bug fixed in the client's
 //   _step/_resolve today (a fourth instance of the same trap) — fixed here too, see the `back`
+//   variable below. THIS ONE IS NOT INERT: manzil-lobby.js builds both PvP hands from the same
+//   28-card pool (unlike single-player, where the sky's hand is fixed to the five planets and can
+//   never hold a "return" card), so a real Return card can land in either seat's hand in a ranked
+//   match. Measured against the pre-fix engine on PvP-shaped hands (both sides drawn from the
+//   pool, not single-player's planets-only sky): ~3.5% of level-2 boards resolve differently. That
+//   is this fix doing its job, correctly, in production — it is not a no-op.
 //   variable in playBoard. L4 is explicitly UNDESIGNED (uncondition tested and made things
 //   worse); do not wire an L4 mechanic off this file without re-reading the handoff first.
 //   Hand size (hers grows 5→8 by level, the player's never does) is flagged as the actual lever
@@ -137,7 +148,7 @@ function mkGame(cfg) {
     you: (cfg.you || []).slice(), sky: (cfg.sky || []).slice(),
     turn: cfg.leader || "you", retUsed: false, glanceOn: false,
     depth: cfg.depth == null ? 8 : cfg.depth, tieRule: cfg.tieRule || "you",
-    jupiterMode: cfg.jupiterMode || "always", grantSides: cfg.grantSides || "both", l4: cfg.l4 || null, grantOnly: cfg.grantOnly || null,
+    jupiterMode: cfg.jupiterMode || "always", grantSides: cfg.grantSides || "none", l4: cfg.l4 || null, grantOnly: cfg.grantOnly || null,
     tapMode: !!cfg.tapMode, skyCanTap: !!cfg.skyCanTap, tapCostsTurn: !!cfg.tapCostsTurn, tapOwnCardsOnly: !!cfg.tapOwnCardsOnly, tapped: {}, taps: 0, stats: { flips: 0, leads: 0 },
     // the mane's single-player asymmetry (see slotW) must not carry into PvP, same reason
     // as tieRule above — whichever seat is locally labeled "you" would get a free advantage.
