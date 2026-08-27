@@ -4098,9 +4098,10 @@ class Component extends DCLogic {
     window.addEventListener("resize", this._onResize);
     this._onKey = (e) => {
       if (e.key !== "Escape") return;
-      const p = this.state.phase;
       if (this.state.pauseOn) { this.setState({ pauseOn: false }); return; }
-      if (p === "play" || p === "round" || p === "over" || p === "won" || p === "lost" || p === "roadlost") this.setState({ pauseOn: true });
+      // accessible from anywhere (menu, deck, birth, tutorial, mid-match, everywhere) except "boot",
+      // the invisible instant before the account gate resolves — nothing real has rendered yet there.
+      if (this.state.phase !== "boot") this.setState({ pauseOn: true });
     };
     window.addEventListener("keydown", this._onKey);
     this._mountT = setTimeout(() => this.forceUpdate(), 400);
@@ -7405,7 +7406,16 @@ class Component extends DCLogic {
       pauseOn: !!st.pauseOn,
       pauseKeepTap: () => this.setState({ pauseOn: false }),
       pauseLeaveTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "menu", pauseOn: false }); },
-      pauseLogoutTap: () => { this._clearSeq(); try { localStorage.removeItem("manzil-v2-user"); } catch (e) {} window.location.href = "Star Shard - Account Portal.dc.html"; },
+      // the old target was a bare source filename ("Star Shard - Account Portal.dc.html"), never the
+      // deployed route (/account/) — a 404 on staging — and never actually invalidated the session,
+      // so the account gate's own api.me() check would just log the visitor straight back in. Both
+      // fixed: a real server-side logout, then the same ./account/ path the gate itself redirects to.
+      pauseLogoutTap: () => {
+        this._clearSeq();
+        try { localStorage.removeItem("manzil-v2-user"); } catch (e) {}
+        const done = () => { window.location.href = "./account/"; };
+        if (this.api && this.api.logout) this.api.logout().then(done).catch(done); else done();
+      },
       rulesTap: () => this.setState(s => ({ rulesOn: !s.rulesOn })),
       rulesOn: !!st.rulesOn,
       faceOn: !!st.face,
