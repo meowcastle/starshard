@@ -39,15 +39,21 @@ cd "$(dirname "$0")/.."
 
 deploy_frontend() {
   echo "==> index.html"
-  # Manzil ("the empty district") is the live root page as of the 24 Aug
-  # restructure — Justin's call to give the minigame the whole staging
-  # domain rather than a /manzil/ subdirectory. Its own script tags are
-  # root-relative ("./support.js", bare "ephemeris2.js"/"manzil-art2.js"),
-  # which is exactly what a root deploy needs — no path rewriting, unlike
-  # star-shard/ below. Star Shard v4 (the astrology reading app that used
-  # to live here) moved to /star-shard/ rather than being dropped from
-  # staging; see that block below. See CLAUDE.md's receipt protocol.
-  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3 Build Plan/Manzil - The Empty District.dc.html"
+  # Manzil is the live root page as of the 24 Aug restructure — Justin's call
+  # to give the minigame the whole staging domain rather than a /manzil/
+  # subdirectory. CANON FLIP (27 Aug 2026, Justin's call): "Manzil - Game
+  # Prototype V1.dc.html" is now the live root — a from-scratch rewrite
+  # (new 28-card slate, new storage keys manzil-v2-*, no migration from the
+  # old manzil-ed-* keys) that supersedes "Manzil - The Empty District.dc.html"
+  # entirely; that file stays in the repo as historical reference only, same
+  # as "Manzil - Prototype.dc.html" and "Star Shard v3.dc.html". Its own
+  # script tags are root-relative ("./support.js", bare
+  # "ephemeris2.js"/"manzil-art2.js"), which is exactly what a root deploy
+  # needs — no path rewriting, unlike star-shard/ below. Star Shard v4 (the
+  # astrology reading app that used to live here) moved to /star-shard/
+  # rather than being dropped from staging; see that block below. See
+  # CLAUDE.md's receipt protocol.
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3 Build Plan/Manzil - Game Prototype V1.dc.html"
   for f in $FRONTEND_FILES; do
     if [ -f "$f" ]; then
       echo "==> $f"

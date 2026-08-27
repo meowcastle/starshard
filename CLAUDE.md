@@ -41,12 +41,30 @@ export uses — not decoration; it ships in `FRONTEND_FILES` alongside the
 engine modules.
 
 **URL layout on staging (restructured 24 Aug 2026, Justin's call):**
-Manzil ("the empty district") is now the site root
-(`staging.starshard.net/`) — `deploy.sh` ships `Star Shard v3 Build
-Plan/Manzil - The Empty District.dc.html` directly as `index.html`, no
-path rewriting needed since its own script tags are already
-root-relative (`./support.js`, bare `ephemeris2.js`/`manzil-art2.js`,
-both now also listed in `FRONTEND_FILES`). Star Shard v4 moved off the
+Manzil is now the site root (`staging.starshard.net/`) — `deploy.sh`
+ships the live Manzil file directly as `index.html`, no path rewriting
+needed since its own script tags are already root-relative
+(`./support.js`, bare `ephemeris2.js`/`manzil-art2.js`, both now also
+listed in `FRONTEND_FILES`). **CANON FLIP (27 Aug 2026, Justin's
+call):** the deployed file is now `Star Shard v3 Build Plan/Manzil -
+Game Prototype V1.dc.html` — a from-scratch rewrite with a new 28-card
+slate (no tie cascade, a tied count is a draw, four passive quadrant
+grants, new storage keys `manzil-v2-*` with no migration from the old
+`manzil-ed-*` keys). `Manzil - The Empty District.dc.html`, the file
+this doc described as canon through 26 Aug, is retired the same way
+`Star Shard v3.dc.html` and `Manzil - Prototype.dc.html` are: stays in
+the repo as historical reference only, not deployed. Current design
+docs for the live file: `docs/handoffs/CARDS-27AUG.md` (the 28-card
+spec) and `docs/handoffs/MECHANICS-27AUG.md` (the rules) — both
+superseded the moment a newer-dated handoff arrives, same as any other
+`docs/handoffs/*` file. Verified 27 Aug: the same "owner-relative
+signature" bug class from the Empty District's card-mechanics rebase
+(hardcoded `"you"`/`"sky"` literals instead of the actual acting seat)
+showed up again in the rewrite — duel hands weren't actually symmetric
+despite the code's own comment saying they should be, and the heart's
+and throne's tap abilities were seat-hardcoded — fixed in `_cards()`,
+`_heartAt`/`_commitHeart`, and the board's tap handler. Star Shard v4
+moved off the
 root to `/star-shard/` — `star-shard/index.html` is a hand-maintained
 copy of `Star Shard v4.dc.html` with every root-relative reference
 (`support.js`, the 13 dynamic engine imports, `ios-frame.jsx`,
