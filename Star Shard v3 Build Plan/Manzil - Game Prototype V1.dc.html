@@ -4078,8 +4078,20 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;where the moon glyph left her&quot;,&quot;the heart&quot;,&quot;the empty district&quot;,&quot;the listener&quot;,&quot;the drum&quot;,&quot;the void&quot;,&quot;the hideaway&quot;,&quot;the chamber&quot;,&quot;the guide&quot;,&quot;the thread&quot;],&quot;default&quot;:&quot;where the moon glyph left her&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;the level&quot;,&quot;description&quot;:&quot;which mansion's level you are standing in. only the built houses are listed. naming one here outranks the in-game moon glyph; left on the first option, the glyph decides&quot;},&quot;mansionStep&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;your real progress&quot;,&quot;the first step: dusk&quot;,&quot;the second step: full dark&quot;,&quot;the third step: the small hours&quot;,&quot;the fourth step: before dawn&quot;],&quot;default&quot;:&quot;your real progress&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;the level&quot;,&quot;description&quot;:&quot;which of the mansion's four hours you are walking. each one arms her hand, never her reading: dusk is plain, full dark wakes her signatures (the hour yours wake too), the small hours give every card she holds +1 on both faces, and before dawn the mansion's own card turns to face you. nothing is recorded while forced&quot;},&quot;station&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;where you stand&quot;,&quot;the daylit ground&quot;,&quot;the low air&quot;,&quot;the dusk&quot;,&quot;the cloud line&quot;,&quot;the high air&quot;,&quot;the cold air&quot;,&quot;the thin air&quot;,&quot;the edge of the air&quot;,&quot;the mansion itself&quot;],&quot;default&quot;:&quot;where you stand&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;the level&quot;,&quot;description&quot;:&quot;stand on any of the nine stations of the road, the ninth being the mansion itself. the station is what scales her judgment: she weights your best reply 3 at the first and 16 at the eighth, 20 at the mansion. nothing is recorded while forced&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a draw&quot;,&quot;you&quot;,&quot;the sky&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;a draw&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a tied board count. a draw as of 27 aug 2026: neither side takes the board, and the match plays on&quot;}}">
 class Component extends DCLogic {
-  constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
-  componentDidMount() {
+  constructor(p) {
+    super(p);
+    // Root now serves this file to every visitor, including logged-out ones — _deckState()'s
+    // legend/birth phase would otherwise render synchronously, before componentDidMount's async
+    // auth check has a chance to redirect an unauthenticated visitor away. Hold the real computed
+    // phase (and consume the #tutorial/#legend hash exactly the once _deckState() ever will) and
+    // show nothing ("boot", no matching phase block) until auth resolves. Mirrors the same gate
+    // "Manzil - The Empty District.dc.html" carried before this file replaced it at the root.
+    const s = this._deckState();
+    this._pendingPhase = s.phase;
+    this.state = { ...s, phase: "boot" };
+    this._seq = [];
+  }
+  async componentDidMount() {
     try { this._measureArt(); } catch (e) {}
 
     this._onResize = () => this.forceUpdate();
@@ -4093,6 +4105,30 @@ class Component extends DCLogic {
     window.addEventListener("keydown", this._onKey);
     this._mountT = setTimeout(() => this.forceUpdate(), 400);
     this._clockT = setInterval(() => { if (this.state.phase === "menu") this.forceUpdate(); }, 30000);
+
+    // Manzil requires a real account (the Account Portal, /account/, owns signup/login/age-check —
+    // see CLAUDE.md's Privacy invariant and URL-layout section). This is the async half of the gate
+    // that actually enforces it: an unauthenticated visitor is redirected outright. A returning,
+    // still-logged-in visitor's local legend/birth screens are skipped in favor of what the Portal
+    // already covered — landing straight in the menu, "the lobby" — except an explicit #tutorial/
+    // #legend hash from a fresh signup (captured pre-auth as _pendingPhase above) still routes to
+    // the practice walk or the story, same as it always has.
+    this.api = await import("./api.js");
+    const who = await this.api.me();
+    if (!who) { window.location.href = "./account/"; return; }
+    try { localStorage.setItem("manzil-v2-legend", "1"); } catch (e) {}
+    if (!this._birth()) {
+      try {
+        const pack = await this.api.getManzilPack();
+        if (pack && Array.isArray(pack.five)) {
+          localStorage.setItem("manzil-v2-birth", JSON.stringify({ date: null, time: null, place: null, five: pack.five, rows: null, fill: null }));
+          this._C = null; this._bMap = null; this._clC = null; this._clongs = undefined;
+        }
+      } catch (e) {}
+    }
+    let ph = this._pendingPhase;
+    if (ph === "legend" || ph === "birth") ph = this._noteDue() ? "note" : "menu";
+    this.setState({ authEmail: who.email, authUsername: who.username, phase: ph });
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
