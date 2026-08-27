@@ -1472,7 +1472,8 @@
   </div>
   <div style="{{ oppPlateStyle }}">
     <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:{{ oppC }};text-shadow:0 1px 10px rgba(5,3,2,.9)">{{ oppName }}</span>
-    <sc-if value="{{ temperLine }}" hint-placeholder-val="{{ false }}">
+    <span style="font-family:'Varela Round',sans-serif;font-size:11.5px;letter-spacing:.02em;color:#C9BC96;text-shadow:0 1px 8px rgba(5,3,2,.9)">{{ userName }}</span>
+      <sc-if value="{{ temperLine }}" hint-placeholder-val="{{ false }}">
       <span style="font-size:10px;color:#9A8A5E;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ temperLine }}</span>
     </sc-if>
     <sc-if value="{{ pipsInPlate }}" hint-placeholder-val="{{ true }}">
@@ -1725,7 +1726,7 @@
     <span style="position:absolute;left:836px;top:240px;width:1px;height:1px;border-radius:50%;background:rgba(255,190,170,.3);animation:bsTwinkle 5.8s ease-in-out 3.1s infinite"></span>
   </div>
   <div style="position:absolute;top:118px;left:50%;transform:translateX(-50%);width:880px;height:220px;border-radius:50%;background:radial-gradient(50% 55% at 50% 50%, rgba(8,5,3,.62), rgba(8,5,3,.4) 55%, transparent 78%);pointer-events:none;z-index:6"></div>
-  <div style="position:absolute;top:132px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:6">
+  <div style="{{ arenaBlurStyle }};position:absolute;top:132px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:6">
     <sc-for list="{{ slots }}" as="s" hint-placeholder-count="9">
       <div style="{{ s.wrapStyle }}">
       <div onClick="{{ s.onTap }}" onMouseEnter="{{ s.onPeek }}" onMouseLeave="{{ s.onPeekEnd }}" onTouchStart="{{ s.onHold }}" onTouchEnd="{{ s.onPeekEnd }}" onTouchCancel="{{ s.onPeekEnd }}" data-mzslot="{{ s.idx }}" style="{{ s.style }}">
@@ -1898,21 +1899,21 @@
       </div>
       <sc-if value="{{ zoomNotesOn }}" hint-placeholder-val="{{ false }}">
         <div style="{{ zoomNotesStyle }}">
-          <div style="position:relative;background:linear-gradient(180deg, rgba(24,17,7,.97), rgba(9,6,2,.98));border:1px solid rgba(240,216,154,.22);padding:4px 14px 6px;box-shadow:0 14px 40px rgba(0,0,0,.7), inset 0 0 0 1px rgba(240,216,154,.05), inset 0 1px 0 rgba(255,248,228,.07)">
-            <span style="position:absolute;top:-1px;left:-1px;width:9px;height:9px;border-top:1.5px solid #FFB000;border-left:1.5px solid #FFB000"></span>
-            <span style="position:absolute;top:-1px;right:-1px;width:9px;height:9px;border-top:1.5px solid #FFB000;border-right:1.5px solid #FFB000"></span>
-            <span style="position:absolute;bottom:-1px;left:-1px;width:9px;height:9px;border-bottom:1.5px solid #FFB000;border-left:1.5px solid #FFB000"></span>
-            <span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-bottom:1.5px solid #FFB000;border-right:1.5px solid #FFB000"></span>
+          <div style="position:relative;background:linear-gradient(180deg, rgba(22,16,6,.985), rgba(7,5,2,.99));border:1px solid rgba(240,216,154,.26);padding:3px 8px 4px;box-shadow:0 16px 44px rgba(0,0,0,.8), 0 0 30px rgba(4,3,2,.7), inset 0 0 0 1px rgba(240,216,154,.05), inset 0 1px 0 rgba(255,248,228,.07)">
+            <span style="position:absolute;top:-1px;left:-1px;width:6px;height:6px;border-top:1.5px solid #FFB000;border-left:1.5px solid #FFB000"></span>
+            <span style="position:absolute;top:-1px;right:-1px;width:6px;height:6px;border-top:1.5px solid #FFB000;border-right:1.5px solid #FFB000"></span>
+            <span style="position:absolute;bottom:-1px;left:-1px;width:6px;height:6px;border-bottom:1.5px solid #FFB000;border-left:1.5px solid #FFB000"></span>
+            <span style="position:absolute;bottom:-1px;right:-1px;width:6px;height:6px;border-bottom:1.5px solid #FFB000;border-right:1.5px solid #FFB000"></span>
             <sc-for list="{{ zoomNotes }}" as="p" hint-placeholder-count="1">
               <div style="{{ p.rowStyle }}">
                 <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
-                  <span style="font-family:'Varela Round',sans-serif;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:#9A8A5E;white-space:nowrap">{{ p.label }}</span>
+                  <span style="font-family:'Varela Round',sans-serif;font-size:7px;letter-spacing:.11em;text-transform:uppercase;color:#A8976A;white-space:nowrap">{{ p.label }}</span>
                   <sc-if value="{{ p.valueOn }}" hint-placeholder-val="{{ false }}">
                     <span style="{{ p.valueStyle }}">{{ p.value }}</span>
                   </sc-if>
                 </div>
                 <sc-if value="{{ p.bodyOn }}" hint-placeholder-val="{{ true }}">
-                  <div style="font-family:'Varela Round',sans-serif;font-size:10px;line-height:1.48;color:#D8C89C;text-align:left;text-wrap:pretty;margin-top:2px">{{ p.body }}</div>
+                  <div style="font-family:'Varela Round',sans-serif;font-size:9px;line-height:1.42;color:#DED0A6;text-align:left;text-wrap:pretty;margin-top:1px">{{ p.body }}</div>
                 </sc-if>
               </div>
             </sc-for>
@@ -3101,7 +3102,7 @@
   <sc-if value="{{ doorUiOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(62% 76% at 50% 52%, rgba(6,4,2,.72), rgba(6,4,2,.34) 68%, transparent 92%);animation:mzFadeUp .7s ease both">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:29px;line-height:1.2;color:#F2EAD6;text-align:center;text-shadow:0 2px 18px rgba(5,3,2,.95)">tonight the moon stands in the {{ tonightName }}</div>
-      <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:470px;text-align:center;text-wrap:pretty">twenty-eight houses, one a night. every mansion is a level, and its card is the prize at the top of the road.</div>
+      <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:470px;text-align:center;text-wrap:pretty">twenty-eight houses, one a night. all twenty-eight cards are already yours: every mansion is a level, and walking its road is how its card wakes.</div>
       <button onClick="{{ legendDoorTap }}" style="margin-top:10px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13.5px;padding:12px 30px;cursor:pointer;animation:mzBtnBreathe 3.4s ease-in-out 1s infinite">the road begins here ✦</button>
     </div>
   </sc-if>
@@ -3912,7 +3913,7 @@
           </label>
         </div>
       </div>
-      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:470px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it, computed and kept on this device. your place sets your rising on the star shard side. the address gets one letter when the moon returns to a road you walk, nothing else.</div>
+      <div style="font-size:10px;color:rgba(154,138,94,.75);max-width:470px;text-align:center;line-height:1.55;animation:mzFadeUp .9s ease .3s both">five cards are read from it: where each of your five planets stood. all twenty-eight are yours either way, and these five start further up the ladder. computed and kept on this device. your place sets your rising on the star shard side. the address gets one letter when the moon returns to a road you walk, nothing else.</div>
       <div style="min-height:12px;font-size:11px;color:#FFB000;line-height:1">{{ bErr }}</div>
       <button onClick="{{ birthCastTap }}" style="{{ bCastStyle }}" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">cast your five</button>
     </div>
@@ -3993,7 +3994,7 @@
   <sc-if value="{{ duelLobbyOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #100A14 0%, #090509 55%, #040204 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;z-index:9;animation:mzFadeUp .35s ease both">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;animation:mzFadeUp .5s ease .1s both">the open tables</div>
-      <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .5s ease .2s both">battles are random: a free hand under the same sky, found for you. when no one is free, the sky pilots a signed hand herself. the match is played on the heart of the archer, sagittarius a*, over the moon road as it truly stands toad tonight, and the ground deepens every board. your five deals fresh from your own twelve, at their true levels. nothing is staked.</div>
+      <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:490px;text-align:center;text-wrap:pretty;animation:mzFadeUp .5s ease .2s both">battles are random: a free hand under the same sky, found for you. when no one is free, the sky pilots a signed hand herself. the match is played on the heart of the archer, sagittarius a*, over the moon road as it truly stands tonight, and the ground deepens every board. your five deals fresh from your own twelve, at their true levels. nothing is staked.</div>
       <sc-if value="{{ lobbyIdleOn }}" hint-placeholder-val="{{ true }}">
         <button onClick="{{ duelSeekTap }}" style="margin-top:10px;background:linear-gradient(180deg, rgba(255,176,0,.22), rgba(255,176,0,.07));border:1px solid #FFB000;border-radius:5px;color:#FFB000;font-family:'Varela Round',sans-serif;font-size:13px;padding:12px 32px;cursor:pointer;box-shadow:0 3px 0 rgba(70,46,0,.95), 0 8px 20px rgba(0,0,0,.45);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,176,0,.32), rgba(255,176,0,.13));box-shadow:0 4px 0 rgba(70,46,0,.95), 0 0 24px rgba(255,176,0,.28), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(70,46,0,.95), 0 0 12px rgba(255,176,0,.18)">find a match</button>
       </sc-if>
@@ -4017,7 +4018,7 @@
   <sc-if value="{{ duelSeatOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #120D06 0%, #0A0603 55%, #050302 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;z-index:9;animation:mzFadeUp .35s ease both">
       <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;animation:mzFadeUp .5s ease .1s both">same device, two hands</div>
-      <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:480px;text-align:center;text-wrap:pretty;animation:mzFadeUp .5s ease .2s both">pass and play. your twelve is split: your five deals at its true levels, the far hand borrows five of your cards asleep. best of five boards, the lead alternates, both hands face up. nothing is staked.</div>
+      <div style="font-size:12px;line-height:1.8;color:#9A8A5E;max-width:480px;text-align:center;text-wrap:pretty;animation:mzFadeUp .5s ease .2s both">pass and play. the twenty-eight are split: your side deals at its true levels, the far hand borrows seven of the same cards asleep, level one, numbers only. best of five boards, the lead alternates, both hands face up. nothing is staked.</div>
       <div style="display:flex;gap:36px;margin-top:6px;animation:mzFadeUp .5s ease .28s both">
         <div style="display:flex;flex-direction:column;gap:5px;align-items:center">
           <span style="font-size:10px;color:#9A8A5E">the near hand · parchment</span>
@@ -4033,7 +4034,7 @@
     </div>
   </sc-if>
   <sc-if value="{{ endOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;background:rgba(4,3,2,.86);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;gap:40px;z-index:7;animation:mzFadeUp .35s ease both">
+    <div onClick="{{ menuPlayTap }}" style="position:absolute;inset:0;background:rgba(4,3,2,.86);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;gap:40px;z-index:7;cursor:pointer;animation:mzFadeUp .35s ease both">
       <div style="text-align:center;max-width:320px">
         <div style="font-size:22px;color:{{ endMark }}">✦</div>
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;line-height:1.2;color:#F2EAD6;margin-top:6px">{{ endTitle }}</div>
@@ -4041,20 +4042,10 @@
         <sc-if value="{{ endRcptOn }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:11px;line-height:1.7;color:#9A8A5E;margin-top:10px">{{ endRcpt }}</div>
         </sc-if>
-        <div style="display:flex;gap:12px;justify-content:center;margin-top:18px">
-          <button class="mzBrk mzBrkOn" onClick="{{ menuPlayTap }}" style="background:linear-gradient(180deg, rgba(240,216,154,.16), rgba(240,216,154,.05));border:1px solid #F0D89A;border-radius:5px;color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 7px 18px rgba(0,0,0,.4);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(240,216,154,.24), rgba(240,216,154,.09));box-shadow:0 4px 0 rgba(38,30,12,.95), 0 0 18px rgba(240,216,154,.22), 0 9px 20px rgba(0,0,0,.45)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95)">{{ endPlayLabel }}</button>
-          <button class="mzBrk" onClick="{{ menuBackTap }}" style="background:none;border:1px solid rgba(154,138,94,.4);border-radius:5px;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:12.5px;padding:12px 24px;cursor:pointer;transition:transform .12s ease, border-color .15s ease, color .15s ease" style-hover="transform:translateY(-1px);border-color:rgba(240,216,154,.6);color:#D8C89C" style-active="transform:translateY(2px)">lobby</button>
-        </div>
+        <div style="font-family:'Varela Round',sans-serif;font-size:10.5px;color:rgba(154,138,94,.75);margin-top:20px">anywhere to deal again</div>
       </div>
-      <sc-if value="{{ endWonOn }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div style="font-size:10.5px;color:#9A8A5E">{{ endWonTag }}</div>
-          <sc-if value="{{ wakePipsOn }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;gap:9px;align-items:center">
-              <sc-for list="{{ wakePips }}" as="p" hint-placeholder-count="4">
-                <span style="{{ p.style }}"></span>
-              </sc-for>
-            </div>
+      <button onClick="{{ endLobbyTap }}" style="position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:none;border:1px solid rgba(240,216,154,.3);border-radius:5px;padding:7px 16px;color:#9A8A5E;font-family:'Varela Round',sans-serif;font-size:10.5px;cursor:pointer;z-index:9;transition:border-color .15s ease, color .15s ease" style-hover="border-color:#F0D89A;color:#F0D89A">lobby</button>
+      <div style="display:none">
           </sc-if>
           <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22);animation:mzCardWake .9s cubic-bezier(.22,1,.36,1) both">
             <div style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
@@ -4075,6 +4066,8 @@
 </div>
 </div>
 </div>
+
+  <div style="{{ veilStyle }}"></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:960,&quot;height&quot;:450},&quot;tonightMansion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;where the moon glyph left her&quot;,&quot;the heart&quot;,&quot;the empty district&quot;,&quot;the listener&quot;,&quot;the drum&quot;,&quot;the void&quot;,&quot;the hideaway&quot;,&quot;the chamber&quot;,&quot;the guide&quot;,&quot;the thread&quot;],&quot;default&quot;:&quot;where the moon glyph left her&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;the level&quot;,&quot;description&quot;:&quot;which mansion's level you are standing in. only the built houses are listed. naming one here outranks the in-game moon glyph; left on the first option, the glyph decides&quot;},&quot;mansionStep&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;your real progress&quot;,&quot;the first step: dusk&quot;,&quot;the second step: full dark&quot;,&quot;the third step: the small hours&quot;,&quot;the fourth step: before dawn&quot;],&quot;default&quot;:&quot;your real progress&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;the level&quot;,&quot;description&quot;:&quot;which of the mansion's four hours you are walking. each one arms her hand, never her reading: dusk is plain, full dark wakes her signatures (the hour yours wake too), the small hours give every card she holds +1 on both faces, and before dawn the mansion's own card turns to face you. nothing is recorded while forced&quot;},&quot;station&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;where you stand&quot;,&quot;the daylit ground&quot;,&quot;the low air&quot;,&quot;the dusk&quot;,&quot;the cloud line&quot;,&quot;the high air&quot;,&quot;the cold air&quot;,&quot;the thin air&quot;,&quot;the edge of the air&quot;,&quot;the mansion itself&quot;],&quot;default&quot;:&quot;where you stand&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;the level&quot;,&quot;description&quot;:&quot;stand on any of the nine stations of the road, the ninth being the mansion itself. the station is what scales her judgment: she weights your best reply 3 at the first and 16 at the eighth, 20 at the mansion. nothing is recorded while forced&quot;},&quot;tieRule&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a draw&quot;,&quot;you&quot;,&quot;the sky&quot;,&quot;tonight's holder&quot;],&quot;default&quot;:&quot;a draw&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;tuning (research)&quot;,&quot;description&quot;:&quot;who takes a tied board count. a draw as of 27 aug 2026: neither side takes the board, and the match plays on&quot;}}">
 class Component extends DCLogic {
@@ -4084,8 +4077,7 @@ class Component extends DCLogic {
     // legend/birth phase would otherwise render synchronously, before componentDidMount's async
     // auth check has a chance to redirect an unauthenticated visitor away. Hold the real computed
     // phase (and consume the #tutorial/#legend hash exactly the once _deckState() ever will) and
-    // show nothing ("boot", no matching phase block) until auth resolves. Mirrors the same gate
-    // "Manzil - The Empty District.dc.html" carried before this file replaced it at the root.
+    // show nothing ("boot", no matching phase block) until auth resolves.
     const s = this._deckState();
     this._pendingPhase = s.phase;
     this.state = { ...s, phase: "boot" };
@@ -4107,13 +4099,12 @@ class Component extends DCLogic {
     this._mountT = setTimeout(() => this.forceUpdate(), 400);
     this._clockT = setInterval(() => { if (this.state.phase === "menu") this.forceUpdate(); }, 30000);
 
-    // Manzil requires a real account (the Account Portal, /account/, owns signup/login/age-check —
-    // see CLAUDE.md's Privacy invariant and URL-layout section). This is the async half of the gate
-    // that actually enforces it: an unauthenticated visitor is redirected outright. A returning,
-    // still-logged-in visitor's local legend/birth screens are skipped in favor of what the Portal
-    // already covered — landing straight in the menu, "the lobby" — except an explicit #tutorial/
-    // #legend hash from a fresh signup (captured pre-auth as _pendingPhase above) still routes to
-    // the practice walk or the story, same as it always has.
+    // Manzil requires a real account (the Account Portal, /account/, owns signup/login/age-check).
+    // This is the async half of the gate that actually enforces it: an unauthenticated visitor is
+    // redirected outright. A returning, still-logged-in visitor's local legend/birth screens are
+    // skipped in favor of what the Portal already covered — landing straight in the menu, "the
+    // lobby" — except an explicit #tutorial/#legend hash from a fresh signup (captured pre-auth as
+    // _pendingPhase above) still routes to the practice walk or the story, same as it always has.
     this.api = await import("./api.js");
     const who = await this.api.me();
     if (!who) { window.location.href = "./account/"; return; }
@@ -4273,7 +4264,11 @@ class Component extends DCLogic {
     let seen = false; try { seen = !!localStorage.getItem("manzil-v2-legend"); } catch (e) {}
     const born = !!this._birth();
     // portal entry routes (24 aug): #tutorial = straight into the practice walk, #legend = the story of the emptied ones first
-    let entry = null; try { entry = { "#tutorial": "pintro", "#legend": "legend" }[window.location.hash] || null; } catch (e) {}
+    let entry = null; try { const h = window.location.hash;
+      if (h === "#fresh" && !this._wiped) { this._wiped = true;
+        ["legend","birth","climbs","rungs","claims","lock","respec","wrec","lastclimb","boardn","pack","duelnames","builds","note"].forEach(k => { try { localStorage.removeItem("manzil-v2-" + k); } catch (e2) {} }); }
+      entry = { "#tutorial": "pintro", "#legend": "legend", "#birth": "birth", "#new": "legend", "#fresh": "legend" }[h] || null;
+      if (h === "#new") this._forceNew = true; } catch (e) {}
     if (entry && !this._entryUsed) { this._entryUsed = true; try { window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch (e) {} }
     else entry = null;
     return { phase: entry || (seen ? (born ? (this._noteDue() ? "note" : "menu") : "birth") : "legend"), legendBeat: 0, mull: null, pool: Array.from({ length: 28 }, (_, i) => i + 1), deckSel: five, slots: [null, null, null, null, null, null, null, null, null], hand: [], sky: [], sel: null, inspect: null, turn: "you", leader: "you", round: 1, roundWins: [], face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, rulesOn: false, introExit: false, roundExit: false, dealt: true, castFx: null, log: "", road: false, roadRung: 0, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, tutStep: 0, freeNight: false, roadPick: false, pickK: null, countFx: null, duel: null, chosenB: null, selB: null,
@@ -4297,13 +4292,6 @@ class Component extends DCLogic {
     const a = (((st.duelA !== undefined ? st.duelA : saved.a) || "").trim()) || this._userName();
     const pack = (st.deckSel || []).filter(id => id >= 1 && id <= 28);
     let b, mySide, farSide;
-    // both fives are dealt ASLEEP (MECHANICS.md §7b: "the open tables are exempt... duels deal
-    // from the same 200+mansion space specifically so both fives are even regardless of what
-    // either player has climbed"). mySide keeps the player's own ids 1-28 (so it still renders as
-    // "your" cards, not a sky/walker mirror copy) — _cards() is what actually strips the levels
-    // for duels now (see the `sx0.duel` check added there 27 Aug), not the id range. Before that
-    // fix, mySide read the player's real levels/signatures/grants unconditionally: a hidden PvP
-    // edge for whichever seat happened to be "you" locally.
     if (mode === "seat") {
       b = (((st.duelB !== undefined ? st.duelB : saved.b) || "").trim()) || "the far hand";
       const sh = pack.slice();
@@ -4461,10 +4449,10 @@ class Component extends DCLogic {
       let l = p[1], r = p[2];
       let lvl = o.lvl;
       if (fl) lvl = fl;
-      // the open tables are exempt from a player's own climbs too (MECHANICS.md §7b — this was the
-      // missing half: the sky's walker copies were already forced asleep in duels via `wsk` above,
-      // but the player's own ids 1-28 read their real saved level/build unconditionally, so whichever
-      // seat was locally "you" carried real signatures/grants against an opponent who never could).
+      // the open tables are exempt from a player's own climbs too: the sky's walker copies were
+      // already forced asleep in duels via `wsk` above, but the player's own ids 1-28 read their
+      // real saved level/build unconditionally, so whichever seat was locally "you" carried real
+      // signatures/grants against an opponent who never could. Both sides asleep now.
       if (sx0 && sx0.duel) lvl = 1;
       // THE LADDER (27 aug 2026 work order + the measured run): the grant comes at the SECOND door and
       // the signature at the third, so a new player learns four grants before twenty-eight moves. the
@@ -4507,6 +4495,10 @@ class Component extends DCLogic {
     // and no signature yet, and wait for the card rewrite like everything else.
     C[106] = { name: "Sun", l: 9, r: 6, who: "sky", ab: null, abText: "", homeM: PH.sun || 0 };
     C[107] = { name: "Moon", l: 6, r: 6, who: "sky", ab: null, abText: "", homeM: 0 };
+    // the ice giants ride the boss's rail (27 aug 2026, user): the solar system minus earth, so the
+    // one you stand on is the one she does not hold. numbers only, like the luminaries.
+    C[108] = { name: "Uranus", l: 7, r: 7, who: "sky", ab: null, abText: "", homeM: 0 };
+    C[109] = { name: "Neptune", l: 6, r: 8, who: "sky", ab: null, abText: "", homeM: 0 };
     // walkers' fives: other players' hands, piloted by her judgment (ids 200+mansion). they take the
     // PRINTED faces, never C[id]'s: those carry the player's own number doors, so her lent hand used
     // to strengthen every time you spent one of yours. the hour is the only thing that hardens them.
@@ -5169,7 +5161,7 @@ class Component extends DCLogic {
     }
     if (c.ab === "heart" && (c.lvl || 1) >= 3) notes.push({ p: 5, label: "hold the beat", body: "tap it once a board: it stays swollen through her turn." });
     if (c.ab === "heart" && (c.lvl || 1) >= 4) notes.push({ p: 5, label: "let it burst", body: "tap the held heart again. it leaves the count and takes the card on either side." });
-    if (c.who === "you") ((lv) => notes.push({ p: 3, label: this._moonGlyph(lv) + "  " + this._lvlWord(lv), value: "",
+    if (c.who === "you" && k[0] === "d") ((lv) => notes.push({ p: 3, lvl: true, label: this._moonGlyph(lv) + "  " + this._lvlWord(lv), value: "",
       body: this._unspentOn(c) ? "a level waiting to be spent." : "" }))(Math.max(1, Math.min(4, c.lvl || 1)));
     if (c.who === "you" && c.grantOn) notes.push({ p: 5, label: this._quadName(c.quad), body: {
       seiryuu: "it may be lodged either way round.",
@@ -5200,15 +5192,19 @@ class Component extends DCLogic {
       border: you ? (c.loan ? "rgba(154,138,94,.45)" : c.lvl >= 3 ? "#F0D89A" : "rgba(240,216,154,.55)") : "rgba(255,176,0,.55)",
       // six rows fit the column (380px of 404). ranked, so the numbers and their cause outrank the powers,
       // which the marks on the card face already state.
-      notes: this._rows(notes.map((r, ix) => ({ ...r, ix })).sort((a, b) => (a.p || 9) - (b.p || 9) || a.ix - b.ix).slice(0, 4)),
+      // a numbers-only card has nothing to say: the level alone is not a panel (the card's own face carries it).
+      // nothing awake, nothing said: a numbers-only card raises no panel at all.
+      notes: this._rows(((rs) => { const keep = rs.filter(r => !r.lvl || r.body);
+        return keep.length ? keep : k[0] === "d" ? rs : []; })(notes.map((r, ix) => ({ ...r, ix })).sort((a, b) => (a.p || 9) - (b.p || 9) || a.ix - b.ix).slice(0, 4))),
     };
   }
   _zoomPlace(k, st) {
-    const zsc = k != null && String(k)[0] === "d" ? 1 : .6;
-    const W = Math.round(210 * zsc), H = Math.round(284 * zsc), NW = 150, GAP = 10;
+    const zsc = k != null && String(k)[0] === "d" ? 1 : .74;
+    const W = Math.round(210 * zsc), H = Math.round(284 * zsc), NW = 178, GAP = 11;
     // the wrapper must NOT clip: the notes column and the card's drop shadow both live outside its box.
     // the body text bounds itself instead (see zoomMove's top/bottom pair below).
-    const base = "position:absolute;width:" + W + "px;height:" + H + "px;z-index:30;pointer-events:none;";
+    // the ink halo lifts the group off a busy backdrop (the arena's core, disk and horizon all glow through).
+    const base = "position:absolute;width:" + W + "px;height:" + H + "px;z-index:30;pointer-events:none;filter:drop-shadow(0 0 26px rgba(4,3,2,.9)) drop-shadow(0 10px 30px rgba(4,3,2,.75));";
     if (k == null) return { wrap: base + "left:-999px;top:0", notes: "display:none" };
     k = String(k);
     const clx = (x) => Math.max(10, Math.min(932 - W - 10, x));
@@ -5220,7 +5216,31 @@ class Component extends DCLogic {
       const left = clx(right ? cardX + 41 : cardX - 41 - W);
       return { wrap: base + "left:" + left + "px;top:73px", notes: "position:absolute;top:0;width:" + NW + "px;max-height:" + (430 - 10 - 73) + "px;overflow:hidden;display:flex;flex-direction:column;gap:6px;" + (right ? "left:" + (W + GAP) + "px" : "right:" + (W + GAP) + "px") };
     }
-    let left, top;
+    let left, top, hand = false;
+    // in the match there is no card in the air: the panel alone carries what the face cannot say,
+    // its grants and its signatures. no level, no second copy of the card you are already holding.
+    const PW = 118, HAND_TOP = 306;
+    const pbase = "position:absolute;width:" + PW + "px;z-index:30;pointer-events:none;filter:drop-shadow(0 0 26px rgba(4,3,2,.9)) drop-shadow(0 10px 30px rgba(4,3,2,.75));";
+    const pcol = ";width:" + PW + "px;overflow:hidden;display:flex;flex-direction:column;gap:6px";
+    const pclx = (x) => Math.max(10, Math.min(922 - PW, x));
+    if (k[0] === "s" || k[0] === "e") {
+      const i = +k.slice(1), L = st.slots.length;
+      const total = L * 86 + (L - 1) * 5, edge = 466 - total / 2;
+      const cx = edge + i * 91 + 43, cy = 132 + Math.pow(i - 4, 2) * 4;
+      const sl = pclx(i <= (L - 1) / 2 ? cx + 54 : cx - 54 - PW);
+      const stp = Math.max(12, Math.min(290, cy - 40));
+      return { wrap: pbase + "height:0;left:" + sl + "px;top:" + stp + "px", notes: "position:absolute;top:0;max-height:" + (HAND_TOP - 16 - stp) + "px" + pcol };
+    }
+    const hidx = st.hand.indexOf(+k.slice(1)), hn = st.hand.length;
+    const hcx = 466 - (hn * 80 + (hn - 1) * 12) / 2 + (hidx < 0 ? 0 : hidx) * 92 + 40;
+    // outward: cards in the left half throw the panel left, the right half throws it right,
+    // set beside the card at its own middle so the hand it belongs to stays whole.
+    const hl = pclx(hcx < 466 ? hcx - 40 - 8 - PW : hcx + 40 + 8);
+    return { wrap: pbase + "height:113px;left:" + hl + "px;top:" + HAND_TOP + "px", notes: "position:absolute;top:50%;transform:translateY(-50%);max-height:112px" + pcol };
+  }
+  _zoomPlaceOld(k, st) {
+    const W = 155, H = 210, NW = 178, GAP = 11, base = "position:absolute", clx = (x) => x, HAND_TOP = 306;
+    let left, top, hand = false;
     if (k[0] === "s" || k[0] === "e") {
       const i = +k.slice(1), L = st.slots.length;
       const total = L * 86 + (L - 1) * 5, edge = 466 - total / 2;
@@ -5228,17 +5248,27 @@ class Component extends DCLogic {
       left = clx(i <= (L - 1) / 2 ? cx + 54 : cx - 54 - W);
       top = Math.max(12, Math.min(430 - H - 12, cy - 70));
     } else {
+      // mtg-style: directly above the hovered card, centred on it, bottom clear of the hand row,
+      // so the hovered card and both neighbours stay visible below it.
       const idx = st.hand.indexOf(+k.slice(1)), n = st.hand.length;
       const edge = 466 - (n * 80 + (n - 1) * 12) / 2;
       const cx = edge + (idx < 0 ? 0 : idx) * 92 + 40;
-      left = clx(cx < 466 ? cx - 12 - W : cx + 12);
-      top = 430 - H - 52;
+      left = clx(cx - W / 2);
+      top = Math.max(12, HAND_TOP - 8 - H);
+      hand = true;
     }
     let nRight = left + W / 2 < 466;
     if (nRight && left + W + GAP + NW > 924) nRight = false;
     if (!nRight && left - GAP - NW < 8) nRight = true;
-    return { wrap: base + "left:" + left + "px;top:" + top + "px", notes: "position:absolute;" + (430 - 10 - top < 300 ? "bottom:0;max-height:" + (top + H - 10) : "top:0;max-height:" + (430 - 10 - top)) + "px;width:" + NW + "px;overflow:hidden;display:flex;flex-direction:column;gap:6px;" + (nRight ? "left:" + (W + GAP) + "px" : "right:" + (W + GAP) + "px") };
+    // the panel never enters the hand row: on a hand hover it is capped to the raised card's own height.
+    const cap = hand ? H - 4 : 430 - 10 - top < 300 ? top + H - 10 : 430 - 10 - top;
+    const anchor = !hand && 430 - 10 - top < 300 ? "bottom:0" : "top:0";
+    return { wrap: base + "left:" + left + "px;top:" + top + "px", notes: "position:absolute;" + anchor + ";max-height:" + cap + "px;width:" + NW + "px;overflow:hidden;display:flex;flex-direction:column;gap:6px;" + (nRight ? "left:" + (W + GAP) + "px" : "right:" + (W + GAP) + "px") };
   }
+  _peekKey() { const st = this.state;
+    if (st.peek != null) return st.peek;
+    if (st.sel != null) return "h" + st.sel;
+    return null; }
   _abilityOn(c) { return c.ab && c.lvl >= 2; }
   _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 18: "rains", 28: "thread", 24: "void" })[this._tonight()] || null; }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
@@ -5320,6 +5350,11 @@ class Component extends DCLogic {
     if (st.nightWalker) return 10;
     return 8;
   }
+  _go(p) {
+    clearTimeout(this._veilT);
+    this.setState({ veil: true });
+    this._veilT = setTimeout(() => this.setState({ phase: typeof p === "function" ? p() : p, veil: false }), 240);
+  }
   _legend() { return [
     "fourteen centuries ago, two courts played for the honor of the world.",
     "from india came a game carried like a riddle: sixty-four houses, an army on each side, and a letter daring the court of persia to read its logic or pay tribute. the persian sage bozorgmehr read it in three days.",
@@ -5329,7 +5364,7 @@ class Component extends DCLogic {
     "it flattered no king. its board was the actual sky, so no court could own it, and a game no court can own is a game every court buries. the star-readers called each night's house by its old name.",
     "manzil.",
   ]; }
-  _legendDone() { try { localStorage.setItem("manzil-v2-legend", "1"); } catch (e) {} this.setState({ phase: this._birth() ? (this._noteDue() ? "note" : "menu") : "birth" }); }
+  _legendDone() { try { localStorage.setItem("manzil-v2-legend", "1"); } catch (e) {} this._go(() => (this._forceNew || !this._birth()) ? "birth" : (this._noteDue() ? "note" : "menu")); }
   // the station toggle (25 aug 2026): stand on any of the nine arenas of the level. nothing is recorded while forced
   // the listener's ground: one station hears what she is carrying
   _listen() {
@@ -5502,7 +5537,7 @@ class Component extends DCLogic {
     const leader = boss ? "sky" : (k % 2 === 0 ? "you" : "sky");
     return { ...this._freshRound(1, leader, hand), phase: "play", chosen: hand.slice(), round: 1, roundWins: [],
       // the mansion itself stands at the ninth step (spec §5): her planets, and its own two cards
-      sky: boss ? [101, 102, 103, 104, 105, 200 + this._tonight(), 200 + this._boardM(1)] : this._seven(w.hand, k + 11),
+      sky: boss ? [101, 102, 103, 104, 105, 108, 109] : this._seven(w.hand, k + 11),
       road: true, roadRung: boss ? 8 : k, roadBoss: boss, roadWalker: boss ? "" : w.name, nightSky: false, nightWalker: "" };
   }
   _freshNightMatch(hand) {
@@ -6360,6 +6395,9 @@ class Component extends DCLogic {
     const skyN0 = st.sky.length;
     // planet faces: limb-darkening + surface layers, top layer first
     const PL = {
+      // the ice giants: uranus tipped on its side (ring drawn near-vertical), neptune the deepest blue
+      108: { s: 13, ring: true, glow: "rgba(150,224,222,.34)", bg: "radial-gradient(circle at 50% 50%, transparent 58%, rgba(4,20,22,.5) 96%), linear-gradient(84deg, transparent 0 28%, rgba(120,206,204,.26) 36%, rgba(214,246,244,.2) 44%, rgba(96,178,178,.22) 52%, transparent 60%), radial-gradient(circle at 34% 28%, #CFF0EC, #6FB6B4 50%, #1C4A4E 88%)" },
+      109: { s: 12, glow: "rgba(96,132,224,.4)", bg: "radial-gradient(circle at 50% 50%, transparent 56%, rgba(3,8,26,.55) 95%), radial-gradient(ellipse 38% 18% at 58% 62%, rgba(8,18,64,.5), transparent 72%), radial-gradient(ellipse 26% 12% at 34% 30%, rgba(216,232,255,.42), transparent 74%), radial-gradient(circle at 32% 26%, #A8C4F4, #3E63C8 48%, #10204E 88%)" },
       101: { s: 39, ring: true, glow: "rgba(230,200,140,.3)", bg: "radial-gradient(circle at 50% 50%, transparent 58%, rgba(18,10,2,.55) 96%), linear-gradient(8deg, transparent 0 26%, rgba(122,94,44,.3) 33%, rgba(242,226,184,.16) 40%, rgba(110,84,38,.28) 48%, transparent 57%), radial-gradient(circle at 32% 26%, #F2E2B6, #C9A96A 48%, #4A3A1A 88%)" },
       102: { s: 11, glow: "rgba(224,123,74,.35)", bg: "radial-gradient(circle at 50% 50%, transparent 56%, rgba(20,6,2,.55) 95%), radial-gradient(ellipse 32% 15% at 46% 8%, rgba(255,248,240,.6), transparent 72%), radial-gradient(ellipse 44% 24% at 62% 58%, rgba(52,16,5,.45), transparent 72%), radial-gradient(ellipse 28% 16% at 28% 46%, rgba(52,16,5,.32), transparent 70%), radial-gradient(circle at 32% 26%, #F0A578, #C25B28 48%, #4A1B0A 86%)" },
       103: { s: 14, glow: "rgba(255,233,192,.45)", bg: "radial-gradient(circle at 50% 50%, transparent 58%, rgba(30,18,4,.45) 96%), linear-gradient(112deg, transparent 0 24%, rgba(255,255,255,.18) 30%, transparent 38%, rgba(150,116,52,.22) 50%, transparent 59%, rgba(255,255,255,.12) 67%, transparent 74%), radial-gradient(circle at 34% 28%, #FFF6DE, #E9CA80 50%, #6A4A18 88%)" },
@@ -6442,6 +6480,7 @@ class Component extends DCLogic {
       marks: this._markRow(c, 13),
       marksStyle: "position:absolute;bottom:" + (c.lvl >= 4 ? 22 : 26) + "px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:7px;font-family:'Varela Round',sans-serif;font-size:8.5px;color:rgba(240,216,154,.9)",
         onPeek: () => {
+          // the gate locks placing, never reading: the whole point of the pause is to read the hand.
           clearTimeout(this._holdT);
           this.setState({ hov: id });
           if (this.state.peek) this.setState({ peek: "h" + id });
@@ -6449,10 +6488,10 @@ class Component extends DCLogic {
         },
         onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); },
         onHold: () => { clearTimeout(this._holdT); this.setState({ hov: id }); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
-        onDown: (e) => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
+        onDown: (e) => { if (this.state.mull) return; clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
         moonD: this._moonD(c.lvl), moonFill: "rgba(250,244,226,.95)",
         moonRim: "rgba(250,244,226," + (c.lvl >= 4 ? .82 : .4) + ")",
-        onTap: () => { if (this._dragDid) return; clearTimeout(this._holdT); const st2 = this.state.peek ? { peek: null } : {}; if (st.turn === "you" && st.phase === "play" && !st.busy) st2.sel = seld ? null : id; this.setState(st2); },
+        onTap: () => { if (this._dragDid || this.state.mull) return; clearTimeout(this._holdT); const st2 = this.state.peek ? { peek: null } : {}; if (st.turn === "you" && st.phase === "play" && !st.busy) st2.sel = seld ? null : id; this.setState(st2); },
         hover: dragMe ? "" : "transform:perspective(620px) translateX(" + nx + "px) rotate(" + (rot + nr).toFixed(1) + "deg) translateY(-16px) scale(1.05) rotateX(7deg);z-index:9",
         style: "flex:none;width:80px;height:108px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;touch-action:none;background:" + this._qWash(id, gOn ? .74 : .42) + "radial-gradient(115% 88% at 50% 0%, #6A5220 0%, #3B2C11 46%, #1E1509 100%);transform-origin:bottom center;" +
           (dragMe ? "transition:transform .12s cubic-bezier(.25,.8,.4,1), box-shadow .22s ease;" : "transition:transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease;") +
@@ -6761,15 +6800,20 @@ class Component extends DCLogic {
       tutSkipTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "tut7" }); },
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
       matchHdrOn: st.phase === "play" || st.phase === "round" || st.phase === "over",
-      ...((z => { const pos = this._zoomPlace(z ? st.peek : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back && !z.station), zoomStationOn: !!(z && z.station), zoomStName: z && z.station && z.name || "", zoomStSub: z && z.sub || "", zoomStLine: z && z.station && z.line || "", zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(st.peek != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(st.peek) : null)),
+      ...((z => { const pos = this._zoomPlace(z ? this._peekKey() : null, st); return { zoomOn: !!z, zoomBackOn: !!(z && z.back), zoomCardOn: !!(z && !z.back && !z.station && String(this._peekKey())[0] === "d"), zoomStationOn: !!(z && z.station), zoomStName: z && z.station && z.name || "", zoomStSub: z && z.sub || "", zoomStLine: z && z.station && z.line || "", zoomShapes: z && z.shapes || [], zoomL: z && z.l != null ? z.l : "", zoomR: z && z.r != null ? z.r : "", zoomName: z && z.name || "", zoomMove: z && z.move || "", zoomWho: z && z.who || "", zoomNumC: z && z.numC || "#F0D89A", zoomBorder: z && z.border || "rgba(240,216,154,.55)", zoomNotes: z && z.notes || [], zoomNotesOn: !!(z && z.notes && z.notes.length), zoomStyle: pos.wrap, zoomNotesStyle: pos.notes }; })(((pk) => pk != null && (st.phase === "play" || st.phase === "deck") ? this._zoomFor(pk) : null)(this._peekKey()))),
+      veilStyle: "position:absolute;inset:0;z-index:60;background:radial-gradient(120% 120% at 50% 50%, rgba(6,4,2,.92), #040302 70%);transition:opacity .24s ease;opacity:" + (st.veil ? 1 : 0) + ";pointer-events:" + (st.veil ? "auto" : "none"),
       logLine: st.log,
       capsList: (st.caps || []).map(cp => { const Lc = st.slots.length, ec = 466 - (Lc * 86 + (Lc - 1) * 5) / 2; const x = ec + cp.i * 91 + 43, y = 112 + (cp.i % 2 ? 22 : 0) + Math.pow(cp.i - (Lc - 1) / 2, 2) * 3; return { t: cp.t, style: "position:absolute;left:" + (x - 70) + "px;top:" + y + "px;width:140px;text-align:center;font-size:10px;color:#D8C89C;text-shadow:0 1px 6px rgba(5,3,2,.95), 0 0 12px rgba(5,3,2,.8);z-index:7;pointer-events:none;animation:mzCapRise 2.3s ease-out both" }; }),
-      zoomInnerStyle: "width:210px;height:284px;transform:scale(" + (st.peek && String(st.peek)[0] === "d" ? 1 : .6) + ");transform-origin:top left",
+      zoomInnerStyle: "width:210px;height:284px;transform:scale(" + (st.peek && String(st.peek)[0] === "d" ? 1 : .74) + ");transform-origin:top left",
       toastOn: !!st.toast,
       toastText: st.toast ? st.toast.t : "",
       toastStyle: st.toast ? "position:absolute;top:60px;left:50%;transform:translateX(-50%);max-width:430px;text-align:center;font-family:'Varela Round',sans-serif;font-size:11px;color:#F0D89A;text-shadow:0 0 12px rgba(240,216,154,.35), 0 1px 6px rgba(4,3,2,.9);pointer-events:none;z-index:7;animation:" + (st.toast.n % 2 ? "mzToastA" : "mzToastB") + " 1.7s ease both" : "",
       mullOn: !!st.mull && st.phase === "play" && !!st.dealt,
-      mullLine: st.mull ? "seven, dealt from all twenty-eight" : "",
+      // the arena stands down while the deal is being judged: only the cards and the prompt are lit
+      arenaBlurStyle: (!!st.mull && st.phase === "play" && !!st.dealt)
+        ? "filter:blur(7px) brightness(.42);transition:filter .5s ease;pointer-events:none"
+        : "filter:none;transition:filter .5s ease",
+      mullLine: "",
       mullKeepT: st.mull ? "play these seven" : "",
       mullAgainT: st.mull ? "shuffle once, take six" : "",
       mullKeep: () => this._mullKeep(),
@@ -6784,6 +6828,7 @@ class Component extends DCLogic {
       tonightName: this._mName(this._tonight()),
       // the hour is printed where the temper is (27 aug 2026): the four steps change her hand three
       // times over the ladder, so the board says which hour it is and what it gave her.
+      userName: this._userName(),
       temperLine: st.phase !== "deck" && st.phase !== "menu"
         ? (st.nightSky ? ({ mars: "mars stands closest: the sky picks the biggest fight", saturn: "saturn stands closest: the sky guards", venus: "venus stands closest: the sky keeps company", mercury: "mercury stands closest: the sky roams", jupiter: "jupiter stands closest: the sky spends big" })[this._temper()]
           : (st.road && !st.practice && !st.duel ? this._hourName() + ": " + ["her cards are numbers only", "her signatures are awake", "every card she holds fights one higher", "the mansion's own card shows either face"][this._walkStep() - 1] : ""))
@@ -7234,10 +7279,10 @@ class Component extends DCLogic {
       birthCastTap: () => {
         const s0 = this.state;
         if (s0.bY == null || s0.bM == null || s0.bD == null) { this.setState({ bErr: "the sky needs the full date" }); return; }
-        // the compliance floor (16, flat, no geolocation — CLAUDE.md's Privacy invariant): V1 has no
-        // account/backend to enforce this server-side the way Star Shard's signup does, so this is a
-        // reasonable-effort client check, same caveat the real age-check endpoint carries. Computed
-        // from the calendar date, not stored either way.
+        // the compliance floor (16, flat, no geolocation): V1's own local birth screen is normally
+        // unreachable now (the account gate redirects an authenticated visitor straight past it),
+        // but kept as defense in depth for whatever path still reaches it. Reasonable-effort client
+        // check only, same caveat the real age-check endpoint carries.
         const today = new Date();
         let age = today.getFullYear() - s0.bY;
         if (today.getMonth() < s0.bM || (today.getMonth() === s0.bM && today.getDate() < s0.bD)) age--;
@@ -7268,14 +7313,14 @@ class Component extends DCLogic {
           pips: Array.from({ length: 4 }, (_, pi) => ({ style: "width:4px;height:4px;border-radius:50%;background:" + (pi < lv3 ? "#F0D89A" : "rgba(240,216,154,.2)") })),
           src: srcs.length ? "your " + srcs.join(" + ") : f2 ? (f2.p === "the road" ? "the road's gift" : "your " + f2.p) : "" };
       }),
-      revealGo: () => this.setState({ phase: "pintro" }),
+      revealGo: () => this._go("pintro"),
       revealLine: "read from your birth sky, and further along than the rest: your sun's card stands at level three, its four companions at level two. every other mansion starts at one.",
       revealSpend: ((n) => (n === 0 ? "nothing waiting: every level you have is spent."
         : (n === 1 ? "one level is waiting to be spent" : (["", "one", "two", "three", "four", "five", "six", "seven", "eight"][n] || n) + " levels are waiting to be spent")
         + ". open your cards from the lobby, tap a card, and choose: two points on one face, your pick which, or its quarter of the sky's grant. the third door offers one more point or the card's own move."))(this._unspent()),
       cardsLinkLabel: ((n) => n > 0 ? "your cards · " + n + " to spend ›" : "your cards ›")(this._unspent()),
       tutSeven: (st.phase === "tut7" ? (st.deckSel || []).filter(id => !this._chartFive().includes(id)) : []).map(id => { const c2 = C[id]; return { name: c2.name.toLowerCase(), l: c2.l, r: c2.r, shapes: window.ManzilArt ? window.ManzilArt.get(id) : [] }; }),
-      tut7Go: () => this.setState({ phase: this._noteDue() ? "note" : "menu" }),
+      tut7Go: () => this._go(() => this._noteDue() ? "note" : "menu"),
       pintroOn: st.phase === "pintro",
       pStartTap: () => {
         this._clearSeq();
@@ -7406,10 +7451,10 @@ class Component extends DCLogic {
       pauseOn: !!st.pauseOn,
       pauseKeepTap: () => this.setState({ pauseOn: false }),
       pauseLeaveTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: "menu", pauseOn: false }); },
-      // the old target was a bare source filename ("Star Shard - Account Portal.dc.html"), never the
-      // deployed route (/account/) — a 404 on staging — and never actually invalidated the session,
-      // so the account gate's own api.me() check would just log the visitor straight back in. Both
-      // fixed: a real server-side logout, then the same ./account/ path the gate itself redirects to.
+      // the old target was a bare source filename, never the deployed route (/account/) — a 404 on
+      // staging — and never actually invalidated the session, so the account gate's own api.me()
+      // check would just log the visitor straight back in. Both fixed: a real server-side logout,
+      // then the same ./account/ path the gate itself redirects to.
       pauseLogoutTap: () => {
         this._clearSeq();
         try { localStorage.removeItem("manzil-v2-user"); } catch (e) {}
@@ -7450,21 +7495,40 @@ class Component extends DCLogic {
       ],
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       endWonOn: endWon && !st.duel,
-      endPlayLabel: "play again",
+      endLobbyTap: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this._clearSeq(); this.setState({ ...this._deckState(), deckSel: st.deckSel, phase: "menu" }); },
       wakePipsOn: endWon && !!st.road,
       wakePips: (ml3 => [1, 2, 3, 4].map(l => ({ style: "width:8px;height:8px;transform:rotate(45deg);display:inline-block;" + (l < Math.max(1, ml3) ? "background:rgba(240,216,154,.85)" : l === Math.max(1, ml3) ? "background:rgba(240,216,154,.1);animation:mzLvlLight 1.5s ease 1s both" : "background:rgba(240,216,154,.1);border:1px solid rgba(240,216,154,.2)") })))(this._mlvl(this._tonight())),
       endWonTag: (m2 => st.road ? (m2 >= 4 ? "the " + this._mName(this._tonight()) + ", claimed and dated tonight" : "the " + this._mName(this._tonight()) + "'s card, at level " + Math.max(1, m2) + " tonight") : "the " + this._mName(this._tonight()))(this._mlvl(this._tonight())),
       endMark: endWon ? "#FFB000" : "rgba(240,216,154,.5)",
+      // THE OPPONENT SPEAKS INSTEAD OF THE ARITHMETIC (27 aug 2026, user: "the rest of the text is
+      // useless, have it say something like whoever you're fighting, some personality trait: mave is
+      // eager to beat you again"). the biggest-chain receipt was a fact nobody needs after the fact.
+      // three states per walker, off the record the game already keeps: never met, she beat you last,
+      // you beat her last. the sky and the mansion get their own line.
       ...((rc => ({ endRcptOn: !!rc, endRcpt: rc }))((() => {
         if (st.practice || !(st.phase === "won" || st.phase === "lost" || st.phase === "roadlost")) return "";
-        const B = this._beats || [];
-        const winner = endWon ? "you" : "sky";
-        const big = B.filter(b => b.who === winner && b.f >= 2).sort((a, b) => b.f - a.f)[0];
-        if (big) {
-          const nm = C[big.id] && C[big.id].name ? "the " + C[big.id].name.replace("The ", "").toLowerCase() : winner === "you" ? "your card" : "her card";
-          return "the board turned at " + (this._mansions()[big.i] || "the road") + ": " + nm + ", " + (big.f === 2 ? "two" : big.f === 3 ? "three" : big.f) + " stations in one strike.";
+        const who = st.roadBoss ? "" : (st.roadWalker || st.nightWalker || "");
+        if (!who) {
+          if (st.roadBoss) return "the " + this._mName(this._tonight()) + " keeps its own road. it will stand here again tomorrow.";
+          if (st.nightSky) return "the sky does not gloat. she simply comes back.";
+          return "";
         }
-        return B.length ? "no single strike turned it: the count was won a station at a time." : "";
+        let rec = {};
+        try { rec = JSON.parse(localStorage.getItem("manzil-ed-wrec")) || {}; } catch (e) {}
+        const r = rec[who] || { w: 0, l: 0 };
+        const T = {
+          imra: ["imra has not met your hand before. she leans in to look at it.", "imra remembers taking this off you. she is in no hurry.", "imra has been beaten by you once. she is eager to fix that."],
+          sef: ["sef counts your ground before he says anything.", "sef turned you back here already. he expects to again.", "sef lost to you and has not stopped counting since."],
+          odel: ["odel keeps her arms crossed and waits for you to move first.", "odel has your measure and is happy to say so.", "odel is not used to losing twice to the same hand."],
+          tesh: ["tesh watches from under the hat and gives you nothing.", "tesh took the corners against you last time and kept them.", "tesh wants the corners back."],
+          ruen: ["ruen holds a card up like a question you have not answered.", "ruen answered you once already tonight's equal.", "ruen is impatient to prove the last one was luck."],
+          brann: ["brann stands wide and picks the fight you least want.", "brann has beaten you here and will pick the same fight.", "brann is eager to beat you again."],
+          mave: ["mave says nothing and the cloak says less.", "mave took this road off you once. she remembers the station.", "mave is eager to beat you again."],
+        };
+        const key = String(who).toLowerCase();
+        const set = T[key] || ["" + who + " stands ready.", who + " has turned you back before.", who + " is eager to beat you again."];
+        const idx = (r.w || 0) + (r.l || 0) === 0 ? 0 : (r.w || 0) > 0 ? 1 : 2;
+        return set[idx] || "";
       })())),
       endTitle: st.duel ? ((n => (n === "you" ? "you win the match" : n + " wins the match") + ", " + (endWon ? mw + " boards to " + ms : ms + " boards to " + mw))(endWon ? st.duel.a : st.duel.b)) : st.practice ? (endWon ? "the practice is yours, " + mw + " boards to " + ms : "the district's hand takes the practice, " + ms + " to " + mw)
         : st.phase === "roadlost" ? "the night rests"

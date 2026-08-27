@@ -25,6 +25,16 @@
   @keyframes spSpin{to{transform:rotate(360deg)}}
   @keyframes spPulse{0%,100%{opacity:1}50%{opacity:.4}}
   @keyframes spCardIn{0%{opacity:0;transform:translateY(16px) scale(.86)}60%{opacity:1;transform:translateY(-3px) scale(1.03)}100%{opacity:1;transform:none}}
+@keyframes spDInA{0%,3%{opacity:0;transform:translateY(20px) scale(.9)}9%{opacity:1;transform:translateY(-2px) scale(1.03)}12%,92%{opacity:1;transform:translateY(0) scale(1)}97%,100%{opacity:0}}
+  @keyframes spDInB{0%,3%{opacity:0;transform:translateY(20px) scale(.9)}9%{opacity:1;transform:translateY(-2px) scale(1.03)}12%,92%{opacity:1;transform:translateY(0) scale(1)}97%,100%{opacity:0}}
+  @keyframes spDFlipA{0%,26%{background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);color:#9A8A5E;transform:rotateY(0deg)}31%{transform:rotateY(90deg)}36%,92%{background:linear-gradient(160deg,#2A2008,#0E0904);border:1px solid rgba(255,176,0,.75);color:#FFB000;transform:rotateY(0deg)}97%,100%{background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);color:#9A8A5E;transform:rotateY(0deg)}}
+  @keyframes spDFlipB{0%,26%{background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);color:#9A8A5E;transform:rotateY(0deg)}31%{transform:rotateY(90deg)}36%,92%{background:linear-gradient(160deg,#2A2008,#0E0904);border:1px solid rgba(255,176,0,.75);color:#FFB000;transform:rotateY(0deg)}97%,100%{background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);color:#9A8A5E;transform:rotateY(0deg)}}
+  @keyframes spDAvA{0%,44%{opacity:0;transform:translateY(20px) scale(.9)}50%{opacity:1;transform:translateY(-2px) scale(1.03)}54%,92%{opacity:1;transform:translateY(0) scale(1)}97%,100%{opacity:0}}
+  @keyframes spDAvB{0%,44%{opacity:0;transform:translateY(20px) scale(.9)}50%{opacity:1;transform:translateY(-2px) scale(1.03)}54%,92%{opacity:1;transform:translateY(0) scale(1)}97%,100%{opacity:0}}
+  @keyframes spDMineA{0%,64%{background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.6);color:#F2EAD6;transform:rotateY(0deg)}69%{transform:rotateY(90deg)}74%,92%{background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);color:#9A8A5E;transform:rotateY(0deg)}97%,100%{background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.6);color:#F2EAD6;transform:rotateY(0deg)}}
+  @keyframes spDMineB{0%,64%{background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.6);color:#F2EAD6;transform:rotateY(0deg)}69%{transform:rotateY(90deg)}74%,92%{background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);color:#9A8A5E;transform:rotateY(0deg)}97%,100%{background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.6);color:#F2EAD6;transform:rotateY(0deg)}}
+  @keyframes spDCapA{0%,14%{opacity:0}22%,92%{opacity:1}97%,100%{opacity:0}}
+  @keyframes spDCapB{0%,14%{opacity:0}22%,92%{opacity:1}97%,100%{opacity:0}}}
   @keyframes spTwk{0%,100%{opacity:.95}50%{opacity:.3}}
   @keyframes spNeb{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.07);opacity:1}}
   @keyframes spComet{0%{transform:translate(0,0)}100%{transform:translate(-160px,44px)}}
@@ -38,7 +48,7 @@
   @media (prefers-reduced-motion: reduce){*{animation-duration:.01s !important;animation-iteration-count:1 !important;transition-duration:.01s !important}}
 </style>
 </helmet>
-<div style="min-height:100vh;min-height:100dvh;position:relative;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);color:#F2EAD6;display:flex;justify-content:center;align-items:center">
+<div style="min-height:100vh;position:relative;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%, #1E1706 0%, #0F0B03 55%, #080502 100%);color:#F2EAD6;display:flex;justify-content:center;align-items:center">
   <div style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 12% 6%, rgba(240,216,154,.85), transparent),radial-gradient(1px 1px at 68% 3%, rgba(248,244,230,.7), transparent),radial-gradient(2px 2px at 88% 10%, rgba(255,176,0,.6), transparent),radial-gradient(1px 1px at 30% 13%, rgba(248,244,230,.5), transparent),radial-gradient(1.5px 1.5px at 52% 7%, rgba(240,216,154,.6), transparent),radial-gradient(1px 1px at 79% 18%, rgba(248,244,230,.45), transparent),radial-gradient(1px 1px at 6% 40%, rgba(248,244,230,.35), transparent),radial-gradient(1.5px 1.5px at 94% 46%, rgba(240,216,154,.45), transparent),radial-gradient(1px 1px at 9% 78%, rgba(248,244,230,.3), transparent),radial-gradient(1.5px 1.5px at 92% 84%, rgba(240,216,154,.35), transparent)"></div>
   <div style="{{ vIntroStyle }}">
     <div style="position:absolute;left:-10%;top:16%;width:120%;height:130px;transform:rotate(-11deg);background:linear-gradient(180deg, transparent, rgba(242,234,214,.05) 35%, rgba(186,196,255,.06) 55%, transparent);filter:blur(3px);animation:spDrift 60s ease-in-out infinite"></div>
@@ -90,11 +100,12 @@
           </sc-for>
         </svg>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:54px;line-height:1;color:#F2EAD6;margin-top:22px;animation:spFadeUp .6s ease .15s both">manzil</div>
-      <div style="font-size:14px;color:#D8C89C;margin-top:10px;animation:spFadeUp .6s ease .3s both">a card game under the sky</div>
-      <div style="font-size:14.5px;line-height:1.85;color:#C9BC96;margin-top:26px;max-width:340px;text-wrap:pretty;animation:spFadeUp .6s ease .48s both">every player carries five cards the sky wrote the minute they were born. to sit at the table, you need yours.</div>
-      <button onClick="{{ introGo }}" style="margin-top:32px;padding:14px 42px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:15px;color:#FFB000;animation:spFadeUp .6s ease .7s both, spBtnBreathe 3.6s ease-in-out 1.4s infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">find my five ✦</button>
-      <button onClick="{{ signinGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;margin-top:20px;padding:0">already have yours? <span style="color:#FFB000">sign in</span></button>
+      
+      
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;line-height:1;letter-spacing:.01em;color:#F2EAD6;animation:spFadeUp .6s ease .2s both">welcome</div>
+      <div style="font-size:14.5px;line-height:1.85;color:#C9BC96;margin-top:26px;max-width:340px;text-wrap:pretty;animation:spFadeUp .6s ease .48s both">you have arrived just in time. enter and remember.</div>
+      <button onClick="{{ introGo }}" style="margin-top:32px;padding:14px 42px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:15px;color:#FFB000;animation:spFadeUp .6s ease .7s both, spBtnBreathe 3.6s ease-in-out 1.4s infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">cast my sky ✦</button>
+      <button onClick="{{ signinGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;margin-top:20px;padding:0">already cast? <span style="color:#FFB000">sign in</span></button>
     </div>
   </sc-if>
   <sc-if value="{{ shellOn }}" hint-placeholder-val="{{ false }}">
@@ -147,34 +158,15 @@
           </div>
           <div style="flex:1.4;min-width:190px">
             <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">where</div>
-            <sc-if value="{{ placeChosen }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(240,216,154,.3);padding:7px 2px 9px">
-                <span style="font-size:17px;color:#F2EAD6">{{ placeConfirmedLine }}</span>
-                <button onClick="{{ placeChangeTap }}" style="background:none;border:none;cursor:pointer;font-size:11.5px;color:#9A8A5E;padding:0;white-space:nowrap">change</button>
-              </div>
-            </sc-if>
-            <sc-if value="{{ placeNotChosen }}" hint-placeholder-val="{{ true }}">
-              <div style="display:flex;gap:8px;align-items:flex-end">
-                <input value="{{ placeVal }}" onChange="{{ setPlace }}" placeholder="portland, oregon" style="{{ inputStyle }}">
-                <button onClick="{{ placeSearchTap }}" style="background:none;border:1px solid rgba(240,216,154,.35);color:#F0D89A;font-family:'Varela Round',sans-serif;font-size:12px;padding:7px 14px 9px;cursor:pointer;white-space:nowrap">{{ placeSearchLabel }}</button>
-              </div>
-              <sc-if value="{{ placeHasResults }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;flex-direction:column;margin-top:4px;border:1px solid rgba(240,216,154,.2);background:rgba(240,216,154,.03)">
-                  <sc-for list="{{ placeCityRows }}" as="r" hint-placeholder-count="4">
-                    <div onClick="{{ r.pick }}" style="padding:10px 12px;font-size:13px;color:#F2EAD6;cursor:pointer;border-bottom:1px solid rgba(240,216,154,.1)">{{ r.label }}</div>
-                  </sc-for>
-                </div>
-              </sc-if>
-              <sc-if value="{{ placeErrOn }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:11px;color:#FFB000;padding-top:9px">{{ placeErr }}</div>
-              </sc-if>
-            </sc-if>
+            <input value="{{ placeVal }}" onChange="{{ setPlace }}" placeholder="portland, oregon" style="{{ inputStyle }}">
             <div style="font-size:11px;color:#9A8A5E;padding-top:9px">the town is enough. it sets where the sky stood</div>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px;animation:spFadeUp .5s ease .42s both">
-          <sc-if value="{{ castErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#FFB000">{{ castErr }}</div></sc-if>
           <button onClick="{{ castTap }}" style="{{ castStyle }}" style-hover="{{ btnHover }}">{{ castLabel }}</button>
+          <sc-if value="{{ castErrOn }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:11.5px;color:#FFB000;text-align:center">{{ castErr }}</div>
+          </sc-if>
           <button onClick="{{ signinGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;text-align:center;padding:0">already have your five? <span style="color:#FFB000">sign in</span></button>
         </div>
       </div>
@@ -206,6 +198,27 @@
         </div>
         </div>
         <div style="font-size:10.5px;color:#9A8A5E;margin-top:12px">left side fights left · right side fights right</div>
+      <div style="display:flex;gap:9px;align-items:center;justify-content:center;margin-top:18px;height:52px;perspective:560px">
+        <sc-if value="{{ demoHersLeftOn }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ demoFlipStyle }}"><span style="position:absolute;top:3px;left:5px;font-size:11px;color:inherit">{{ demoHers }}</span></div>
+        </sc-if>
+        <sc-if value="{{ demoHersRightOn }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ demoAvStyle }}"><span style="position:absolute;top:3px;left:5px;font-size:11px;color:#C9BC96">{{ demoAv }}</span></div>
+        </sc-if>
+        <div style="{{ demoWrapStyle }}">
+          <div style="{{ demoMineStyle }}">
+            <span style="position:absolute;top:3px;left:5px;font-size:11px;color:inherit">{{ cardL }}</span>
+            <span style="position:absolute;bottom:3px;right:5px;font-size:11px;color:inherit">{{ cardR }}</span>
+          </div>
+        </div>
+        <sc-if value="{{ demoHersRightOn }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ demoFlipStyle }}"><span style="position:absolute;top:3px;left:5px;font-size:11px;color:inherit">{{ demoHers }}</span></div>
+        </sc-if>
+        <sc-if value="{{ demoHersLeftOn }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ demoAvStyle }}"><span style="position:absolute;top:3px;left:5px;font-size:11px;color:#C9BC96">{{ demoAv }}</span></div>
+        </sc-if>
+      </div>
+      <div style="{{ demoCapStyle }}">{{ demoCap }}</div>
         <div style="font-size:12px;color:#FFB000;margin-top:20px">{{ cardSource }}</div>
         <div style="font-size:14.5px;line-height:1.75;color:#D8C89C;margin-top:10px;max-width:320px;text-wrap:pretty">{{ cardMove }}</div>
         <div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:14px;max-width:300px;text-wrap:pretty">{{ cardLesson }}</div>
@@ -219,10 +232,10 @@
             <div style="{{ c }}">✦</div>
           </sc-for>
         </div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.25;color:#F2EAD6;margin-top:10px">the sky lends you seven more.</div>
-        <div style="font-size:13.5px;line-height:1.8;color:#D8C89C;max-width:340px;text-wrap:pretty">twelve cards walk with you: your five, awake, and seven asleep at level one, numbers only. win a card's own night and it wakes.</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.25;color:#F2EAD6;margin-top:10px">the hand is seven.</div>
+        <div style="font-size:13.5px;line-height:1.8;color:#D8C89C;max-width:340px;text-wrap:pretty">twenty-eight cards, shuffled. seven land in your hand, and you play them against your opponent's seven on a board of nine stations. every card you take is a point. hold the most when the board fills and the night is yours.</div>
         <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px;align-items:center">
-          <button onClick="{{ tutGo }}" style="padding:13px 34px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:14px;color:#FFB000;animation:spBtnBreathe 3.6s ease-in-out infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">learn the game ✦</button>
+          <button onClick="{{ tutGo }}" style="padding:13px 34px;background:rgba(255,176,0,.08);border:1px solid rgba(255,176,0,.6);border-radius:8px;cursor:pointer;font-family:'Varela Round',sans-serif;font-size:14px;color:#FFB000;animation:spBtnBreathe 3.6s ease-in-out infinite;transition:transform .25s ease" style-hover="transform:translateY(-2px)">enter ✦</button>
           <button onClick="{{ skipGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;padding:4px">straight to the sky ›</button>
         </div>
       </div>
@@ -235,8 +248,8 @@
               <div style="{{ c.style }}"><div style="font-size:15px;color:#F0D89A">{{ c.glyph }}</div><div style="font-size:9px;color:#9A8A5E;margin-top:5px;line-height:1.25">{{ c.name }}</div></div>
             </sc-for>
           </div>
-          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.25;color:#F2EAD6">these five are yours.</div>
-          <div style="font-size:13.5px;color:#D8C89C;margin-top:6px">name yourself and they are kept.</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.25;color:#F2EAD6">the five your chart wakes first.</div>
+          <div style="font-size:13.5px;color:#D8C89C;margin-top:6px">name yourself and your sky is kept.</div>
         </div>
         <div>
           <div style="font-size:12px;color:#9A8A5E;margin-bottom:2px">username</div>
@@ -254,8 +267,10 @@
             <div style="font-size:11px;color:#9A8A5E;padding-top:9px">eight characters at least.</div>
           </div>
         </div>
-        <sc-if value="{{ acctErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#FFB000;text-align:center">{{ acctErr }}</div></sc-if>
         <button onClick="{{ keepTap }}" style="{{ keepStyle }}" style-hover="{{ btnHover }}">{{ keepLabel }}</button>
+        <sc-if value="{{ acctErrOn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:11.5px;color:#FFB000;text-align:center">{{ acctErr }}</div>
+        </sc-if>
       </div>
       </sc-if>
       <sc-if value="{{ signinOn }}" hint-placeholder-val="{{ false }}">
@@ -274,8 +289,10 @@
           <div style="padding-top:9px"><a href="#" style="font-size:11px;color:#9A8A5E">lost it? we'll send a road back in</a></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
-          <sc-if value="{{ signinErrOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#FFB000">{{ signinErr }}</div></sc-if>
           <button onClick="{{ signinTap }}" style="{{ signinStyle }}" style-hover="{{ btnHover }}">{{ signinLabel }}</button>
+          <sc-if value="{{ signinErrOn }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:11.5px;color:#FFB000;text-align:center">{{ signinErr }}</div>
+          </sc-if>
           <button onClick="{{ castGo }}" style="background:none;border:none;cursor:pointer;font-size:12px;color:#9A8A5E;text-align:center;padding:0">new here? <span style="color:#FFB000">find your five</span></button>
         </div>
       </div>
@@ -294,13 +311,13 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:800},&quot;startPhase&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;intro&quot;,&quot;options&quot;:[&quot;intro&quot;,&quot;cast&quot;,&quot;cards&quot;,&quot;account&quot;,&quot;seven&quot;,&quot;signin&quot;,&quot;young&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;preview&quot;}}">
 class Component extends DCLogic {
-  state = { day: "", mon: "", yr: "", time: "", noTime: false, place: "", placeCityResults: [], placeSearching: false, placePick: null, placeErr: "", email: "", user: "", pass: "", sid: "", spass: "", phase: null, busy: false, castErr: "", acctErr: "", signinErr: "" };
+  state = { day: "", mon: "", yr: "", time: "", noTime: false, place: "", email: "", user: "", pass: "", sid: "", spass: "", phase: null, busy: false, castErr: "", acctErr: "", signinErr: "" };
   async componentDidMount() {
     this._rs = () => this.forceUpdate();
     window.addEventListener("resize", this._rs);
     // A refresh must not present a fresh empty cast form to someone who
-    // already failed the age gate (§1 step 2's "reasonable-effort
-    // standard" — the whole point is not inviting a retry-loop).
+    // already failed the age gate (the reasonable-effort standard — the
+    // whole point is not inviting a retry-loop).
     let ageFail = false;
     try { ageFail = !!localStorage.getItem("starshard-age-fail"); } catch (e) {}
     if (ageFail && !this.state.phase) this.setState({ phase: "young" });
@@ -308,7 +325,7 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { window.removeEventListener("resize", this._rs); if (this._ct) clearTimeout(this._ct); }
   // The real _castFive, ported from Manzil's own (Star Shard v3 Build
-  // Plan/Manzil - The Empty District.dc.html) — duplicated rather than
+  // Plan/Manzil - Game Prototype V1.dc.html) — duplicated rather than
   // shared, matching how manzil-engine.js is already a synced copy: the
   // dc-runtime evaluates each page's script block independently, no
   // cross-page ESM import is possible here.
@@ -321,47 +338,44 @@ class Component extends DCLogic {
     let step = 1; while (five.length < 5) { const id = ((five[five.length - 1] + step - 1) % 28) + 1; if (!five.includes(id)) { five.push(id); fill.push({ p: "the road", m: id }); } step++; }
     return { rows, five, fill };
   }
-  _buildPack(five) {
-    const pool = []; for (let i = 1; i <= 28; i++) if (!five.includes(i)) pool.push(i);
-    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
-    return five.concat(pool.slice(0, 7));
-  }
-  // Base L/R numbers + names, ported from Manzil's own _cards() pool
-  // array with its re-baseline rule already applied (22 Aug 2026: every
-  // card carries what used to be its L3 numbers from night one — the
-  // lower side gets +1, or the left side on a tie). Move text ported
-  // from _simpleMove(). This is a small, deliberately-duplicated subset
-  // (name/numbers/one line) — Manzil's own full leveling/signature
-  // system doesn't apply before an account even exists.
+  // Base L/R numbers + names, ported from Manzil's own _cards() pool array
+  // (the 27 Aug card sheet, docs/handoffs/CARDS-27AUG.md — faces already
+  // include the four mirrors: the bearer, the storm, the hand, the veil).
+  // Move text is the sheet's own signature column in plain lowercase
+  // words. Deliberately duplicated, not shared — Manzil's own full
+  // leveling/build/grant system doesn't apply before an account exists,
+  // and every card starts unleveled anyway (a fresh signup has spent no
+  // doors), so only the base faces and what the card eventually does are
+  // worth showing here.
   _CARD_DATA = [
-    ["The Gate", 6, 6, "if the other side gets to go first, the gate jumps in and takes the very first turn instead. once a board."],
-    ["The Bearer", 6, 5, "both cards standing next to the bearer fight +1 while it stands."],
-    ["The Gathered Stars", 7, 7, "counts as two cards at the final count, wherever it stands."],
-    ["The Follower", 8, 7, "its left number becomes a copy of whatever number faces it from the left."],
-    ["The Blaze", 6, 6, "the space it lands on stays yours to the end of the board, even if the card itself gets taken."],
-    ["The Storm", 8, 6, "on its own mansion, a tie can't take the storm. equal numbers just bounce off: beat it or leave it."],
-    ["The Return", 7, 7, "the first time it gets taken, it comes back to your hand instead. once a board."],
-    ["The Ghost", 7, 6, "their cards next to it fight -1 while the road is less than half full."],
-    ["The Glance", 5, 6, "when you play the glance, the next card they play fights -1."],
-    ["The Throne", 7, 9, "it has two faces: when you play it, you pick which number points which way."],
-    ["The Mane", 6, 6, "both its numbers get +1 while it stands between two cards."],
-    ["The Turning", 7, 6, "when it lands, it spins a neighbor enemy card around: strong number facing away from you."],
-    ["The Hand", 7, 5, "once a board, you can pick it up and set it down somewhere else."],
-    ["The Jewel", 8, 7, "nothing can lower its numbers. ever."],
-    ["The Veil", 8, 3, "it can't be taken on the turn it lands: their answer comes one turn late."],
-    ["The Claws", 7, 6, "whatever takes the claws fights -1 for the rest of the board."],
-    ["The Crown", 7, 6, "on the first or last space of the road, it counts as two at the count."],
-    ["The Heart", 8, 7, "while the heart stands, nothing can lower any of your cards' numbers."],
-    ["The Root", 7, 7, "if it's the first card you play on a board, it fights +1 all board long."],
-    ["The Flock", 7, 6, "when the flock takes a card, your cards next to it fight +1 for the rest of the board."],
-    ["The Empty District", 3, 8, "counts as two at the count while none of your cards touch it. it likes standing alone."],
-    ["The Listener", 7, 5, "when they play a card right next to it, the listener strikes first."],
-    ["The Drum", 5, 7, "when the drum takes a card, that card attacks its next neighbor too. dominoes."],
-    ["The Void", 9, 3, "it can't be taken while only its attacker stands beside it."],
-    ["The Hideaway", 6, 6, "it shuts the loudest mansion next to it: that space counts for nobody at the end."],
-    ["The Chamber", 7, 6, "your cards landing next to it are safe on their first turn."],
-    ["The Guide", 6, 6, "once a board, tap the guide then another of your cards: the two swap places."],
-    ["The Thread", 6, 6, "the first and last mansions of the road count for whoever holds the thread."],
+    ["The Gate", 6, 6, "the first strike against the gate does not land."],
+    ["The Bearer", 5, 6, "anything striking a card beside the bearer fights two lower."],
+    ["The Gathered Stars", 7, 7, "the gathered stars cannot be taken while a card beside it is yours."],
+    ["The Follower", 8, 7, "when a card beside the follower is taken, it strikes back."],
+    ["The Blaze", 6, 6, "the blaze marks one enemy card beside it two lower, for good."],
+    ["The Storm", 6, 8, "no tie takes the storm."],
+    ["The Return", 7, 7, "if the return took nothing on the way in, it strikes again a turn later."],
+    ["The Ghost", 7, 6, "take the ghost and you trade places with it: the striker changes hands too."],
+    ["The Glance", 5, 6, "the glance watches the station opposite it across the road and strikes there, as it lands and whenever anything lands there."],
+    ["The Throne", 7, 9, "whatever the throne takes fights one higher afterwards."],
+    ["The Mane", 6, 6, "cards you hold beside the mane fight one higher."],
+    ["The Turning", 7, 6, "what the turning takes strikes onward the same way."],
+    ["The Hand", 5, 7, "what you lodge beside the hand lands one higher, for good."],
+    ["The Jewel", 9, 5, "the jewel turns to meet whatever lands beside it with its stronger face."],
+    ["The Veil", 3, 8, "the first card that lands beside the veil is turned around."],
+    ["The Claws", 7, 6, "any card of hers that lands beside the claws is shoved along one station."],
+    ["The Crown", 7, 6, "what the crown takes cannot be taken back."],
+    ["The Heart", 8, 7, "when the road fills, the heart strikes both its neighbours once more."],
+    ["The Root", 7, 7, "both cards beside the root turn around as it lands."],
+    ["The Flock", 7, 6, "the flock and one card beside it trade places."],
+    ["The Empty District", 3, 8, "the empty district counts two, and silences the enemy cards standing beside it."],
+    ["The Listener", 7, 5, "the listener counts one more for every card standing beside it."],
+    ["The Drum", 5, 7, "the station on the drum's right counts for the drum's side."],
+    ["The Void", 9, 3, "the void counts two, and the station on its right counts one less."],
+    ["The Hideaway", 6, 6, "the hideaway counts nothing itself; both stations beside it count one more."],
+    ["The Chamber", 7, 6, "the chamber counts two while it has never been taken, and four if it is still untouched when the road fills."],
+    ["The Guide", 6, 6, "your cards standing on their own mansion count one more, while the guide stands with you."],
+    ["The Thread", 6, 6, "everything standing beside the thread fights one lower, both sides."],
   ];
   _PLANET_GLYPH = { sun: "☉", moon: "☽", mercury: "☿", venus: "♀", mars: "♂", jupiter: "♃", saturn: "♄", "the road": "✦" };
   _arc(r, a0, a1) {
@@ -384,33 +398,18 @@ class Component extends DCLogic {
     if (n.getUTCMonth() < p.mi || (n.getUTCMonth() === p.mi && n.getUTCDate() < p.d)) a--;
     return a;
   }
-  // A real search-and-pick step, same proven pattern as Star Shard
-  // v4.dc.html's obSearch()/obCityResults — replacing a free-text field
-  // that used to be accepted as typed, with no confirmation it resolved
-  // to a real place. Manzil's own cast (_castFive) never needed
-  // coordinates, so this is display-only here (the picked name/region),
-  // but it's the same real api.geocode() lookup either way.
-  async placeSearch() {
-    const q = this.state.place.trim();
-    if (!q) return;
-    this.setState({ placeSearching: true, placeCityResults: [], placeErr: "" });
-    try {
-      const res = await this.api.geocode(q);
-      this.setState({ placeSearching: false, placeCityResults: res, placeErr: res.length ? "" : "no place found by that name. try a different spelling" });
-    } catch (e) {
-      this.setState({ placeSearching: false, placeErr: "the star atlas is unreachable. try again" });
-    }
-  }
-  placePickTap(r) { return () => this.setState({ placePick: r, placeCityResults: [], place: `${r.name}, ${r.region}` }); }
-  placeChangeTap() { this.setState({ placePick: null, place: "", placeCityResults: [] }); }
   renderVals() {
     const st = this.state, desk = window.innerWidth >= 900, ph = st.phase || this.props.startPhase || "intro";
     const P = this._parse(), dateDone = P.ok;
+    // A general lesson per step of the walkthrough, one law of the game each — same slot the mock's
+    // fixed LESSONS occupied, updated to the 27 Aug canon (the ladder swapped which door is the grant
+    // vs the signature; the old "its card is the prize at the top" line is gone since all 28 are held
+    // from the first login, per CLAUDE.md's 27 Aug onboarding sweep).
     const LESSONS = [
       "cards fight with numbers. the bigger side claims the smaller.",
-      "your five are awake at level two. their moves are live from the first deal.",
-      "every mansion is a level. its card is the prize at the top.",
-      "on its own mansion night, a card counts two. that ground is its dominion.",
+      "all twenty-eight cards are already yours: every mansion is a level, and walking its road is how its card wakes.",
+      "the second door is its quarter's grant, or two points on a face. the third is its own signature move.",
+      "on its own mansion night, a card counts two: that ground is its dominion.",
       "the board is nine stations. hold the most when it fills and the night is yours.",
     ];
     const litSet = st.cast ? st.cast.five.map(id => id - 1) : [];
@@ -434,7 +433,7 @@ class Component extends DCLogic {
     const tm = tq.match(/^(\d{1,2}):(\d{2})\s*(am|pm)?$/);
     const timeValid = !!(tm && parseInt(tm[1], 10) >= (tm[3] ? 1 : 0) && parseInt(tm[1], 10) <= (tm[3] ? 12 : 23) && parseInt(tm[2], 10) <= 59);
     const timeOk = st.noTime || timeValid;
-    const placeOk = !!st.placePick;
+    const placeOk = st.place.trim().length >= 2;
     const emailOk = st.email.indexOf("@") > 0 && st.email.indexOf(".") > 1;
     const userOk = /^[a-z0-9_]{3,20}$/.test(st.user);
     const passOk = st.pass.length >= 8;
@@ -466,13 +465,13 @@ class Component extends DCLogic {
       heroFootOn: desk,
       ringSvgStyle: "display:block;width:" + (desk ? 190 : 108) + "px;height:" + (desk ? 190 : 108) + "px",
       titleSize: desk ? 46 : 34,
-      heroLine: ph === "account" || ph === "done" ? "the sky wrote your five the minute you arrived. here they are." : "your star shard: five cards the sky wrote the minute you were born.",
+      heroLine: ph === "account" || ph === "done" ? "your star shard was made the moment you arrived. here it stands." : "your star shard was made the moment you were born: the sky standing over that minute, and the cards it wakes first.",
       formStyle: desk ? "flex:1;min-width:0" : "width:100%",
       rowTwoStyle: "display:flex;gap:26px;flex-wrap:wrap",
       castOn: ph === "cast", castingOn: ph === "casting", youngOn: ph === "young", accountOn: ph === "account", doneOn: ph === "done", signinOn: ph === "signin",
       cardsOn: ph === "cards", sevenOn: ph === "seven",
       ...((() => {
-        const cast = st.cast, ci = st.cardStep || 0;
+        const cast = st.cast, ci = this.state.cardStep || 0;
         const five = cast ? cast.five : [];
         const mid = five[Math.min(ci, Math.max(0, five.length - 1))] || null;
         const data = mid ? this._CARD_DATA[mid - 1] : null;
@@ -480,17 +479,34 @@ class Component extends DCLogic {
         const fillEntry = cast && !row ? cast.fill.find(f => f.m === mid) : null;
         const glyph = row ? (this._PLANET_GLYPH[row.p] || "✦") : (fillEntry ? (this._PLANET_GLYPH[fillEntry.p] || "✦") : "✦");
         const source = row ? "your " + row.p + " stands here" : fillEntry ? (fillEntry.p === "the road" ? "the road's gift" : "your " + fillEntry.p + " stands here") : "";
+        const L = data ? data[1] : 0, R = data ? data[2] : 0;
+        const better = Math.max(L, R), weaker = Math.min(L, R), betterLeft = L >= R;
+        // a generic, always-arithmetically-true two-exchange demo built from the card's REAL faces
+        // (not the mock's hand-authored numbers): our better face beats a plausible lower number of
+        // hers, then her comeback number beats our remaining, weaker face — same caption shape and
+        // animation the export shipped, real numbers under it.
+        const her1 = Math.max(1, better - 2), her2 = Math.min(9, weaker + 2);
+        const demoCap = data ? ("its " + better + " takes her " + her1 + ". then a " + her2 + " lodges the other side and takes the card back.") : "";
         return {
           cardDots: five.map((_, i) => "width:7px;height:7px;border-radius:50%;transition:background .4s ease;background:" + (i <= ci ? "#FFB000" : "rgba(240,216,154,.2)")),
-          cardGlyph: glyph, cardName: data ? data[0].toLowerCase() : "", cardSource: source,
-          cardMove: data ? data[3] : "", cardLesson: LESSONS[Math.min(ci, 4)], cardL: data ? data[1] : "", cardR: data ? data[2] : "",
+          cardGlyph: glyph, cardName: data ? data[0].toLowerCase() : "", cardSource: source, cardMove: data ? data[3] : "",
+          cardLesson: LESSONS[Math.min(ci, 4)], cardL: L, cardR: R,
+      // one board, played: the card lodges, the neighbour it beats turns over. the A/B twins restart the loop per card.
+      // two exchanges a loop: your card lodges and takes a neighbour, then a bigger number
+      // lodges the other side and takes yours. the A/B twins restart the loop when the card changes.
+      ...((k) => ({
+        demoHers: her1, demoAv: her2, demoHersRightOn: betterLeft, demoHersLeftOn: !betterLeft, demoCap,
+        demoCapStyle: "font-size:10px;line-height:1.6;color:#9A8A5E;margin-top:11px;max-width:290px;text-wrap:pretty;animation:spDCap" + k + " 6.4s ease-in-out infinite",
+        demoWrapStyle: "width:36px;height:48px;animation:spDIn" + k + " 6.4s ease-in-out infinite",
+        demoMineStyle: "position:relative;width:36px;height:48px;border-radius:5px;box-shadow:0 6px 16px rgba(0,0,0,.6);animation:spDMine" + k + " 6.4s ease-in-out infinite",
+        demoFlipStyle: "position:relative;width:36px;height:48px;border-radius:5px;animation:spDFlip" + k + " 6.4s ease-in-out infinite",
+        demoAvStyle: "position:relative;width:36px;height:48px;border-radius:5px;background:rgba(20,14,6,.5);border:1px solid rgba(240,216,154,.22);animation:spDAv" + k + " 6.4s ease-in-out infinite"
+      }))(ci % 2 ? "B" : "A"),
           cardNextLabel: ci < 4 ? "next ›" : "keep them ›",
           cardNext: () => ci < 4 ? this.setState({ cardStep: ci + 1 }) : this.setState({ phase: "account" }),
           sevenBacks: [0, 1, 2, 3, 4, 5, 6].map(i => "width:44px;height:60px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(240,216,154,.5);background:linear-gradient(160deg,#1A140A,#0A0603);border:1px solid rgba(240,216,154,.22);box-shadow:0 6px 16px rgba(0,0,0,.5);animation:spCardIn .5s ease " + (i * 90) + "ms both, spFloat " + (4 + i * .4) + "s ease-in-out " + (700 + i * 90) + "ms infinite alternate"),
-          // Manzil is the site root as of the 24 Aug restructure — the
-          // portal lives at /account/, one level down. The hash is
-          // Design's own handoff mechanism, already built into Manzil's
-          // _deckState() entry-routing.
+          // Manzil is the site root — the portal lives at /account/, one level down. The hash is
+          // Design's own handoff mechanism, already built into _deckState()'s entry-routing.
           tutGo: () => { window.location.href = "../#tutorial"; },
           skipGo: () => { window.location.href = "../#legend"; },
         };
@@ -507,18 +523,13 @@ class Component extends DCLogic {
         this.setState({ busy: true, signinErr: "" });
         const username = st.sid.trim().toLowerCase();
         this.api.loginWithUsername(username, st.spass).then(async (res) => {
+          // V1 has no "pack" concept any more (all 28 are held from first login) — only the
+          // chart-five matters, and V1's own componentDidMount already re-fetches this itself on
+          // mount if missing, so this is a pre-cache for a snappier first load, not load-bearing.
           const pack = await this.api.getManzilPack();
           try {
-            if (pack) {
-              localStorage.setItem("manzil-ed-pack", JSON.stringify(pack.pack));
-              // _chartFive() reads manzil-ed-birth.five, not the pack key
-              // directly — a bare login has no raw birth date to offer, so
-              // this carries just enough for Manzil's own chart-owned-card
-              // logic to resolve correctly. rows/fill/date/time/place stay
-              // null; Manzil's own fallbacks handle that gracefully.
-              localStorage.setItem("manzil-ed-birth", JSON.stringify({ five: pack.five, date: null, time: null, place: null, rows: null, fill: null }));
-            }
-            localStorage.setItem("manzil-ed-user", res.username || username);
+            if (pack) localStorage.setItem("manzil-v2-birth", JSON.stringify({ five: pack.five, date: null, time: null, place: null, rows: null, fill: null }));
+            localStorage.setItem("manzil-v2-user", res.username || username);
           } catch (e) {}
           this.setState({ busy: false, phase: "done" });
         }).catch(e => {
@@ -533,21 +544,14 @@ class Component extends DCLogic {
       timeBadOn: !st.noTime && tq.length > 2 && !timeValid,
       toggleNoTime: () => this.setState(s => ({ noTime: !s.noTime, time: s.noTime ? s.time : "" })),
       noTimeMark: st.noTime ? "☑" : "☐", noTimeC: st.noTime ? "#F0D89A" : "#9A8A5E",
-      placeChosen: !!st.placePick, placeNotChosen: !st.placePick,
-      placeConfirmedLine: st.placePick ? `${st.placePick.name}, ${st.placePick.region}` : "",
-      placeChangeTap: () => this.placeChangeTap(),
-      placeVal: st.place, setPlace: (e) => this.setState({ place: e.target.value, placeErr: "" }),
-      placeSearchTap: () => this.placeSearch(), placeSearchLabel: st.placeSearching ? "searching…" : "search",
-      placeHasResults: st.placeCityResults.length > 0,
-      placeCityRows: st.placeCityResults.map(r => ({ label: `${r.name}, ${r.region}`, pick: this.placePickTap(r) })),
-      placeErrOn: !!st.placeErr, placeErr: st.placeErr,
+      placeVal: st.place, setPlace: bind("place"),
       emailVal: st.email, setEmail: bind("email"),
       userVal: st.user, setUser: bind("user"),
       passVal: st.pass, setPass: bind("pass"),
       inputStyle,
       castErrOn: !!st.castErr, castErr: st.castErr,
-      castLabel: dateDone && timeOk && placeOk ? "find my five ✦" : "find my five",
-      castStyle: btn(dateDone && timeOk && placeOk),
+      castLabel: st.busy ? "…" : dateDone && timeOk && placeOk ? "cast my sky ✦" : "cast my sky",
+      castStyle: btn(dateDone && timeOk && placeOk && !st.busy),
       castTap: () => {
         if (!(dateDone && timeOk && placeOk) || st.busy) return;
         this.setState({ phase: "casting", busy: true, castErr: "" });
@@ -559,8 +563,8 @@ class Component extends DCLogic {
           dt.setHours(h, mm, 0, 0);
         } else dt.setHours(12, 0, 0, 0);
         const birthDate = P.y + "-" + String(P.mi + 1).padStart(2, "0") + "-" + String(P.d).padStart(2, "0");
-        // A short minimum pacing alongside the real round-trip, so "reading
-        // the sky" reads as a beat rather than a network-speed flicker.
+        // A short minimum pacing alongside the real round-trip, so "reading the sky" reads as a
+        // beat rather than a network-speed flicker — the export's own mock had a fixed 2.1s delay.
         Promise.all([this.api.ageCheck(birthDate), new Promise(r => setTimeout(r, 900))]).then(([{ ok }]) => {
           if (!ok) {
             try { localStorage.setItem("starshard-age-fail", "1"); } catch (e) {}
@@ -568,13 +572,12 @@ class Component extends DCLogic {
             return;
           }
           const cast = this._castFive(dt);
-          const pack = this._buildPack(cast.five);
           this.setState({
             phase: "cards", cardStep: 0, busy: false,
             cast: {
-              ...cast, pack, birthDate,
+              ...cast, birthDate,
               birthTime: timeKnown ? String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0") : null,
-              birthTimeKnown: timeKnown, place: st.placePick ? `${st.placePick.name}, ${st.placePick.region}` : "",
+              birthTimeKnown: timeKnown, place: st.place.trim(),
             },
           });
         }).catch(e => {
@@ -597,20 +600,14 @@ class Component extends DCLogic {
         if (!keepArmed || st.busy || !st.cast) return;
         this.setState({ busy: true, acctErr: "" });
         const c = st.cast, username = st.user.trim().toLowerCase();
-        this.api.signup(st.email, st.pass, { username, birthDate: c.birthDate, five: c.five, pack: c.pack }).then(res => {
+        this.api.signup(st.email, st.pass, { username, birthDate: c.birthDate, five: c.five, pack: c.five }).then(res => {
           try {
-            // Manzil's own climb/level progress (rungs, card levels, claims,
-            // board-seed, game-shards, win/loss records, the seen-legend
-            // flag) lives entirely in local storage, never the account —
-            // deleting an account server-side doesn't touch it. A brand
-            // new account has no history at all, so it shouldn't inherit
-            // whatever this browser was doing under a previous one (this
-            // is exactly what caused a fresh account to land straight in
-            // a "sky herself" road-boss fight instead of rung one).
-            ["manzil-ed-boardn", "manzil-ed-claims", "manzil-ed-duelnames", "manzil-ed-lastclimb", "manzil-ed-legend", "manzil-ed-mlvl", "manzil-ed-rungs", "manzil-ed-shards", "manzil-ed-wrec"].forEach(k => localStorage.removeItem(k));
-            localStorage.setItem("manzil-ed-pack", JSON.stringify(c.pack));
-            localStorage.setItem("manzil-ed-birth", JSON.stringify({ date: c.birthDate, time: c.birthTimeKnown ? c.birthTime : null, place: c.place || null, five: c.five, rows: c.rows, fill: c.fill }));
-            localStorage.setItem("manzil-ed-user", username);
+            // A brand new account has no history at all, so it shouldn't inherit whatever this
+            // browser was doing under a previous one (this is the same lesson W6's account-portal
+            // work drew from — a fresh account landing mid-progress from a stale local save).
+            ["manzil-v2-build", "manzil-v2-buildv", "manzil-v2-climbs", "manzil-v2-lock", "manzil-v2-respec", "manzil-v2-legend", "manzil-v2-duelnames"].forEach(k => localStorage.removeItem(k));
+            localStorage.setItem("manzil-v2-birth", JSON.stringify({ date: c.birthDate, time: c.birthTimeKnown ? c.birthTime : null, place: c.place || null, five: c.five, rows: c.rows, fill: c.fill }));
+            localStorage.setItem("manzil-v2-user", username);
           } catch (e) {}
           this.setState({ busy: false, phase: "seven" });
         }).catch(e => {
