@@ -48,6 +48,7 @@
   [data-mzstage]{user-select:none;-webkit-user-select:none}
   [data-mzstage] input{user-select:text;-webkit-user-select:text}
   @keyframes mzFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes mzRotateHint{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
   @keyframes mzDrop{0%{opacity:.35;transform:scale(1.35)}55%{transform:scale(.94)}100%{opacity:1;transform:scale(1)}}
   @keyframes mzFlip3d{0%{transform:perspective(420px) rotateY(0deg)}45%{transform:perspective(420px) rotateY(92deg)}100%{transform:perspective(420px) rotateY(0deg)}}
   @keyframes mzNumPulse{0%{transform:translateY(-50%) scale(1)}40%{transform:translateY(-50%) scale(1.8)}100%{transform:translateY(-50%) scale(1)}}
@@ -205,6 +206,13 @@
 <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0A0603"></rect><circle cx="100" cy="78" r="27" fill="none" stroke="#FFB000" stroke-width="2"></circle><path d="M100 51 L100 105 M73 78 L127 78" stroke="#F0D89A" stroke-width="1.2" opacity=".5"></path><text x="100" y="146" text-anchor="middle" fill="#F0D89A" font-family="Georgia,serif" font-size="26">manzil</text></svg></template>
 </helmet>
 <div style="height:100vh;display:flex;justify-content:center;align-items:center;background:#040302;position:relative;overflow:hidden">
+<sc-if value="{{ rotateOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:99;background:#040302;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px">
+    <div style="font-size:38px;color:#F0D89A;animation:mzRotateHint 1.8s ease-in-out infinite">⟳</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6">turn your phone sideways</div>
+    <div style="font-family:'Varela Round',sans-serif;font-size:13px;color:#9A8A5E;max-width:280px;line-height:1.5">the road is wider than it is tall. turn to see the whole sky.</div>
+  </div>
+</sc-if>
 <div style="{{ deskBgStyle }}">
   <sc-for list="{{ deskStars }}" as="s" hint-placeholder-count="4"><div style="{{ s }}"></div></sc-for>
   <div style="{{ deskGlowStyle }}"></div>
@@ -4088,6 +4096,9 @@ class Component extends DCLogic {
 
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
+    // iOS Safari doesn't reliably fire "resize" on a rotation (innerWidth/innerHeight can lag a
+    // frame behind), so the rotate-prompt needs its own listener rather than trusting resize alone.
+    window.addEventListener("orientationchange", this._onResize);
     this._onKey = (e) => {
       if (e.key !== "Escape") return;
       if (this.state.pauseOn) { this.setState({ pauseOn: false }); return; }
@@ -4123,7 +4134,7 @@ class Component extends DCLogic {
     this.setState({ authEmail: who.email, authUsername: who.username, phase: ph });
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
+    window.removeEventListener("resize", this._onResize); window.removeEventListener("orientationchange", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf); clearInterval(this._tiltI);
   }
@@ -6517,6 +6528,12 @@ class Component extends DCLogic {
         const seeds = [[.14, .1, 2], [.4, .22, 1.5], [.72, .07, 1], [.28, .38, 1], [.86, .3, 1.5], [.55, .5, 1], [.2, .62, 1.5], [.66, .72, 1], [.9, .55, 1]];
         const star = (fx, fy, s, L) => "position:absolute;" + (L ? "left:" : "right:") + Math.round(fx * side) + "px;top:" + Math.round(fy * gy) + "px;width:" + s + "px;height:" + s + "px;border-radius:50%;background:#F2EAD6;opacity:" + (.14 + s * .1).toFixed(2) + ";animation:bsTwinkle " + (4 + fx * 5).toFixed(1) + "s ease-in-out " + (-fy * 6).toFixed(1) + "s infinite";
         return {
+          // a phone held upright scales the fixed 932x430 board down to ~40% (sc above) — unreadably
+          // small, and nothing ever told a mobile visitor to turn the phone. Gated tight (narrow AND
+          // taller-than-wide) so no desktop window, however small or oddly shaped, can ever trigger
+          // it: any landscape or wide window always has w >= h or w >= 700, so this is a pure add,
+          // never a behavior change, for anyone not on a phone held in portrait.
+          rotateOn: w < h && w < 700,
           frameScaleStyle: "transform:scale(" + sc.toFixed(3) + ");transform-origin:center center;position:relative;z-index:1",
           deskBgStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.2s ease;opacity:" + (on ? 1 : 0),
           deskStars: on ? seeds.map(q => star(q[0], q[1], q[2], true)).concat(seeds.map(q => star(q[0], (q[1] + .1) % .8, q[2], false))) : [],
