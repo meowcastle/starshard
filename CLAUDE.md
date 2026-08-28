@@ -63,8 +63,121 @@ signature" bug class from the Empty District's card-mechanics rebase
 showed up again in the rewrite — duel hands weren't actually symmetric
 despite the code's own comment saying they should be, and the heart's
 and throne's tap abilities were seat-hardcoded — fixed in `_cards()`,
-`_heartAt`/`_commitHeart`, and the board's tap handler. Star Shard v4
-moved off the
+`_heartAt`/`_commitHeart`, and the board's tap handler.
+
+**V1's engine has one canonical standalone port (28 Aug 2026).** The
+real Manzil engine lives inline in V1's own `<script type="text/x-dc">`
+block (~178 `_`-prefixed methods reading `this.state`/`this.props`
+directly — required by the runtime constraint against top-level
+`import` in that block). Nothing else in the repo should be treated as
+"the current engine": `starshard-api/lib/manzil-engine.js` +
+`manzil-lobby.js` are real, deployed Socket.io PvP infra, but orphaned
+— V1 has no PvP/socket wiring, so nothing connects them to what
+players actually play, and their `tieRule` still defaults to the
+pre-27-Aug `"you"`, not V1's `"a draw"`. An external ML platform was
+found defaulting to a stale `research/manzil-engine-v7-tiebreak.js`
+snapshot for sims; that file and its siblings (`v6.js`, `v2.js`,
+`ref-*.js`, `tapvec.js`) are deleted for that reason — they predated
+the 27 Aug rewrite. `research/manzil-engine-current.cjs` is the
+replacement: a manual, point-in-time, documented-scope port of V1's
+inline logic into a plain `require()`-able module (its header lists
+exactly what's deliberately not ported — road-mode's per-mansion
+special grounds, the build/currency system, the walker-ladder meta —
+progression/UI layers, not the board mechanic). It is **not**
+live-synced — if Manzil's rules change in the `.dc.html` again, this
+file goes stale until someone re-ports it by hand; diff it against the
+`.dc.html` before trusting a long-running sim. Point any future
+external simulation work at this file, not at the server lib.
+
+**Two external-sim proposals are built into the canonical engine but
+NOT yet in V1's live `.dc.html` (28 Aug 2026, pt. 1 and pt. 2 — both
+pending a Design handoff to port).** Pt. 1: `tieRule` now defaults to
+`"the defender"` (a level board goes to whoever did NOT lead it,
+replacing the flat `"a draw"` still live in the `.dc.html`), plus
+`playMatch()` — best-of-three walkers / best-of-five mansion, loser
+leads the next board. Independently re-verified on this engine, not
+just trusted from the report: single-board seat advantage measured
+20.0 points under a flat draw vs. 6.9 under `"the defender"`; match-level
+numbers (5.6/2.54 boards walker, 6.4/4.17 boards mansion) landed close
+to the report's own (5.4/2.57, 3.8/4.24). Pt. 2's original ladder
+mechanism (deck-scale only, `ladderScale()`/`DEPTH_TABLE`/
+`ladderLevels()`) is **superseded by pt. 3, same day** — see below;
+those three functions no longer exist in the canonical engine.
+
+**Pt. 3 (28 Aug 2026, also pending a Design handoff): the difficulty
+ladder is now "always a mirror deck, opponent search DEPTH does the
+work," not deck-scaling.** This is a real reversal, not a refinement —
+the external report itself retracted its pt. 2 recommendation
+("the opposite of what I recommended this morning") after finding that
+weakening the opponent's deck means something completely different at
+different collection depths (worth 1 point to a fresh player, 28 to a
+deep one). This independently confirms what this engine's own
+re-simulation of pt. 2 found from the other direction (see the old
+paragraph, preserved above): no deck-scale-only formula could hit the
+claimed clear rates for deep collections. Both point the same way.
+`playPush()` is unchanged in shape (three lives, the shortened road,
+same `cfg.playerLevels` input) but now builds the opponent via
+`handicapFor()`/`handicapLevels()` (a full mirror of the player's real
+levels, with a shrinking fraction of the player's own AWAKE cards
+knocked to level 1 — 3/4 at 0-8 awake down to 0/"a true mirror" at
+22-28) and `depthsFor()` (the opponent's search depth per road stage,
+0 at the low end up to 8 at the mansion for a maxed collection). The
+search itself is new: `searchMove()` is a genuine negamax + alpha-beta
+game-tree search (`playBoardSearch()`/`playMatchSearch()` use it in
+place of `playBoard()`/`playMatch()`'s `pickMove()` heuristic) — full
+exhaustive search at depth 8 from an opening board measured ~88.5s for
+ONE move decision, intractable at any scale, so `BEAM` (10) caps how
+many candidates get recursed into per ply; this cut a depth-8 root
+decision to ~2.9s and a full board to ~3.6s. **That per-board cost is
+still a real, unresolved product constraint** — this is server/Node
+timing, and V1 runs the same kind of search, Babel-transpiled, on a
+single browser thread; a multi-second freeze on the mansion's board is
+not shippable as-is without either a lower depth cap, a tighter beam,
+web-worker offloading, or some other mitigation Design/Code need to
+decide on before this reaches the live game — flag this plainly, don't
+let it get lost under the calibration question. On calibration itself:
+re-verified against `research/manzil-depth-check.cjs` (the report's
+own "opponent thinking depth, mirror deck" table, ~25 matches/cell,
+~15 minutes to run) — results landed within roughly 3-16 points of the
+report's own numbers at every cell, which is within the ~10-point
+standard error a sample that size implies, unlike pt. 2's ~80-point,
+sample-size-can't-explain-it miss.
+
+**Pt. 4 (28 Aug 2026, same day): "depth" was a naming mistake, not a
+tree search — corrected, and the performance wall from pt. 3 is gone.**
+The external report clarified that "opponent thinking depth" was
+always meant as a MULTIPLIER on one ply of lookahead (the opponent's
+single best reply, scored once), never a recursion-depth ply count —
+"depth: 8" means "look one move ahead and weight the reply eight
+times," not "search eight moves deep." `bestMove()`/`replyCost()`/
+`moveKey()` in the canonical engine are a verbatim port of the
+report's own reference functions; the parameter is renamed `caution`
+throughout (`CAUTION_BANDS`/`cautionsFor()`, replacing
+`DEPTH_BANDS`/`depthsFor()`) so the mistake can't recur by rereading
+old comments. `playPush()` now calls `playBoardWeighted()`/
+`playMatchWeighted()` (built on `bestMove()`), not the negamax —
+**`searchMove()`/`playBoardSearch()`/`playMatchSearch()`/`BEAM` are
+KEPT, not deleted, but explicitly NOT shipped**: a real tree search is
+a plausibly stronger and better-feeling opponent (the report's
+suggestion: reserve it for the mansion alone, a deliberately slower
+"obviously thinking" final boss), but every pt. 3 difficulty number
+was measured against the one-ply evaluator, not the search, so the
+search needs its own calibration pass before it goes anywhere near
+`playPush()`. Performance is no longer a concern either way: the
+one-ply evaluator ran the self-check suite in ~1s (down from ~41s) and
+a 2,000-push validation batch (500/tier x 4 tiers) in ~5.5 minutes.
+Re-validated against `research/manzil-push-check.cjs` at real sample
+size (500/tier, not the old 20): clear rates now land
+**monotonically decreasing** with collection depth — 46.2% / 45.4% /
+35.0% / 16.8%, against the report's 61.7% / 37% / 22% / 11.9% — a
+real, directionally-correct curve for the first time (the old
+negamax-based numbers were essentially inverted, ~7-11% for deep
+collections against a claimed ~90%). Gaps are now 5-15 points, not
+80+; read this as "close, not exact" — worth another look if the road
+plays noticeably easier at 9-14 awake than the report expects (that
+tier's the flattest relative to its neighbor in this engine's numbers).
+
+Star Shard v4 moved off the
 root to `/star-shard/` — `star-shard/index.html` is a hand-maintained
 copy of `Star Shard v4.dc.html` with every root-relative reference
 (`support.js`, the 13 dynamic engine imports, `ios-frame.jsx`,
@@ -502,6 +615,25 @@ unavailability.
   the leading article produces "The Storm of the The Glance." Strip
   `/^The /` before recomposing "of the ___" — caught live, not by any
   test, building the shard blueprint's hero.
+- **A card ability rewrite has to be swept everywhere the ability is described in prose, not just
+  the card-sheet table.** After the 27 Aug card rewrite, `_zoomFor`'s peek/hold panel (what a real
+  match shows when you hold a card during play) kept its own pre-rewrite copy of all 28 abilities —
+  the listener, ghost, crown, thread etc. all read the OLD mechanics live in production, contradicting
+  the actual engine (`_simpleMove`/the `ABS` table were already correct). The practice-walk tutorial's
+  `_demoScript()` had the same staleness, plus a deeper bug: its board-slot choreography assumed
+  a fixed "tonight" that `_tonight()` never enforced, so the dominion moment it claimed never actually
+  fired for most players. Fixed by routing `_zoomFor`'s mansion-card text through `_simpleMove()`
+  (one source of truth), pinning `_tonight()` to a fixed mansion during `practice && tutor`, and
+  re-choreographing the script against the real `_resolve`/`_tryFlip` logic (user, 27 aug 2026: "the
+  cards are weird, they aren't the updated ones" + "we definitely need dominion to happen in the
+  tutorial"). When a card's ability text changes, grep for every hardcoded copy of the old wording
+  before calling the rewrite done — `_simpleMove`, the `ABS` table, and any per-surface duplicate.
+- **On-station card name text used a hardcoded pixel offset (`top:52px`) that landed inside the L1/L2
+  art box's own vertical range (27–69px)**, so a card's name overlapped its art on the board
+  specifically (hand cards, which use a different, correctly-tuned offset, were never affected) —
+  caught live from a user screenshot, 27 aug 2026. Fixed by moving the name to `top:74px`, clearing
+  the art's bottom edge. Any future resize of the on-station art box must re-check this offset by hand;
+  it isn't computed relative to the art, it's a sibling absolute-positioned div.
 
 ## Open decisions — ask, do not guess
 
