@@ -180,8 +180,19 @@ function mkGame(cfg) {
     temper: cfg.temper || null, // off by default: matches the common walker-night case in the source
     round: cfg.round || 1,
     roundWins: [],
+    roadBoss: !!cfg.roadBoss, // 28 aug 2026 pt.5: gates the per-mansion station laws (lawAt), boss boards only
+    tonight: cfg.tonight || null, // which mansion's road this is — lawAt() and moveKey()'s tiebreak both key on this
   };
 }
+
+// PER-MANSION STATION LAWS (28 aug 2026 pt.5 work order, Form C) — boss boards only. Station 0 is
+// always the mansion's own ground on a boss board. "beat" (mansion 18, the heart): once when the
+// road fills, whoever holds station 0 strikes station 1 once more, regardless of whether that
+// side's own card carries an ability (unlike mars/turning/suzaku's chains, which only fire for a
+// card that has them) — see resolve()'s "when the road fills" gate. Structured as a map, per the
+// work order's own template, so the other 27 mansions' station laws land as entries here.
+const LAW_AT = { 18: "beat" };
+function lawAt(m) { return LAW_AT[m] || null; }
 
 function nb(g, i, dir) { const k = i + dir; return k >= 0 && k < g.len ? k : -1; }
 function legalSlot(g, slots, i) { return true; } // "contiguous" road shape was retired; the road is always open
@@ -336,6 +347,9 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
         if (!x || g.C[x.id].ab !== "heart" || !on(g, g.C[x.id])) return;
         for (const d of [-1, 1]) { const k = nb(g, xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d, sig: "the heart strikes as the road fills." }); }
       });
+      if (g.roadBoss && lawAt(g.tonight) === "beat") {
+        queue.push({ from: 0, to: 1, dir: 1, sig: "the heart beats once more, as the road fills.", lawBeat: true });
+      }
       if (!queue.length) break;
     }
     const cur = queue.shift();
@@ -368,6 +382,9 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
     if (fromAb === "mars") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "mars carries the strike onward." }); }
     if (on(g, fromC) && fromAb === "turning") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the turning carries onward." }); }
     if (fromC.grantOn && fromC.quad === "suzaku") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the vermilion bird's strike carries two stations." }); }
+    // THE HEART'S LAW, vectored: the beat's own strike carries onward the same way, independent of
+    // whatever ability the card that just won station `to` happens to carry (or doesn't).
+    if (cur.lawBeat) { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the beat carries onward.", lawBeat: true }); }
   }
   if (on(g, me) && me.ab === "return" && slots[i] && !seq.some(x => x.from === i && !x.miss)) {
     slots[i] = Object.assign({}, slots[i], { reArm: true });
@@ -996,7 +1013,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards,
-  playPush, ROAD_STAGES, SHADOW_PACK,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
@@ -1197,6 +1214,46 @@ if (require.main === module) {
         if (prev.winner !== "you" && prev.livesLeft > 1 && r.log[i].stage !== prev.stage) ok = false;
       }
       return ok;
+    }, true],
+    // THE HEART'S LAW (28 aug 2026 pt.5 work order, Form C) — station 0 strikes station 1 once
+    // more, on boss boards, mansion 18, the moment the board fills. Uses sun(106)/moon(107) as
+    // ability-less filler (both have ab:null) so slot faces are the only thing under test;
+    // faceOf()/tryFlip() read a slot's OWN l/r, not the card table's, so a filler slot's numbers
+    // can be set freely regardless of what sun/moon "really" print.
+    ["the heart's law: fires on a boss board for mansion 18, station 0 takes station 1", () => {
+      const g = E.mkGame({ roadBoss: true, tonight: 18 });
+      const slots = Array.from({ length: 9 }, (_, k) => k === 8 ? null : { id: 106, l: 1, r: 1, owner: "you", by: "you", age: 1 });
+      slots[0] = { id: 106, l: 1, r: 5, owner: "you", by: "you", age: 1 }; // station 0's right face (attacker) = 5
+      slots[1] = { id: 107, l: 3, r: 1, owner: "sky", by: "sky", age: 1 }; // station 1's left face (defender) = 3
+      const rr = E.resolve(g, slots, 107, 8, false, "sky"); // fills the last slot; triggers "road fills"
+      return rr.slots.every(Boolean) && rr.slots[1].owner === "you";
+    }, true],
+    ["the heart's law: does NOT fire off a boss board, or for a mansion other than 18", () => {
+      const mk = (roadBoss, tonight) => {
+        const g = E.mkGame({ roadBoss, tonight });
+        const slots = Array.from({ length: 9 }, (_, k) => k === 8 ? null : { id: 106, l: 1, r: 1, owner: "you", by: "you", age: 1 });
+        slots[0] = { id: 106, l: 1, r: 5, owner: "you", by: "you", age: 1 };
+        slots[1] = { id: 107, l: 3, r: 1, owner: "sky", by: "sky", age: 1 };
+        return E.resolve(g, slots, 107, 8, false, "sky").slots[1].owner;
+      };
+      return mk(false, 18) === "sky" && mk(true, 21) === "sky";
+    }, true],
+    ["the heart's law respects deny rules: saturn's ground still locks against the beat", () => {
+      const g = E.mkGame({ roadBoss: true, tonight: 18 });
+      const slots = Array.from({ length: 9 }, (_, k) => k === 8 ? null : { id: 106, l: 1, r: 1, owner: "you", by: "you", age: 1 });
+      slots[0] = { id: 106, l: 1, r: 9, owner: "you", by: "you", age: 1 }; // overwhelming attacker face
+      slots[1] = { id: 101, l: 1, r: 1, owner: "sky", by: "sky", age: 1 }; // saturn: locked regardless of numbers
+      const rr = E.resolve(g, slots, 107, 8, false, "sky");
+      return rr.slots[1].owner === "sky"; // unchanged: the deny rule held
+    }, true],
+    ["the heart's law is vectored: a taken station 1 carries the beat onward to station 2", () => {
+      const g = E.mkGame({ roadBoss: true, tonight: 18 });
+      const slots = Array.from({ length: 9 }, (_, k) => k === 8 ? null : { id: 106, l: 1, r: 1, owner: "you", by: "you", age: 1 });
+      slots[0] = { id: 106, l: 1, r: 9, owner: "you", by: "you", age: 1 }; // beats station 1 easily
+      slots[1] = { id: 107, l: 2, r: 8, owner: "sky", by: "sky", age: 1 }; // taken, then its OWN right face (8) attacks station 2
+      slots[2] = { id: 106, l: 3, r: 1, owner: "sky", by: "sky", age: 1 }; // left face 3 < 8: should also flip
+      const rr = E.resolve(g, slots, 107, 8, false, "sky");
+      return rr.slots[1].owner === "you" && rr.slots[2].owner === "you";
     }, true],
   ];
   let fails = 0;

@@ -41,19 +41,27 @@ deploy_frontend() {
   echo "==> index.html"
   # Manzil is the live root page as of the 24 Aug restructure — Justin's call
   # to give the minigame the whole staging domain rather than a /manzil/
-  # subdirectory. CANON FLIP (27 Aug 2026, Justin's call): "Manzil - Game
-  # Prototype V1.dc.html" is now the live root — a from-scratch rewrite
-  # (new 28-card slate, new storage keys manzil-v2-*, no migration from the
-  # old manzil-ed-* keys) that supersedes "Manzil - The Empty District.dc.html"
-  # entirely; that file stays in the repo as historical reference only, same
-  # as "Manzil - Prototype.dc.html" and "Star Shard v3.dc.html". Its own
-  # script tags are root-relative ("./support.js", bare
-  # "ephemeris2.js"/"manzil-art2.js"), which is exactly what a root deploy
-  # needs — no path rewriting, unlike star-shard/ below. Star Shard v4 (the
-  # astrology reading app that used to live here) moved to /star-shard/
-  # rather than being dropped from staging; see that block below. See
-  # CLAUDE.md's receipt protocol.
-  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3 Build Plan/Manzil - Game Prototype V1.dc.html"
+  # subdirectory. CANON FLIP (29 Aug 2026, Justin's call): "Manzil - Game
+  # Prototype V2.dc.html" is now the live root, replacing V1 — a working
+  # copy of V1 carrying a UI overhaul (Karla replaces Varela Round, an
+  # avatar/player-chip system, "the 28 avatars" systems pass) built by
+  # Design in parallel with Code's V1 fixes. V2 forked from an early V1
+  # snapshot and was missing nearly every fix V1 had accumulated (the
+  # account gate, the rotate prompt, the on-station name-offset fix,
+  # seat-symmetric duel handling, the age-check, real server logout, the
+  # mobile info-panel fix, the walker-5-through-8 best-of-three tally fix,
+  # and the mansion's three-lives fix) — all ported into V2 by hand and
+  # verified (script syntax, data-props JSON, and each fix's marker) before
+  # this flip; see CLAUDE.md for the full trail. "Manzil - Game Prototype
+  # V1.dc.html" stays in the repo as historical reference only, same as
+  # "Manzil - The Empty District.dc.html", "Manzil - Prototype.dc.html" and
+  # "Star Shard v3.dc.html" before it. V2's own script tags are
+  # root-relative ("./support.js", bare "ephemeris2.js"/"manzil-art2.js"),
+  # same as V1's, so no path rewriting is needed here — no path rewriting,
+  # unlike star-shard/ below. Star Shard v4 (the astrology reading app that
+  # used to live here) moved to /star-shard/ rather than being dropped from
+  # staging; see that block below. See CLAUDE.md's receipt protocol.
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html"
   for f in $FRONTEND_FILES; do
     if [ -f "$f" ]; then
       echo "==> $f"

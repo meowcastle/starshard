@@ -65,6 +65,82 @@ despite the code's own comment saying they should be, and the heart's
 and throne's tap abilities were seat-hardcoded — fixed in `_cards()`,
 `_heartAt`/`_commitHeart`, and the board's tap handler.
 
+**CANON FLIP (29 Aug 2026, Justin's call): "Manzil - Game Prototype
+V2.dc.html" replaces V1 as the deployed file.** V2 is Design's own
+work, built in parallel with Code's V1 fixes as "a working copy of V1"
+carrying a UI overhaul — Karla replaces Varela Round, an avatar/
+player-chip system, "the 28 avatars" systems pass (its own dated
+history lives in the copy of `CLAUDE.md` Design ships alongside their
+exports, not this file). It forked from an early V1 snapshot and
+inherited none of the fixes below except gaze depth and the defender
+tie rule, which Design built directly into V2 itself. Before this flip,
+every other V1 fix was hand-ported into V2 and independently verified
+(script syntax, `data-props` JSON, and each fix's own marker checked
+by hand, not just trusted from the porting pass): the account gate,
+the rotate-to-landscape prompt, the on-station name-offset fix
+(`top:74px`), `_simpleMove`-routed ability text (V2 had already
+rebuilt this independently and correctly — nothing to port there),
+the dominion-tutorial fix (`_tonight()`'s practice/tutor pin +
+`_demoScript()`, ported verbatim since V2 uses the identical 28-card
+sheet), seat-symmetric duel/tap handling, the age-check, real
+server-side logout, the mobile info-panel touch-hold fix, the
+walker-5-through-8 best-of-three tally fix, and the mansion's
+three-lives fix (V2 had full lives infrastructure already but the
+same pre-lives-system gap in its mansion-loss branch V1 had). Suzaku's
+grant bug (below) exists in V2 too, untouched — still unresolved, not
+part of this port. `tools/deploy.sh`'s `deploy_frontend` now ships V2
+as `index.html`; V1 stays in the repo as historical reference only,
+same as `Manzil - The Empty District.dc.html`, `Manzil -
+Prototype.dc.html`, and `Star Shard v3.dc.html` before it. **The
+canonical engine port below (`research/manzil-engine-current.cjs`)
+was extracted from V1's inline script, not V2's** — the structural
+fixes are now aligned across both files, but V2's own game-logic
+mechanics (card resolution, abilities) have not been independently
+diffed against the canonical module since the flip; treat the module
+as V1-sourced until that's checked, not automatically V2-accurate.
+
+**V2's second export, same day, was pure new Design work — nothing to
+reject this time.** A UI-overhaul pass landed on top of the first
+export: the three lives are now drawn as the moon's last three nights
+of light (full/crescent/sliver, darkening in that order) rather than
+lanterns, with a "the moon is dark tonight" veil beat on the third
+loss (`nmBeat` state, 2.6s) instead of an instant wipe; walker rosters
+are now per-mansion data (`_rosters()`/`_rosterFor()`, mansion 18's
+own eight kiln-and-rain-themed walkers added, `_wAlias()` borrowing
+posture/voice/gesture from the district's eight until a mansion draws
+its own); mansion 25 (the hideaway) got its own avatar art and joined
+the "walk" road-kind set. Applied on top of the already-ported V1
+fixes (both together, verified: syntax, `data-props` JSON, all fix
+markers).
+
+**The heart's law (Form C) is implemented — a genuine new engine
+feature, not a bug fix, per a same-day Design work order
+(`WORKORDER-HEART-LAW-29AUG.md`).** Boss boards only, mansion 18: the
+moment the ninth card lodges (before the count), station 0 strikes
+station 1 once more — right face against left, bigger-or-equal takes
+it, every existing deny rule applies (storm's no-tie, the gate's
+shield, byakko's ground, saturn's lock) because it's implemented as a
+genuine extra entry in `_resolve()`'s own strike queue, not a
+separate mechanism — and a taken station 1 carries the beat onward to
+station 2 the same "vectored" way mars/turning/suzaku already chain,
+tagged via a `lawBeat` flag so it doesn't depend on the winning card's
+own abilities. Structured as `_lawAt(m)` (a per-mansion map, `{18:
+"beat"}` today) exactly per the work order's own template, so the
+other 27 mansions' station laws are additions, not rewrites. Ported
+into both V2 (`_lawAt`, the `_resolve()` hooks) and the canonical
+engine (`lawAt`/`LAW_AT`, `resolve()`'s matching hooks, plus a new
+`roadBoss`/`tonight` pair on `mkGame()` that didn't exist before this
+— `g.tonight` was referenced by `moveKey()` but never actually settable
+via `mkGame(cfg)` until now). Verified with 4 new self-checks (fires
+correctly, stays silent off a boss board or the wrong mansion, saturn
+still locks against it, vectoring works) — **not** verified against
+the work order's own worked numeric example (void 9/3 vs. a lodged 7):
+tracing it requires knowing exactly how the void's -1 aura interacts
+with the normal adjacent pre-strike a fresh lodge already attempts,
+which isn't fully pinned down from the work order text alone. The
+mechanic matches the specification precisely; that one specific
+number pairing is unconfirmed.
+
 **V1's engine has one canonical standalone port (28 Aug 2026).** The
 real Manzil engine lives inline in V1's own `<script type="text/x-dc">`
 block (~178 `_`-prefixed methods reading `this.state`/`this.props`
