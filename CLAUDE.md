@@ -113,10 +113,65 @@ the "walk" road-kind set. Applied on top of the already-ported V1
 fixes (both together, verified: syntax, `data-props` JSON, all fix
 markers).
 
-**The heart's law (Form C) is implemented — a genuine new engine
-feature, not a bug fix, per a same-day Design work order
-(`WORKORDER-HEART-LAW-29AUG.md`).** Boss boards only, mansion 18: the
-moment the ninth card lodges (before the count), station 0 strikes
+**The heart's law (Form C) is implemented and CORRECTED against
+Design's own measurement engine (29 Aug 2026,
+`WORKORDER-HEART-LAW-CORRECTED-29AUG.md` +
+`THE-HEART-LAW-29AUG.md` + `research/v2.js`/`heartvec.js`, delivered
+in `manzil-reference-29aug.zip` after the first pass shipped ahead of
+receiving them).** The first pass (below the line) got two things
+wrong that the corrected order and its own reference engine caught:
+it gated the law on `roadBoss` (boss board only) when the measured,
+shipped form is **whole-night scope** — a property of tonight's road,
+firing on every battle under it, walkers and the mansion match alike
+(measured safe across the full walker caution range, deltas inside
+±2.4) — and it ported an onward "vectored" chain that belongs to
+Form B, the board-wide law the measurement memo explicitly rejects
+(triples blowouts, turns Byakko into an army); Form C **does not
+chain** — the only chain that can still occur is a winning card's own
+ability (mars/turning/suzaku's reach) firing as it normally would,
+which needs no special-casing. Both fixed in V2 (`_lawAt`, the
+`_resolve()` hooks, the `avG` station-0 glow and the walker-night
+intro note extended off `roadBoss`-only per the corrected order's UI
+addition) and the canonical engine (`lawAt`/`LAW_AT`, `resolve()`'s
+matching hooks). Mechanic, unchanged by the correction: the moment the
+ninth card lodges (before the count), station 0 strikes station 1
+once more, right face against left, bigger-or-equal takes it, every
+deny rule applies. The "saturn's lock"/"byakko's ground" wording
+question is resolved: the corrected order's "there is no Saturn card
+in this build" refers to Design's own from-scratch measurement engine
+(`research/v2.js`, 28-mansion cards only) — this repo's canonical
+engine and the live V2 build both genuinely carry a Saturn planet card
+(`ab:"saturn"`) alongside the byakko quadrant grant, both real
+ground-lock deny rules gated through the same `shielded()`/tC checks,
+so the self-check using Saturn is accurate for this codebase, just not
+attributable to the work order's own list. Verified: the canonical
+engine's self-checks were rewritten to match (fires on a walker board,
+not just a boss board; does NOT chain onward; deny rules still hold)
+and all 35 pass; Design's own bundled acceptance suites (`v2vec.js`
+37/37, `gvec.js` 16/16, `heartvec.js` 13/13 including the four `beatAt`
+vectors that gate this specific port) all pass against their own
+`v2.js` reference; and the work order's own hard requirement — "the
+evaluator must see the law: play one crafted board twice, law on and
+law off, same seed and hands, the move sequences must differ" — was
+independently checked against this codebase's `bestMove()` (not just
+`resolve()`'s mechanical application) and confirmed: sequences diverge
+starting at the second move, not just the board-filling one, so the
+AI is planning around the incoming beat, not merely resolving it after
+the fact. The original worked-hand example ("void 9/3 vs. a lodged
+7") that the first pass couldn't reproduce is now known to be
+superseded prose — Design's own shipped acceptance vectors (`heartvec`
+10-13) test the identical mechanic with plain dummy numbers instead
+(9 vs. 6, no void, no aura interaction), so that open question is
+closed, not just unresolved. `suzvec.js`, also in the same delivery,
+covers two rival replacement candidates for Suzaku's still-broken
+grant ("again" vs. "reach") but ships no verdict/decision doc ("no
+numbers until these pass" — it's mid-research, not a decided spec);
+left untouched, same as before, pending an actual call from Design.
+
+*(Below: the first-pass note, preserved for the record rather than
+deleted, since it documents what shipped briefly before the
+correction above landed the same day.)* Boss boards only, mansion 18:
+the moment the ninth card lodges (before the count), station 0 strikes
 station 1 once more — right face against left, bigger-or-equal takes
 it, every existing deny rule applies (storm's no-tie, the gate's
 shield, byakko's ground, saturn's lock) because it's implemented as a
@@ -131,15 +186,7 @@ into both V2 (`_lawAt`, the `_resolve()` hooks) and the canonical
 engine (`lawAt`/`LAW_AT`, `resolve()`'s matching hooks, plus a new
 `roadBoss`/`tonight` pair on `mkGame()` that didn't exist before this
 — `g.tonight` was referenced by `moveKey()` but never actually settable
-via `mkGame(cfg)` until now). Verified with 4 new self-checks (fires
-correctly, stays silent off a boss board or the wrong mansion, saturn
-still locks against it, vectoring works) — **not** verified against
-the work order's own worked numeric example (void 9/3 vs. a lodged 7):
-tracing it requires knowing exactly how the void's -1 aura interacts
-with the normal adjacent pre-strike a fresh lodge already attempts,
-which isn't fully pinned down from the work order text alone. The
-mechanic matches the specification precisely; that one specific
-number pairing is unconfirmed.
+via `mkGame(cfg)` until now).
 
 **V1's engine has one canonical standalone port (28 Aug 2026).** The
 real Manzil engine lives inline in V1's own `<script type="text/x-dc">`

@@ -5853,10 +5853,12 @@ class Component extends DCLogic {
     h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
     return 1 + (h % (len - 2));
   }
-  // PER-MANSION STATION LAWS (29 aug 2026 work order, Form C): boss boards only. Structured as a
-  // map, per the work order's own template, so the other 27 mansions' station laws land as entries
-  // here as they're measured and approved — nothing else in _resolve() needs to change to add one,
-  // only what this returns and (if the effect differs from "beat") a new branch keyed on the name.
+  // PER-MANSION STATION LAWS (29 aug 2026, corrected work order, Form C): whole-night scope — every
+  // board played under tonight's mansion, walkers and the mansion match alike, not boss boards only.
+  // Structured as a map, per the work order's own template, so the other 27 mansions' station laws
+  // land as entries here as they're measured and approved — nothing else in _resolve() needs to
+  // change to add one, only what this returns and (if the effect differs from "beat") a new branch
+  // keyed on the name.
   _lawAt(m) { return { 18: "beat" }[m] || null; }
   _stationList() { return ["where you stand", "the daylit ground", "the low air", "the dusk", "the cloud line", "the high air", "the cold air", "the thin air", "the edge of the air", "the mansion itself"]; }
   _stationForce() {
@@ -6203,15 +6205,17 @@ class Component extends DCLogic {
           if (!x || C[x.id].ab !== "heart" || !this._on(C[x.id])) return;
           for (const d of [-1, 1]) { const k = this._nb(xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d, sig: "the heart strikes as the road fills." }); }
         });
-        // PER-MANSION STATION LAWS (29 aug 2026 work order, Form C) — boss boards only. Station 0
-        // is always the mansion's own ground on a boss board. "beat" (mansion 18, the heart): once
-        // when the road fills, whoever holds station 0 strikes station 1 once more — regardless of
-        // whether that side's own card has an ability, unlike mars/turning/suzaku's chains below,
-        // which only fire for a card that has them. Flagged `lawBeat` so a successful hit carries
-        // onward the same "vectored" way (a taken card strikes its own new neighbour in turn),
-        // without requiring the winning card to carry mars/turning itself.
-        if (this.state && this.state.roadBoss && this._lawAt(this._tonight()) === "beat") {
-          queue.push({ from: 0, to: 1, dir: 1, sig: "the heart beats once more, as the road fills.", lawBeat: true });
+        // PER-MANSION STATION LAWS (29 aug 2026, corrected work order, Form C) — whole-night scope,
+        // NOT gated on roadBoss: the law is a property of tonight's road, so it fires on every
+        // battle played under it, walkers and the mansion match alike. Station 0 is always
+        // tonight's mansion's own ground. "beat" (mansion 18, the heart): once when the road fills,
+        // whoever holds station 0 strikes station 1 once more, regardless of whether that side's
+        // own card has an ability. No onward chain: that clause belonged to the rejected
+        // board-wide form and was ported in error on 28 Aug, then corrected here. The one chain
+        // that can still occur is a winning card's OWN ability (mars/turning/suzaku's reach, below)
+        // firing as it normally would — card behavior inside the strike, not law behavior.
+        if (this.state && this._lawAt(this._tonight()) === "beat") {
+          queue.push({ from: 0, to: 1, dir: 1, sig: "the heart beats once more, as the road fills." });
         }
         if (!queue.length) break;
       }
@@ -6265,12 +6269,6 @@ class Component extends DCLogic {
       if (fromC.grantOn && (fromC.quad || this._quad(slots[from].id)) === "suzaku") {
         const far = this._nb(to, dir);
         if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the vermilion bird's strike carries two stations." });
-      }
-      // THE HEART'S LAW, vectored: the beat's own strike carries onward the same way, independent
-      // of whatever ability the card that just won station `to` happens to carry (or doesn't).
-      if (cur.lawBeat) {
-        const far = this._nb(to, dir);
-        if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the beat carries onward.", lawBeat: true });
       }
     }
     if (i === this._rope() && !inPlace) { // al-Risha, the well-rope: what lodges here hauls its neighbour in
@@ -6800,9 +6798,12 @@ class Component extends DCLogic {
       const numBase = (side) => "position:absolute;" + side + ":" + (lv >= 4 ? 4 : 5) + "px;top:50%;transform:translateY(-50%);font-size:" + (lv >= 4 ? 9 : 11) + "px;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95);color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + (st.duelI === i && st.duelSide === (side === "left" ? "l" : "r") ? ";animation:mzNumPulse .45s ease both" : "");
       const home = s && this._isHome(s.id, i);
       const domPrev = empty && ((selOn && this._boardM(i) === st.sel) || (st.phase === "play" && !st.busy && st.hov != null && this._boardM(i) === st.hov && this._legalSlot(st.slots, i)));
-      // the mansion's ground (level grammar beat 3): on the boss board, the house's OWN station
-      // burns quietly in the avatar's color. the law lives somewhere you can point at.
-      const avG = (st.roadBoss && this._boardM(i) === this._tonight() && this._avFig(this._tonight())) ? this._avFig(this._tonight()).glow : null;
+      // the mansion's ground (level grammar beat 3): burns in the avatar's color on the boss board
+      // regardless of the mansion, same as before. Whole-night scope per the 29 aug correction adds
+      // ONE more case: a mansion that actually carries a law (mansion 18 today) burns on its walker
+      // boards too, since the law is live there now — a mansion with no law stays boss-only, so this
+      // doesn't turn into "every mansion glows on every walker board," only the lawed ones do.
+      const avG = ((st.roadBoss || this._lawAt(this._tonight()) === "beat") && this._boardM(i) === this._tonight() && this._avFig(this._tonight())) ? this._avFig(this._tonight()).glow : null;
       return {
         wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (avG ? ";filter:drop-shadow(0 0 11px " + avG + ")" : "") + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
         idx: i,
@@ -7271,8 +7272,14 @@ class Component extends DCLogic {
             : { introTitle: "the " + this._mName(this._tonight()) + " itself", introSubOn: true, introSub: "the house stands at the top of its own road.", introNoteOn: true, introNote: "best of five. the house deals your own hand against you: at the foot of the road it holds your cards asleep, and the further you have walked the more of them stand awake. you taught this road what you know." })(this._avatar(t0)));
           const w0 = this._walkers()[k0];
           const rc0 = this._wrec()[w0.name];
+          // the law is whole-night now (29 aug 2026 correction), so the first walker board of a
+          // heart night carries the same one-line law text the boss intro does — a player meets it
+          // before it ever costs them a board, not only once they reach the mansion itself.
           return { introTitle: w0.name + " stands on the road", introSubOn: true, introSub: rc0 && rc0.l > 0 ? (w0.again || this._again(w0.name) || w0.line) : w0.line,
-            introNoteOn: (AV && k0 === 6) || this._firstRoadNote(), introNote: (AV && k0 === 6) ? AV.arrive + ": " + AV.arriveSub + " two walkers still stand between you." : "the " + this._mName(t0) + " is still and quiet, and above it stands the sky. win your way past the eight and defeat the sky to claim the mansion." };
+            introNoteOn: (AV && k0 === 6) || this._firstRoadNote() || (t0 === 18 && k0 === 0),
+            introNote: (AV && k0 === 6) ? AV.arrive + ": " + AV.arriveSub + " two walkers still stand between you."
+              : (t0 === 18 && k0 === 0) ? "when the road fills tonight, the heart beats once more: the first station strikes its neighbour one last time, for whoever holds it."
+              : "the " + this._mName(t0) + " is still and quiet, and above it stands the sky. win your way past the eight and defeat the sky to claim the mansion." };
         }
         return { introTitle: "match the sky for the " + this._mName(t0), introSubOn: false, introSub: "", introNoteOn: false, introNote: "" };
       })()),
