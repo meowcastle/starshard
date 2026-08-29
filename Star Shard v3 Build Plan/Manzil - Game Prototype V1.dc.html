@@ -1740,7 +1740,7 @@
   <div style="{{ arenaBlurStyle }};position:absolute;top:132px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:6">
     <sc-for list="{{ slots }}" as="s" hint-placeholder-count="9">
       <div style="{{ s.wrapStyle }}">
-      <div onClick="{{ s.onTap }}" onMouseEnter="{{ s.onPeek }}" onMouseLeave="{{ s.onPeekEnd }}" onTouchStart="{{ s.onHold }}" onTouchEnd="{{ s.onPeekEnd }}" onTouchCancel="{{ s.onPeekEnd }}" data-mzslot="{{ s.idx }}" style="{{ s.style }}">
+      <div onClick="{{ s.onTap }}" onMouseEnter="{{ s.onPeek }}" onMouseLeave="{{ s.onPeekEnd }}" onTouchStart="{{ s.onHold }}" onTouchEnd="{{ s.onHoldEnd }}" onTouchCancel="{{ s.onHoldEnd }}" data-mzslot="{{ s.idx }}" style="{{ s.style }}">
         <sc-if value="{{ s.emptyOn }}" hint-placeholder-val="{{ true }}">
           <svg viewBox="0 0 100 100" style="width:58px;height:52px;opacity:.42">
             <sc-for list="{{ s.emptyShapes }}" as="p" hint-placeholder-count="2">
@@ -1960,7 +1960,7 @@
 
   <div style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;z-index:6">
     <sc-for list="{{ handCards }}" as="c" hint-placeholder-count="5">
-      <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" data-mzhand="{{ c.hid }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
+      <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onHoldEnd }}" onTouchCancel="{{ c.onHoldEnd }}" data-mzhand="{{ c.hid }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
         <div style="position:absolute;top:2.5px;left:2.5px;right:2.5px;bottom:2.5px;border-radius:5px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.08)"></div>
         <svg viewBox="0 0 20 20" style="position:absolute;top:5px;right:5px;width:13px;height:13px;pointer-events:none;z-index:3;overflow:visible">
           <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ c.moonRim }}" stroke-width="1"></circle>
@@ -4241,9 +4241,17 @@ class Component extends DCLogic {
     return [sh("M -34 0 h 12 l -6 40 h -12 Z", { f: "rgba(" + c + ",.15)", a: "mzFxSweep .7s" })];
   }
   _afterDeal() { clearTimeout(this._dealT); this._dealT = setTimeout(() => { this.setState({ dealt: true }); this._say("open"); }, 1100); }
-  _advanceRound() {
+  // `sameRung` distinguishes this function's two callers, which need opposite behavior at a
+  // walker rung (28 aug 2026 fix — the best-of-three/five rewrite added the second caller without
+  // this, so a WON board at walker 5+ silently reset roundWins to [] and re-dealt a "round 1" at
+  // the same rung instead of continuing the match: false/omitted = called from _exitRound() after
+  // a DECIDED rung's ceremony, advance to the NEXT physical rung (existing behavior, untouched);
+  // true = called mid-match, the current rung's best-of-N isn't decided yet, so this must continue
+  // THE SAME MATCH's next board (same walker, same rung, roundWins preserved) — falls through to
+  // the general "next board" logic below instead of the road-step branch.
+  _advanceRound(sameRung) {
     const st = this.state;
-    if (st.road && !st.roadBoss) {
+    if (st.road && !st.roadBoss && !sameRung) {
       // a chosen station keeps climbing from where it was picked; the walked road reads the saved rung
       const k = st.roadPick ? Math.min((st.roadRung || 0) + 1, 8) : Math.min(this._rungs()[this._tonight()] || 0, 8);
       this._clearSeq();
@@ -4258,6 +4266,9 @@ class Component extends DCLogic {
     this._clearSeq();
     const fr = this._freshRound(r, nextLeader, st.chosen, !st.nightWalker && !st.road && !st.duel);
     if (st.nightWalker) fr.sky = this._walkerFor(this._tonight()).hand.slice();
+    // a road rung mid-match: same walker as the board just played, re-padded with a round-varied
+    // seed so the filler cards differ board to board instead of repeating _freshRoadStep's fixed one
+    if (st.road && !st.roadBoss) fr.sky = this._seven(this._walkers()[st.roadRung].hand, st.roadRung + 11 + r);
     if (st.duel) fr.sky = (st.chosenB || []).slice();
     this.setState({ ...fr, round: r, roundWins: st.roundWins, phase: "play", selB: null });
     this._afterDeal();
@@ -6226,13 +6237,30 @@ class Component extends DCLogic {
                 if (lv <= 0) { this._buzz([28, 90, 28]); this._wipeRoad(this.state.roadRung); this.setState({ phase: "roadlost", wiped: true, lives: 0 }); }
                 else { this._saveLives(lv); this.setState({ phase: "roadlost", wiped: false, lives: lv }); }
               }
-              else { this._roundX = setTimeout(() => this._advanceRound(), 240); }
+              else { this._roundX = setTimeout(() => this._advanceRound(true), 240); } // true: same rung, next board of THIS match — see _advanceRound()'s header
               return;
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
             if (w >= 3) { this._buzz([10, 60, 18]); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, true); this.setState({ phase: "won" }); }
-            else if (l >= 3) { this._buzz(24); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false); this.setState({ phase: this.state.road ? "roadlost" : "lost" }); }
+            else if (l >= 3) {
+              this._buzz(24);
+              if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false);
+              // THREE LIVES applies at the mansion too (28 aug 2026 fix): by the time execution
+              // reaches this generic branch, st.road true always means the mansion (a walker-rung
+              // loss is caught and returned above), but this code predates the lives system and
+              // never wired it in here — a mansion loss skipped the life count entirely: no
+              // decrement, no wipe on a third loss, and the roadlost screen just re-showed whatever
+              // life total the walkers had already saved, unchanged, which read as the exact same
+              // "one light left" message twice in a row.
+              if (this.state.road && this.state.roadBoss) {
+                const lv = this._lives() - 1;
+                if (lv <= 0) { this._buzz([28, 90, 28]); this._wipeRoad(this.state.roadRung); this.setState({ phase: "roadlost", wiped: true, lives: 0 }); }
+                else { this._saveLives(lv); this.setState({ phase: "roadlost", wiped: false, lives: lv }); }
+              } else {
+                this.setState({ phase: this.state.road ? "roadlost" : "lost" });
+              }
+            }
             else {
               const asc = false;
               if (asc) { this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
@@ -6422,8 +6450,14 @@ class Component extends DCLogic {
           if (this.state.peek) this.setState({ peek: pk });
           else this._holdT = setTimeout(() => this.setState({ peek: pk }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
+        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); }, // desktop mouseleave only (see markup) — hover should close on its own
         onHold: () => { if (this.state.drag) return; const pk = (this.state.slots[i] ? "s" : "e") + i; clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: pk }), 400); },
+        // touch release (28 aug 2026 fix): only cancels a hold that hadn't fired yet. A finger lift
+        // must NOT close a panel that's already open — the old shared onPeekEnd did, so mobile could
+        // only ever read the panel while a finger stayed pressed on the card. It now stays open, the
+        // same way desktop's hover reads, until the player taps the card again (onTap below already
+        // closes an open peek) or taps elsewhere.
+        onHoldEnd: () => { clearTimeout(this._holdT); },
         onTap: () => {
           if (this._dragDid) return;
           clearTimeout(this._holdT);
@@ -6568,8 +6602,12 @@ class Component extends DCLogic {
           if (this.state.peek) this.setState({ peek: "h" + id });
           else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); },
+        onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); }, // desktop mouseleave only (see markup)
         onHold: () => { clearTimeout(this._holdT); this.setState({ hov: id }); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
+        // touch release (28 aug 2026 fix, same as the station panel above): a finger lift only
+        // cancels a hold that hadn't fired yet, it never closes a panel already open — mirrors
+        // desktop hover, which stays up until you look away, not just while the mouse is held still.
+        onHoldEnd: () => { clearTimeout(this._holdT); },
         onDown: (e) => { if (this.state.mull) return; clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
         moonD: this._moonD(c.lvl), moonFill: "rgba(250,244,226,.95)",
         moonRim: "rgba(250,244,226," + (c.lvl >= 4 ? .82 : .4) + ")",

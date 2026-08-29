@@ -118,7 +118,13 @@ function cards(cfg) {
     const id = idx + 1;
     const lvl = levels[id] != null ? levels[id] : 3;
     const q = quadOf(id);
-    const grantOn = grants; // simplification: grants are all-or-nothing here, not per-card build state
+    // grants require lvl>=2 (V1's own "the grant comes at the second door"), same gate as the
+    // signature (ab). Fixed 28 aug 2026: this was previously ungated (grantOn = grants alone),
+    // which meant a level-1 "numbers only" card silently carried a grant whenever cfg.grants was
+    // "all" — dormant until the ladder started calling cards({grants:"all"}) for real, at which
+    // point a fresh/mostly-level-1 collection got every card granted and swung wildly stronger
+    // than intended (surfaced by manzil-acceptance-checks.cjs's check 5/7 blowing out to ~100%).
+    const grantOn = grants && lvl >= 2; // simplification stands: still all-or-nothing ACROSS cards, not per-card build state
     C[id] = {
       id, name: p[0], l: p[1], r: p[2], who: "you", lvl, loan: false,
       ab: lvl >= 2 ? p[3] : null, sig: p[3], quad: q, grantOn,
@@ -808,15 +814,23 @@ function handicapLevels(playerLevels, handicap) {
 }
 
 // merges a mirror 28-card opponent deck (ids 200+i) into a base card table built from the
-// player's own real levels (baseC = cards({levels: playerLevels})). Ability gating (lvl>=2) works
-// correctly here because of the on() fix above; grants stay off (twoFaced: false, no grantOn) —
-// wiring the four quadrant grants into the ladder is explicitly still outstanding (report
-// checklist item 6), not part of this ship.
+// player's own real levels (baseC = cards({levels: playerLevels, grants: "all"})). Ability gating
+// (lvl>=2) works correctly here because of the on() fix above. Grants WIRED 28 aug 2026 (report
+// checklist item 6, closed): a shadow card carries the grant only if the base deck has grants
+// enabled at all (baseC[i].grantOn — cards()'s own whole-table on/off simplification, not a
+// per-card build choice) AND the shadow card's own level survived the handicap knockdown
+// (lvl>=2) — a knocked-down card is level 1 regardless of what the player's real card carries, so
+// its grant has to be off too, the same way its signature already is. `shielded()`/the
+// strike-carry checks read `.grantOn`/`.quad` directly, unlike ability text which gates through
+// on()/`.ab`, so grantOn has to be computed here rather than just copied via the `...baseC[i]`
+// spread (which would otherwise hand a level-1 shadow card a grant its own level doesn't support).
 function ladderOpponentCards(baseC, opponentLevels) {
   const C = Object.assign({}, baseC);
   for (let i = 1; i <= 28; i++) {
     const lvl = opponentLevels[i] || 1;
-    C[200 + i] = { ...baseC[i], id: 200 + i, who: "sky", lvl, ab: lvl >= 2 ? baseC[i].sig : null, twoFaced: false, homeM: i };
+    const grantOn = !!(baseC[i].grantOn && lvl >= 2);
+    C[200 + i] = { ...baseC[i], id: 200 + i, who: "sky", lvl, ab: lvl >= 2 ? baseC[i].sig : null,
+      grantOn, twoFaced: grantOn && baseC[i].quad === "seiryuu", homeM: i };
   }
   return C;
 }
@@ -828,25 +842,33 @@ const ROAD_STAGES = [1, 2, 3, 4, 5, 6, 7, 8, "mansion"];
 // actually drives the difficulty ladder (28 aug 2026 pt.4). cfg.youCaution/cfg.skyCaution (both
 // default 8) replace playBoardSearch's youDepth/skyDepth naming for the same reason bestMove()
 // exists at all: these are reply-cost weights, not search depths.
+//
+// MUTATES g.you/g.sky/g.slots in place as the board plays out (matching playBoard()'s own
+// convention) rather than tracking hands in a separate local object — this is load-bearing, not
+// stylistic: bestMove()/replyCost() read the opponent's hand straight off g.sky/g.you (verbatim
+// per the report's reference implementation), so if g itself is never updated, replyCost sees the
+// foe's FULL ORIGINAL 7-card hand all game, including cards already played — a real bug caught by
+// the report's own acceptance check 7 (the seat gap came out at 22 points against a ~1-point
+// target before this fix), not by code review. playBoardSearch()/searchMove() don't have this
+// problem because searchMove() takes a `hands` object as an explicit parameter instead.
 function playBoardWeighted(cfg) {
   cfg = cfg || {};
   const g = mkGame(cfg);
   const youCaution = cfg.youCaution == null ? 8 : cfg.youCaution;
   const skyCaution = cfg.skyCaution == null ? 8 : cfg.skyCaution;
-  let slots = g.slots.slice(), turn = g.turn, flips = 0, guard = 0;
-  const you = g.you.slice(), sky = g.sky.slice();
-  const hands = { you, sky };
-  while (slots.some(s => !s) && (hands.you.length || hands.sky.length) && guard++ < 20) {
-    const mover = turn, caution = mover === "you" ? youCaution : skyCaution;
-    if (!hands[mover].length) { turn = mover === "you" ? "sky" : "you"; continue; }
-    const mv = bestMove(g, slots, hands[mover], mover, caution);
-    if (!mv) { turn = mover === "you" ? "sky" : "you"; continue; }
+  let flips = 0, guard = 0;
+  while (g.slots.some(s => !s) && (g.you.length || g.sky.length) && guard++ < 20) {
+    const side = g.turn, caution = side === "you" ? youCaution : skyCaution;
+    const hand = side === "you" ? g.you : g.sky;
+    if (!hand.length) { g.turn = side === "you" ? "sky" : "you"; continue; }
+    const mv = bestMove(g, g.slots, hand, side, caution);
+    if (!mv) { g.turn = side === "you" ? "sky" : "you"; continue; }
     flips += (mv.r.seq || []).filter(x => !x.miss).length;
-    slots = mv.r.slots;
-    hands[mover] = hands[mover].filter(id => id !== mv.id);
-    turn = mover === "you" ? "sky" : "you";
+    g.slots = mv.r.slots;
+    g[side] = hand.filter(id => id !== mv.id);
+    g.turn = side === "you" ? "sky" : "you";
   }
-  return { winner: boardWinner(g, slots), flips, slots, you: hands.you, sky: hands.sky };
+  return { winner: boardWinner(g, g.slots), flips, slots: g.slots, you: g.you, sky: g.sky };
 }
 function playMatchWeighted(cfg) {
   cfg = cfg || {};
@@ -930,7 +952,9 @@ function playMatchSearch(cfg) {
 // cfg.youCaution (default 8, "careful") lets a caller simulate a careless player instead
 // (caution 0), matching the report's own "careful minus careless" comparison. Uses
 // playBoardWeighted/playMatchWeighted (the one-ply evaluator, pt.4) — NOT the negamax search;
-// see bestMove()'s header for why.
+// see bestMove()'s header for why. baseC is built with grants:"all" — cards()'s whole-table grant
+// simplification, matching the assumption every ladder acceptance check makes about the player's
+// own deck (see ladderOpponentCards()'s header for how that then mirrors into the opponent).
 function playPush(cfg) {
   cfg = cfg || {};
   const playerLevels = cfg.playerLevels || {};
@@ -940,7 +964,7 @@ function playPush(cfg) {
   const awake = awakeCount(playerLevels);
   const handicap = handicapFor(awake);
   const cautions = cautionsFor(awake);
-  const C = ladderOpponentCards(cards({ levels: playerLevels }), handicapLevels(playerLevels, handicap));
+  const C = ladderOpponentCards(cards({ levels: playerLevels, grants: "all" }), handicapLevels(playerLevels, handicap));
   let livesLeft = lives, stageIdx = 0, boardsPlayed = 0;
   const log = [];
   while (stageIdx < ROAD_STAGES.length && livesLeft > 0) {
@@ -1007,6 +1031,10 @@ if (require.main === module) {
       const C = E.cards({});
       return Object.keys(C).filter(k => C[k].id <= 28).length + ":" + [101, 102, 103, 104, 105, 106, 107].every(id => !!C[id]);
     }, "28:true"],
+    ["cards(): grants require lvl>=2, same gate as the signature — a level-1 card gets no grant even with grants:'all'", () => {
+      const C = E.cards({ levels: { 1: 1, 2: 3 }, grants: "all" });
+      return C[1].grantOn === false && C[2].grantOn === true;
+    }, true],
     ["deal() returns the requested hand size from a 28-card pack", () => E.deal(null, 42, 7).length, 7],
     ["deal() is deterministic for a given seed", () => JSON.stringify(E.deal(null, 42, 7)) === JSON.stringify(E.deal(null, 42, 7)), true],
     ["resolve() places a card and returns a full slot array", () => {
@@ -1118,6 +1146,21 @@ if (require.main === module) {
       const opp = E.handicapLevels(levels, 0); // true mirror
       const C = E.ladderOpponentCards(baseC, opp);
       return E.on({}, C[201]) === true && C[201].ab === baseC[1].sig;
+    }, true],
+    ["ladderOpponentCards: grants mirror onto a kept card when the base deck has grants on", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const baseC = E.cards({ levels, grants: "all" }); // card 14 is seiryuu (QUAD_OF)
+      const opp = E.handicapLevels(levels, 0); // true mirror -> all 28 kept
+      const C = E.ladderOpponentCards(baseC, opp);
+      const allGranted = Array.from({ length: 28 }, (_, i) => C[201 + i].grantOn).every(Boolean);
+      return allGranted && C[214].twoFaced === true; // seiryuu's grant carries twoFaced
+    }, true],
+    ["ladderOpponentCards: a knocked-down (level 1) card gets NO grant even if the base deck has grants on", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const baseC = E.cards({ levels, grants: "all" });
+      const opp = E.handicapLevels(levels, 1); // handicap 1 -> every card knocked to level 1
+      const C = E.ladderOpponentCards(baseC, opp);
+      return C[201].grantOn === false && C[214].twoFaced === false;
     }, true],
     ["searchMove: depth 0 is pure greedy (no lookahead) and picks a legal move", () => {
       const g = E.mkGame({ seed: 3 });
