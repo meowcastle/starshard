@@ -32,8 +32,13 @@ FRONTEND_FILES="api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil
 # validator (manzil-lobby.js) and its synced copy of the rules engine
 # (manzil-engine.js). deploy_backend only ever shipped server.js itself
 # before this existed — a bare `require('./lib/manzil-lobby')` would 404
-# in production without these alongside it.
-BACKEND_LIB_FILES="starshard-api/lib/manzil-engine.js starshard-api/lib/manzil-lobby.js"
+# in production without these alongside it. age-gate.js (30 aug 2026) is
+# the region-aware minimum-signup-age table server.js now requires() —
+# added here the hard way, after a deploy that shipped server.js without
+# it crash-looped the live process on MODULE_NOT_FOUND. Same lesson as
+# FRONTEND_FILES above: a new require()/import() needs this list updated
+# in the same commit, and nothing catches a miss here except deploying.
+BACKEND_LIB_FILES="starshard-api/lib/manzil-engine.js starshard-api/lib/manzil-lobby.js starshard-api/lib/age-gate.js"
 
 cd "$(dirname "$0")/.."
 
