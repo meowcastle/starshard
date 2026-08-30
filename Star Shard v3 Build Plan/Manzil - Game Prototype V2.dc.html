@@ -5609,7 +5609,10 @@ class Component extends DCLogic {
     if (st.sel != null) return "h" + st.sel;
     return null; }
   _abilityOn(c) { return c.ab && c.lvl >= 2; }
-  _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 18: "rains", 28: "thread", 24: "void" })[this._tonight()] || null; }
+  // "rains" (mansion 18) is gone from this map: it only ever gated the removed +1/-1 (+2/-2 boss)
+  // face-value swing in _faceOf, which was the pre-Form-C "heart's law" this map's other entries
+  // never described — the real law now lives in _lawAt/_resolve, not here.
+  _bossRule() { const st = this.state; if (!st || !st.roadBoss) return null; return ({ 6: "storm", 15: "veil", 28: "thread", 24: "void" })[this._tonight()] || null; }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
   _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} }
@@ -5973,11 +5976,14 @@ class Component extends DCLogic {
     let d = 0;
     if (s.boon) d += s.boon;  // the throne raised what it took, or the hand raised what you lodged: for good
     if (s.blazed) d -= 2;     // the blaze marked it, for good
-    if (this._tonight() === 18 && !(this.state && this.state.practice)) { // the heart's own night: the whole
-      // road keeps its time, gentler. never in the practice walk, whose captions state exact printed numbers.
-      const b18 = this._bossRule() === "rains" ? 2 : 1; // the rains break at the summit and the beat doubles
-      d += (this.state && this.state.turn === (s.ground || s.owner)) ? b18 : -b18;
-    }
+    // REMOVED (30 aug 2026, user): a pre-existing, informal "heart's law" lived here — a turn-based
+    // +1/-1 swing to every face on mansion 18, doubled to +2/-2 on the boss board ("the rains break at
+    // the summit and the beat doubles"). This predates the whole Form A/B/C measurement process
+    // (THE-HEART-LAW-29AUG.md) and is exactly the category of board-wide combat arithmetic that
+    // process measured and REJECTED (Form A: inverts skill on fresh boards, re-prices all four
+    // quadrants by up to 37 points) — it was never removed when Form C (the scoped `_lawAt`/`beat`
+    // mechanic in `_resolve()`) shipped in its place, so both were live simultaneously, silently
+    // skewing every board tonight beyond what Form C was ever measured or shipped to do. Gone.
     const own = s.ground || s.owner;
     for (const dd of [-1, 1]) {
       const k = this._nb(i, dd); if (k < 0 || !slots[k]) continue;
@@ -6047,7 +6053,8 @@ class Component extends DCLogic {
     if (s.boon) why.push("raised, for good");
     if (s.blazed) why.push("the blaze's mark");
     if (s.crowned) why.push("the crown holds it");
-    if (this._tonight() === 18 && !(this.state && this.state.practice)) why.push("the heart's law");
+    // the old face-value "heart's law" tag is gone with the modifier it explained (see _faceOf) — the
+    // real law is a station-0-only strike at the count now, which touches ownership, not a number.
     const own = s.ground || s.owner;
     for (const d of [-1, 1]) { const k = this._nb(i, d); if (k < 0 || !slots[k]) continue;
       const n = C[slots[k].id]; if (!this._on(n)) continue;

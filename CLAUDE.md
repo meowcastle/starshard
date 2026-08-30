@@ -168,6 +168,30 @@ grant ("again" vs. "reach") but ships no verdict/decision doc ("no
 numbers until these pass" — it's mid-research, not a decided spec);
 left untouched, same as before, pending an actual call from Design.
 
+**A second, unrelated "heart's law" was found and removed the next
+day (30 Aug 2026, user: "is the heart mansion +2+2 element still
+happening? can you check and remove it").** V2 (and V1, still
+historical reference only) carried a pre-existing, informal mansion-18
+mechanic in `_faceOf()` that predates the whole Form A/B/C measurement
+process above: a turn-based +1/-1 swing to every card's face value on
+mansion 18's own night, doubled to +2/-2 on the boss board specifically
+(`_bossRule() === "rains"`, "the rains break at the summit and the
+beat doubles"). This is exactly the category of board-wide combat
+arithmetic the measurement memo (`THE-HEART-LAW-29AUG.md`) measured as
+Form A and rejected outright (inverts skill on fresh boards, re-prices
+all four quadrants by up to 37 points) — it was never removed when
+Form C shipped in its place, so both were live simultaneously: every
+board on mansion 18 was silently skewed by this on top of whatever
+Form C's own measured numbers assumed, undocumented and unmeasured.
+Removed from `_faceOf()`, its "the heart's law" tag in `_whyHere()`'s
+tooltip explanation, and the now-dead `"rains"` entry in `_bossRule()`'s
+map (nothing else read it). Verified: `esbuild` syntax check and
+`data-props` JSON both clean, no leftover `"rains"`/`b18` references,
+deployed to staging and confirmed live. Not touched in the canonical
+engine (`research/manzil-engine-current.cjs`) — it never carried this,
+since it's a fresh Form-C-only reimplementation, not a full mechanical
+port of V1's `_faceOf()`.
+
 *(Below: the first-pass note, preserved for the record rather than
 deleted, since it documents what shipped briefly before the
 correction above landed the same day.)* Boss boards only, mansion 18:
