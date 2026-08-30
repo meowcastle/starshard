@@ -185,18 +185,43 @@ function mkGame(cfg) {
   };
 }
 
-// PER-MANSION STATION LAWS (29 aug 2026, corrected work order + research/heartvec.js form C) —
-// whole-night scope, NOT gated on roadBoss: the law is a property of tonight's road, so it fires
-// on every battle played under it, walkers and the mansion match alike. Station 0 is always
-// tonight's mansion's own ground. "beat" (mansion 18, the heart): once when the road fills,
-// whoever holds station 0 strikes station 1 once more, regardless of whether that side's own card
-// carries an ability — see resolve()'s "when the road fills" gate. No onward chain: that clause
-// belonged to the rejected board-wide form (allBeat in research/v2.js) and was ported in error on
-// 28 Aug, then corrected here. The one chain that can still occur is a winning card's OWN ability
-// (mars/turning/suzaku's reach) firing as it normally would — that's card behavior inside the
-// strike, not law behavior, and needs no special-casing. Structured as a map, per the work order's
-// own template, so the other 27 mansions' station laws land as entries here.
-const LAW_AT = { 18: "beat" };
+// PER-MANSION STATION LAWS (29-30 aug 2026, corrected heart's-law work order + the 30 aug
+// WORKORDER-LAWS-AND-THRONE-30AUG.md/WORKORDER-THRONE-LAW-30AUG.md/THE-TENTS-LAW-SHIPPED-30AUG.md
+// trio) — whole-night scope, NOT gated on roadBoss: each law is a property of tonight's road, so
+// it fires on every battle played under it, walkers and the mansion match alike. `station` is the
+// 0-based slot index the law lives on for that mansion's night (mostly the mansion's own ground,
+// station 0 — the exception is mansion 25, see below).
+//   - 18, "beat": once when the road fills, whoever holds station 0 strikes station 1 once more,
+//     regardless of whether that side's own card carries an ability — see resolve()'s "when the
+//     road fills" gate. No onward chain: that clause belonged to the rejected board-wide form
+//     (allBeat in the design reference engine) and was ported in error on 28 Aug, corrected 29 Aug.
+//   - 25, "shell": station 4 (NOT 0 — the client slides the whole nine-station road window on m25's
+//     own night, `_boardM(i)=((t-1+i-4+28)%28)+1`, so her own ground stands mid-road; this engine
+//     doesn't model that road-window slide at all, per the scope note atop this file, so `station:4`
+//     is simply hardcoded as the law's home rather than derived). Whatever lodges there counts
+//     normally; the moment it is ever taken (owner differs from whoever lodged it — reusing the
+//     existing `by` field, same test the genbu grant's own "empty shell" already uses in slotW()
+//     below), it counts for nobody, either side, for the rest of the board. The Genbu quadrant
+//     grant, moved to a place.
+//   - 10, "reach": station 0. Whatever lodges there ALSO strikes two stations away (crossing an
+//     empty middle station), using its PRINTED pool faces at the far station — a pumped/boon'd/
+//     blazed live face does not carry. Side-neutral. Ported to match the client's own documented
+//     scope: fires at LODGE TIME ONLY (the initial strike-queue push below), not from a strike that
+//     merely originates from station 0 by some other cause (a heart fill-strike, a follower answer,
+//     a return re-arm) — the 30 Aug work order flags that gap explicitly and calls the reference
+//     engine "the truth" if the acceptance vectors ever require the wider form, but wardvec.js's own
+//     three reach vectors test the mechanic in isolation (direct strikes, not resolve()'s full
+//     lodge/re-arm/chain machinery) and don't actually pin that timing question down either way, so
+//     this port matches the client rather than guessing past what's tested.
+// The one chain that can still occur on ANY of these is a winning card's OWN ability (mars/turning/
+// suzaku's reach) firing as it normally would — that's card behavior inside the strike, not law
+// behavior, and needs no special-casing. Structured as a map, per the work order's own template, so
+// the other 25 mansions' station laws can land as entries here.
+const LAW_AT = {
+  18: { kind: "beat", station: 0 },
+  25: { kind: "shell", station: 4 },
+  10: { kind: "reach", station: 0 },
+};
 function lawAt(m) { return LAW_AT[m] || null; }
 
 function nb(g, i, dir) { const k = i + dir; return k >= 0 && k < g.len ? k : -1; }
@@ -238,11 +263,15 @@ function shielded(g, slots, ti) {
   return false;
 }
 
-function tryFlip(g, slots, ai, ti, dir) {
+function tryFlip(g, slots, ai, ti, dir, printed) {
   const a = slots[ai], t = slots[ti];
   if (!t || t.spent || t.owner === a.owner) return false;
   const tC = g.C[t.id];
   let av = faceOf(g, slots, ai, dir), tv = faceOf(g, slots, ti, -dir);
+  // the throne's law (mansion 10): the far strike reads the attacker's PRINTED pool face — the
+  // card table's own l/r, not the slot's live (boon/blaze/neighbour-modified) face. Reads g.C, not
+  // slots[ai], so it's unaffected by rev too, matching the client's own _tryFlip(..., printed).
+  if (printed) { const aC = g.C[a.id]; av = dir === 1 ? aC.r : aC.l; }
   for (const d of [-1, 1]) {
     const k = nb(g, ti, d); if (k < 0 || k === ai || !slots[k]) continue;
     const n = g.C[slots[k].id]; if (n.ab === "bearer" && on(g, n)) { av = Math.max(1, av - 2); break; }
@@ -336,6 +365,15 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
     for (const d of [-1, 1]) { const k = nb(g, xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d }); }
   });
   queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
+  const law = lawAt(g.tonight);
+  // the throne's law (mansion 10, station 0): lodging there also strikes two stations away, printed
+  // faces, crossing an empty middle — see the LAW_AT comment above for the lodge-time-only scope.
+  if (law && law.kind === "reach" && i === law.station) {
+    [-1, 1].forEach(d => {
+      const far = i + 2 * d;
+      if (far >= 0 && far < slots.length) queue.push({ from: i, to: far, dir: d, printed: true, sig: "the throne's law: the strike carries to the far station, as printed." });
+    });
+  }
   const opp = slots.length - 1 - i;
   if (on(g, me) && me.ab === "glance" && opp !== i) queue.push({ from: i, to: opp, dir: opp > i ? 1 : -1, sig: "the glance strikes across the road." });
   slots.forEach((x, xi) => {
@@ -352,8 +390,8 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
         if (!x || g.C[x.id].ab !== "heart" || !on(g, g.C[x.id])) return;
         for (const d of [-1, 1]) { const k = nb(g, xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d, sig: "the heart strikes as the road fills." }); }
       });
-      if (lawAt(g.tonight) === "beat") {
-        queue.push({ from: 0, to: 1, dir: 1, sig: "the heart beats once more, as the road fills." });
+      if (law && law.kind === "beat") {
+        queue.push({ from: law.station, to: law.station + 1, dir: 1, sig: "the heart beats once more, as the road fills." });
       }
       if (!queue.length) break;
     }
@@ -362,7 +400,7 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
     if (to < 0 || to >= slots.length || !slots[from] || !slots[to]) continue;
     const tgt = slots[to], tC = g.C[tgt.id], tOwn = tgt.ground || tgt.owner;
     if (tC.ab === "chamber" && !tgt.struck) { slots[to] = Object.assign({}, slots[to], { struck: true }); seq.push({ from, to, dir, miss: true }); }
-    const res = tryFlip(g, slots, from, to, dir);
+    const res = tryFlip(g, slots, from, to, dir, cur.printed);
     if (res === "gate") { seq.push({ from, to, dir, miss: true, sig: "the gate turns the first strike aside." }); continue; }
     if (!res) continue;
     const fromC = g.C[slots[from].id] || {}, fromAb = fromC.ab;
@@ -402,6 +440,10 @@ function slotW(g, slots, i, ctx) {
   if (!s) return { who: null, w: 0, silent: !!(ctx && ctx.sil && ctx.sil[i]) };
   const c0 = g.C[s.id];
   if (c0.grantOn && c0.quad === "genbu" && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true }; // black tortoise's grant
+  const law = lawAt(g.tonight);
+  // the hideaway's law (mansion 25): the same "empty shell" test as the genbu grant above, just
+  // keyed to the law's fixed station instead of a specific card's grant — see the LAW_AT comment.
+  if (law && law.kind === "shell" && i === law.station && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true };
   if (ctx && ctx.sil && ctx.sil[i]) return { who: null, w: 0, silent: true };
   if (s.spent) return { who: null, w: 0, silent: true };
   const c = g.C[s.id];
@@ -1256,6 +1298,71 @@ if (require.main === module) {
       slots[2] = { id: 106, l: 3, r: 1, owner: "sky", by: "sky", age: 1 }; // left face 3 < 8, but sun/moon carry no chaining ability
       const rr = E.resolve(g, slots, 107, 8, false, "sky");
       return rr.slots[1].owner === "you" && rr.slots[2].owner === "sky"; // station 1 taken by the beat; station 2 untouched
+    }, true],
+    // THE HIDEAWAY'S LAW (30 aug 2026, THE-TENTS-LAW-SHIPPED-30AUG.md) — mansion 25's station 4
+    // (not station 0: the client slides the road window so her own ground stands mid-road, a
+    // theater-layer concept this base-match engine doesn't model — see the LAW_AT comment). Reuses
+    // the same `by !== owner` "has this station ever changed hands" test the genbu grant's own
+    // "empty shell" already uses in slotW(), so these vectors also incidentally cover that reuse.
+    ["the hideaway's law: an untaken tent (mansion 25, station 4) counts normally", () => {
+      const g = E.mkGame({ tonight: 25 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 106, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const [you, sky] = E.counts(g, slots);
+      return you === 1 && sky === 0;
+    }, true],
+    ["the hideaway's law: a taken tent counts for nobody, either side", () => {
+      const g = E.mkGame({ tonight: 25 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 106, l: 5, r: 5, owner: "you", by: "sky", age: 1 }; // by !== owner: it changed hands
+      const [you, sky] = E.counts(g, slots);
+      return you === 0 && sky === 0;
+    }, true],
+    ["the hideaway's law: the shell does not touch a neighbouring station", () => {
+      const g = E.mkGame({ tonight: 25 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 106, l: 5, r: 5, owner: "you", by: "sky", age: 1 }; // taken tent: counts for nobody
+      slots[5] = { id: 107, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; // untouched neighbour, counts as ever
+      const [you, sky] = E.counts(g, slots);
+      return you === 0 && sky === 1;
+    }, true],
+    ["the hideaway's law does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 106, l: 5, r: 5, owner: "you", by: "sky", age: 1 }; // "taken", but no law active tonight
+      const [you, sky] = E.counts(g, slots);
+      return you === 1 && sky === 0;
+    }, true],
+    // THE THRONE'S LAW (30 aug 2026, WORKORDER-THRONE-LAW-30AUG.md) — mansion 10, station 0. A card
+    // lodging there also strikes two stations away, crossing an empty middle, printed pool faces.
+    ["the throne's law: her station's strike carries two stations, over an empty middle (mansion 10, station 0)", () => {
+      const g = E.mkGame({ tonight: 10 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[2] = { id: 107, l: 3, r: 3, owner: "sky", by: "sky", age: 1 }; // an easy target, two stations away
+      const rr = E.resolve(g, slots, 106, 0, false, "you"); // sun (9/6) lodges at station 0
+      return rr.slots[2].owner === "you";
+    }, true],
+    ["the throne's law: side-neutral, her card reaches the same way", () => {
+      const g = E.mkGame({ tonight: 10 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[2] = { id: 106, l: 3, r: 3, owner: "you", by: "you", age: 1 };
+      const rr = E.resolve(g, slots, 107, 0, false, "sky"); // moon (6/6) lodges at station 0 for sky
+      return rr.slots[2].owner === "sky";
+    }, true],
+    ["the throne's law: printed faces at the far station — a boon'd live face does not carry", () => {
+      const g = E.mkGame({ tonight: 10 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[1] = { id: 13, l: 5, r: 7, owner: "you", by: "you", age: 1 }; // the hand: boons its new neighbour +1
+      slots[2] = { id: 107, l: 7, r: 7, owner: "sky", by: "sky", age: 1 }; // printed 6 fails v 7; a boon'd 7 would tie and take it
+      const rr = E.resolve(g, slots, 106, 0, false, "you"); // sun (9/6) lodges at station 0, boon'd to 7 by the hand
+      return rr.slots[0].boon === 1 && rr.slots[2].owner === "sky"; // the near boon lands; the reach's far strike still reads printed 6 and fails
+    }, true],
+    ["the throne's law does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[2] = { id: 107, l: 3, r: 3, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 0, false, "you");
+      return rr.slots[2].owner === "sky"; // untouched: no law active tonight, so no reach
     }, true],
   ];
   let fails = 0;

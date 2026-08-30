@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const { Resend } = require('resend');
 const { Server: SocketIOServer } = require('socket.io');
 const { createManzilLobby } = require('./lib/manzil-lobby');
+const { minAgeForTz } = require('./lib/age-gate');
 
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -172,7 +173,10 @@ function computeAge(birthDate) {
   return age;
 }
 
-const MIN_MANZIL_AGE = 16;
+// Replaced 30 Aug 2026 (Justin's call) with lib/age-gate.js's per-region
+// minAgeForTz() — 13 worldwide by default, 16 (or 14/15) only in the
+// GDPR member states that set a higher digital-consent age. See that
+// file's header for the region-detection method and its limits.
 
 // Star Shard's opt-in path only (PUT /api/me/birth) — Manzil signup never
 // calls this anymore, see the 24 Aug PM handoff §2. Only birthDate is
@@ -291,10 +295,10 @@ const GUESTBOOK_STAMPS = new Set(['⭐', '🎀', '🌙', '💿', '✿']);
 // handoff's own framing: this is the documented reasonable-effort
 // standard, not enforcement. Signup re-checks the age itself regardless.
 app.post('/api/auth/age-check', ageCheckLimiter, wrap(async (req, res) => {
-  const { birthDate } = req.body || {};
+  const { birthDate, tz } = req.body || {};
   const age = computeAge(birthDate);
   if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
-  res.json({ ok: age >= MIN_MANZIL_AGE });
+  res.json({ ok: age >= minAgeForTz(tz) });
 }));
 
 app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
@@ -311,10 +315,13 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
     return res.status(400).json({ error: 'invalid_username' });
   }
   // Re-checked here regardless of whatever /api/auth/age-check answered
-  // earlier — the client is never trusted to have actually called it.
+  // earlier — the client is never trusted to have actually called it, and
+  // this re-check uses its OWN region read (req.body.tz) rather than
+  // trusting a region the age-check call might have used — same posture
+  // as the birth date itself, just extended to the one new signal.
   const age = computeAge(req.body && req.body.birthDate);
   if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
-  if (age < MIN_MANZIL_AGE) return res.status(403).json({ error: 'too_young' });
+  if (age < minAgeForTz(req.body && req.body.tz)) return res.status(403).json({ error: 'too_young' });
   const birthYear = Number(String(req.body.birthDate).slice(0, 4));
 
   const manzilPack = parseManzilPack(req.body);

@@ -212,6 +212,133 @@ engine (`lawAt`/`LAW_AT`, `resolve()`'s matching hooks, plus a new
 — `g.tonight` was referenced by `moveKey()` but never actually settable
 via `mkGame(cfg)` until now).
 
+**Two more station laws shipped client-side and are now ported into the
+canonical engine (30 Aug 2026, `docs/handoffs/WORKORDER-LAWS-AND-THRONE-30AUG.md`
++ `WORKORDER-THRONE-LAW-30AUG.md` + `THE-TENTS-LAW-SHIPPED-30AUG.md`).**
+Design's "v3 pack" landed a UI-overhaul-plus-mechanics export of V2
+(replacing the previous V2.dc.html; a plain `diff` against the
+pre-existing copy confirmed no engine-module imports snuck in, per the
+receipt protocol) carrying the throne level (mansion 10) and two more
+per-mansion laws, `_bossRule()`/`_lawSt()` gating on the same whole-night
+scope as the heart's law (`road && !practice && !duel`, fires for every
+board tonight, not just the boss board):
+- **Mansion 25, "shell" (station 4, the hideaway):** the Genbu quadrant
+  grant ("the empty shell") moved to a fixed place instead of a specific
+  card's grant — whatever lodges on station 4 counts normally until it
+  is ever taken (`s.by !== s.owner`, reusing the exact same field/test
+  the Genbu grant's own shell check already uses), after which it counts
+  for nobody, either side, for the rest of the board. Station 4, not 0:
+  on mansion 25's own night the client slides the whole nine-station
+  road window back four (`_boardM(i) = ((t-1+i-4+28)%28)+1`), so her own
+  ground stands mid-road rather than at the door — the same treatment
+  the well-rope (mansion 28) already gets. The canonical engine does
+  **not** model that road-window slide at all (a road-mode/theater-layer
+  concept explicitly out of scope per this file's own header note), so
+  the port simply hardcodes `station: 4` as the law's home rather than
+  deriving it — correct for the law itself, silent on the window slide.
+- **Mansion 10, "reach" (station 0, the throne):** a card lodging on
+  station 0 also strikes two stations away, crossing an empty middle,
+  side-neutral, using its PRINTED pool faces at the far station (a
+  boon'd/blazed/leveled live face does not carry two stations — a pumped
+  near-strike face and a plain far-strike face on the SAME lodge is the
+  intended asymmetry, not a bug). The client fires this at lodge time
+  only; the work order flags that a strike merely *originating* from
+  station 0 by some other cause (a heart fill-strike, a follower answer,
+  a return re-arm) does not reach client-side, and calls the reference
+  engine "the truth" if the acceptance vectors ever require the wider
+  form. Checked rather than assumed: the three shipped `reach` vectors
+  in Design's `wardvec.js` test the mechanic in isolation (direct
+  strikes, not `resolve()`'s full lodge/re-arm/chain machinery) and
+  don't actually pin that timing question down either way, so the port
+  matches the client's documented lodge-time-only scope rather than
+  guessing past what's tested.
+
+Both ported into `research/manzil-engine-current.cjs`'s `LAW_AT` (now
+`{18:{kind:"beat",station:0}, 25:{kind:"shell",station:4},
+10:{kind:"reach",station:0}}`, an object shape replacing the old bare-
+string map so a station can differ from a mansion's own index),
+`tryFlip()` (new optional `printed` param, reads the attacking card's
+raw `g.C[id].l/r` instead of `faceOf()`), and `slotW()` (the shell check,
+sitting right beside the pre-existing Genbu-grant shell check it
+literally reuses the field of). Eight new self-check vectors added
+alongside the existing heart's-law ones (untaken/taken/neighbour-
+unaffected/wrong-night for the shell; two-station-carry/side-neutral/
+printed-not-live/wrong-night for the reach) — all pass, 43/43 total
+(`node research/manzil-engine-current.cjs`). `npm test` (193/193) and
+`npm run bindings` (which only ever targeted `Star Shard v4.dc.html`,
+untouched by this) both still pass clean. No `FRONTEND_FILES`/
+`deploy.sh` changes needed: the throne level's assets are inline in the
+`.dc.html` itself, and the shared JS trio (`support.js`, `ephemeris2.js`,
+`manzil-art2.js`) that ships alongside it came through this delivery
+byte-identical to what's already deployed.
+
+**The same Design export bundle also contained older, regressed copies
+of `Star Shard v4.dc.html` and `Star Shard - Account Portal.dc.html`
+(30 Aug 2026) — deliberately NOT applied.** Both diffed smaller than the
+live repo copies and were missing real, later Code work (the account
+portal's real `_castFive`/error-message wiring and `<title>`/OG tags;
+v4's month/day/year onboarding selects) — almost certainly stale
+snapshots swept into a whole-workspace zip export rather than an actual
+handoff for those two files, since nothing in the accompanying work
+order mentions either page. Left untouched. If a future Design delivery
+zip ever bundles everything in their workspace again, diff every file
+against the live repo copy before applying anything, same as this pass
+did — don't assume "it was in the zip" means "it's the intended update."
+
+**V2's own onboarding got a real, decided rebuild in this same delivery
+— and it silently dropped the real account system, caught and re-ported
+the same day (30 Aug 2026).** Design replaced Manzil's old external-
+redirect account gate (`await api.me()`, `window.location.href =
+"./account/"` for anyone unauthenticated) with a full cast/signup/signin
+flow built INTO V2 itself: `arrive → birth` (a five-question "the sky
+asks" cast that doubles as the signup form) `→ shard` (the sun/moon
+archetype reveal) `→ walkers → tut5`, replacing the old legend/door
+screens entirely (dated comments in the file cite specific user picks —
+"2b" for the question-at-a-time cast layout, "the account-portal layout"
+for the field style — from a concept-options deck Design shipped the
+same day, `Manzil - Onboarding Directions.dc.html`, itself superseded by
+this actual build). This is a real, good UX call — no more jarring
+redirect to a separate page — but the fresh build's own wiring was
+**entirely local**: no `fetch`, no `this.api`, no `/api/` calls anywhere,
+credentials compared against a password mirrored in `localStorage`, no
+age question at all. It silently deleted the real account requirement
+this repo spent the 24 Aug PM handoff establishing (the two-tier privacy
+model, the server-side age gate, `manzil_pack`) — AND it deleted a fix
+from that same morning: commit `f8689f7` ("Escape opens the lobby menu,
+with a log out option") had just wired a second real-logout entry point
+into V2's player-chip menu; the fresh export's equivalent menu code
+existed (Design correctly carried the escape-opens-lobby-menu UI and the
+logout button forward) but called nothing but local `setState` — the
+actual `api.logout()` call was gone. Caught only because the user asked
+"does this include the new login page" a second time after an
+insufficiently thorough first check (that first pass only diffed for
+stray engine-module imports, the receipt protocol's own item 4 — it
+never checked whether a fresh export had silently dropped Code-side
+wiring the previous export had, which is exactly the category of bug
+the 29 Aug canon flip's whole "port every V1 fix into V2" exercise
+existed to catch). Re-ported same day: `componentDidMount` is now
+`async`, awaits `api.me()`, and skips a signed-in visitor straight past
+`arrive`/`birth`/`signin` into the lobby (pulling `getManzilPack()` if no
+local cache exists) — same behavior as the old redirect gate, no
+redirect. `birthCastTap`/`_castNow` now calls the real `api.ageCheck()`
+then `api.signup()` before ever writing local state (local `_saveBirth()`
+stays as a device-side cache afterward, not the source of truth). `_siGo`
+now calls the real `api.loginWithUsername()`, and — a correctness fix
+beyond just "add the missing call" — unconditionally overwrites the
+local birth cache from the server's real pack on every sign-in (the old
+mock's `if (!this._birth())` gate would have let a second account
+signing in on the same device inherit the first account's chart).
+`pmLogout`/`pauseLogoutTap` now actually call `api.logout()` before
+landing on `arrive`, keeping Design's own in-page-not-redirect decision.
+The busy-label gap flagged the same day was closed within the hour (user:
+"can you grab spinner from the old one") — `bCastLabel`/`siLabel` ("…"
+while `st.busy`, ported from the Account Portal's own `st.busy ? "…" :`
+pattern) plus `pointer-events:none` while busy, one small markup change
+(`{{ bCastLabel }}`/`{{ siLabel }}` swapped in for the two buttons' static
+text) alongside the renderVals fields, verified the same way. Verified
+throughout: `esbuild --loader=jsx` on the extracted script block and the
+`data-props` JSON both clean, `npm run check` (193/193) untouched.
+
 **V1's engine has one canonical standalone port (28 Aug 2026).** The
 real Manzil engine lives inline in V1's own `<script type="text/x-dc">`
 block (~178 `_`-prefixed methods reading `this.state`/`this.props`
@@ -623,16 +750,40 @@ mansions/               generated: 28 static permalink pages + index + OG
      account is the *actor* for reports/blocks (`reporter_user_id`/
      `blocker_user_id`), never rows where it's the target — exporting your
      own data must not leak who reported you.
-  4. **The age gate is 16, flat, global, no geolocation** (24 Aug PM handoff
-     §3) — not 13. Nine GDPR member states set digital consent at 13, but
-     gating there means owning that table forever; 16 clears every
-     jurisdiction at once, and under-16s can't complete the paid unlock
-     regardless (Apple's Ask to Buy routes it to a parent). `POST
-     /api/auth/age-check` computes age from a submitted date and answers
-     `{ok}` with **nothing persisted either way** — it's a reasonable-effort
-     UX gate, not the enforcement. `POST /api/auth/signup` re-checks age
-     itself and is the actual boundary (403 `too_young`); never trust that
-     age-check was called first.
+  4. **The age gate is per-region now, 13 worldwide by default (30 Aug 2026,
+     Justin's call, reversing the 24 Aug PM handoff §3 flat-16 decision).**
+     `starshard-api/lib/age-gate.js`'s `minAgeForTz()` is the single source
+     of truth: 13 everywhere except the GDPR/EEA member states that set a
+     higher digital-consent age under Article 8 — 16 (Croatia, Germany,
+     Hungary, Ireland, Luxembourg, Netherlands, Poland, Romania, Slovakia,
+     Slovenia), 15 (Czech Republic, France, Greece), or 14 (Austria,
+     Bulgaria, Cyprus, Italy, Lithuania, Spain); everything else, US/COPPA's
+     13 included, falls through to the 13 floor. Sourced 30 Aug 2026 against
+     a published EU/EEA comparison table — a point-in-time legal snapshot,
+     not a live feed; a member state can move its own number, so revisit
+     this table periodically rather than trusting it indefinitely. **Region
+     detection is the client's resolved IANA time zone**
+     (`Intl.DateTimeFormat().resolvedOptions().timeZone`), not real IP
+     geolocation — there is no geo-IP service anywhere in this stack (no
+     Cloudflare/CDN in front of the Synology box, see `tools/deploy.sh`),
+     and adding one means a new paid/rate-limited dependency plus logging
+     visitor IPs, which this repo has otherwise gone out of its way to
+     avoid. This is a heuristic on the same trust footing as the birth date
+     itself (a VPN or a changed clock defeats it trivially) — accepted,
+     not an oversight, since the actual boundary was never the client
+     anyway. `api.js`'s `ageCheck()`/`signup()` auto-detect and send `tz`
+     unless a caller supplies its own; every existing call site (the
+     Account Portal, Manzil's own onboarding below) got this for free with
+     no markup changes. `POST /api/auth/age-check` computes age from a
+     submitted date + `tz` and answers `{ok}` with **nothing persisted
+     either way** — it's a reasonable-effort UX gate, not the enforcement.
+     `POST /api/auth/signup` re-checks age itself, with its own `tz` read
+     (never trusts the age-check call's), and is the actual boundary (403
+     `too_young`); never trust that age-check was called first. The
+     hardcoded "come back when you are sixteen" copy (`api.js`'s
+     `AUTH_COPY.too_young`, and the Account Portal's own "young" phase
+     text) no longer names a fixed age, since it's wrong for most callers
+     now — both read "come back in a year or two" instead.
   5. **The surviving claim is "it explains itself", not "we never see it".**
      `PLATFORM.md` leads on explainability and buy-it-once; both survive intact.
      No product copy may say or imply that birth data stays in the browser.

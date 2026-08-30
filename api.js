@@ -63,16 +63,30 @@ export async function me() {
   try { return await call('/api/me'); } catch (e) { return null; }
 }
 
+/** Best-effort IANA time zone read, used only to pick which region's
+ * minimum signup age applies (30 Aug 2026, Justin's call: 13 worldwide,
+ * 16 — or 14/15 — only in the handful of GDPR states that set a higher
+ * digital-consent age; replaces the old flat 16). Never throws; "" reads
+ * as "unknown region" server-side, which falls back to the 13 floor —
+ * see starshard-api/lib/age-gate.js for the actual table and why a time
+ * zone, not real IP geolocation, is the signal used here. */
+function detectTz() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
+}
+
 /** extra carries { username, birthDate, five, pack } — birthDate is
  * re-validated server-side for the age gate but, per the two-tier privacy
  * model, only its YEAR is stored (manzil_pack.birth_year); five/pack (the
  * chart-owned mansions + starting deck) are what's actually persisted for
  * Manzil. Call ageCheck() first — a client that skips straight to signup()
- * with an under-16 birthDate still gets rejected (too_young), just later
- * and with a worse UX, since the server never trusts the client to have
- * called ageCheck() at all. */
+ * with an under-the-regional-minimum birthDate still gets rejected
+ * (too_young), just later and with a worse UX, since the server never
+ * trusts the client to have called ageCheck() at all. A caller may pass
+ * its own `extra.tz`; otherwise this fills one in automatically. */
 export async function signup(email, password, extra = {}) {
-  return call('/api/auth/signup', { method: 'POST', body: { email, password, ...extra } });
+  const body = { email, password, ...extra };
+  if (body.tz == null) body.tz = detectTz();
+  return call('/api/auth/signup', { method: 'POST', body });
 }
 
 export async function login(email, password) {
@@ -86,14 +100,16 @@ export async function loginWithUsername(username, password) {
 }
 
 /** Resolves to { ok: boolean }. Nothing is persisted either way — this is
- * the reasonable-effort age gate the Manzil cast screen calls right after
- * "cast your five" and before ever showing account fields, so someone who
- * fails it never reaches a signup screen. Not itself a security boundary;
- * signup() re-checks server-side regardless. Throws on a malformed date
- * (invalid_birth_date) — callers should already have validated the date
- * client-side before this ever fires. */
-export async function ageCheck(birthDate) {
-  return call('/api/auth/age-check', { method: 'POST', body: { birthDate } });
+ * the reasonable-effort age gate the account-creation screens call right
+ * after the birth date is entered and before ever showing the rest of the
+ * signup fields, so someone below their region's minimum never reaches a
+ * signup screen. Not itself a security boundary; signup() re-checks
+ * server-side regardless, with its own tz read (never trusts this call's).
+ * `tz` is optional — an IANA time zone string; omit it to auto-detect.
+ * Throws on a malformed date (invalid_birth_date) — callers should already
+ * have validated the date client-side before this ever fires. */
+export async function ageCheck(birthDate, tz) {
+  return call('/api/auth/age-check', { method: 'POST', body: { birthDate, tz: tz == null ? detectTz() : tz } });
 }
 
 // --- birth data (server-side, per account) ----------------------------------
@@ -258,7 +274,10 @@ const AUTH_COPY = {
   // Manzil shows its own bespoke §8 copy for this inline rather than routing
   // through signupError() — kept here anyway for whatever else calls
   // signupError() with this code (logging, a future non-Manzil surface).
-  too_young: 'the moon keeps her houses for you. come back when you are sixteen.',
+  // No fixed age named here since 30 Aug 2026: the real minimum is now
+  // per-region (starshard-api/lib/age-gate.js), so a flat "sixteen" would
+  // be wrong for most callers.
+  too_young: 'the moon keeps her houses for you. come back in a year or two.',
   too_many_requests: 'too many tries, please wait a bit and try again ♡',
   unreachable: 'the shard server is unreachable, try again ♡',
   invalid_or_expired_token: 'that reset link is invalid or expired, request a new one ♡',
