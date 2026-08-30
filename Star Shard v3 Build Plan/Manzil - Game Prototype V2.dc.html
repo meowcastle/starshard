@@ -4266,6 +4266,12 @@
           </span>
           <span style="font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.05em;color:#D8C89C;text-shadow:0 1px 8px rgba(5,3,2,.9)">ledger</span>
         </button>
+        <button onClick="{{ pmLogoutTap }}" style="position:relative;background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;animation:mzPmIn .38s cubic-bezier(.3,1.2,.4,1) .28s both" style-hover="filter:brightness(1.35) drop-shadow(0 0 10px rgba(198,94,42,.5));transform:translateY(-3px)">
+          <span style="position:relative;width:44px;height:44px;border-radius:50%;border:1px dashed rgba(198,94,42,.5);background:radial-gradient(circle at 50% 42%, rgba(198,94,42,.1), rgba(12,9,5,.85) 76%);box-shadow:0 0 14px rgba(198,94,42,.12);display:flex;align-items:center;justify-content:center">
+            <svg viewBox="0 0 40 40" style="width:19px;height:19px"><g fill="none" stroke="rgba(210,120,70,.9)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11 H12 a2 2 0 0 0 -2 2 v14 a2 2 0 0 0 2 2 h6"></path><path d="M22 14 L28 20 L22 26"></path><path d="M28 20 H16"></path></g></svg>
+          </span>
+          <span style="font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.05em;color:rgba(210,150,120,.85);text-shadow:0 1px 8px rgba(5,3,2,.9)">log out</span>
+        </button>
         <sc-if value="{{ pmLevelOn }}" hint-placeholder-val="{{ false }}">
           <button onClick="{{ pmGoMoon }}" style="position:relative;background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;animation:mzPmIn .38s cubic-bezier(.3,1.2,.4,1) .24s both" style-hover="filter:brightness(1.35) drop-shadow(0 0 10px rgba(255,176,0,.5));transform:translateY(-3px)">
             <span style="position:relative;width:44px;height:44px;border-radius:50%;border:1px dashed rgba(255,176,0,.55);background:radial-gradient(circle at 50% 42%, rgba(255,176,0,.1), rgba(12,9,5,.85) 76%);box-shadow:0 0 14px rgba(255,176,0,.14);display:flex;align-items:center;justify-content:center;overflow:hidden">
@@ -4327,6 +4333,10 @@ class Component extends DCLogic {
       if (p === "mode" || p === "moon" || p === "road") { this._clearSeq(); this._go("menu"); return; }
       if (p === "shardapp") { this._clearSeq(); this._go("record", { navFrom: null }); return; }
       if (p === "deck" || p === "record" || p === "ledger") { this._clearSeq(); this._go("menu", { ...this._deckState(), deckSel: this.state.deckSel, navFrom: null }); return; }
+      // the lobby had no Escape binding at all (30 aug 2026, user) — every other pmOn-eligible phase
+      // either closes back to it or opens the pause overlay; the lobby itself just did nothing. Opens
+      // the same player-chip menu the corner button does, which now carries log out (see pmLogoutTap).
+      if (p === "menu") { this.setState({ pmOpen: true }); return; }
       if (p === "play" || p === "round" || p === "over" || p === "won" || p === "lost" || p === "roadlost") this.setState({ pauseOn: true });
     };
     window.addEventListener("keydown", this._onKey);
@@ -8297,6 +8307,15 @@ class Component extends DCLogic {
           pmGoCards: () => nav("deck"),
           pmGoShard: () => nav("record"),
           pmGoLedger: () => nav("ledger"),
+          // same action as pauseLogoutTap (the in-match pause overlay's own log out button) —
+          // duplicated rather than shared since it sits in a different renderVals closure, same as
+          // the account portal's own deliberately-duplicated _castFive.
+          pmLogoutTap: () => {
+            this._clearSeq();
+            try { localStorage.removeItem("manzil-v2-user"); } catch (e) {}
+            const done = () => { window.location.href = "./account/"; };
+            if (this.api && this.api.logout) this.api.logout().then(done).catch(done); else done();
+          },
           pmNoteOn: canLeave,
         };
       })()),
