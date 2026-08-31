@@ -1,5 +1,10 @@
 # How Design should deliver to Code (and how Code should receive it)
 
+> **Companion doc:** `docs/FOR-DESIGN-WHAT-CODE-OWNS.md` (31 Aug 2026) is the
+> inventory this protocol assumes — what Code has built into the same file, the
+> 33 methods both sides edit, and when Design should ask for a fresh copy of the
+> live file rather than building on an old one. Send Design both.
+
 **Written 31 Aug 2026, after the same failure landed three deliveries in a
 row.** This is a process fix, not a code fix. It exists because the current
 delivery shape has cost real, shipped work twice and nearly cost it a third

@@ -614,6 +614,18 @@ own predictions corrected below):
    delivered one unless the diff proves it's strictly ahead. The doc
    also states what Design should ship instead (one folder, changed
    files only, a required `WHATS-NEW.md`).
+8. **The inventory Design works from: `docs/FOR-DESIGN-WHAT-CODE-OWNS.md`**
+   (31 Aug 2026). Measured, not remembered: the 14 methods that exist only
+   on Code's side, the **33 methods both agents edit** (the real risk
+   zone — `renderVals`, `constructor`, `_cards`, `_resolve`, `_finish`
+   and friends), the server surface Design has no counterpart for, and a
+   decision guide for when a Design change ports cleanly vs. when Design
+   should ask for a fresh copy of the deployed file first. **Re-measure
+   and update this doc whenever Code adds a method to the shared script
+   block** — a stale inventory is the same failure mode as the stale
+   SOURCE OF TRUTH line that caused all of this (Design's own CLAUDE.md
+   named V1 as canon for two days after the flip to V2, which is why
+   `send-to-code/` kept shipping the retired file).
 
 **Then, the app wrapper** (`PLATFORM.md` — decided Aug 13). Ships to the
 App Store as a **Capacitor wrapper around the existing web build, not a
