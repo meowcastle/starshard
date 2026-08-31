@@ -5125,27 +5125,23 @@ class Component extends DCLogic {
     // one you stand on is the one she does not hold. numbers only, like the luminaries.
     C[108] = { name: "Uranus", l: 7, r: 7, who: "sky", ab: null, abText: "", homeM: 0 };
     C[109] = { name: "Neptune", l: 6, r: 8, who: "sky", ab: null, abText: "", homeM: 0 };
-    // walkers' fives: other players' hands, piloted by her judgment (ids 200+mansion). they take the
-    // PRINTED faces, never C[id]'s: those carry the player's own number doors, so her lent hand used
-    // to strengthen every time you spent one of yours. the hour is the only thing that hardens them.
-    // the four beats, per the four steps sheet: dusk plain · full dark wakes her moves, the same hour
-    // yours wake · the small hours harden her numbers · before dawn the mansion's own card turns to
-    // face you, showing whichever of its two numbers answers yours.
-    const tnw = this._tonight();
-    // THE HOUSE ANSWERS YOUR INVESTMENT (27 aug 2026, user): at the ninth step the mansion plays its
-    // own cards at YOUR level for that mansion, doors and all, so the last battle never softens as you
-    // climb. the hour's beats still reach her five planets; the mansion's own two take the level instead.
-    const bossM = !!(sx0 && sx0.road && sx0.roadBoss && !sx0.duel && !sx0.practice);
+    // walkers' fives: other players' hands, piloted by her judgment (ids 200+mansion).
+    // THE WALKERS NOW MIRROR YOUR OWN COLLECTION (31 aug 2026, staging audit + Justin's go-ahead
+    // — a real reversal, not a bugfix, so it's spelled out here rather than silently overwritten):
+    // every walker rung now builds the exact same way the mansion's own boss rung already did
+    // (`{...C[id], who:"sky", ...}` — full mirror, doors and grants included), instead of the old
+    // flat printed-faces-plus-an-hour-bump model. The comment this replaced explained the OLD
+    // design's own reasoning — "her lent hand used to strengthen every time you spent one of
+    // yours" felt bad, so it was deliberately kept off printed faces — but per SHIP-THE-ROAD-27AUG.md's
+    // own spec (difficulty should key off the player's real per-card levels "even if the player
+    // never levels their cards there") and the acceptance table measured against mirror opponents
+    // at every rung, not just the boss, that tradeoff is now made the other way, on purpose. The
+    // four-hours hand-hardening mechanic (dusk/full dark/small hours/before dawn) is superseded by
+    // this for walker nights too, the same way the boss rung already dropped it — a single mirrored
+    // collection is the difficulty signal now, not an hour-of-night bump on top of a flat hand.
     pool.forEach((p, idx) => {
-      const id = idx + 1, a = ABS[id] || {};
-      if (bossM) {
-        C[200 + id] = { ...C[id], who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true };
-        return;
-      }
-      const hs = wsk >= 2, hb = wsk >= 3 ? 1 : 0, tf = wsk >= 4 && id === tnw;
-      C[200 + id] = { name: p[0], l: p[1] + hb, r: p[2] + hb, who: "sky",
-        lvl: hs ? 2 : 1, loan: false, ab: hs ? a.ab : null, abText: hs ? (a.abText || "") : "",
-        sig: a.ab, twoFaced: tf, walker: true, homeM: id, hour: wsk };
+      const id = idx + 1;
+      C[200 + id] = { ...C[id], who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true };
     });
     // her cards wear L3 quiet by default; a whole set at L4 turns the whole game L4
     if (wake && C[wake] && C[wake].lvl < 2) C[wake] = { ...C[wake], lvl: 2 }; // ascent: one signature woken for the match
@@ -6334,15 +6330,20 @@ class Component extends DCLogic {
     h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
     return 1 + (h % (len - 2));
   }
-  // the thread's ground: the rope station pulls one neighbour in with whatever lodges there
+  // the thread's ground: the rope station pulls one neighbour in with whatever lodges there.
+  // PINNED TO STATION 4 (31 aug 2026, THE-ROPE-28AUG.md's own spec + staging audit go-ahead): was
+  // a per-board hash keyed on roadRung AND round, so the rope moved board to board within a single
+  // push — up to a measured 10-point swing between stations, less learnable than even a nightly
+  // coin flip. Fixed, same station index as the hideaway's shell (see lawAt/_lawSt above), still
+  // gated on mansion 28's own night from the second walk-step on, unchanged from before — that
+  // walkStep>=2 timing was never reported broken, only the wandering station was, so it's kept as
+  // its own condition here rather than folded into the whole-night lawAt map, which has no
+  // per-station-law hour gating today and would otherwise silently drop it.
   _rope() {
     const st = this.state;
     if (!st || !st.road || st.practice || st.duel) return -1;
     if (this._tonight() !== 28 || this._walkStep() < 2) return -1;
-    const len = (st.slots || []).length || 9;
-    let h = ((this._tonight() * 193 + (st.roadRung || 0) * 41 + (st.round || 1) * 23 + 619) >>> 0);
-    h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
-    return 1 + (h % (len - 2));
+    return 4;
   }
   // the drum's ground: strikes that cross the resonant station carry one further
   _reson() {
@@ -6730,6 +6731,19 @@ class Component extends DCLogic {
     // faces at the far one. lodge-time reach here; full conformance (every strike class) is the
     // engine port's, gated by research/wardvec.js reach vectors.
     if (this._bossRule() === "reach" && i === this._lawSt() && slots.length > 2) queue.push({ from: i, to: i + 2, dir: 1, printed: true, sig: "the throne's law: the strike carries to the far station, as printed." });
+    // THE VERMILION BIRD'S GRANT (31 aug 2026, staging audit + go-ahead): moved to lodge time,
+    // striking FROM the granted card's own position with printed faces — the same shape as the
+    // throne's law just above (that fix already existed in this file; suzaku's own grant never
+    // used it). The old version lived inside the post-flip success block below, so it struck from
+    // the VICTIM's slot (`from: to`), only after a near strike had already succeeded, and carried
+    // no `printed` flag — three separate faults from one bug. Fires in both directions, matching
+    // the card's own ordinary near strikes just above.
+    if (me.grantOn && (me.quad || this._quad(cardId)) === "suzaku") {
+      [-1, 1].forEach(d => {
+        const far = i + 2 * d;
+        if (far >= 0 && far < slots.length) queue.push({ from: i, to: far, dir: d, printed: true, sig: "the vermilion bird's strike carries two stations, as printed." });
+      });
+    }
     // THE GLANCE watches the station opposite it across the road: as it lands, and whenever anything lands there
     const opp = slots.length - 1 - i;
     if (this._on(me) && me.ab === "glance" && opp !== i) queue.push({ from: i, to: opp, dir: opp > i ? 1 : -1, sig: "the glance strikes across the road." });
@@ -6796,11 +6810,8 @@ class Component extends DCLogic {
         const far = this._nb(to, dir);
         if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the turning carries onward." });
       }
-      // the vermilion bird's grant (card sheet): your strikes carry two stations, not one
-      if (fromC.grantOn && (fromC.quad || this._quad(slots[from].id)) === "suzaku") {
-        const far = this._nb(to, dir);
-        if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the vermilion bird's strike carries two stations." });
-      }
+      // the vermilion bird's grant moved to lodge time, from the granted card's own position —
+      // see the queue.push near the top of this function, right after the throne's law.
     }
     if (i === this._rope() && !inPlace) { // al-Risha, the well-rope: what lodges here hauls its neighbour in
       const cands = [-1, 1].map(d => ({ k: this._nb(i, d), d })).filter(o => o.k >= 0 && slots[o.k] && slots[o.k].owner !== own);
