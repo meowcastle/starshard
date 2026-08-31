@@ -6168,10 +6168,22 @@ class Component extends DCLogic {
   }
   _say(kind) {
     const who = this._sayWho(); if (!who) return;
-    const v = this._sayLines()[who] || this._sayLines()[this._wAlias(who)]; if (!v) return;
+    // BORROWED LINES WEAR THE SPEAKER'S OWN NAME (31 aug 2026, code — caught live: the drum's sema
+    // and the heart's asha both greeted the board with "imra doesn't wait."). _sayLines() only
+    // authors the original eight, so every roster added since (10/18/21/23/25/28) falls through
+    // _wAlias to its ART alias and speaks that character's lines verbatim — and those lines name
+    // themselves ("imra doesn't wait.", "sef counts the ground first.", "odel waits."). The alias
+    // is for DRAWINGS, not identity, so swap the alias's name for the real speaker's wherever the
+    // borrowed copy says it. Design owns the real fix (author _sayLines for the new rosters, or
+    // move the bubble onto each roster entry's own words); this keeps the wrong name off screen
+    // until then, and becomes a no-op the moment a walker has its own entry.
+    const own = this._sayLines()[who];
+    const alias = own ? null : this._wAlias(who);
+    const v = own || this._sayLines()[alias]; if (!v) return;
     let line = v[kind];
     if (kind === "idle") line = v.idle[Math.floor(Math.random() * v.idle.length)];
     if (!line) return;
+    if (alias && alias !== who) line = line.split(alias).join(who);
     clearTimeout(this._sayT);
     this.setState(s => ({ wSay: { t: line, n: (s.wSay ? s.wSay.n : 0) + 1, a: v.anim } }));
     this._sayT = setTimeout(() => this.setState({ wSay: null }), kind === "open" ? 3400 : 2600);
@@ -7802,6 +7814,11 @@ class Component extends DCLogic {
       // tempo grammar kept: 1.9s at the foot, quickening per rung; the galleries slide DOWN past you
       // and the city's lights appear far below as you rise. never above the horizon line.
       ...(t23 => {
+    // THE SCENE STANDS BACK WHILE THE BOARD IS UP (31 aug 2026, code — reported live: "the arena is messed up"
+    // on the drum and the thread). The older levels all fade their scenery to .46 in play (see the heart's
+    // own `hide` term); these three shipped without it, so the tower beams, the shaft walls and the
+    // canyon ran at full strength straight through the nine stations. Same constant, same condition.
+    const hide = this._inPlay() ? .46 : 1;
         const e = ev.e, k = e / 8, bpm = (1.9 - k * .78).toFixed(2), near = k >= .5;
         const r = 90 + Math.pow(k, 1.3) * 310, cy = 300 - k * 58;
         const g = [];
@@ -7823,11 +7840,11 @@ class Component extends DCLogic {
         return {
           dtGreat: React.createElement("g", { dangerouslySetInnerHTML: { __html: g.join("") } }),
           dtTierDrums: React.createElement("g", { dangerouslySetInnerHTML: { __html: hd.join("") } }),
-          dtDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 62% at 50% " + (72 - e * 4) + "%, rgba(64,46,110," + (.2 + k * .26).toFixed(2) + "), rgba(10,7,18,.98) 70%), #06040C;transition:opacity 1.6s ease;opacity:" + (t23 ? 1 : 0),
-          dtDrumStyle: "position:absolute;left:50%;top:" + (26 - k * 44).toFixed(0) + "px;width:600px;height:600px;margin-left:-300px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t23 ? [0, .04, .1, .2, .34, .52, .72, .9, 1][e] : 0),
-          dtCityStyle: "position:absolute;left:0;right:0;bottom:-4px;height:90px;pointer-events:none;transition:all 1.7s ease;transform:translateY(" + ((8 - e) * 8).toFixed(0) + "px);opacity:" + (t23 ? [0, 0, .1, .2, .34, .48, .6, .7, .75][e] : 0),
-          dtTierStyle: "position:absolute;left:0;right:0;top:0;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 44).toFixed(0) + "px);opacity:" + (t23 ? [.9, 1, 1, .95, .82, .62, .4, .2, .08][e] : 0),
-          dtHallStyle: "position:absolute;left:0;right:0;bottom:-8px;height:210px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 62).toFixed(0) + "px);opacity:" + (t23 ? [1, .68, .36, .1, 0, 0, 0, 0, 0][e] : 0),
+          dtDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 62% at 50% " + (72 - e * 4) + "%, rgba(64,46,110," + (.2 + k * .26).toFixed(2) + "), rgba(10,7,18,.98) 70%), #06040C;transition:opacity 1.6s ease;opacity:" + (t23 ? 1 : 0) * hide,
+          dtDrumStyle: "position:absolute;left:50%;top:" + (26 - k * 44).toFixed(0) + "px;width:600px;height:600px;margin-left:-300px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t23 ? [0, .04, .1, .2, .34, .52, .72, .9, 1][e] : 0) * hide,
+          dtCityStyle: "position:absolute;left:0;right:0;bottom:-4px;height:90px;pointer-events:none;transition:all 1.7s ease;transform:translateY(" + ((8 - e) * 8).toFixed(0) + "px);opacity:" + (t23 ? [0, 0, .1, .2, .34, .48, .6, .7, .75][e] : 0) * hide,
+          dtTierStyle: "position:absolute;left:0;right:0;top:0;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 44).toFixed(0) + "px);opacity:" + (t23 ? [.9, 1, 1, .95, .82, .62, .4, .2, .08][e] : 0) * hide,
+          dtHallStyle: "position:absolute;left:0;right:0;bottom:-8px;height:210px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 62).toFixed(0) + "px);opacity:" + (t23 ? [1, .68, .36, .1, 0, 0, 0, 0, 0][e] : 0) * hide,
         };
       })(this._tonight() === 23),
       // the hanging hour-drum over the resonant station (pinned mid-road): rings when the beat carries
@@ -7867,6 +7884,11 @@ class Component extends DCLogic {
       // slide sideways, nothing climbs), getting QUIETER as you go — one lit window at the foot,
       // none by the top — with the assize square arriving from rung three. the hush is the level.
       ...(t21 => {
+    // THE SCENE STANDS BACK WHILE THE BOARD IS UP (31 aug 2026, code — reported live: "the arena is messed up"
+    // on the drum and the thread). The older levels all fade their scenery to .46 in play (see the heart's
+    // own `hide` term); these three shipped without it, so the tower beams, the shaft walls and the
+    // canyon ran at full strength straight through the nine stations. Same constant, same condition.
+    const hide = this._inPlay() ? .46 : 1;
         const e = ev.e, k = e / 8;
         // THE CANYON (31 aug 2026, user): the quarter surrounds the road and falls BEHIND you
         // vertically — towers on both sides sliding DOWN past the player and growing as they pass,
@@ -7908,8 +7930,8 @@ class Component extends DCLogic {
         const ty = Math.pow(k, 1.12) * 5200, sc = (1 + k * .5).toFixed(2);
         const inner = (side) => "position:absolute;" + side + ":0;top:-3000px;width:100%;height:3400px;transform-origin:" + (side === "left" ? "0%" : "100%") + " 100%;transition:transform 1.7s cubic-bezier(.3,.7,.3,1);transform:translateY(" + ty.toFixed(0) + "px) scale(" + sc + ")";
         return {
-          qtDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(64% 58% at 50% 88%, rgba(58,64,104," + (.34 - k * .24).toFixed(2) + "), rgba(7,9,16,.99) 68%), #05070C;transition:opacity 1.6s ease;opacity:" + (t21 ? 1 : 0),
-          qtRoofStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;transition:all 1.6s ease;bottom:" + Math.max(ev.gh + 54, 40) + "px;transform:translateY(" + (e * 30).toFixed(0) + "px);opacity:" + (t21 ? [.5, .44, .36, .28, .2, .12, .06, .02, 0][e] : 0),
+          qtDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(64% 58% at 50% 88%, rgba(58,64,104," + (.34 - k * .24).toFixed(2) + "), rgba(7,9,16,.99) 68%), #05070C;transition:opacity 1.6s ease;opacity:" + (t21 ? 1 : 0) * hide,
+          qtRoofStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;transition:all 1.6s ease;bottom:" + Math.max(ev.gh + 54, 40) + "px;transform:translateY(" + (e * 30).toFixed(0) + "px);opacity:" + (t21 ? [.5, .44, .36, .28, .2, .12, .06, .02, 0][e] : 0) * hide,
           qtWallL: React.createElement("g", { dangerouslySetInnerHTML: { __html: wall("l") } }),
           qtWallR: React.createElement("g", { dangerouslySetInnerHTML: { __html: wall("r") } }),
           qtLeftStyle: band("left:0", "l"),
@@ -7918,8 +7940,8 @@ class Component extends DCLogic {
           qtRightInnerStyle: inner("right"),
           // the court stands at the far end of the canyon: a shape between the towers the whole
           // climb, only stepping into full view on the last station when the walls have gone by.
-          qtCourtStyle: "position:absolute;left:50%;margin-left:-210px;bottom:" + (Math.max(ev.gh - 10, 0) + 54 + Math.round((1 - k) * 62)) + "px;width:420px;height:250px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:scale(" + (.42 + Math.max(0, k - .18) * 1.1).toFixed(2) + ");transform-origin:50% 100%;opacity:" + (t21 ? [0, 0, .05, .08, .12, .18, .28, .46, 1][e] : 0),
-          qtLampStyle: "position:absolute;left:22%;bottom:" + (ev.gh + 96) + "px;width:26px;height:34px;pointer-events:none;border-radius:2px;background:linear-gradient(180deg, rgba(240,216,154,.5), rgba(240,216,154,.16));box-shadow:0 0 26px rgba(240,216,154,.3);transition:opacity 1.7s ease;opacity:" + (t21 ? [.85, .7, .48, .28, .13, .05, 0, 0, 0][e] : 0),
+          qtCourtStyle: "position:absolute;left:50%;margin-left:-210px;bottom:" + (Math.max(ev.gh - 10, 0) + 54 + Math.round((1 - k) * 62)) + "px;width:420px;height:250px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:scale(" + (.42 + Math.max(0, k - .18) * 1.1).toFixed(2) + ");transform-origin:50% 100%;opacity:" + (t21 ? [0, 0, .05, .08, .12, .18, .28, .46, 1][e] : 0) * hide,
+          qtLampStyle: "position:absolute;left:22%;bottom:" + (ev.gh + 96) + "px;width:26px;height:34px;pointer-events:none;border-radius:2px;background:linear-gradient(180deg, rgba(240,216,154,.5), rgba(240,216,154,.16));box-shadow:0 0 26px rgba(240,216,154,.3);transition:opacity 1.7s ease;opacity:" + (t21 ? [.85, .7, .48, .28, .13, .05, 0, 0, 0][e] : 0) * hide,
         };
       })(this._tonight() === 21),
       ...((() => {
@@ -7938,6 +7960,11 @@ class Component extends DCLogic {
       // the mouth grows from a coin to the whole sky, andromeda opens, and the wolf waits on the
       // rim with mirach at its shoulder. never above the horizon: the rim IS the horizon.
       ...(t28b => {
+    // THE SCENE STANDS BACK WHILE THE BOARD IS UP (31 aug 2026, code — reported live: "the arena is messed up"
+    // on the drum and the thread). The older levels all fade their scenery to .46 in play (see the heart's
+    // own `hide` term); these three shipped without it, so the tower beams, the shaft walls and the
+    // canyon ran at full strength straight through the nine stations. Same constant, same condition.
+    const hide = this._inPlay() ? .46 : 1;
         const e = ev.e, k = e / 8;
         const mw = 74 + Math.pow(k, 1.7) * 1180, my = 92 - k * 46;
         const wall = [];
@@ -7950,13 +7977,13 @@ class Component extends DCLogic {
         const drips = [];
         for (let i = 0; i < 5; i++) drips.push("<circle cx='" + (168 + i * 152) + "' cy='" + (40 + (i % 3) * 90) + "' r='1.6' fill='rgba(214,236,226,.5)' style='animation:mzBeatLite " + (2.6 + i * .4).toFixed(1) + "s linear " + (i * .5).toFixed(1) + "s infinite'/>");
         return {
-          rpDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(" + (30 + k * 60).toFixed(0) + "% " + (24 + k * 46).toFixed(0) + "% at 50% " + (16 + k * 6).toFixed(0) + "%, rgba(38,74,66," + (.3 + k * .5).toFixed(2) + "), rgba(5,10,9,.99) 68%), #040807;transition:opacity 1.6s ease;opacity:" + (t28b ? 1 : 0),
+          rpDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(" + (30 + k * 60).toFixed(0) + "% " + (24 + k * 46).toFixed(0) + "% at 50% " + (16 + k * 6).toFixed(0) + "%, rgba(38,74,66," + (.3 + k * .5).toFixed(2) + "), rgba(5,10,9,.99) 68%), #040807;transition:opacity 1.6s ease;opacity:" + (t28b ? 1 : 0) * hide,
           rpWalls: React.createElement("g", { dangerouslySetInnerHTML: { __html: wall.join("") + drips.join("") } }),
           rpWallStyle: "position:absolute;inset:0;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:translateY(" + (e * 26).toFixed(0) + "px) scale(" + (1 + k * .5).toFixed(2) + ");opacity:" + (t28b ? Math.max(0, 1 - Math.max(0, k - .55) * 1.9).toFixed(2) : 0),
-          rpMouthStyle: "position:absolute;left:50%;top:" + (my - mw * .34).toFixed(0) + "px;width:" + mw.toFixed(0) + "px;height:" + (mw * .58).toFixed(0) + "px;margin-left:" + (-mw / 2).toFixed(0) + "px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? 1 : 0),
-          rpAndroStyle: "position:absolute;left:50%;margin-left:-160px;top:" + (10 + (1 - k) * 16).toFixed(0) + "px;width:320px;height:150px;pointer-events:none;transition:all 1.7s ease;opacity:" + (t28b ? [0, 0, .08, .2, .4, .6, .78, .92, 1][e] : 0),
-          rpRopeStyle: "position:absolute;left:50%;margin-left:-108px;top:0;width:56px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:opacity 1.6s ease;opacity:" + (t28b ? .92 : 0),
-          rpRimStyle: "position:absolute;left:0;right:0;top:" + (my - 16).toFixed(0) + "px;height:120px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? [0, 0, 0, .1, .3, .55, .78, .94, 1][e] : 0),
+          rpMouthStyle: "position:absolute;left:50%;top:" + (my - mw * .34).toFixed(0) + "px;width:" + mw.toFixed(0) + "px;height:" + (mw * .58).toFixed(0) + "px;margin-left:" + (-mw / 2).toFixed(0) + "px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? 1 : 0) * hide,
+          rpAndroStyle: "position:absolute;left:50%;margin-left:-160px;top:" + (10 + (1 - k) * 16).toFixed(0) + "px;width:320px;height:150px;pointer-events:none;transition:all 1.7s ease;opacity:" + (t28b ? [0, 0, .08, .2, .4, .6, .78, .92, 1][e] : 0) * hide,
+          rpRopeStyle: "position:absolute;left:50%;margin-left:-108px;top:0;width:56px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:opacity 1.6s ease;opacity:" + (t28b ? .92 : 0) * hide,
+          rpRimStyle: "position:absolute;left:0;right:0;top:" + (my - 16).toFixed(0) + "px;height:120px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? [0, 0, 0, .1, .3, .55, .78, .94, 1][e] : 0) * hide,
         };
       })(this._tonight() === 28),
       chamOn: this._tonight() === 26,
