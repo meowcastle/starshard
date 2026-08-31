@@ -34,6 +34,7 @@
   @keyframes mzReachB{0%{offset-distance:0%;opacity:0}10%{opacity:1}72%{opacity:1}100%{offset-distance:100%;opacity:0}}
   @keyframes mzReachTrail{0%{opacity:0}18%{opacity:.7}70%{opacity:.55}100%{opacity:0}}
   @keyframes mzStampIn{0%{opacity:0;transform:scale(1.8)}22%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+  @keyframes mzResonRing{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.3);opacity:0}}
   @keyframes mzAntares{0%,100%{opacity:.86;transform:scale(1)}44%{opacity:1;transform:scale(1.06)}70%{opacity:.9;transform:scale(1.02)}}
   @keyframes mzSting{0%,100%{transform:rotate(0deg)}42%{transform:rotate(-7deg)}54%{transform:rotate(4deg)}}
   @keyframes mzRotateHint{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
@@ -817,182 +818,48 @@
 <div style="{{ hrRainStyle }}"><sc-for list="{{ hrDrops }}" as="dp" hint-placeholder-count="8"><div style="{{ dp }}"></div></sc-for></div>
 </sc-if>
 <sc-if value="{{ drumOn }}" hint-placeholder-val="{{ false }}">
-<div style="{{ drDeepStyle }}"></div>
-<div style="{{ drFarStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-  <path d="M0 150 V96 h84 v-22 h64 v22 h116 v-34 h74 v34 h130 v-18 h88 v18 h96 v-28 h70 v28 h110 V150 Z" fill="#171126"></path>
-  <g fill="rgba(196,168,246,.22)"><rect x="120" y="82" width="5" height="7"></rect><rect x="356" y="72" width="5" height="7"></rect><rect x="602" y="88" width="5" height="7"></rect><rect x="790" y="70" width="5" height="7"></rect></g>
-  <g fill="none" stroke="rgba(160,132,208,.16)" stroke-width="1"><path d="M0 96 h932"></path></g>
+<div style="{{ dtDeepStyle }}"></div>
+<div style="{{ dtDrumStyle }}"><svg viewBox="0 0 600 600" style="width:100%;height:100%;display:block;overflow:visible">{{ dtGreat }}</svg></div>
+<div style="{{ dtCityStyle }}"><svg viewBox="0 0 932 90" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+  <path d="M0 78 h932" stroke="rgba(160,132,208,.14)" stroke-width="1" fill="none"></path>
+  <g fill="rgba(196,168,246,.34)"><rect x="64" y="60" width="3" height="4"></rect><rect x="150" y="70" width="3" height="3"></rect><rect x="238" y="56" width="3" height="4"></rect><rect x="352" y="66" width="3" height="3"></rect><rect x="470" y="58" width="3" height="4"></rect><rect x="558" y="72" width="3" height="3"></rect><rect x="672" y="62" width="3" height="4"></rect><rect x="760" y="54" width="3" height="4"></rect><rect x="852" y="68" width="3" height="3"></rect></g>
+  <g fill="rgba(196,168,246,.14)"><rect x="110" y="74" width="2" height="3"></rect><rect x="300" y="76" width="2" height="3"></rect><rect x="520" y="74" width="2" height="3"></rect><rect x="716" y="78" width="2" height="3"></rect></g>
 </svg></div>
-<div style="{{ drTowerStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
-  
-<g transform="translate(132,254) scale(0.96)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  <circle cx="0" cy="-122" r="5" fill="rgba(230,204,255,.95)" style="animation:mzBeatLite 1.9s linear 0s infinite"></circle><circle cx="0" cy="-122" r="13" fill="rgba(186,140,255,.14)"></circle>
-</g>
-<g transform="translate(806,254) scale(0.94)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0.95s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 1.90s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  <circle cx="0" cy="-122" r="5" fill="rgba(230,204,255,.95)" style="animation:mzBeatLite 1.9s linear 0.95s infinite"></circle><circle cx="0" cy="-122" r="13" fill="rgba(186,140,255,.14)"></circle>
-</g>
-  
-<g transform="translate(276,224) scale(0.66)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0.48s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0.48s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0.48s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 1.43s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0.48s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
-<g transform="translate(664,224) scale(0.64)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 1.42s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 1.42s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 1.42s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 2.37s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 1.42s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
-  
-<g transform="translate(368,202) scale(0.44)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0.24s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0.24s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0.24s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 1.19s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0.24s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
-<g transform="translate(570,202) scale(0.43)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 1.18s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 1.18s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 1.18s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 2.13s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 1.18s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
+<div style="{{ dtTierStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <g stroke="rgba(186,158,232,.22)" stroke-width="2" fill="none"><path d="M40 0 V430 M892 0 V430"></path></g>
+  <g stroke="rgba(160,132,208,.14)" stroke-width="1.6" fill="none"><path d="M170 0 V430 M466 0 V430 M762 0 V430"></path></g>
+  <g stroke="rgba(160,132,208,.18)" stroke-width="1.2" fill="none"><path d="M40 148 H892 M40 288 H892 M40 424 H892"></path><path d="M40 132 H892 M40 272 H892 M40 408 H892" stroke-width=".8"></path></g>
+  <g stroke="rgba(160,132,208,.12)" stroke-width="1" fill="none"><path d="M92 132 v16 M144 132 v16 M196 132 v16 M248 132 v16 M300 132 v16 M352 132 v16 M404 132 v16 M518 132 v16 M570 132 v16 M622 132 v16 M674 132 v16 M726 132 v16 M778 132 v16 M830 132 v16"></path><path d="M92 272 v16 M144 272 v16 M196 272 v16 M248 272 v16 M300 272 v16 M352 272 v16 M404 272 v16 M518 272 v16 M570 272 v16 M622 272 v16 M674 272 v16 M726 272 v16 M778 272 v16 M830 272 v16"></path><path d="M92 408 v16 M196 408 v16 M300 408 v16 M404 408 v16 M518 408 v16 M622 408 v16 M726 408 v16 M830 408 v16"></path></g>
+  <g stroke="rgba(160,132,208,.1)" stroke-width="1.2" fill="none"><path d="M170 148 L230 196 M170 148 L110 196 M466 148 L526 196 M466 148 L406 196 M762 148 L822 196 M762 148 L702 196"></path><path d="M170 288 L230 336 M170 288 L110 336 M466 288 L526 336 M466 288 L406 336 M762 288 L822 336 M762 288 L702 336"></path></g>
+  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1"><path d="M496 0 V186" fill="none" stroke="rgba(160,132,208,.2)"></path><rect x="488" y="186" width="16" height="26" rx="2"></rect></g>
+  <g>{{ dtTierDrums }}</g>
 </svg></div>
-<div style="{{ drStreetStyle }}"><svg viewBox="0 0 932 200" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
-  <path d="M0 200 V72 h932 V200 Z" fill="#0E0A18"></path>
-  <path d="M0 72 h932" stroke="rgba(186,158,232,.18)" stroke-width="1.2" fill="none"></path>
-  <g stroke="rgba(160,132,208,.1)" stroke-width="1" fill="none"><path d="M60 120 h180 M300 148 h150 M540 128 h200 M180 176 h240"></path></g>
-  <g transform="translate(86,96) scale(0.92)">
-    <g style="animation:mzBeatLite 1.9s linear 0s infinite"><path d="M0 -34 q9 10 3 20 q-3 -7 -8 -7 q4 8 -2 14 q-9 -6 -6 -18 q3 -10 13 -9 z" fill="rgba(226,140,90,.6)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(846,96) scale(0.92)">
-    <g style="animation:mzBeatLite 1.9s linear 0.24s infinite"><path d="M0 -36 q10 14 10 21 a10 10 0 0 1 -20 0 q0 -7 10 -21 z" fill="rgba(110,168,206,.5)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
+<div style="{{ dtHallStyle }}"><svg viewBox="0 0 932 210" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M0 210 V84 h932 V210 Z" fill="#0D0918"></path>
+  <path d="M0 84 h932" stroke="rgba(186,158,232,.16)" stroke-width="1.2" fill="none"></path>
+  <g fill="#161022" stroke="rgba(186,158,232,.18)" stroke-width="1.2">
+    <rect x="118" y="-64" width="22" height="150"></rect><rect x="110" y="-72" width="38" height="10"></rect>
+    <rect x="792" y="-64" width="22" height="150"></rect><rect x="784" y="-72" width="38" height="10"></rect>
+    <rect x="332" y="-30" width="16" height="116"></rect><rect x="326" y="-38" width="28" height="9"></rect>
+    <rect x="584" y="-30" width="16" height="116"></rect><rect x="578" y="-38" width="28" height="9"></rect>
   </g>
-  <g transform="translate(212,84) scale(0.78)">
-    <g style="animation:mzBeatLite 1.9s linear 0.48s infinite"><path d="M-12 -30 q16 -8 24 0 M-12 -22 q20 -8 30 0 M-12 -14 q12 -6 18 0" stroke="rgba(196,214,236,.5)" stroke-width="1.6" fill="none"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(722,84) scale(0.78)">
-    <g style="animation:mzBeatLite 1.9s linear 0.72s infinite"><rect x="-8" y="-32" width="16" height="16" rx="2" fill="rgba(150,132,96,.5)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
+  <g fill="#1A1428" stroke="rgba(214,190,255,.3)" stroke-width="1.2">
+    <path d="M214 86 q-6 -34 24 -36 q30 2 24 36 z"></path>
+    <path d="M660 86 q-7 -40 28 -42 q35 2 28 42 z"></path>
   </g>
-  <g transform="translate(318,76) scale(0.62)">
-    <g style="animation:mzBeatLite 1.9s linear 0.96s infinite"><path d="M-13 -18 a13 13 0 0 1 26 0 z" fill="rgba(232,168,120,.5)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(618,76) scale(0.62)">
-    <g style="animation:mzBeatLite 1.9s linear 1.2s infinite"><path d="M4 -34 a12 12 0 1 0 0 22 a9 9 0 1 1 0 -22 z" fill="rgba(226,226,246,.55)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g>
-  <g transform="translate(392,70) scale(0.5)">
-    <g style="animation:mzBeatLite 1.9s linear 1.44s infinite"><path d="M0 -38 l3 9 l9 3 l-9 3 l-3 9 l-3 -9 l-9 -3 l9 -3 z" fill="rgba(236,226,255,.7)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(544,70) scale(0.5)">
-    <g style="animation:mzBeatLite 1.9s linear 1.68s infinite"><circle cx="0" cy="-26" r="8" fill="none" stroke="rgba(246,238,214,.55)" stroke-width="1.6"/><circle cx="0" cy="-26" r="3" fill="rgba(246,238,214,.6)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
+  <g stroke="rgba(226,206,255,.16)" stroke-width="1" fill="none"><path d="M218 68 q24 8 44 0 M664 62 q28 9 52 0"></path></g>
+  <g stroke="rgba(160,132,208,.08)" stroke-width="1" fill="none"><path d="M120 132 h250 M420 156 h300 M180 184 h420"></path></g>
+</svg></div>
+<sc-if value="{{ resonOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ resonStyle }}"><svg viewBox="0 0 60 84" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M30 0 v24" stroke="rgba(160,132,208,.5)" stroke-width="1.4" fill="none"></path>
+  <circle cx="30" cy="42" r="24" fill="none" stroke="rgba(214,190,255,.7)" stroke-width="1.6" style="{{ resonRingStyle }}"></circle>
+  <g style="{{ resonBeatStyle }}">
+    <path d="M14 30 q-5 12 0 24 q16 6 32 0 q5 -12 0 -24 q-16 -6 -32 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.45)" stroke-width="1.3"></path>
+    <ellipse cx="30" cy="30" rx="16" ry="4.8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.2"></ellipse>
   </g>
 </svg></div>
-<div style="{{ drLanternStyle }}"><svg viewBox="0 0 932 120" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-  <path d="M0 26 q233 42 466 26 q233 -16 466 -26" stroke="rgba(160,132,208,.22)" stroke-width="1.2" fill="none"></path>
-  <g>{{ drLanterns }}</g>
-</svg></div>
-<div style="{{ drHollowStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-  <defs><radialGradient id="drho" cx="50%" cy="42%" r="60%"><stop offset="0" stop-color="#1C1430" stop-opacity="0"></stop><stop offset=".72" stop-color="#0B0714" stop-opacity=".8"></stop><stop offset="1" stop-color="#05030A"></stop></radialGradient></defs>
-  <rect x="0" y="0" width="932" height="430" fill="url(#drho)"></rect>
-  <g fill="none" stroke="rgba(196,168,246,.14)" stroke-width="1.4"><ellipse cx="466" cy="196" rx="430" ry="150"></ellipse><ellipse cx="466" cy="196" rx="366" ry="126"></ellipse></g>
-  <ellipse cx="466" cy="196" rx="430" ry="150" fill="rgba(186,158,232,.03)" style="animation:mzSkin 1.5s linear infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-</svg></div>
+</sc-if>
 </sc-if>
 <sc-if value="{{ threadOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ thDeepStyle }}"></div>
@@ -2659,181 +2526,37 @@
 <div style="{{ hrRainStyle }}"><sc-for list="{{ hrDrops }}" as="dp" hint-placeholder-count="8"><div style="{{ dp }}"></div></sc-for></div>
 </sc-if>
 <sc-if value="{{ drumOn }}" hint-placeholder-val="{{ false }}">
-<div style="{{ drDeepStyle }}"></div>
-<div style="{{ drFarStyle }}"><svg viewBox="0 0 932 150" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-  <path d="M0 150 V96 h84 v-22 h64 v22 h116 v-34 h74 v34 h130 v-18 h88 v18 h96 v-28 h70 v28 h110 V150 Z" fill="#171126"></path>
-  <g fill="rgba(196,168,246,.22)"><rect x="120" y="82" width="5" height="7"></rect><rect x="356" y="72" width="5" height="7"></rect><rect x="602" y="88" width="5" height="7"></rect><rect x="790" y="70" width="5" height="7"></rect></g>
-  <g fill="none" stroke="rgba(160,132,208,.16)" stroke-width="1"><path d="M0 96 h932"></path></g>
+<div style="{{ dtDeepStyle }}"></div>
+<div style="{{ dtDrumStyle }}"><svg viewBox="0 0 600 600" style="width:100%;height:100%;display:block;overflow:visible">{{ dtGreat }}</svg></div>
+<div style="{{ dtCityStyle }}"><svg viewBox="0 0 932 90" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+  <path d="M0 78 h932" stroke="rgba(160,132,208,.14)" stroke-width="1" fill="none"></path>
+  <g fill="rgba(196,168,246,.34)"><rect x="64" y="60" width="3" height="4"></rect><rect x="150" y="70" width="3" height="3"></rect><rect x="238" y="56" width="3" height="4"></rect><rect x="352" y="66" width="3" height="3"></rect><rect x="470" y="58" width="3" height="4"></rect><rect x="558" y="72" width="3" height="3"></rect><rect x="672" y="62" width="3" height="4"></rect><rect x="760" y="54" width="3" height="4"></rect><rect x="852" y="68" width="3" height="3"></rect></g>
+  <g fill="rgba(196,168,246,.14)"><rect x="110" y="74" width="2" height="3"></rect><rect x="300" y="76" width="2" height="3"></rect><rect x="520" y="74" width="2" height="3"></rect><rect x="716" y="78" width="2" height="3"></rect></g>
 </svg></div>
-<div style="{{ drTowerStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
-  
-<g transform="translate(132,254) scale(0.96)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  <circle cx="0" cy="-122" r="5" fill="rgba(230,204,255,.95)" style="animation:mzBeatLite 1.9s linear 0s infinite"></circle><circle cx="0" cy="-122" r="13" fill="rgba(186,140,255,.14)"></circle>
-</g>
-<g transform="translate(806,254) scale(0.94)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0.95s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 1.90s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0.95s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  <circle cx="0" cy="-122" r="5" fill="rgba(230,204,255,.95)" style="animation:mzBeatLite 1.9s linear 0.95s infinite"></circle><circle cx="0" cy="-122" r="13" fill="rgba(186,140,255,.14)"></circle>
-</g>
-  
-<g transform="translate(276,224) scale(0.66)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0.48s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0.48s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0.48s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 1.43s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0.48s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
-<g transform="translate(664,224) scale(0.64)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 1.42s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 1.42s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 1.42s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 2.37s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 1.42s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
-  
-<g transform="translate(368,202) scale(0.44)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 0.24s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 0.24s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 0.24s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 1.19s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 0.24s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
-<g transform="translate(570,202) scale(0.43)">
-  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1.2"><rect x="-40" y="-8" width="9" height="74"></rect><rect x="31" y="-8" width="9" height="74"></rect><path d="M-50 -14 h100 v9 h-100 z"></path></g>
-  <g stroke="rgba(160,132,208,.18)" stroke-width="1.4" fill="none"><path d="M-36 22 L36 22 M-36 46 L36 46 M-40 66 L40 66"></path></g>
-  <g style="animation:mzBeat 1.9s linear 1.18s infinite;transform-box:fill-box;transform-origin:50% 100%">
-    <ellipse cx="0" cy="-30" rx="34" ry="26" fill="rgba(160,110,214,.16)" style="animation:mzBeatLite 1.9s linear 1.18s infinite"></ellipse><g transform="translate(0,6)"><g fill="#0E0916" stroke="rgba(200,172,246,.42)" stroke-width="1.3">
-      <path d="M-2 -104 q12 0 12 13 q0 13 -12 14 q-12 -1 -12 -14 q0 -13 12 -13 z"></path>
-      <path d="M-15 -76 q5 -19 13 -19 q8 0 13 19 l-3 24 h-20 z"></path>
-    </g>
-    <g stroke="rgba(214,190,255,.62)" stroke-width="3" stroke-linecap="round" fill="none">
-      <path d="M-15 -74 l-19 -14" style="animation:mzStrike 1.9s linear 1.18s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-      <path d="M9 -74 l20 -13" style="animation:mzStrikeB 1.9s linear 2.13s infinite;transform-box:fill-box;transform-origin:0% 100%"></path>
-    </g></g>
-    <path d="M-28 -52 q-9 18 0 36 q28 9 56 0 q9 -18 0 -36 q-28 -9 -56 0 z" fill="#2A1F45" stroke="rgba(214,190,255,.4)" stroke-width="1.4"></path>
-    <path d="M-28 -44 q28 9 56 0 M-28 -24 q28 9 56 0" stroke="rgba(226,206,255,.22)" stroke-width="1.1" fill="none"></path>
-    <ellipse cx="0" cy="-52" rx="28" ry="8" fill="#3C2D62" stroke="rgba(236,220,255,.5)" stroke-width="1.4" style="animation:mzSkin 1.9s linear 1.18s infinite;transform-box:fill-box;transform-origin:center"></ellipse>
-    
-  </g>
-  
-</g>
+<div style="{{ dtTierStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <g stroke="rgba(186,158,232,.22)" stroke-width="2" fill="none"><path d="M40 0 V430 M892 0 V430"></path></g>
+  <g stroke="rgba(160,132,208,.14)" stroke-width="1.6" fill="none"><path d="M170 0 V430 M466 0 V430 M762 0 V430"></path></g>
+  <g stroke="rgba(160,132,208,.18)" stroke-width="1.2" fill="none"><path d="M40 148 H892 M40 288 H892 M40 424 H892"></path><path d="M40 132 H892 M40 272 H892 M40 408 H892" stroke-width=".8"></path></g>
+  <g stroke="rgba(160,132,208,.12)" stroke-width="1" fill="none"><path d="M92 132 v16 M144 132 v16 M196 132 v16 M248 132 v16 M300 132 v16 M352 132 v16 M404 132 v16 M518 132 v16 M570 132 v16 M622 132 v16 M674 132 v16 M726 132 v16 M778 132 v16 M830 132 v16"></path><path d="M92 272 v16 M144 272 v16 M196 272 v16 M248 272 v16 M300 272 v16 M352 272 v16 M404 272 v16 M518 272 v16 M570 272 v16 M622 272 v16 M674 272 v16 M726 272 v16 M778 272 v16 M830 272 v16"></path><path d="M92 408 v16 M196 408 v16 M300 408 v16 M404 408 v16 M518 408 v16 M622 408 v16 M726 408 v16 M830 408 v16"></path></g>
+  <g stroke="rgba(160,132,208,.1)" stroke-width="1.2" fill="none"><path d="M170 148 L230 196 M170 148 L110 196 M466 148 L526 196 M466 148 L406 196 M762 148 L822 196 M762 148 L702 196"></path><path d="M170 288 L230 336 M170 288 L110 336 M466 288 L526 336 M466 288 L406 336 M762 288 L822 336 M762 288 L702 336"></path></g>
+  <g fill="#1A1424" stroke="rgba(186,158,232,.2)" stroke-width="1"><path d="M496 0 V186" fill="none" stroke="rgba(160,132,208,.2)"></path><rect x="488" y="186" width="16" height="26" rx="2"></rect></g>
+  <g>{{ dtTierDrums }}</g>
 </svg></div>
-<div style="{{ drStreetStyle }}"><svg viewBox="0 0 932 200" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
-  <path d="M0 200 V72 h932 V200 Z" fill="#0E0A18"></path>
-  <path d="M0 72 h932" stroke="rgba(186,158,232,.18)" stroke-width="1.2" fill="none"></path>
-  <g stroke="rgba(160,132,208,.1)" stroke-width="1" fill="none"><path d="M60 120 h180 M300 148 h150 M540 128 h200 M180 176 h240"></path></g>
-  <g transform="translate(86,96) scale(0.92)">
-    <g style="animation:mzBeatLite 1.9s linear 0s infinite"><path d="M0 -34 q9 10 3 20 q-3 -7 -8 -7 q4 8 -2 14 q-9 -6 -6 -18 q3 -10 13 -9 z" fill="rgba(226,140,90,.6)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(846,96) scale(0.92)">
-    <g style="animation:mzBeatLite 1.9s linear 0.24s infinite"><path d="M0 -36 q10 14 10 21 a10 10 0 0 1 -20 0 q0 -7 10 -21 z" fill="rgba(110,168,206,.5)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
+<div style="{{ dtHallStyle }}"><svg viewBox="0 0 932 210" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M0 210 V84 h932 V210 Z" fill="#0D0918"></path>
+  <path d="M0 84 h932" stroke="rgba(186,158,232,.16)" stroke-width="1.2" fill="none"></path>
+  <g fill="#161022" stroke="rgba(186,158,232,.18)" stroke-width="1.2">
+    <rect x="118" y="-64" width="22" height="150"></rect><rect x="110" y="-72" width="38" height="10"></rect>
+    <rect x="792" y="-64" width="22" height="150"></rect><rect x="784" y="-72" width="38" height="10"></rect>
+    <rect x="332" y="-30" width="16" height="116"></rect><rect x="326" y="-38" width="28" height="9"></rect>
+    <rect x="584" y="-30" width="16" height="116"></rect><rect x="578" y="-38" width="28" height="9"></rect>
   </g>
-  <g transform="translate(212,84) scale(0.78)">
-    <g style="animation:mzBeatLite 1.9s linear 0.48s infinite"><path d="M-12 -30 q16 -8 24 0 M-12 -22 q20 -8 30 0 M-12 -14 q12 -6 18 0" stroke="rgba(196,214,236,.5)" stroke-width="1.6" fill="none"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(722,84) scale(0.78)">
-    <g style="animation:mzBeatLite 1.9s linear 0.72s infinite"><rect x="-8" y="-32" width="16" height="16" rx="2" fill="rgba(150,132,96,.5)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
+  <g fill="#1A1428" stroke="rgba(214,190,255,.3)" stroke-width="1.2">
+    <path d="M214 86 q-6 -34 24 -36 q30 2 24 36 z"></path>
+    <path d="M660 86 q-7 -40 28 -42 q35 2 28 42 z"></path>
   </g>
-  <g transform="translate(318,76) scale(0.62)">
-    <g style="animation:mzBeatLite 1.9s linear 0.96s infinite"><path d="M-13 -18 a13 13 0 0 1 26 0 z" fill="rgba(232,168,120,.5)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(618,76) scale(0.62)">
-    <g style="animation:mzBeatLite 1.9s linear 1.2s infinite"><path d="M4 -34 a12 12 0 1 0 0 22 a9 9 0 1 1 0 -22 z" fill="rgba(226,226,246,.55)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g>
-  <g transform="translate(392,70) scale(0.5)">
-    <g style="animation:mzBeatLite 1.9s linear 1.44s infinite"><path d="M0 -38 l3 9 l9 3 l-9 3 l-3 9 l-3 -9 l-9 -3 l9 -3 z" fill="rgba(236,226,255,.7)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g><g transform="translate(544,70) scale(0.5)">
-    <g style="animation:mzBeatLite 1.9s linear 1.68s infinite"><circle cx="0" cy="-26" r="8" fill="none" stroke="rgba(246,238,214,.55)" stroke-width="1.6"/><circle cx="0" cy="-26" r="3" fill="rgba(246,238,214,.6)"/></g>
-    <g fill="#110C1A"><path d="M0 -14 q8 0 8 9 q0 9 -8 10 q-8 -1 -8 -10 q0 -9 8 -9 z"></path><path d="M-11 8 q3 -13 11 -13 q8 0 11 13 l3 40 h-28 z"></path></g>
-    <ellipse cx="0" cy="49" rx="14" ry="3.4" fill="rgba(0,0,0,.5)"></ellipse>
-  </g>
-</svg></div>
-<div style="{{ drLanternStyle }}"><svg viewBox="0 0 932 120" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-  <path d="M0 26 q233 42 466 26 q233 -16 466 -26" stroke="rgba(160,132,208,.22)" stroke-width="1.2" fill="none"></path>
-  <g>{{ drLanterns }}</g>
-</svg></div>
-<div style="{{ drHollowStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-  <defs><radialGradient id="drho" cx="50%" cy="42%" r="60%"><stop offset="0" stop-color="#1C1430" stop-opacity="0"></stop><stop offset=".72" stop-color="#0B0714" stop-opacity=".8"></stop><stop offset="1" stop-color="#05030A"></stop></radialGradient></defs>
-  <rect x="0" y="0" width="932" height="430" fill="url(#drho)"></rect>
-  <g fill="none" stroke="rgba(196,168,246,.14)" stroke-width="1.4"><ellipse cx="466" cy="196" rx="430" ry="150"></ellipse><ellipse cx="466" cy="196" rx="366" ry="126"></ellipse></g>
-  <ellipse cx="466" cy="196" rx="430" ry="150" fill="rgba(186,158,232,.03)" style="animation:mzSkin 1.5s linear infinite;transform-box:fill-box;transform-origin:center"></ellipse>
+  <g stroke="rgba(226,206,255,.16)" stroke-width="1" fill="none"><path d="M218 68 q24 8 44 0 M664 62 q28 9 52 0"></path></g>
+  <g stroke="rgba(160,132,208,.08)" stroke-width="1" fill="none"><path d="M120 132 h250 M420 156 h300 M180 184 h420"></path></g>
 </svg></div>
 </sc-if>
 <sc-if value="{{ threadOn }}" hint-placeholder-val="{{ false }}">
@@ -3666,6 +3389,18 @@
       </sc-if>
       <sc-if value="{{ moonPickOn }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;background:radial-gradient(72% 92% at 50% 54%, rgba(6,4,2,.82), rgba(6,4,2,.5) 70%, rgba(6,4,2,.3) 96%);pointer-events:none;z-index:3"></div>
+      <sc-if value="{{ moonAskOn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:8;background:rgba(4,3,2,.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center">
+        <div style="width:330px;background:linear-gradient(170deg, rgba(30,21,9,.97), rgba(9,6,2,.985));border:1px solid rgba(240,216,154,.3);box-shadow:0 22px 60px rgba(0,0,0,.75);padding:22px 26px;display:flex;flex-direction:column;align-items:center;gap:10px;animation:mzFadeUp .25s ease both">
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#F2EAD6;text-align:center">a board stands unfinished</div>
+          <div style="font-family:'Karla',sans-serif;font-size:10.5px;line-height:1.75;color:rgba(198,94,42,.92);text-align:center;text-wrap:pretty">{{ moonAskLine }}</div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button onClick="{{ moonAskStayTap }}" style="padding:10px 20px;background:rgba(255,176,0,.1);border:1px solid rgba(255,176,0,.6);cursor:pointer;font-family:'Karla',sans-serif;font-size:12px;color:#FFB000">stay on this road</button>
+            <button onClick="{{ moonAskForfeitTap }}" style="padding:10px 18px;background:none;border:1px solid rgba(198,94,42,.55);cursor:pointer;font-family:'Karla',sans-serif;font-size:11.5px;color:rgba(210,120,70,.95)">forfeit and walk</button>
+          </div>
+        </div>
+      </div>
+      </sc-if>
       <div style="position:absolute;inset:0;z-index:4">
         <div style="position:absolute;left:50%;top:206px;width:660px;height:272px;margin-left:-330px;margin-top:-136px;border-radius:50%;border:1px solid rgba(240,216,154,.13);pointer-events:none"></div>
         <sc-for list="{{ moonNodes }}" as="mn" hint-placeholder-count="28">
@@ -4685,7 +4420,7 @@ class Component extends DCLogic {
       else { this.setState({ drag: null, dragOver: null }); this._commitPlace(p.id, i, false, "you"); }
     } else this.setState({ drag: null, dragOver: null, sel: null });
   }
-  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearTimeout(this._logT); clearTimeout(this._aiT); clearTimeout(this._gazeT); clearTimeout(this._seekT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); clearTimeout(this._burstT); }
+  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearInterval(this._pulseT); clearTimeout(this._logT); clearTimeout(this._aiT); clearTimeout(this._gazeT); clearTimeout(this._seekT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); clearTimeout(this._burstT); }
   _fxKind(id) { return ({ 6: "sweep", 102: "sweep", 5: "flash", 14: "flash", 18: "pulse", 103: "pulse", 10: "rise", 3: "sparkle", 17: "sparkle", 27: "sparkle", 8: "mist", 15: "mist", 101: "lock", 104: "flicker", 105: "swell" })[id] || "shimmer"; }
   _castFor(fx) {
     const c = fx.owner === "sky" ? "255,176,0" : "240,216,154";
@@ -4707,6 +4442,13 @@ class Component extends DCLogic {
   }
   _afterDeal() {
     this._sfx("deal");
+    // the tower's pulse (31 aug 2026, drum rebuild): a felt heartbeat under the drum's road boards,
+    // at the scene's own tempo (1.9s at the foot, quickening with the climb)
+    clearInterval(this._pulseT);
+    if (this._tonight() === 23 && this.state.road && !this.state.practice && !this.state.duel) {
+      const ms = Math.round((1.9 - (Math.min(this._elev(), 8) / 8) * .78) * 1000);
+      this._pulseT = setInterval(() => { const s = this.state; if (s.phase === "play" && s.road && this._tonight() === 23) this._sfx("pulse"); }, ms);
+    }
     clearTimeout(this._dealT); this._dealT = setTimeout(() => { this.setState({ dealt: true }); this._say("open"); }, 1100);
     // the stride (level grammar beat 4): entering a station is a step taken, in the level's physics
     if (this.state.road && !this.state.practice) {
@@ -5392,6 +5134,9 @@ class Component extends DCLogic {
     10: { hold: "the horse does not move from the dais. the court stands adjourned.",
           yield: "the horse steps from the dais. the seat was never its to give: take your piece of the king.",
           react: "the horse stamps once.", word: "held court." },
+    23: { hold: "the bat keeps the hour. the great drum stays silent a while longer.",
+          yield: "the bat lets go of the beam. the beat is yours to carry down.",
+          react: "the bat turns one ear.", word: "heard." },
     25: { hold: "the swallow keeps the tents. what is hidden stays hidden a while longer.",
           yield: "the swallow steps from the tent's mouth. what it kept for the camp, it hands to you.",
           react: "the swallow tucks it away.", word: "kept." },
@@ -5401,6 +5146,17 @@ class Component extends DCLogic {
     "ruen": "\u2609", "brann": "\u2642", "mave": "\u2640", "the quiet one": "\u260A",
   })[n] || ""; }
   _avFig(m) { return ({
+    23: { star: "#D6BEFF", glow: "rgba(186,120,232,.5)", starX: 60, starY: 42, p: [
+      // the bat of the drum (女's animal), hanging folded from the great drum's beam, head down,
+      // albali breathing at its breast ("the bat carrying albali").
+      { d: "M24 12 L96 12", f: "none", s: "rgba(240,216,154,.5)", w: 1.6 },
+      { d: "M55 12 L58 19 M65 12 L62 19", f: "none", s: "rgba(240,216,154,.5)", w: 1.3 },
+      { d: "M58 19 q-11 14 -8 34 q3 12 10 16 q7 -4 10 -16 q3 -20 -8 -34 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1.2 },
+      { d: "M55 32 q-2 16 3 30 M65 32 q2 16 -3 30", f: "none", s: "rgba(240,216,154,.25)", w: 1 },
+      { d: "M53 70 q7 -8 14 0 q4 6 -1 11 q-6 4 -12 0 q-5 -5 -1 -11 z", f: "#120C07", s: "rgba(240,216,154,.55)", w: 1.2 },
+      { d: "M54 79 L50 88 L58 83 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1 },
+      { d: "M66 79 L70 88 L62 83 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1 },
+    ] },
     18: { star: "#E85630", glow: "rgba(232,86,48,.5)", starX: 54, starY: 54, p: [
       // seated fox, facing left: tall chest rising to a small raised head, ears ON the skull line,
       // and the brush — a fat filled mass wrapping the feet, a third of the whole silhouette.
@@ -5529,7 +5285,11 @@ class Component extends DCLogic {
   // the hideaway's road is walked with her tent MIDWAY (30 aug 2026, user): on m25's night the
   // nine-station window slides back four, so mansion 25 itself stands at the law's station (index 4)
   // and the road still ends nine houses on. every other night keeps tonight's mansion at the door.
-  _boardM(i) { const t = this._tonight(); const off = ({ 25: 4 })[t] || 0; return ((t - 1 + i - off + 28) % 28) + 1; }
+  // the window slide is per-mansion (31 aug 2026): m25's road already slid back four so the shell
+  // stands mid-road; m23's does the same so the drum's own mansion sits on its law's station (user
+  // law: a mansion's signature always sits on the level's own station). Measurement note carried
+  // from Design's delivery: m23's baselines were cut door-first and want re-cutting on this window.
+  _boardM(i) { const t = this._tonight(); const off = ({ 25: 4, 23: 4 })[t] || 0; return ((t - 1 + i - off + 28) % 28) + 1; }
   _mName(id) { return this._cards()[id].name.replace("The ", "").toLowerCase(); }
   _claims() { try { return JSON.parse(localStorage.getItem("manzil-v2-claims")) || {}; } catch (e) { return {}; } }
   // THE LADDER (26 aug 2026, spec §1 + §6). all twenty-eight are held from the first login. the chart
@@ -6094,10 +5854,15 @@ class Component extends DCLogic {
   // learnable than even a nightly coin flip. One system for station laws now, same gate as the
   // other three (null for practice/duel/off-road — a real reversal from _rope()'s own extra
   // walkStep>=2 condition, dropped on purpose per the work order: "the same gate as the other three").
-  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 18: "beat", 25: "shell", 10: "reach", 28: "rope" })[this._tonight()] || null; }
+  // THE DRUM'S LAW JOINS THE MAP (31 aug 2026, WORKORDER-DRUM-FOLD-ADDENDUM-31AUG.md — measured,
+  // 20 vectors green in the station-law suite, signed off): mansion 23's resonant ground folds in
+  // exactly the way the rope did, same hard delegation, same whole-night gate, its own xorshift
+  // hash and walkStep>=2 condition both deleted. Design folded the drum on their side while Code
+  // folded the rope on this one, so this map is the MERGE of both — neither delivery had all five.
+  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson" })[this._tonight()] || null; }
   // per-mansion law stations (30-31 aug v3 pack, lawAt is {station, kind}): beat and reach live on
   // the mansion's own door (index 0); the tents' SHELL and the rope both stand midway, index 4.
-  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4 })[this._bossRule()] ?? -1; }
+  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4 })[this._bossRule()] ?? -1; }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
   // THE NIGHT SPEAKS (31 aug 2026, ported from the Design prototype against "Manzil - Sound
   // Design.dc.html"): a small webaudio voice for the board loop — gather-and-strike grammar,
@@ -6139,6 +5904,8 @@ class Component extends DCLogic {
       case "lantern": N({ ft: "highpass", f: 3000, d: .06, v: .11 }); N({ ft: "lowpass", f: 2000, f2: 150, d: .5, v: .08, a: .02 }, .06); break;
       case "reach": T({ f: 600, f2: 1200, d: .18, v: .04, a: .16 }); N({ f: 500, f2: 3400, d: .5, v: .1 }, .2); N({ ft: "lowpass", f: 900, d: .03, v: .32 }, .74); T({ f: 150, f2: 55, d: .14, v: .18 }, .74); N({ f: 1800, d: .06, v: .14 }, .8); break;
       case "gaze": T({ f: 2093, d: .28, v: .018, a: .05 }); break;
+      case "drumcarry": N({ ft: "bandpass", f: 240, d: .12, v: .28, q: 2 }); T({ f: 180, f2: 120, d: .3, v: .15 }); C({ f: 554, d: .6, v: .05 }, .04); break;
+      case "pulse": T({ f: 84, f2: 62, d: .16, v: .05 }); break;
     } }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
   _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} this._syncProgress(); }
@@ -6163,7 +5930,46 @@ class Component extends DCLogic {
       "ruen": { op: .95, p: [P("M58 9.5 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M51 28 Q59 23.5 68 28 L70 60 L66 93 L60 93 L59 71 L57 93 L51 93 L49 60 Z", I, S, ".8"), P("M67 35 Q76 29 79 21", "none", S, "1.5"), P("M75 9 L84 11 L82 22 L73 20 Z", I, S, "1")] },
       "brann": { op: .95, p: [P("M60 7 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 28 Q60 21 74 28 L77 58 L82 93 L72 93 L66 67 L54 67 L48 93 L38 93 L43 58 Z", I, S, ".8"), P("M46 29 Q60 23 74 29", "none", S, "1.2")] },
       "mave": { op: .95, p: [P("M56 24 Q58 10 67 12 Q71 15 69 24 Z", I, S, ".7"), P("M54 24 Q46 54 42 93 L70 93 Q75 55 68 24 Q60 20 54 24 Z", I, S, ".8"), P("M61 27 Q56 58 54 90", "none", F, ".8")] },
-      "the quiet one": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M76 13 L75 94", "none", S, "1.6"), P("M65 46 Q71 44 75.5 44.5", "none", S, "1.2")] }
+      "the quiet one": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M76 13 L75 94", "none", S, "1.6"), P("M65 46 Q71 44 75.5 44.5", "none", S, "1.2")] },
+      // THE THRONE'S COURT, DRAWN (31 aug 2026): each keeper's own ink figure, one prop each telling
+      // the office. keyed by name, so the lookup takes these over the fig alias (which stays for
+      // voice and gesture archetypes). own drawings stand unposed.
+      "halim": { op: .95, p: [P("M60 9 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M53 27 Q61 22.5 69 28 L72 60 L68 93 L62 93 L60.5 71 L59 93 L53 93 L50 60 Z", I, S, ".8"), P("M67 33 Q74 28 80 22", "none", S, "1.5"), P("M78 24 L92 14 L94 20 L81 28 Z", I, S, ".8"), P("M97 9 Q100 13 97 17", "none", F, "1")] },
+      "sura": { op: .95, p: [P("M57 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 28 Q58 23.5 66 28 L69 60 L66 93 L59 93 L58 72 L57 93 L51 93 L48 60 Z", I, S, ".8"), P("M66 36 Q74 38 78 44", "none", S, "1.4"), P("M63 42 Q71 44 77 47", "none", S, "1.2"), P("M75 45 L84 45 L82 52 L77 52 Z", I, S, ".8"), P("M79.5 37 Q81 40.5 79.5 44", "none", F, "1")] },
+      "benna": { op: .95, p: [P("M78 6 L78 94", "none", S, "1.6"), P("M78 8 Q83 14 79.5 30 L76.5 30 Q74 14 78 8 Z", I, S, ".7"), P("M56 11 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M49 29 Q57 24.5 65 29 L68 60 L64 93 L58 93 L57 72 L55 93 L49 93 L47 60 Z", I, S, ".8"), P("M64 36 Q72 36 77 34", "none", S, "1.4")] },
+      "okka": { op: .95, p: [P("M86 8 L86 94", "none", S, "1.6"), P("M86 10 L98 10", "none", S, "1.2"), P("M86 40 L91 40", "none", F, "1"), P("M68 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M60 33 Q68 28 76 34 L80 62 L74 93 L68 93 L67 73 L65 93 L59 93 L59 62 Z", I, S, ".8"), P("M75 40 Q81 42 85 46", "none", S, "1.4")] },
+      "meret": { op: .95, p: [P("M64 17 a5 5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 31 Q60 26 68 32 L70 60 L66 93 L60 93 L59 72 L57 93 L51 93 L50 60 Z", I, S, ".8"), P("M52 44 L72 44 L72 53 L52 53 Z", I, S, ".8"), P("M62 44 L62 53", "none", S, ".8"), P("M69 36 L76 28", "none", S, "1.2"), P("M53 38 Q52 42 53 45", "none", S, "1.2")] },
+      "kasran": { op: .95, p: [P("M61 6 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M45 27 Q61 19 77 27 L79 58 L83 93 L73 93 L67 68 L55 68 L49 93 L39 93 L43 58 Z", I, S, ".8"), P("M46 34 L36 44 L46 52", "none", S, "1.4"), P("M76 34 L86 44 L76 52", "none", S, "1.4"), P("M47 30 Q61 23 75 30", "none", S, "1.2"), P("M40 93 Q61 96.5 82 93", "none", F, "1")] },
+      "reya": { op: .95, p: [P("M57 23 Q59 9 68 11 Q72 14 70 23 Z", I, S, ".7"), P("M55 23 Q47 55 44 93 L72 93 Q77 56 69 23 Q62 19 55 23 Z", I, S, ".8"), P("M52 34 Q66 44 68 60", "none", F, "1"), P("M72 62 L78 62 L78 78 L72 78 Z", I, S, ".7"), P("M72 70 L78 70", "none", S, ".7")] },
+      "the throne-warden": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M68 92 L86 34", "none", S, "1.6"), P("M83 36 Q80 26 87 22 Q92 26 89 34 Q86 38 83 36 Z", I, S, ".7"), P("M93 16 L94.5 14.5", "none", F, "1"), P("M64 46 Q70 48 74 52", "none", S, "1.2")] },
+      // THE HEART'S COURT (31 aug 2026): kiln-tenders and rain-watchers, each with the tool of
+      // their line. same law as the throne: keyed by name, alias kept for voice and gesture.
+      "asha": { op: .95, p: [P("M59 9 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M53 27 Q61 22.5 69 28 L72 60 L68 93 L62 93 L60.5 71 L59 93 L53 93 L50 60 Z", I, S, ".8"), P("M68 36 Q76 44 82 54", "none", S, "1.5"), P("M80 51 L88 62", "none", S, "1.2"), P("M82 93 Q82 78 91 78 Q100 78 100 93 Z", I, S, ".8"), P("M90 78 Q88 71 91 67 Q94 71 92 78", "none", F, "1")] },
+      "derev": { op: .95, p: [P("M55 41 a5 5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M45 68 Q46 55 55 53 Q66 54 68 64 L70 80 L64 82 L63 93 L49 93 L50 80 Q44 78 45 68 Z", I, S, ".8"), P("M66 70 Q72 79 76 87", "none", S, "1.4"), P("M81 90 a1.4 1.4 0 1 1 -0.01 0 Z", F, "none", "0"), P("M87 87.5 a1.4 1.4 0 1 1 -0.01 0 Z", F, "none", "0"), P("M85 92 a1.4 1.4 0 1 1 -0.01 0 Z", F, "none", "0")] },
+      "onna": { op: .95, p: [P("M62 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M54 29 Q62 24 69 30 L70 60 L66 93 L60 93 L59 72 L57 93 L52 93 L51 60 Z", I, S, ".8"), P("M53 40 Q62 46 69 40", "none", S, "1.2"), P("M54 46 Q62 51 68 46", "none", F, "1")] },
+      "kel": { op: .95, p: [P("M40 30 L80 30 L67 24 L53 24 Z", I, S, ".8"), P("M60 31 a4.5 4.5 0 1 1 -0.01 0 Z", I, "none", "0"), P("M51 39 Q60 35 69 39 L75 93 L45 93 Z", I, S, ".8"), P("M50 58 Q60 53.5 70 58", "none", S, "1"), P("M38 32 L36 40 M82 32 L84 40", "none", F, "1")] },
+      "sorev": { op: .95, p: [P("M58 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M51 28 Q59 23.5 68 28 L70 60 L66 93 L60 93 L59 71 L57 93 L51 93 L49 60 Z", I, S, ".8"), P("M66 36 Q75 34 82 36", "none", S, "1.5"), P("M80 30 Q82 27 80 24 M85 31 Q87 28 85 25", "none", F, "1")] },
+      "brakka": { op: .95, p: [P("M60 7 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 28 Q60 21 74 28 L77 58 L82 93 L72 93 L66 67 L54 67 L48 93 L38 93 L43 58 Z", I, S, ".8"), P("M73 33 Q81 26 84 18", "none", S, "1.6"), P("M83 12 a4 4 0 1 1 -0.01 0 Z", I, S, ".8"), P("M46 29 Q60 23 74 29", "none", S, "1.2")] },
+      "immi": { op: .95, p: [P("M56 24 Q58 10 67 12 Q71 15 69 24 Z", I, S, ".7"), P("M54 24 Q46 54 42 93 L70 93 Q75 55 68 24 Q60 20 54 24 Z", I, S, ".8"), P("M52 40 Q61 47 69 40", "none", S, "1.2"), P("M53 47 Q61 53 68 47", "none", F, ".9")] },
+      "the rain-keeper": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M80 92 L80 20", "none", S, "1.6"), P("M66 20 L94 20 Q90 12 80 11 Q70 12 66 20 Z", I, S, ".7"), P("M60 6 L59 12 M97 14 L96 20 M89 3 L88 9", "none", F, "1"), P("M65 46 Q73 45 79.5 45", "none", S, "1.2")] },
+      // THE TENTS' COURT (31 aug 2026): keepers of secrets, each holding the one hidden thing.
+      "naila": { op: .95, p: [P("M60 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M53 28 Q61 23.5 69 29 L72 60 L68 93 L62 93 L60.5 71 L59 93 L53 93 L50 60 Z", I, S, ".8"), P("M69 34 Q68 25 64 19", "none", S, "1.4"), P("M64 19 L63 13.5", "none", S, "1.2")] },
+      "veth": { op: .95, p: [P("M54 40 a5 5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M44 66 Q45 54 54 52 Q65 53 67 63 L69 80 L63 82 L62 93 L48 93 L49 80 Q43 77 44 66 Z", I, S, ".8"), P("M65 68 L80 84", "none", S, "1.5"), P("M78 82 L86 90 L80 94 L74 87 Z", I, S, ".8"), P("M84 93 Q90 89 97 93", "none", F, "1")] },
+      "orna": { op: .95, p: [P("M59 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 28 Q60 23.5 68 28 L71 60 L67 93 L61 93 L60 72 L58 93 L52 93 L49 60 Z", I, S, ".8"), P("M52 40 Q60 44 68 40", "none", S, "1.4"), P("M52 45 Q60 48 68 45", "none", F, "1"), P("M76 93 Q82 86 92 93 Z", I, S, ".7")] },
+      "pell": { op: .95, p: [P("M58 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 28 Q58 23.5 66 28 L70 60 L66 93 L59 93 L58 72 L56 93 L50 93 L47 60 Z", I, S, ".8"), P("M66 52 L80 52 L80 63 L66 63 Z", I, S, ".8"), P("M73 52 L73 57", "none", S, ".8"), P("M65 40 Q74 44 78 51", "none", S, "1.4")] },
+      "sarai": { op: .95, p: [P("M62 15 a5 5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M53 30 Q61 25 69 31 L71 60 L67 93 L61 93 L60 72 L58 93 L52 93 L51 60 Z", I, S, ".8"), P("M54 42 L70 42 L70 52 L54 52 Z", I, S, ".8"), P("M54 42 L62 47 L70 42", "none", S, ".8"), P("M53 37 Q52 42 54 45", "none", S, "1.2")] },
+      "dov": { op: .95, p: [P("M30 93 L58 18 M90 93 L62 18", "none", F, "1"), P("M60 12 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M47 30 Q60 24 73 30 L76 58 L80 93 L70 93 L65 68 L55 68 L50 93 L40 93 L44 58 Z", I, S, ".8"), P("M48 38 Q60 43 72 38", "none", S, "1.4")] },
+      "lys": { op: .95, p: [P("M56 24 Q58 10 67 12 Q71 15 69 24 Z", I, S, ".7"), P("M54 24 Q46 54 42 93 L70 93 Q75 55 68 24 Q60 20 54 24 Z", I, S, ".8"), P("M61 27 Q56 58 54 90", "none", F, ".8"), P("M78 93 L86 78 L94 93 Z", I, S, ".8"), P("M86 93 L86 85", "none", S, ".7")] },
+      "the lamp-keeper": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M65 42 Q72 38 78 34", "none", S, "1.2"), P("M79 22 L79 26", "none", S, "1"), P("M75 26 L83 26 L82 36 L76 36 Z", I, S, ".8"), P("M79 30 a1.6 1.6 0 1 1 -0.01 0 Z", "rgba(240,216,154,.55)", "none", "0")] },
+      // THE DRUM TOWER'S COURT (31 aug 2026): the silent staff, each with the tool of their watch.
+      "sema": { op: .95, p: [P("M56 11 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M49 29 Q57 24.5 65 29 L68 60 L64 93 L58 93 L57 72 L55 93 L49 93 L47 60 Z", I, S, ".8"), P("M72 54 L102 54", "none", S, "1.4"), P("M98 54 L98 93", "none", S, "1.4"), P("M64 38 Q72 46 78 53", "none", S, "1.4")] },
+      "odu": { op: .95, p: [P("M57 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 30 Q58 25 66 30 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M66 40 L88 82", "none", S, "1.5"), P("M84 78 L96 90 L86 93 L80 84 Z", I, S, ".8"), P("M32 86 q0 -9 9 -9 q9 0 9 9 z", I, S, ".8"), P("M41 88 L41 91", "none", S, "1")] },
+      "lien": { op: .95, p: [P("M58 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M51 30 Q59 25 67 30 L70 60 L66 93 L60 93 L59 72 L57 93 L51 93 L49 60 Z", I, S, ".8"), P("M66 36 Q72 30 78 24", "none", S, "1.4"), P("M76 26 L92 10", "none", S, "1.2"), P("M90 10 L98 10 L97 20 L91 20 Z", I, S, ".8"), P("M94 13 a1.6 1.6 0 1 1 -0.01 0 Z", "rgba(240,216,154,.55)", "none", "0")] },
+      "pava": { op: .95, p: [P("M92 4 L64 46", "none", S, "1.4"), P("M52 18 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 35 Q54 29 61 36 L66 62 L64 93 L57 93 L57 74 L54 93 L47 93 L44 62 Z", I, S, ".8"), P("M58 40 Q64 42 68 44", "none", S, "1.3"), P("M56 46 Q62 48 66 49", "none", S, "1.3")] },
+      "meki": { op: .95, p: [P("M60 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M53 30 Q61 25 69 30 L72 60 L68 93 L62 93 L61 72 L59 93 L53 93 L51 60 Z", I, S, ".8"), P("M68 36 Q68 26 64 20", "none", S, "1.4"), P("M64 18 q6 1 6 7", "none", S, "1.2"), P("M36 60 v6 M41 60 v6 M46 60 v6", "none", F, "1")] },
+      "doran": { op: .95, p: [P("M56 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M49 28 Q57 23.5 65 28 L68 60 L64 93 L58 93 L57 72 L55 93 L49 93 L47 60 Z", I, S, ".8"), P("M78 60 q-5 10 0 22 q12 5 24 0 q5 -12 0 -22 q-12 -5 -24 0 z", I, S, ".8"), P("M78 60 q12 -4 24 0", "none", S, "1"), P("M64 40 Q72 48 79 56", "none", S, "1.4"), P("M77 54 L83 60", "none", S, "1.6")] },
+      "sorn": { op: .95, p: [P("M56 24 Q58 10 67 12 Q71 15 69 24 Z", I, S, ".7"), P("M54 24 Q46 54 42 93 L70 93 Q75 55 68 24 Q60 20 54 24 Z", I, S, ".8"), P("M68 44 Q76 48 80 56", "none", S, "1.2"), P("M76 56 L86 56 L84 70 L78 70 Z", I, S, ".8")] },
+      "the tower-heart": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M53 40 Q58 38 61 40", "none", S, "1.3"), P("M70 38 q4 4 0 8 M75 35 q6 6 0 14", "none", F, "1")] }
     };
   }
   // EVERY ROAD HAS ITS OWN WALKERS (29 aug 2026, user): the roster is per-mansion data, like the
@@ -6174,6 +5980,16 @@ class Component extends DCLogic {
   _wAlias(n) { const e = this._walkers().find(w2 => w2.name === n); return (e && e.fig) || n; }
   _rosterFor(m) { const R = this._rosters(); return R[m] || R[21]; }
   _rosters() { return {
+    23: [ // the drum tower: the silent staff of a tower that told the city the hour, keeping the beat alive by hand until the great drum takes it back.
+      { name: "sema", fig: "imra", line: "sema keeps the beat with her knuckles on the rail. the drums are asleep; she isn't.", react: "sema raps the rail twice.", defeat: "sema lets the rail rest. the road goes on.", again: "back again. sema never dropped the count." },
+      { name: "odu", fig: "sef", line: "odu sweeps under bells that no longer ring, and counts the dust.", react: "odu sweeps that away.", defeat: "odu nods, and sweeps your path clear.", again: "odu swept your old footprints out once. here they are again." },
+      { name: "lien", fig: "tesh", line: "lien lights the galleries one flame a night. tonight she lights them for you.", react: "lien shields the flame.", defeat: "lien leaves a lamp lit behind you.", again: "lien remembers which lamps you passed." },
+      { name: "pava", fig: "ruen", line: "pava hauls the great drum's hoist rope. he has never heard it struck.", react: "pava takes another grip.", defeat: "pava lets the rope out a little. up you go.", again: "pava has hauled since you left. the rope is shorter." },
+      { name: "meki", fig: "odel", line: "meki counts the echoes of strikes nobody living struck.", react: "meki adds one to the count.", defeat: "meki counts you going up.", again: "your echo never left this tower, meki says." },
+      { name: "doran", fig: "brann", line: "doran the drummer is deaf, and reads your game through the floor.", react: "doran feels that one land.", defeat: "doran lays his palm flat: he felt you win.", again: "doran knows your footsteps now." },
+      { name: "sorn", fig: "mave", line: "sorn calls no curfew anymore, and holds your cards awake.", react: "sorn says nothing of it.", defeat: "sorn waives the curfew, once.", again: "sorn remembers exactly when you left." },
+      { name: "the tower-heart", fig: "the quiet one", line: "the tower-heart has stood under the great drum so long her pulse keeps the hour. the hand is yours, every card of it awake.", react: "the tower-heart misses no beat.", defeat: "the tower-heart steps from under the skin.", again: "the hour never stopped. the tower-heart kept it for you." },
+    ],
     18: [ // the heart: kiln-tenders and rain-watchers, mars-red people. antares is their hearth.
       { name: "asha", fig: "imra", line: "asha feeds the kiln before she fights.", react: "asha stokes it higher.", defeat: "asha banks the fire. the road goes on.", again: "back again. asha kept the kiln hot for you.", hand: [201, 202, 208, 211, 227] },
       { name: "derev", fig: "sef", line: "derev counts embers, not cards.", react: "derev counts again, slower.", defeat: "derev nods at the ground you kept.", again: "derev remembers your count. it was short then.", hand: [203, 207, 212, 219, 222] },
@@ -6390,6 +6206,10 @@ class Component extends DCLogic {
         line: "the throne is kept, not sat. the horse has held the seat for the star a long time.",
         arrive: "something steps from behind the throne", arriveSub: "the horse comes round the empty seat, unhurried, and regulus settles at its brow.",
         watch: "it keeps the seat, and watches." },
+      23: { name: "albali", full: "albali, the swallower's star",
+        line: "the tower kept the hours; the swallower kept the sounds. every strike this city ever made is in here somewhere.",
+        arrive: "something lets go of the beam", arriveSub: "under the great drum a fold of dark opens its wings, and albali gleams at the bat's breast.",
+        watch: "it hangs beneath the skin, listening." },
       25: { name: "sadachbia", full: "sadachbia, the luck of the tents",
         line: "the luck of hidden things. it does not shine to be found: it shines to be kept.",
         arrive: "a light wakes in the camp", arriveSub: "one tent among the dark ones begins to glow, and the swallow drops out of the cold to shelter beside it.",
@@ -6441,13 +6261,11 @@ class Component extends DCLogic {
   // _bossRule()/_lawSt() map every other station law uses. See the header comment on _bossRule().
   // the drum's ground: strikes that cross the resonant station carry one further
   _reson() {
-    const st = this.state;
-    if (!st || !st.road || st.practice || st.duel) return -1;
-    if (this._tonight() !== 23 || this._walkStep() < 2) return -1;
-    const len = (st.slots || []).length || 9;
-    let h = ((this._tonight() * 157 + (st.roadRung || 0) * 29 + (st.round || 1) * 11 + 353) >>> 0);
-    h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
-    return 1 + (h % (len - 2));
+    // MEASURED AND FOLDED (31 aug 2026, measurement memo "the drum and the rope, measured": 20
+    // vectors green, seat clean, cleanest quadrant row after the throne's, fresh skill +2.1→+10.8
+    // in the good direction). one system for station laws: the resonant ground is m23's law in the
+    // _bossRule/_lawSt maps, whole-night scope like the other four; the old walkStep gate is gone.
+    return this._bossRule() === "reson" ? this._lawSt() : -1;
   }
   _stationList() { return ["where you stand", "the daylit ground", "the low air", "the dusk", "the cloud line", "the high air", "the cold air", "the thin air", "the edge of the air", "the mansion itself"]; }
   _stationForce() {
@@ -6891,9 +6709,13 @@ class Component extends DCLogic {
           break;
         }
       }
-      if (to === this._reson() || from === this._reson()) { // the resonant ground: the beat keeps travelling
+      // THE DRUM'S LAW (m23): a strike whose origin OR target is the resonant station carries one
+      // further — from the victim, one extra hop, not recursive. `reson: true` tags the entry so
+      // _step can ring the hour-drum (resonFx + the drumcarry cue) off the law rather than off a
+      // card's own signature.
+      if (to === this._reson() || from === this._reson()) {
         const far = this._nb(to, dir);
-        if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the ground carries the beat onward." });
+        if (far >= 0) queue.push({ from: to, to: far, dir, reson: true, sig: "the hour-drum rings: the beat carries onward." });
       }
       if (fromAb === "mars") { // the strike carries one further
         const far = this._nb(to, dir);
@@ -7190,6 +7012,7 @@ class Component extends DCLogic {
         return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", shakeFx: k === 0 && this._shakeOn ? true : s.shakeFx, toast: it.sig ? { t: it.sig, n: (s.toast ? s.toast.n : 0) + 1 } : s.toast, caps: (s.caps || []).concat([{ i: it.to, t: "claimed by " + aName }]), ...(it.printed ? { reachFx: { n: (s.reachFx ? s.reachFx.n : 0) + 1, pl: this._cards()[slots[it.to].id].l, pr: this._cards()[slots[it.to].id].r } } : {}) };
       }, () => this._step(seq, k + 1, who, keepTurn));
       if (seq[k] && seq[k].printed) { this._sfx("reach"); const rt = setTimeout(() => this.setState({ reachFx: null }), 1800); this._seq.push(rt); }
+      if (seq[k] && seq[k].reson) { this._sfx("drumcarry"); this.setState(s2 => ({ resonFx: (s2.resonFx || 0) + 1 })); const rt2 = setTimeout(() => this.setState({ resonFx: null }), 1100); this._seq.push(rt2); }
     }, k === 0 ? 320 : 400);
     this._seq.push(t);
   }
@@ -7480,7 +7303,10 @@ class Component extends DCLogic {
       // burns quietly in the avatar's color. the law lives somewhere you can point at.
       // the mansion's ground (level grammar beat 3): on the boss board, the LAW'S OWN station burns
       // in the avatar's color: the mansion's door for beat/reach, the mid-road tent for the shell.
-      const avG = (st.roadBoss && (this._bossRule() ? i === this._lawSt() : this._boardM(i) === this._tonight()) && this._avFig(this._tonight())) ? this._avFig(this._tonight()).glow : null;
+      // THE LAW'S STATION BURNS ON EVERY ROAD BOARD (31 aug 2026, Design): a mansion's law is a
+      // whole-night property, so its station is lit for all nine battles, not only the boss board.
+      // The no-law fallback (light the mansion's own ground) stays boss-only as before.
+      const avG = ((this._bossRule() ? (st.road && !st.practice && !st.duel && i === this._lawSt()) : (st.roadBoss && this._boardM(i) === this._tonight())) && this._avFig(this._tonight())) ? this._avFig(this._tonight()).glow : null;
       return {
         wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (avG ? ";filter:drop-shadow(0 0 11px " + avG + ")" : "") + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
         idx: i,
@@ -7836,6 +7662,51 @@ class Component extends DCLogic {
         };
       })(this._tonight() === 18),
       drumOn: this._tonight() === 23,
+      // THE DRUM TOWER (31 aug 2026, user pick 1a from Manzil - Drum Level Directions.dc.html): the
+      // road climbs a silent city drum tower from inside, gallery by gallery, to the great drum
+      // whose skin is the night sky, delphinus riding it as the wear-marks of ten thousand strikes.
+      // tempo grammar kept: 1.9s at the foot, quickening per rung; the galleries slide DOWN past you
+      // and the city's lights appear far below as you rise. never above the horizon line.
+      ...(t23 => {
+        const e = ev.e, k = e / 8, bpm = (1.9 - k * .78).toFixed(2), near = k >= .5;
+        const r = 90 + Math.pow(k, 1.3) * 310, cy = 300 - k * 58;
+        const g = [];
+        g.push("<circle cx='300' cy='" + cy.toFixed(0) + "' r='" + (r * 1.5).toFixed(0) + "' fill='rgba(120,84,178," + (.04 + k * .09).toFixed(2) + ")'/>");
+        g.push("<circle cx='300' cy='" + cy.toFixed(0) + "' r='" + (r * 1.08).toFixed(0) + "' fill='#241A38' stroke='rgba(214,190,255,.32)' stroke-width='3'/>");
+        g.push("<g" + (near ? " style='animation:mzBeat " + bpm + "s linear infinite;transform-box:fill-box;transform-origin:center'" : "") + "><circle cx='300' cy='" + cy.toFixed(0) + "' r='" + r.toFixed(0) + "' fill='#191230' stroke='rgba(226,206,255,.5)' stroke-width='1.6'/>");
+        g.push("<circle cx='300' cy='" + cy.toFixed(0) + "' r='" + (r * .62).toFixed(0) + "' fill='none' stroke='rgba(196,168,246,.15)' stroke-width='1.2'/>");
+        g.push("<circle cx='300' cy='" + cy.toFixed(0) + "' r='" + (r * .3).toFixed(0) + "' fill='none' stroke='rgba(196,168,246,.09)' stroke-width='1'/></g>");
+        for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; g.push("<circle cx='" + (300 + Math.cos(a) * r * 1.04).toFixed(0) + "' cy='" + (cy + Math.sin(a) * r * 1.04).toFixed(0) + "' r='2.6' fill='rgba(214,190,255,.38)'/>"); }
+        const dS = .7 + k * 1.1, dx = 300 + r * .26, dy = cy - r * .3, D = [[0, 0], [26, -12], [46, 2], [30, 16], [10, 16]];
+        g.push("<g" + (near ? " style='animation:mzBeatLite " + bpm + "s linear infinite'" : "") + "><path d='M" + D.map(p => (dx + p[0] * dS).toFixed(0) + " " + (dy + p[1] * dS).toFixed(0)).join(" L") + " Z' fill='none' stroke='rgba(207,224,255,.28)' stroke-width='.9'/>");
+        D.forEach((p, i) => g.push("<circle cx='" + (dx + p[0] * dS).toFixed(0) + "' cy='" + (dy + p[1] * dS).toFixed(0) + "' r='" + (i === 0 ? 3.2 : 2.3) + "' fill='#CFE0FF'/>"));
+        g.push("</g>");
+        const hd = [];
+        for (let i = 0; i < 6; i++) {
+          const x = 100 + i * 148, y = 84 + (i % 2) * 30;
+          hd.push("<g><path d='M" + x + " " + (y - 36) + " v30' stroke='rgba(160,132,208,.3)' stroke-width='1.2'/><g style='animation:mzBeatLite " + bpm + "s linear " + (i * .16).toFixed(2) + "s infinite'><path d='M" + (x - 16) + " " + (y - 4) + " q-5 12 0 24 q16 6 32 0 q5 -12 0 -24 q-16 -6 -32 0 z' fill='#2A1F45' stroke='rgba(214,190,255,.38)' stroke-width='1.2'/><ellipse cx='" + x + "' cy='" + (y - 4) + "' rx='16' ry='4.6' fill='#3C2D62' stroke='rgba(236,220,255,.45)' stroke-width='1.2'/></g></g>");
+        }
+        return {
+          dtGreat: React.createElement("g", { dangerouslySetInnerHTML: { __html: g.join("") } }),
+          dtTierDrums: React.createElement("g", { dangerouslySetInnerHTML: { __html: hd.join("") } }),
+          dtDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 62% at 50% " + (72 - e * 4) + "%, rgba(64,46,110," + (.2 + k * .26).toFixed(2) + "), rgba(10,7,18,.98) 70%), #06040C;transition:opacity 1.6s ease;opacity:" + (t23 ? 1 : 0),
+          dtDrumStyle: "position:absolute;left:50%;top:" + (26 - k * 44).toFixed(0) + "px;width:600px;height:600px;margin-left:-300px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t23 ? [0, .04, .1, .2, .34, .52, .72, .9, 1][e] : 0),
+          dtCityStyle: "position:absolute;left:0;right:0;bottom:-4px;height:90px;pointer-events:none;transition:all 1.7s ease;transform:translateY(" + ((8 - e) * 8).toFixed(0) + "px);opacity:" + (t23 ? [0, 0, .1, .2, .34, .48, .6, .7, .75][e] : 0),
+          dtTierStyle: "position:absolute;left:0;right:0;top:0;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 44).toFixed(0) + "px);opacity:" + (t23 ? [.9, 1, 1, .95, .82, .62, .4, .2, .08][e] : 0),
+          dtHallStyle: "position:absolute;left:0;right:0;bottom:-8px;height:210px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 62).toFixed(0) + "px);opacity:" + (t23 ? [1, .68, .36, .1, 0, 0, 0, 0, 0][e] : 0),
+        };
+      })(this._tonight() === 23),
+      // the hanging hour-drum over the resonant station (pinned mid-road): rings when the beat carries
+      ...((() => {
+        const rI = this._reson();
+        if (rI < 0 || !(st.phase === "play" || st.phase === "round" || st.phase === "over")) return { resonOn: false, resonStyle: "display:none", resonBeatStyle: "", resonRingStyle: "opacity:0" };
+        const Lr = (st.slots || []).length || 9, er = 466 - (Lr * 86 + (Lr - 1) * 5) / 2, xr = er + rI * 91 + 43;
+        const bpmR = (1.9 - (Math.min(this._elev(), 8) / 8) * .78).toFixed(2);
+        return { resonOn: true,
+          resonStyle: "position:absolute;left:" + (xr - 30) + "px;top:44px;width:60px;height:82px;pointer-events:none;z-index:1",
+          resonBeatStyle: "animation:mzBeatLite " + bpmR + "s linear infinite",
+          resonRingStyle: st.resonFx ? "transform-box:fill-box;transform-origin:center;animation:mzResonRing .9s ease-out both" : "opacity:0" };
+      })()),
       // sa'd al-dhabih: a procession that thickens, and a tempo that quickens with every station
       ...(t23 => {
         const e = ev.e, k = e / 8, bpm = (1.9 - k * .78).toFixed(2), lit = Math.min(8, 1 + Math.round(k * 7));
@@ -8073,14 +7944,11 @@ class Component extends DCLogic {
         const gk = av6 ? "Press" : w ? ({ "imra": "Fling", "tesh": "Fling", "sef": "Press", "ruen": "Press", "odel": "Press", "brann": "Slam", "mave": "Still", "the quiet one": "Still" })[this._wAlias(w.name)] || "Press" : "";
         return {
           walkerFigOn: !!f, figPaths: f ? f.p : [], figOp: f ? f.op : 1,
-          // UNIQUE WALKER POSTURES (30 aug 2026): the shared ink figures wear a per-character stance:
-          // lean, bow, mirror, puff. whole-figure transforms only, so every roster reads as eight
-          // different people without eight new drawings. avatars stand unposed.
-          figPose: (!av6 && w ? ({
-            halim: "rotate(-2deg) translateY(-2px)", sura: "rotate(4deg) scale(.97)", benna: "rotate(-6deg) translateX(3px)", okka: "scaleX(-1) rotate(2deg)", meret: "rotate(5deg) scale(.95) translateY(2px)", kasran: "rotate(-4deg) scale(1.06)", reya: "scale(.99)", "the throne-warden": "rotate(1.5deg) translateY(1px)",
-            naila: "rotate(3deg) scale(.96)", veth: "rotate(-3deg) translateY(2px)", orna: "rotate(4deg) scale(.95)", pell: "rotate(-5deg)", sarai: "rotate(2deg) translateY(-1px)", dov: "scaleX(-1) rotate(-1deg)", lys: "rotate(-2deg) scale(.98)", "the lamp-keeper": "translateY(1px)",
-            asha: "rotate(-3deg)", derev: "rotate(3deg) scale(1.03)", onna: "rotate(-1.5deg) translateY(-1px)", kel: "scaleX(-1) rotate(3deg)", sorev: "rotate(-5deg) translateX(2px)", brakka: "scale(1.07)", immi: "rotate(4deg) scale(.94) translateY(2px)", "the rain-keeper": "rotate(1deg)",
-          })[w.name] : null) || "none",
+          // ALL FOUR COURTS ARE DRAWN NOW (31 aug 2026): the 30 aug per-character transform map was
+          // a stand-in — the same eight ink figures leaned/mirrored/scaled so a roster read as eight
+          // people without eight drawings. Every court (throne, heart, tents, drum) now carries its
+          // own real `_figs()` entries, so the stand-in is deleted rather than left fighting them.
+          figPose: "none",
           avStarOn: !!av6, avStarF: av6 ? (av6.starF || av6.star) : "", avStarS: av6 ? (av6.starS || "none") : "none", avStarX: av6 ? av6.starX : 0, avStarY: av6 ? av6.starY : 0,
           wkOn: !!(w && f && !av6 && this._walkerKGlyph(w.name)), wkGlyph: w ? this._walkerKGlyph(w.name) : "",
           ...((sy) => ({
@@ -8461,7 +8329,31 @@ class Component extends DCLogic {
       noteGo: () => { this._noteSeen(); this._go("menu"); },
       moonPickOn: st.phase === "moon",
       moonGlyphTap: () => this._go("moon", { moonHover: null }),
-      moonBackTap: () => this._go("menu", { moonHover: null }),
+      moonBackTap: () => this._go("menu", { moonHover: null, moonAsk: null }),
+      // A BOARD BELONGS TO ITS ROAD (31 aug 2026, user + Design): a suspended fight is keyed to the
+      // mansion it stands on (`_suspM`), so picking a different house on the moon ring can't
+      // silently carry someone else's board into it. Walking away is allowed, but it forfeits:
+      // a real board loss (wrec, a lantern, the wipe at zero), applied while tonight is still the
+      // OLD road so the loss lands on the right mansion, before _setMoon moves it.
+      moonAskOn: st.phase === "moon" && st.moonAsk != null,
+      moonAskLine: (() => { const k = this._susp; if (!k) return "";
+        return k.road && !k.practice && !k.duel
+          ? "the fight on " + (k.roadWalker ? k.roadWalker + "'s station" : "the " + this._mName(this._tonight()) + "'s road") + " is still standing. walking to another house forfeits the board: it counts as a loss, and a lantern goes out."
+          : "a table board is still standing. walking to another house sets it aside; nothing is staked."; })(),
+      moonAskStayTap: () => this.setState({ moonAsk: null }),
+      moonAskForfeitTap: () => {
+        const tgt = st.moonAsk, keep = this._susp;
+        if (tgt == null) return;
+        this._susp = null; this._suspM = null;
+        if (keep && keep.road && !keep.practice && !keep.duel) {
+          // the forfeit bites while tonight is still the old road: wrec, a lantern, the wipe at zero
+          this._sfx("lantern"); this._saveWrec(keep.roadWalker, false);
+          const lv = this._lives() - 1;
+          if (lv <= 0) this._wipeRoad(keep.roadRung || 0); else this._saveLives(lv);
+        }
+        this._setMoon(tgt); this._clearSeq();
+        this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu", moonHover: null, moonAsk: null });
+      },
       ...((() => {
         if (st.phase !== "moon") return { moonNodes: [], moonName: "", moonTier: "", moonTierC: "#9A8A5E", moonHint: "", moonCount: "" };
         const t = this._tonight(), names = this._mList();
@@ -8480,7 +8372,10 @@ class Component extends DCLogic {
             hereOn: real,
             selOn: here && !real,
             shut: open ? null : "1",
-            tap: () => { if (!open) return; this._setMoon(id); this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu", moonHover: null }); },
+            tap: () => { if (!open) return;
+              // a live board on another road asks before it is thrown away (see moonAskForfeitTap)
+              if (this._susp && id !== this._tonight()) { this._sfx("reject"); this.setState({ moonAsk: id }); return; }
+              this._setMoon(id); this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu", moonHover: null, moonAsk: null }); },
             over: () => this.setState({ moonHover: id }),
             out: () => this.setState({ moonHover: null }),
             style: "position:absolute;left:" + x.toFixed(1) + "px;top:" + y.toFixed(1) + "px;transform:translate(-50%,-50%);width:26px;height:26px;padding:0;background:none;border:none;cursor:" + (open ? "pointer" : "default") + ";display:flex;align-items:center;justify-content:center;transition:transform .16s ease",
@@ -9246,7 +9141,7 @@ class Component extends DCLogic {
           if (inMatch) {
             const keep = { ...this.state };
             ["pmOpen", "pauseOn", "leaveAsk", "drag", "dragOver", "peek", "sel", "selB", "inspect", "toast", "countFx", "busy", "face", "pick"].forEach(k2 => { delete keep[k2]; });
-            this._susp = keep;
+            this._susp = keep; this._suspM = this._tonight(); // the board belongs to its road (31 aug 2026, user): a suspended fight is keyed to the mansion it stands on
           }
           // the menu STAYS open across the walk (29 aug 2026, user): only the chip itself closes it
           if (dest === "deck") this._go("deck", { ...(inMatch ? this._deckState() : {}), pmOpen: true, pauseOn: false, navFrom: "menu" });
