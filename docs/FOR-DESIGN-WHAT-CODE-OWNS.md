@@ -23,7 +23,7 @@ Concretely, right now:
 
 - **14 methods exist only in the deployed file** (Code-built, listed below).
   Shipping your V2 as-is deletes all 14.
-- **33 methods exist in both with different bodies.** These are the contested
+- **36 methods exist in both with different bodies.** These are the contested
   ones — the real risk zone, because nothing about them *looks* wrong in your
   copy.
 - Your copy still carries `_cities` and a hashed `_rope`, both of which Code
@@ -53,7 +53,7 @@ None of that is a complaint about your work. It's the shape of the problem.
 - **The engine modules** — the ephemeris, sigil, transits, reading corpus.
 - **25 `manzil-v2-*` localStorage keys**, 16 of which sync to the server.
 
-## The contested 33: methods you and Code both edit
+## The contested 36: methods you and Code both edit
 
 These exist in both files with different bodies. If you regenerate one, Code's
 edit is silently gone. Grouped by what Code's version adds:
@@ -66,12 +66,22 @@ edit is silently gone. Grouped by what Code's version adds:
   `_dragUp` `_startDuel` `componentWillUnmount`.
 - **The measured ruleset** — `_cards` (walkers mirror the player's real
   collection), `_replyW` (caution dial), `_resolve` (Suzaku's grant, the drum's
-  law), `_bossRule` `_lawSt` `_reson` (the five station laws), `_advanceRound`
-  (the walker 5–8 tally), `_moonOpen` `_tonight`.
+  law), `_bossRule` `_lawSt` `_reson` (the six station laws), `_advanceRound`
+  (the walker 5–8 tally), `_moonOpen` (which levels the ring lights — see the
+  note below), `_quad` `_tonight`.
 - **Accounts / onboarding** — `_saveBirth` (timezone-correct chart), `constructor`,
   `renderVals`, `_legendDone`.
-- **Sound + misc** — `_afterDeal` `_buzz` `_zoomFor` `_abilityOn` `_specialNight`
-  `_cross` `_moon`.
+- **Sound + misc** — `_afterDeal` `_buzz` `_sfx` `_zoomFor` `_abilityOn`
+  `_specialNight` `_cross` `_moon` `_introHold`.
+- **Walker speech** — `_say`, which now substitutes the real speaker's name into
+  any line borrowed through `_wAlias` (see the note below).
+
+**`_moonOpen` is worth calling out separately.** It is not a contested method in
+the usual sense — Code narrowed it while only three levels were finished, and it
+gates which houses the ring will light at all. Three finished levels sat dark on
+the ring for several hours because it wasn't on anybody's check path. **When you
+ship a level, say so in `WHATS-NEW.md` even though the gate is Code's**, or the
+work is unreachable no matter how well it ports.
 
 `renderVals` and `constructor` are the two biggest shared surfaces — almost
 every delivery touches them, and almost every Code change does too.
@@ -87,7 +97,7 @@ every delivery touches them, and almost every Code change does too.
 *The drum tower was 100% this, which is why it ported in one pass.*
 
 **Ports with care — say so in `WHATS-NEW.md`:**
-- Editing any of the 33 contested methods above. Name the method and say what
+- Editing any of the 36 contested methods above. Name the method and say what
   you changed; Code merges rather than overwrites.
 - Anything touching game rules — the laws, `_cards`, `_resolve`. These have a
   measurement trail and an engine counterpart on Code's side that has to move
@@ -111,7 +121,7 @@ they'll break production:**
 1. **You're about to regenerate the whole file**, or rebuild a screen that
    isn't purely visual. Starting from the deployed copy means your work lands
    on top of reality instead of needing a merge.
-2. **You're touching one of the 33 contested methods** — especially
+2. **You're touching one of the 36 contested methods** — especially
    `renderVals`, `constructor`, `_cards`, `_resolve`, or `_finish`.
 3. **You're building anything that needs an account, the network, or saved
    progress.** All of that exists already; building a mock alongside it
