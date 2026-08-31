@@ -125,6 +125,39 @@ function createManzilLobby(io, { jwtSecret, pool }) {
     return gidToSocket.get(gid) || null;
   }
 
+  // REAL PER-PLAYER LEVELS (30 aug 2026, user's explicit call — reverses the client's own "duels
+  // stay even regardless of what either player has climbed" comment, see _cards() ~line 4909):
+  // an account's real card levels/builds, computed server-side from data already synced here for
+  // an unrelated reason (the progress-sync feature) — mirrors the client's own _mlvl()/_baseLvl()/
+  // _builds() formulas exactly (Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html
+  // ~line 4966-4993). manzil_pack.five_json is ordered [sun-mansion, ...others] the same way
+  // _castFive() builds it, so five[0] alone (no full birth chart needed server-side) tells us which
+  // mansion gets the sun's base level 3 vs the others' base level 2.
+  async function realCardConfig(uid) {
+    try {
+      const [[packRow], [progRow]] = await Promise.all([
+        pool.execute('SELECT five_json FROM manzil_pack WHERE user_id = ?', [uid]).then(([r]) => [r[0]]),
+        pool.execute('SELECT progress_json FROM manzil_progress WHERE user_id = ?', [uid]).then(([r]) => [r[0]]),
+      ]);
+      let five = [];
+      try { const parsed = packRow && JSON.parse(packRow.five_json); if (Array.isArray(parsed)) five = parsed; } catch (e) {}
+      let progress = {};
+      try { const parsed = progRow && JSON.parse(progRow.progress_json); if (parsed && typeof parsed === 'object') progress = parsed; } catch (e) {}
+      const climbs = progress.climbs && typeof progress.climbs === 'object' ? progress.climbs : {};
+      const builds = progress.build && typeof progress.build === 'object' ? progress.build : {};
+      const levels = {};
+      for (let id = 1; id <= 28; id++) {
+        const idx = five.indexOf(id);
+        const base = idx === 0 ? 3 : idx > 0 ? 2 : 1;
+        const climb = Number(climbs[id]) || 0;
+        levels[id] = Math.max(1, Math.min(4, base + climb));
+      }
+      return { levels, builds };
+    } catch (e) {
+      return { levels: {}, builds: {} }; // cards()'s own default (level 1, nothing spent) — never blocks a match
+    }
+  }
+
   function faceGrid(match) {
     const g = match.game;
     return g.slots.map((s, i) => s ? { l: engine.faceOf(g, g.slots, i, -1), r: engine.faceOf(g, g.slots, i, 1) } : null);
@@ -133,7 +166,7 @@ function createManzilLobby(io, { jwtSecret, pool }) {
   function viewSlots(mySeat, match) {
     const faces = faceGrid(match);
     return match.game.slots.map((s, i) => !s ? null : {
-      id: s.id, owner: view(mySeat, s.owner), age: s.age, first: !!s.first,
+      id: s.id, owner: view(mySeat, s.owner), by: s.by ? view(mySeat, s.by) : undefined, age: s.age, first: !!s.first,
       ground: s.ground ? view(mySeat, s.ground) : undefined,
       came: s.came, clawed: !!s.clawed, flocked: !!s.flocked, glanced: !!s.glanced,
       l: s.l, r: s.r, // raw post-rev faces, matching local slot.l/.r semantics (pre-modifier)
@@ -177,7 +210,9 @@ function createManzilLobby(io, { jwtSecret, pool }) {
   async function createMatch(p1, p2) {
     const matchId = 'm_' + crypto.randomBytes(8).toString('hex');
     const leader = Math.random() < 0.5 ? 'you' : 'sky';
-    const C = engine.makeCards({ lvl: 2 }); // fixed baseline for v1 — see CLAUDE.md's Manzil plan note
+    // real per-player levels/builds, not a fixed baseline — see realCardConfig()'s own header note.
+    const [youCfg, skyCfg] = await Promise.all([realCardConfig(uidFromGid(p1.gid)), realCardConfig(uidFromGid(p2.gid))]);
+    const C = { you: engine.cards(youCfg), sky: engine.cards(skyCfg) };
     const tonight = await currentTonight();
     const match = {
       id: matchId, C, tonight, leader,
@@ -246,15 +281,17 @@ function createManzilLobby(io, { jwtSecret, pool }) {
     // leader alternates each round, starting from the coin-flip winner
     const leader = match.round % 2 === 1 ? match.leader : otherSeat(match.leader);
     const seed = Date.now() ^ crypto.randomInt(1, 0x7fffffff);
-    const youHand = engine.deal(match.seats.you.pack, seed + 1, match.tonight, true);
-    const skyHand = engine.deal(match.seats.sky.pack, seed + 2, match.tonight, true);
+    // deal(pack, seed, n) — no tonight/dealGuarantee args: the walking-twelve "guarantee tonight's
+    // mansion in the deal" mechanic is a single-player road convenience with no clear PvP-fair
+    // equivalent (see manzil-engine.js's own header). A plain seeded 7-of-pack pick is the honest port.
+    const youHand = engine.deal(match.seats.you.pack, seed + 1, 7);
+    const skyHand = engine.deal(match.seats.sky.pack, seed + 2, 7);
     match.game = engine.mkGame({
+      // C is already { you, sky } — real per-player levels/builds computed in createMatch(). The
+      // mane is inherently owner-relative in this engine (see its own header), so no fairness flag
+      // is needed the way the file this replaces needed maneFair.
       C: match.C, tonight: match.tonight, len: BOARD_LEN,
-      // maneFair: the mane's 25 Aug rewrite counts its slot for whoever holds both its
-      // neighbours, but single-player only ever lets "you" benefit (never the sky) — same
-      // reason tieRule below is neutralized: whichever seat is locally labeled "you" would
-      // otherwise get a free advantage over the real other player.
-      you: youHand, sky: skyHand, leader, tieRule: 'a draw', maneFair: true,
+      you: youHand, sky: skyHand, leader, tieRule: 'a draw',
     });
     ['you', 'sky'].forEach(seat => {
       const snap = boardSnapshot(match, seat);
@@ -279,23 +316,16 @@ function createManzilLobby(io, { jwtSecret, pool }) {
     if (g.slots[slot]) return emitTo(match, seat, 'move_rejected', { matchId: match.id, reason: 'slot_taken' });
     const hand = seat === 'you' ? g.you : g.sky;
     if (hand.indexOf(cardId) < 0) return emitTo(match, seat, 'move_rejected', { matchId: match.id, reason: 'not_in_hand' });
-    const card = match.C[cardId];
+    const card = engine.cardById(g, cardId, seat);
     if (!card) return emitTo(match, seat, 'move_rejected', { matchId: match.id, reason: 'invalid_input' });
     const rev = !!msg.rev && !!card.twoFaced;
 
-    const preSlots = g.slots;
-    const rr = engine.resolve(g, preSlots, cardId, slot, rev, seat);
-
-    // returned cards go back to whoever owned them before the failed claim,
-    // not always "you" — engine.resolve()'s bare `ret` array is id-only by
-    // contract (its own vectors format-check it as a plain number), so the
-    // owner lookup happens here, against the pre-move board.
-    rr.seq.forEach(entry => {
-      if (entry.ret == null) return;
-      const prevOwner = preSlots[entry.to] && preSlots[entry.to].owner;
-      (prevOwner === 'you' ? g.you : g.sky).push(entry.ret);
-    });
-    if (rr.ret.length) g.retUsed = true;
+    const rr = engine.resolve(g, g.slots, cardId, slot, rev, seat);
+    // NOTE: no per-entry "ret" (a card returning to hand rather than just flipping) exists in the
+    // live ruleset this engine is ported from — verified: nothing in the client's own _resolve()
+    // ever pushes a `ret:` seq entry any more, `_step()`'s handler for it is now dead code carried
+    // forward from an older mechanic. This engine never produces one either; if a future ruleset
+    // change reintroduces a real return-to-hand card, this is the spot that needs it back.
 
     g.slots = rr.slots;
     if (seat === 'you') g.you = g.you.filter(id => id !== cardId);
@@ -309,9 +339,14 @@ function createManzilLobby(io, { jwtSecret, pool }) {
         matchId: match.id,
         side: view(viewSeat, seat),
         cardId, slot, rev,
-        flips: rr.seq.map(e => e.ret != null
-          ? { from: e.from, to: e.to, dir: e.dir, ret: e.ret }
-          : { from: e.from, to: e.to, dir: e.dir, owner: view(viewSeat, e.owner) }),
+        // the client's own _step() reads set/miss/sig/printed alongside from/to/dir/owner for every
+        // signature's animation (turn-flags, the gate/chamber/return's miss marks, toast text, the
+        // throne's reach fx) — dropping any of these here silently breaks that signature in PvP.
+        flips: rr.seq.map(e => ({
+          from: e.from, to: e.to, dir: e.dir,
+          owner: e.owner != null ? view(viewSeat, e.owner) : undefined,
+          miss: e.miss || undefined, set: e.set || undefined, sig: e.sig || undefined,
+        })),
         slots: viewSlots(viewSeat, match),
         nextTurn: boardFull ? null : view(viewSeat, g.turn),
       });

@@ -1,753 +1,589 @@
-// SYNCED FILE — mirrors "Star Shard v3 Build Plan/research/manzil-engine-v6.js" verbatim.
-// This is the server-authoritative copy for real-time PvP move validation
-// (starshard-api/lib/manzil-lobby.js). Never hand-edit here: change the
-// research copy and re-copy, same discipline as the frontend's generated
-// files (see CLAUDE.md's ownership table).
+// manzil-engine.js — server-authoritative move engine for real-time PvP
+// (starshard-api/lib/manzil-lobby.js). Ported + verified 30 aug 2026 against the LIVE
+// "Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html" (`_faceOf`/`_shielded`/`_tryFlip`/
+// `_lodge`/`_resolve`/`_isHome`/`_slotW`/`_ctx`/`_counts`/`_boardWinner`/`_cards`/`_mlvl`/`_baseLvl`/
+// `_builds`), NOT against `research/manzil-engine-current.cjs` (a V1 port whose own header flags it
+// as unverified against V2 — this file supersedes it as "the one to use" for PvP specifically; the
+// .cjs file stays the reference for offline sims, a different documented-scope artifact).
 //
-// manzil engine v6 — a port of "Manzil - Prototype.dc.html" as shipped 22 august 2026,
-// plus the 25 august 2026 slate rewrite (20 signatures rebuilt) rebased onto this file's own
-// owner-relative fixes rather than the pre-24-Aug lineage Design's own port branched from.
-// scope: the whole live ruleset. all 28 mansion signatures, her five planets, the base laws
-// (ties flip · a tie-flip attacks both its own neighbours · tied counts are yours), dominion,
-// jupiter's counts-two, the dealt five, and her two-ply reply at a per-rung reading depth.
+// PREVIOUS VERSION of this file mirrored "research/manzil-engine-v6.js" (22-25 aug era) — stale
+// relative to both V2 and .cjs; replaced wholesale rather than patched.
 //
-// the 25 aug rewrite, card by card (rebased — see docs/handoffs/NOTE-TO-CODE-slate-rebase.md):
-//   bearer   keeps the ground beside it (lodge or claim)     was: neighbours +1
-//   follower answers when its side is claimed                was: copies the left face
-//   storm    no tie takes it, anywhere                        was: only on its own mansion
-//   return   bounded: once, on its own ground                 was: unbounded
-//   ghost    first opposing card that lodges beside it, -2    was: -1 field while road <half full
-//   glance   her next card -2                                 was: -1
-//   mane     counts for whoever holds both its neighbours,    was: +1 between two
-//            single-player only (g.maneFair neutralizes for PvP, see mkGame/manzil-lobby.js)
-//   hand     steps aside to the first open ground on the road was: a tap-driven relocation
-//   jewel    floor of 7, still immune to softening            was: cannot be softened
-//   veil     turns the first card that lodges beside it       was: safe on the turn it lands
-//   claws    its claimer fights -2                             was: -1
-//   crown    counts two beside its own ground                 was: counts two on the two edges
-//   heart    counts two while its side holds less of the road was: cannot be softened
-//   flock    what it claims turns as it joins                 was: neighbours +1 on claim
-//   district counts two AND silences both sides               was: counts two while untouched
-//   drum     answers what's taken from its side, anywhere     was: its claim struck onward
-//   void     everything beside it fights -1                   was: safe while alone
-//   hideaway its own ground counts two                        was: silenced the loudest neighbour
-//   guide    trades the two grounds beside it as it lands     was: a tap-driven swap
-//   throne   twoFaced now gates on lvl>=2 (a harness/engine bug: it made the asleep and awake
-//            arms of any awake/asleep comparison identical). its "turn in place" is a tap on
-//            your own turn — player tempo the sim still doesn't model; unlisted above.
+// SCOPE, checked by hand against the live client rather than assumed:
 //
-// deliberate deviations from the prototype, all of them player-side tempo the sim cannot use:
-//   the throne's turn-in-place (see above) is not modelled outside tapMode (below).
-//   her seeded tie-break (FNV over the date) is replaced by a deterministic hash over the move
-//   itself (id, slot, face), not hand order — see moveKey() — so runs are repeatable and a
-//   card's measured worth can't depend on where it sits in the hand.
-//   tempers are omitted: they are a tie-break filter above the same seed.
-// everything else is line-for-line the shipped behaviour. conformance vectors: see VECTORS below.
+// STATION LAWS (mansion 18 "beat", 25 "shell", 10 "reach") and every road-mode special ground
+// (mansion 21/23/25/26/27/28's remedy/kiln/cross/rope/reson) are DELIBERATELY NOT PORTED. The
+// client's own `_bossRule()` (line ~5952) returns null whenever `st.duel` is set, and every one of
+// `_remedy`/`_kiln`/`_cross`/`_rope`/`_reson` returns -1 under the same `st.duel` guard — i.e. the
+// LIVE GAME ITSELF exempts every duel mode (including the existing fake "net" AI duel and real
+// pass-and-play "seat") from station laws and road-only grounds. A real networked PvP match is
+// exactly another duel; porting station laws in would make PvP MORE road-like than any duel the
+// live client has ever actually produced. If a future decision wants station laws in PvP, that's a
+// new product call, not a parity fix — flag it rather than silently reintroducing here.
 //
-// L3/L4 grants + the tap (merged 25 Aug from research/ref-tap.js, a downstream port onto this
-// exact file by a parallel research pass — docs/handoffs/HANDOFF-L34-MERGE-25AUG.md and
-// HANDOFF-TAP-MEASURED-25AUG.md; corrected 26 Aug per docs/handoffs/NOTE-bec8406-verification.md,
-// which caught two things the first merge commit got wrong — read both corrections before
-// trusting any claim in this block about what is or isn't live).
-//   grantSides defaults to "none" (fixed 26 Aug — it shipped defaulting to "both", which made the
-//   three passive grants a live trap: any future caller passing lvl:3 cards would have turned them
-//   on with no flag flipped and no one deciding it, harmless only because every caller today
-//   happens to build lvl:2 cards). l4/grantOnly further gate the four quadrant grants
-//   (guard/lead/turn/return), each live only at lvl>=3 and only once grantSides opts in. Measured:
-//   only the turn (Seiryuu) does anything (+7.1); guard/lead/return are inside the noise floor as
-//   passive properties. grantOf() is the read path either way.
-//   tapMode replaces the three passive grants (not the turn) with a tap: once a card, free,
-//   in-place, no lodge signature fires twice. Measured to clear the skill-gap target ONLY when
-//   both open-fairness questions below are answered honestly — as first built it was borrowing
-//   ~20 points from an ownership loophole and her agent's inability to reply in kind:
-//     tapOwnCardsOnly should be true — false lets a captured card be tapped, and "the black
-//       tortoise comes home" on a captured card is a one-tap theft engine (confirmed live bug).
-//     skyCanTap should track whatever her hand actually is — inert today only because walker
-//       hands are L1 vanilla; the moment hands wake or PvP deals real levels this is worth 12pts.
-//   playBoard's own return-routing carried the exact "always g.you" bug fixed in the client's
-//   _step/_resolve today (a fourth instance of the same trap) — fixed here too, see the `back`
-//   variable below. THIS ONE IS NOT INERT: manzil-lobby.js builds both PvP hands from the same
-//   28-card pool (unlike single-player, where the sky's hand is fixed to the five planets and can
-//   never hold a "return" card), so a real Return card can land in either seat's hand in a ranked
-//   match. Measured against the pre-fix engine on PvP-shaped hands (both sides drawn from the
-//   pool, not single-player's planets-only sky): ~3.5% of level-2 boards resolve differently. That
-//   is this fix doing its job, correctly, in production — it is not a no-op.
-//   variable in playBoard. L4 is explicitly UNDESIGNED (uncondition tested and made things
-//   worse); do not wire an L4 mechanic off this file without re-reading the handoff first.
-//   Hand size (hers grows 5→8 by level, the player's never does) is flagged as the actual lever
-//   that reaches the skill-gap target — not shipped, not this file's call, "deserves its own round."
+// DOMINION uses `_isHome`/`_boardM`'s real tonight-relative rotation (`boardM(i) = ((tonight-1+i)%28)+1`
+// for i in 0..8), NOT a flat "slot i is mansion i+1" — this is a genuine, confirmed divergence from
+// research/manzil-engine-current.cjs's `isHome`, which hardcodes slotIdx+1 with no tonight rotation
+// at all. Without this fix, dominion would fire on the wrong stations for every night except the one
+// where tonight happens to be mansion 1. The mansion-25 four-station road-window slide the client
+// applies on ITS OWN night (`_boardM`'s `off:4` for m25) exists only to host the shell law, which
+// duels don't get — so `off` is always 0 here, deliberately.
+//
+// MANE is inherently owner-relative already (`_faceOf`'s own mane check compares the mane-holder's
+// side against the card being evaluated's side, not a hardcoded "you"), in both the client and this
+// file — no `maneFair`-style neutralizing flag is needed here, unlike the file this replaces.
+//
+// LEVELS + THE THREE-DOOR BUILD SYSTEM (client `_cards()`, ~line 4966-4993, ground truth over any
+// prose summary elsewhere in this repo that says levels no longer touch numbers — they still do):
+// door 1 (lvl>=2) picks grant "g" or +2 to one face ("n"+aS); door 2 (lvl>=3) picks signature "s" or
+// +1 to one face ("n"+bS); door 3 (lvl>=4) is always +1 to one face (bd.c). `cards(cfg)` takes both
+// `cfg.levels` (per-id 1-4) and `cfg.builds` (per-id {a,b,c}) and reproduces this exactly — a real
+// per-card model, not the all-or-nothing `cfg.grants` toggle the file this replaces used.
+//
+// AI/AUTOPLAY CODE IS NOT PORTED: real PvP moves come from real players via manzil-lobby.js's `place`
+// event, never from a local move-picker — unlike research/manzil-engine-current.cjs (built partly
+// for offline self-play sims), this file has no bestMove/pickMove/searchMove/playBoard/playMatch.
+//
+// TWO CARD TABLES, NOT ONE — a real architectural gap the file this replaces never had to face,
+// because solo play is always a real player (real levels) against the fixed sky planets (a
+// separate, non-colliding id space, 101-107). Real PvP is a real player against ANOTHER real
+// player, both dealing from the SAME id space (1-28, "The Gate" is always id 1 for anyone) but at
+// each player's OWN real levels/builds — so id 6 (the Storm) can be level 3 in your table and
+// level 1 in your opponent's at the same time, and a single flat `g.C[id]` cannot represent both.
+// `g.C` here is `{ you: cards(youCfg), sky: cards(skyCfg) }`; every lookup goes through `cardOf(g,
+// slot)` (keyed off the slot's `by` — who ORIGINALLY lodged it, unchanged by later flips, since a
+// card's definition belongs to whoever's collection it came from) or `cardById(g, id, side)` where
+// no slot exists yet (a card about to be lodged). Passing a flat, single-seat `g.C` (as the self-
+// checks below do, for brevity) still works — `cardOf`/`cardById` fall back to flat lookup when
+// `g.C` has no `.you`/`.sky` keys, so a flat table means "both seats share one table," useful for
+// isolated mechanic tests where per-seat asymmetry isn't what's being tested.
+//
+// Run self-checks: node starshard-api/lib/manzil-engine.js
+
+"use strict";
 
 const POOL = [
-  ["the gate", 6, 5, "gate"], ["the bearer", 6, 4, "bearer"], ["the gathered stars", 7, 6, "gathered"],
-  ["the follower", 7, 7, "follower"], ["the blaze", 5, 6, "blaze"], ["the storm", 8, 5, "storm"],
-  ["the return", 7, 6, "return"], ["the ghost", 6, 6, "ghost"], ["the glance", 4, 6, "glance"],
-  ["the throne", 6, 9, "throne"], ["the mane", 6, 5, "mane"], ["the turning", 7, 5, "turning"],
-  ["the hand", 7, 4, "hand"], ["the jewel", 7, 7, "jewel"], ["the veil", 8, 2, "veil"],
-  ["the claws", 6, 6, "claws"], ["the crown", 6, 6, "crown"], ["the heart", 7, 7, "heart"],
-  ["the root", 7, 6, "root"], ["the flock", 6, 6, "flock"], ["the empty district", 2, 8, "district"],
-  ["the listener", 7, 4, "listener"], ["the drum", 4, 7, "drum"], ["the void", 9, 2, "void"],
-  ["the hideaway", 5, 6, "hideaway"], ["the chamber", 7, 5, "chamber"], ["the guide", 6, 5, "guide"],
-  ["the thread", 5, 6, "thread"],
-];
-const PLANETS = {
-  101: { name: "saturn", l: 9, r: 5, ab: "saturn", homeM: 26 },
-  102: { name: "mars", l: 8, r: 6, ab: "mars", homeM: 14 },
-  103: { name: "venus", l: 4, r: 7, ab: "venus", homeM: 22 },
-  104: { name: "mercury", l: 6, r: 5, ab: "mercury", homeM: 8 },
-  105: { name: "jupiter", l: 7, r: 8, ab: "jupiter", homeM: 2 },
-};
+  ["The Gate", 6, 6, "gate"], ["The Bearer", 5, 6, "bearer"], ["The Gathered Stars", 7, 7, "gathered"],
+  ["The Follower", 8, 7, "follower"], ["The Blaze", 6, 6, "blaze"], ["The Storm", 6, 8, "storm"],
+  ["The Return", 7, 7, "return"], ["The Ghost", 7, 6, "ghost"], ["The Glance", 5, 6, "glance"],
+  ["The Throne", 7, 9, "throne"], ["The Mane", 6, 6, "mane"], ["The Turning", 7, 6, "turning"],
+  ["The Hand", 5, 7, "hand"], ["The Jewel", 9, 5, "jewel"], ["The Veil", 3, 8, "veil"],
+  ["The Claws", 7, 6, "claws"], ["The Crown", 7, 6, "crown"], ["The Heart", 8, 7, "heart"],
+  ["The Root", 7, 7, "root"], ["The Flock", 7, 6, "flock"], ["The Empty District", 3, 8, "district"],
+  ["The Listener", 7, 5, "listener"], ["The Drum", 5, 7, "drum"], ["The Void", 9, 3, "void"],
+  ["The Hideaway", 6, 6, "hideaway"], ["The Chamber", 7, 6, "chamber"], ["The Guide", 6, 6, "guide"],
+  ["The Thread", 6, 6, "thread"],
+]; // card sheet faces, matching the client's own `_cards()` `pool` array verbatim (27 aug 2026 sheet)
 
-// ---- L3/L4: the Four Symbols. mansions-table.json's fy_god column; mansion 2 is blank
-// there and belongs to Byakko by position.
-// g.grantSides decides WHOSE cards carry a grant: "you" | "both" | "sky" | "none".
-// g.l4 === "uncondition" drops each grant's positional condition (see the handoff — tested, worse).
-const QUADRANT = {};
-[[ "byakko",  [1,2,3,4,5,6,28],        "guard"  ],
- [ "suzaku",  [7,8,9,10,11,12,13],     "lead"   ],
- [ "seiryuu", [14,15,16,17,18,19,20],  "turn"   ],
- [ "genbu",   [21,22,23,24,25,26,27],  "return" ]
-].forEach(([nm, ids, grant]) => ids.forEach(id => QUADRANT[id] = { nm, grant }));
-function quadGrant(id) { const q = QUADRANT[id]; return q ? q.grant : null; }
-function canTurn(g, id) { const c = g.C[id]; return !!(c.twoFaced || grantOf(g, c) === "turn"); }
-function grantOf(g, c) {
-  if (!c || c.lvl < 3) return null;
-  if (c.id >= 101 && c.id <= 105) return null;          // planets have no quadrant
-  const sides = g && g.grantSides ? g.grantSides : "both";
-  if (sides === "none") return null;
-  if (sides !== "both" && c.who !== sides) return null; // whose hand carries grants
-  const gr = quadGrant(c.homeM != null ? c.homeM : c.id);
-  if (g && g.grantOnly && gr !== g.grantOnly) return null;   // isolate one quadrant
-  return gr;
-}
+const QUAD_OF = {};
+[["byakko", [1, 2, 3, 4, 5, 6, 28]], ["suzaku", [7, 8, 9, 10, 11, 12, 13]],
+ ["seiryuu", [14, 15, 16, 17, 18, 19, 20]], ["genbu", [21, 22, 23, 24, 25, 26, 27]]]
+  .forEach(([q, ids]) => ids.forEach(id => { QUAD_OF[id] = q; }));
+function quadOf(id) { return QUAD_OF[id] || "byakko"; }
 
-// lvl: 1 = asleep (numbers only), 2+ = signature awake. numbers are re-baselined by default (22 aug 2026);
-// pass legacyBase:true to reproduce the old level-climbing numbers.
-function makeCards(opts) {
-  const o = opts || {}, C = {};
+const BOARD_LEN = 9;
+
+// cfg.levels: {id: 1-4}, default 1. cfg.builds: {id: {a: "g"|"n", aS: "l"|"r", b: "s"|"n", bS: "l"|"r", c: "l"|"r"}}
+// — exact mirror of the client's `_cards()` door logic (verified against the live source, not the
+// simpler "level>=2 wakes everything" model an earlier version of this file used).
+function cards(cfg) {
+  cfg = cfg || {};
+  const levels = cfg.levels || {};
+  const builds = cfg.builds || {};
+  const C = {};
   POOL.forEach((p, idx) => {
     const id = idx + 1;
-    let l = p[1], r = p[2];
-    const lvl = o.levels && o.levels[id] != null ? o.levels[id] : (o.lvl || 2);
-    if (o.legacyBase) { // pre-22-aug: numbers climbed with level
-      if (lvl >= 3) { if (l <= r) l = Math.min(9, l + 1); else r = Math.min(9, r + 1); }
-      if (lvl >= 4) { l = Math.min(9, l + 1); r = Math.min(9, r + 1); }
-    } else { // the re-baseline: what used to be L3, from night one, and levels never touch numbers again
-      if (l <= r) l = Math.min(9, l + 1); else r = Math.min(9, r + 1);
-    }
-    C[id] = { id, name: p[0], l, r, ab: o.silence === id ? null : p[3], lvl, who: "you", twoFaced: p[3] === "throne" && lvl >= 2, homeM: id };
+    const lvl = levels[id] != null ? levels[id] : 1;
+    const bd = builds[id] || {};
+    const q = quadOf(id);
+    const sigOn = lvl >= 3 && bd.b === "s";
+    const grantOn = lvl >= 2 && bd.a === "g";
+    let dl = 0, dr = 0;
+    if (lvl >= 2 && bd.a === "n" && bd.aS) { if (bd.aS === "r") dr += 2; else dl += 2; }
+    if (lvl >= 3 && bd.b === "n" && bd.bS) { if (bd.bS === "r") dr += 1; else dl += 1; }
+    if (lvl >= 4 && bd.c) { if (bd.c === "r") dr += 1; else dl += 1; }
+    C[id] = {
+      id, name: p[0], l: p[1] + dl, r: p[2] + dr, who: "you", lvl, loan: false,
+      ab: sigOn ? p[3] : null, sig: p[3], quad: q, grantOn,
+      homeM: id, // a player's own mansion cards' dominion ground is themselves, always
+      twoFaced: grantOn && q === "seiryuu",
+    };
   });
-  Object.keys(PLANETS).forEach(k => { C[k] = { ...PLANETS[k], id: +k, who: "sky", lvl: 3 }; });
-  if (o.homes) Object.keys(o.homes).forEach(k => { C[k] = { ...C[k], homeM: o.homes[k] }; });
   return C;
 }
 
-function mkGame(cfg) {
-  const g = {
-    C: cfg.C, tonight: cfg.tonight || 1, len: cfg.len || 9,
-    slots: Array.from({ length: cfg.len || 9 }, () => null),
-    you: (cfg.you || []).slice(), sky: (cfg.sky || []).slice(),
-    turn: cfg.leader || "you", retUsed: false, glanceOn: false,
-    depth: cfg.depth == null ? 8 : cfg.depth, tieRule: cfg.tieRule || "you",
-    jupiterMode: cfg.jupiterMode || "always", grantSides: cfg.grantSides || "none", l4: cfg.l4 || null, grantOnly: cfg.grantOnly || null,
-    tapMode: !!cfg.tapMode, skyCanTap: !!cfg.skyCanTap, tapCostsTurn: !!cfg.tapCostsTurn, tapOwnCardsOnly: !!cfg.tapOwnCardsOnly, tapped: {}, taps: 0, stats: { flips: 0, leads: 0 },
-    // the mane's single-player asymmetry (see slotW) must not carry into PvP, same reason
-    // as tieRule above — whichever seat is locally labeled "you" would get a free advantage.
-    maneFair: cfg.maneFair || false,
+function seededRand(seed) {
+  let h = (seed >>> 0) || 1;
+  return function rnd() {
+    h ^= h << 13; h >>>= 0; h ^= h >>> 17; h >>>= 0; h ^= h << 5; h >>>= 0;
+    return h / 4294967296;
   };
-  // the gate lodges before her lead — either hand's gate seizes the lead, not just "you"'s.
-  // suzaku's lead grant does the same thing, but only outside tapMode (it becomes a tap there).
-  const hasGate = ids => ids.some(id => (on(g, g.C[id]) && g.C[id].ab === "gate") || (!g.tapMode && grantOf(g, g.C[id]) === "lead"));
-  if (g.turn === "sky" && hasGate(g.you)) g.turn = "you";
-  else if (g.turn === "you" && hasGate(g.sky)) g.turn = "sky";
-  return g;
 }
-const on = (g, c) => !!c && !!c.ab && (c.who === "sky" || c.lvl >= 2);
-const nb = (g, i, d) => { const k = i + d; return k >= 0 && k < g.len ? k : -1; };
-const boardM = (g, i) => ((g.tonight - 1 + i) % 28) + 1;
-const isHome = (g, id, i) => (g.C[id].homeM || id) === boardM(g, i);
 
-// the hard light: the jewel is immune to softening (see faceOf's floor-of-7 too)
-function noSoften(g, slots, i) {
-  const s = slots[i]; if (!s) return false;
-  const c = g.C[s.id];
-  return c.ab === "jewel" && on(g, c);
+// pack: array of card ids to deal from (default: all 28). n: hand size (7, a real match's own hand).
+// No walking-twelve "guarantee tonight's mansion" logic here — that's a single-player road
+// convenience with no clear PvP-fair equivalent (see header); a plain seeded pick is the honest port.
+function deal(pack, seed, n) {
+  n = n || 7;
+  const bag = (pack && pack.length ? pack : Array.from({ length: 28 }, (_, i) => i + 1)).slice();
+  if (bag.length <= n) return bag;
+  const rnd = seededRand(seed);
+  const out = [];
+  while (out.length < n && bag.length) out.push(bag.splice(Math.floor(rnd() * bag.length), 1)[0]);
+  return out;
 }
-// every face modifier in the slate, resolved live
+
+function mkGame(cfg) {
+  cfg = cfg || {};
+  let C = cfg.C;
+  if (!C) C = (cfg.youConfig || cfg.skyConfig) ? { you: cards(cfg.youConfig || {}), sky: cards(cfg.skyConfig || {}) } : cards(cfg);
+  const len = cfg.len || BOARD_LEN;
+  return {
+    C, len,
+    slots: Array.from({ length: len }, () => null),
+    you: (cfg.you || deal(null, cfg.seed || 1)).slice(),
+    sky: (cfg.sky || deal(null, (cfg.seed || 1) + 1)).slice(),
+    turn: cfg.leader || "you",
+    leader: cfg.leader || "you",
+    tieRule: cfg.tieRule || "a draw", // PvP default — matches the client's own duel-mode tieRule
+    tonight: cfg.tonight || 1, // for dominion's boardM rotation only; no station laws read this here
+  };
+}
+
+function nb(g, i, dir) { const k = i + dir; return k >= 0 && k < g.len ? k : -1; }
+// mansion for board station i (0-based), rotated from tonight's real mansion — matches the client's
+// `_boardM(i)` with `off` always 0 (the mansion-25 4-station slide only exists to host the shell
+// law, which duels don't get here — see header).
+function boardM(g, i) { return ((g.tonight - 1 + i) % 28) + 1; }
+// a card's real definition — for an EXISTING slot, keyed by `by` (who lodged it, never changes with
+// a later flip: the card's own level/build stays that side's, even once the other side holds it).
+function cardOf(g, s) {
+  if (!s) return null;
+  const perSeat = g.C && (g.C.you || g.C.sky);
+  return (perSeat ? g.C[s.by || s.owner] : g.C)[s.id];
+}
+// a card about to be lodged (no slot object yet) — `side` is the mover's own seat, always passed
+// explicitly by manzil-lobby.js; "you" is a safe default only for tests that omit it.
+function cardById(g, cardId, side) {
+  const perSeat = g.C && (g.C.you || g.C.sky);
+  return (perSeat ? g.C[side || "you"] : g.C)[cardId];
+}
+function isHome(g, s, slotIdx) { const c = cardOf(g, s); return (c.homeM || s.id) === boardM(g, slotIdx); }
+function on(g, c) { return !!c && !!c.ab && c.lvl >= 2 && !c.loan; }
+
 function faceOf(g, slots, i, dir) {
   const s = slots[i]; if (!s) return 0;
-  const c = g.C[s.id];
-  let v = dir === 1 ? s.r : s.l;
-  let d = 0;
-  if (c.ab === "root" && on(g, c) && s.first) d += 1;
-  if (s.clawed) d -= 2;
-  if (s.ghosted) d -= 2;
-  if (s.glanced) d -= 2;
+  let v = dir === 1 ? s.r : s.l, d = 0;
+  if (s.boon) d += s.boon;
+  if (s.blazed) d -= 2;
+  const own = s.ground || s.owner;
   for (const dd of [-1, 1]) {
     const k = nb(g, i, dd); if (k < 0 || !slots[k]) continue;
-    const n = g.C[slots[k].id]; if (!on(g, n)) continue;
-    if (n.ab === "void") d -= 1;
+    const n = cardOf(g, slots[k]); if (!on(g, n)) continue;
+    if (n.ab === "thread") d -= 1;
+    if (n.ab === "mane" && (slots[k].ground || slots[k].owner) === own) d += 1;
   }
-  if (d < 0 && noSoften(g, slots, i)) d = 0;
-  if (c.ab === "jewel" && on(g, c)) return Math.max(7, v + d);
   return Math.max(1, v + d);
 }
-function safeNow(g, slots, ti) {
-  const t = slots[ti]; if (!t) return false;
-  const age = t.age || 0;
-  if (age <= 1) for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k < 0 || !slots[k] || slots[k].owner !== t.owner) continue; const n = g.C[slots[k].id]; if (n.ab === "chamber" && on(g, n)) return true; }
+
+function shielded(g, slots, ti) {
+  const t = slots[ti]; if (!t) return true;
+  const tC = cardOf(g, t);
+  if (t.spent || t.crowned) return true;
+  if (tC.grantOn && tC.quad === "byakko") return true; // the white tiger's grant: the ground holds
+  if (tC.ab === "gathered" && on(g, tC)) {
+    const own = t.ground || t.owner;
+    for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) return true; }
+  }
   return false;
 }
+
 function tryFlip(g, slots, ai, ti, dir) {
   const a = slots[ai], t = slots[ti];
-  if (!t || !a || t.owner === a.owner) return false;
-  const aC = g.C[a.id], tC = g.C[t.id];
-  const av = faceOf(g, slots, ai, dir), tv = faceOf(g, slots, ti, -dir);
-  const stormFace = tC.ab === "storm" && on(g, tC); // ties never take the storm, wherever it stands
-  const tGrant = grantOf(g, tC);
-  const guarded = !g.tapMode && tGrant === "guard" && (g.l4 === "uncondition" || isHome(g, t.id, ti) ||
-    [-1, 1].some(d => { const k = nb(g, ti, d); return k >= 0 && isHome(g, t.id, k); }));
-  const tie = av === tv && !stormFace && !guarded;
-  if (!(av > tv || tie)) return false;
-  if (tC.ab === "saturn") return false;
-  if (safeNow(g, slots, ti)) return false;
-  if (tC.ab === "return" && on(g, tC) && t.came === false && isHome(g, t.id, ti)) return "return";
-  if (!g.tapMode && tGrant === "return" && !g.retUsed && (g.l4 === "uncondition" || isHome(g, t.id, ti))) return "return";
-  t.owner = a.owner;
-  if (tC.ab === "claws" && on(g, tC)) slots[ai] = { ...slots[ai], clawed: true };
-  if (aC.ab === "flock" && on(g, aC)) slots[ti] = { ...slots[ti], l: slots[ti].r, r: slots[ti].l };
-  for (const d of [-1, 1]) { // the bearer: whatever it claims beside it, the ground locks to its own side
-    const k = nb(g, ti, d); if (k < 0 || !slots[k] || slots[k].owner !== a.owner) continue;
-    const n = g.C[slots[k].id]; if (n.ab === "bearer" && on(g, n)) slots[ti] = { ...slots[ti], ground: a.owner };
+  if (!t || t.spent || t.owner === a.owner) return false;
+  const tC = cardOf(g, t);
+  let av = faceOf(g, slots, ai, dir), tv = faceOf(g, slots, ti, -dir);
+  for (const d of [-1, 1]) {
+    const k = nb(g, ti, d); if (k < 0 || k === ai || !slots[k]) continue;
+    const n = cardOf(g, slots[k]); if (n.ab === "bearer" && on(g, n)) { av = Math.max(1, av - 2); break; }
   }
+  const tie = av === tv && !(tC.ab === "storm" && on(g, tC));
+  if (!(av > tv || tie)) return false;
+  if (shielded(g, slots, ti)) return false;
+  if (tC.ab === "gate" && on(g, tC) && !t.gateUsed) { t.gateUsed = true; return "gate"; }
+  t.owner = a.owner;
   return tie ? "tie" : true;
 }
+
 function lodge(g, slotsIn, cardId, i, rev, side) {
-  const c = g.C[cardId], own = side || c.who;
-  const slots = slotsIn.slice().map(x => x ? { ...x, age: (x.age || 0) + 1 } : x);
+  const own = side || "you", c = cardById(g, cardId, own), sigs = [];
+  const slots = slotsIn.slice().map(x => x ? Object.assign({}, x, { age: (x.age || 0) + 1 }) : x);
   const first = !slotsIn.some(x => x && x.owner === own);
-  slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, age: 0, first };
-  if (g.glanceOn && g.glanceOn !== own) slots[i].glanced = true;
-  if (c.ab === "blaze" && on(g, c)) slots[i].ground = own;
-  if (c.ab === "return" && on(g, c)) slots[i].came = g.retUsed ? true : false;
-  if (grantOf(g, c) === "return") slots[i].came = g.retUsed ? true : false;
-  if (c.ab === "turning" && on(g, c)) {
-    let best = -1, bv = 0;
-    [-1, 1].forEach(d => { const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner === own) return;
-      const face = d === 1 ? slots[k].l : slots[k].r, back = d === 1 ? slots[k].r : slots[k].l;
-      if (face > back && face - back > bv) { bv = face - back; best = k; } });
-    if (best >= 0) slots[best] = { ...slots[best], l: slots[best].r, r: slots[best].l };
+  slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, by: own, age: 0, first };
+  let at = i;
+  if (on(g, c) && c.ab === "flock") {
+    const ns = [-1, 1].map(d => nb(g, i, d)).filter(k => k >= 0 && k !== i && slots[k]);
+    const k = ns.find(x => (slots[x].ground || slots[x].owner) !== own);
+    const pick = k != null ? k : ns[0];
+    if (pick != null) {
+      const mine = Object.assign({}, slots[i]), theirs = Object.assign({}, slots[pick]);
+      slots[pick] = Object.assign({}, mine, { age: 0 }); slots[i] = theirs;
+      at = pick; sigs.push("the flock trades places.");
+    }
+  } else for (const d of [-1, 1]) {
+    const k = nb(g, i, d); if (k < 0 || k === i || !slots[k]) continue;
+    const n = cardOf(g, slots[k]);
+    if (n.ab !== "claws" || !on(g, n) || (slots[k].ground || slots[k].owner) === own) continue;
+    const away = i + (i > k ? 1 : -1);
+    if (away < 0 || away >= slots.length || slots[away]) continue;
+    slots[away] = Object.assign({}, slots[i], { age: 0 }); slots[i] = null; at = away;
+    sigs.push("the claws shove it along one station."); break;
   }
-  if (c.ab === "venus") [-1, 1].forEach(d => {
-    const t = nb(g, i, d); if (t < 0 || !slots[t] || noSoften(g, slots, t)) return;
-    const key = d === 1 ? "l" : "r";
-    if (slots[t][key] > 1) slots[t] = { ...slots[t], [key]: slots[t][key] - 1 };
-  });
-  if (c.ab === "guide" && on(g, c)) { // it trades the grounds beside it as it lands
-    const a = nb(g, i, -1), b = nb(g, i, 1);
-    if (a >= 0 && b >= 0 && slots[a] && slots[b]) {
-      const ta = { ...slots[a] }, tb2 = { ...slots[b] };
-      slots[a] = { ...tb2, age: ta.age }; slots[b] = { ...ta, age: tb2.age };
+  for (const d of [-1, 1]) {
+    const k = nb(g, at, d); if (k < 0 || k === at || !slots[k]) continue;
+    const n = cardOf(g, slots[k]); if (!on(g, n)) continue;
+    if (n.ab === "hand" && (slots[k].ground || slots[k].owner) === own) {
+      slots[at] = Object.assign({}, slots[at], { boon: (slots[at].boon || 0) + 1 });
+      sigs.push("the hand raises what lands beside it.");
+    }
+    if (n.ab === "veil" && !slots[k].vused) {
+      slots[k] = Object.assign({}, slots[k], { vused: true });
+      slots[at] = Object.assign({}, slots[at], { l: slots[at].r, r: slots[at].l, turned: true });
+      sigs.push("the veil turns the first card that lands beside it.");
+    }
+    if (n.ab === "jewel") {
+      const hi = Math.max(slots[k].l, slots[k].r), lo = Math.min(slots[k].l, slots[k].r);
+      const nl = d === 1 ? hi : lo, nr = d === 1 ? lo : hi;
+      if (slots[k].l !== nl || slots[k].r !== nr) { slots[k] = Object.assign({}, slots[k], { l: nl, r: nr, turned: true }); sigs.push("the jewel turns its stronger face to meet it."); }
     }
   }
-  for (const d of [-1, 1]) { // lodged beside the bearer: the ground is its owner's from the start
-    const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner !== own) continue;
-    const n = g.C[slots[k].id]; if (n.ab === "bearer" && on(g, n)) slots[i].ground = own;
+  if (on(g, c) && c.ab === "root") {
+    let any = false;
+    for (const d of [-1, 1]) { const k = nb(g, at, d); if (k < 0 || k === at || !slots[k]) continue; slots[k] = Object.assign({}, slots[k], { l: slots[k].r, r: slots[k].l, turned: true }); any = true; }
+    if (any) sigs.push("the root turns both its neighbours.");
   }
-  for (const d of [-1, 1]) { // the ghost chills, the veil turns, the hand steps aside — only ever an opponent's card
-    const k = nb(g, i, d); if (k < 0 || !slots[k] || slots[k].owner === own) continue;
-    const n = g.C[slots[k].id]; if (!on(g, n)) continue;
-    if (n.ab === "ghost" && !slots[k].vused) { slots[k] = { ...slots[k], vused: true }; slots[i].ghosted = true; }
-    if (n.ab === "veil" && !slots[k].vused) { slots[k] = { ...slots[k], vused: true }; slots[i] = { ...slots[i], l: slots[i].r, r: slots[i].l }; }
-    if (n.ab === "hand" && !slots[k].moved) {
-      const away = slots.findIndex(x => !x);
-      if (away >= 0) { slots[away] = { ...slots[k], moved: true, age: 0 }; slots[k] = null; }
+  if (on(g, c) && c.ab === "blaze") {
+    let best = -1, bv = -1;
+    for (const d of [-1, 1]) {
+      const k = nb(g, at, d); if (k < 0 || k === at || !slots[k]) continue;
+      if ((slots[k].ground || slots[k].owner) === own) continue;
+      const f = Math.max(slots[k].l, slots[k].r); if (f > bv) { bv = f; best = k; }
     }
+    if (best >= 0) { slots[best] = Object.assign({}, slots[best], { blazed: true }); sigs.push("the blaze marks it two lower, for good."); }
   }
-  return slots;
+  const soft = [];
+  if (c.ab === "venus") { // no live PvP card has ab "venus" (that's a sky-planet-only ability) — kept
+    [-1, 1].forEach(d => { // for structural parity with the client's shared _lodge, harmless no-op here
+      const t = nb(g, at, d); if (t < 0 || !slots[t]) return;
+      const key = d === 1 ? "l" : "r";
+      if (slots[t][key] > 1) { slots[t] = Object.assign({}, slots[t], { [key]: slots[t][key] - 1 }); soft.push(t); }
+    });
+  }
+  if (soft.length) sigs.push("venus softens her neighbors.");
+  return { slots, soft, sigs, at };
 }
-function runCascade(g, slots, queue) {
-  const ret = [], seq = [];
-  let flips = 0, guard = 0;
-  while (queue.length && guard++ < 60) {
-    const { from, to, dir } = queue.shift();
-    if (to < 0 || !slots[from] || !slots[to]) continue;
-    const res = tryFlip(g, slots, from, to, dir);
-    if (!res) continue;
-    flips++;
-    if (res === "return") { seq.push({ from, to, dir, ret: slots[to].id }); ret.push(slots[to].id); slots[to] = null; continue; }
-    seq.push({ from, to, dir, owner: slots[to].owner });
-    if (res === "tie") for (const d of [-1, 1]) { const far = nb(g, to, d); if (far >= 0 && far !== from) queue.push({ from: to, to: far, dir: d }); }
-    const claimer = slots[from].owner, victim = claimer === "you" ? "sky" : "you";
-    if (!slots[to].drummed) { // the drum answers what's taken from its own side, from wherever it stands
-      const ks = slots.map((x, xi) => x && x.owner === victim && g.C[x.id].ab === "drum" && on(g, g.C[x.id]) ? xi : -1).filter(xi => xi >= 0);
-      if (ks.length) { const k = ks[0]; slots[to] = { ...slots[to], drummed: true }; queue.push({ from: k, to, dir: k > to ? -1 : 1 }); }
-    }
-    const fk = nb(g, to, 1);
-    if (fk >= 0 && slots[fk] && slots[fk].owner === victim && !slots[to].followed) {
-      const n = g.C[slots[fk].id];
-      if (n.ab === "follower" && on(g, n)) { slots[to] = { ...slots[to], followed: true }; queue.push({ from: fk, to, dir: -1 }); }
-    }
-    if (g.C[slots[from].id].ab === "mars") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir }); }
-  }
-  return { flips, ret, seq };
-}
+
+// resolve()'s seq entries carry `set`/`miss`/`sig`/`printed` alongside `owner`/`ret` — the client's
+// own `_step()` animation reads all of these (turn-flags for veil/root, miss-flags for the gate/
+// chamber/return, toast text, `printed` for the throne's reach fx). manzil-lobby.js's `move_confirmed`
+// mapping must forward every one of these fields; dropping any silently breaks that signature's
+// animation/state in a real PvP match without erroring.
 function resolve(g, slotsIn, cardId, i, rev, side) {
-  const own = side || g.C[cardId].who;
-  const slots = lodge(g, slotsIn, cardId, i, rev, side);
-  const queue = [];
-  for (const d of [-1, 1]) { // the listener strikes what lands beside it
-    const k = nb(g, i, d);
-    if (k >= 0 && slots[k] && slots[k].owner !== own && g.C[slots[k].id].ab === "listener" && on(g, g.C[slots[k].id])) queue.push({ from: k, to: i, dir: -d });
-  }
+  const lg = lodge(g, slotsIn, cardId, i, rev, side);
+  const slots = lg.slots, soft = lg.soft, sigs = lg.sigs;
+  if (lg.at != null) i = lg.at;
+  const own = side || "you", me = cardById(g, cardId, own);
+  const queue = [], seq = [];
+  slots.forEach((x, xi) => {
+    if (!x || !x.reArm || (x.ground || x.owner) !== own || (x.age || 0) < 1) return;
+    slots[xi] = Object.assign({}, slots[xi], { reArm: false });
+    seq.push({ from: xi, to: xi, dir: 1, miss: true, set: { reArm: false }, sig: "the return strikes again." });
+    for (const d of [-1, 1]) { const k = nb(g, xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d }); }
+  });
   queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
-  const out = runCascade(g, slots, queue);
-  return { slots, flips: out.flips, ret: out.ret, seq: out.seq };
+  const opp = slots.length - 1 - i;
+  if (on(g, me) && me.ab === "glance" && opp !== i) queue.push({ from: i, to: opp, dir: opp > i ? 1 : -1, sig: "the glance strikes across the road." });
+  slots.forEach((x, xi) => {
+    if (!x || xi === i) return;
+    const xc = cardOf(g, x);
+    if (xc.ab !== "glance" || !on(g, xc)) return;
+    if (slots.length - 1 - xi !== i) return;
+    queue.push({ from: xi, to: i, dir: i > xi ? 1 : -1, sig: "the glance was watching that ground." });
+  });
+  let heartFired = false;
+  for (;;) {
+    if (!queue.length) {
+      if (heartFired || !slots.every(x => x)) break;
+      heartFired = true;
+      slots.forEach((x, xi) => {
+        if (!x) return;
+        const xc = cardOf(g, x);
+        if (xc.ab !== "heart" || !on(g, xc)) return;
+        for (const d of [-1, 1]) { const k = nb(g, xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d, sig: "the heart strikes as the road fills." }); }
+      });
+      if (!queue.length) break;
+    }
+    const cur = queue.shift();
+    const { from, to, dir } = cur;
+    if (to < 0 || to >= slots.length || !slots[from] || !slots[to]) continue;
+    const tgt = slots[to], tC = cardOf(g, tgt), tOwn = tgt.ground || tgt.owner;
+    if (tC.ab === "chamber" && !tgt.struck) { slots[to] = Object.assign({}, slots[to], { struck: true }); seq.push({ from, to, dir, miss: true, set: { struck: true } }); }
+    const res = tryFlip(g, slots, from, to, dir);
+    if (res === "gate") { seq.push({ from, to, dir, miss: true, set: { gateUsed: true }, sig: "the gate turns the first strike aside." }); continue; }
+    if (!res) continue;
+    const fromC = cardOf(g, slots[from]) || {}, fromAb = fromC.ab;
+    const set = {};
+    if (on(g, fromC) && fromAb === "throne") set.boon = (slots[to].boon || 0) + 1;
+    if (on(g, fromC) && fromAb === "crown") set.crowned = true;
+    const hasSet = set.boon != null || set.crowned === true;
+    if (hasSet) slots[to] = Object.assign({}, slots[to], set);
+    seq.push({ from, to, dir, owner: slots[to].owner, sig: cur.sig, set: hasSet ? set : null });
+    if (on(g, tC) && tC.ab === "ghost" && slots[from] && (slots[from].ground || slots[from].owner) !== tOwn) {
+      slots[from] = Object.assign({}, slots[from], { owner: tOwn });
+      seq.push({ from: to, to: from, dir: -dir, owner: tOwn, sig: "the ghost trades places with its taker." });
+    }
+    if (!slots[to].followed) for (const d of [-1, 1]) {
+      const k = nb(g, to, d); if (k < 0 || k === from || !slots[k]) continue;
+      const n = cardOf(g, slots[k]);
+      if (n.ab === "follower" && on(g, n) && (slots[k].ground || slots[k].owner) === tOwn) {
+        slots[to] = Object.assign({}, slots[to], { followed: true });
+        queue.push({ from: k, to, dir: k > to ? -1 : 1, sig: "the follower answers for its neighbour." });
+        break;
+      }
+    }
+    if (fromAb === "mars") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "mars carries the strike onward." }); }
+    if (on(g, fromC) && fromAb === "turning") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the turning carries onward." }); }
+    if (fromC.grantOn && fromC.quad === "suzaku") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the vermilion bird's strike carries two stations." }); }
+  }
+  if (on(g, me) && me.ab === "return" && slots[i] && !seq.some(x => x.from === i && !x.miss)) {
+    slots[i] = Object.assign({}, slots[i], { reArm: true });
+    seq.push({ from: i, to: i, dir: 1, miss: true, set: { reArm: true }, sig: "the return took nothing: it strikes again next turn." });
+  }
+  return { slots, seq, soft, sigs, at: i };
 }
-// ---- the tap: one move kind, three quarters. Design's 25 Aug build (HANDOFF-TAP-MEASURED-25AUG.md).
-// vermilion bird strikes again from where it stands; white tiger locks its ground;
-// black tortoise comes home to be lodged again. azure dragon has no tap, by design.
-function tapKind(g, slots, i, own) {
-  const s = slots[i];
-  if (!g.tapMode || !s || s.owner !== own) return null;
-  if (g.tapped && g.tapped[s.id]) return null;
-  if (g.tapOwnCardsOnly && g.C[s.id].who !== own) return null;   // only cards that started in your hand
-  const gr = grantOf(g, g.C[s.id]);
-  if (gr === "lead")   return "strike";
-  if (gr === "guard")  return "lock";
-  if (gr === "return") return "home";
-  return null;
-}
-function doTap(g, slotsIn, i, own) {
-  const kind = tapKind(g, slotsIn, i, own);
-  if (!kind) return null;
-  const slots = slotsIn.slice().map(x => x ? { ...x } : x);
-  const id = slots[i].id;
-  if (kind === "lock") { slots[i].ground = own; return { slots, flips: 0, ret: [], seq: [], kind, id }; }
-  if (kind === "home") { slots[i] = null; return { slots, flips: 0, ret: [id], seq: [], kind, id }; }
-  // strike: turn first if it has two faces, then strike both neighbours from where it stands.
-  // nothing is lodged, so no lodge signature fires a second time.
-  if (canTurn(g, id)) { const t = slots[i].l; slots[i].l = slots[i].r; slots[i].r = t; }
-  const queue = [{ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 }];
-  const out = runCascade(g, slots, queue);
-  return { slots, flips: out.flips, ret: out.ret, seq: out.seq, kind, id };
-}
-const tapSlots = (g, own) => g.slots.map((s, i) => tapKind(g, g.slots, i, own) ? i : -1).filter(i => i >= 0);
+
 function slotW(g, slots, i, ctx) {
-  const s = slots[i]; if (!s) return { who: null, w: 0 };
-  if (ctx && ctx.sil[i]) return { who: null, w: 0, silent: true };
-  const c = g.C[s.id], home = isHome(g, s.id, i), own = s.ground || s.owner;
+  const s = slots[i];
+  if (!s) return { who: null, w: 0, silent: !!(ctx && ctx.sil && ctx.sil[i]) };
+  const c = cardOf(g, s);
+  if (c.grantOn && c.quad === "genbu" && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true }; // the black tortoise's grant
+  if (ctx && ctx.sil && ctx.sil[i]) return { who: null, w: 0, silent: true };
+  if (s.spent) return { who: null, w: 0, silent: true };
+  const home = isHome(g, s, i);
   let j = 0;
-  if (c.ab === "jupiter") j = g.jupiterMode === "on its home only" ? (home ? 1 : 0) : g.jupiterMode === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
+  if (c.ab === "jupiter") j = 1; // jupiterMode "always" — the locked default, the only mode that ever ships
   let w = 1 + j + (home ? 1 : 0);
+  if (ctx && ctx.guide && ctx.guide[s.ground || s.owner] && home) w += 1;
   if (on(g, c)) {
-    if (c.ab === "gathered") w += 1;
-    if (c.ab === "crown") { for (const d of [-1, 1]) { const k = nb(g, i, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) { w += 1; break; } } }
     if (c.ab === "district") w += 1;
-    if (c.ab === "hideaway") w += 1;
-    if (c.ab === "heart") { // a comeback card: counts two while its own side holds less of the road
-      let mine = 0, theirs = 0;
-      slots.forEach(x => { if (!x) return; (x.ground || x.owner) === own ? mine++ : theirs++; });
-      if (theirs > mine) w += 1;
-    }
+    if (c.ab === "void") w += 1;
+    if (c.ab === "listener") for (const d of [-1, 1]) { const k = nb(g, i, d); if (k >= 0 && k !== i && slots[k]) w += 1; }
+    if (c.ab === "hideaway") w = 0;
+    if (c.ab === "chamber" && !(s.by && s.by !== s.owner)) w = (!s.struck && slots.every(x => x)) ? 4 : 2;
   }
-  let who = own;
-  if (ctx && ctx.thread && (i === 0 || i === g.len - 1)) who = ctx.thread;
-  if (on(g, c) && c.ab === "mane") {
-    const a = nb(g, i, -1), b = nb(g, i, 1);
-    if (a >= 0 && b >= 0 && slots[a] && slots[b]) {
-      const oa = slots[a].ground || slots[a].owner, ob = slots[b].ground || slots[b].owner;
-      // single-player only: whoever holds both its neighbours gains the mane's count, but
-      // never the sky — measured 25 aug, a symmetric version favoured her by -3.0 net,
-      // because her own evaluation claims in pairs more often than the player does.
-      // g.maneFair (set true for PvP, see mkGame) restores the symmetric version so
-      // neither PvP seat gets a free advantage from whichever side is locally "you".
-      if (oa === ob && (g.maneFair || oa === "you")) who = oa;
-    }
+  for (const d of [-1, 1]) {
+    const k = nb(g, i, d); if (k < 0 || k === i || !slots[k]) continue;
+    const n = cardOf(g, slots[k]); if (!on(g, n)) continue;
+    if (n.ab === "hideaway") w += 1;
+    if (n.ab === "void" && d === -1) w = Math.max(0, w - 1);
   }
+  let who = s.ground || s.owner;
+  const dl = nb(g, i, -1);
+  if (dl >= 0 && dl !== i && slots[dl]) { const n = cardOf(g, slots[dl]); if (n.ab === "drum" && on(g, n)) who = slots[dl].ground || slots[dl].owner; }
   return { who, w };
 }
+
 function ctxOf(g, slots) {
-  let thread = null;
-  slots.forEach(s => { if (s && g.C[s.id].ab === "thread" && on(g, g.C[s.id])) thread = s.ground || s.owner; });
-  const sil = {};
-  slots.forEach((s, i) => { // the empty district silences both sides of it
-    if (!s) return; const c = g.C[s.id];
-    if (c.ab !== "district" || !on(g, c)) return;
-    [-1, 1].forEach(d => { const k = nb(g, i, d); if (k >= 0 && slots[k]) sil[k] = true; });
+  const sil = {}, guide = {};
+  slots.forEach((s, i) => {
+    if (!s) return;
+    const c = cardOf(g, s); if (!on(g, c)) return;
+    const own = s.ground || s.owner;
+    if (c.ab === "district") for (const d of [-1, 1]) { const k = nb(g, i, d); if (k >= 0 && k !== i && slots[k] && (slots[k].ground || slots[k].owner) !== own) sil[k] = true; }
+    if (c.ab === "guide") guide[own] = true;
   });
-  return { thread, sil };
+  return { sil, guide };
 }
+
 function counts(g, slots) {
   const ctx = ctxOf(g, slots);
   let you = 0, sky = 0;
   slots.forEach((s, i) => { const r = slotW(g, slots, i, ctx); if (!r.who) return; if (r.who === "you") you += r.w; else sky += r.w; });
   return [you, sky];
 }
+
 function boardWinner(g, slots) {
   const [you, sky] = counts(g, slots);
   if (you !== sky) return you > sky ? "you" : "sky";
-  return g.tieRule === "the sky" ? "sky" : g.tieRule === "a draw" ? "draw" : "you";
+  return (g.tieRule || "a draw") === "a draw" ? "draw" : (g.tieRule === "the sky" ? "sky" : "you");
 }
 
-const legalSlots = (g) => g.slots.map((s, i) => s ? -1 : i).filter(i => i >= 0);
-function bestYouReply(g, slots, hand) {
-  let best = null;
-  hand.forEach(id => {
-    (canTurn(g, id) ? [false, true] : [false]).forEach(rev => {
-      slots.forEach((s, i) => {
-        if (s) return;
-        const [y, k] = counts(g, resolve(g, slots, id, i, rev, "you").slots);
-        if (best === null || y - k > best) best = y - k;
-      });
-    });
-  });
-  return best;
-}
-// her move: greedy on the count, plus a two-ply reply term weighted by reading depth
-// A STABLE, HAND-ORDER-INDEPENDENT TIEBREAK.
-// The agents used a strict `>`, so among equally-scored moves whichever came FIRST IN HAND
-// ORDER won. That made the order of the five worth 17.9 points to careful play. Ties now
-// break on a hash of the move itself, so shuffling the hand cannot change the choice.
-function moveKey(g, id, i, rev) {
-  let h = (((id * 73856093) ^ (i * 19349663) ^ ((rev ? 1 : 0) * 83492791) ^ ((g.tonight || 1) * 2654435761)) >>> 0);
-  h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
-  return h >>> 0;
-}
-function skyMove(g) {
-  let best = null;
-  g.sky.forEach(id => {
-    const revs = (g.C[id].ab === "mercury" || canTurn(g, id)) ? [false, true] : [false];
-    revs.forEach(rev => {
-      legalSlots(g).forEach(i => {
-        const r = resolve(g, g.slots, id, i, rev, "sky");
-        const [y, k] = counts(g, r.slots);
-        let score = (k - y) * 10;
-        if (g.depth > 0) {
-          const rest = g.sky.filter(x => x !== id);
-          const reply = bestYouReply(g, r.slots, g.you);
-          if (reply !== null) score -= reply * g.depth;
-        }
-        const key = moveKey(g, id, i, rev);
-        if (best === null || score > best.score || (score === best.score && key > best.key)) best = { id, i, rev, score, r, key };
-      });
-    });
-  });
-  if (g.skyCanTap) tapSlots(g, "sky").forEach(i => {
-    const r = doTap(g, g.slots, i, "sky"); if (!r) return;
-    const [y, k] = counts(g, r.slots);
-    let score = (k - y) * 10;
-    if (g.depth > 0) {
-      const reply = bestYouReply(g, r.slots, g.you);
-      if (reply !== null) score -= reply * g.depth;
-    }
-    const key = moveKey(g, r.id, i, true);
-    if (best === null || score > best.score || (score === best.score && key > best.key))
-      best = { id: r.id, i, rev: false, score, r, key, tap: r.kind };
-  });
-  return best;
-}
-function youMove(g) { // the careful player: same shape, so skill is one dial
-  let best = null;
-  g.you.forEach(id => {
-    (canTurn(g, id) ? [false, true] : [false]).forEach(rev => {
-      legalSlots(g).forEach(i => {
-        const r = resolve(g, g.slots, id, i, rev, "you");
-        const [y, k] = counts(g, r.slots);
-        let score = (y - k) * 10;
-        if (g.youDepth > 0) {
-          let worst = null;
-          g.sky.forEach(sid => legalSlots({ ...g, slots: r.slots }).forEach(si => {
-            if (r.slots[si]) return;
-            const r2 = resolve({ ...g, slots: r.slots }, r.slots, sid, si, false, "sky");
-            const [y2, k2] = counts(g, r2.slots);
-            if (worst === null || k2 - y2 > worst) worst = k2 - y2;
-          }));
-          if (worst !== null) score -= worst * g.youDepth;
-        }
-        const key = moveKey(g, id, i, rev);
-        if (best === null || score > best.score || (score === best.score && key > best.key)) best = { id, i, rev, score, r, key };
-      });
-    });
-  });
-  tapSlots(g, "you").forEach(i => {
-    const r = doTap(g, g.slots, i, "you"); if (!r) return;
-    const [y, k] = counts(g, r.slots);
-    let score = (y - k) * 10;
-    if (g.youDepth > 0) {
-      let worst = null;
-      g.sky.forEach(sid => legalSlots({ ...g, slots: r.slots }).forEach(si => {
-        if (r.slots[si]) return;
-        const r2 = resolve({ ...g, slots: r.slots }, r.slots, sid, si, false, "sky");
-        const [y2, k2] = counts(g, r2.slots);
-        if (worst === null || k2 - y2 > worst) worst = k2 - y2;
-      }));
-      if (worst !== null) score -= worst * g.youDepth;
-    }
-    const key = moveKey(g, r.id, i, true);
-    if (best === null || score > best.score || (score === best.score && key > best.key))
-      best = { id: r.id, i, rev: false, score, r, key, tap: r.kind };
-  });
-  return best;
-}
-function playBoard(cfg) {
-  const g = mkGame(cfg);
-  g.youDepth = cfg.youDepth == null ? 8 : cfg.youDepth;
-  let flips = 0, guard = 0;
-  while (g.slots.some(s => !s) && (g.you.length || g.sky.length) && guard++ < 80) {
-    const side = g.turn;
-    const mv = side === "you" ? (g.you.length ? youMove(g) : null) : (g.sky.length ? skyMove(g) : null);
-    if (!mv) { g.turn = side === "you" ? "sky" : "you"; continue; }
-    if (mv.tap) {                       // free, and it does not hand the board back
-      g.slots = mv.r.slots; flips += mv.r.flips;
-      g.tapped[mv.id] = true;
-      if (mv.tap === "home") g[side] = g[side].concat([mv.id]);   // comes home to its own hand
-      if (mv.r.ret.length) { const back = side === "you" ? "sky" : "you"; g[back] = g[back].concat(mv.r.ret); g.retUsed = true; }
-      g.taps++;
-      if (!g.tapCostsTurn) continue;     // free: same side moves again
-      g.turn = side === "you" ? "sky" : "you";
-      continue;
-    }
-    g.slots = mv.r.slots; flips += mv.r.flips;
-    if (side === "you") g.you = g.you.filter(x => x !== mv.id); else g.sky = g.sky.filter(x => x !== mv.id);
-    if (mv.r.ret.length) {   // a returning card belongs to the side that did NOT move
-      const back = side === "you" ? "sky" : "you";
-      g[back] = g[back].concat(mv.r.ret); g.retUsed = true;
-    }
-    g.glanceOn = (g.C[mv.id].ab === "glance" && on(g, g.C[mv.id])) ? side : false;
-    g.turn = side === "you" ? "sky" : "you";
-  }
-  const [you, sky] = counts(g, g.slots);
-  // handsYou/handsSky expose the final hand contents (not the board tally above) — added so a
-  // returning card's destination is testable at all; see the two "comes home" vectors below.
-  return { winner: boardWinner(g, g.slots), you, sky, flips, taps: g.taps, slots: g.slots, handsYou: g.you, handsSky: g.sky };
-}
-
-// the five dealt from the pack: seeded, tonight's mansion first when it is carried
-function deal(pack, seed, tonight, guarantee) {
-  if (!pack || pack.length <= 5) return (pack || []).slice();
-  let h = (seed ^ 2166136261) >>> 0;
-  const rnd = () => { h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0; return h / 4294967296; };
-  const bag = pack.slice(), out = [];
-  if (guarantee !== false && bag.includes(tonight)) out.push(bag.splice(bag.indexOf(tonight), 1)[0]);
-  while (out.length < 5 && bag.length) out.push(bag.splice(Math.floor(rnd() * bag.length), 1)[0]);
-  return out;
-}
-
-// conformance vectors: a port is faithful only if every one of these reproduces.
-// each is [name, setup, expectation]; run them with runVectors().
-const VECTORS = [
-  ["ties flip", g => { g.slots[0] = { id: 17, owner: "you", l: 6, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "sky"],
-  ["a tie-flip strikes on, past her reach", g => {
-    // she lodges at 0 and can only reach slot 1. slot 2 falls only because the tie-flip attacks onward.
-    g.slots[1] = { id: 17, owner: "you", l: 6, r: 6, age: 3 }; g.slots[2] = { id: 16, owner: "you", l: 6, r: 6, age: 3 };
-    const r = resolve(g, g.slots, 1, 0, false, "sky");
-    return [r.slots[1].owner, r.slots[2].owner].join("/");
-  }, "sky/sky"],
-  ["tied counts are yours", g => { g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 1 }; g.slots[1] = { id: 2, owner: "sky", l: 6, r: 4, age: 1 }; g.len = 2; return boardWinner(g, g.slots.slice(0, 2)); }, "you"],
-  ["saturn's ground is never claimed", g => { g.slots[1] = { id: 101, owner: "sky", l: 9, r: 5, age: 3 }; return resolve(g, g.slots, 24, 0, false, "you").slots[1].owner; }, "sky"],
-  ["dominion counts two", g => { g.tonight = 1; g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 0 }; return counts(g, g.slots)[0]; }, 2],
-  ["jupiter counts two", g => { g.slots[3] = { id: 105, owner: "sky", l: 7, r: 8, age: 0 }; return counts(g, g.slots)[1]; }, 2],
-  ["the gate takes the lead", g => mkGame({ C: g.C, you: [1], sky: [101], leader: "sky" }).turn, "you"],
-  ["the bearer keeps the ground it's lodged beside", g => { g.slots[0] = { id: 2, owner: "you", l: 6, r: 4, age: 2 }; const s = lodge(g, g.slots, 17, 1, false, "you"); return s[1].ground; }, "you"],
-  ["the bearer keeps the ground it claims beside", g => { g.slots[0] = { id: 2, owner: "you", l: 6, r: 4, age: 2 }; g.slots[1] = { id: 20, owner: "sky", l: 1, r: 1, age: 3 }; const r = resolve(g, g.slots, 17, 2, false, "you"); return r.slots[1].ground; }, "you"],
-  ["the gathered stars count two", g => { g.tonight = 9; g.slots[0] = { id: 3, owner: "you", l: 7, r: 6, age: 0 }; return counts(g, g.slots)[0]; }, 2],
-  ["the follower answers when its side is claimed", g => {
-    g.slots[1] = { id: 6, owner: "sky", l: 1, r: 1, age: 3 }; g.slots[2] = { id: 4, owner: "sky", l: 9, r: 9, age: 3 };
-    const r = resolve(g, g.slots, 17, 0, false, "you"); return [r.slots[1].owner, r.flips].join("/");
-  }, "sky/2"],
-  ["the blaze keeps its ground", g => { const s = lodge(g, g.slots, 5, 4, false, "you"); s[4].owner = "sky"; return slotW(g, s, 4, ctxOf(g, s)).who; }, "you"],
-  ["the storm cannot be tied, anywhere (at home)", g => { g.tonight = 6; g.slots[0] = { id: 6, owner: "you", l: 8, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "you"],
-  ["the storm cannot be tied, anywhere (away)", g => { g.tonight = 1; g.slots[0] = { id: 6, owner: "you", l: 8, r: 6, age: 3 }; return resolve(g, g.slots, 1, 1, false, "sky").slots[0].owner; }, "you"],
-  ["the return comes home once, on its own ground", g => { g.tonight = 7; const s = lodge(g, g.slots, 7, 0, false, "you"); const r = resolve({ ...g, tonight: 7, slots: s }, s, 101, 1, false, "sky"); return [r.slots[0] === null ? "gone" : "stayed", r.ret[0]].join("/"); }, "gone/7"],
-  ["the return does not trigger off its own ground", g => { g.tonight = 1; const s = lodge(g, g.slots, 7, 0, false, "you"); const r = resolve({ ...g, tonight: 1, slots: s }, s, 101, 1, false, "sky"); return r.slots[0] === null ? "gone" : "stayed"; }, "stayed"],
-  ["the ghost dims the first opposing lodge beside it, once", g => {
-    g.slots[1] = { id: 8, owner: "you", l: 6, r: 6, age: 2 };
-    const s1 = lodge(g, g.slots, 101, 2, false, "sky"); const f1 = faceOf({ ...g, slots: s1 }, s1, 2, -1);
-    const s2 = lodge({ ...g, slots: s1 }, s1, 102, 0, false, "sky"); const f2 = faceOf({ ...g, slots: s2 }, s2, 0, 1);
-    return f1 + "/" + f2;
-  }, "7/6"],
-  ["the glance dims her next by two", g => { g.glanceOn = true; const s = lodge(g, g.slots, 101, 4, false, "sky"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 3],
-  ["the mane: her card, you hold both sides, you gain it", g => { g.slots[1] = { id: 11, owner: "sky", l: 6, r: 5, age: 0 }; g.slots[0] = { id: 20, owner: "you", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "you", l: 6, r: 6, age: 2 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).who; }, "you"],
-  ["the mane: your card, sky holds both sides, stays yours", g => { g.slots[1] = { id: 11, owner: "you", l: 6, r: 5, age: 0 }; g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).who; }, "you"],
-  ["the mane: maneFair restores symmetry for PvP", g => { g.maneFair = true; g.slots[1] = { id: 11, owner: "you", l: 6, r: 5, age: 0 }; g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 2 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).who; }, "sky"],
-  ["the turning turns her", g => { g.slots[1] = { id: 101, owner: "sky", l: 9, r: 5, age: 2 }; const s = lodge(g, g.slots, 12, 0, false, "you"); return s[1].l; }, 5],
-  ["the jewel cannot be softened", g => { g.slots[0] = { id: 14, owner: "you", l: 7, r: 7, age: 2 }; const s = lodge(g, g.slots, 103, 1, false, "sky"); return s[0].r; }, 7],
-  ["the veil turns the first card that lodges beside it", g => { const s = lodge(g, g.slots, 15, 0, false, "you"); const s2 = lodge({ ...g, slots: s }, s, 101, 1, false, "sky"); return [s2[1].l, s2[1].r].join(","); }, "5,9"],
-  ["baseline: without the veil, no turn happens", g => { g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 3 }; const s2 = lodge(g, g.slots, 101, 1, false, "sky"); return [s2[1].l, s2[1].r].join(","); }, "9,5"],
-  ["the claws' claimer fights at -2", g => { g.slots[0] = { id: 16, owner: "you", l: 6, r: 6, age: 3 }; const r = resolve(g, g.slots, 101, 1, false, "sky"); return faceOf({ ...g, slots: r.slots }, r.slots, 1, 1); }, 3],
-  ["the crown counts two beside its own ground", g => { g.slots[0] = { id: 5, owner: "you", l: 5, r: 6, age: 0 }; g.slots[1] = { id: 17, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).w; }, 2],
-  ["the crown: no bonus with no ground beside it", g => { g.slots[0] = { id: 20, owner: "sky", l: 6, r: 6, age: 0 }; g.slots[1] = { id: 17, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 1, ctxOf(g, g.slots)).w; }, 1],
-  ["the heart counts two while its side holds less of the road", g => { g.slots[0] = { id: 18, owner: "you", l: 7, r: 7, age: 0 }; g.slots[1] = { id: 20, owner: "sky", l: 6, r: 6, age: 0 }; g.slots[2] = { id: 20, owner: "sky", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 2],
-  ["the heart: no bonus while ahead or even", g => { g.slots[0] = { id: 18, owner: "you", l: 7, r: 7, age: 0 }; g.slots[1] = { id: 20, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 1],
-  ["the root opens higher", g => { const s = lodge(g, g.slots, 19, 3, false, "you"); return faceOf({ ...g, slots: s }, s, 3, 1); }, 8],
-  ["the flock turns what it claims as it joins", g => { g.slots[0] = { id: 20, owner: "sky", l: 2, r: 3, age: 3 }; const r = resolve(g, g.slots, 20, 1, false, "you"); return [r.slots[0].owner, r.slots[0].l, r.slots[0].r].join(","); }, "you,3,2"],
-  ["the empty district counts two, unconditionally", g => { g.tonight = 5; g.slots[4] = { id: 21, owner: "you", l: 2, r: 8, age: 0 }; g.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 0 }; return counts(g, g.slots)[0]; }, 2],
-  ["the empty district silences both sides of it", g => { g.slots[1] = { id: 21, owner: "you", l: 2, r: 8, age: 0 }; g.slots[0] = { id: 1, owner: "sky", l: 6, r: 5, age: 0 }; g.slots[2] = { id: 1, owner: "sky", l: 6, r: 5, age: 0 }; return counts(g, g.slots)[1]; }, 0],
-  ["the listener strikes what lands", g => { g.slots[0] = { id: 22, owner: "you", l: 7, r: 4, age: 3 }; return resolve(g, g.slots, 21, 1, false, "sky").slots[1].owner; }, "you"],
-  ["the drum answers what's taken from its side, from wherever it stands", g => {
-    g.slots[8] = { id: 23, owner: "you", l: 9, r: 9, age: 3 }; g.slots[1] = { id: 20, owner: "you", l: 1, r: 1, age: 3 };
-    const r = resolve(g, g.slots, 101, 0, false, "sky"); return [r.slots[1] && r.slots[1].owner, r.flips].join("/");
-  }, "you/2"],
-  ["the void weakens everything beside it, either owner", g => {
-    g.slots[4] = { id: 24, owner: "you", l: 5, r: 6, age: 2 }; g.slots[3] = { id: 1, owner: "sky", l: 6, r: 5, age: 2 }; g.slots[5] = { id: 1, owner: "you", l: 6, r: 5, age: 2 };
-    return [faceOf(g, g.slots, 3, 1), faceOf(g, g.slots, 5, -1)].join(",");
-  }, "4,5"],
-  ["the hideaway counts its own ground two", g => { g.slots[0] = { id: 25, owner: "you", l: 5, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 2],
-  ["the chamber shields a landing", g => { g.slots[0] = { id: 26, owner: "you", l: 7, r: 5, age: 3 }; const s = lodge(g, g.slots, 20, 1, false, "you"); return resolve({ ...g, slots: s }, s, 101, 2, false, "sky").slots[1].owner; }, "you"],
-  ["the guide trades the two grounds beside it as it lands", g => {
-    g.slots[0] = { id: 1, owner: "you", l: 6, r: 5, age: 5 }; g.slots[2] = { id: 2, owner: "sky", l: 6, r: 4, age: 7 };
-    const s = lodge(g, g.slots, 27, 1, false, "you");
-    return [s[0].id, s[0].owner, s[0].age, s[2].id, s[2].owner, s[2].age].join(",");
-  }, "2,sky,6,1,you,8"],
-  ["the thread holds both ends", g => { g.slots[0] = { id: 101, owner: "sky", l: 9, r: 5, age: 0 }; g.slots[8] = { id: 102, owner: "sky", l: 8, r: 6, age: 0 }; g.slots[4] = { id: 28, owner: "you", l: 5, r: 6, age: 0 }; return counts(g, g.slots)[1]; }, 0],
-  ["the casual agent's move", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "you", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; q.youDepth = 0; const m = youMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "18@7"],
-  // Re-baselined for the moveKey tiebreak (item 1, 25 Aug handoff): all three were
-  // genuine ties under the old strict `>` compare, resolved by hand-order position.
-  // The new hash-based tiebreak picks a different (still valid) tied move.
-  ["the careful agent's move", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "you", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; q.youDepth = 8; const m = youMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "10@8"],
-  ["her move on the same board", g => { const q = mkGame({ C: g.C, tonight: 11, you: [5, 10, 18], sky: [102, 104], leader: "sky", depth: 8 }); q.slots[2] = { id: 6, owner: "you", l: 8, r: 6, age: 2 }; q.slots[3] = { id: 101, owner: "sky", l: 9, r: 5, age: 1 }; const m = skyMove(q); return m.id + "@" + m.r.slots.findIndex((s, i) => s && !q.slots[i]); }, "104@1"],
-  ["a full board plays out", g => { const r = playBoard({ C: g.C, tonight: 11, you: [5, 6, 10, 17, 18], sky: [101, 102, 103, 104, 105], leader: "sky", depth: 8, youDepth: 8 }); return r.winner + "/" + r.you + "/" + r.sky; }, "you/7/4"],
-
-  // owner-relative pass (24 aug 2026): every signature above is framed from the "you" seat.
-  // these mirror them from the "sky" seat to prove the fix isn't seat-locked either way.
-  ["[sky] the bearer keeps the ground it's lodged beside", g => { g.slots[0] = { id: 2, owner: "sky", l: 6, r: 4, age: 2 }; const s = lodge(g, g.slots, 17, 1, false, "sky"); return s[1].ground; }, "sky"],
-  ["[sky] the bearer keeps the ground it claims beside", g => { g.slots[0] = { id: 2, owner: "sky", l: 6, r: 4, age: 2 }; g.slots[1] = { id: 20, owner: "you", l: 1, r: 1, age: 3 }; const r = resolve(g, g.slots, 17, 2, false, "sky"); return r.slots[1].ground; }, "sky"],
-  ["[sky] the ghost dims the first opposing lodge, once", g => { g.slots[1] = { id: 8, owner: "sky", l: 6, r: 6, age: 2 }; const s1 = lodge(g, g.slots, 101, 2, false, "you"); return faceOf({ ...g, slots: s1 }, s1, 2, -1); }, 7],
-  ["[sky] the turning turns them", g => { g.slots[1] = { id: 101, owner: "you", l: 9, r: 5, age: 2 }; const s = lodge(g, g.slots, 12, 0, false, "sky"); return s[1].l; }, 5],
-  ["[sky] the jewel cannot be softened", g => { g.slots[0] = { id: 14, owner: "sky", l: 7, r: 7, age: 2 }; const s = lodge(g, g.slots, 103, 1, false, "you"); return s[0].r; }, 7],
-  ["[sky] the veil turns the first card that lodges beside it", g => { const s = lodge(g, g.slots, 15, 0, false, "sky"); const s2 = lodge({ ...g, slots: s }, s, 101, 1, false, "you"); return [s2[1].l, s2[1].r].join(","); }, "5,9"],
-  ["[sky] the heart counts two while its side holds less of the road", g => { g.slots[0] = { id: 18, owner: "sky", l: 7, r: 7, age: 0 }; g.slots[1] = { id: 20, owner: "you", l: 6, r: 6, age: 0 }; g.slots[2] = { id: 20, owner: "you", l: 6, r: 6, age: 0 }; return slotW(g, g.slots, 0, ctxOf(g, g.slots)).w; }, 2],
-  ["[sky] the void weakens everything beside it too", g => { g.slots[4] = { id: 24, owner: "sky", l: 5, r: 6, age: 2 }; g.slots[3] = { id: 1, owner: "you", l: 6, r: 5, age: 2 }; return faceOf(g, g.slots, 3, 1); }, 4],
-  ["[sky] the listener strikes what lands", g => { g.slots[0] = { id: 22, owner: "sky", l: 7, r: 4, age: 3 }; return resolve(g, g.slots, 21, 1, false, "you").slots[1].owner; }, "sky"],
-  ["[sky] the chamber shields a landing", g => { g.slots[0] = { id: 26, owner: "sky", l: 7, r: 5, age: 3 }; const s = lodge(g, g.slots, 20, 1, false, "sky"); return resolve({ ...g, slots: s }, s, 101, 2, false, "you").slots[1].owner; }, "sky"],
-  ["[sky] the blaze keeps its ground", g => { const s = lodge(g, g.slots, 5, 4, false, "sky"); s[4].owner = "you"; return slotW(g, s, 4, ctxOf(g, s)).who; }, "sky"],
-  ["[sky] the return comes home once, on its own ground", g => { g.tonight = 7; const s = lodge(g, g.slots, 7, 0, false, "sky"); const r = resolve({ ...g, tonight: 7, slots: s }, s, 101, 1, false, "you"); return [r.slots[0] === null ? "gone" : "stayed", r.ret[0]].join("/"); }, "gone/7"],
-  ["[sky] the glance dims their next by two", g => { g.glanceOn = "sky"; const s = lodge(g, g.slots, 101, 4, false, "you"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 3],
-  ["the glance never dims its own caster", g => { g.glanceOn = "you"; const s = lodge(g, g.slots, 101, 4, false, "you"); return faceOf({ ...g, slots: s }, s, 4, 1); }, 5],
-  ["[sky] the gate takes the lead", g => mkGame({ C: g.C, you: [101], sky: [1], leader: "you" }).turn, "sky"],
-];
-
-// tap vectors: L3/L4 grants + the tap (merged 25 Aug, research/tapvec.js, 18/18 originally).
-// self-contained — each builds its own lvl:3 game rather than reusing the shared vector harness's
-// lvl:2 default, since grants and the tap are both inert below level 3.
-function mkTap(seat, extra) {
-  const C = makeCards({ lvl: 3 });
-  for (let i = 1; i <= 28; i++) C[200 + i] = { ...C[i], id: 200 + i, who: "sky", homeM: i };
-  return mkGame(Object.assign({ C, tonight: 1, len: 9, tapMode: true, skyCanTap: true, grantSides: "both" }, extra));
-}
-[["you", 9, 221], ["sky", 209, 21]].forEach(([seat, mine, theirs]) => {
-  VECTORS.push([`[${seat}] vermilion bird taps and strikes onward`, () => {
-    const g = mkTap(seat);
-    g.slots = lodge(g, g.slots, mine, 3, false, seat);
-    g.slots = lodge(g, g.slots, theirs, 4, false, seat === "you" ? "sky" : "you");
-    const before = g.slots[4].owner;
-    const r = doTap(g, g.slots, 3, seat);
-    return r && r.slots[4].owner === seat && before !== seat;
-  }, true]);
-});
-[["you", 10], ["sky", 210]].forEach(([seat, mine]) => {
-  VECTORS.push([`[${seat}] the throne turns, then strikes`, () => {
-    const g = mkTap(seat);
-    const theirs = seat === "you" ? 221 : 21;
-    g.slots = lodge(g, g.slots, mine, 3, false, seat);
-    g.slots = lodge(g, g.slots, theirs, 4, false, seat === "you" ? "sky" : "you");
-    const r = doTap(g, g.slots, 3, seat);
-    return r && r.slots[3].l === 9 && r.slots[4].owner === seat;
-  }, true]);
-});
-VECTORS.push(["the forced turn can cost the throne its strike", () => {
-  const g = mkTap("you");
-  g.slots = lodge(g, g.slots, 10, 3, false, "you");
-  g.slots = lodge(g, g.slots, 224, 4, false, "sky");   // the void, 9/3, left face 9
-  const r = doTap(g, g.slots, 3, "you");
-  return r && r.slots[4].owner === "sky";
-}, true]);
-[["you", 1], ["sky", 201]].forEach(([seat, mine]) => {
-  VECTORS.push([`[${seat}] white tiger taps and locks its ground`, () => {
-    const g = mkTap(seat);
-    g.slots = lodge(g, g.slots, mine, 2, false, seat);
-    const r = doTap(g, g.slots, 2, seat);
-    return r && r.slots[2].ground === seat;
-  }, true]);
-  VECTORS.push([`[${seat}] the locked ground still counts for its tapper`, () => {
-    const g = mkTap(seat);
-    g.slots = lodge(g, g.slots, mine, 2, false, seat);
-    const r = doTap(g, g.slots, 2, seat);
-    if (!r) return null;
-    const g2 = { ...g, slots: r.slots };
-    const after = resolve(g2, r.slots, seat === "you" ? 224 : 24, 3, false, seat === "you" ? "sky" : "you");
-    return slotW(g2, after.slots, 2, ctxOf(g2, after.slots)).who;
-  }, seat === "you" ? "you" : "sky"]);
-});
-[["you", 21], ["sky", 221]].forEach(([seat, mine]) => {
-  VECTORS.push([`[${seat}] black tortoise taps and leaves the board`, () => {
-    const g = mkTap(seat, { tonight: 21 });
-    g.slots = lodge(g, g.slots, mine, 5, false, seat);
-    const r = doTap(g, g.slots, 5, seat);
-    return r && r.slots[5] === null;
-  }, true]);
-  VECTORS.push([`[${seat}] and it is the tapper's own card coming home`, () => {
-    const g = mkTap(seat, { tonight: 21 });
-    g.slots = lodge(g, g.slots, mine, 5, false, seat);
-    const r = doTap(g, g.slots, 5, seat);
-    return r && r.ret[0];
-  }, mine]);
-});
-VECTORS.push(["azure dragon has no tap", () => {
-  const g = mkTap("you", { tonight: 14 });
-  g.slots = lodge(g, g.slots, 14, 1, false, "you");
-  return tapKind(g, g.slots, 1, "you");
-}, null]);
-VECTORS.push(["a card taps only once a board", () => {
-  const g = mkTap("you");
-  g.slots = lodge(g, g.slots, 1, 2, false, "you");
-  g.tapped = { 1: true };
-  return tapKind(g, g.slots, 2, "you");
-}, null]);
-VECTORS.push(["you cannot tap her card", () => {
-  const g = mkTap("you");
-  g.slots = lodge(g, g.slots, 201, 2, false, "sky");
-  return tapKind(g, g.slots, 2, "you");
-}, null]);
-VECTORS.push(["taps actually happen in a real board", () => {
-  const C = makeCards({ lvl: 3 });
-  for (let i = 1; i <= 28; i++) C[200 + i] = { ...C[i], id: 200 + i, who: "sky", homeM: i, lvl: 1, ab: null };
-  const r = playBoard({ C, you: [10, 1, 21, 14, 5], sky: [201, 202, 203, 204, 205],
-    tonight: 10, leader: "you", depth: 8, youDepth: 8, tapMode: true, grantSides: "both" });
-  return r.taps > 0;
-}, true]);
-VECTORS.push(["tapMode replaces the passive grants", () => {
-  const gg = mkTap("you", { tapMode: false });
-  return tapKind(gg, [{ id: 1, owner: "you" }], 0, "you");
-}, null]);
-
-// playBoard's own hand-bookkeeping (docs/handoffs/HANDOFF-L34-MERGE-25AUG.md §0): resolve()'s
-// `ret` was always correct, but playBoard used to route every return to g.you regardless of
-// owner. Neither of the two direct-resolve() return vectors above exercises this — they check
-// `ret`, not which hand playBoard puts it in. This is the seat where the bug actually showed:
-// sky owns the return card, "you" attacks it home, and the old code silently defected it to you.
-VECTORS.push(["[sky] playBoard returns her card to her own hand, not the mover's", () => {
-  const C = makeCards({ lvl: 2 });
-  const r = playBoard({ C, you: [101], sky: [7], tonight: 7, leader: "sky", depth: 0, youDepth: 0, len: 2 });
-  return r.slots[0] && r.slots[0].owner;
-}, "sky"]);
-VECTORS.push(["[you] playBoard returns your card to your own hand, not the mover's", () => {
-  const C = makeCards({ lvl: 2 });
-  const r = playBoard({ C, you: [7], sky: [101], tonight: 7, leader: "you", depth: 0, youDepth: 0, len: 2 });
-  return r.slots[0] && r.slots[0].owner;
-}, "you"]);
-function runVectors(opts) {
-  const out = [];
-  VECTORS.forEach(([name, fn, want]) => {
-    const C = makeCards(opts || {});
-    const g = mkGame({ C, you: [], sky: [], tonight: 1 });
-    let got;
-    try { got = fn(g); } catch (e) { got = "threw: " + e.message; }
-    out.push({ name, want, got, pass: String(got) === String(want) });
-  });
-  return out;
-}
-
-const API = { POOL, QUADRANT, grantOf, quadGrant, canTurn, doTap, tapKind, tapSlots, runCascade, PLANETS, makeCards, mkGame, on, nb, isHome, faceOf, safeNow, tryFlip, lodge, resolve, counts, slotW, ctxOf, boardWinner, bestYouReply, skyMove, youMove, playBoard, deal, VECTORS, runVectors };
+const API = { cards, deal, mkGame, faceOf, shielded, tryFlip, lodge, resolve, isHome, boardM, cardOf, cardById, slotW, ctxOf, counts, boardWinner, on, nb, POOL, QUAD_OF };
 if (typeof module !== "undefined") module.exports = API;
-if (typeof window !== "undefined") window.ManzilEngineV6 = API;
+
+// ---- self-checks: node starshard-api/lib/manzil-engine.js -----------------------------------
+if (require.main === module) {
+  const checks = [];
+  const ok = (name, cond) => checks.push([name, !!cond]);
+
+  // 1. a plain flip: 8 beats 6, higher takes it
+  {
+    const g = mkGame({ tonight: 1 });
+    g.slots[0] = { id: 6, l: 6, r: 8, owner: "you", by: "you", age: 1 }; // storm, right face 8
+    g.slots[1] = { id: 9, l: 5, r: 6, owner: "sky", by: "sky", age: 0 }; // glance, left face 5
+    const r = tryFlip(g, g.slots, 0, 1, 1);
+    ok("plain flip: 8 beats 5", r === true && g.slots[1].owner === "you");
+  }
+  // 2. a tie flips to the attacker (base rule)
+  {
+    const g = mkGame({ tonight: 1 });
+    g.slots[0] = { id: 2, l: 6, r: 5, owner: "you", by: "you", age: 1 };
+    g.slots[1] = { id: 4, l: 5, r: 7, owner: "sky", by: "sky", age: 0 };
+    const r = tryFlip(g, g.slots, 0, 1, 1);
+    ok("a tie flips to the attacker", r === "tie" && g.slots[1].owner === "you");
+  }
+  // 3. the storm cannot be tied
+  {
+    const g = mkGame({ tonight: 1, levels: { 6: 3 }, builds: { 6: { a: "g", b: "s" } } });
+    const C = cards({ levels: { 6: 3 }, builds: { 6: { a: "g", b: "s" } } });
+    g.C = C;
+    g.slots[0] = { id: 2, l: 6, r: 5, owner: "you", by: "you", age: 1 };
+    g.slots[1] = { id: 6, l: 5, r: 8, owner: "sky", by: "sky", age: 0 };
+    const r = tryFlip(g, g.slots, 0, 1, 1);
+    ok("the storm cannot be tied", r === false);
+  }
+  // 4. the gate turns the first strike aside, then stands open (build picks numbers at door 1 so
+  // byakko's OWN grant — the gate happens to sit in byakko's quadrant — doesn't also shield it;
+  // this isolates the gate's own ability from the quadrant grant it would otherwise also carry)
+  {
+    const g = mkGame({ tonight: 1 });
+    g.C = cards({ levels: { 1: 3 }, builds: { 1: { a: "n", aS: "l", b: "s" } } });
+    ok("the gate's own build carries no grant here (isolating its ability)", g.C[1].grantOn === false && g.C[1].ab === "gate");
+    g.slots[0] = { id: 2, l: 9, r: 9, owner: "you", by: "you", age: 1 };
+    g.slots[1] = { id: 1, l: 6, r: 6, owner: "sky", by: "sky", age: 0 };
+    const r1 = tryFlip(g, g.slots, 0, 1, 1);
+    ok("the gate turns the first strike aside", r1 === "gate" && g.slots[1].owner === "sky");
+    const r2 = tryFlip(g, g.slots, 0, 1, 1);
+    ok("the gate stands open after", r2 === true && g.slots[1].owner === "you");
+  }
+  // 5. dominion: a card on its own mansion, rotated by tonight, counts double
+  {
+    const g = mkGame({ tonight: 10 }); // station 0 == mansion 10 tonight
+    g.C = cards({ levels: { 10: 3 }, builds: { 10: { a: "g", b: "s" } } });
+    g.slots[0] = { id: 10, l: 7, r: 9, owner: "you", by: "you", age: 0 };
+    const [you, sky] = counts(g, g.slots);
+    ok("dominion doubles a card on its own (tonight-rotated) mansion", you === 2 && sky === 0);
+  }
+  {
+    const g = mkGame({ tonight: 1 }); // station 0 == mansion 1 tonight, NOT the throne's home (10)
+    g.C = cards({ levels: { 10: 3 }, builds: { 10: { a: "g", b: "s" } } });
+    g.slots[0] = { id: 10, l: 7, r: 9, owner: "you", by: "you", age: 0 };
+    const [you] = counts(g, g.slots);
+    ok("dominion does NOT fire off tonight's rotation (regression check for the boardM fix)", you === 1);
+  }
+  // 6. jupiter counts two, always
+  {
+    const g = mkGame({ tonight: 1 });
+    g.C = cards({});
+    g.C[999] = { id: 999, name: "Jupiter", l: 7, r: 8, who: "sky", ab: "jupiter", homeM: 0 };
+    g.slots[0] = { id: 999, l: 7, r: 8, owner: "you", by: "you", age: 0 };
+    const [you] = counts(g, g.slots);
+    ok("jupiter counts two", you === 2);
+  }
+  // 7. the black tortoise's grant: an empty shell once taken
+  {
+    const g = mkGame({ tonight: 1 });
+    g.C = cards({ levels: { 21: 2 }, builds: { 21: { a: "g" } } }); // district is genbu-quadrant
+    g.slots[0] = { id: 21, l: 3, r: 8, owner: "you", by: "you", age: 0 }; // by === owner: not yet taken
+    let r = slotW(g, g.slots, 0, ctxOf(g, g.slots));
+    ok("an untaken genbu-grant card counts normally (not yet a shell)", r.who === "you" && r.w > 0);
+    g.slots[0] = { id: 21, l: 3, r: 8, owner: "sky", by: "you", age: 0 }; // taken: by !== owner
+    r = slotW(g, g.slots, 0, ctxOf(g, g.slots));
+    ok("the black tortoise's grant: taken counts for nobody", r.who === null && r.shell === true);
+  }
+  // 8. mane is owner-relative (symmetric), not hardcoded to "you"
+  {
+    const g = mkGame({ tonight: 1 });
+    g.C = cards({ levels: { 11: 3 }, builds: { 11: { a: "g", b: "s" } } });
+    g.slots[0] = { id: 11, l: 6, r: 6, owner: "sky", by: "sky", age: 1 }; // the mane, sky's
+    g.slots[1] = { id: 2, l: 5, r: 5, owner: "sky", by: "sky", age: 0 }; // sky's own neighbour
+    const fv = faceOf(g, g.slots, 1, 1);
+    ok("the mane lifts its OWN side's neighbour (sky, here), not just \"you\"", fv === 6);
+  }
+  // 9. the throne raises what it takes, for good
+  {
+    const g = mkGame({ tonight: 1 });
+    g.C = cards({ levels: { 10: 3 }, builds: { 10: { a: "g", b: "s" } } });
+    g.slots[0] = { id: 10, l: 7, r: 9, owner: "you", by: "you", age: 1 };
+    g.slots[1] = { id: 9, l: 5, r: 6, owner: "sky", by: "sky", age: 0 };
+    const rr = resolve(g, g.slots, 10, 0, false, "you");
+    ok("the throne raises what it takes", rr.slots[1].boon === 1 && rr.slots[1].owner === "you");
+  }
+  // 10. the heart strikes both neighbours "at the fill" — distinct from its own initial lodge
+  // strike, which only ever attacks slots that are ALREADY occupied when it lodges. Lodge the
+  // heart with both neighbours still empty (no initial attempt at all, nothing to fail), fill
+  // them in later with weak cards, then confirm the heart gets a fresh attempt at both when a
+  // final move fills the road.
+  {
+    const g = mkGame({ tonight: 1, len: 3 });
+    g.C = cards({ levels: { 18: 3 }, builds: { 18: { a: "g", b: "s" } } }); // heart: l8 r7
+    const r1 = resolve(g, g.slots, 18, 1, false, "you"); // lodges alone in the middle, both sides empty
+    ok("the heart's initial lodge has no neighbours to strike yet", r1.seq.length === 0 && r1.slots[0] === null && r1.slots[2] === null);
+    let s2 = r1.slots.slice();
+    s2[0] = { id: 5, l: 1, r: 1, owner: "sky", by: "sky", age: 0 }; // a weak card fills in beside it later
+    const r2 = resolve(g, s2, 15, 2, false, "sky"); // the veil (printed l3) — too weak to claim the heart (r7) on its own lodge strike
+    const heartHits = r2.seq.filter(x => x.sig === "the heart strikes as the road fills.");
+    ok("the heart gets a fresh strike at both neighbours when the road fills", heartHits.length === 2 && r2.slots[0].owner === "you" && r2.slots[2].owner === "you");
+  }
+  // 11. the return re-arms and strikes again on the OWNER's next lodge (not any lodge)
+  {
+    const g = mkGame({ tonight: 1, len: 5 });
+    g.C = cards({ levels: { 7: 3 }, builds: { 7: { a: "g", b: "s" } } });
+    const r1 = resolve(g, g.slots, 7, 2, false, "you"); // nothing beside it: took nothing
+    ok("the return arms itself when it takes nothing", r1.slots[2].reArm === true);
+    let slots2 = r1.slots.slice();
+    slots2[0] = { id: 5, l: 1, r: 1, owner: "sky", by: "sky", age: 0 }; // not adjacent — sky's move, ages the return to 1
+    const rSky = resolve(g, slots2, 5, 0, false, "sky");
+    ok("a different side's lodge does not trigger the return's re-arm", rSky.slots[2].reArm === true);
+    let slots3 = rSky.slots.slice();
+    slots3[1] = { id: 4, l: 1, r: 1, owner: "sky", by: "sky", age: 0 }; // a weak card beside the armed return
+    const r3 = resolve(g, slots3, 12, 4, false, "you"); // YOUR next lodge — the return's own side — fires it
+    ok("the return strikes again on the owner's next turn and claims the low card", r3.slots[1].owner === "you" && r3.slots[2].reArm === false);
+  }
+  // 12. door-based levels: grant off without the "g" pick even at high level
+  {
+    const C = cards({ levels: { 1: 4 }, builds: { 1: { a: "n", aS: "l", b: "n", bS: "r", c: "l" } } });
+    ok("level 4 with numbers picked at every door: no grant, no signature", C[1].grantOn === false && C[1].ab === null);
+    ok("door bonuses land on the picked faces", C[1].l === 6 + 2 + 1 && C[1].r === 6 + 1);
+  }
+  // 13. door-based levels: grant AND signature both on when both doors picked
+  {
+    const C = cards({ levels: { 18: 4 }, builds: { 18: { a: "g", b: "s", c: "r" } } });
+    ok("grant + signature both wake on their own doors", C[18].grantOn === true && C[18].ab === "heart");
+  }
+  // 14. the two-seat card table — the same id (the storm, 6) at different real levels for each
+  // player at once, the exact collision a single flat table cannot represent.
+  {
+    const g = mkGame({
+      tonight: 1,
+      C: {
+        you: cards({ levels: { 6: 3 }, builds: { 6: { a: "g", b: "s" } } }), // storm awake
+        sky: cards({ levels: { 6: 1 }, builds: {} }), // sky's own storm, still asleep
+      },
+    });
+    g.slots[0] = { id: 6, l: 6, r: 8, owner: "you", by: "you", age: 1 }; // your storm: awake, can't be tied
+    g.slots[1] = { id: 6, l: 6, r: 8, owner: "sky", by: "sky", age: 1 }; // sky's own storm: asleep
+    ok("your storm (by:you) reads your real level", cardOf(g, g.slots[0]).ab === "storm" && cardOf(g, g.slots[0]).lvl === 3);
+    ok("sky's storm (by:sky) reads THEIR real level, same card id", cardOf(g, g.slots[1]).ab === null && cardOf(g, g.slots[1]).lvl === 1);
+    const g2 = mkGame({ tonight: 1, C: g.C });
+    g2.slots[0] = { id: 2, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+    g2.slots[1] = { id: 6, l: 5, r: 8, owner: "you", by: "you", age: 0 }; // your awake storm, defending
+    const r = tryFlip(g2, g2.slots, 0, 1, 1); // 5 vs 5 would tie anywhere else — your storm can't be tied
+    ok("a tie against your awake storm still doesn't take it", r === false);
+  }
+
+  const fails = checks.filter(([, c]) => !c);
+  checks.forEach(([name, c]) => console.log((c ? "✓" : "✗") + " " + name));
+  console.log(fails.length ? ("\n" + fails.length + " FAILED") : ("\nall " + checks.length + " passed"));
+  process.exitCode = fails.length ? 1 : 0;
+}

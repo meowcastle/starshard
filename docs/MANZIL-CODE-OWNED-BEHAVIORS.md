@@ -124,6 +124,36 @@ still matters — check the specific items the patch's own area touches.
   account that predates this fix. Both `componentDidMount`'s passive
   resume and `_siGo`'s sign-in pull must call this, not a bare
   `getManzilPack()`.
+- [ ] **Real-time PvP ("find a match") is wired to the real Socket.io
+  lobby, not the old fake local-AI duel.** `duelSeekTap` connects a real
+  socket (`<script src="socket-io-client.js">`, loaded next to
+  `ephemeris2.js`/`manzil-art2.js`) and calls `queue_join` —
+  `starshard-api/lib/manzil-lobby.js` was already deployed and running
+  before this port, just never connected to any client. `duel.mode
+  "live"` is a NEW, distinct value from the pre-existing fake `"net"`
+  (a local AI wearing a random opponent's name) — nothing in the local
+  engine (`_resolve`/`_lodge`/`_skyMove`) may ever run for a live board;
+  every move (your own AND the opponent's) goes through `_netPlace()` →
+  the server's `move_confirmed` → `_step()` replaying the server's own
+  `seq`, using the server's authoritative `pf.{l,r}` face values
+  (`_faceOf()`'s own short-circuit on `duel.mode === "live"`), never
+  local computation — the server holds real per-player card levels/
+  builds the client can't see for the opponent's hand. `_finish()` has
+  an early return for `duel.mode === "live"` that skips its normal local
+  win-check/turn-flip/`_skyMove()` scheduling entirely and instead
+  reconciles `slots` from the server's post-move snapshot and applies
+  its `nextTurn` — losing that branch silently reintroduces a phantom
+  local AI opponent into a real match. Leaving a live match
+  (`pauseLeaveTap`/`pauseLogoutTap`) must emit `leave_match` before
+  cleaning up the socket, not just disconnect silently (the far hand
+  would otherwise sit on a 60-second disconnect-grace timer for a
+  deliberate exit). `starshard-api/lib/manzil-engine.js` was replaced
+  wholesale in the same port (a stale, pre-25-Aug ruleset before this)
+  — its own header documents the verification this had against the live
+  `.dc.html`'s engine functions, the two-seat `{you,sky}` card-table
+  model real per-player levels require, and what's deliberately excluded
+  (station laws, road-only grounds — the live client's own `_bossRule()`
+  exempts every duel mode from these, so a faithful PvP port does too).
 - [ ] **The cast/restore chart is timezone-correct, not device-local.**
   `birthCastTap`/`_castNow` and `_restoreChart()` both used to build the
   `Date` fed to `ephemeris2.js` via `new Date(y,m,d); dt.setHours(h,mm)`

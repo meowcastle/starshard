@@ -219,6 +219,7 @@
 </style>
 <script src="manzil-art2.js"></script>
 <script src="ephemeris2.js"></script>
+<script src="socket-io-client.js"></script>
 <style>
 </style>
 <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0A0603"></rect><circle cx="100" cy="78" r="27" fill="none" stroke="#FFB000" stroke-width="2"></circle><path d="M100 51 L100 105 M73 78 L127 78" stroke="#F0D89A" stroke-width="1.2" opacity=".5"></path><text x="100" y="146" text-anchor="middle" fill="#F0D89A" font-family="Georgia,serif" font-size="26">manzil</text></svg></template>
@@ -4621,6 +4622,7 @@ class Component extends DCLogic {
     window.removeEventListener("resize", this._onResize); window.removeEventListener("orientationchange", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf); clearInterval(this._tiltI);
+    this._netCleanup();
   }
   _startDrag(id, e) {
     if (this.state.phase !== "play" || this.state.turn !== "you" || this.state.busy) return;
@@ -4670,6 +4672,7 @@ class Component extends DCLogic {
     const st = this.state, i = st.dragOver;
     if (i !== null && i !== undefined && st.phase === "play" && st.turn === "you" && !st.busy && !st.slots[i] && this._legalSlot(st.slots, i)) {
       if (this._cards()[p.id].twoFaced) this.setState({ drag: null, dragOver: null, face: { id: p.id, i } });
+      else if (st.duel && st.duel.mode === "live") { this.setState({ drag: null, dragOver: null }); this._netPlace(p.id, i, false); }
       else { this.setState({ drag: null, dragOver: null }); this._commitPlace(p.id, i, false, "you"); }
     } else this.setState({ drag: null, dragOver: null, sel: null });
   }
@@ -4830,6 +4833,114 @@ class Component extends DCLogic {
     this._clearSeq();
     this.setState({ ...this._deckState(), ...this._freshRound(1, "you", mySide), phase: "play", chosen: mySide.slice(), chosenB: farSide.slice(), sky: farSide.slice(), round: 1, roundWins: [], road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, freeNight: false, duel: { a, b, mode, t: dt, opp: mode === "net" ? opp : null }, duelA: a, duelB: st.duelB, deckSel: st.deckSel, duelSeek: null, mull: null });
     this._afterDeal();
+  }
+  // REAL-TIME PvP (30 aug 2026, code): wires the "find a match" screen to the real Socket.io lobby
+  // (starshard-api/lib/manzil-lobby.js), already live and deployed but never connected to this
+  // file before — see docs/MANZIL-CODE-OWNED-BEHAVIORS.md. duel.mode "live" is a new, distinct
+  // mode from the pre-existing fake "net" (a local AI dressed up as a random opponent) — nothing
+  // else in this file's local engine ever runs for it; the server is the only truth. See
+  // _netPlace()/_netMoveConfirmed() for the move pipeline, and _faceOf()'s own short-circuit on
+  // `duel.mode === "live"` for why numbers come from the server's `pf`, never local computation.
+  _netQueue() {
+    clearTimeout(this._seekT);
+    this._netCleanup();
+    this.setState({ duelSeek: { stage: "seek" } });
+    (window.io ? Promise.resolve() : import("./socket-io-client.js")).then(() => {
+      const sock = window.io({ path: "/socket.io", withCredentials: true, transports: ["websocket", "polling"] });
+      this._netSock = sock;
+      sock.on("connect", () => {
+        sock.emit("queue_join", { pack: (this.state.deckSel || []).filter(id => id >= 1 && id <= 28) });
+      });
+      sock.on("auth_required", () => { this._netCleanup(); this.setState({ duelSeek: null }); this._go("signin"); });
+      sock.on("matched", (m) => {
+        this._netMatch = { matchId: m.matchId, oppName: m.opponent || "the far hand" };
+        this.setState({ duelSeek: { stage: "found", opp: { name: m.opponent || "the far hand", line: "the table is dealt…" } } });
+        this._seekT = setTimeout(() => { if (this._netSock) this._netSock.emit("match_ready_ack", { matchId: m.matchId }); }, 1700);
+      });
+      sock.on("board_start", (snap) => this._netBoardStart(snap));
+      sock.on("move_confirmed", (msg) => this._netMoveConfirmed(msg));
+      sock.on("board_result", (msg) => this._netBoardResult(msg));
+      sock.on("match_result", (msg) => this._netMatchResult(msg));
+      sock.on("move_rejected", () => this.setState({ busy: false }));
+      sock.on("opponent_disconnected", (msg) => {
+        const mins = Math.max(1, Math.round((msg.graceSeconds || 60) / 60));
+        this.setState({ log: "the far hand has gone quiet. it may return within " + mins + " minute" + (mins === 1 ? "" : "s") + "." });
+      });
+      sock.on("opponent_reconnected", () => this.setState({ log: "the far hand returns." }));
+      sock.on("match_abandoned", () => {
+        this._netCleanup();
+        if (this.state.duel && this.state.duel.mode === "live") this.setState({ phase: "duel1", duel: null, duelSeek: null, log: "the match ended: the far hand left." });
+        else this.setState({ duelSeek: null, log: "the table closed before it began." });
+      });
+      sock.on("disconnect", () => { if (this.state.duel && this.state.duel.mode === "live" && this.state.phase === "play") this.setState({ log: "the connection to the sky broke." }); });
+    }).catch(() => this.setState({ duelSeek: null, log: "the sky could not be reached." }));
+  }
+  _netCancelQueue() {
+    clearTimeout(this._seekT);
+    if (this._netSock) {
+      try {
+        if (this._netMatch) this._netSock.emit("leave_match", { matchId: this._netMatch.matchId }); // matched, still on the "found" beat
+        else this._netSock.emit("queue_cancel"); // still waiting in queue
+      } catch (e) {}
+    }
+    this._netCleanup();
+  }
+  _netCleanup() {
+    if (this._netSock) { try { this._netSock.disconnect(); } catch (e) {} this._netSock = null; }
+    this._netMatch = null; this._netPendingSlots = null; this._netPendingTurn = undefined;
+  }
+  _netBoardStart(snap) {
+    clearTimeout(this._seekT);
+    const a = this._userName(), b = (this._netMatch && this._netMatch.oppName) || "the far hand";
+    this._clearSeq();
+    this.setState({
+      ...this._deckState(),
+      phase: "play",
+      hand: (snap.hand || []).slice(), sky: (snap.oppHand || []).slice(),
+      slots: (snap.slots || []).map(s => s ? { ...s } : null),
+      round: snap.round || 1, roundWins: (snap.roundWins || []).slice(),
+      leader: snap.leader || "you", turn: snap.turn || "you",
+      duel: { a, b, mode: "live", t: (snap.tonight >= 1 && snap.tonight <= 28) ? snap.tonight : 1, opp: null },
+      duelA: a, duelB: b, deckSel: this.state.deckSel, duelSeek: null, mull: null,
+      road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: "", practice: false, tutor: false, freeNight: false,
+    });
+    this._afterDeal();
+  }
+  _netPlace(cardId, i, rev) {
+    if (!this._netSock || !this._netMatch || this.state.busy || this.state.turn !== "you") return;
+    this._buzz(8);
+    this.setState({ busy: true, sel: null, dropIdx: i, face: null });
+    this._netSock.emit("place", { matchId: this._netMatch.matchId, cardId, slot: i, rev: !!rev });
+  }
+  _netMoveConfirmed(msg) {
+    if (!this._netMatch || msg.matchId !== this._netMatch.matchId) return;
+    this._netPendingSlots = msg.slots || null;
+    this._netPendingTurn = msg.nextTurn === undefined ? null : msg.nextTurn;
+    const seq = msg.flips || [];
+    const flipsN = seq.filter(x => !x.miss).length;
+    this._shakeOn = flipsN >= 2;
+    if (flipsN >= 1) setTimeout(() => this._say(msg.side === "you" ? "hit" : "lost"), 420 + flipsN * 380);
+    this.setState(s => {
+      const slots = s.slots.slice();
+      const placed = msg.slots && msg.slots[msg.slot];
+      if (placed) slots[msg.slot] = { ...placed };
+      return {
+        slots, busy: true, dropIdx: msg.slot, flipIdx: null, duelI: null, duelSide: null, sel: null, inspect: null, face: null,
+        hand: msg.side === "you" ? (s.hand || []).filter(x => x !== msg.cardId) : s.hand,
+        sky: msg.side === "sky" ? (s.sky || []).filter(x => x !== msg.cardId) : s.sky,
+      };
+    }, () => this._step(seq, 0, msg.side));
+  }
+  _netBoardResult(msg) {
+    if (!this._netMatch || msg.matchId !== this._netMatch.matchId) return;
+    this.setState({ roundWins: (msg.roundWins || []).slice() });
+  }
+  _netMatchResult(msg) {
+    if (!this._netMatch || msg.matchId !== this._netMatch.matchId) return;
+    const won = msg.winner === "you";
+    this._buzz(won ? [10, 60, 18] : 24);
+    this.setState({ roundWins: (msg.roundWins || []).slice(), phase: won ? "won" : "lost" });
+    this._netCleanup();
   }
   _countCeremony(done) {
     const slots = this.state.slots;
@@ -6388,6 +6499,12 @@ class Component extends DCLogic {
   // every face modifier in the slate, resolved live: the one place a number is read
   _faceOf(slots, i, dir) {
     const s = slots[i]; if (!s) return 0;
+    // LIVE PvP (30 aug 2026, code): the server is the only truth for a live board's face values —
+    // the client never has the OPPONENT's real card levels/builds to recompute this locally (see
+    // manzil-lobby.js's own header on why), and would silently misrender an opponent's bearer/
+    // ghost/heart/void/veil/chamber otherwise. `pf` (post-flip authoritative {l,r}) rides on the
+    // slot itself, set from the server's own viewSlots() payload — short-circuit straight to it.
+    if (this.state && this.state.duel && this.state.duel.mode === "live" && s.pf) return dir === 1 ? s.pf.r : s.pf.l;
     const C = this._cards(), c = C[s.id];
     if (this._remedy() === i) return dir < 0 ? c.l : c.r; // the remedy: printed numbers, nothing added or taken
     let v = dir === 1 ? s.r : s.l;
@@ -6973,6 +7090,24 @@ class Component extends DCLogic {
     const t = setTimeout(() => {
       this.setState(s => {
         const st = { busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, shakeFx: false };
+        // LIVE PvP (30 aug 2026, code): _finish() otherwise recomputes the board winner locally
+        // (_boardWinner), flips whose turn it is, and — critically — schedules _skyMove(), none of
+        // which exist for a real networked match: there is no local AI opponent, turn and the win/
+        // loss/next-round decision all arrive separately over the socket (move_confirmed's own
+        // nextTurn, then board_result/match_result). _step()/_finish() are ONLY the animation
+        // replay here. Reconcile against the server's own authoritative post-move slots (closes a
+        // real gap: _step()'s incremental replay never updates a card's `pf`, so a neighbour whose
+        // printed face changed this move — boon, blaze, a turn — would otherwise show a stale
+        // number until the next full board sync) and apply the server's own next-turn assignment,
+        // then stop — no local win-check, no _skyMove.
+        if (s.duel && s.duel.mode === "live") {
+          const pend = this._netPendingSlots, turn = this._netPendingTurn;
+          this._netPendingSlots = null; this._netPendingTurn = undefined;
+          if (pend) st.slots = pend.map(x => x ? { ...x } : null);
+          if (turn) st.turn = turn;
+          if (turn === null && s.slots.every(x => x)) this._endT = setTimeout(() => this._countCeremony(() => {}), 900);
+          return st;
+        }
         if (this._reactPend) {
           const w = this._walkers().find(x => x.name === this._reactPend);
           if (w && w.react) { st.toast = { t: w.react, n: (s.toast ? s.toast.n : 0) + 1 }; st.reactDone = true; }
@@ -7070,7 +7205,8 @@ class Component extends DCLogic {
         }
         return st;
       }, () => {
-        if (this.state.turn === "sky" && this.state.phase === "play") {
+        // never fire the local AI for a real opponent's turn — see the live-mode early return above
+        if (this.state.turn === "sky" && this.state.phase === "play" && !(this.state.duel && this.state.duel.mode === "live")) {
           this._aiT = setTimeout(() => this._skyMove(), 800);
         }
       });
@@ -7295,7 +7431,11 @@ class Component extends DCLogic {
             if (st.selB != null && !st.slots[i] && this._legalSlot(st.slots, i)) { const cid = st.selB; this.setState({ selB: null }); this._commitPlace(cid, i, false, "sky"); }
             return;
           }
-          if (st.phase === "play" && st.turn === "you" && !st.busy && st.slots[i] && st.slots[i].owner === "you") {
+          // LIVE PvP (30 aug 2026, code): every one of these taps mutates st.slots directly on the
+          // client, with no server round-trip — fine for solo/seat modes (the local engine IS the
+          // truth there), but a real networked match's only truth is the server's own move_confirmed.
+          // Guarded off entirely for duel.mode "live"; see _netPlace()/the move_confirmed handler.
+          if (st.phase === "play" && st.turn === "you" && !st.busy && st.slots[i] && st.slots[i].owner === "you" && !(st.duel && st.duel.mode === "live")) {
             const mine = C[st.slots[i].id];
             if (st.pick !== null && st.pick !== i) { // the crossing trades grounds
               const sl = st.slots.slice().map(x => x ? { ...x } : x), a = sl[st.pick], b = sl[i];
@@ -7317,7 +7457,9 @@ class Component extends DCLogic {
           }
           if (st.phase !== "play" || st.turn !== "you" || st.busy || st.mull || st.sel === null || st.slots[i] || !this._legalSlot(st.slots, i)) return;
           const c = C[st.sel];
+          const live = st.duel && st.duel.mode === "live";
           if (c.twoFaced) this.setState({ face: { id: st.sel, i } });
+          else if (live) this._netPlace(st.sel, i, false);
           else this._commitPlace(st.sel, i, false, "you");
         },
         style: "width:86px;height:112px;border-radius:7px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:border-color .3s ease;" +
@@ -8931,14 +9073,14 @@ class Component extends DCLogic {
       foundOn: !!(st.duelSeek && st.duelSeek.stage === "found"),
       foundName: (st.duelSeek && st.duelSeek.opp && st.duelSeek.opp.name) || "",
       foundLine: (st.duelSeek && st.duelSeek.opp && st.duelSeek.opp.line) || "",
-      duelSeekTap: () => { clearTimeout(this._seekT); this.setState({ duelSeek: { stage: "seek" } }); this._seekT = setTimeout(() => { const r = this._roster(); const opp = r[Math.floor(Math.random() * r.length)]; this.setState({ duelSeek: { stage: "found", opp } }); this._seekT = setTimeout(() => { if (this.state.phase === "duel1") this._startDuel("net", opp); }, 1700); }, 1600); },
+      duelSeekTap: () => this._netQueue(),
       duelSeatLink: () => this.setState({ phase: "duel2" }),
       duelGo2Tap: () => this._startDuel("seat"),
       duelA: st.duelA !== undefined ? st.duelA : (this._duelSaved().a || ""),
       duelB: st.duelB !== undefined ? st.duelB : (this._duelSaved().b || ""),
       duelATyp: (e) => this.setState({ duelA: e.target.value }),
       duelBTyp: (e) => this.setState({ duelB: e.target.value }),
-      duelBackTap: () => { clearTimeout(this._seekT); this._go(st.navFrom === "mode" ? "mode" : "menu", { duelSeek: null, navFrom: null }); },
+      duelBackTap: () => { this._netCancelQueue(); this._go(st.navFrom === "mode" ? "mode" : "menu", { duelSeek: null, navFrom: null }); },
       ...((rnd => { const f = (on) => "position:absolute;inset:0;pointer-events:none;transition:opacity 1.8s ease;opacity:" + (on ? 1 : 0); return {
         duelArenaOn: !!st.duel,
         arenaS1: f(rnd === 0), arenaS2: f(rnd === 1), arenaS3: f(rnd === 2), arenaS4: f(rnd === 3), arenaS5: f(rnd === 4)
@@ -9057,6 +9199,13 @@ class Component extends DCLogic {
         if (forfeit && !st.leaveAsk) { this.setState({ leaveAsk: true }); return; }
         this._clearSeq();
         if (forfeit) { this._buzz([28, 90, 28]); this._saveWrec(st.roadWalker, false); this._wipeRoad(st.roadRung); }
+        // leaving a LIVE match tells the server (and so the far hand) right away, rather than
+        // waiting out the disconnect-grace timer as if the connection had just dropped (30 aug
+        // 2026, code — real PvP's own leave_match event, already implemented server-side).
+        if (st.duel && st.duel.mode === "live" && this._netSock && this._netMatch) {
+          try { this._netSock.emit("leave_match", { matchId: this._netMatch.matchId }); } catch (e) {}
+          this._netCleanup();
+        }
         this._go("menu", { ...this._deckState(), pauseOn: false, leaveAsk: false, forfeited: forfeit });
       },
       leaveBackTap: () => this.setState({ leaveAsk: false }),
@@ -9064,6 +9213,10 @@ class Component extends DCLogic {
       // since it sits in a different renderVals closure, same precedent as pmLogout/_castFive.
       pauseLogoutTap: () => {
         this._clearSeq();
+        if (st.duel && st.duel.mode === "live" && this._netSock && this._netMatch) {
+          try { this._netSock.emit("leave_match", { matchId: this._netMatch.matchId }); } catch (e) {}
+          this._netCleanup();
+        }
         try { localStorage.removeItem("manzil-v2-user"); } catch (e) {}
         const done = () => this.setState({ ...this._deckState(), phase: "arrive", pauseOn: false });
         if (this.api && this.api.logout) this.api.logout().then(done).catch(done); else done();
@@ -9085,8 +9238,8 @@ class Component extends DCLogic {
           faceSerpentNums: c2 ? c2.r + " | " + c2.l : "",
         };
       })(st.face),
-      faceSeat: () => st.face && this._commitPlace(st.face.id, st.face.i, false, "you"),
-      faceSerpent: () => st.face && this._commitPlace(st.face.id, st.face.i, true, "you"),
+      faceSeat: () => st.face && (st.duel && st.duel.mode === "live" ? this._netPlace(st.face.id, st.face.i, false) : this._commitPlace(st.face.id, st.face.i, false, "you")),
+      faceSerpent: () => st.face && (st.duel && st.duel.mode === "live" ? this._netPlace(st.face.id, st.face.i, true) : this._commitPlace(st.face.id, st.face.i, true, "you")),
       roundOverOn: st.phase === "round",
       roundWalkerOn: st.phase === "round" && !!st.road && !st.roadBoss && lastRound === "you" && !!st.roadWalker && st.roadRung < 8,
       roundWalkerLine: ((this._walkers().find(x => x.name === st.roadWalker) || {}).defeat) || "",
