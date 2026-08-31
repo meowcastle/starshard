@@ -4596,7 +4596,12 @@ class Component extends DCLogic {
     let entry = null; try { const h = window.location.hash;
       if (h === "#fresh" && !this._wiped) { this._wiped = true;
         // the true key list (30 aug 2026: "builds"/"note" never matched the real "build"/"buildv"/"noted" keys, and spec picks, lives, wipes, shards, moon and the nightbeat mark survived a wipe)
-        ["legend","birth","climbs","rungs","claims","lock","respec","wrec","lastclimb","boardn","pack","duelnames","build","buildv","noted","lives","wipe","shards","moon","nightbeat"].forEach(k => { try { localStorage.removeItem("manzil-v2-" + k); } catch (e2) {} }); }
+        // 31 aug 2026: "stairseen" and "firstlight" were missing — both are real one-shot flags that
+        // _syncProgress() sends to the server, so a wipe left two "you have seen this" marks standing
+        // and the opening beats they gate never played again. The list below is now exactly the
+        // sixteen keys _syncProgress persists, plus the six local-only ones (legend/birth/pack/
+        // boardn/duelnames/nightbeat). If a new progress key is added to _syncProgress, add it here.
+        ["legend","birth","climbs","rungs","claims","lock","respec","wrec","lastclimb","boardn","pack","duelnames","build","buildv","noted","lives","wipe","shards","moon","nightbeat","stairseen","firstlight"].forEach(k => { try { localStorage.removeItem("manzil-v2-" + k); } catch (e2) {} }); }
       entry = { "#tutorial": "pintro", "#birth": "birth", "#new": "arrive", "#fresh": "arrive" }[h] || null;
       if (h === "#new") this._forceNew = true; } catch (e) {}
     if (entry && !this._entryUsed) { this._entryUsed = true; try { window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch (e) {} }
