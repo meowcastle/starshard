@@ -597,6 +597,23 @@ own predictions corrected below):
    both. Design: consult this file before finalizing a full regeneration
    of this page, the same way you'd check it wasn't accidentally
    reverting a screen you already redesigned on purpose.**
+7. **The delivery shape itself is now specified:
+   `docs/DESIGN-DELIVERY-PROTOCOL.md`** (31 Aug 2026). Deliveries have
+   arrived as whole-workspace zips (297MB, 26 top-level `.dc.html`s) in
+   which stale copies of live files sit indistinguishable from current
+   ones — the Aug 30 one cost eight fixes, and the Aug 31 one would have
+   reverted a full day of work (PvP, the staging-audit fixes, real
+   logout) if applied wholesale. **Two traps that doc records, both
+   confirmed by hand:** `send-to-code/` is NOT automatically the safe
+   path — as of 31 Aug it still shipped the retired V1, not the deployed
+   V2 — and genuinely new work can ride in on an otherwise-stale file
+   (the 31 Aug sound pass existed only inside that stale top-level V2).
+   So a delivery can be neither accepted nor rejected wholesale: diff
+   every included file against the live repo copy, port what's actually
+   new onto the current file, and never replace a live file with a
+   delivered one unless the diff proves it's strictly ahead. The doc
+   also states what Design should ship instead (one folder, changed
+   files only, a required `WHATS-NEW.md`).
 
 **Then, the app wrapper** (`PLATFORM.md` — decided Aug 13). Ships to the
 App Store as a **Capacitor wrapper around the existing web build, not a
