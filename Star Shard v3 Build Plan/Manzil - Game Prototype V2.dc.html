@@ -5047,7 +5047,11 @@ class Component extends DCLogic {
   // that range (21,22,23,24,26,27,28) still have real level art/content, just not a station law, so
   // this is a deliberate demo-scope narrowing, not a claim they're broken. Revert to the wider range
   // to re-open them.
-  _moonOpen(id) { return id === 18 || id === 10 || id === 25; }
+  // THE OPEN LEVELS (31 aug 2026): the ring lights a house only when its level is actually built.
+  // Was 10/18/25 while those were the only three finished; the drum (23), the well (28) and the
+  // empty district (21) each shipped a full level the same day — law, scene, roster and art — so
+  // they join. Add an id here the moment its level lands, or the work is unreachable.
+  _moonOpen(id) { return [10, 18, 21, 23, 25, 28].indexOf(id) >= 0; }
   _moonTest(id) { return false; }
   // the four quarters of the sky, al-biruni's numbering. the animals are named to the player
   _quad(m) { return m >= 14 && m <= 20 ? "seiryuu" : m >= 7 && m <= 13 ? "suzaku" : m >= 21 && m <= 27 ? "genbu" : "byakko"; }
