@@ -4574,6 +4574,13 @@ class Component extends DCLogic {
       if (p === "mode" || p === "moon" || p === "road") { this._clearSeq(); this._go("menu"); return; }
       if (p === "shardapp") { this._clearSeq(); this._go("record", { navFrom: null }); return; }
       if (p === "deck" || p === "record" || p === "ledger") { this._clearSeq(); this._go("menu", { ...this._deckState(), deckSel: this.state.deckSel, navFrom: null }); return; }
+      // the lobby had no Escape binding at all (30 aug 2026, user) — every other pmOn-eligible phase
+      // either closes back to it or opens the pause overlay; the lobby itself just did nothing. Opens
+      // the same player-chip menu the corner button does, which now carries log out (see pmLogout).
+      // re-ported 30 aug 2026 (code): this specific line was the one piece of f8689f7 still missing
+      // after the earlier account-gate/logout re-port — the pmOpen/pmLogout wiring itself was intact,
+      // only this keybinding that reaches it from the lobby had been dropped.
+      if (p === "menu") { this.setState({ pmOpen: true }); return; }
       if (p === "play" || p === "round" || p === "over" || p === "won" || p === "lost" || p === "roadlost") this.setState({ pauseOn: true });
     };
     window.addEventListener("keydown", this._onKey);
