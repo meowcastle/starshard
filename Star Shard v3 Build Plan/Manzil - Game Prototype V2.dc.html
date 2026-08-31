@@ -36,6 +36,7 @@
   @keyframes mzStampIn{0%{opacity:0;transform:scale(1.8)}22%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
   @keyframes mzAntares{0%,100%{opacity:.86;transform:scale(1)}44%{opacity:1;transform:scale(1.06)}70%{opacity:.9;transform:scale(1.02)}}
   @keyframes mzSting{0%,100%{transform:rotate(0deg)}42%{transform:rotate(-7deg)}54%{transform:rotate(4deg)}}
+  @keyframes mzRotateHint{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
   /* mansion 25, the tents: the swallow swoops shallow and settles; the hidden star breathes low */
   @keyframes mzSwoop{0%,100%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(9px,-8px) rotate(-4deg)}58%{transform:translate(-6px,4px) rotate(3deg)}}
   @keyframes mzSmoke{0%{opacity:0;transform:translateY(6px)}30%{opacity:.5}100%{opacity:0;transform:translateY(-22px)}}
@@ -223,6 +224,13 @@
 <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0A0603"></rect><circle cx="100" cy="78" r="27" fill="none" stroke="#FFB000" stroke-width="2"></circle><path d="M100 51 L100 105 M73 78 L127 78" stroke="#F0D89A" stroke-width="1.2" opacity=".5"></path><text x="100" y="146" text-anchor="middle" fill="#F0D89A" font-family="Georgia,serif" font-size="26">manzil</text></svg></template>
 </helmet>
 <div style="height:100vh;display:flex;justify-content:center;align-items:center;background:#040302;position:relative;overflow:hidden">
+<sc-if value="{{ rotateOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:99;background:#040302;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px">
+    <div style="font-size:38px;color:#F0D89A;animation:mzRotateHint 1.8s ease-in-out infinite">⟳</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F2EAD6">turn your phone sideways</div>
+    <div style="font-family:'Karla',sans-serif;font-size:13px;color:#9A8A5E;max-width:280px;line-height:1.5">the road is wider than it is tall. turn to see the whole sky.</div>
+  </div>
+</sc-if>
 <div style="{{ deskBgStyle }}">
   <sc-for list="{{ deskStars }}" as="s" hint-placeholder-count="4"><div style="{{ s }}"></div></sc-for>
   <div style="{{ deskGlowStyle }}"></div>
@@ -1822,7 +1830,7 @@
   <div style="{{ arenaBlurStyle }};position:absolute;top:132px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:6">
     <sc-for list="{{ slots }}" as="s" hint-placeholder-count="9">
       <div style="{{ s.wrapStyle }}">
-      <div onClick="{{ s.onTap }}" onMouseEnter="{{ s.onPeek }}" onMouseLeave="{{ s.onPeekEnd }}" onTouchStart="{{ s.onHold }}" onTouchEnd="{{ s.onPeekEnd }}" onTouchCancel="{{ s.onPeekEnd }}" data-mzslot="{{ s.idx }}" style="{{ s.style }}">
+      <div onClick="{{ s.onTap }}" onMouseEnter="{{ s.onPeek }}" onMouseLeave="{{ s.onPeekEnd }}" onTouchStart="{{ s.onHold }}" onTouchEnd="{{ s.onHoldEnd }}" onTouchCancel="{{ s.onHoldEnd }}" data-mzslot="{{ s.idx }}" style="{{ s.style }}">
         <sc-if value="{{ s.emptyOn }}" hint-placeholder-val="{{ true }}">
           <svg viewBox="0 0 100 100" style="width:58px;height:52px;opacity:.42">
             <sc-for list="{{ s.emptyShapes }}" as="p" hint-placeholder-count="2">
@@ -1849,7 +1857,7 @@
           <div style="{{ s.lStyle }}">{{ s.l }}</div>
           <div style="{{ s.rStyle }}">{{ s.r }}</div>
           <sc-if value="{{ s.nameOn }}" hint-placeholder-val="{{ true }}">
-            <div style="position:absolute;top:52px;left:0;right:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:10.5px;color:#F2EAD6;text-align:center;line-height:1.1;padding:0 16px">{{ s.cname }}</div>
+            <div style="position:absolute;top:74px;left:0;right:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:10.5px;color:#F2EAD6;text-align:center;line-height:1.1;padding:0 16px">{{ s.cname }}</div>
           </sc-if>
           <sc-if value="{{ s.homeOn }}" hint-placeholder-val="{{ false }}">
             <svg viewBox="0 0 12 12" style="{{ s.homeStyle }}">
@@ -2060,7 +2068,7 @@
 
   <div style="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;z-index:6">
     <sc-for list="{{ handCards }}" as="c" hint-placeholder-count="5">
-      <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onPeekEnd }}" onTouchCancel="{{ c.onPeekEnd }}" data-mzhand="{{ c.hid }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
+      <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onHoldEnd }}" onTouchCancel="{{ c.onHoldEnd }}" data-mzhand="{{ c.hid }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
         <div style="position:absolute;top:2.5px;left:2.5px;right:2.5px;bottom:2.5px;border-radius:5px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.08)"></div>
         <svg viewBox="0 0 20 20" style="position:absolute;top:5px;right:5px;width:13px;height:13px;pointer-events:none;z-index:3;overflow:visible">
           <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ c.moonRim }}" stroke-width="1"></circle>
@@ -4545,6 +4553,9 @@ class Component extends DCLogic {
 
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
+    // iOS Safari doesn't reliably fire "resize" on a rotation (innerWidth/innerHeight can lag a
+    // frame behind), so the rotate-prompt needs its own listener rather than trusting resize alone.
+    window.addEventListener("orientationchange", this._onResize);
     this._onKey = (e) => {
       // ENTER ADVANCES THE CAST (30 aug 2026, user: "enter didnt work" when focus sat on a chip):
       // the listener rides the window, so it works wherever focus landed.
@@ -4597,7 +4608,7 @@ class Component extends DCLogic {
     }
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
+    window.removeEventListener("resize", this._onResize); window.removeEventListener("orientationchange", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf); clearInterval(this._tiltI);
   }
@@ -4681,9 +4692,17 @@ class Component extends DCLogic {
       this._strideT = setTimeout(() => this.setState({ strideFx: null }), 1200);
     }
   }
-  _advanceRound() {
+  // `sameRung` distinguishes this function's two callers, which need opposite behavior at a
+  // walker rung (28 aug 2026 fix, re-ported 30 aug 2026 — the fresh export had reverted to the
+  // single-caller shape this fix replaced, so a WON board at walker 5+ silently reset roundWins to
+  // [] and re-dealt a "round 1" at the same rung instead of continuing the match): false/omitted =
+  // called after a DECIDED rung's ceremony, advance to the NEXT physical rung (existing behavior,
+  // untouched); true = called mid-match, the current rung's best-of-N isn't decided yet, so this
+  // must continue THE SAME MATCH's next board (same walker, same rung, roundWins preserved) —
+  // falls through to the general "next board" logic below instead of the road-step branch.
+  _advanceRound(sameRung) {
     const st = this.state;
-    if (st.road && !st.roadBoss) {
+    if (st.road && !st.roadBoss && !sameRung) {
       // a chosen station keeps climbing from where it was picked; the walked road reads the saved rung
       const k = st.roadPick ? Math.min((st.roadRung || 0) + 1, 8) : Math.min(this._rungs()[this._tonight()] || 0, 8);
       this._clearSeq();
@@ -4698,6 +4717,9 @@ class Component extends DCLogic {
     this._clearSeq();
     const fr = this._freshRound(r, nextLeader, st.chosen, !st.nightWalker && !st.road && !st.duel);
     if (st.nightWalker) fr.sky = this._walkerFor(this._tonight()).hand.slice();
+    // a road rung mid-match: same walker as the board just played, re-padded with a round-varied
+    // seed so the filler cards differ board to board instead of repeating _freshRoadStep's fixed one
+    if (st.road && !st.roadBoss) fr.sky = this._seven(this._walkers()[st.roadRung].hand, st.roadRung + 11 + r);
     if (st.duel) fr.sky = (st.chosenB || []).slice();
     this.setState({ ...fr, round: r, roundWins: st.roundWins, phase: "play", selB: null });
     this._afterDeal();
@@ -5047,6 +5069,13 @@ class Component extends DCLogic {
   _mList() { return ["the gate", "the bearer", "the gathered stars", "the follower", "the blaze", "the storm", "the return", "the ghost", "the glance", "the throne", "the mane", "the turning", "the hand", "the jewel", "the veil", "the claws", "the crown", "the heart", "the root", "the flock", "the empty district", "the listener", "the drum", "the void", "the hideaway", "the chamber", "the guide", "the thread"]; }
   _tonight() {
     const st = this.state;
+    // the practice walk is authored against a fixed sky (card sheet, 27 aug 2026 rewrite): its script
+    // picks exact board slots to land two of the sky's dealt cards on their OWN mansion (dominion, the
+    // rule that a card lodged at home counts two at the count — user, 27 aug 2026: "we need dominion to
+    // happen in the tutorial"). that only holds if the walk's board is always the same nine mansions,
+    // so it pins tonight to the heart regardless of wherever a returning player last walked the moon.
+    // re-ported 30 aug 2026 (code) — the fresh export dropped this pin along with _zoomFor's fix above.
+    if (st && st.practice && st.tutor) return 18;
     if (st && st.duel && st.duel.t >= 1 && st.duel.t <= 28) return st.duel.t; // duels ride the moon's true road
     // the tweak outranks the glyph (27 aug 2026): a mansion named in the panel is an explicit
     // override and wins. left on "where the moon glyph left her", the in-game moon decides.
@@ -5701,39 +5730,19 @@ class Component extends DCLogic {
       if (s.owner === "sky" && this._bossRule() === "veil") return { back: true, notes: this._rows([{ label: "the veil's night", body: "her lodged cards close again once played." }]) };
     }
     else { c = C[+k.slice(1)]; if (!c) return null; }
+    const cid = s ? s.id : +k.slice(1);
     const you = s ? s.owner === "you" : true;
     const lines = [], notes = [];
     if (!s && c.twoFaced && this._abilityOn(c)) lines.push("two-faced. you choose which number faces which way when it lodges, and the throne may turn again after it lands.");
     else if (c.ab) {
-      const t = {
-        gate: "it lodges before her lead. once a board, when the sky leads, the gate takes the first turn.",
-        bearer: "the ground beside it stays yours. any mansion you claim next to the bearer counts yours to the end, whoever holds the card.",
-        gathered: "counts two at the count, and the stars strike both sides again every time she lodges anywhere on the road.",
-        follower: "it answers for its left. when she claims the card on the follower's left, the follower strikes it back at once.",
-        blaze: "its ground stays yours. the mansion the blaze lodges on counts as yours to the end, whoever holds the card.",
-        storm: "no tie ever takes the storm, wherever it stands. equal numbers do nothing to it: bigger or nothing.",
-        return: "it comes home once. the first claim against it sends it back to your hand instead of flipping, once a board, wherever it stands.",
-        ghost: "the first card she lands beside the ghost fights at −2 for the rest of the board. one chill, then it is spent.",
-        glance: "her next card fights at −2. the glance sees the blow coming.",
-        throne: "two-faced, and it may change its mind: tap the throne after it lands to turn it in place. once a board.",
-        mane: "+2 in company. both its faces fight two higher while a card stands on either side of it, and while both of those cards are yours the mane counts for you at the count, whoever holds it.",
-        turning: "it turns a neighbor. as it lodges, her card beside it swaps its numbers, the strong side facing away.",
-        hand: "it steps away. when she lands beside the hand, it walks off to the first open ground on the road. once a board.",
-        jewel: "neither face ever fights below seven. the hard light does not dim.",
-        veil: "it turns the first card she lands beside it: her strong number ends up facing away.",
-        claws: "they reach past their neighbor. as the claws land they also strike two grounds out, and whatever claims them fights at −2 from then on.",
-        crown: "counts two while the ground beside it is yours. hold its neighbor and the crown wears dominion.",
-        heart: "it beats when the road fills: one more strike at each neighbour.",
-        root: "planted. as your first lodge it fights +1, and nothing can take it for the rest of the board.",
-        flock: "it counts two in company. any card standing beside the flock makes it worth double at the count.",
-        district: "counts two, and sure-footed while the street is empty: with five or more grounds still open, nothing can take it.",
-        listener: "it strikes what lands beside it. when she lodges next to the listener, the listener fights first.",
-        drum: "it answers whatever she takes. wherever the drum stands, a card she claims from you is struck straight back.",
-        void: "beside the void, everything fights at −1: hers and yours alike.",
-        hideaway: "the prize ground. the mansion the hideaway stands on counts two, for whoever holds it at the count.",
-        chamber: "landings beside it are safe. your cards that lodge next to the chamber survive their first turn.",
-        guide: "it changes places with her card. when she lodges beside the guide, the two swap grounds and she ends up where it stood.",
-        thread: "it holds both ends of the road. the first and last mansions count for whoever holds the thread.",
+      // MANSION CARDS (1-28) ROUTE THROUGH _simpleMove(), the one source of truth (re-ported 30 aug
+      // 2026, code): the fresh export had reverted to a separate, hand-duplicated 28-entry copy here
+      // — the exact bug CLAUDE.md's "a card ability rewrite has to be swept everywhere the ability is
+      // described in prose" note already fixed once, describing mechanics that don't match what
+      // resolve()/tryFlip() actually do (e.g. this copy's gate was "lodges before her lead, takes the
+      // first turn" — a turn-order mechanic; the real gate is "the first strike against it misses").
+      // The five sky planets aren't in _simpleMove's table, so they keep their own text here.
+      const t = cid >= 1 && cid <= 28 ? this._simpleMove(cid) : {
         saturn: "saturn's ground is locked. it cannot be claimed, and holds this mansion to the end.",
         mars: "its claim strikes onward. a card mars claims fights its far neighbor in turn.",
         venus: "venus softened both neighbors' facing numbers by 1 as she lodged.",
@@ -6890,13 +6899,34 @@ class Component extends DCLogic {
                   this._nmT = setTimeout(() => this.setState({ nmBeat: false }), 2600); }
                 else { this._saveLives(lv); this.setState({ phase: "roadlost", wiped: false, lives: lv }); }
               }
-              else { this._roundX = setTimeout(() => this._advanceRound(), 240); }
+              else { this._roundX = setTimeout(() => this._advanceRound(true), 240); } // true: same rung, next board of THIS match — see _advanceRound()'s header
               return;
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
             if (w >= 3) { this._buzz([10, 60, 18]); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, true); this.setState({ phase: "won" }); }
-            else if (l >= 3) { this._buzz(24); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false); this.setState({ phase: this.state.road ? "roadlost" : "lost" }); }
+            else if (l >= 3) {
+              this._buzz(24);
+              if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false);
+              // THREE LIVES applies at the mansion too (28 aug 2026 fix, re-ported 30 aug 2026): by
+              // the time execution reaches this generic branch, st.road true always means the
+              // mansion (a walker-rung loss is caught and returned above), but this code predates
+              // the lives system and the fresh export had reverted to that pre-lives shape — a
+              // mansion loss skipped the life count entirely: no decrement, no wipe on a third loss,
+              // and the roadlost screen just re-showed whatever life total the walkers had already
+              // saved, unchanged, which read as the exact same "one light left" message twice in a row.
+              if (this.state.road && this.state.roadBoss) {
+                const lv = this._lives() - 1;
+                if (lv <= 0) { this._buzz([28, 90, 28]); this._wipeRoad(this.state.roadRung);
+                  // the new moon (29 aug 2026): same beat as the walker-rung wipe, so the mansion's
+                  // third loss reads identically rather than skipping the dark-veil moment.
+                  this.setState({ phase: "roadlost", wiped: true, lives: 0, nmBeat: true });
+                  this._nmT = setTimeout(() => this.setState({ nmBeat: false }), 2600); }
+                else { this._saveLives(lv); this.setState({ phase: "roadlost", wiped: false, lives: lv }); }
+              } else {
+                this.setState({ phase: this.state.road ? "roadlost" : "lost" });
+              }
+            }
             else {
               const asc = false;
               if (asc) { this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
@@ -7119,7 +7149,12 @@ class Component extends DCLogic {
           if (this.state.peek) this.setState({ peek: pk });
           else this._holdT = setTimeout(() => this.setState({ peek: pk }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); },
+        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); }, // desktop mouseleave only (see markup) — hover should close on its own
+        // re-ported 30 aug 2026 (code, ca592d3 regressed by the fresh export): mobile's touch-end
+        // shared onPeekEnd with desktop's mouseleave, so the info panel closed the instant a finger
+        // lifted — split so a touch release only cancels a hold that hadn't fired yet, panel stays
+        // open like desktop hover does until the player taps away or selects the card.
+        onHoldEnd: () => { clearTimeout(this._holdT); },
         onHold: () => { if (this.state.drag) return; const pk = (this.state.slots[i] ? "s" : "e") + i; clearTimeout(this._holdT); this._holdT = setTimeout(() => this.setState({ peek: pk }), 400); },
         onTap: () => {
           if (this._dragDid) return;
@@ -7260,7 +7295,9 @@ class Component extends DCLogic {
           if (this.state.peek) this.setState({ peek: "h" + id });
           else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 500);
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); },
+        onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); }, // desktop mouseleave only (see markup)
+        // same mobile touch-hold fix as the board slots above, re-ported 30 aug 2026 (code)
+        onHoldEnd: () => { clearTimeout(this._holdT); },
         onHold: () => { clearTimeout(this._holdT); this.setState({ hov: id }); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
         onDown: (e) => { if (this.state.mull) return; clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
         moonD: this._moonD(c.lvl), moonFill: "rgba(250,244,226,.95)",
@@ -7291,6 +7328,11 @@ class Component extends DCLogic {
         const seeds = [[.14, .1, 2], [.4, .22, 1.5], [.72, .07, 1], [.28, .38, 1], [.86, .3, 1.5], [.55, .5, 1], [.2, .62, 1.5], [.66, .72, 1], [.9, .55, 1]];
         const star = (fx, fy, s, L) => "position:absolute;" + (L ? "left:" : "right:") + Math.round(fx * side) + "px;top:" + Math.round(fy * gy) + "px;width:" + s + "px;height:" + s + "px;border-radius:50%;background:#F2EAD6;opacity:" + (.14 + s * .1).toFixed(2) + ";animation:bsTwinkle " + (4 + fx * 5).toFixed(1) + "s ease-in-out " + (-fy * 6).toFixed(1) + "s infinite";
         return {
+          // re-ported 30 aug 2026 (code): a fresh design export dropped this along with the account
+          // gate — see CLAUDE.md. a phone held in portrait (w < h, and narrow enough it's really a
+          // phone, not a squarish tablet) gets told to turn rather than rendering the 932x430 stage
+          // scaled/cramped.
+          rotateOn: w < h && w < 700,
           frameScaleStyle: "transform:scale(" + sc.toFixed(3) + ");transform-origin:center center;position:relative;z-index:1",
           deskBgStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.2s ease;opacity:" + (on ? 1 : 0),
           deskStars: on ? (side > 60

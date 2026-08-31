@@ -339,6 +339,69 @@ text) alongside the renderVals fields, verified the same way. Verified
 throughout: `esbuild --loader=jsx` on the extracted script block and the
 `data-props` JSON both clean, `npm run check` (193/193) untouched.
 
+**The same-day regression turned out to be much bigger than the account
+gate alone — seven more Code-side fixes were silently reverted, found
+and re-ported the same day (30 Aug 2026, user: "does the mobile turn
+screen thing exist in this mock up" → "make sure the mobile behaves the
+same way it did before").** Checking the rotate-prompt question by hand
+against the fresh export vs. the pre-export git copy surfaced a pattern:
+this export reads as having been built from an older baseline again, the
+same failure mode as the 29 Aug canon flip ("V2 forked from an early V1
+snapshot and inherited none of the fixes"), just recurring on a same-day
+re-export rather than a separate one. A full sweep against every fix that
+29 Aug flip ported found SEVEN more missing, all re-ported and verified
+(`esbuild`, `data-props` JSON, `npm run check` 193/193, each individually
+diffed against the pre-export copy to confirm the fix, not just its
+absence, is what changed):
+- **The rotate-to-landscape prompt** — `rotateOn` (`w < h && w < 700`),
+  the `⟳` overlay, and its own `orientationchange` listener (iOS Safari
+  doesn't reliably fire plain `resize` on a rotation).
+- **The mobile info-panel touch-hold behavior** — `onTouchEnd`/
+  `onTouchCancel` had been rewired to call `onPeekEnd` (desktop
+  mouseleave's handler, which also clears `state.peek`) instead of a
+  dedicated `onHoldEnd` (clears only the pending timer) — so on a phone
+  the info panel flashed open and vanished the instant a finger lifted,
+  never actually readable. Split back apart, both the board-slot and
+  hand-card markup and their two `renderVals` sites.
+- **The on-station card name offset** — back to the pre-fix `top:52px`
+  (inside the L1/L2 art box's own 27–69px vertical range, so the name
+  overlapped the art); restored to `top:74px`.
+- **`_zoomFor`'s ability-text panel** — carrying its own separate,
+  substantively WRONG 28-entry copy again (e.g. its "gate" read "it
+  lodges before her lead, takes the first turn" — a turn-order mechanic
+  that doesn't exist — while the real gate, per `_simpleMove()` and the
+  engine's own `tryFlip()`, is "the first strike against it misses").
+  Routed back through `_simpleMove(cid)` for card ids 1–28; the five sky
+  planets (not in that table) keep their own text alongside it.
+- **The dominion-tutorial pin** — `_tonight()` had lost its `if
+  (st.practice && st.tutor) return 18;` line, so a returning player's
+  last-walked moon position silently changed which nine mansions the
+  practice walk's hand-choreographed `_demoScript()` was actually playing
+  against, breaking the dominion (home-mansion) teaching moment the
+  tutorial exists to land.
+- **The walker 5–8 best-of-three tally** — `_advanceRound()` had lost its
+  `sameRung` parameter entirely (back to a single-caller shape), so a WON
+  board at walker rung 5+ silently reset `roundWins` to `[]` and re-dealt
+  a fresh "round 1" instead of continuing the match; the mid-match re-deal
+  of the correct walker's hand (`this._seven(this._walkers()[st.roadRung
+  ].hand, ...)`) was gone too, not just the flag.
+- **The mansion's three lives** — a mansion loss (`st.road &&
+  st.roadBoss`) had reverted to a bare `phase: "roadlost"` with no life
+  decrement and no third-loss wipe at all, the exact pre-lives-system gap
+  the 28 Aug fix closed, reading as the same "one light left" message
+  forever regardless of how many times the mansion was actually lost.
+
+**Standing checklist created so this stops being a one-off catch each
+time: `docs/MANZIL-CODE-OWNED-BEHAVIORS.md`**, covering all eight items
+above (account gate included) with the specific code shape each one
+should have. Wired into the receipt protocol below (item 6) as binding
+for both agents — Design should consult it before finalizing any future
+full-file regeneration of this page, Code before applying one. This is
+deliberately narrower than "every bug ever fixed in Manzil": it's
+specifically the set of fixes that live in the shared script block and
+are easy to lose in a full regeneration, not anything Design visibly
+redesigned on purpose.
+
 **V1's engine has one canonical standalone port (28 Aug 2026).** The
 real Manzil engine lives inline in V1's own `<script type="text/x-dc">`
 block (~178 `_`-prefixed methods reading `this.state`/`this.props`
@@ -518,6 +581,22 @@ own predictions corrected below):
    is next in line; its funnel/onboarding/shard screens carry two
    assumptions (email magic-link auth, a web-side IAP gate) that need
    Justin's call before porting — see Open decisions.
+6. **For Manzil (`Manzil - Game Prototype V2.dc.html`) specifically:
+   `docs/MANZIL-CODE-OWNED-BEHAVIORS.md` is a standing checklist of
+   Code-side behaviors that live in the shared script block and have now
+   been silently dropped by a fresh full-file export TWICE (29 Aug's
+   canon-flip port, then again 30 Aug the same day the throne level and
+   two new mansion laws shipped — the real account system, the rotate
+   prompt, the mobile touch-hold behavior, the on-station name offset,
+   `_zoomFor`'s stale ability-text duplicate, the dominion-tutorial pin,
+   the walker 5–8 tally, and the mansion's three lives all had to be
+   re-ported the second time too). Run through that checklist item by
+   item on every future Manzil export before treating it as ready to
+   ship — a clean `npm run check` and no stray engine imports are NOT
+   sufficient signals here, since every one of those regressions passed
+   both. Design: consult this file before finalizing a full regeneration
+   of this page, the same way you'd check it wasn't accidentally
+   reverting a screen you already redesigned on purpose.**
 
 **Then, the app wrapper** (`PLATFORM.md` — decided Aug 13). Ships to the
 App Store as a **Capacitor wrapper around the existing web build, not a
