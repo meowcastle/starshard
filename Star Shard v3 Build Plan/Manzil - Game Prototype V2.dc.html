@@ -4609,6 +4609,17 @@ class Component extends DCLogic {
         } catch (e) {}
       }
       try { localStorage.setItem("manzil-v2-user", who.username || ""); } catch (e) {}
+      // the real save file (30 aug 2026, code): a passive resume only pulls if this device has
+      // never actually played this account — manzil-v2-claims is written unconditionally on every
+      // single win, road or table, so its absence is the honest "genuinely fresh device" signal.
+      // an ALREADY-warm local session is left alone here on purpose, so a stale server copy can't
+      // clobber play that's happening right now; _siGo's own sign-in pull below is unconditional.
+      try {
+        if (!localStorage.getItem("manzil-v2-claims")) {
+          const progress = await this.api.getManzilProgress();
+          if (progress) this._applyProgress(progress);
+        }
+      } catch (e) {}
       if (["arrive", "signin", "birth"].includes(this.state.phase)) {
         this.setState({ phase: this._noteDue() ? "note" : "menu" });
       }
@@ -5384,7 +5395,7 @@ class Component extends DCLogic {
   }
   _noteDue() { const t = this._tonight(); try { const n = JSON.parse(localStorage.getItem("manzil-v2-noted")) || {}; return n[t] !== new Date().toISOString().slice(0, 10); } catch (e) { return true; } }
   _noteSeen() { const t = this._tonight(); try { const n = JSON.parse(localStorage.getItem("manzil-v2-noted")) || {}; n[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-v2-noted", JSON.stringify(n)); } catch (e) {} }
-  _setMoon(m) { this._moonC = (m >= 1 && m <= 28) ? m : 0; this._C = null; try { localStorage.setItem("manzil-v2-moon", String(this._moonC)); } catch (e) {} }
+  _setMoon(m) { this._moonC = (m >= 1 && m <= 28) ? m : 0; this._C = null; try { localStorage.setItem("manzil-v2-moon", String(this._moonC)); } catch (e) {} this._syncProgress(); }
   // the hideaway's road is walked with her tent MIDWAY (30 aug 2026, user): on m25's night the
   // nine-station window slides back four, so mansion 25 itself stands at the law's station (index 4)
   // and the road still ends nine houses on. every other night keeps tonight's mansion at the door.
@@ -5473,6 +5484,7 @@ class Component extends DCLogic {
     b[id] = { ...(b[id] || {}), ...(k && typeof k === "object" ? k : { [k]: v }) };
     try { localStorage.setItem("manzil-v2-build", JSON.stringify(b)); } catch (e) {}
     this._C = null; this.forceUpdate();
+    this._syncProgress();
   }
   // a respec is earned, never bought: the fourth level grants one, and every later win of that
   // mansion grants another. so a choice is never permanent and never free.
@@ -5482,6 +5494,7 @@ class Component extends DCLogic {
     const b = this._builds(); delete b[id];
     try { localStorage.setItem("manzil-v2-build", JSON.stringify(b)); localStorage.setItem("manzil-v2-respec", String(n - 1)); } catch (e) {}
     this._C = null; this.forceUpdate();
+    this._syncProgress();
   }
   // presetting (spec §6): a level-four card can be locked into every hand. two at most, and each one
   // spends a slot of the seven. nothing below four can be guaranteed into a hand.
@@ -5715,6 +5728,7 @@ class Component extends DCLogic {
       const g = parseInt(localStorage.getItem("manzil-v2-shards")) || 0;
       localStorage.setItem("manzil-v2-shards", String(g + 1));
     } catch (e) {}
+    this._syncProgress();
   }
   _mansions() { return Array.from({ length: ((this.state && this.state.slots && this.state.slots.length) || 9) }, (_, i) => "the " + this._mName(this._boardM(i))); }
   _zoomFor(k) {
@@ -5892,7 +5906,7 @@ class Component extends DCLogic {
   _lawSt() { return ({ beat: 0, reach: 0, shell: 4 })[this._bossRule()] ?? -1; }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
-  _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} }
+  _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} this._syncProgress(); }
   _again(name) { return ({
     "imra": "back again. imra doesn't hope this time.",
     "sef": "sef has counted this ground before. he remembers yours.",
@@ -6179,7 +6193,45 @@ class Component extends DCLogic {
   // THREE LIVES a push (28 aug 2026 sim canon): a loss without a wipe leaves the same walker standing,
   // the third loss folds the road back to its first walker and lights all three again.
   _lives() { try { const v = parseInt(localStorage.getItem("manzil-v2-lives"), 10); return isNaN(v) ? 3 : Math.max(0, Math.min(3, v)); } catch (e) { return 3; } }
-  _saveLives(n) { try { localStorage.setItem("manzil-v2-lives", String(Math.max(0, Math.min(3, n)))); } catch (e) {} }
+  _saveLives(n) { try { localStorage.setItem("manzil-v2-lives", String(Math.max(0, Math.min(3, n)))); } catch (e) {} this._syncProgress(); }
+  // THE REAL SAVE FILE (30 aug 2026, code): everything above this line was local-only — a real
+  // account only ever synced the chart (five/pack), never the actual progress that makes a save
+  // file a save file. Gathers all sixteen manzil-v2-* progress keys FRESH from localStorage every
+  // time it fires — never through an instance getter, since _rungs() (above) merges in a live
+  // Design-preview override (_stationForce()) that must never reach a real account's save. Fired
+  // from a handful of existing setters (_saveLives/_saveRung/_setBuild/_doRespec/_saveWrec/_setMoon/
+  // _recordWin), each of which already guards itself against Design-preview state — a sync call
+  // appended as the LAST line of each inherits those guards for free. Not real-time: whichever
+  // checkpoint fires next after a one-shot flag (noted/stairseen/firstlight) changes sweeps it up
+  // too, since every field is re-read fresh each call.
+  _syncProgress() {
+    if (!this.api || !this.api.saveManzilProgress) return;
+    const raw = (k, fb) => { try { const v = JSON.parse(localStorage.getItem("manzil-v2-" + k)); return v == null ? fb : v; } catch (e) { return fb; } };
+    const rawInt = (k, fb) => { try { const v = parseInt(localStorage.getItem("manzil-v2-" + k), 10); return isNaN(v) ? fb : v; } catch (e) { return fb; } };
+    this.api.saveManzilProgress({
+      climbs: raw("climbs", {}), rungs: raw("rungs", {}), lives: rawInt("lives", 3),
+      build: raw("build", {}), buildv: (() => { try { return localStorage.getItem("manzil-v2-buildv"); } catch (e) { return null; } })(),
+      wrec: raw("wrec", {}), noted: raw("noted", {}), stairseen: raw("stairseen", {}), wipe: raw("wipe", {}),
+      moon: rawInt("moon", 0), lastclimb: raw("lastclimb", {}), respec: rawInt("respec", 0),
+      claims: raw("claims", {}), lock: raw("lock", []), shards: rawInt("shards", 0), firstlight: raw("firstlight", {}),
+    });
+  }
+  // the restore half: writes a server payload back into every progress key (or resets each to its
+  // documented default when `data` is empty/null) — used both by a passive mount-resume and, ALWAYS,
+  // by an explicit sign-in, so a second account on a shared device can't inherit the first one's
+  // save the way it could before this existed.
+  _applyProgress(data) {
+    const d = data && typeof data === "object" ? data : {};
+    const put = (k, v) => { try { localStorage.setItem("manzil-v2-" + k, JSON.stringify(v)); } catch (e) {} };
+    const putInt = (k, v) => { try { localStorage.setItem("manzil-v2-" + k, String(v)); } catch (e) {} };
+    put("climbs", d.climbs || {}); put("rungs", d.rungs || {}); putInt("lives", d.lives != null ? d.lives : 3);
+    put("build", d.build || {});
+    try { localStorage.setItem("manzil-v2-buildv", d.buildv || "2"); } catch (e) {}
+    put("wrec", d.wrec || {}); put("noted", d.noted || {}); put("stairseen", d.stairseen || {}); put("wipe", d.wipe || {});
+    putInt("moon", d.moon || 0); put("lastclimb", d.lastclimb || {}); putInt("respec", d.respec || 0);
+    put("claims", d.claims || {}); put("lock", d.lock || []); putInt("shards", d.shards || 0); put("firstlight", d.firstlight || {});
+    this._clC = null; this._moonC = null; this._C = null;
+  }
   _wipeRoad(k) {
     const t = this._tonight();
     try { const r = this._rungs(); delete r[t]; localStorage.setItem("manzil-v2-rungs", JSON.stringify(r)); } catch (e) {}
@@ -6200,7 +6252,7 @@ class Component extends DCLogic {
       : "pratyari, the adversary: one sliver of light left.")
       + " the same walker stands where you fell, and the road gives its shard regardless.";
   }
-  _saveRung(m, k) { if (this._stationForce() >= 0 || (this.state && this.state.roadPick)) return; try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-v2-rungs", JSON.stringify(r)); } catch (e) {} }
+  _saveRung(m, k) { if (this._stationForce() >= 0 || (this.state && this.state.roadPick)) return; try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-v2-rungs", JSON.stringify(r)); } catch (e) {} this._syncProgress(); }
   _elev() {
     const st = this.state;
     if (!st) return 0;
@@ -8470,6 +8522,11 @@ class Component extends DCLogic {
         this.setState({ busy: true, siErr: "" });
         (this.api ? Promise.resolve(this.api) : import("./api.js")).then(api => { this.api = api; return api.loginWithUsername(v.toLowerCase(), p); }).then(async (res) => {
           const pack = await this.api.getManzilPack();
+          // the real save file, pulled unconditionally same as the chart above it (30 aug 2026,
+          // code): applies the incoming account's real progress, OR clears every progress key to
+          // its default if this account has none yet — either way closing the leak where a second
+          // account signing in on a shared device used to inherit the first one's climbs/lives/build.
+          const progress = await this.api.getManzilProgress();
           try {
             if (pack && Array.isArray(pack.five)) {
               localStorage.setItem("manzil-v2-birth", JSON.stringify({ date: null, time: null, place: null, five: pack.five, rows: null, fill: null }));
@@ -8477,6 +8534,7 @@ class Component extends DCLogic {
             }
             localStorage.setItem("manzil-v2-user", res.username || v);
           } catch (e) {}
+          this._applyProgress(progress);
           this.setState({ busy: false });
           this._go(() => this._noteDue() ? "note" : "menu");
         }).catch(e => {

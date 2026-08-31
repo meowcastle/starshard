@@ -145,6 +145,27 @@ export async function getManzilPack() {
   } catch (e) { return null; }
 }
 
+// --- manzil progress (per account) ------------------------------------------
+// A player's actual save file — card levels, lives, which mansions are
+// climbed and how far, match records, claimed nights — gathered by
+// Manzil's own _syncProgress() into one opaque object. manzil-pack above
+// only ever covers chart identity (five integers); before this pair
+// existed, none of a player's real progress followed their account
+// across devices.
+
+/** Resolves to the saved progress object, or null. Never throws. */
+export async function getManzilProgress() {
+  try {
+    const j = await call('/api/me/manzil-progress');
+    return j && typeof j.progress === 'object' ? j.progress : null;
+  } catch (e) { return null; }
+}
+
+/** Never throws — a failed progress sync must not interrupt play. */
+export async function saveManzilProgress(progress) {
+  try { await call('/api/me/manzil-progress', { method: 'PUT', body: { progress } }); } catch (e) {}
+}
+
 /** Never throws — logging out locally must always succeed. */
 export async function logout() {
   try { await call('/api/auth/logout', { method: 'POST' }); } catch (e) {}

@@ -563,7 +563,7 @@ app.get('/api/me/manzil-pack', requireAuth, wrap(async (req, res) => {
 // user, not on a hot path, so four small queries over one wide join is the
 // simpler and more honest shape here.
 app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
-  const [[user], [state], [deckRow], [sigilRow], [birthRow], [packRow], reports, blocks, recollection] = await Promise.all([
+  const [[user], [state], [deckRow], [sigilRow], [birthRow], [packRow], [progressRow], reports, blocks, recollection] = await Promise.all([
     pool.execute('SELECT email, username, created_at FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT state_json FROM window_state WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT deck_json FROM deck WHERE user_id = ?', [req.userId]).then(([r]) => r),
@@ -574,6 +574,10 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
     ).then(([r]) => r),
     pool.execute(
       'SELECT five_json, pack_json, birth_year FROM manzil_pack WHERE user_id = ?',
+      [req.userId]
+    ).then(([r]) => r),
+    pool.execute(
+      'SELECT progress_json FROM manzil_progress WHERE user_id = ?',
       [req.userId]
     ).then(([r]) => r),
     // Only rows where this account is the actor (reporter/blocker), never
@@ -610,6 +614,7 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
       five: parseOr(packRow.five_json, []), pack: parseOr(packRow.pack_json, []),
       birthYear: packRow.birth_year,
     } : null,
+    manzilProgress: progressRow ? parseOr(progressRow.progress_json, null) : null,
     manzilReportsFiled: reports.map(r => ({ matchId: r.match_id, reportedUserId: r.reported_user_id, createdAt: r.created_at })),
     manzilBlocks: blocks.map(b => ({ blockedUserId: b.blocked_user_id, createdAt: b.created_at })),
     recollection: recollection.map(r => ({
@@ -621,8 +626,9 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
 }));
 
 // Deletes the account and everything FK-cascaded from it (window_state,
-// deck, sigil, recollection, password_resets — schema.sql's ON DELETE
-// CASCADE on every one) — W6's "no account deletion" gap. Requires the
+// deck, sigil, recollection, manzil_pack, manzil_progress, password_resets
+// — schema.sql's ON DELETE CASCADE on every one) — W6's "no account
+// deletion" gap. Requires the
 // current password in the body, not just the session cookie: deletion is
 // the one action here with no undo, and a valid session alone (forgeable
 // via XSS/CSRF in a way a freshly-typed password isn't) shouldn't be
@@ -698,6 +704,40 @@ app.put('/api/deck', requireAuth, wrap(async (req, res) => {
   await pool.execute(
     'INSERT INTO deck (user_id, deck_json) VALUES (?, ?) ' +
     'ON DUPLICATE KEY UPDATE deck_json = VALUES(deck_json)',
+    [req.userId, json]
+  );
+  res.status(204).end();
+}));
+
+// Manzil's actual game progress (30 Aug 2026) — the sixteen manzil-v2-*
+// localStorage keys that make up a player's real save file, gathered by
+// the client's _syncProgress() into one object. Namespaced under /api/me/
+// to match manzil-pack's own convention (this is Manzil account data, not
+// a generic window/deck surface). An opaque, size-capped grab-bag like
+// window_state above, not a validated domain object like deck: the server
+// has no reason to understand climbs/rungs/build/etc, only to hold them.
+app.get('/api/me/manzil-progress', requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute('SELECT progress_json FROM manzil_progress WHERE user_id = ?', [req.userId]);
+  if (!rows[0]) return res.json({ progress: null });
+  try {
+    res.json({ progress: JSON.parse(rows[0].progress_json) });
+  } catch (e) {
+    res.json({ progress: null });
+  }
+}));
+
+app.put('/api/me/manzil-progress', requireAuth, wrap(async (req, res) => {
+  const { progress } = req.body || {};
+  if (typeof progress !== 'object' || progress === null) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+  const json = JSON.stringify(progress);
+  if (json.length > 100000) {
+    return res.status(413).json({ error: 'progress_too_large' });
+  }
+  await pool.execute(
+    'INSERT INTO manzil_progress (user_id, progress_json) VALUES (?, ?) ' +
+    'ON DUPLICATE KEY UPDATE progress_json = VALUES(progress_json)',
     [req.userId, json]
   );
   res.status(204).end();

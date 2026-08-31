@@ -96,6 +96,23 @@ CREATE TABLE IF NOT EXISTS manzil_pack (
   CONSTRAINT fk_manzil_pack_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Manzil's actual game progress (30 Aug 2026): the sixteen manzil-v2-*
+-- localStorage keys that make up a player's real save file — climbs,
+-- rungs, lives, build/buildv, wrec, noted, stairseen, wipe, moon,
+-- lastclimb, respec, claims, lock, shards, firstlight (see CLAUDE.md) —
+-- none of which synced to an account before this table existed, so
+-- signing into the same real account on a second device restored the
+-- chart but not the save. An opaque, size-capped grab-bag like
+-- window_state above, not a validated domain object like deck/sigil: the
+-- server has no reason to understand this blob's contents, only to hold
+-- it. See PUT /api/me/manzil-progress in server.js.
+CREATE TABLE IF NOT EXISTS manzil_progress (
+  user_id INT NOT NULL PRIMARY KEY,
+  progress_json LONGTEXT NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_manzil_progress_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Reporting a match opponent also blocks them (manzil-lobby.js's
 -- report_player handler writes both rows together) — the point of a block
 -- list existing at all is that the matchmaker skips it, so a report with no
