@@ -92,12 +92,38 @@ still matters — check the specific items the patch's own area touches.
   keybinding that reaches it from the lobby had been dropped, so
   checking that the feature "works" isn't enough — check every entry
   point into it.
-- [ ] **The sign-in link during account creation.** `obLinkOn` (the small
-  "returning? → sign in" / "new here? → cast your sky" toggle) includes
-  `ph9 === "birth"` alongside `"arrive"` and `"signin"` — someone who
-  taps "read yours" and then remembers they already have an account must
-  be able to reach sign-in from there, not just from the screens before
-  and after it.
+- [ ] **The sign-in link during account creation, positioned so it doesn't
+  collide.** `obLinkOn` includes `ph9 === "birth"` alongside `"arrive"`
+  and `"signin"` — someone who taps "read yours" and then remembers they
+  already have an account must be able to reach sign-in from there. On
+  `"birth"` specifically, `obLinkStyle` gives it a fixed top-right corner
+  position, NOT the bottom-margin placement arrive/signin use — that
+  margin strip is already shared by the progress diamonds and (on most
+  steps) hint text, and three rows do not fit in a strip sized for one
+  (confirmed with `getBoundingClientRect`, not eyeballing, after a first
+  attempt at re-spacing all three still overlapped). If this link's
+  position ever gets "simplified" back to one shared style across all
+  three phases, re-check this specific overlap before shipping.
+- [ ] **The one-time chart grab at Manzil signup.** `birthCastTap` calls
+  `api.saveBirth()` with the full date/time/place it already collects
+  (Manzil's own `api.signup()` call only ever sends five integers, never
+  the full birth data), so a Manzil account also has a real chart on file
+  for Star Shard's separate `birth_data` table — no second birthday
+  prompt if the same account later opens a Star Shard reading. Fire-and-
+  forget, alongside (not blocking) the existing local `_saveBirth()` call.
+- [ ] **`_restoreChart()`, not a bare `getManzilPack()` call, on both
+  account-restore paths.** `getManzilPack()` alone only ever returns
+  `five` (`rows`/`fill: null`), and the in-Manzil star shard screen needs
+  `rows` (which mansion is the sun vs. the moon) to render anything but
+  "cast your five and the sky will name you" — a real account with a real
+  chart on file still hit that fallback text on any device that restored
+  from the server rather than casting locally. `_restoreChart()` tries
+  the account's real `birth_data` (populated by the one-time grab above)
+  first and recomputes the full `rows`/`fill` via `_saveBirth()`/
+  `_castFive()`, falling back to the `five`-only restore only for an
+  account that predates this fix. Both `componentDidMount`'s passive
+  resume and `_siGo`'s sign-in pull must call this, not a bare
+  `getManzilPack()`.
 
 ## Why this list and not something broader
 
