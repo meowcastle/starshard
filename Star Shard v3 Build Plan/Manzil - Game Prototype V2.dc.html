@@ -1780,7 +1780,16 @@
           <div style="{{ s.groundBare }}"></div>
         </sc-if>
         <sc-if value="{{ s.listenOn }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-top:5px;white-space:nowrap;font-family:'Karla',sans-serif;font-size:8.5px;color:#5FC8C8;text-shadow:0 0 8px rgba(64,196,196,.45)">{{ s.listenTxt }}</div>
+          <!-- THE GROUND NOTE SITS OUT OF FLOW (31 aug 2026, code — reported live as "the gap and the
+               blue text"). It was an in-flow child of the slot's flex item with white-space:nowrap, so
+               a long caption stretched its own station: measured 415px against 224px for every other
+               slot, which shoved the back half of the road sideways and opened a hole mid-board. The
+               older captions were short enough to hide it ("printed numbers here", 20 chars); the new
+               law notes are up to 38 ("it resounds: strikes carry one further"), so it surfaced the
+               moment the station laws shipped. Absolute + centred under the card: same place on
+               screen, zero contribution to the row's width. Colour also moved off the lone cyan in the
+               build (#5FC8C8, the only one) onto the parchment the rest of the UI speaks. -->
+          <div style="position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:5px;white-space:nowrap;font-family:'Karla',sans-serif;font-size:8.5px;color:rgba(240,216,154,.82);text-shadow:0 0 8px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.9)">{{ s.listenTxt }}</div>
         </sc-if>
       </div>
       </div>
@@ -7454,7 +7463,7 @@ class Component extends DCLogic {
       // The no-law fallback (light the mansion's own ground) stays boss-only as before.
       const avG = ((this._bossRule() ? (st.road && !st.practice && !st.duel && i === this._lawSt()) : (st.roadBoss && this._boardM(i) === this._tonight())) && this._avFig(this._tonight())) ? this._avFig(this._tonight()).glow : null;
       return {
-        wrapStyle: "transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (avG ? ";filter:drop-shadow(0 0 11px " + avG + ")" : hushI.indexOf(i) >= 0 ? ";filter:grayscale(.85) brightness(.72);transition:filter .7s ease" : "") + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
+        wrapStyle: "position:relative;transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (avG ? ";filter:drop-shadow(0 0 11px " + avG + ")" : hushI.indexOf(i) >= 0 ? ";filter:grayscale(.85) brightness(.72);transition:filter .7s ease" : "") + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
         idx: i,
         num: String(20 + i),
         mname: this._mansions()[i],
