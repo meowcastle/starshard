@@ -82,6 +82,22 @@ still matters — check the specific items the patch's own area touches.
   `nmBeat` beat) on the third loss — the SAME code path a walker-rung
   loss already uses higher up in the same function, not a separate
   generic branch that skips the life count entirely.
+- [ ] **Escape opens the lobby menu.** `_onKey`'s Escape branch has an
+  explicit `if (p === "menu") { this.setState({ pmOpen: true }); return; }`
+  case — every other `pmOn`-eligible phase either closes back to the lobby
+  or opens the pause overlay on Escape; the lobby itself needs this
+  explicit case or Escape silently does nothing there. Caught 30 Aug
+  2026 as the one piece of `f8689f7` the first re-port pass missed — the
+  `pmOpen`/`pmLogout` wiring itself was present and correct, only this
+  keybinding that reaches it from the lobby had been dropped, so
+  checking that the feature "works" isn't enough — check every entry
+  point into it.
+- [ ] **The sign-in link during account creation.** `obLinkOn` (the small
+  "returning? → sign in" / "new here? → cast your sky" toggle) includes
+  `ph9 === "birth"` alongside `"arrive"` and `"signin"` — someone who
+  taps "read yours" and then remembers they already have an account must
+  be able to reach sign-in from there, not just from the screens before
+  and after it.
 
 ## Why this list and not something broader
 
