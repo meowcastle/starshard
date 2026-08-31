@@ -4599,15 +4599,7 @@ class Component extends DCLogic {
     this.api = await import("./api.js");
     const who = await this.api.me();
     if (who) {
-      if (!this._birth()) {
-        try {
-          const pack = await this.api.getManzilPack();
-          if (pack && Array.isArray(pack.five)) {
-            localStorage.setItem("manzil-v2-birth", JSON.stringify({ date: null, time: null, place: null, five: pack.five, rows: null, fill: null }));
-            this._C = null; this._bMap = null; this._clC = null; this._clongs = undefined;
-          }
-        } catch (e) {}
-      }
+      if (!this._birth()) { try { await this._restoreChart(); } catch (e) {} }
       try { localStorage.setItem("manzil-v2-user", who.username || ""); } catch (e) {}
       // the real save file (30 aug 2026, code): a passive resume only pulls if this device has
       // never actually played this account — manzil-v2-claims is written unconditionally on every
@@ -5697,6 +5689,47 @@ class Component extends DCLogic {
     } catch (e) {}
     this._C = null; this._bMap = null; this._clC = null; this._clongs = undefined;
     return cast.five;
+  }
+  // THE FULL CHART RESTORE (30 aug 2026, user: "we definitely want a one time chart grab so that
+  // when they sign up for manzil they dont have to reinput their birthday"): getManzilPack() alone
+  // only ever gives back `five` (rows/fill: null), so the star shard screen's "your sun/moon stands
+  // in..." fell back to "cast your five and the sky will name you" for ANY account restored from
+  // the server rather than freshly cast on THIS device — five bare mansion ids don't say which one
+  // is the sun vs the moon. Manzil's own cast now also saves full birth data to Star Shard's
+  // birth_data table (see birthCastTap's saveBirth call above), so pulling THAT back and running it
+  // through the same _saveBirth()/_castFive() a fresh cast uses gives the full rows/fill breakdown
+  // back, not just five. Falls back to the five/pack-only restore (rows: null, the pre-existing
+  // behavior) for an account that predates this fix or never went through Manzil's own cast — an
+  // account that only ever used the standalone Star Shard portal, say. Returns the five-array
+  // actually applied, or null if nothing could be restored at all.
+  async _restoreChart() {
+    try {
+      const birth = await this.api.getBirth();
+      if (birth && birth.birthDate && window.ManzilEphem) {
+        const [y, m, d] = birth.birthDate.split("-").map(Number);
+        const dt = new Date(y, m - 1, d);
+        const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+        const dateStr = d + " " + MO[m - 1] + " " + y;
+        let timeStr = null;
+        if (birth.birthTimeKnown && birth.birthTime) {
+          const [hh, mm] = birth.birthTime.split(":").map(Number);
+          dt.setHours(hh, mm, 0, 0);
+          const ap = hh >= 12 ? "pm" : "am", h12 = ((hh + 11) % 12) + 1;
+          timeStr = h12 + ":" + String(mm).padStart(2, "0") + " " + ap;
+        } else dt.setHours(12, 0, 0, 0);
+        const five = this._saveBirth(dt, dateStr, timeStr, birth.placeName);
+        if (five) return five;
+      }
+    } catch (e) {}
+    try {
+      const pack = await this.api.getManzilPack();
+      if (pack && Array.isArray(pack.five)) {
+        localStorage.setItem("manzil-v2-birth", JSON.stringify({ date: null, time: null, place: null, five: pack.five, rows: null, fill: null }));
+        this._C = null; this._bMap = null; this._clC = null; this._clongs = undefined;
+        return pack.five;
+      }
+    } catch (e) {}
+    return null;
   }
   _recordWin() {
     if (this._forced()) { if (this.state && this.state.road) this._fBump = 1; return; } // the review toggles never write progress
@@ -8521,19 +8554,13 @@ class Component extends DCLogic {
         // "no local cache") so switching accounts on a shared device can't leak the previous one's.
         this.setState({ busy: true, siErr: "" });
         (this.api ? Promise.resolve(this.api) : import("./api.js")).then(api => { this.api = api; return api.loginWithUsername(v.toLowerCase(), p); }).then(async (res) => {
-          const pack = await this.api.getManzilPack();
+          await this._restoreChart();
           // the real save file, pulled unconditionally same as the chart above it (30 aug 2026,
           // code): applies the incoming account's real progress, OR clears every progress key to
           // its default if this account has none yet — either way closing the leak where a second
           // account signing in on a shared device used to inherit the first one's climbs/lives/build.
           const progress = await this.api.getManzilProgress();
-          try {
-            if (pack && Array.isArray(pack.five)) {
-              localStorage.setItem("manzil-v2-birth", JSON.stringify({ date: null, time: null, place: null, five: pack.five, rows: null, fill: null }));
-              this._C = null; this._bMap = null; this._clC = null; this._clongs = undefined;
-            }
-            localStorage.setItem("manzil-v2-user", res.username || v);
-          } catch (e) {}
+          try { localStorage.setItem("manzil-v2-user", res.username || v); } catch (e) {}
           this._applyProgress(progress);
           this.setState({ busy: false });
           this._go(() => this._noteDue() ? "note" : "menu");
@@ -8702,6 +8729,20 @@ class Component extends DCLogic {
           const cast = this._castFive(dt);
           return this.api.signup(em, s0.bPass, { username: un, birthDate, five: cast.five, pack: cast.five }).then(() => {
             try { localStorage.setItem("manzil-v2-user", un); } catch (e) {}
+            // ONE-TIME CHART GRAB (30 aug 2026, user: "we definitely want a one time chart grab so
+            // that when they sign up for manzil they dont have to reinput their birthday"): Manzil's
+            // own cast already collects the full date/time/place, just never sent it anywhere but
+            // here — this saves it to Star Shard's separate opt-in birth_data table too, so signing
+            // up for Manzil is also enough to unlock a real Star Shard reading later with no second
+            // birthday prompt. Fire-and-forget (saveBirth never throws, per api.js); the place field
+            // here is free-text with no geocoding, so lat/lon/tz are left for a real Star Shard
+            // onboarding to fill in later, per parseBirthFields' own "upgrade later" comment.
+            this.api.saveBirth({
+              birthDate,
+              birthTime: this.state.bTimeU ? null : String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0"),
+              birthTimeKnown: !this.state.bTimeU,
+              placeName: (s0.bPlace || "").trim() || null,
+            });
             const pack = this._saveBirth(dt, ds, this.state.bTimeU ? null : ts, this.state.bPlace);
             if (!pack) { this.setState({ busy: false, bErr: "the sky can't read that date" }); return; }
             this.setState({ busy: false, phase: "shard", deckSel: pack, bErr: "" });
@@ -8903,13 +8944,21 @@ class Component extends DCLogic {
           obRowStyle: "position:absolute;left:0;right:0;bottom:" + Math.round(cyB + 2) + "px;z-index:44;display:flex;justify-content:center;gap:12px",
           // 30 aug 2026 (code, user: "I couldn't access [sign in] once you choose to make a new
           // account. lots of people can forget they have an account") — this link's own margin-bar
-          // slot was already built to coexist with the birth phase's hint text and progress diamonds
-          // (see the comment above), "birth" was just missing from the condition that shows it.
+          // slot was claimed to already coexist with the birth phase's hint text and progress
+          // diamonds, so "birth" was added to the condition that shows it — but on-screen measurement
+          // (getBoundingClientRect, not eyeballing) showed hint/diamonds/link genuinely overlapping
+          // by several pixels no matter how they were re-spaced within that one crowded strip: three
+          // rows do not fit in a margin bar sized for one. FOLLOW-UP FIX, same day (user: "login...
+          // text is on top of each other"): "birth" gets its own fixed top-right corner slot instead
+          // of fighting hint/diamonds for the bottom margin — arrive/signin (never crowded, only ever
+          // showed this link alone) keep the original bottom placement unchanged.
           obLinkOn: ph9 === "arrive" || ph9 === "signin" || ph9 === "birth",
           obLinkA: ph9 === "signin" ? "new here?" : "returning?",
           obLinkB: ph9 === "signin" ? "cast your sky" : "sign in",
           obLinkTap: () => this._go(this.state.phase === "signin" ? "birth" : "signin"),
-          obLinkStyle: obBase + "bottom:" + Math.round(cyB + 6) + "px;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)",
+          obLinkStyle: ph9 === "birth"
+            ? "position:absolute;top:14px;right:18px;z-index:44;font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)"
+            : obBase + "bottom:" + Math.round(cyB + 6) + "px;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)",
           marginTitleStyle: "position:absolute;left:50%;top:" + Math.round(Math.max((barM - 26) / 2, 5)) + "px;transform:translateX(-50%);z-index:42;text-align:center;pointer-events:none",
           marginTitleTextStyle: "white-space:nowrap;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + Math.round(Math.min(21, Math.max(barM * .42, 14))) + "px;line-height:1.1;color:#E8D9AC;text-shadow:0 2px 14px rgba(4,3,2,.9)",
           moonCtlStyle: "position:absolute;right:18px;top:" + Math.round(cyT) + "px;z-index:44;display:flex;align-items:center;gap:8px;pointer-events:none;animation:mzFadeUp .6s ease .5s both",
