@@ -124,6 +124,30 @@ still matters — check the specific items the patch's own area touches.
   account that predates this fix. Both `componentDidMount`'s passive
   resume and `_siGo`'s sign-in pull must call this, not a bare
   `getManzilPack()`.
+- [ ] **The cast/restore chart is timezone-correct, not device-local.**
+  `birthCastTap`/`_castNow` and `_restoreChart()` both used to build the
+  `Date` fed to `ephemeris2.js` via `new Date(y,m,d); dt.setHours(h,mm)`
+  — that interprets the typed/stored wall-clock time in whatever
+  timezone the CASTING OR RESTORING DEVICE happens to sit in, not the
+  birthplace's. Caught live 30 Aug 2026 (a real account's moon landed in
+  the glance, mansion 9, instead of the throne, mansion 10 — confirmed
+  by replicating `_castFive`/`ephemeris2.js` in a standalone script: the
+  tz-correct chart gives `five:[6,10,5,8,9]`, the naive one
+  `five:[6,9,5,8,7]`, an exact match to the bug). Fixed two ways
+  together: (1) the birth-cast screen's place field is now a real
+  debounced geocoder (`_searchPlace()` → `api.geocode()`, replacing the
+  old static-list `_cities()`) so a picked place carries a real IANA
+  `tz` (plus `lat`/`lon`), not just a free-typed name; (2) both
+  `birthCastTap` and `_restoreChart()` use `tz.js`'s `dstInfo()` to
+  correct the `Date`'s underlying UTC instant against that real tz
+  before it ever reaches `ephemeris2.js`, mirroring `Star Shard
+  v4.dc.html`'s own already-proven `chartFromParts()` pattern. A
+  free-typed, ungeocoded place (or an account that signed up before this
+  fix, so `birth_data.tz` is null) has no known tz and silently keeps
+  the old naive behavior — that's a real, standing limitation, not a
+  regression, but don't let a future full-file export quietly drop the
+  `dstInfo()` correction and reintroduce the device-timezone bug for
+  everyone.
 
 ## Why this list and not something broader
 

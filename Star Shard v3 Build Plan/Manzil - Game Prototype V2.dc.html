@@ -5707,16 +5707,32 @@ class Component extends DCLogic {
       const birth = await this.api.getBirth();
       if (birth && birth.birthDate && window.ManzilEphem) {
         const [y, m, d] = birth.birthDate.split("-").map(Number);
-        const dt = new Date(y, m - 1, d);
+        let hh = 12, mm = 0;
         const MO = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
         const dateStr = d + " " + MO[m - 1] + " " + y;
         let timeStr = null;
         if (birth.birthTimeKnown && birth.birthTime) {
-          const [hh, mm] = birth.birthTime.split(":").map(Number);
-          dt.setHours(hh, mm, 0, 0);
+          [hh, mm] = birth.birthTime.split(":").map(Number);
           const ap = hh >= 12 ? "pm" : "am", h12 = ((hh + 11) % 12) + 1;
           timeStr = h12 + ":" + String(mm).padStart(2, "0") + " " + ap;
-        } else dt.setHours(12, 0, 0, 0);
+        }
+        // TIMEZONE-CORRECT RESTORE (30 aug 2026, code — same bug/fix as birthCastTap): a naive
+        // new Date(y,m,d).setHours(hh,mm) interprets the stored wall-clock time in whatever
+        // timezone the RESTORING device happens to sit in, not the birthplace's. birth.tz (saved
+        // by the one-time chart grab whenever the place was geocoded) lets this correct the
+        // instant properly; an old account predating that grab, or a free-typed unmatched place,
+        // has no birth.tz and falls back to the previous (documented) naive behavior.
+        let dt;
+        if (birth.tz) {
+          try {
+            const { dstInfo } = await import("./tz.js");
+            const off = dstInfo(birth.tz, y, m, d, hh, mm).off;
+            dt = new Date(Date.UTC(y, m - 1, d, hh, mm) - off * 3600000);
+          } catch (e) { dt = new Date(y, m - 1, d); dt.setHours(hh, mm, 0, 0); }
+        } else {
+          dt = new Date(y, m - 1, d);
+          dt.setHours(hh, mm, 0, 0);
+        }
         const five = this._saveBirth(dt, dateStr, timeStr, birth.placeName);
         if (five) return five;
       }
@@ -6075,7 +6091,23 @@ class Component extends DCLogic {
   _legendDone() { try { localStorage.setItem("manzil-v2-legend", "1"); } catch (e) {} this._go(() => (this._forceNew || !this._birth()) ? "birth" : (this._noteDue() ? "note" : "menu")); }
   // town search stand-in (30 aug 2026): the shipped build geocodes server-side; this list only makes
   // the prototype's search feel real. lowercase on purpose, matched by substring.
-  _cities() { return ["portland, oregon", "seattle, washington", "san francisco, california", "los angeles, california", "san diego, california", "phoenix, arizona", "salt lake city, utah", "denver, colorado", "austin, texas", "dallas, texas", "houston, texas", "kansas city, missouri", "chicago, illinois", "minneapolis, minnesota", "detroit, michigan", "nashville, tennessee", "atlanta, georgia", "new orleans, louisiana", "miami, florida", "new york, new york", "brooklyn, new york", "boston, massachusetts", "philadelphia, pennsylvania", "washington, dc", "honolulu, hawaii", "anchorage, alaska", "toronto, canada", "vancouver, canada", "montreal, canada", "mexico city, mexico", "bogotá, colombia", "lima, peru", "são paulo, brazil", "rio de janeiro, brazil", "buenos aires, argentina", "santiago, chile", "london, england", "manchester, england", "edinburgh, scotland", "dublin, ireland", "paris, france", "berlin, germany", "munich, germany", "amsterdam, netherlands", "brussels, belgium", "zurich, switzerland", "vienna, austria", "prague, czechia", "warsaw, poland", "stockholm, sweden", "oslo, norway", "copenhagen, denmark", "helsinki, finland", "madrid, spain", "barcelona, spain", "lisbon, portugal", "rome, italy", "milan, italy", "athens, greece", "istanbul, türkiye", "cairo, egypt", "casablanca, morocco", "lagos, nigeria", "accra, ghana", "nairobi, kenya", "addis ababa, ethiopia", "johannesburg, south africa", "cape town, south africa", "tel aviv, israel", "beirut, lebanon", "riyadh, saudi arabia", "dubai, uae", "tehran, iran", "karachi, pakistan", "lahore, pakistan", "mumbai, india", "delhi, india", "bangalore, india", "kolkata, india", "colombo, sri lanka", "dhaka, bangladesh", "kathmandu, nepal", "bangkok, thailand", "hanoi, vietnam", "ho chi minh city, vietnam", "kuala lumpur, malaysia", "jakarta, indonesia", "singapore", "manila, philippines", "hong kong", "taipei, taiwan", "shanghai, china", "beijing, china", "seoul, south korea", "tokyo, japan", "osaka, japan", "sydney, australia", "melbourne, australia", "perth, australia", "auckland, new zealand"]; }
+  // TIMEZONE-CORRECT CAST, part 1/2 (30 aug 2026, code): replaces the old static _cities() name-
+  // match list with a real geocoded lookup — reusing api.js's own geocode() (Open-Meteo, already
+  // shipped, already used by Star Shard v4's own onboarding the exact same way) instead of a plain
+  // string filter, because a real result carries lat/lon/tz, and the whole point is knowing the
+  // birthplace's actual timezone. Debounced (350ms) since this fires on every keystroke; a stale-
+  // response guard in the .then() drops a result that arrives after the text has since changed.
+  // Must live outside renderVals() (which stays read-only) — called from bPlaceChange, not from here.
+  _searchPlace(q) {
+    clearTimeout(this._placeDebounceT);
+    const query = (q || "").trim();
+    if (query.length < 2) { this.setState({ bPlaceGeoResults: [] }); return; }
+    this._placeDebounceT = setTimeout(() => {
+      (this.api ? Promise.resolve(this.api) : import("./api.js")).then(api => { this.api = api; return api.geocode(query); }).then(res => {
+        if ((this.state.bPlace || "").trim() === query) this.setState({ bPlaceGeoResults: res || [] });
+      }).catch(() => {});
+    }, 350);
+  }
   // the station toggle (25 aug 2026): stand on any of the nine arenas of the level. nothing is recorded while forced
   // the listener's ground: one station hears what she is carrying
   _listen() {
@@ -8647,7 +8679,19 @@ class Component extends DCLogic {
           bAmTap: () => this.setState({ bAmPm: "am", bErr: "" }),
           bPmTap: () => this.setState({ bAmPm: "pm", bErr: "" }),
           bAmStyle: ampm(st.bAmPm === "am"), bPmStyle: ampm(st.bAmPm === "pm"),
-          bPlaceOpts: (stp === 2 && (st.bPlace || "").trim().length >= 2 ? this._cities().filter(c => c.indexOf((st.bPlace || "").trim().toLowerCase()) >= 0).slice(0, 5) : []).map(c => ({ t: c, tap: () => { this.setState({ bPlace: c, bErr: "", bStep2: 3 }); } })),
+          // real geocoded results (30 aug 2026, code — replaces the old static _cities() name-match
+          // list), populated async by _searchPlace()'s own debounced api.geocode() call; renderVals
+          // only ever READS st.bPlaceGeoResults here, never fetches (must stay read-only). Picking
+          // one records real lat/lon/tz so the cast can convert the typed wall-clock time using the
+          // birthplace's own timezone instead of whatever timezone the casting device happens to be
+          // in — see birthCastTap's own "TIMEZONE-CORRECT CAST" comment for why that matters.
+          bPlaceOpts: (stp === 2 ? (st.bPlaceGeoResults || []) : []).map(r => ({
+            t: r.name + (r.region ? ", " + r.region : ""),
+            tap: () => {
+              clearTimeout(this._placeDebounceT);
+              this.setState({ bPlace: r.name + (r.region ? ", " + r.region : ""), bPlaceLat: r.lat, bPlaceLon: r.lon, bPlaceTz: r.tz, bPlaceGeoResults: [], bErr: "", bStep2: 3 });
+            },
+          })),
           bDia: flags.map((on, i) => ({ tap: () => this.setState({ bStep2: i, bErr: "" }), style: "width:7px;height:7px;transform:rotate(45deg);border:none;padding:0;cursor:pointer;transition:all .4s ease;background:" + (on ? "#FFB000" : "rgba(240,216,154,.16)") + (i === stp ? ";box-shadow:0 0 0 3px rgba(255,176,0,.22), 0 0 10px rgba(255,176,0,.5)" : "") })),
           bBigInput: "background:none;border:none;border-bottom:1px solid rgba(255,176,0,.5);color:#F2EAD6;font-family:'Karla',sans-serif;font-size:17px;text-align:center;width:290px;padding:0 6px 6px;outline:none",
           bCells: cells, bHead: head,
@@ -8660,7 +8704,10 @@ class Component extends DCLogic {
       })()),
       bTimeChange: (e) => this.setState({ bTime: e.target.value, bErr: "" }),
       bPlace: st.bPlace || "",
-      bPlaceChange: (e) => this.setState({ bPlace: e.target.value, bErr: "" }),
+      // typing invalidates any previously-picked geocode result — bPlaceLat/Lon/Tz only ever come
+      // from actually tapping a suggestion (see bPlaceOpts above), never from free text alone, so a
+      // stale tz from an earlier pick can't silently attach itself to a since-edited place string.
+      bPlaceChange: (e) => { const v = e.target.value; this.setState({ bPlace: v, bErr: "", bPlaceLat: null, bPlaceLon: null, bPlaceTz: null }); this._searchPlace(v); },
       bEmail: st.bEmail || "",
       bEmailChange: (e) => this.setState({ bEmail: e.target.value, bErr: "" }),
       bName: st.bName || "",
@@ -8724,9 +8771,26 @@ class Component extends DCLogic {
         // aware per starshard-api/lib/age-gate.js), then the real api.signup(); the local cast/
         // localStorage write that follows is a device-side cache for speed, not the source of truth.
         this.setState({ busy: true, bErr: "" });
-        (this.api ? Promise.resolve(this.api) : import("./api.js")).then(api => { this.api = api; return api.ageCheck(birthDate); }).then(({ ok }) => {
+        (this.api ? Promise.resolve(this.api) : import("./api.js")).then(api => { this.api = api; return api.ageCheck(birthDate); }).then(async ({ ok }) => {
           if (!ok) { this.setState({ busy: false, bErr: "the sky asks you to come back in a year or two", bStep2: 0 }); return; }
-          const cast = this._castFive(dt);
+          // TIMEZONE-CORRECT CAST, part 2/2 (30 aug 2026, code): `dt` above was built with
+          // new Date(y,m,d).setHours(h,mm) — that interprets the typed wall-clock time in THIS
+          // DEVICE's own ambient timezone, correct only when the device casting happens to sit in
+          // the same timezone as the birthplace. Caught live: a real account's moon landed in the
+          // glance (mansion 9) instead of the throne (10) because the casting device was on UTC,
+          // not Portland's actual UTC-7. If the place was picked from a real geocoded result
+          // (bPlaceTz — see _searchPlace/bPlaceOpts above), correct dt's underlying UTC instant
+          // using that real timezone before the ephemeris ever sees it. A free-typed, unmatched
+          // place has no known tz and keeps the old (now-documented) limitation.
+          let castDt = dt;
+          if (s0.bPlaceTz) {
+            try {
+              const { dstInfo } = await import("./tz.js");
+              const off = dstInfo(s0.bPlaceTz, s0.bY, s0.bM + 1, s0.bD, dt.getHours(), dt.getMinutes()).off;
+              castDt = new Date(Date.UTC(s0.bY, s0.bM, s0.bD, dt.getHours(), dt.getMinutes()) - off * 3600000);
+            } catch (e) {}
+          }
+          const cast = this._castFive(castDt);
           return this.api.signup(em, s0.bPass, { username: un, birthDate, five: cast.five, pack: cast.five }).then(() => {
             try { localStorage.setItem("manzil-v2-user", un); } catch (e) {}
             // ONE-TIME CHART GRAB (30 aug 2026, user: "we definitely want a one time chart grab so
@@ -8734,16 +8798,19 @@ class Component extends DCLogic {
             // own cast already collects the full date/time/place, just never sent it anywhere but
             // here — this saves it to Star Shard's separate opt-in birth_data table too, so signing
             // up for Manzil is also enough to unlock a real Star Shard reading later with no second
-            // birthday prompt. Fire-and-forget (saveBirth never throws, per api.js); the place field
-            // here is free-text with no geocoding, so lat/lon/tz are left for a real Star Shard
-            // onboarding to fill in later, per parseBirthFields' own "upgrade later" comment.
+            // birthday prompt. Fire-and-forget (saveBirth never throws, per api.js). lat/lon/tz ride
+            // along when the place was geocoded (see above); a free-typed place still saves its name
+            // with no coordinates, same "upgrade later" contract parseBirthFields already documents.
             this.api.saveBirth({
               birthDate,
               birthTime: this.state.bTimeU ? null : String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0"),
               birthTimeKnown: !this.state.bTimeU,
               placeName: (s0.bPlace || "").trim() || null,
+              lat: s0.bPlaceLat != null ? s0.bPlaceLat : null,
+              lon: s0.bPlaceLon != null ? s0.bPlaceLon : null,
+              tz: s0.bPlaceTz || null,
             });
-            const pack = this._saveBirth(dt, ds, this.state.bTimeU ? null : ts, this.state.bPlace);
+            const pack = this._saveBirth(castDt, ds, this.state.bTimeU ? null : ts, this.state.bPlace);
             if (!pack) { this.setState({ busy: false, bErr: "the sky can't read that date" }); return; }
             this.setState({ busy: false, phase: "shard", deckSel: pack, bErr: "" });
           });
