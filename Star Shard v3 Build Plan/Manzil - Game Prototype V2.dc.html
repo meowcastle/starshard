@@ -3443,7 +3443,7 @@
       <sc-if value="{{ moonAskOn }}" hint-placeholder-val="{{ false }}">
       <div style="position:absolute;inset:0;z-index:8;background:rgba(4,3,2,.7);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center">
         <div style="width:330px;background:linear-gradient(170deg, rgba(30,21,9,.97), rgba(9,6,2,.985));border:1px solid rgba(240,216,154,.3);box-shadow:0 22px 60px rgba(0,0,0,.75);padding:22px 26px;display:flex;flex-direction:column;align-items:center;gap:10px;animation:mzFadeUp .25s ease both">
-          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#F2EAD6;text-align:center">a board stands unfinished</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#F2EAD6;text-align:center">your climb stands unfinished</div>
           <div style="font-family:'Karla',sans-serif;font-size:10.5px;line-height:1.75;color:rgba(198,94,42,.92);text-align:center;text-wrap:pretty">{{ moonAskLine }}</div>
           <div style="display:flex;gap:10px;margin-top:4px">
             <button onClick="{{ moonAskStayTap }}" style="padding:10px 20px;background:rgba(255,176,0,.1);border:1px solid rgba(255,176,0,.6);cursor:pointer;font-family:'Karla',sans-serif;font-size:12px;color:#FFB000">stay on this road</button>
@@ -6487,8 +6487,18 @@ class Component extends DCLogic {
   }
   // THREE LIVES a push (28 aug 2026 sim canon): a loss without a wipe leaves the same walker standing,
   // the third loss folds the road back to its first walker and lights all three again.
-  _lives() { try { const v = parseInt(localStorage.getItem("manzil-v2-lives"), 10); return isNaN(v) ? 3 : Math.max(0, Math.min(3, v)); } catch (e) { return 3; } }
-  _saveLives(n) { try { localStorage.setItem("manzil-v2-lives", String(Math.max(0, Math.min(3, n)))); } catch (e) {} this._syncProgress(); }
+  // LIVES ARE PER-MANSION (31 aug 2026, user: "progress and lives shouldnt carry across levels").
+  // Rungs and wipe points were already keyed by mansion; lives were a single global int, so losing
+  // the thread's last light left you starting the drum on one light. Now {mansionId: n}, defaulting
+  // to three. MIGRATION: the old value was a bare int with no mansion attached, so there is no
+  // honest way to say which road it belonged to — a non-object simply reads as "everything full",
+  // which is the generous direction and costs nobody a climb they earned.
+  _livesMap() { try { const v = JSON.parse(localStorage.getItem("manzil-v2-lives")); return (v && typeof v === "object" && !Array.isArray(v)) ? v : {}; } catch (e) { return {}; } }
+  _lives(m) { const k = m || this._tonight(); const v = this._livesMap()[k]; return typeof v === "number" ? Math.max(0, Math.min(3, v)) : 3; }
+  _saveLives(n, m) { const k = m || this._tonight(); try { const L2 = this._livesMap(); L2[k] = Math.max(0, Math.min(3, n)); localStorage.setItem("manzil-v2-lives", JSON.stringify(L2)); } catch (e) {} this._syncProgress(); }
+  // is a climb under way on this road? either the ladder has been started or a light is out.
+  // a mansion already at level four has nothing left to climb, so it never asks.
+  _climbing(m) { const k = m || this._tonight(); return this._mlvl(k) < 4 && (((this._rungs()[k] || 0) > 0) || this._lives(k) < 3); }
   // THE REAL SAVE FILE (30 aug 2026, code): everything above this line was local-only — a real
   // account only ever synced the chart (five/pack), never the actual progress that makes a save
   // file a save file. Gathers all sixteen manzil-v2-* progress keys FRESH from localStorage every
@@ -6504,7 +6514,7 @@ class Component extends DCLogic {
     const raw = (k, fb) => { try { const v = JSON.parse(localStorage.getItem("manzil-v2-" + k)); return v == null ? fb : v; } catch (e) { return fb; } };
     const rawInt = (k, fb) => { try { const v = parseInt(localStorage.getItem("manzil-v2-" + k), 10); return isNaN(v) ? fb : v; } catch (e) { return fb; } };
     this.api.saveManzilProgress({
-      climbs: raw("climbs", {}), rungs: raw("rungs", {}), lives: rawInt("lives", 3),
+      climbs: raw("climbs", {}), rungs: raw("rungs", {}), lives: raw("lives", {}),
       build: raw("build", {}), buildv: (() => { try { return localStorage.getItem("manzil-v2-buildv"); } catch (e) { return null; } })(),
       wrec: raw("wrec", {}), noted: raw("noted", {}), stairseen: raw("stairseen", {}), wipe: raw("wipe", {}),
       moon: rawInt("moon", 0), lastclimb: raw("lastclimb", {}), respec: rawInt("respec", 0),
@@ -6519,7 +6529,10 @@ class Component extends DCLogic {
     const d = data && typeof data === "object" ? data : {};
     const put = (k, v) => { try { localStorage.setItem("manzil-v2-" + k, JSON.stringify(v)); } catch (e) {} };
     const putInt = (k, v) => { try { localStorage.setItem("manzil-v2-" + k, String(v)); } catch (e) {} };
-    put("climbs", d.climbs || {}); put("rungs", d.rungs || {}); putInt("lives", d.lives != null ? d.lives : 3);
+    put("climbs", d.climbs || {}); put("rungs", d.rungs || {});
+    // a server copy predating the per-mansion change carries a bare int; drop it rather than
+    // pin one mansion's leftover light count onto every road (see _livesMap).
+    put("lives", (d.lives && typeof d.lives === "object") ? d.lives : {});
     put("build", d.build || {});
     try { localStorage.setItem("manzil-v2-buildv", d.buildv || "2"); } catch (e) {}
     put("wrec", d.wrec || {}); put("noted", d.noted || {}); put("stairseen", d.stairseen || {}); put("wipe", d.wipe || {});
@@ -8638,21 +8651,28 @@ class Component extends DCLogic {
       // a real board loss (wrec, a lantern, the wipe at zero), applied while tonight is still the
       // OLD road so the loss lands on the right mansion, before _setMoon moves it.
       moonAskOn: st.phase === "moon" && st.moonAsk != null,
-      moonAskLine: (() => { const k = this._susp; if (!k) return "";
-        return k.road && !k.practice && !k.duel
-          ? "the fight on " + (k.roadWalker ? k.roadWalker + "'s station" : "the " + this._mName(this._tonight()) + "'s road") + " is still standing. walking to another house forfeits the board: it counts as a loss, and a lantern goes out."
-          : "a table board is still standing. walking to another house sets it aside; nothing is staked."; })(),
+      moonAskLine: (() => {
+        const k = this._susp, t9 = this._tonight(), nm = "the " + this._mName(t9);
+        if (k && !(k.road && !k.practice && !k.duel)) return "a table board is still standing. walking to another house sets it aside; nothing is staked.";
+        const rung = this._rungs()[t9] || 0, lit = this._lives(t9);
+        const where = k && k.roadWalker ? k.roadWalker + "'s station" : rung > 0 ? "step " + (rung + 1) + " of " + nm + "'s road" : nm + "'s road";
+        const lights = lit === 3 ? "" : lit === 1 ? " one light is left" : " " + lit + " lights are left";
+        return "you are standing at " + where + "." + (lights ? lights + "." : "")
+          + " walking to another house forfeits the climb: this road goes back to its first walker and its lights come back full.";
+      })(),
       moonAskStayTap: () => this.setState({ moonAsk: null }),
       moonAskForfeitTap: () => {
         const tgt = st.moonAsk, keep = this._susp;
         if (tgt == null) return;
         this._susp = null; this._suspM = null;
-        if (keep && keep.road && !keep.practice && !keep.duel) {
-          // the forfeit bites while tonight is still the old road: wrec, a lantern, the wipe at zero
-          this._sfx("lantern"); this._saveWrec(keep.roadWalker, false);
-          const lv = this._lives() - 1;
-          if (lv <= 0) this._wipeRoad(keep.roadRung || 0); else this._saveLives(lv);
-        }
+        // THE FORFEIT (31 aug 2026, user's call): leaving a road mid-climb gives the climb up —
+        // the road folds back to its first walker and its lights come back full. Everything below
+        // runs while tonight is still the OLD road, so it lands on the right mansion before
+        // _setMoon moves on. A live board also records the loss against its walker first.
+        const t9 = this._tonight(), climbing = this._climbing(t9);
+        if (keep && keep.road && !keep.practice && !keep.duel) { this._sfx("lantern"); this._saveWrec(keep.roadWalker, false); }
+        else if (climbing) this._sfx("lantern");
+        if (climbing || (keep && keep.road && !keep.practice && !keep.duel)) this._wipeRoad(keep && keep.roadRung != null ? keep.roadRung : (this._rungs()[t9] || 0));
         this._setMoon(tgt); this._clearSeq();
         this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu", moonHover: null, moonAsk: null });
       },
@@ -8676,7 +8696,8 @@ class Component extends DCLogic {
             shut: open ? null : "1",
             tap: () => { if (!open) return;
               // a live board on another road asks before it is thrown away (see moonAskForfeitTap)
-              if (this._susp && id !== this._tonight()) { this._sfx("reject"); this.setState({ moonAsk: id }); return; }
+              // a live board OR a climb already under way asks before it is given up (moonAskForfeitTap)
+              if ((this._susp || this._climbing(this._tonight())) && id !== this._tonight()) { this._sfx("reject"); this.setState({ moonAsk: id }); return; }
               this._setMoon(id); this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu", moonHover: null, moonAsk: null }); },
             over: () => this.setState({ moonHover: id }),
             out: () => this.setState({ moonHover: null }),
