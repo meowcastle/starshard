@@ -5023,6 +5023,9 @@ class Component extends DCLogic {
     // regardless of what either player has climbed.
     const sx0 = this.state;
     const wsk = (sx0 && sx0.road && !sx0.duel && !sx0.practice) ? this._walkStep() : 0;
+    // the mansion's boss rung plays a TRUE mirror of the player's own cards, no handicap — see the
+    // walker-building block below for why walker rungs differ from it on purpose since 31 aug 2026.
+    const bossM = !!(sx0 && sx0.road && sx0.roadBoss && !sx0.duel && !sx0.practice);
     // tonight is IN the key: before dawn sets twoFaced on the mansion's OWN card, so a change of
     // mansion that leaves the hour alone must still rebuild, or the flag sticks to the old house.
     const ck = fl + ":" + wake + ":" + (demo ? 1 : 0) + ":" + wsk + ":" + this._tonight()
@@ -5071,6 +5074,16 @@ class Component extends DCLogic {
     const claims = this._claims(), BD = this._builds(), dh = demo ? this._demoHand() : [];
     const owned = {};
     for (let i2 = 1; i2 <= 28; i2++) owned[i2] = { lvl: this._mlvl(i2), won: claims[i2], ...ABS[i2] };
+    // THE WALKER LADDER'S HANDICAP (31 aug 2026, canon per research/manzil-engine-current.cjs's
+    // handicapFor()/handicapLevels(), pt.3): ONE handicap fraction for the player's whole real
+    // collection tonight (not per-rung — see _cards()'s own walker-building block below for why),
+    // knocking the weakest fraction of the player's own AWAKE cards down to level 1 in the
+    // walkers' mirror deck. Computed here, from `owned`'s real levels, before either card table exists.
+    const awakeIds = Object.keys(owned).map(Number).filter(id => owned[id].lvl >= 2);
+    const handicap = this._handicapFor(awakeIds.length);
+    const dropN = Math.round(handicap * awakeIds.length);
+    const weakestFirst = awakeIds.slice().sort((a, b) => owned[a].lvl - owned[b].lvl || a - b);
+    const dropSet = new Set(weakestFirst.slice(0, dropN));
     const C = {};
     pool.forEach((p, idx) => {
       const id = idx + 1, o = owned[id];
@@ -5126,22 +5139,29 @@ class Component extends DCLogic {
     C[108] = { name: "Uranus", l: 7, r: 7, who: "sky", ab: null, abText: "", homeM: 0 };
     C[109] = { name: "Neptune", l: 6, r: 8, who: "sky", ab: null, abText: "", homeM: 0 };
     // walkers' fives: other players' hands, piloted by her judgment (ids 200+mansion).
-    // THE WALKERS NOW MIRROR YOUR OWN COLLECTION (31 aug 2026, staging audit + Justin's go-ahead
-    // — a real reversal, not a bugfix, so it's spelled out here rather than silently overwritten):
-    // every walker rung now builds the exact same way the mansion's own boss rung already did
-    // (`{...C[id], who:"sky", ...}` — full mirror, doors and grants included), instead of the old
-    // flat printed-faces-plus-an-hour-bump model. The comment this replaced explained the OLD
-    // design's own reasoning — "her lent hand used to strengthen every time you spent one of
+    // THE WALKERS NOW MIRROR YOUR OWN COLLECTION (31 aug 2026, staging audit + work order — a real
+    // reversal, not a bugfix, so it's spelled out here rather than silently overwritten): every
+    // walker rung builds from the player's own real cards (doors and grants included) instead of
+    // the old flat printed-faces-plus-an-hour-bump model. The comment this replaced explained the
+    // OLD design's own reasoning — "her lent hand used to strengthen every time you spent one of
     // yours" felt bad, so it was deliberately kept off printed faces — but per SHIP-THE-ROAD-27AUG.md's
     // own spec (difficulty should key off the player's real per-card levels "even if the player
-    // never levels their cards there") and the acceptance table measured against mirror opponents
-    // at every rung, not just the boss, that tradeoff is now made the other way, on purpose. The
-    // four-hours hand-hardening mechanic (dusk/full dark/small hours/before dawn) is superseded by
-    // this for walker nights too, the same way the boss rung already dropped it — a single mirrored
-    // collection is the difficulty signal now, not an hour-of-night bump on top of a flat hand.
+    // never levels their cards there") that tradeoff is now made the other way, on purpose. The
+    // four-hours hand-hardening mechanic (dusk/full dark/small hours/before dawn) is superseded for
+    // walker nights: the mirror-plus-handicap-plus-caution system above is the difficulty signal
+    // now, not an hour-of-night bump on top of a flat hand. `dropSet`/`handicap` (just above) knock
+    // the weakest fraction of the player's own awake cards down to level 1 — one flat handicap for
+    // tonight's whole road, NOT scaled per rung; the actual rung-to-rung climb inside one night
+    // comes entirely from `_replyW()`'s caution dial, a separate axis. THE MANSION (roadBoss) is
+    // untouched by the handicap on purpose: its own "the last battle never softens as you climb"
+    // design (below) predates this decision and nothing flagged it as wrong.
     pool.forEach((p, idx) => {
-      const id = idx + 1;
-      C[200 + id] = { ...C[id], who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true };
+      const id = idx + 1, base = C[id];
+      if (bossM) { C[200 + id] = { ...base, who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true }; return; }
+      const lvl = dropSet.has(id) ? 1 : base.lvl;
+      const grantOn = !!(base.grantOn && lvl >= 2);
+      C[200 + id] = { ...base, lvl, ab: lvl >= 2 ? base.sig : null, grantOn,
+        twoFaced: grantOn && base.quad === "seiryuu", who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true };
     });
     // her cards wear L3 quiet by default; a whole set at L4 turns the whole game L4
     if (wake && C[wake] && C[wake].lvl < 2) C[wake] = { ...C[wake], lvl: 2 }; // ascent: one signature woken for the match
@@ -6056,10 +6076,17 @@ class Component extends DCLogic {
   // (18) is live. the tents law (25) is OUT: zeroing a station flips the seat to the follower
   // (−23.3 fresh, byakko −24.8). storm weather (6), the veil (15), the void (24), the thread (28)
   // are FROZEN pending measurement — their branches below stay dormant until this map returns them.
-  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 18: "beat", 25: "shell", 10: "reach" })[this._tonight()] || null; }
-  // per-mansion law stations (30 aug v3 pack, lawAt is {station, kind}): beat and reach live on the
-  // mansion's own door (index 0); the tents' SHELL stands midway, index 4, like the rope.
-  _lawSt() { return ({ beat: 0, reach: 0, shell: 4 })[this._bossRule()] ?? -1; }
+  // THE ROPE IS NOW MANSION 28'S LAW (31 aug 2026, THE-ROPE-28AUG.md's own spec + staging audit +
+  // work order): folded into this same whole-night map instead of its own separately-hashed
+  // _rope() (deleted). Was a per-board hash keyed on roadRung AND round, so the rope moved
+  // board-to-board within a single push — a measured swing up to 10 points between stations, less
+  // learnable than even a nightly coin flip. One system for station laws now, same gate as the
+  // other three (null for practice/duel/off-road — a real reversal from _rope()'s own extra
+  // walkStep>=2 condition, dropped on purpose per the work order: "the same gate as the other three").
+  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 18: "beat", 25: "shell", 10: "reach", 28: "rope" })[this._tonight()] || null; }
+  // per-mansion law stations (30-31 aug v3 pack, lawAt is {station, kind}): beat and reach live on
+  // the mansion's own door (index 0); the tents' SHELL and the rope both stand midway, index 4.
+  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4 })[this._bossRule()] ?? -1; }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
   _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} this._syncProgress(); }
@@ -6167,13 +6194,40 @@ class Component extends DCLogic {
     this._sayT = setTimeout(() => this.setState({ wSay: null }), kind === "open" ? 3400 : 2600);
   }
   _specialNight(t) { return this._chartFive().indexOf(t) >= 0; }
+  // how many of the player's 28 cards are awake (level >= 2) — the one number the walker ladder's
+  // handicap and caution are both keyed on (research/manzil-engine-current.cjs's awakeCount()).
+  _awake() { let n = 0; for (let id = 1; id <= 28; id++) if (this._mlvl(id) >= 2) n++; return n; }
+  // the report's handicap bands (HANDICAP_BANDS, 28 aug 2026 pt.3): the fraction of the player's
+  // own awake cards the walker ladder's mirror deck knocks down to level 1, weakest first —
+  // shrinks to 0 (a true mirror) at 22-28 awake. See _cards()'s own walker-building block.
+  _handicapFor(awake) {
+    const bands = [[8, .75], [14, .5], [21, .25], [28, 0]];
+    for (const [max, h] of bands) if (awake <= max) return h;
+    return 0;
+  }
+  // the report's own caution table (CAUTION_BANDS, unchanged from pt.4's correction — a reply-cost
+  // MULTIPLIER, not a search depth), one value per road stage: index 0-7 = walker rungs 1-8.
+  _cautionsFor(awake) {
+    const bands = [
+      [8, [0, 0, 0, 1, 1, 2, 2, 2, 2]],
+      [14, [0, 0, 1, 1, 2, 2, 4, 4, 4]],
+      [21, [0, 1, 1, 2, 2, 4, 4, 6, 6]],
+      [28, [0, 1, 2, 2, 4, 4, 6, 8, 8]],
+    ];
+    for (const [max, arr] of bands) if (awake <= max) return arr;
+    return bands[bands.length - 1][1];
+  }
   _replyW() {
     const st = this.state;
     if (st && st.practice) return 3;
     if (!st) return 8;
-    // the rung ladder (27 aug 2026, user set rung eight at 16): the last stations read much harder
-    // than they did, and the mansion at nine stays a clear step beyond the last walker.
-    if (st.road) return (st.roadBoss ? 20 : [3, 4, 5, 7, 9, 11, 13, 16][Math.min(st.roadRung || 0, 7)]);
+    // THE WALKER LADDER'S CAUTION DIAL (31 aug 2026, staging audit + work order): walker rungs now
+    // read the measured canon's own CAUTION_BANDS, keyed on the player's real awake-card count,
+    // replacing the old flat [3,4,5,7,9,11,13,16] per-rung table. The mansion (roadBoss) is
+    // UNCHANGED on purpose — its own comment elsewhere in this file ("the last battle never
+    // softens as you climb") predates and is not touched by this decision; nothing flagged it as
+    // wrong, only the walkers were.
+    if (st.road) return st.roadBoss ? 20 : this._cautionsFor(this._awake())[Math.min(st.roadRung || 0, 7)];
     if (st.nightSky) return 12;
     if (st.nightWalker) return 10;
     return 8;
@@ -6331,20 +6385,8 @@ class Component extends DCLogic {
     return 1 + (h % (len - 2));
   }
   // the thread's ground: the rope station pulls one neighbour in with whatever lodges there.
-  // PINNED TO STATION 4 (31 aug 2026, THE-ROPE-28AUG.md's own spec + staging audit go-ahead): was
-  // a per-board hash keyed on roadRung AND round, so the rope moved board to board within a single
-  // push — up to a measured 10-point swing between stations, less learnable than even a nightly
-  // coin flip. Fixed, same station index as the hideaway's shell (see lawAt/_lawSt above), still
-  // gated on mansion 28's own night from the second walk-step on, unchanged from before — that
-  // walkStep>=2 timing was never reported broken, only the wandering station was, so it's kept as
-  // its own condition here rather than folded into the whole-night lawAt map, which has no
-  // per-station-law hour gating today and would otherwise silently drop it.
-  _rope() {
-    const st = this.state;
-    if (!st || !st.road || st.practice || st.duel) return -1;
-    if (this._tonight() !== 28 || this._walkStep() < 2) return -1;
-    return 4;
-  }
+  // _rope() is GONE (31 aug 2026) — the rope is now mansion 28's law, read through the same
+  // _bossRule()/_lawSt() map every other station law uses. See the header comment on _bossRule().
   // the drum's ground: strikes that cross the resonant station carry one further
   _reson() {
     const st = this.state;
@@ -6813,7 +6855,7 @@ class Component extends DCLogic {
       // the vermilion bird's grant moved to lodge time, from the granted card's own position —
       // see the queue.push near the top of this function, right after the throne's law.
     }
-    if (i === this._rope() && !inPlace) { // al-Risha, the well-rope: what lodges here hauls its neighbour in
+    if (this._bossRule() === "rope" && i === this._lawSt() && !inPlace) { // al-Risha, the well-rope: what lodges here hauls its neighbour in
       const cands = [-1, 1].map(d => ({ k: this._nb(i, d), d })).filter(o => o.k >= 0 && slots[o.k] && slots[o.k].owner !== own);
       if (cands.length) {
         const pick = cands[0];
@@ -7351,7 +7393,7 @@ class Component extends DCLogic {
     });
     const roundWinner = st.turn === "over" && st.slots.every(x => x) ? this._boardWinner(st.slots) : null;
     const tutF = this._tutMove();
-    const listenI = this._listen(), loudest = listenI >= 0 ? this._herLoudest() : 0, remedyI = this._remedy(), kilnI = this._kiln(), crossI = this._cross(), ropeI = this._rope(), resonI = this._reson();
+    const listenI = this._listen(), loudest = listenI >= 0 ? this._herLoudest() : 0, remedyI = this._remedy(), kilnI = this._kiln(), crossI = this._cross(), ropeI = this._bossRule() === "rope" ? this._lawSt() : -1, resonI = this._reson();
     const slots = st.slots.map((s, i) => {
       const empty = !s;
       const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
