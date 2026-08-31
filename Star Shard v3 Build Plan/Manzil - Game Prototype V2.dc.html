@@ -8836,7 +8836,11 @@ class Component extends DCLogic {
           obHintStyle: obBase + "bottom:" + Math.round(cyB + 17) + "px;color:rgba(154,138,94,.6);pointer-events:none",
           obDiaOn: ph9 === "birth",
           obRowStyle: "position:absolute;left:0;right:0;bottom:" + Math.round(cyB + 2) + "px;z-index:44;display:flex;justify-content:center;gap:12px",
-          obLinkOn: ph9 === "arrive" || ph9 === "signin",
+          // 30 aug 2026 (code, user: "I couldn't access [sign in] once you choose to make a new
+          // account. lots of people can forget they have an account") — this link's own margin-bar
+          // slot was already built to coexist with the birth phase's hint text and progress diamonds
+          // (see the comment above), "birth" was just missing from the condition that shows it.
+          obLinkOn: ph9 === "arrive" || ph9 === "signin" || ph9 === "birth",
           obLinkA: ph9 === "signin" ? "new here?" : "returning?",
           obLinkB: ph9 === "signin" ? "cast your sky" : "sign in",
           obLinkTap: () => this._go(this.state.phase === "signin" ? "birth" : "signin"),
