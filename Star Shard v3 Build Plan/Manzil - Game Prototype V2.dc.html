@@ -1989,7 +1989,7 @@
         </sc-if>
         <div style="width:120px;height:1px;background:linear-gradient(90deg, transparent, rgba(240,216,154,.22), transparent);margin:16px 0 12px"></div>
         <div style="display:flex;align-items:center;gap:20px">
-          <span style="font-family:'Karla',sans-serif;font-size:11px;color:rgba(154,138,94,.4)">settings · soon</span>
+          <button onClick="{{ soundTap }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Karla',sans-serif;font-size:11px;color:rgba(154,138,94,.85)" style-hover="filter:brightness(1.3)">{{ soundLabel }}</button>
           <button onClick="{{ pauseLogoutTap }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:'Karla',sans-serif;font-size:11px;color:rgba(154,138,94,.85)" style-hover="filter:brightness(1.3)">log out</button>
         </div>
         <div style="font-size:9px;color:rgba(154,138,94,.55);margin-top:12px">esc to close</div>
@@ -3669,7 +3669,7 @@
       <div style="position:absolute;inset:0;z-index:4">
         <div style="position:absolute;left:50%;top:206px;width:660px;height:272px;margin-left:-330px;margin-top:-136px;border-radius:50%;border:1px solid rgba(240,216,154,.13);pointer-events:none"></div>
         <sc-for list="{{ moonNodes }}" as="mn" hint-placeholder-count="28">
-          <button onClick="{{ mn.tap }}" onMouseEnter="{{ mn.over }}" onMouseLeave="{{ mn.out }}" style="{{ mn.style }}" style-hover="transform:translate(-50%,-50%) scale(1.55)">
+          <button onClick="{{ mn.tap }}" onMouseEnter="{{ mn.over }}" onMouseLeave="{{ mn.out }}" data-mzshut="{{ mn.shut }}" style="{{ mn.style }}" style-hover="transform:translate(-50%,-50%) scale(1.55)">
             <span style="{{ mn.dotStyle }}"></span>
             <sc-if value="{{ mn.hereOn }}" hint-placeholder-val="{{ false }}">
               <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;pointer-events:none;border-radius:50%;background:radial-gradient(circle, rgba(255,196,90,.28), transparent 68%);animation:mzBreathe 3.4s ease-in-out infinite"></span>
@@ -4551,6 +4551,14 @@ class Component extends DCLogic {
   constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
   async componentDidMount() {
     try { this._measureArt(); } catch (e) {}
+    // THE NIGHT SPEAKS (31 aug 2026 sound pass, ported from the Design prototype against
+    // "Manzil - Sound Design.dc.html"): the parchment press, everywhere — every real button lands
+    // with the felt thud; board ground (slots, hand cards) keeps its own stone voice instead, fired
+    // explicitly from _commitPlace/_step, not from this generic listener.
+    this._sfxBtnL = (e) => { try { const b = e.target && e.target.closest && e.target.closest("button"); if (!b) return;
+      if (b.hasAttribute("data-mzshut")) { this._sfx("shut"); return; } // a door that does not open sounds shut, never pressed
+      if (!b.closest("[data-mzslot]") && !b.hasAttribute("data-mzhand")) this._sfx("btn"); } catch (e2) {} };
+    document.addEventListener("pointerdown", this._sfxBtnL, true);
 
     this._onResize = () => this.forceUpdate();
     window.addEventListener("resize", this._onResize);
@@ -4622,6 +4630,7 @@ class Component extends DCLogic {
     window.removeEventListener("resize", this._onResize); window.removeEventListener("orientationchange", this._onResize); window.removeEventListener("keydown", this._onKey); this._clearSeq(); clearInterval(this._clockT);
     if (this._onDragMove) { window.removeEventListener("pointermove", this._onDragMove); window.removeEventListener("pointerup", this._onDragUp); window.removeEventListener("pointercancel", this._onDragUp); }
     if (this._dragRaf) cancelAnimationFrame(this._dragRaf); clearInterval(this._tiltI);
+    if (this._sfxBtnL) document.removeEventListener("pointerdown", this._sfxBtnL, true);
     this._netCleanup();
   }
   _startDrag(id, e) {
@@ -4697,6 +4706,7 @@ class Component extends DCLogic {
     return [sh("M -34 0 h 12 l -6 40 h -12 Z", { f: "rgba(" + c + ",.15)", a: "mzFxSweep .7s" })];
   }
   _afterDeal() {
+    this._sfx("deal");
     clearTimeout(this._dealT); this._dealT = setTimeout(() => { this.setState({ dealt: true }); this._say("open"); }, 1100);
     // the stride (level grammar beat 4): entering a station is a step taken, in the level's physics
     if (this.state.road && !this.state.practice) {
@@ -4947,10 +4957,11 @@ class Component extends DCLogic {
     const [cy, cs] = this._counts(slots);
     const winner = this._boardWinner(slots);
     this.setState({ countFx: { you: cy, sky: cs, winner, step: 0, sweep: -1 } });
+    this._sfx("countRun");
     this._cfA = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 1 } } : {}), 80);
     for (let i = 0; i < slots.length; i++) this._seq.push(setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, sweep: i } } : {}), 300 + i * 135));
     const tBoom = 300 + slots.length * 135 + 330;
-    this._cfC = setTimeout(() => { this._buzz && this._buzz([12, 40, 16]); this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 3, sweep: slots.length - 1 } } : {}); }, tBoom);
+    this._cfC = setTimeout(() => { this._buzz && this._buzz([12, 40, 16]); this._sfx("countMerge"); this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 3, sweep: slots.length - 1 } } : {}); }, tBoom);
     this._cfE = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 4 } } : {}), tBoom + 1900);
     this._cfD = setTimeout(() => { this.setState({ countFx: null }); done(); }, tBoom + 2600);
   }
@@ -6088,6 +6099,47 @@ class Component extends DCLogic {
   // the mansion's own door (index 0); the tents' SHELL and the rope both stand midway, index 4.
   _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4 })[this._bossRule()] ?? -1; }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+  // THE NIGHT SPEAKS (31 aug 2026, ported from the Design prototype against "Manzil - Sound
+  // Design.dc.html"): a small webaudio voice for the board loop — gather-and-strike grammar,
+  // singing bowls for the sky, go-stone weight for the board, felt for the ui. every tone drifts
+  // ~30 cents so nothing machine-guns. toggle lives in the pause plaque (manzil-v2-sound, default
+  // on). Pure oscillator/noise synthesis — no audio files, nothing to bundle or deploy separately.
+  _sndOn() { try { return localStorage.getItem("manzil-v2-sound") !== "off"; } catch (e) { return true; } }
+  _sfxAc() { try { if (!this.__ac) this.__ac = new (window.AudioContext || window.webkitAudioContext)(); if (this.__ac.state === "suspended") this.__ac.resume(); return this.__ac; } catch (e) { return null; } }
+  _sfxT(ac, t, o) { const g = ac.createGain(), os = ac.createOscillator(); os.type = o.w || "sine";
+    os.frequency.setValueAtTime(o.f * (1 + (Math.random() - .5) * .03), t);
+    if (o.f2) os.frequency.exponentialRampToValueAtTime(Math.max(20, o.f2), t + o.d);
+    const v = (o.v || .2) * .3; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(v, t + (o.a || .005));
+    g.gain.exponentialRampToValueAtTime(.0001, t + o.d); os.connect(g); g.connect(ac.destination); os.start(t); os.stop(t + o.d + .05); }
+  _sfxN(ac, t, o) { const d = o.d, b = ac.createBuffer(1, Math.ceil(ac.sampleRate * (d + .1)), ac.sampleRate), ch = b.getChannelData(0);
+    for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    const src = ac.createBufferSource(); src.buffer = b; const fl = ac.createBiquadFilter(); fl.type = o.ft || "bandpass"; fl.Q.value = o.q || 1;
+    fl.frequency.setValueAtTime(o.f, t); if (o.f2) fl.frequency.exponentialRampToValueAtTime(Math.max(40, o.f2), t + d);
+    const g = ac.createGain(); const v = (o.v || .25) * .3; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(v, t + (o.a || .004));
+    g.gain.exponentialRampToValueAtTime(.0001, t + d); src.connect(fl); fl.connect(g); g.connect(ac.destination); src.start(t); src.stop(t + d + .05); }
+  _sfxB(ac, t, o) { [[1, 1], [2.01, .5], [3.02, .22], [4.16, .1]].forEach((p, k) => this._sfxT(ac, t, { f: o.f * p[0], d: (o.d || 1.6) * (1.1 - k * .12), v: (o.v || .14) * p[1], a: o.a || .07 })); }
+  _sfxC(ac, t, o) { [[1, 1], [2.76, .4], [5.4, .16]].forEach((p, k) => this._sfxT(ac, t, { f: o.f * p[0], d: o.d * (1.1 - k * .15), v: (o.v || .18) * p[1], a: .012 })); }
+  _sfx(id) { if (!this._sndOn()) return; const ac = this._sfxAc(); if (!ac) return;
+    const t = ac.currentTime + .02, T = (o, at) => this._sfxT(ac, t + (at || 0), o), N = (o, at) => this._sfxN(ac, t + (at || 0), o), B = (o, at) => this._sfxB(ac, t + (at || 0), o), C = (o, at) => this._sfxC(ac, t + (at || 0), o);
+    switch (id) {
+      case "btn": T({ f: 170, f2: 70, d: .09, v: .018 }); N({ ft: "lowpass", f: 700, d: .04, v: .012 }); break;
+      case "deal": [0, .11, .22, .33, .44].forEach(at => N({ f: 900, f2: 2600, d: .13, v: .11 }, at)); C({ f: 1318, d: .5, v: .05 }, .56); break;
+      case "lodge": N({ ft: "lowpass", f: 900, d: .03, v: .38 }); T({ f: 150, f2: 60, d: .12, v: .2 }, .005); break;
+      case "dominion": this._sfx("lodge"); B({ f: 392, d: 1.5, v: .08 }, .07); break;
+      case "reject": N({ ft: "lowpass", f: 500, d: .04, v: .18 }); N({ ft: "lowpass", f: 500, d: .04, v: .18 }, .1); break;
+      case "shut": N({ ft: "lowpass", f: 340, d: .05, v: .15 }); T({ f: 196, f2: 160, d: .13, v: .045 }, .01); break;
+      case "flip": N({ f: 1400, d: .1, v: .13 }); C({ f: 880, d: .3, v: .065 }, .02); break;
+      case "flipDown": N({ f: 1100, d: .1, v: .13 }); C({ f: 659, d: .3, v: .065 }, .02); break;
+      case "bigtake": T({ f: 300, f2: 1400, d: .26, v: .05, a: .23 }); T({ f: 120, f2: 36, d: .32, v: .38 }, .36); N({ ft: "highpass", f: 6000, d: .4, v: .11, q: 2, a: .002 }, .36);
+        for (let k2 = 0; k2 < 5; k2++) T({ f: 1100 * (1 + Math.random() * 1.6), d: 1.2, v: .026, a: .12 }, .42 + Math.random() * .08); break;
+      case "countRun": [988, 1108, 1244, 1318].forEach((f2, k2) => T({ f: f2, d: .08, v: .055 }, k2 * .12)); break;
+      case "countMerge": T({ f: 90, f2: 45, d: .4, v: .26 }); B({ f: 523, d: 1.8, v: .1 }, .05); break;
+      case "won": T({ f: 131, d: 2, v: .035, a: .4 }); B({ f: 523, d: 1.5, v: .09 }, .1); B({ f: 659, d: 1.5, v: .09 }, .26); B({ f: 784, d: 2, v: .1 }, .42); break;
+      case "lost": T({ f: 100, f2: 48, d: .2, v: .18 }); N({ ft: "lowpass", f: 400, d: .5, v: .055, a: .06 }, .05); break;
+      case "lantern": N({ ft: "highpass", f: 3000, d: .06, v: .11 }); N({ ft: "lowpass", f: 2000, f2: 150, d: .5, v: .08, a: .02 }, .06); break;
+      case "reach": T({ f: 600, f2: 1200, d: .18, v: .04, a: .16 }); N({ f: 500, f2: 3400, d: .5, v: .1 }, .2); N({ ft: "lowpass", f: 900, d: .03, v: .32 }, .74); T({ f: 150, f2: 55, d: .14, v: .18 }, .74); N({ f: 1800, d: .06, v: .14 }, .8); break;
+      case "gaze": T({ f: 2093, d: .28, v: .018, a: .05 }); break;
+    } }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
   _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} this._syncProgress(); }
   _again(name) { return ({
@@ -7072,9 +7124,10 @@ class Component extends DCLogic {
   _commitPlace(cardId, i, rev, who) {
     if (who === "you") {
       const tf = this._tutMove();
-      if (tf && (cardId !== tf.id || i !== tf.i)) { this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
+      if (tf && (cardId !== tf.id || i !== tf.i)) { this._sfx("reject"); this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
     }
     const c = this._cards()[cardId];
+    this._sfx(this._boardM(i) === cardId ? "dominion" : "lodge");
     const rr = this._resolve(this.state.slots, cardId, i, rev, who);
     const seq = rr.seq;
     const flipsN = seq.filter(x => !x.ret).length;
@@ -7085,6 +7138,7 @@ class Component extends DCLogic {
     if (who === "sky" && !this.state.practice && ((this.state.road && !this.state.roadBoss) || (!this.state.road && !this.state.nightSky && this.state.nightWalker)
       || (this.state.roadBoss && this._avFig(this._tonight())))) this._wCast = { n: (this._wCast ? this._wCast.n : 0) + 1, f: flipsN >= 2 };
     this._buzz(flipsN >= 2 ? [12, 46, 12] : 8);
+    if (flipsN >= 2) this._sfx("bigtake"); else if (flipsN === 1) this._sfx(who === "sky" ? "flipDown" : "flip");
     if (flipsN >= 1) setTimeout(() => this._say(who === "sky" ? "hit" : "lost"), 420 + flipsN * 380);
     this._reactPend = who === "sky" && flipsN >= 2 && !this.state.reactDone && !this.state.roadBoss && !this.state.nightSky ? (this.state.roadWalker || this.state.nightWalker) : null;
     // the avatar reacts too (29 aug 2026): once a match, when the mansion takes two or more
@@ -7135,7 +7189,7 @@ class Component extends DCLogic {
         const tName = this._cards()[slots[it.to].id].name.toLowerCase();
         return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", shakeFx: k === 0 && this._shakeOn ? true : s.shakeFx, toast: it.sig ? { t: it.sig, n: (s.toast ? s.toast.n : 0) + 1 } : s.toast, caps: (s.caps || []).concat([{ i: it.to, t: "claimed by " + aName }]), ...(it.printed ? { reachFx: { n: (s.reachFx ? s.reachFx.n : 0) + 1, pl: this._cards()[slots[it.to].id].l, pr: this._cards()[slots[it.to].id].r } } : {}) };
       }, () => this._step(seq, k + 1, who, keepTurn));
-      if (seq[k] && seq[k].printed) { const rt = setTimeout(() => this.setState({ reachFx: null }), 1800); this._seq.push(rt); }
+      if (seq[k] && seq[k].printed) { this._sfx("reach"); const rt = setTimeout(() => this.setState({ reachFx: null }), 1800); this._seq.push(rt); }
     }, k === 0 ? 320 : 400);
     this._seq.push(t);
   }
@@ -7207,9 +7261,9 @@ class Component extends DCLogic {
               const rw = this.state.roundWins.filter(x => x === "you").length;
               const rl = this.state.roundWins.filter(x => x === "sky").length;
               const t2 = this._tonight();
-              if (rw >= need) { this._buzz([10, 50, 14]); this._saveWrec(this.state.roadWalker, true); this._saveRung(t2, this.state.roadRung + 1); this._clearWipe(t2, this.state.roadRung + 1); this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
+              if (rw >= need) { this._buzz([10, 50, 14]); this._sfx("won"); this._saveWrec(this.state.roadWalker, true); this._saveRung(t2, this.state.roadRung + 1); this._clearWipe(t2, this.state.roadRung + 1); this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
               else if (rl >= need) {
-                this._buzz(24); this._saveWrec(this.state.roadWalker, false);
+                this._buzz(24); this._sfx("lantern"); this._saveWrec(this.state.roadWalker, false);
                 const lv = this._lives() - 1; // THREE LIVES a push (28 aug 2026 canon): the third loss wipes
                 if (lv <= 0) { this._buzz([28, 90, 28]); this._wipeRoad(this.state.roadRung);
                   // the new moon (29 aug 2026): the third loss goes fully dark for a breath before the
@@ -7223,9 +7277,9 @@ class Component extends DCLogic {
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
             const l = this.state.roundWins.filter(x => x === "sky").length;
-            if (w >= 3) { this._buzz([10, 60, 18]); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, true); this.setState({ phase: "won" }); }
+            if (w >= 3) { this._buzz([10, 60, 18]); this._sfx("won"); if (!this.state.practice && !this.state.freeNight && !this.state.duel) this._recordWin(); if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, true); this.setState({ phase: "won" }); }
             else if (l >= 3) {
-              this._buzz(24);
+              this._buzz(24); this._sfx("lost");
               if (!this.state.practice && !this.state.road && this.state.nightWalker) this._saveWrec(this.state.nightWalker, false);
               // THREE LIVES applies at the mansion too (28 aug 2026 fix, re-ported 30 aug 2026): by
               // the time execution reaches this generic branch, st.road true always means the
@@ -7363,14 +7417,14 @@ class Component extends DCLogic {
     const weighed = [best.i].concat(alts);
     if (deep.sweep && weighed.length > 1) {
       // she looks at them one at a time, the way someone counts before they answer
-      this.setState({ skyGaze: [weighed[0]] });
+      this.setState({ skyGaze: [weighed[0]] }); this._sfx("gaze");
       weighed.slice(1).forEach((gi, k) => {
         this._seq.push(setTimeout(() => {
           const s3 = this.state;
-          if (s3.phase === "play" && s3.turn === "sky") this.setState(s => ({ skyGaze: (s.skyGaze || []).concat(gi) }));
+          if (s3.phase === "play" && s3.turn === "sky") { this.setState(s => ({ skyGaze: (s.skyGaze || []).concat(gi) })); this._sfx("gaze"); }
         }, Math.round(deep.ms * (k + 1) / (weighed.length + .4))));
       });
-    } else this.setState({ skyGaze: weighed });
+    } else { this.setState({ skyGaze: weighed }); this._sfx("gaze"); }
     this._gazeT = setTimeout(() => {
       const s2 = this.state;
       if (s2.phase === "play" && s2.turn === "sky" && !s2.slots[best.i]) {
@@ -8425,6 +8479,7 @@ class Component extends DCLogic {
             // the player selects a level; only the moon's actual house can wake a new card)
             hereOn: real,
             selOn: here && !real,
+            shut: open ? null : "1",
             tap: () => { if (!open) return; this._setMoon(id); this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu", moonHover: null }); },
             over: () => this.setState({ moonHover: id }),
             out: () => this.setState({ moonHover: null }),
@@ -9274,6 +9329,8 @@ class Component extends DCLogic {
         const done = () => this.setState({ ...this._deckState(), phase: "arrive", pauseOn: false });
         if (this.api && this.api.logout) this.api.logout().then(done).catch(done); else done();
       },
+      soundTap: () => { const on = this._sndOn(); try { localStorage.setItem("manzil-v2-sound", on ? "off" : "on"); } catch (e) {} if (!on) this._sfx("btn"); this.forceUpdate(); },
+      soundLabel: "sound · " + (this._sndOn() ? "on" : "off"),
       rulesTap: () => this.setState(s => ({ rulesOn: !s.rulesOn })),
       rulesOn: !!st.rulesOn,
       faceOn: !!st.face,
