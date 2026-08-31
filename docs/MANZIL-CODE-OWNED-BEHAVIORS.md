@@ -178,6 +178,31 @@ still matters — check the specific items the patch's own area touches.
   regression, but don't let a future full-file export quietly drop the
   `dstInfo()` correction and reintroduce the device-timezone bug for
   everyone.
+- [ ] **The sound pass (webaudio SFX) is real, wired code, not a
+  placeholder.** Ported 31 Aug 2026 from a Design export against
+  `Manzil - Sound Design.dc.html` — pure oscillator/filtered-noise
+  synthesis (`_sfxAc`/`_sfxT`/`_sfxN`/`_sfxB`/`_sfxC`/`_sfx(id)`), no
+  audio files. A capture-phase `pointerdown` listener
+  (`componentDidMount`'s `_sfxBtnL`, removed in `componentWillUnmount`)
+  gives every real `<button>` the felt-press sound for free via
+  `data-mzslot`/`data-mzhand`/`data-mzshut` markup attributes — losing
+  any of those three attributes (board slots, hand cards, the
+  moon-picker's locked nodes) either double-sounds the board's own
+  dedicated lodge/dominion tones or silences the moon picker's shut-door
+  cue. Toggle is real (`manzil-v2-sound`, default on; `soundTap`/
+  `soundLabel` in the pause plaque, replacing an old "settings · soon"
+  placeholder — don't let a future export put the placeholder back).
+  Explicit `_sfx(...)` calls live in `_commitPlace` (lodge/dominion/
+  reject/flip/flipDown/bigtake), `_step` (reach), `_afterDeal` (deal),
+  `_countCeremony` (countRun/countMerge), `_finish` (won/lost/lantern —
+  these three sit AFTER the live-PvP early return, so a future edit to
+  that function has to keep them past it, not swallow them into it),
+  and `_skyMove` (gaze). The export this was ported from was otherwise a
+  stale whole-workspace snapshot (missing all of that day's other
+  work, including a regressed mobile touch-hold binding) — a reminder
+  that a real, wanted addition can still ride in on an otherwise-stale
+  export; diff for what's actually new rather than accepting or
+  rejecting a delivery wholesale.
 
 ## Why this list and not something broader
 
