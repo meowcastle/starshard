@@ -5084,7 +5084,14 @@ class Component extends DCLogic {
     if (o >= 1 && o <= 28) return o;
     const mv = this._moon();
     if (mv) return mv;                 // the moon glyph: wherever the player last walked her
-    return 23; // the drum: the moon's home while the built houses are twenty-one to twenty-eight
+    // 30 aug 2026 (code): was `return 23` (the drum), correct while the built houses were 21-28 and
+    // _moonOpen() lit that whole range. Now that _moonOpen() only lights 18/10/25 (the three mansions
+    // with a real station law), a fresh device or a stale manzil-v2-moon value pointing at a now-
+    // closed house fell through to this default and landed on a level that isn't playable at all —
+    // caught live (user: "why did the game open on the drum mansion? that level isn't active?").
+    // The default now has to be a currently-open house; 18 (the heart) matches the practice/tutor
+    // pin above so a fresh device's very first board is the same mansion the tutorial teaches.
+    return 18;
   }
   // where the moon TRULY stands tonight, ignoring the player's moon-walk and the tweak override.
   // real ephemeris (truncated meeus, ~0.005°); the drum only as a dead fallback if the script fails.
