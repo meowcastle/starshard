@@ -9,31 +9,29 @@ live file?**
 
 Everything below is measured from the two files directly, not remembered.
 
-## The one fact that explains everything
+## The one fact that used to explain everything — and what replaced it
 
-**Your `Manzil - Game Prototype V2.dc.html` and the deployed one are two
-different lineages, and neither is ahead of the other.**
+**Until 31 Aug this doc opened by saying your file and the deployed one were two
+lineages, neither ahead of the other.** That was measured and true: your copy
+carried none of Code's work, and every delivery was a merge in both directions.
 
-Measured on the 31 Aug delivery: your copy contained **zero** of Code's work —
-all 16 Code-owned markers absent. The deployed copy, in turn, had none of your
-drum tower. Each delivery is therefore a **merge**, never a replace, in both
-directions.
+**That is no longer the case.** Your 31 Aug evening delivery was built on the
+deployed copy, and after it landed the two files were byte-identical. You have
+all of Code's work now. The 14 "Code-only methods" this section used to
+enumerate are simply part of the file you hold.
 
-Concretely, right now:
+**Keep it that way and this whole document mostly stops mattering.** The way to
+keep it that way is the one you already used: build on the copy Code sends,
+ship only what changed, and name any shared method you touched. What follows is
+what still matters when the two do drift apart again — which they will, the
+moment either side works for a day without exchanging files.
 
-- **14 methods exist only in the deployed file** (Code-built, listed below).
-  Shipping your V2 as-is deletes all 14.
-- **36 methods exist in both with different bodies.** These are the contested
-  ones — the real risk zone, because nothing about them *looks* wrong in your
-  copy.
-- Your copy still carries `_cities` and a hashed `_rope`, both of which Code
-  has since replaced. Those would come back.
+## What Code owns (all of it now in your copy too)
 
-None of that is a complaint about your work. It's the shape of the problem.
+### In the shared `<script type="text/x-dc">` block
 
-## What Code has built that isn't in your file
-
-### In the shared `<script type="text/x-dc">` block — 14 methods
+Not missing from your file any more — listed so you know what they are and
+don't delete one you don't recognise:
 
 | Method(s) | What it is |
 |---|---|
@@ -41,8 +39,9 @@ None of that is a complaint about your work. It's the shape of the problem.
 | `_syncProgress` `_applyProgress` | **Server-side save data.** Card levels, climbs, lives, builds sync to the account so progress survives a new device. |
 | `_awake` `_handicapFor` `_cautionsFor` | **The walker ladder's difficulty canon** (handicap bands + caution dial from the measurement engine). |
 | `_searchPlace` | **Real geocoding** for the birth-place field, replacing the old static `_cities` list. |
+| `_livesMap` `_lives(m)` `_saveLives(n, m)` `_climbing(m)` | **Per-mansion lives + the forfeit gate** (1 Sep). Lives are `{mansionId: n}`, not a global int; `_climbing` is what decides whether leaving a road asks to forfeit. |
 
-### Outside the file entirely (Code-only, no Design counterpart)
+### Outside the file entirely (no Design counterpart)
 
 - **A real account system** — 27 API endpoints, including signup with a
   region-aware age gate, login, logout, password reset, GDPR export/delete.
