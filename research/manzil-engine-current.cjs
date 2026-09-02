@@ -250,6 +250,20 @@ function mkGame(cfg) {
 //   - 28, "rope": station 4. What lodges there hauls one enemy card beside it onto the rope: the
 //     first neighbour (checked -1 then +1) owned by the other side changes hands outright. No
 //     comparison, no faces, no deny rules — it is not a strike, so shielded() never runs.
+//   - 27, "stranger" (2 sep 2026, measured on m27's own night: spread 46.0 -> 41.3, seat -2.7
+//     fresh, 51 vectors green): station 4. A card whose quarter is NOT that station's GROUND
+//     quarter counts one more, both sides; a card on its own quarter's ground counts as it always
+//     did. This is the FIRST law that reads the ground it stands on rather than just the slot, and
+//     that changes what this module has to model — see boardM() below. Three traps, all named in
+//     Design's own work order and all carried here deliberately:
+//       * Her seven planets (ids 101-107) are QUARTERLESS and take no bonus. quadOf() has a byakko
+//         catch-all and never returns undefined, so a `if (q && ...)` guard is dead code and the
+//         planets silently come back as tiger cards. The id range is the only honest test.
+//       * `c.quad` must stay FIRST in the fallback: quadOf() is only valid for ids 1-27, so
+//         quadOf(215) is "byakko" while C[215].quad is "seiryuu" — dropping the `c.quad ||` half
+//         misclassifies the whole ladder mirror deck as tiger.
+//       * The ground quarter is COMPUTED, never a table. Design nearly shipped this law at the
+//         wrong station by reasoning about the geography from memory.
 const LAW_AT = {
   10: { kind: "reach", station: 0 },
   12: { kind: "turn", station: 0 },
@@ -259,9 +273,28 @@ const LAW_AT = {
   23: { kind: "reson", station: 4 },
   25: { kind: "shell", station: 4 },
   26: { kind: "guest", station: 0 },
+  27: { kind: "stranger", station: 4 },
   28: { kind: "rope", station: 4 },
 };
 function lawAt(m) { return LAW_AT[m] || null; }
+
+// Which MANSION's ground a station stands on tonight — the client's own _boardOff/_boardM pair.
+// This module still does not model the road window as a road concept (see the scope note at the
+// top): the other laws hardcode their station index and are right to, because none of them reads
+// the ground. The stranger's law (m27) does, so it needs the real mapping — and the mapping is
+// exactly where that law can be got wrong. Design measured both forms: on m27's own DOOR-FIRST
+// window (no offset: road 27, 28, 1...7) station 4 is mansion 3, byakko ground, and the law pays
+// the three non-tiger quarters and NARROWS the board 46.0 -> 41.3. Slide m27 back four "for
+// consistency" with the other station-4 laws and station 4 becomes m27 itself, tortoise ground,
+// where the tiger is the stranger: byakko +14.7, spread 46.0 -> 59.6, WIDENS, fails. Same
+// sentence, same index, inverted law. So: m27 takes no BOARD_OFF entry, deliberately, and the
+// general rule is that a window slide is only free for a law that does not read its own ground.
+const BOARD_OFF = { 19: 4, 21: 4, 23: 4, 25: 4, 28: 4 };
+function boardM(g, i) {
+  const t = g.tonight; if (!t) return null;
+  const off = BOARD_OFF[t] || 0;
+  return ((t - 1 + i - off + 28) % 28) + 1;
+}
 
 function nb(g, i, dir) { const k = i + dir; return k >= 0 && k < g.len ? k : -1; }
 function legalSlot(g, slots, i) { return true; } // "contiguous" road shape was retired; the road is always open
@@ -546,6 +579,13 @@ function slotW(g, slots, i, ctx) {
   let j = 0;
   if (c.ab === "jupiter") j = 1; // jupiterMode "always" — the locked base-layer default
   let w = 1 + j + (home ? 1 : 0);
+  // the stranger's law (mansion 27, station 4): a card whose quarter is not this ground's quarter
+  // counts one more, both sides. Her planets are quarterless and take no bonus; `c.quad` leads the
+  // fallback because quadOf() is only valid for ids 1-27. See the LAW_AT comment for all three.
+  if (law && law.kind === "stranger" && i === law.station && !(s.id >= 101 && s.id <= 107)) {
+    const gm = boardM(g, i);
+    if (gm && (c.quad || quadOf(s.id)) !== quadOf(gm)) w += 1;
+  }
   if (ctx && ctx.guide && ctx.guide[s.ground || s.owner] && home) w += 1;
   if (on(g, c)) {
     if (c.ab === "district") w += 1;
@@ -1159,7 +1199,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards,
-  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
@@ -1684,6 +1724,72 @@ if (require.main === module) {
       slots[0] = { id: 5, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
       const rr = E.resolve(g, slots, 106, 1, false, "you");
       return rr.slots[0].owner === "sky"; // the tiger's ground still holds
+    }, true],
+    // THE STRANGER'S STATION (2 sep 2026) — mansion 27, station 4. The first law that reads the
+    // GROUND it stands on, so these vectors pin the geography as hard as the arithmetic.
+    ["the stranger's law: m27's window is door-first, so station 4 stands on mansion 3, tiger ground", () => {
+      const g = E.mkGame({ tonight: 27 });
+      return E.BOARD_OFF[27] === undefined && E.boardM(g, 4) === 3 && E.quadOf(3) === "byakko";
+    }, true],
+    ["the stranger's law: a card off its ground's quarter counts one more", () => {
+      const g = E.mkGame({ tonight: 27 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 21, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // 21 is genbu on byakko ground
+      const plain = E.mkGame({ tonight: 5 });
+      const [you] = E.counts(g, slots), [youPlain] = E.counts(plain, slots);
+      return you === youPlain + 1;
+    }, true],
+    ["the stranger's law: a card on its own quarter's ground counts as it always did", () => {
+      const g = E.mkGame({ tonight: 27 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 5, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // 5 is byakko, and so is the ground
+      const plain = E.mkGame({ tonight: 5 });
+      return E.counts(g, slots)[0] === E.counts(plain, slots)[0];
+    }, true],
+    ["the stranger's law: both sides, not just the player's", () => {
+      const g = E.mkGame({ tonight: 27 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 21, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      const plain = E.mkGame({ tonight: 5 });
+      return E.counts(g, slots)[1] === E.counts(plain, slots)[1] + 1;
+    }, true],
+    ["the stranger's law: HER PLANETS ARE QUARTERLESS and take no bonus (quadOf's byakko catch-all would have made them tiger cards)", () => {
+      const g = E.mkGame({ tonight: 27 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 101, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; // saturn: no quarter at all
+      const plain = E.mkGame({ tonight: 5 });
+      return E.quadOf(101) === "byakko" && E.counts(g, slots)[1] === E.counts(plain, slots)[1];
+    }, true],
+    ["the stranger's law: c.quad leads the fallback, so the ladder's mirror deck is not misread as tiger", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const baseC = E.cards({ levels, grants: "all" });
+      const C = E.ladderOpponentCards(baseC, levels);
+      // 214 mirrors card 14 (seiryuu). quadOf(214) is the byakko catch-all and would be wrong.
+      return C[214] && C[214].quad === "seiryuu" && E.quadOf(214) === "byakko";
+    }, true],
+    ["the stranger's law does not touch a neighbouring station", () => {
+      const g = E.mkGame({ tonight: 27 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 21, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const plain = E.mkGame({ tonight: 5 });
+      return E.counts(g, slots)[0] === E.counts(plain, slots)[0];
+    }, true],
+    ["the stranger's law does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 26 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 21, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const plain = E.mkGame({ tonight: 5 });
+      return E.counts(g, slots)[0] === E.counts(plain, slots)[0];
+    }, true],
+    ["THE TRAP: sliding m27's window four (the 'consistency' fix) inverts the law — the tiger becomes the stranger", () => {
+      // Not a behaviour test: a guard on the constant. Design measured the slid form at byakko
+      // +14.7 and spread 46.0 -> 59.6, a fail, and nearly shipped it by copying the other
+      // station-4 laws. If someone adds BOARD_OFF[27] = 4 for tidiness, this vector fails loudly.
+      const g = E.mkGame({ tonight: 27 });
+      if (E.BOARD_OFF[27] !== undefined) return false;
+      const slid = ((27 - 1 + 4 - 4 + 28) % 28) + 1; // what station 4 would stand on if slid
+      return E.boardM(g, 4) === 3 && E.quadOf(3) === "byakko"
+        && slid === 27 && E.quadOf(slid) === "genbu"; // the ground's quarter flips, so the law flips
     }, true],
   ];
   let fails = 0;

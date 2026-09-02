@@ -627,13 +627,46 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
-**The guide's law (m27) is a work order only — nothing ported, `LAW_AT` correctly
-stays at nine.** 1a ("the stranger's station": at the guide's station, a card
-whose quarter is not that ground's quarter counts one more, both sides) is
-unbuilt and unmeasured. When it lands it is a `slotW()` change, not a `resolve()`
-one. 1c ("the wall") is deliberately in the drawer, and its rationale records a
-real standing gap worth remembering: **the throne's reach and suzaku's grant both
-carry two stations and nothing in the game currently answers them.**
+**A third delivery the same night built and measured the guide's law (m27), so it
+IS ported — `LAW_AT` is ten.** `stranger@4`: at the road's middle station, a card
+whose quarter is not that ground's quarter counts one more, both sides. Measured
+896 boards a cell, 51 vectors green, spread 46.0 → 41.3. It is not a gentle law —
+suzaku +24.4 is the largest single quadrant move anything passing has produced,
+and seiryuu drops 8.0 to become the new bottom, so the board's order rotates; the
+pass condition is that the spread narrows and the top comes down, which it does.
+
+**THE ONE THING NOT TO "TIDY": m27 takes no `_boardOff`/`BOARD_OFF` entry.** Every
+other station-4 law (19/21/23/25/28) slides its window back four, and adding 27
+for consistency is the obvious edit — **it inverts the law.** On m27's own
+door-first window (road 27, 28, 1…7) station 4 is mansion 3, byakko ground, which
+is why the law pays the three non-tiger quarters. Slide it and station 4 becomes
+m27 itself, tortoise ground, where the tiger is the stranger: byakko +14.7, spread
+46.0 → 59.6, fail. Design nearly shipped the slid form by copying the pattern.
+**This is now a failing acceptance vector, not just a comment** — "THE TRAP:
+sliding m27's window four (the 'consistency' fix) inverts the law". The general
+rule: a window slide is only free for a law that does not read its own ground.
+
+That property forced the module's one real structural addition: `stranger` is
+**the first law that reads the ground it stands on**, so the engine could no
+longer hardcode a station index. It now carries `BOARD_OFF` + `boardM(g, i)`, a
+real port of `_boardOff`/`_boardM`, used by this law alone — the scope note still
+holds for everything else. Two `_quad` traps carried and each pinned by its own
+vector: **her seven planets (101-107) are quarterless and take no bonus** (a
+`if (q && …)` guard is dead code, since `quadOf` has a byakko catch-all and would
+silently make saturn a tiger card), and **`c.quad` must lead the fallback**
+(`quadOf` is only valid for ids 1-27, so `quadOf(214)` is "byakko" while
+`C[214].quad` is "seiryuu" — dropping it misreads the whole ladder mirror deck).
+**77/77 pass**, up from 68. Open and unmeasured, flagged by Design: what the
+reference sim does with her planets on the boss board.
+
+Also in: the causeway level (`cw*`, physics "the water rises"), `_nightSpread`'s
+m27 entry corrected 44.2 → 46.0, `_zoomFor`'s missing `t0 === 27` summit branch,
+and `guideOn` forced false — the old river-journey art, art only with no law hook,
+same finding and same treatment as the chamber's kiln floor. **Ten houses stand.**
+1b ("the rear spout") was measured and is dead — pouring destroys worth wherever
+the next station is empty, fresh skill went negative. 1c ("the wall") stays in the
+drawer, and its rationale records a real standing gap: **the throne's reach and
+suzaku's grant both carry two stations and nothing in the game answers them.**
 
 Star Shard v4 moved off the
 root to `/star-shard/` — `star-shard/index.html` is a hand-maintained

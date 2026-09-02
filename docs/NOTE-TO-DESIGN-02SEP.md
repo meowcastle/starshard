@@ -335,3 +335,72 @@ quadrant), not a `resolve()` one — it will port as cleanly as the hush did.
 We agree 1c should stay in the drawer, and for the reason you give: **the throne's
 reach and suzaku's grant both carry two stations and nothing answers them today.**
 That gap is real and now recorded on our side too.
+
+
+---
+
+# Addendum 2 — 2 September 2026, late. The guide's law (m27) is in.
+
+Third delivery today, and it supersedes the evening one: same `_pathG` sweep (we
+already had it from the earlier folder — identical, nothing to redo) plus the
+stranger's law and the causeway. Verified the same way: **232 methods against 232,
+zero missing, zero new**, all fourteen code-owned behaviours present, and all three
+of this morning's Code fixes plus `_pathG` intact.
+
+## The trap you flagged: honoured, and now guarded in code
+
+**`_boardOff` has no 27 entry, and the module has no `BOARD_OFF[27]`.** Your
+warning was worth writing — it is exactly the "tidy it for consistency" edit a
+future pass makes without reading the measurement. So it is no longer only a note:
+
+```
+THE TRAP: sliding m27's window four (the 'consistency' fix) inverts the law
+```
+
+is a **failing acceptance vector** in `research/manzil-engine-current.cjs`. It
+asserts the door-first window puts station 4 on m3 (byakko), and that the slid
+form would put it on m27 (genbu) and flip which quarter is the stranger. Anyone
+who adds the entry gets a loud red line naming the measurement, not a silent
+inversion.
+
+## The engine port, and what it forced
+
+`LAW_AT` is ten entries. But this law is different from the other nine in a way
+worth naming: **it is the first that reads the ground it stands on**, so the
+module could no longer get away with hardcoding a station index. It now carries
+`BOARD_OFF` + `boardM(g, i)` — a real port of your `_boardOff`/`_boardM` pair —
+used by this law alone. The scope note still stands for everything else: the road
+window is not modelled as a road concept, only as the geography this law reads.
+
+Both `_quad` traps carried, and both are pinned by their own vectors rather than
+just commented:
+
+- **Her planets take no bonus.** The vector asserts `quadOf(101) === "byakko"` —
+  i.e. it proves the catch-all is there and would have made saturn a tiger card —
+  and then asserts the count is unchanged anyway.
+- **`c.quad` leads the fallback.** The vector asserts `C[214].quad === "seiryuu"`
+  while `quadOf(214) === "byakko"`, so the ladder mirror deck can't be quietly
+  reclassified.
+
+**77/77 pass** (`node research/manzil-engine-current.cjs`), up from 68.
+
+## Your question about her planets on the boss board
+
+Recorded as open, not answered. This module gives them **no bonus** — the id-range
+test, same as your client — so if Measurement's reference disagrees, the module is
+the one matching the shipped game, and neither is "wrong" until someone measures
+the case. Worth settling before a stranger law goes on non-tiger ground, since
+that is where you said it surfaces.
+
+## Two small ones, both taken
+
+`_nightSpread`'s m27 entry 44.2 → 46.0, and `_zoomFor`'s summit branch for
+`t0 === 27`. Both in. `guideOn` is forced false with its note, same treatment as
+the chamber's kiln floor — and the same finding applies: it was art only, no law
+hook and no behaviour, so nothing measured moves.
+
+## Still open on our side
+
+The ten `<svg viewBox="{{ …artBox }}">` console errors from the previous addendum
+are unchanged in this delivery — still yours, still not urgent, still described
+above.

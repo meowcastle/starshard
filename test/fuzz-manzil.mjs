@@ -12,7 +12,7 @@
 //      This is the highest-value target right now: lives just changed from a
 //      bare int to a per-mansion object, and old saves in the wild still hold
 //      the int. A reader that assumes shape will throw on someone's real save.
-//   2. Every built level, opened cold — nine mansions, each booted from a fresh
+//   2. Every built level, opened cold — ten mansions, each booted from a fresh
 //      context, checked for page errors and unresolved {{ bindings }}.
 //   3. Rapid/duplicate input — double-fire on the same control, Escape spam,
 //      clicking during animation windows.
@@ -108,7 +108,7 @@ for (const [label, seed] of Object.entries(hostile)) {
 
 // ---- 2. every built level, cold ---------------------------------------------
 console.log('\n2. each built level, opened cold');
-for (const [id, name] of [[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],[21,'empty district'],[23,'drum'],[25,'hideaway'],[26,'chamber'],[28,'thread']]) {
+for (const [id, name] of [[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],[21,'empty district'],[23,'drum'],[25,'hideaway'],[26,'chamber'],[27,'causeway'],[28,'thread']]) {
   const r = await withPage(browser, { [K + 'moon']: String(id) }, async page => {
     // walk in: the moon road -> the road -> sit down, tolerating whichever beats appear
     for (const label of ['the moon road', 'the moon road', 'click to sit down']) {
