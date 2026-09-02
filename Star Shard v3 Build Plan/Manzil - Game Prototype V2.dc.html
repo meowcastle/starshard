@@ -35,6 +35,17 @@
   @keyframes mzReachTrail{0%{opacity:0}18%{opacity:.7}70%{opacity:.55}100%{opacity:0}}
   @keyframes mzStampIn{0%{opacity:0;transform:scale(1.8)}22%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
   @keyframes mzResonRing{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.3);opacity:0}}
+  @keyframes mzTurnGlide{0%{offset-distance:0%;opacity:0}12%{opacity:1}80%{opacity:1}100%{offset-distance:100%;opacity:0}}
+  @keyframes mzTurnTrail{0%{opacity:0}20%{opacity:.75}72%{opacity:.5}100%{opacity:0}}
+  @keyframes mzTurnStamp{0%{opacity:0;transform:scale(1.6) rotate(-12deg)}26%{opacity:1;transform:scale(1) rotate(0deg)}74%{opacity:1}100%{opacity:0;transform:scale(.95)}}
+  @keyframes mzTurnRefuse{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}44%{transform:translateX(5px)}68%{transform:translateX(-2px)}}
+  @keyframes mzVaneSwing{0%,100%{transform:rotate(-3.5deg)}50%{transform:rotate(4.5deg)}}
+  @keyframes mzKiteBob{0%,100%{transform:translateY(0px) rotate(-5deg)}50%{transform:translateY(-9px) rotate(6deg)}}
+  @keyframes mzSnakeRead{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(3deg)}}
+  @keyframes mzRootGrip{0%{transform:scaleY(.08) scaleX(.5);opacity:0}55%{opacity:1}80%{transform:scaleY(1.06) scaleX(1.02)}100%{transform:none;opacity:1}}
+  @keyframes mzClothLay{0%{transform:translateY(-16px) scaleY(.35);opacity:0}70%{opacity:1}100%{transform:none;opacity:1}}
+  @keyframes mzLampFlick{0%,100%{opacity:.72}42%{opacity:1}68%{opacity:.84}}
+  @keyframes mzBladeGleam{0%,100%{opacity:.5}50%{opacity:1}}
   @keyframes mzAntares{0%,100%{opacity:.86;transform:scale(1)}44%{opacity:1;transform:scale(1.06)}70%{opacity:.9;transform:scale(1.02)}}
   @keyframes mzSting{0%,100%{transform:rotate(0deg)}42%{transform:rotate(-7deg)}54%{transform:rotate(4deg)}}
   @keyframes mzRotateHint{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
@@ -106,6 +117,12 @@
   @keyframes mzShimmer{0%,100%{opacity:.55}50%{opacity:1}}
   @keyframes mzRingSpin{to{transform:rotate(360deg)}}
   @keyframes mzPop{0%{transform:scale(1)}45%{transform:scale(1.14)}100%{transform:scale(1)}}
+  @keyframes mzYield{0%{opacity:0;transform:translateY(-5px)}26%{opacity:1;transform:none}100%{opacity:.46;transform:translateY(8px) rotate(-4deg)}}
+  @keyframes mzPipLight{0%{box-shadow:0 0 0 rgba(240,216,154,0)}45%{box-shadow:0 0 17px rgba(240,216,154,.95)}100%{box-shadow:0 0 8px rgba(240,216,154,.6)}}
+  @keyframes mzGutter{0%{opacity:.95}18%{opacity:1}42%{opacity:.5}54%{opacity:.72}100%{opacity:0}}
+  @keyframes mzDrain{0%{opacity:1;box-shadow:0 0 10px rgba(180,83,30,.7)}100%{opacity:.62;box-shadow:none}}
+  @keyframes mzRelight{0%{opacity:0}100%{opacity:.9}}
+  @keyframes mzBow{0%{opacity:0;transform:translateY(-7px)}32%{opacity:1;transform:none}100%{opacity:1;transform:translateY(5px) rotate(-3deg)}}
   @keyframes mzZoomIn{0%{opacity:0;transform:scale(.45)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
   @keyframes mzReadyGlow{0%,100%{box-shadow:0 0 8px rgba(255,176,0,.25)}50%{box-shadow:0 0 22px rgba(255,176,0,.55)}}
   @keyframes mzFadeOut{from{opacity:1}to{opacity:0}}
@@ -637,7 +654,7 @@
   <path d="M0 250 V222 L140 206 L300 222 L470 200 L640 220 L800 202 L932 216 V250 Z" fill="#140B05"></path>
 </svg></div>
 <div style="{{ thrWashStyle }}"></div>
-<div style="{{ thrHallStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+<div data-mz-dest="10" style="{{ thrHallStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
   <g fill="#1C0F07" stroke="rgba(240,216,154,.22)" stroke-width="1">
     <rect x="146" y="286" width="640" height="14"></rect>
     <rect x="206" y="272" width="520" height="14"></rect>
@@ -673,9 +690,11 @@
     <path d="M672 162 h26 v40 l-13 -8 l-13 8 Z" fill="#7A2416" stroke="rgba(240,216,154,.2)" stroke-width="1"></path>
   </g>
   <sc-for list="{{ thrBraz }}" as="bz" hint-placeholder-count="8">
-    <rect x="{{ bz.x }}" y="{{ bz.y }}" width="8" height="12" fill="#1C0F07" stroke="rgba(240,216,154,.3)" stroke-width="1"></rect>
-    <circle cx="{{ bz.cx }}" cy="{{ bz.cy }}" r="6" fill="{{ bz.g }}"></circle>
-    <circle cx="{{ bz.cx }}" cy="{{ bz.cy }}" r="2.6" fill="{{ bz.f }}" style="{{ bz.fl }}"></circle>
+    <g style="{{ bz.gs }}">
+      <path d="M-4 4h8v12h-8Z" fill="#1C0F07" stroke="rgba(240,216,154,.3)" stroke-width="1"></path>
+      <circle cx="0" cy="0" r="6" fill="{{ bz.g }}"></circle>
+      <circle cx="0" cy="0" r="2.6" fill="{{ bz.f }}" style="{{ bz.fl }}"></circle>
+    </g>
   </sc-for>
 </svg></div>
 <div style="{{ thrRegStyle }}">
@@ -700,7 +719,7 @@
   <g fill="rgba(236,230,250,.5)"><circle cx="120" cy="88" r="1"></circle><circle cx="228" cy="150" r="1.2"></circle><circle cx="332" cy="66" r="1"></circle><circle cx="450" cy="128" r="1.1"></circle><circle cx="856" cy="76" r="1"></circle><circle cx="806" cy="210" r="1"></circle><circle cx="86" cy="228" r="1.1"></circle></g>
   <path d="M0 330 L110 296 L212 318 L330 288 L466 316 L600 292 L730 314 L852 294 L932 310 V330 Z" fill="#1A1830"></path>
 </svg></div>
-<div style="{{ hdCampStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+<div data-mz-dest="25" style="{{ hdCampStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
   <g fill="#15111C" stroke="rgba(200,206,236,.12)" stroke-width="1"><path d="M304 80 L318 66 L332 80 Z"></path><path d="M600 80 L614 66 L628 80 Z"></path></g>
   <g fill="#17121F" stroke="rgba(200,206,236,.2)" stroke-width="1">
     <path d="M368 78 L386 56 L404 78 Z"></path>
@@ -819,7 +838,7 @@
 </sc-if>
 <sc-if value="{{ drumOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ dtDeepStyle }}"></div>
-<div style="{{ dtDrumStyle }}"><svg viewBox="0 0 600 600" style="width:100%;height:100%;display:block;overflow:visible">{{ dtGreat }}</svg></div>
+<div data-mz-dest="23" style="{{ dtDrumStyle }}"><svg viewBox="0 0 600 600" style="width:100%;height:100%;display:block;overflow:visible">{{ dtGreat }}</svg></div>
 <div style="{{ dtCityStyle }}"><svg viewBox="0 0 932 90" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
   <path d="M0 78 h932" stroke="rgba(160,132,208,.14)" stroke-width="1" fill="none"></path>
   <g fill="rgba(196,168,246,.34)"><rect x="64" y="60" width="3" height="4"></rect><rect x="150" y="70" width="3" height="3"></rect><rect x="238" y="56" width="3" height="4"></rect><rect x="352" y="66" width="3" height="3"></rect><rect x="470" y="58" width="3" height="4"></rect><rect x="558" y="72" width="3" height="3"></rect><rect x="672" y="62" width="3" height="4"></rect><rect x="760" y="54" width="3" height="4"></rect><rect x="852" y="68" width="3" height="3"></rect></g>
@@ -861,6 +880,92 @@
 </svg></div>
 </sc-if>
 </sc-if>
+<sc-if value="{{ tnOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ tnDeepStyle }}"></div>
+<div style="{{ tnStarStyle }}"><svg viewBox="0 0 120 120" style="width:100%;height:100%;display:block;overflow:visible">
+  <circle cx="60" cy="60" r="34" fill="rgba(255,232,196,.1)"></circle>
+  <circle cx="60" cy="60" r="4.4" fill="#FFF3D8" style="animation:mzBreathe 4.6s ease-in-out infinite"></circle>
+</svg></div>
+<div style="{{ tnKiteStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ tnKites }}</svg></div>
+<div style="{{ tnGreatStyle }}"><svg viewBox="0 0 240 430" preserveAspectRatio="xMidYMax meet" style="width:100%;height:100%;display:block;overflow:visible">{{ tnVane }}</svg></div>
+<div style="{{ tnHillStyle }}"><svg viewBox="0 0 932 240" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ tnHill }}</svg></div>
+</sc-if>
+<sc-if value="{{ rtOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ rtDeepStyle }}"></div>
+<div style="{{ rtStarStyle }}"><svg viewBox="0 0 120 120" style="width:100%;height:100%;display:block;overflow:visible">
+  <circle cx="54" cy="50" r="17" fill="rgba(214,226,196,.05)"></circle>
+  <circle cx="54" cy="50" r="3.4" fill="#EAF2DC" style="animation:mzBreathe 4.8s ease-in-out infinite"></circle>
+  <circle cx="70" cy="59" r="2" fill="rgba(234,242,220,.7)"></circle>
+  <path d="M58 51 L74 62" stroke="rgba(234,242,220,.16)" stroke-width="1" fill="none"></path>
+</svg></div>
+<div style="{{ rtLipStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtLip }}</svg></div>
+<div style="{{ rtWallLStyle }}"><svg viewBox="0 0 340 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtWallL }}</svg></div>
+<div style="{{ rtWallRStyle }}"><svg viewBox="0 0 340 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtWallR }}</svg></div>
+<div style="{{ rtFloorStyle }}"><svg viewBox="0 0 932 200" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtFloor }}</svg></div>
+<sc-if value="{{ rtLawOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ rtGraveStyle }}"><svg viewBox="0 0 190 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M8 52 Q95 20 182 52 Q95 84 8 52 Z" fill="#100C07" stroke="rgba(126,146,104,.85)" stroke-width="2"></path>
+  <path d="M8 52 Q95 20 182 52" fill="none" stroke="rgba(240,216,154,.5)" stroke-width="1.5"></path>
+  <path d="M20 52 Q95 28 170 52 Q95 74 20 52 Z" fill="none" stroke="rgba(196,160,104,.3)" stroke-width="1"></path>
+  <g fill="none" stroke="rgba(110,127,92,.55)" stroke-width="1.6" stroke-linecap="round">
+    <path d="M22 46 q-11 -6 -21 -3 M168 46 q11 -6 21 -3 M42 33 q-6 -9 -17 -10 M148 34 q7 -9 18 -9"></path>
+  </g>
+  <path d="M70 54 q14 -8 32 -1 q-4 11 -16 11 q-15 0 -16 -10 Z" fill="#141008" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+  <g style="{{ rtRootStyle }}" fill="none" stroke="rgba(126,146,104,.9)" stroke-width="2.2" stroke-linecap="round">
+    <path d="M72 58 q-12 16 -14 34 q-1 12 4 22"></path>
+    <path d="M95 62 q-3 20 2 32 q5 14 1 26"></path>
+    <path d="M118 58 q12 17 13 35 q0 12 -5 21"></path>
+    <path d="M80 76 q-20 6 -34 2" stroke-width="1.5" opacity=".7"></path>
+    <path d="M112 78 q21 5 36 0" stroke-width="1.5" opacity=".7"></path>
+  </g>
+</svg></div>
+</sc-if>
+</sc-if>
+<sc-if value="{{ chOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ chDeepStyle }}"></div>
+<div style="{{ chFloorStyle }}"><svg viewBox="0 0 932 170" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ chFloor }}</svg></div>
+<div data-mz-dest="26" style="{{ chDoorStyle }}"><svg viewBox="0 0 160 220" style="width:100%;height:100%;display:block;overflow:visible">
+  <ellipse cx="80" cy="150" rx="98" ry="112" fill="rgba(198,216,238,.09)"></ellipse>
+  <ellipse cx="80" cy="176" rx="58" ry="62" fill="rgba(214,230,246,.1)"></ellipse>
+  <path d="M14 220 V54 q66 -44 132 0 V220 Z" fill="#0A0F16" stroke="rgba(206,220,236,.75)" stroke-width="1.6"></path>
+  <path d="M28 220 V64 q52 -34 104 0 V220 Z" fill="rgba(210,224,240,.26)"></path>
+  <path d="M44 220 V92 q36 -22 72 0 V220 Z" fill="rgba(224,236,248,.42)"></path>
+  <path d="M58 220 V116 q22 -14 44 0 V220 Z" fill="rgba(238,246,255,.5)"></path>
+  <path d="M52 220 H108 L118 232 H42 Z" fill="rgba(226,238,250,.3)"></path>
+  <g stroke="rgba(150,168,192,.4)" stroke-width="1" fill="none"><path d="M28 150 H132 M28 178 H132"></path></g>
+</svg></div>
+<div style="{{ chWallLStyle }}"><div style="{{ chWallLInner }}"><svg viewBox="0 0 260 2600" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ chWallL }}</svg></div></div>
+<div style="{{ chWallRStyle }}"><div style="{{ chWallRInner }}"><svg viewBox="0 0 260 2600" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ chWallR }}</svg></div></div>
+<div style="{{ chStarStyle }}"><svg viewBox="0 0 120 96" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M10 96 V26 q50 -30 100 0 V96 Z" fill="#070A12" stroke="rgba(124,138,204,.4)" stroke-width="1.3"></path>
+  <circle cx="48" cy="52" r="3" fill="#DCE4FF" style="animation:mzBreathe 5.2s ease-in-out infinite"></circle>
+  <circle cx="76" cy="44" r="2.1" fill="rgba(220,228,255,.75)"></circle>
+  <path d="M51 51 L74 45" stroke="rgba(220,228,255,.18)" stroke-width="1" fill="none"></path>
+</svg></div>
+<div style="{{ chCotStyle }}"><svg viewBox="0 0 260 210" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M46 200 V152 M214 200 V152 M46 152 V140 M214 152 V140" stroke="rgba(240,216,154,.5)" stroke-width="4" fill="none" stroke-linecap="round"></path>
+  <path d="M38 152 H222" stroke="rgba(240,216,154,.6)" stroke-width="5" fill="none" stroke-linecap="round"></path>
+  <path d="M44 166 H216" stroke="rgba(240,216,154,.22)" stroke-width="2" fill="none"></path>
+  <path d="M50 150 q18 -30 80 -30 q62 0 80 30 q-14 8 -30 8 H80 q-16 0 -30 -8 Z" fill="#1E2036" stroke="rgba(214,222,255,.5)" stroke-width="1.5"></path>
+  <path d="M66 138 q62 -22 128 2" fill="none" stroke="rgba(214,222,255,.26)" stroke-width="1.2"></path>
+  <path d="M88 128 q42 -14 84 4" fill="none" stroke="rgba(214,222,255,.16)" stroke-width="1.1"></path>
+  <path d="M196 128 q10 -46 6 -78" stroke="rgba(226,232,255,.75)" stroke-width="4.4" fill="none" stroke-linecap="round"></path>
+  <path d="M196 128 q10 -46 6 -78" stroke="rgba(255,248,220,.5)" stroke-width="1.6" fill="none" stroke-linecap="round" style="animation:mzBladeGleam 4.4s ease-in-out infinite"></path>
+  <path d="M202 50 q3 -12 -1 -18" stroke="rgba(226,232,255,.6)" stroke-width="2" fill="none" stroke-linecap="round"></path>
+  <path d="M186 104 q22 -6 30 -12" stroke="rgba(240,216,154,.5)" stroke-width="3" fill="none" stroke-linecap="round"></path>
+  <g style="animation:mzLampFlick 3.6s ease-in-out infinite"><circle cx="52" cy="120" r="4" fill="rgba(255,196,120,.85)"></circle><path d="M52 116 V104" stroke="rgba(240,216,154,.3)" stroke-width="1" fill="none"></path></g>
+</svg></div>
+<sc-if value="{{ chLawOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ chClothStyle }}"><svg viewBox="0 0 130 84" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <g style="{{ chClothLay }}">
+    <path d="M8 26 q57 -20 114 0 q-6 30 -20 42 H28 q-14 -12 -20 -42 Z" fill="rgba(30,32,54,.92)" stroke="rgba(124,138,204,.7)" stroke-width="1.5"></path>
+    <path d="M22 34 q43 -12 86 0" fill="none" stroke="rgba(214,222,255,.3)" stroke-width="1.1"></path>
+    <path d="M40 46 q25 -7 50 0" fill="none" stroke="rgba(214,222,255,.18)" stroke-width="1"></path>
+    <circle cx="65" cy="20" r="2.6" fill="rgba(255,196,120,.85)" style="animation:mzLampFlick 3.2s ease-in-out infinite"></circle>
+  </g>
+</svg></div>
+</sc-if>
+</sc-if>
 <sc-if value="{{ qtOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ qtDeepStyle }}"></div>
 <div style="{{ qtRoofStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
@@ -870,7 +975,7 @@
 </svg></div>
 <div style="{{ qtLeftStyle }}"><div style="{{ qtLeftInnerStyle }}"><svg viewBox="0 0 300 3400" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ qtWallL }}</svg></div></div>
 <div style="{{ qtRightStyle }}"><div style="{{ qtRightInnerStyle }}"><svg viewBox="0 0 300 3400" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ qtWallR }}</svg></div></div>
-<div style="{{ qtCourtStyle }}"><svg viewBox="0 0 420 250" style="width:100%;height:100%;display:block;overflow:visible">
+<div data-mz-dest="21" style="{{ qtCourtStyle }}"><svg viewBox="0 0 420 250" style="width:100%;height:100%;display:block;overflow:visible">
   <path d="M40 250 V96 h340 V250 Z" fill="#0C111C"></path>
   <g fill="#131A29" stroke="rgba(240,216,154,.2)" stroke-width="1.2">
     <rect x="66" y="104" width="20" height="122"></rect><rect x="150" y="104" width="20" height="122"></rect>
@@ -900,7 +1005,7 @@
   <rect x="0" y="0" width="932" height="430" fill="url(#rpwl)"></rect>
   <g>{{ rpWalls }}</g>
 </svg></div>
-<div style="{{ rpMouthStyle }}"><svg viewBox="0 0 400 232" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+<div data-mz-dest="28" style="{{ rpMouthStyle }}"><svg viewBox="0 0 400 232" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
   <defs><radialGradient id="rpmo" cx="50%" cy="50%" r="50%"><stop offset=".62" stop-color="#0A1A22" stop-opacity="0"></stop><stop offset=".93" stop-color="#0A1A22" stop-opacity=".5"></stop><stop offset="1" stop-color="#050B0A"></stop></radialGradient></defs>
   <ellipse cx="200" cy="116" rx="198" ry="114" fill="url(#rpmo)"></ellipse>
   <ellipse cx="200" cy="116" rx="196" ry="112" fill="none" stroke="rgba(214,236,226,.34)" stroke-width="2"></ellipse>
@@ -1428,7 +1533,7 @@
               <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
             </sc-for>
             <sc-if value="{{ avStarOn }}" hint-placeholder-val="{{ false }}">
-              <circle cx="{{ avStarX }}" cy="{{ avStarY }}" r="3.4" fill="{{ avStarF }}" stroke="{{ avStarS }}" stroke-width="1.3" style="animation:mzBreathe 2.4s ease-in-out infinite"></circle>
+              <g style="{{ avStarPos }}"><circle cx="0" cy="0" r="3.4" fill="{{ avStarF }}" stroke="{{ avStarS }}" stroke-width="1.3" style="animation:mzBreathe 2.4s ease-in-out infinite"></circle></g>
             </sc-if>
 
           </svg>
@@ -1466,13 +1571,6 @@
     <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:{{ oppC }};text-shadow:0 1px 10px rgba(5,3,2,.9)">{{ oppName }}</span>
       <sc-if value="{{ temperLine }}" hint-placeholder-val="{{ false }}">
       <span style="font-size:10px;color:#9A8A5E;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ temperLine }}</span>
-    </sc-if>
-    <sc-if value="{{ pipsInPlate }}" hint-placeholder-val="{{ true }}">
-    <span style="display:flex;gap:4px;align-items:center;justify-content:center">
-      <sc-for list="{{ matchPips }}" as="p" hint-placeholder-count="5">
-        <span style="{{ p.style }}"></span>
-      </sc-for>
-    </span>
     </sc-if>
     <span style="font-size:10px;color:#9A8A5E;min-height:13px;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ turnLine }}</span>
   </div>
@@ -1707,6 +1805,29 @@
     <span style="position:absolute;left:836px;top:240px;width:1px;height:1px;border-radius:50%;background:rgba(255,190,170,.3);animation:bsTwinkle 5.8s ease-in-out 3.1s infinite"></span>
   </div>
   <div style="position:absolute;top:118px;left:50%;transform:translateX(-50%);width:880px;height:220px;border-radius:50%;background:radial-gradient(50% 55% at 50% 50%, rgba(8,5,3,.62), rgba(8,5,3,.4) 55%, transparent 78%);pointer-events:none;z-index:6"></div>
+  <sc-if value="{{ tnLawOn }}" hint-placeholder-val="{{ false }}">
+    <div style="{{ tnSnakeStyle }}"><svg viewBox="0 0 104 62" style="width:100%;height:100%;display:block;overflow:visible">
+      <g style="{{ tnSnakeAnim }}">
+        <path d="M6 54 q14 -9 30 -4 q16 5 28 -3 q11 -6 22 1" fill="none" stroke="rgba(28,16,10,.6)" stroke-width="9" stroke-linecap="round"></path>
+        <path d="M6 54 q14 -9 30 -4 q16 5 28 -3 q11 -6 22 1" fill="none" stroke="rgba(212,90,58,.85)" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M86 48 q11 -9 6 -21 q-6 -13 -20 -11 q-11 2 -12 12" fill="none" stroke="rgba(28,16,10,.6)" stroke-width="9" stroke-linecap="round"></path>
+        <path d="M86 48 q11 -9 6 -21 q-6 -13 -20 -11 q-11 2 -12 12" fill="none" stroke="rgba(226,110,72,.92)" stroke-width="6" stroke-linecap="round"></path>
+        <path d="M60 28 q-9 -2 -12 5" fill="none" stroke="rgba(240,216,154,.6)" stroke-width="2" stroke-linecap="round"></path>
+        <path d="M74 20 a2.2 2.2 0 1 1 -0.01 0 Z" fill="#FFE9C6"></path>
+      </g>
+    </svg></div>
+    <sc-if value="{{ turnFxOn }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ turnFxStyle }}">
+        <svg viewBox="0 0 150 64" style="width:100%;height:100%;display:block;overflow:visible">
+          <path d="M8 46 Q52 6 96 42" fill="none" stroke="rgba(212,90,58,.6)" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round" style="{{ turnTrailStyle }}"></path>
+        </svg>
+        <div style="{{ turnHeadStyle }}"><svg viewBox="0 0 26 14" style="width:100%;height:100%;display:block;overflow:visible">
+          <path d="M2 10 q7 -5 13 -1 q5 3 9 -1" fill="none" stroke="rgba(255,196,150,.92)" stroke-width="3" stroke-linecap="round"></path>
+        </svg></div>
+        <div style="{{ turnStampStyle }}">{{ turnStamp }}</div>
+      </div>
+    </sc-if>
+  </sc-if>
   <sc-if value="{{ reachFxOn }}" hint-placeholder-val="{{ false }}">
     <div style="{{ reachFxStyle }}">
       <svg viewBox="0 0 270 80" style="width:100%;height:100%;display:block;overflow:visible">
@@ -2375,7 +2496,7 @@
   <path d="M0 250 V222 L140 206 L300 222 L470 200 L640 220 L800 202 L932 216 V250 Z" fill="#140B05"></path>
 </svg></div>
 <div style="{{ thrWashStyle }}"></div>
-<div style="{{ thrHallStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+<div data-mz-dest="10" style="{{ thrHallStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
   <g fill="#1C0F07" stroke="rgba(240,216,154,.22)" stroke-width="1">
     <rect x="146" y="286" width="640" height="14"></rect>
     <rect x="206" y="272" width="520" height="14"></rect>
@@ -2411,9 +2532,11 @@
     <path d="M672 162 h26 v40 l-13 -8 l-13 8 Z" fill="#7A2416" stroke="rgba(240,216,154,.2)" stroke-width="1"></path>
   </g>
   <sc-for list="{{ thrBraz }}" as="bz" hint-placeholder-count="8">
-    <rect x="{{ bz.x }}" y="{{ bz.y }}" width="8" height="12" fill="#1C0F07" stroke="rgba(240,216,154,.3)" stroke-width="1"></rect>
-    <circle cx="{{ bz.cx }}" cy="{{ bz.cy }}" r="6" fill="{{ bz.g }}"></circle>
-    <circle cx="{{ bz.cx }}" cy="{{ bz.cy }}" r="2.6" fill="{{ bz.f }}" style="{{ bz.fl }}"></circle>
+    <g style="{{ bz.gs }}">
+      <path d="M-4 4h8v12h-8Z" fill="#1C0F07" stroke="rgba(240,216,154,.3)" stroke-width="1"></path>
+      <circle cx="0" cy="0" r="6" fill="{{ bz.g }}"></circle>
+      <circle cx="0" cy="0" r="2.6" fill="{{ bz.f }}" style="{{ bz.fl }}"></circle>
+    </g>
   </sc-for>
 </svg></div>
 <div style="{{ thrRegStyle }}">
@@ -2438,7 +2561,7 @@
   <g fill="rgba(236,230,250,.5)"><circle cx="120" cy="88" r="1"></circle><circle cx="228" cy="150" r="1.2"></circle><circle cx="332" cy="66" r="1"></circle><circle cx="450" cy="128" r="1.1"></circle><circle cx="856" cy="76" r="1"></circle><circle cx="806" cy="210" r="1"></circle><circle cx="86" cy="228" r="1.1"></circle></g>
   <path d="M0 330 L110 296 L212 318 L330 288 L466 316 L600 292 L730 314 L852 294 L932 310 V330 Z" fill="#1A1830"></path>
 </svg></div>
-<div style="{{ hdCampStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+<div data-mz-dest="25" style="{{ hdCampStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
   <g fill="#15111C" stroke="rgba(200,206,236,.12)" stroke-width="1"><path d="M304 80 L318 66 L332 80 Z"></path><path d="M600 80 L614 66 L628 80 Z"></path></g>
   <g fill="#17121F" stroke="rgba(200,206,236,.2)" stroke-width="1">
     <path d="M368 78 L386 56 L404 78 Z"></path>
@@ -2557,7 +2680,7 @@
 </sc-if>
 <sc-if value="{{ drumOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ dtDeepStyle }}"></div>
-<div style="{{ dtDrumStyle }}"><svg viewBox="0 0 600 600" style="width:100%;height:100%;display:block;overflow:visible">{{ dtGreat }}</svg></div>
+<div data-mz-dest="23" style="{{ dtDrumStyle }}"><svg viewBox="0 0 600 600" style="width:100%;height:100%;display:block;overflow:visible">{{ dtGreat }}</svg></div>
 <div style="{{ dtCityStyle }}"><svg viewBox="0 0 932 90" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
   <path d="M0 78 h932" stroke="rgba(160,132,208,.14)" stroke-width="1" fill="none"></path>
   <g fill="rgba(196,168,246,.34)"><rect x="64" y="60" width="3" height="4"></rect><rect x="150" y="70" width="3" height="3"></rect><rect x="238" y="56" width="3" height="4"></rect><rect x="352" y="66" width="3" height="3"></rect><rect x="470" y="58" width="3" height="4"></rect><rect x="558" y="72" width="3" height="3"></rect><rect x="672" y="62" width="3" height="4"></rect><rect x="760" y="54" width="3" height="4"></rect><rect x="852" y="68" width="3" height="3"></rect></g>
@@ -2589,6 +2712,92 @@
   <g stroke="rgba(160,132,208,.08)" stroke-width="1" fill="none"><path d="M120 132 h250 M420 156 h300 M180 184 h420"></path></g>
 </svg></div>
 </sc-if>
+<sc-if value="{{ tnOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ tnDeepStyle }}"></div>
+<div style="{{ tnStarStyle }}"><svg viewBox="0 0 120 120" style="width:100%;height:100%;display:block;overflow:visible">
+  <circle cx="60" cy="60" r="34" fill="rgba(255,232,196,.1)"></circle>
+  <circle cx="60" cy="60" r="4.4" fill="#FFF3D8" style="animation:mzBreathe 4.6s ease-in-out infinite"></circle>
+</svg></div>
+<div style="{{ tnKiteStyle }}"><svg viewBox="0 0 932 300" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ tnKites }}</svg></div>
+<div style="{{ tnGreatStyle }}"><svg viewBox="0 0 240 430" preserveAspectRatio="xMidYMax meet" style="width:100%;height:100%;display:block;overflow:visible">{{ tnVane }}</svg></div>
+<div style="{{ tnHillStyle }}"><svg viewBox="0 0 932 240" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ tnHill }}</svg></div>
+</sc-if>
+<sc-if value="{{ rtOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ rtDeepStyle }}"></div>
+<div style="{{ rtStarStyle }}"><svg viewBox="0 0 120 120" style="width:100%;height:100%;display:block;overflow:visible">
+  <circle cx="54" cy="50" r="17" fill="rgba(214,226,196,.05)"></circle>
+  <circle cx="54" cy="50" r="3.4" fill="#EAF2DC" style="animation:mzBreathe 4.8s ease-in-out infinite"></circle>
+  <circle cx="70" cy="59" r="2" fill="rgba(234,242,220,.7)"></circle>
+  <path d="M58 51 L74 62" stroke="rgba(234,242,220,.16)" stroke-width="1" fill="none"></path>
+</svg></div>
+<div style="{{ rtLipStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtLip }}</svg></div>
+<div style="{{ rtWallLStyle }}"><svg viewBox="0 0 340 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtWallL }}</svg></div>
+<div style="{{ rtWallRStyle }}"><svg viewBox="0 0 340 430" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtWallR }}</svg></div>
+<div style="{{ rtFloorStyle }}"><svg viewBox="0 0 932 200" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ rtFloor }}</svg></div>
+<sc-if value="{{ rtLawOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ rtGraveStyle }}"><svg viewBox="0 0 190 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M8 52 Q95 20 182 52 Q95 84 8 52 Z" fill="#100C07" stroke="rgba(126,146,104,.85)" stroke-width="2"></path>
+  <path d="M8 52 Q95 20 182 52" fill="none" stroke="rgba(240,216,154,.5)" stroke-width="1.5"></path>
+  <path d="M20 52 Q95 28 170 52 Q95 74 20 52 Z" fill="none" stroke="rgba(196,160,104,.3)" stroke-width="1"></path>
+  <g fill="none" stroke="rgba(110,127,92,.55)" stroke-width="1.6" stroke-linecap="round">
+    <path d="M22 46 q-11 -6 -21 -3 M168 46 q11 -6 21 -3 M42 33 q-6 -9 -17 -10 M148 34 q7 -9 18 -9"></path>
+  </g>
+  <path d="M70 54 q14 -8 32 -1 q-4 11 -16 11 q-15 0 -16 -10 Z" fill="#141008" stroke="rgba(240,216,154,.18)" stroke-width="1"></path>
+  <g style="{{ rtRootStyle }}" fill="none" stroke="rgba(126,146,104,.9)" stroke-width="2.2" stroke-linecap="round">
+    <path d="M72 58 q-12 16 -14 34 q-1 12 4 22"></path>
+    <path d="M95 62 q-3 20 2 32 q5 14 1 26"></path>
+    <path d="M118 58 q12 17 13 35 q0 12 -5 21"></path>
+    <path d="M80 76 q-20 6 -34 2" stroke-width="1.5" opacity=".7"></path>
+    <path d="M112 78 q21 5 36 0" stroke-width="1.5" opacity=".7"></path>
+  </g>
+</svg></div>
+</sc-if>
+</sc-if>
+<sc-if value="{{ chOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ chDeepStyle }}"></div>
+<div style="{{ chFloorStyle }}"><svg viewBox="0 0 932 170" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ chFloor }}</svg></div>
+<div data-mz-dest="26" style="{{ chDoorStyle }}"><svg viewBox="0 0 160 220" style="width:100%;height:100%;display:block;overflow:visible">
+  <ellipse cx="80" cy="150" rx="98" ry="112" fill="rgba(198,216,238,.09)"></ellipse>
+  <ellipse cx="80" cy="176" rx="58" ry="62" fill="rgba(214,230,246,.1)"></ellipse>
+  <path d="M14 220 V54 q66 -44 132 0 V220 Z" fill="#0A0F16" stroke="rgba(206,220,236,.75)" stroke-width="1.6"></path>
+  <path d="M28 220 V64 q52 -34 104 0 V220 Z" fill="rgba(210,224,240,.26)"></path>
+  <path d="M44 220 V92 q36 -22 72 0 V220 Z" fill="rgba(224,236,248,.42)"></path>
+  <path d="M58 220 V116 q22 -14 44 0 V220 Z" fill="rgba(238,246,255,.5)"></path>
+  <path d="M52 220 H108 L118 232 H42 Z" fill="rgba(226,238,250,.3)"></path>
+  <g stroke="rgba(150,168,192,.4)" stroke-width="1" fill="none"><path d="M28 150 H132 M28 178 H132"></path></g>
+</svg></div>
+<div style="{{ chWallLStyle }}"><div style="{{ chWallLInner }}"><svg viewBox="0 0 260 2600" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ chWallL }}</svg></div></div>
+<div style="{{ chWallRStyle }}"><div style="{{ chWallRInner }}"><svg viewBox="0 0 260 2600" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ chWallR }}</svg></div></div>
+<div style="{{ chStarStyle }}"><svg viewBox="0 0 120 96" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M10 96 V26 q50 -30 100 0 V96 Z" fill="#070A12" stroke="rgba(124,138,204,.4)" stroke-width="1.3"></path>
+  <circle cx="48" cy="52" r="3" fill="#DCE4FF" style="animation:mzBreathe 5.2s ease-in-out infinite"></circle>
+  <circle cx="76" cy="44" r="2.1" fill="rgba(220,228,255,.75)"></circle>
+  <path d="M51 51 L74 45" stroke="rgba(220,228,255,.18)" stroke-width="1" fill="none"></path>
+</svg></div>
+<div style="{{ chCotStyle }}"><svg viewBox="0 0 260 210" style="width:100%;height:100%;display:block;overflow:visible">
+  <path d="M46 200 V152 M214 200 V152 M46 152 V140 M214 152 V140" stroke="rgba(240,216,154,.5)" stroke-width="4" fill="none" stroke-linecap="round"></path>
+  <path d="M38 152 H222" stroke="rgba(240,216,154,.6)" stroke-width="5" fill="none" stroke-linecap="round"></path>
+  <path d="M44 166 H216" stroke="rgba(240,216,154,.22)" stroke-width="2" fill="none"></path>
+  <path d="M50 150 q18 -30 80 -30 q62 0 80 30 q-14 8 -30 8 H80 q-16 0 -30 -8 Z" fill="#1E2036" stroke="rgba(214,222,255,.5)" stroke-width="1.5"></path>
+  <path d="M66 138 q62 -22 128 2" fill="none" stroke="rgba(214,222,255,.26)" stroke-width="1.2"></path>
+  <path d="M88 128 q42 -14 84 4" fill="none" stroke="rgba(214,222,255,.16)" stroke-width="1.1"></path>
+  <path d="M196 128 q10 -46 6 -78" stroke="rgba(226,232,255,.75)" stroke-width="4.4" fill="none" stroke-linecap="round"></path>
+  <path d="M196 128 q10 -46 6 -78" stroke="rgba(255,248,220,.5)" stroke-width="1.6" fill="none" stroke-linecap="round" style="animation:mzBladeGleam 4.4s ease-in-out infinite"></path>
+  <path d="M202 50 q3 -12 -1 -18" stroke="rgba(226,232,255,.6)" stroke-width="2" fill="none" stroke-linecap="round"></path>
+  <path d="M186 104 q22 -6 30 -12" stroke="rgba(240,216,154,.5)" stroke-width="3" fill="none" stroke-linecap="round"></path>
+  <g style="animation:mzLampFlick 3.6s ease-in-out infinite"><circle cx="52" cy="120" r="4" fill="rgba(255,196,120,.85)"></circle><path d="M52 116 V104" stroke="rgba(240,216,154,.3)" stroke-width="1" fill="none"></path></g>
+</svg></div>
+<sc-if value="{{ chLawOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ chClothStyle }}"><svg viewBox="0 0 130 84" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+  <g style="{{ chClothLay }}">
+    <path d="M8 26 q57 -20 114 0 q-6 30 -20 42 H28 q-14 -12 -20 -42 Z" fill="rgba(30,32,54,.92)" stroke="rgba(124,138,204,.7)" stroke-width="1.5"></path>
+    <path d="M22 34 q43 -12 86 0" fill="none" stroke="rgba(214,222,255,.3)" stroke-width="1.1"></path>
+    <path d="M40 46 q25 -7 50 0" fill="none" stroke="rgba(214,222,255,.18)" stroke-width="1"></path>
+    <circle cx="65" cy="20" r="2.6" fill="rgba(255,196,120,.85)" style="animation:mzLampFlick 3.2s ease-in-out infinite"></circle>
+  </g>
+</svg></div>
+</sc-if>
+</sc-if>
 <sc-if value="{{ qtOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ qtDeepStyle }}"></div>
 <div style="{{ qtRoofStyle }}"><svg viewBox="0 0 932 96" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
@@ -2598,7 +2807,7 @@
 </svg></div>
 <div style="{{ qtLeftStyle }}"><div style="{{ qtLeftInnerStyle }}"><svg viewBox="0 0 300 3400" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ qtWallL }}</svg></div></div>
 <div style="{{ qtRightStyle }}"><div style="{{ qtRightInnerStyle }}"><svg viewBox="0 0 300 3400" preserveAspectRatio="none" style="width:100%;height:100%;display:block">{{ qtWallR }}</svg></div></div>
-<div style="{{ qtCourtStyle }}"><svg viewBox="0 0 420 250" style="width:100%;height:100%;display:block;overflow:visible">
+<div data-mz-dest="21" style="{{ qtCourtStyle }}"><svg viewBox="0 0 420 250" style="width:100%;height:100%;display:block;overflow:visible">
   <path d="M40 250 V96 h340 V250 Z" fill="#0C111C"></path>
   <g fill="#131A29" stroke="rgba(240,216,154,.2)" stroke-width="1.2">
     <rect x="66" y="104" width="20" height="122"></rect><rect x="150" y="104" width="20" height="122"></rect>
@@ -2628,7 +2837,7 @@
   <rect x="0" y="0" width="932" height="430" fill="url(#rpwl)"></rect>
   <g>{{ rpWalls }}</g>
 </svg></div>
-<div style="{{ rpMouthStyle }}"><svg viewBox="0 0 400 232" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
+<div data-mz-dest="28" style="{{ rpMouthStyle }}"><svg viewBox="0 0 400 232" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">
   <defs><radialGradient id="rpmo" cx="50%" cy="50%" r="50%"><stop offset=".62" stop-color="#0A1A22" stop-opacity="0"></stop><stop offset=".93" stop-color="#0A1A22" stop-opacity=".5"></stop><stop offset="1" stop-color="#050B0A"></stop></radialGradient></defs>
   <ellipse cx="200" cy="116" rx="198" ry="114" fill="url(#rpmo)"></ellipse>
   <ellipse cx="200" cy="116" rx="196" ry="112" fill="none" stroke="rgba(214,236,226,.34)" stroke-width="2"></ellipse>
@@ -3534,10 +3743,10 @@
           <circle cx="36" cy="36" r="33" fill="none" stroke="#F0D89A" stroke-width="1.4" pathLength="56" stroke-dasharray="0.55 1.45" opacity=".55"></circle>
           <circle cx="36" cy="36" r="27" fill="none" stroke="#F0D89A" stroke-width=".5" opacity=".3"></circle>
           <sc-for list="{{ shardLines }}" as="ln2" hint-placeholder-count="4">
-            <line x1="{{ ln2.x1 }}" y1="{{ ln2.y1 }}" x2="{{ ln2.x2 }}" y2="{{ ln2.y2 }}" stroke="{{ ln2.c }}" stroke-width=".55" opacity="{{ ln2.o }}"></line>
+            <path d="{{ ln2.d }}" fill="none" stroke="{{ ln2.c }}" stroke-width=".55" opacity="{{ ln2.o }}"></path>
           </sc-for>
           <sc-for list="{{ shardDots }}" as="d2" hint-placeholder-count="5">
-            <circle cx="{{ d2.x }}" cy="{{ d2.y }}" r="{{ d2.r }}" fill="{{ d2.c }}"></circle>
+            <path d="{{ d2.d }}" fill="{{ d2.c }}"></path>
           </sc-for>
         </svg>
         <a href="Star Shard v4.dc.html" style="font-family:'Karla',sans-serif;font-size:10px;color:#9A8A5E;letter-spacing:.02em;text-decoration:none;cursor:pointer;text-shadow:0 1px 8px rgba(5,3,2,.85);transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease .04s both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">your star shard ›</a>
@@ -3624,11 +3833,11 @@
         <svg viewBox="0 0 260 260" style="width:100%;height:100%;overflow:visible">
           <circle cx="130" cy="130" r="96" fill="none" stroke="rgba(240,216,154,.14)" stroke-width="1"></circle>
           <sc-for list="{{ ledSpokes }}" as="lsp" hint-placeholder-count="28">
-            <line x1="{{ lsp.x1 }}" y1="{{ lsp.y1 }}" x2="{{ lsp.x2 }}" y2="{{ lsp.y2 }}" stroke="{{ lsp.c }}" stroke-width="{{ lsp.w }}" stroke-linecap="round" style="{{ lsp.st }}"></line>
+            <path d="{{ lsp.d }}" fill="none" stroke="{{ lsp.c }}" stroke-width="{{ lsp.w }}" stroke-linecap="round" style="{{ lsp.st }}"></path>
           </sc-for>
-          <circle cx="{{ ledTx }}" cy="{{ ledTy }}" r="6" fill="none" stroke="#FFB000" stroke-width="1.2" style="animation:mzBreathe 2.6s ease-in-out infinite"></circle>
+          <g style="{{ ledPos }}"><circle cx="0" cy="0" r="6" fill="none" stroke="#FFB000" stroke-width="1.2" style="animation:mzBreathe 2.6s ease-in-out infinite"></circle></g>
           <sc-for list="{{ ledMarks }}" as="lm" hint-placeholder-count="5">
-            <text x="{{ lm.x }}" y="{{ lm.y }}" fill="{{ lm.c }}" font-size="12" text-anchor="middle">{{ lm.g }}</text>
+            <text x="0" y="0" fill="{{ lm.c }}" font-size="12" text-anchor="middle" style="{{ lm.pos }}">{{ lm.g }}</text>
           </sc-for>
         </svg>
         <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;display:flex;flex-direction:column;gap:2px;pointer-events:none">
@@ -3841,7 +4050,7 @@
                 <path d="{{ fp2.d }}" fill="{{ fp2.f }}" stroke="{{ fp2.s }}" stroke-width="{{ fp2.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
               </sc-for>
               <sc-if value="{{ introStarOn }}" hint-placeholder-val="{{ false }}">
-                <circle cx="{{ introStarX }}" cy="{{ introStarY }}" r="3.6" fill="{{ introStarF }}" stroke="{{ introStarS }}" stroke-width="1.3" style="animation:mzBreathe 2.4s ease-in-out infinite"></circle>
+                <g style="{{ introStarPos }}"><circle cx="0" cy="0" r="3.6" fill="{{ introStarF }}" stroke="{{ introStarS }}" stroke-width="1.3" style="animation:mzBreathe 2.4s ease-in-out infinite"></circle></g>
               </sc-if>
             </svg>
           </div>
@@ -3906,10 +4115,58 @@
   </sc-if>
   <sc-if value="{{ roundOverOn }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ nextRoundTap }}" style="{{ roundOverStyle }}">
-      <div style="font-size:20px;color:{{ roundMark }}">✦</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6">{{ roundTitle }}</div>
+      <sc-if value="{{ rbFigOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative;width:120px;height:94px;flex:none;margin-bottom:2px">
+          <div style="position:absolute;left:50%;top:58%;width:124px;height:124px;margin-left:-62px;margin-top:-62px;border-radius:50%;background:radial-gradient(circle,rgba(240,216,154,.13),transparent 66%);pointer-events:none"></div>
+          <svg viewBox="0 0 120 96" style="position:absolute;inset:0;width:100%;height:100%;display:block;transform-origin:50% 100%;animation:mzYield 2.8s cubic-bezier(.3,.75,.3,1) both">
+            <sc-for list="{{ rbFigPaths }}" as="rp" hint-placeholder-count="3">
+              <path d="{{ rp.d }}" fill="{{ rp.f }}" stroke="{{ rp.s }}" stroke-width="{{ rp.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
+            </sc-for>
+          </svg>
+        </div>
+      </sc-if>
+      <div style="font-size:20px;color:{{ roundMark }};animation:mzPop .7s cubic-bezier(.22,1,.36,1) both">✦</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .5s ease .06s both">{{ roundTitle }}</div>
       <sc-if value="{{ roundWalkerOn }}" hint-placeholder-val="{{ false }}">
         <div style="font-family:'Karla',sans-serif;font-size:11px;color:#9A8A5E;animation:mzFadeUp .6s ease .3s both">{{ roundWalkerLine }}</div>
+      </sc-if>
+      <sc-if value="{{ rbOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:9px;margin-top:17px;animation:mzFadeUp .6s ease .46s both">
+          <span style="width:36px;height:1px;flex:none;background:linear-gradient(90deg,transparent,rgba(240,216,154,.34))"></span>
+          <sc-for list="{{ rbPips }}" as="rq" hint-placeholder-count="9">
+            <span style="{{ rq.style }}"></span>
+          </sc-for>
+          <span style="width:36px;height:1px;flex:none;background:linear-gradient(270deg,transparent,rgba(240,216,154,.34))"></span>
+        </div>
+        <div style="font-family:'Karla',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(154,138,94,.9);margin-top:9px;animation:mzFadeUp .6s ease .6s both">{{ rbCount }}</div>
+        <div style="{{ rbTailStyle }}">
+          <sc-if value="{{ rbFmtOn }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:13px 30px 14px;flex:none;border:1px solid rgba(240,216,154,.28);border-radius:5px;background:linear-gradient(180deg,rgba(240,216,154,.075),rgba(240,216,154,.02));display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 10px 30px rgba(0,0,0,.45), 0 0 26px rgba(240,216,154,.07);animation:mzPlaqueDrop .85s cubic-bezier(.22,1,.36,1) .9s both">
+              <span style="font-family:'Karla',sans-serif;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;color:#9A8A5E">from here</span>
+              <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F0D89A;text-shadow:0 0 24px rgba(240,216,154,.32)">{{ rbFmtTitle }}</span>
+              <span style="font-family:'Karla',sans-serif;font-size:11px;color:#B8A87C">{{ rbFmtSub }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ rbNextOn }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ rbNextStyle }}">
+              <span style="font-family:'Karla',sans-serif;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;color:rgba(154,138,94,.8)">{{ rbNextK }}</span>
+              <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;color:#F2EAD6">{{ rbNextName }}</span>
+              <span style="font-family:'Karla',sans-serif;font-size:10.5px;line-height:1.6;color:#9A8A5E;text-wrap:pretty">{{ rbNextLine }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ rmOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:9px;margin-top:14px;animation:mzFadeUp .6s ease .3s both">
+          <sc-for list="{{ matchPips }}" as="rp2" hint-placeholder-count="3">
+            <span style="{{ rp2.style }}"></span>
+          </sc-for>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;color:#F0D89A;margin-top:16px;animation:mzFadeUp .6s ease .5s both">{{ rmLead }}</div>
+        <div style="font-family:'Karla',sans-serif;font-size:10.5px;color:rgba(154,138,94,.85);margin-top:4px;animation:mzFadeUp .6s ease .7s both">{{ rmRule }}</div>
+      </sc-if>
+      <sc-if value="{{ roundGoOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;bottom:22px;text-align:center;font-family:'Karla',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(216,200,156,.85);animation:mzShimmer 2.8s ease-in-out 1.7s infinite">{{ roundGoLabel }} ›</div>
       </sc-if>
       <sc-if value="{{ ascentOn }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;align-items:center">
@@ -4186,11 +4443,45 @@
     </div>
   </sc-if>
   <sc-if value="{{ endOn }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ menuPlayTap }}" style="position:absolute;inset:0;background:rgba(4,3,2,.86);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;gap:40px;z-index:7;cursor:pointer;animation:mzFadeUp .35s ease both">
+    <div onClick="{{ menuPlayTap }}" style="position:absolute;inset:0;background:rgba(4,3,2,.86);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;gap:40px;padding-bottom:46px;z-index:7;cursor:pointer;animation:mzFadeUp .35s ease both">
+      <sc-if value="{{ avEndOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative;width:150px;height:120px;flex:none">
+          <div style="position:absolute;left:50%;top:56%;width:170px;height:170px;margin-left:-85px;margin-top:-85px;border-radius:50%;background:radial-gradient(circle,{{ avEndGlow }},transparent 68%);pointer-events:none"></div>
+          <svg viewBox="0 0 120 96" style="{{ avEndFigStyle }}">
+            <sc-for list="{{ avEndPaths }}" as="ap" hint-placeholder-count="3">
+              <path d="{{ ap.d }}" fill="{{ ap.f }}" stroke="{{ ap.s }}" stroke-width="{{ ap.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
+            </sc-for>
+            <sc-if value="{{ avEndStarOn }}" hint-placeholder-val="{{ false }}">
+              <g style="{{ avEndStarPos }}"><circle cx="0" cy="0" r="3.6" fill="{{ avEndStarF }}" stroke="{{ avEndStarS }}" stroke-width="1.3" style="{{ avEndStarStyle }}"></circle></g>
+            </sc-if>
+          </svg>
+        </div>
+      </sc-if>
       <div style="text-align:center;max-width:320px">
         <div style="font-size:22px;color:{{ endMark }}">✦</div>
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;line-height:1.2;color:#F2EAD6;margin-top:6px">{{ endTitle }}</div>
         <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;margin-top:8px">{{ endLine }}</div>
+        <sc-if value="{{ rlOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:center;align-items:center;gap:18px;margin-top:18px">
+            <sc-for list="{{ rlMoons }}" as="rn" hint-placeholder-count="3">
+              <span style="{{ rn.wrap }}">
+                <span style="{{ rn.dark }}"></span>
+                <sc-if value="{{ rn.litOn }}" hint-placeholder-val="{{ true }}">
+                  <span style="{{ rn.lit }}"></span>
+                </sc-if>
+              </span>
+            </sc-for>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;color:#D8C8A8;margin-top:16px;animation:mzFadeUp 1.1s ease 1.9s both">{{ rlLostLine }}</div>
+          <sc-if value="{{ rlWipeOn }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;justify-content:center;align-items:center;gap:7px;margin-top:14px">
+              <sc-for list="{{ rlStrip }}" as="rs" hint-placeholder-count="9">
+                <span style="{{ rs.style }}"></span>
+              </sc-for>
+            </div>
+            <div style="font-family:'Karla',sans-serif;font-size:11px;line-height:1.7;color:#9A8A5E;margin-top:14px;animation:mzFadeUp 1.2s ease 2.9s both">{{ rlBackLine }}</div>
+          </sc-if>
+        </sc-if>
         <sc-if value="{{ avVoiceOn }}" hint-placeholder-val="{{ false }}">
           <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.6;color:{{ avVoiceC }};margin-top:8px;max-width:420px;text-wrap:pretty">{{ avVoice }}</div>
         </sc-if>
@@ -4206,22 +4497,7 @@
         <div style="font-family:'Karla',sans-serif;font-size:10.5px;color:rgba(154,138,94,.75);margin-top:20px">anywhere to deal again</div>
       </div>
       <button onClick="{{ endLobbyTap }}" style="position:absolute;left:50%;bottom:18px;transform:translateX(-50%);background:none;border:1px solid rgba(240,216,154,.3);border-radius:5px;padding:7px 16px;color:#9A8A5E;font-family:'Karla',sans-serif;font-size:10.5px;cursor:pointer;z-index:9;transition:border-color .15s ease, color .15s ease" style-hover="border-color:#F0D89A;color:#F0D89A">lobby</button>
-      <div style="display:none">
-          </sc-if>
-          <div style="width:104px;height:140px;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 10px 30px rgba(0,0,0,.6), 0 0 24px rgba(240,216,154,.22);animation:mzCardWake .9s cubic-bezier(.22,1,.36,1) both">
-            <div style="position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
-            <svg viewBox="0 0 100 100" style="position:absolute;top:14px;left:27px;width:50px;height:40px;opacity:.9">
-              <sc-for list="{{ introShapes }}" as="p" hint-placeholder-count="2">
-                <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-              </sc-for>
-            </svg>
-            <div style="position:absolute;top:10px;left:13px;font-size:15px;color:#F0D89A">{{ introL }}</div>
-            <div style="position:absolute;bottom:10px;right:13px;font-size:15px;color:#F0D89A">{{ introR }}</div>
-            <div style="position:absolute;top:56px;left:0;right:0;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#F2EAD6;padding:0 8px;line-height:1.1">{{ introName }}</div>
-            <div style="position:absolute;top:80px;left:0;right:0;text-align:center;font-size:8.5px;color:#9A8A5E">tonight's mansion</div>
-          </div>
-        </div>
-      </sc-if>
+
     </div>
   </sc-if>
 </div>
@@ -4326,7 +4602,7 @@
       <svg viewBox="0 0 72 72" style="width:24px;height:24px;display:block;flex:none">
         <circle cx="36" cy="36" r="33" fill="rgba(10,7,3,.5)" stroke="#F0D89A" stroke-width="1.8" pathLength="28" stroke-dasharray="0.62 0.38" opacity=".6"></circle>
         <sc-for list="{{ shardDots }}" as="pd" hint-placeholder-count="5">
-          <circle cx="{{ pd.x }}" cy="{{ pd.y }}" r="{{ pd.r }}" fill="{{ pd.c }}"></circle>
+          <path d="{{ pd.d }}" fill="{{ pd.c }}"></path>
         </sc-for>
         <rect x="29" y="25" width="14" height="19" rx="2" fill="rgba(10,7,3,.88)" stroke="#F0D89A" stroke-width="1.2"></rect>
       </svg>
@@ -4343,6 +4619,9 @@ class Component extends DCLogic {
   constructor(p) { super(p); this.state = this._deckState(); this._seq = []; }
   async componentDidMount() {
     try { this._measureArt(); } catch (e) {}
+    // dev handle, one line, no behaviour (2 sep 2026): lets the physics audit be run from the
+    // console — window.manzil._physicsAudit(). See _destinations()/_physicsAudit().
+    try { window.manzil = this; } catch (e) {}
     // THE NIGHT SPEAKS (31 aug 2026 sound pass, ported from the Design prototype against
     // "Manzil - Sound Design.dc.html"): the parchment press, everywhere — every real button lands
     // with the felt thud; board ground (slots, hand cards) keeps its own stone voice instead, fired
@@ -4527,6 +4806,15 @@ class Component extends DCLogic {
     if (st.road && !st.roadBoss && !sameRung) {
       // a chosen station keeps climbing from where it was picked; the walked road reads the saved rung
       const k = st.roadPick ? Math.min((st.roadRung || 0) + 1, 8) : Math.min(this._rungs()[this._tonight()] || 0, 8);
+      // THE MANSION GETS HER INTRO ON THE WALKED ROAD TOO (1 sep 2026, user: "the avatar intro only
+      // pops up if you lose and face him from the lobby"). phase "intro" was set ONLY by
+      // deckStartTap, so the authored avatar splash — figure, star, the road-becomes-you copy — was
+      // reachable only by re-entering through the deck screen. Climbing to the top skipped it
+      // entirely, which is the one arrival it was written for. Routing through "intro" here hands off
+      // to _startMatch, which reads the same saved rung and deals rung nine exactly as before; a
+      // picked climb carries pickK: 8 so _startMatch's own pickK branch lands on the mansion, not
+      // back on the station that was picked.
+      if (k >= 8) { this._clearSeq(); this.setState({ phase: "intro", introExit: false, roundExit: false, pickK: st.roadPick ? 8 : st.pickK }); return; }
       this._clearSeq();
       const step = this._freshRoadStep(k, st.chosen);
       this.setState({ ...step, roadPick: st.roadPick, roundExit: false });
@@ -4547,11 +4835,19 @@ class Component extends DCLogic {
     this._afterDeal();
     if (nextLeader === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
   }
+  // EVERY BEAT WAITS FOR THE PLAYER (1 sep 2026, user: "wait for a tap always"). Returns the
+  // auto-advance delay in ms, or 0 to hold until tapped — and it is 0 everywhere now. Kept as one
+  // method rather than deleting the timers, so the policy is a single line to change if a beat ever
+  // needs to move on by itself again. The counterpart obligation: a beat that never advances itself
+  // MUST carry a visible continue affordance, or the player is just stuck. See roundGoOn.
+  _roundDwell() { return 0; }
+  _armRound() { const d = this._roundDwell(); if (d > 0) this._roundT = setTimeout(() => this._exitRound(), d); }
   _exitRound() {
     if (this.state.phase !== "round" || this.state.roundExit) return;
     clearTimeout(this._roundT);
+    const same = !!this.state.roundSame; // read before setState: a mid-match seam must not reset the rung
     this.setState({ roundExit: true });
-    this._roundX = setTimeout(() => this._advanceRound(), 340);
+    this._roundX = setTimeout(() => this._advanceRound(same), 340);
   }
   _startMatch() {
     if (this.state.phase !== "intro" || this.state.introExit) return;
@@ -5065,7 +5361,13 @@ class Component extends DCLogic {
   // Was 10/18/25 while those were the only three finished; the drum (23), the well (28) and the
   // empty district (21) each shipped a full level the same day — law, scene, roster and art — so
   // they join. Add an id here the moment its level lands, or the work is unreachable.
-  _moonOpen(id) { return [10, 18, 21, 23, 25, 28].indexOf(id) >= 0; }
+  // the turning (12) joins 2 sep 2026: turn@0 shipped with its level — the hill of vanes, the snake
+  // as the law's body, the eight who read the wind. seven houses stand.
+  // the root (19) joins 2 sep 2026: plant@4 (measurement's 1a′, plantOnTake) shipped with its level
+  // — the cut at the root, the burial as the law's body, the grave-openers. eight houses stand.
+  // the chamber (26) joins 2 sep 2026: guest@0, the first house taken on the byakko brief — the cot
+  // and the sword, the fire pig by the fire, the eight who keep a house for strangers. nine stand.
+  _moonOpen(id) { return [10, 12, 18, 19, 21, 23, 25, 26, 28].indexOf(id) >= 0; }
   _moonTest(id) { return false; }
   // the four quarters of the sky, al-biruni's numbering. the animals are named to the player
   _quad(m) { return m >= 14 && m <= 20 ? "seiryuu" : m >= 7 && m <= 13 ? "suzaku" : m >= 21 && m <= 27 ? "genbu" : "byakko"; }
@@ -5191,6 +5493,15 @@ class Component extends DCLogic {
   // THE AVATAR'S VOICE (29 aug 2026): one held line and one yielded line per avatar, written from
   // the hunger axis, spoken on the boss end screens. observation, never prophecy; no gloating.
   _avVoice(m) { return ({
+    26: { hold: "the pig settles back into the warm stones. the room keeps its own hours.",
+          yield: "the pig gets up, which it does for nothing, and gives you the fire.",
+          react: "the pig's ear turns toward you.", word: "kept the room." },
+    19: { hold: "the tiger settles back into the ground. what was holding, holds.",
+          yield: "the tiger pulls itself out of the earth and lets the road past.",
+          react: "the tiger's shoulders shift in the earth.", word: "held fast." },
+    12: { hold: "the snake keeps the turn. the heat holds a little longer.",
+          yield: "the snake goes down off the warm stone. the wind is yours to read now.",
+          react: "the snake turns its head into the new wind.", word: "turned." },
     18: { hold: "the fox keeps the heart. the eldest carries it a while longer.",
           yield: "the fox steps back from the first station. what the eldest carried, it hands to you.",
           react: "the fox carries it without hurry.", word: "held." },
@@ -5215,6 +5526,43 @@ class Component extends DCLogic {
     "ruen": "\u2609", "brann": "\u2642", "mave": "\u2640", "the quiet one": "\u260A",
   })[n] || ""; }
   _avFig(m) { return ({
+    26: { star: "#DCE4FF", glow: "rgba(190,202,255,.4)", starX: 34, starY: 40, p: [
+      // the fire pig of 室 (the chamber), lying along the warm stones with its back to the fire:
+      // heavy body, short legs tucked, blunt snout down, one ear up. markab at the shoulder. of
+      // every animal on the slate it is the only one that is unmistakably at home.
+      { d: "M26 74 q-4 -22 16 -30 q22 -9 44 -4 q20 5 22 20 q2 15 -8 22 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1.2 },
+      { d: "M24 62 q-12 4 -14 12 q-1 7 8 8 q8 1 12 -6", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1.2 },
+      { d: "M10 74 q-6 2 -6 6 q0 4 7 3", f: "#120C07", s: "rgba(240,216,154,.45)", w: 1.1 },
+      { d: "M40 46 L34 32 L50 40 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1 },
+      { d: "M20 66 q4 3 8 1", f: "none", s: "rgba(240,216,154,.4)", w: 1.1 },
+      { d: "M46 88 q3 8 0 10 M66 88 q3 8 0 10", f: "none", s: "rgba(240,216,154,.4)", w: 1.6 },
+      { d: "M96 66 q10 6 6 16", f: "none", s: "rgba(240,216,154,.35)", w: 1.4 },
+      { d: "M6 96 h96", f: "none", s: "rgba(255,178,104,.28)", w: 4 },
+    ] },
+    19: { star: "#EAF2DC", glow: "rgba(190,208,166,.44)", starX: 40, starY: 20, p: [
+      // the fire tiger of 尾 (the tail), HALF-BURIED in the dug earth (2 sep 2026, user pick): head,
+      // shoulders and one forepaw above the ground line, the rest of it still in the ground it is
+      // holding. shaula sits at the brow. it does not rise — the earth is taken away from it.
+      { d: "M34 60 q-4 -20 8 -30 q12 -10 28 -8 q16 2 22 14 q5 12 1 24 z", f: "#120C07", s: "rgba(240,216,154,.52)", w: 1.2 },
+      { d: "M42 30 L36 15 L51 22 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1 },
+      { d: "M70 25 L83 14 L82 29 z", f: "#120C07", s: "rgba(240,216,154,.5)", w: 1 },
+      { d: "M46 41 q6 4 12 0 M62 41 q6 4 12 0", f: "none", s: "rgba(240,216,154,.42)", w: 1.2 },
+      { d: "M52 49 q8 6 16 0", f: "none", s: "rgba(240,216,154,.45)", w: 1.3 },
+      { d: "M40 23 q4 8 2 16 M56 18 q0 9 -2 14 M72 23 q-3 8 -2 15", f: "none", s: "rgba(190,208,166,.3)", w: 1.4 },
+      { d: "M76 57 q11 2 15 9 q3 5 -3 6", f: "#120C07", s: "rgba(240,216,154,.42)", w: 1.1 },
+      { d: "M8 65 q26 -8 52 -6 q30 2 54 8", f: "none", s: "rgba(176,140,88,.5)", w: 3 },
+      { d: "M6 74 q30 -6 60 -4 q30 2 56 6", f: "none", s: "rgba(6,4,2,.5)", w: 4 },
+    ] },
+    12: { star: "#FFF3D8", glow: "rgba(255,226,178,.42)", starX: 22, starY: 76, p: [
+      // the snake of the wings (翼's animal), lying along the road's own last slab above the world:
+      // a long loose coil, not a strike-coil, with the head raised into the new wind. denebola sits
+      // LOW BEHIND it (2 sep 2026, user pick), so the star is nearly on the stone.
+      { d: "M18 88 q14 -10 30 -6 q16 4 26 -4 q10 -8 20 0", f: "none", s: "rgba(240,216,154,.5)", w: 4.4 },
+      { d: "M28 80 q16 -8 32 -3", f: "none", s: "rgba(240,216,154,.28)", w: 2.6 },
+      { d: "M94 78 q10 -12 4 -26 q-7 -16 -22 -14 q-11 2 -12 12", f: "none", s: "rgba(240,216,154,.55)", w: 4 },
+      { d: "M64 50 q-9 -2 -12 5", f: "none", s: "rgba(240,216,154,.45)", w: 1.6 },
+      { d: "M14 93 h84", f: "none", s: "rgba(6,4,2,.55)", w: 3 },
+    ] },
     28: { star: "#E6D2FF", glow: "rgba(198,168,246,.46)", starX: 44, starY: 40, p: [
       // the wolf of the last house (奎's animal), sitting square on the well's rim, facing out:
       // long straight muzzle, upright triangular ears, deep chest, tail curled at the forepaws.
@@ -5381,9 +5729,18 @@ class Component extends DCLogic {
   // measurement owes the re-cut; until it lands, _nightStale() withholds the player-facing clause
   // rather than stating a fact the build can no longer support. drop the id from the list when
   // its new number arrives.
-  _nightStale(m) { return m === 21 || m === 23 || m === 28; }
+  // 25 ADDED 1 SEP 2026 (design, MEMO-BYAKKO-SIX-VERIFIED): the hideaway slid on 30 aug, BEFORE the
+  // sweep, and the sweep's recorded geographies (m28 "seven byakko of nine", m23 "five genbu four
+  // byakko") pin it to door-first windows throughout. m25's 34.8 therefore describes 25…5 (6/9
+  // byakko), not the 21…1 it plays (2/9). withhold until measurement confirms; revert if the sweep
+  // did cut m25 slid.
+  // 19 JOINS THE LIST (2 sep 2026): the root's window slid back four so m19 stands on its own law
+  // station, so its 15.0 sweep row describes 19…27 and not the 15…23 it now plays. measurement DID
+  // cut the slid window for the law tables (baseline spread 10.8, seat +4.5 fresh) — drop 19 from
+  // this list the moment that figure lands in _nightSpread's table rather than only in the memo.
+  _nightStale(m) { return m === 19 || m === 21 || m === 23 || m === 25 || m === 28; }
   _nightSpread(m) { return [47.5, 40.2, 20.8, 46.4, 31.9, 30.1, 27.2, 35.0, 26.8, 38.2, 20.5, 12.7, 24.6, 31.7, 12.7, 21.2, 29.5, 21.9, 15.0, 37.3, 10.0, 25.4, 32.8, 36.2, 34.8, 49.1, 44.2, 48.7][(m || 1) - 1]; }
-  _boardOff(t) { return ({ 25: 4, 23: 4, 28: 4, 21: 4 })[t] || 0; }
+  _boardOff(t) { return ({ 25: 4, 23: 4, 28: 4, 21: 4, 19: 4 })[t] || 0; }
   _boardM(i) { const t = this._tonight(); const off = this._boardOff(t); return ((t - 1 + i - off + 28) % 28) + 1; }
   _mName(id) { return this._cards()[id].name.replace("The ", "").toLowerCase(); }
   _claims() { try { return JSON.parse(localStorage.getItem("manzil-v2-claims")) || {}; } catch (e) { return {}; } }
@@ -5530,7 +5887,7 @@ class Component extends DCLogic {
       hourWarmStyle: "position:absolute;left:0;right:0;bottom:0;height:54%;pointer-events:none;z-index:4;transition:opacity 1.6s ease;opacity:" + ([.38, .06, 0, .18][hs] * gf).toFixed(3) + ";background:" + (this._tonight() === 22
         ? "linear-gradient(to top, rgba(44,116,128,.36), rgba(32,86,102,.12) 34%, transparent 72%)" // the listener's alley runs cold even at dusk
         : this._tonight() === 26
-        ? "linear-gradient(to top, rgba(214,96,34,.4), rgba(150,60,22,.16) 34%, transparent 72%)" // firelight off the kiln floor
+        ? "linear-gradient(to top, rgba(255,178,104,.24), rgba(58,64,112,.14) 34%, transparent 72%)" // hearthlight off the hall floor, with the room's indigo above it
         : this._tonight() === 27
         ? "linear-gradient(to top, rgba(52,120,150,.28), rgba(40,84,116,.1) 30%, transparent 66%)" // lamplight thrown back off the water
         : this._tonight() === 28
@@ -5786,7 +6143,10 @@ class Component extends DCLogic {
           if (rl === "shell" && idx9 === 4) return "whatever lodges here counts as normal, but if it is ever taken it counts for nobody, both sides, to the end of the board.";
           if (rl === "reson" && idx9 === 4) return "the resonant ground: a strike that starts here or lands here carries one station further. the hour-drum overhead rings when the beat travels on.";
           if (rl === "hush" && idx9 === 4) return "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
+          if (rl === "turn" && idx9 === 0) return "the turning's door: whatever lodges here turns the next station to face the other way. its two numbers swap, left for right, and stay swapped until the board ends. a card that reads the same both ways cannot be turned at all.";
           if (rl === "rope" && idx9 === 4) return "the rope passes closest to the wall here: whatever lodges on this ground hauls one enemy card beside it onto the rope, and it changes hands.";
+          if (rl === "plant" && idx9 === 4) return "the old grave lies open here. whatever lodges on this ground can be taken once — but the moment it changes hands it takes root, and cannot be taken back by either side before the board ends.";
+          if (rl === "guest" && idx9 === 0) return "the house's own door. whatever lodges here is a guest under this roof: while it stands on this ground it loses its own quarter's grant, whoever played it. the house's cloth goes over it.";
           return this._mPoem(m); })()) };
     }
     if (k[0] === "s") { i = +k.slice(1); s = this.state.slots[i]; if (!s) return null; c = C[s.id];
@@ -5947,10 +6307,108 @@ class Component extends DCLogic {
   // exactly the way the rope did, same hard delegation, same whole-night gate, its own xorshift
   // hash and walkStep>=2 condition both deleted. Design folded the drum on their side while Code
   // folded the rope on this one, so this map is the MERGE of both — neither delivery had all five.
-  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson", 21: "hush" })[this._tonight()] || null; }
+  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson", 21: "hush", 12: "turn", 19: "plant", 26: "guest" })[this._tonight()] || null; }
   // per-mansion law stations (30-31 aug v3 pack, lawAt is {station, kind}): beat and reach live on
   // the mansion's own door (index 0); the tents' SHELL and the rope both stand midway, index 4.
-  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4, hush: 4 })[this._bossRule()] ?? -1; }
+  // the turn (m12) stands on the turning's own door, index 0 — measured there and shipped there
+  // (31 aug memo: seat +1.2 fresh, the smallest seat move any law has produced, and the spread narrows).
+  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4, hush: 4, turn: 0, plant: 4, guest: 0 })[this._bossRule()] ?? -1; }
+  // ═══ THE ROAD'S OWN HORIZON — ONE SOURCE OF TRUTH FOR EVERY LEVEL'S DESTINATION ═══
+  // (2 sep 2026, user: "make sure we are operating on the same physics". written after three
+  // rejected chamber passes, whose whole fault was placing a destination by eye and then nudging
+  // constants until it looked close.)
+  //
+  // THE FACTS, read off the live DOM, not reasoned about: the lobby road gauge is a FIXED box,
+  // inset 118px from the top of the 430px stage. Inside it a station sits at
+  //     top = 78 − 68.8·(i/8)^0.78   percent of that box
+  // and the cone's half-width at a station is 114·v, where v = top/100. So the road's far end
+  // stands at  430 − (118 + 3.12·top)  above the stage floor, and the road is 114·v wide when it
+  // gets there. The road also SHORTENS as it is walked (the mansion's landing draws one station
+  // nearer per rung), so the far index walks down with the climb: fi = 8 − e.
+  //
+  // THE RULE: anything the road must MEET — a doorway, a terrace, a camp, a well mouth, a drum —
+  // takes its base line and its width from here. Never from ev.gh (that is the near ground rim,
+  // for things standing at the player's feet), never from a hand-tuned constant, never top-anchored.
+  // `scaleFor(art, trueW)` gives the scale for a piece of art `art` px wide that is `trueW` px wide
+  // when the road is underfoot, with `min` as the legibility floor (the chamber's door needed .3:
+  // at the apex the honest size is 21px, which the road's own 12px marker swallows).
+  //
+  // EXEMPT, and deliberately so: the heart (18) — its ridge IS the horizon, not an object on it;
+  // and the root (19) — nothing is approached there, the ground is dug back and the sky arrives.
+  _horizon(e) {
+    const fi = Math.max(0, 8 - (e || 0));
+    const top = 78 - 68.8 * Math.pow(fi / 8, 0.78), v = top / 100;
+    return {
+      bottom: Math.round(430 - (118 + 3.12 * top)), v, half: 114 * v,
+      scaleFor: (art, trueW, min) => Math.max(min || 0, (trueW / art) * (v / 0.78)),
+    };
+  }
+  // ═══ THE PHYSICS AUDIT ═══ (2 sep 2026, user: "how can we make sure this doesn't happen again")
+  // _horizon() is only a rule if something checks it. This is the register of every house's
+  // destination — the one element the road must MEET — and what its base is allowed to be.
+  // A house with `derived: true` must sit on _horizon().bottom; an exempt house says why.
+  // Run in the console: document.querySelector('x-dc').__logic._physicsAudit()
+  // ADDING A LEVEL: add its row here in the same session you build it. A missing row is itself a
+  // finding — the audit reports houses it has never heard of.
+  _destinations() {
+    return {
+      10: { key: "thrHallStyle", what: "the throne's terrace", derived: true },
+      12: { key: "tnGreatStyle", what: "the great vane", derived: false, why: "stands on the NEAR ground at the player's feet, so ev.gh is correct for it — the vane is a landmark, not the road's destination" },
+      18: { key: "heartRidge", what: "the dry ridge", derived: false, why: "the ridge IS the horizon, not an object standing on it" },
+      19: { key: "rtLipStyle", what: "the cut's rim", derived: false, why: "nothing is approached — the ground is dug back and the sky arrives" },
+      21: { key: "qtCourtStyle", what: "the assize court", derived: true },
+      23: { key: "dtDrumStyle", what: "the great drum", derived: true },
+      25: { key: "hdCampStyle", what: "the camp", derived: true },
+      26: { key: "chDoorStyle", what: "the white doorway", derived: true },
+      28: { key: "rpMouthStyle", what: "the well mouth", derived: true },
+    };
+  }
+  // It MEASURES, it does not restate intent (2 sep 2026): each derived destination carries
+  // data-mz-dest="<mansion>" in the template, so the audit reads the element's real base off the
+  // live DOM and compares it with _horizon().bottom. Only tonight's house is on screen, so the
+  // measured column fills in for the house you are standing in and the rest report their contract.
+  // A drift over 2px is a FAIL and says so — that is the whole point of the thing.
+  _physicsAudit(e) {
+    // _elev() returns a NUMBER (the `ev` object with .e/.gh/.sd is a local built inside renderVals).
+    // Dereferencing it as an object pinned the audit to rung 0: false DRIFT at every non-zero rung,
+    // and — far worse — it would have waved through a destination hard-coded to 283 at rung 5.
+    const D = this._destinations(), lvl = typeof e === "number" ? e : this._elev();
+    const H = this._horizon(lvl), rows = [];
+    const measure = (m) => {
+      try {
+        const el = document.querySelector('[data-mz-dest="' + m + '"]');
+        if (!el) return null;
+        const stage = el.closest("[data-mzstage]") || el.offsetParent;
+        if (!stage) return null;
+        const sr = stage.getBoundingClientRect(), er = el.getBoundingClientRect();
+        if (!sr.height || !er.height) return null;
+        return Math.round((sr.bottom - er.bottom) / (sr.height / 430));
+      } catch (err) { return null; }
+    };
+    Object.keys(D).forEach(k => {
+      const m = +k, d = D[k];
+      if (!this._moonOpen(m)) return;
+      const got = d.derived ? measure(m) : null;
+      const drift = got == null ? null : got - H.bottom;
+      rows.push({
+        mansion: m, house: d.what, key: d.key,
+        basis: d.derived ? "_horizon" : "exempt",
+        expected: d.derived ? H.bottom : "—",
+        measured: got == null ? (d.derived ? "not on screen" : "—") : got,
+        verdict: !d.derived ? "exempt" : drift == null ? "—" : Math.abs(drift) <= 2 ? "welded" : "DRIFT " + (drift > 0 ? "+" : "") + drift + "px",
+        note: d.why || "",
+      });
+    });
+    const unlisted = [10, 12, 18, 19, 21, 23, 25, 26, 28].filter(m => this._moonOpen(m) && !D[m]);
+    const failed = rows.filter(r => /^DRIFT/.test(r.verdict));
+    console.log("%cphysics audit · elev " + lvl + " · road's far end at " + H.bottom + "px, " + Math.round(H.half * 2) + "px wide", "color:#F0D89A;font-weight:700");
+    console.table(rows);
+    if (unlisted.length) console.warn("houses with no destination row (add them to _destinations): " + unlisted.join(", "));
+    rows.filter(r => r.basis === "exempt" && !r.note).forEach(r => console.warn("m" + r.mansion + " is exempt with no stated reason"));
+    failed.forEach(r => console.error("m" + r.mansion + " " + r.house + " (" + r.key + ") is off the road's far end: " + r.verdict));
+    if (!failed.length && !unlisted.length) console.log("%call destinations welded", "color:#7FC8B6");
+    return { farEnd: H.bottom, width: Math.round(H.half * 2), rows, unlisted, failed: failed.length };
+  }
   _buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
   // THE NIGHT SPEAKS (31 aug 2026, ported from the Design prototype against "Manzil - Sound
   // Design.dc.html"): a small webaudio voice for the board loop — gather-and-strike grammar,
@@ -5994,6 +6452,8 @@ class Component extends DCLogic {
       case "gaze": T({ f: 2093, d: .28, v: .018, a: .05 }); break;
       case "drumcarry": N({ ft: "bandpass", f: 240, d: .12, v: .28, q: 2 }); T({ f: 180, f2: 120, d: .3, v: .15 }); C({ f: 554, d: .6, v: .05 }, .04); break;
       case "pulse": T({ f: 84, f2: 62, d: .16, v: .05 }); break;
+      // the vane's pivot, dry and iron: the one cue the turning's night asks for (2 sep 2026, user)
+      case "creak": N({ ft: "bandpass", f: 520, d: .3, v: .15, q: 1.4, a: .06 }); T({ f: 300, f2: 186, d: .32, v: .06 }); N({ ft: "lowpass", f: 760, d: .03, v: .18 }, .24); break;
       case "hush": N({ ft: "lowpass", f: 1400, d: .5, v: .1, a: .16 }); N({ ft: "lowpass", f: 320, d: .16, v: .16 }, .34); T({ f: 220, f2: 96, d: .5, v: .07 }, .3); break;
     } }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
@@ -6050,6 +6510,36 @@ class Component extends DCLogic {
       "dov": { op: .95, p: [P("M30 93 L58 18 M90 93 L62 18", "none", F, "1"), P("M60 12 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M47 30 Q60 24 73 30 L76 58 L80 93 L70 93 L65 68 L55 68 L50 93 L40 93 L44 58 Z", I, S, ".8"), P("M48 38 Q60 43 72 38", "none", S, "1.4")] },
       "lys": { op: .95, p: [P("M56 24 Q58 10 67 12 Q71 15 69 24 Z", I, S, ".7"), P("M54 24 Q46 54 42 93 L70 93 Q75 55 68 24 Q60 20 54 24 Z", I, S, ".8"), P("M61 27 Q56 58 54 90", "none", F, ".8"), P("M78 93 L86 78 L94 93 Z", I, S, ".8"), P("M86 93 L86 85", "none", S, ".7")] },
       "the lamp-keeper": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M65 42 Q72 38 78 34", "none", S, "1.2"), P("M79 22 L79 26", "none", S, "1"), P("M75 26 L83 26 L82 36 L76 36 Z", I, S, ".8"), P("M79 30 a1.6 1.6 0 1 1 -0.01 0 Z", "rgba(240,216,154,.55)", "none", "0")] },
+      // THE HILL OF VANES (2 sep 2026): eight who read the wind, each carrying the instrument they
+      // read it with. same law as the other courts — keyed by name over the fig alias, unposed.
+      "nael": { op: .95, p: [P("M57 11 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 29 Q58 24.5 66 29 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M66 38 L80 32", "none", S, "1.3"), P("M78 26 L90 26 L88 36 L80 36 Z", I, S, ".9"), P("M88 30 L98 22", "none", S, "1"), P("M22 14 L22 62 M14 18 L30 22 L14 26 Z", "none", S, "1.1")] },
+      "vesh": { op: .95, p: [P("M55 41 a5 5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M45 68 Q46 55 55 53 Q66 54 68 64 L70 80 L64 82 L63 93 L49 93 L50 80 Q44 78 45 68 Z", I, S, ".8"), P("M66 66 L84 58", "none", S, "1.3"), P("M80 20 L100 20 M90 20 L90 30", "none", S, "1.2"), P("M83 30 q0 -8 7 -8 q7 0 7 8 q3 4 3 7 h-20 q0 -3 3 -7 Z", I, S, ".9"), P("M90 46 L84 58", "none", F, ".9")] },
+      "thea": { op: .95, p: [P("M60 8.5 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 27 Q60 22.5 70 27 L71 60 L67 93 L61 93 L60 72 L59 93 L53 93 L49 60 Z", I, S, ".8"), P("M46 40 L60 36 L74 40 L74 54 L60 50 L46 54 Z", I, S, ".8"), P("M60 36 L60 50", "none", S, ".8"), P("M44 47 q-4 3 -1 7", "none", S, "1.2")] },
+      "sabi": { op: .95, p: [P("M42 33 L78 33 L68 28 L52 28 Z", I, S, ".8"), P("M60 34 a4.5 4.5 0 1 1 -0.01 0 Z", I, "none", "0"), P("M51 42 Q60 38 69 42 L75 93 L45 93 Z", I, S, ".8"), P("M69 48 Q84 40 96 22", "none", F, "1"), P("M96 6 L104 15 L96 26 L88 15 Z", I, S, ".9"), P("M96 26 q5 8 -1 15", "none", F, ".9")] },
+      "orun": { op: .95, p: [P("M58 9.5 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M51 28 Q59 23.5 68 28 L70 60 L66 93 L60 93 L59 71 L57 93 L51 93 L49 60 Z", I, S, ".8"), P("M84 92 L84 30", "none", S, "1.4"), P("M66 36 Q76 34 83 34", "none", S, "1.3"), P("M84 28 q10 -6 14 -16 M84 18 q9 -5 12 -13", "none", F, "1")] },
+      "duna": { op: .95, p: [P("M60 7 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 28 Q60 21 74 28 L77 58 L82 93 L72 93 L66 67 L54 67 L48 93 L38 93 L43 58 Z", I, S, ".8"), P("M76 30 L96 88", "none", S, "1.4"), P("M18 84 q6 -8 14 -4 q7 4 3 10 z", I, S, ".8"), P("M8 90 q5 -6 11 -3", "none", F, ".9"), P("M46 29 Q60 23 74 29", "none", S, "1.2")] },
+      "kip": { op: .95, p: [P("M56 24 Q58 10 67 12 Q71 15 69 24 Z", I, S, ".7"), P("M54 24 Q46 54 42 93 L70 93 Q75 55 68 24 Q60 20 54 24 Z", I, S, ".8"), P("M66 34 Q76 30 80 22", "none", S, "1.3"), P("M76 14 q8 -2 10 6 q-6 4 -11 1 z", I, S, ".9"), P("M88 8 q4 4 0 8", "none", F, "1")] },
+      "the weather-watch": { op: .72, p: [P("M55 22 Q56.5 10 62.5 10 Q67 12 65 22 Z", I, S, ".7"), P("M55 22 L65 22 L66.5 60 L64 93 L56 93 L53.5 60 Z", I, S, ".7"), P("M58 26 q4 4 5 10", "none", F, ".9"), P("M30 88 h10 M46 92 h10 M74 90 h9", "none", S, "1.1")] },
+      // THE COT AND THE SWORD (2 sep 2026): eight who keep a house for strangers. every tool here is
+      // one you hand to a guest — a token, a log, a jar, a girth, a plate, a lamp, a book.
+      "tamir": { op: .95, p: [P("M57 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M49 30 Q57 25 65 30 L68 60 L64 93 L58 93 L57 72 L55 93 L49 93 L47 60 Z", I, S, ".8"), P("M66 44 L86 44 L86 58 L66 58 Z", I, S, "1.1"), P("M66 51 H86", "none", F, ".9"), P("M64 40 L70 44", "none", S, "1.2")] },
+      "nasha": { op: .95, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M47 32 Q56 26 65 32 L69 60 L65 93 L59 93 L57 74 L55 93 L48 93 L45 60 Z", I, S, ".8"), P("M64 48 q14 -8 22 2 q-6 8 -14 6 q-9 -2 -8 -8 Z", I, S, "1.1"), P("M84 44 q6 -8 2 -14", "none", F, "1")] },
+      "vell": { op: .95, p: [P("M58 13 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 31 Q58 26 66 31 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M68 40 q14 2 15 14 q1 12 -13 13 q-13 1 -14 -12 q-1 -13 12 -15 Z", I, S, "1.1"), P("M80 38 q7 -3 8 -9", "none", S, "1.2")] },
+      "sadir": { op: .95, p: [P("M55 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 34 Q55 28 64 34 L68 62 Q64 76 66 93 L58 93 L56 76 L52 93 L45 93 L44 62 Z", I, S, ".8"), P("M62 52 q11 -18 24 -18 q13 0 22 18 q-11 7 -23 7 q-12 0 -23 -7 Z", I, S, "1.2"), P("M62 52 H108", "none", F, "1")] },
+      "ennu": { op: .95, p: [P("M57 15 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 33 Q57 27 66 33 L70 60 L66 93 L60 93 L58 74 L56 93 L49 93 L46 60 Z", I, S, ".8"), P("M68 56 q16 0 18 10 q1 9 -18 9 q-19 0 -18 -9 q2 -10 18 -10 Z", I, S, "1.1"), P("M78 44 q3 -8 -2 -12", "none", F, "1"), P("M66 46 L74 54", "none", S, "1.2")] },
+      "borin": { op: .95, p: [P("M59 10 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 30 Q59 23 72 30 L76 58 L80 93 L70 93 L65 68 L54 68 L48 93 L38 93 L42 58 Z", I, S, ".8"), P("M76 32 L76 92", "none", S, "1.5"), P("M74 34 q8 -4 6 -12", "none", F, "1")] },
+      "raqi": { op: .95, p: [P("M58 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 30 Q58 25 66 30 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M44 46 L72 42 L74 60 L46 64 Z", I, S, "1.1"), P("M58 44 L60 62", "none", F, ".9")] },
+      "the house-watch": { op: .72, p: [P("M56 24 Q57.5 13 63.5 13 Q68 15 66 24 Z", I, S, ".7"), P("M56 24 L66 24 L69 52 L69 68 L57 68 L54 52 Z", I, S, ".7"), P("M57 68 L57 88 L49 88 M69 68 L69 88 L77 88", "none", S, ".9"), P("M44 88 H82", "none", F, "1")] },
+      // THE CUT AT THE ROOT (2 sep 2026): eight grave-openers, each carrying the tool their part of
+      // the work is done with. same law as every other court — keyed by name over the fig alias.
+      "muza": { op: .95, p: [P("M58 10 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 28 Q58 23 66 28 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M72 24 L72 92", "none", S, "1.5"), P("M65 76 L79 76 L77 92 L67 92 Z", I, S, "1"), P("M64 38 L72 33", "none", S, "1.2")] },
+      "hev": { op: .95, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M32 34 L88 24", "none", S, "2.6"), P("M58 36 L64 30", "none", S, "1.2")] },
+      "ansu": { op: .95, p: [P("M57 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M49 30 Q57 25 65 30 L68 60 L64 93 L58 93 L57 72 L55 93 L49 93 L47 60 Z", I, S, ".8"), P("M78 46 a11 11 0 1 1 -0.01 0 Z", "none", S, "1.3"), P("M64 40 L70 44", "none", S, "1.2"), P("M72 60 l-2 8 M78 60 l0 9 M84 60 l2 8", "none", F, ".9")] },
+      "kori": { op: .95, p: [P("M55 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 34 Q55 28 64 34 L68 62 L64 93 L58 93 L56 74 L54 93 L48 93 L44 62 Z", I, S, ".8"), P("M66 22 L94 22 L90 42 L70 42 Z", I, S, "1.1"), P("M66 22 q14 -9 28 0", "none", S, "1.2"), P("M62 34 L70 28", "none", S, "1.2")] },
+      "zayn": { op: .95, p: [P("M58 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 32 Q58 26 66 32 L70 58 Q66 72 68 93 L60 93 L58 76 L54 93 L47 93 L48 58 Z", I, S, ".8"), P("M66 58 q13 5 15 18", "none", S, "2"), P("M64 46 L70 54", "none", S, "1.2")] },
+      "oda": { op: .95, p: [P("M59 11 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M51 29 Q59 24 67 29 L70 60 L66 93 L60 93 L59 72 L57 93 L51 93 L49 60 Z", I, S, ".8"), P("M46 44 q14 -9 27 2 q-4 12 -14 12 q-13 0 -13 -14 Z", I, S, "1"), P("M52 52 l0 6 M58 51 l0 7 M64 52 l0 6", "none", F, ".9")] },
+      "veya": { op: .95, p: [P("M58 17 a5.2 5.2 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 34 Q58 29 66 34 L69 62 L65 93 L59 93 L58 74 L56 93 L50 93 L48 62 Z", I, S, ".8"), P("M48 48 q11 -6 21 0 q-2 10 -10 10 q-10 0 -11 -10 Z", I, S, "1"), P("M53 44 q6 -3 12 0", "none", F, ".9")] },
+      "the ground-watch": { op: .72, p: [P("M56 20 Q57.5 9 63.5 9 Q68 11 66 20 Z", I, S, ".7"), P("M56 20 L66 20 L67.5 60 L65 93 L57 93 L54.5 60 Z", I, S, ".7"), P("M66 38 L88 36", "none", S, "1.2"), P("M88 32 q6 4 0 9", "none", F, "1.1")] },
       // THE QUARTER WITH NO LAMPS (31 aug 2026): the eight who stayed. every tool here is one that
       // is still carried after the work it was for stopped: an unfilled lantern, a wrapped bell, a
       // pole for hooks with nothing on them.
@@ -6138,6 +6628,39 @@ class Component extends DCLogic {
       { name: "dov", fig: "brann", line: "dov guards the way in, which is also the way out.", react: "dov closes the way behind him.", defeat: "dov steps out of the doorway.", again: "dov barred this way to you before.", hand: [206, 215, 218, 210, 220] },
       { name: "lys", fig: "mave", line: "lys shows you seven tents. she sleeps in the eighth.", react: "lys moves her bed again.", defeat: "lys leaves the eighth tent unlit for you.", again: "lys counted you out once. the eighth tent has moved.", hand: [201, 213, 219, 224, 226] },
       { name: "the lamp-keeper", fig: "the quiet one", line: "the lamp-keeper trims the one lit wick, and has kept every secret the camp ever gave. the hand is yours, every card of it awake.", react: "the lamp-keeper shields the flame.", defeat: "the lamp-keeper opens the flap.", again: "the light went out for you once. the lamp-keeper relit it.", hand: [206, 215, 218, 221, 224] },
+    ],
+    26: [ // the cot and the sword: a house that keeps a room for strangers, keeping one night's watch.
+      // hosts, not workers — the first roster whose job is other people arriving.
+      { name: "tamir", fig: "imra", line: "tamir keeps the gate. your quarter's token goes in his box as you pass, and comes back when you leave, not before.", react: "tamir sets the token down.", defeat: "tamir hands your token back early.", again: "tamir still had your token from last time." },
+      { name: "nasha", fig: "sef", line: "nasha keeps the hearth alight all night, because the cot is cold and the room should not be.", react: "nasha turns a log.", defeat: "nasha banks the fire for you.", again: "nasha kept your place by the fire." },
+      { name: "vell", fig: "odel", line: "vell carries water up from the fore spout. the jar pours whether anyone is lodged here or not.", react: "vell sets the jar down.", defeat: "vell pours for you first.", again: "vell remembers how you take it." },
+      { name: "sadir", fig: "tesh", line: "sadir mends saddles by lamplight, and every guest's saddle hangs in the bay they slept in. markab is the saddle; this house is named for it.", react: "sadir pulls the girth tight.", defeat: "sadir hangs your saddle in the good bay.", again: "sadir kept your saddle oiled." },
+      { name: "ennu", fig: "ruen", line: "ennu cooks for whoever is in, and tonight there is one plate more than there are mouths.", react: "ennu stirs the pot.", defeat: "ennu puts a plate aside for you.", again: "ennu knows what you left last time." },
+      { name: "borin", fig: "brann", line: "borin walks the hall gate to gate all night and dares it to bring him something.", react: "borin turns at the wall.", defeat: "borin steps out of your way.", again: "borin has walked past you before." },
+      { name: "raqi", fig: "mave", line: "raqi keeps the book of guests. she has your name from last time, gives nothing away twice, and holds your cards awake.", react: "raqi turns a page.", defeat: "raqi writes you out clean.", again: "raqi found your entry and did not read it aloud." },
+      { name: "the house-watch", fig: "the quiet one", line: "the house-watch sits where she can see both gates and the cot between them. the hand is yours, every card of it awake.", react: "the house-watch does not look up.", defeat: "the house-watch lets you by.", again: "the house-watch has not moved. the cot is where it was." },
+    ],
+    19: [ // the cut at the root: grave-openers moving an old burial before the season turns. nobody here
+      // is afraid of the ground; they are all watching it. the road stands still and they dig it back.
+      { name: "muza", fig: "imra", line: "muza runs the cut. she chalked tonight's edge before you got here, and the line does not move.", react: "muza checks her line.", defeat: "muza steps back off the edge.", again: "muza kept your line chalked." },
+      { name: "hev", fig: "sef", line: "hev shores whatever the digging opens. nothing has come down on anyone yet.", react: "hev sets another prop.", defeat: "hev takes a prop out and lets you through.", again: "hev's props are still standing where you left them." },
+      { name: "ansu", fig: "odel", line: "ansu sifts every basket. what is worth keeping was never the big pieces.", react: "ansu shakes the sieve.", defeat: "ansu passes your basket through unsifted.", again: "ansu still has what she sifted out of your last one." },
+      { name: "kori", fig: "tesh", line: "kori carries spoil up and empty baskets down, all night, and has never been asked twice.", react: "kori swings the basket up.", defeat: "kori sets the basket down and lets you by.", again: "kori remembers the weight of your last load." },
+      { name: "zayn", fig: "ruen", line: "zayn cuts the roots that grew down into the grave. they take longer to get through than the stone did.", react: "zayn tests the blade.", defeat: "zayn cuts you a way through.", again: "zayn's cuts from last time have healed over." },
+      { name: "oda", fig: "brann", line: "oda tallies what comes out. she has the whole burial written down twice, in case.", react: "oda makes a mark.", defeat: "oda writes the loss down as yours.", again: "oda found your tally from before." },
+      { name: "veya", fig: "mave", line: "veya came with the bones and will walk behind them to the new ground. she gives nothing away twice, and holds your cards awake.", react: "veya folds the cloth again.", defeat: "veya lets the road pass first.", again: "veya has carried this cloth past you before." },
+      { name: "the ground-watch", fig: "the quiet one", line: "the ground-watch keeps a palm flat on the cut face and feels for movement. the hand is yours, every card of it awake.", react: "the ground-watch presses the wall.", defeat: "the ground-watch takes her hand off the wall.", again: "nothing has shifted since. the ground-watch would know." },
+    ],
+    12: [ // the hill of vanes: eight people whose living depends on knowing when the wind changes.
+      // they climb with you (2 sep 2026, user), so their kit changes as the air thins.
+      { name: "nael", fig: "imra", line: "nael keeps the great vane's pivot oiled. it has never once stuck.", react: "nael gives the pivot a turn.", defeat: "nael lets the vane swing your way.", again: "back again. nael oiled it for you." },
+      { name: "vesh", fig: "sef", line: "vesh rings the bell of the change, and never one hour early.", react: "vesh's hand goes to the rope.", defeat: "vesh rings it. that one was yours.", again: "vesh counted the hours since the last change." },
+      { name: "thea", fig: "odel", line: "thea keeps the almanac with her thumb in this week. the heat ends on a date, not a whim.", react: "thea marks the page.", defeat: "thea writes you into the year.", again: "thea found your entry from last time." },
+      { name: "sabi", fig: "tesh", line: "sabi flies a kite on a line long enough to read air nobody can feel.", react: "sabi lets out more line.", defeat: "sabi reels in, and lets you past.", again: "sabi kept your line coiled." },
+      { name: "orun", fig: "ruen", line: "orun reads smoke off a slow taper. the smoke has started leaning the other way.", react: "orun shields the taper.", defeat: "orun watches the smoke go your way.", again: "orun remembers which way you leaned." },
+      { name: "duna", fig: "brann", line: "duna is already turning the flock. she turned before the vanes did and dares you to say she guessed.", react: "duna whistles the flock round.", defeat: "duna turns the flock past you.", again: "duna turned early last time too. she was right then as well." },
+      { name: "kip", fig: "mave", line: "kip tastes the air off his palm, says nothing useful, and holds your cards awake.", react: "kip wets his palm again.", defeat: "kip shrugs: cooler now.", again: "kip has tasted your air before." },
+      { name: "the weather-watch", fig: "the quiet one", line: "the weather-watch has read this hill since before the vanes were planted, and watches the ground instead of the sky. the hand is yours, every card of it awake.", react: "the weather-watch keeps looking down.", defeat: "the weather-watch steps off the summit stone.", again: "the dust never settled. the weather-watch was still watching it." },
     ],
     21: [ // the quarter with no lamps: the eight who stayed after the district emptied. nobody here raises their voice.
       { name: "daru", fig: "imra", line: "daru walks the night watch with a lantern she stopped filling.", react: "daru swings the dark lantern.", defeat: "daru waves you through her quarter.", again: "back again. daru knows your step by now." },
@@ -6412,6 +6935,18 @@ class Component extends DCLogic {
         line: "a district with no stars in it, and one star named for the emptiness. the judge lives where there is nothing to argue over.",
         arrive: "something is standing in the square", arriveSub: "the xiezhi turns at last, one horn swept back, and albaldah steadies over the dry fountain.",
         watch: "it waits in the square, and does not blink." },
+      12: { name: "denebola", full: "denebola, the lion's tail",
+        line: "the star whose setting ends the heat. the snake is not coiled to strike: it is reading the air, like everyone else who came up this hill.",
+        arrive: "something moves on the last slab", arriveSub: "the snake comes off the warm stone above the world, head up into the new wind, and denebola settles low behind it.",
+        watch: "it lies along the road, reading the wind." },
+      26: { name: "markab", full: "markab, the saddle",
+        line: "the star at the jar's shoulder, and the name of the thing you sit on to leave. the pig does not get up for arrivals: it lives here, and you do not.",
+        arrive: "something shifts under the cot", arriveSub: "the coals move, and what was a shape against the warm stones turns out to be breathing; markab settles at its shoulder.",
+        watch: "it lies by the fire, and lets you come to it." },
+      19: { name: "shaula", full: "shaula, the raised sting",
+        line: "the tail's own star, over a house named for the root. what stings you and what holds you are the same thing at different ends.",
+        arrive: "the ground moves at the road's end", arriveSub: "earth slides off a shoulder that was never a stone, and shaula comes up out of the dust with it.",
+        watch: "it lies in the earth, watching the cut." },
       25: { name: "sadachbia", full: "sadachbia, the luck of the tents",
         line: "the luck of hidden things. it does not shine to be found: it shines to be kept.",
         arrive: "a light wakes in the camp", arriveSub: "one tent among the dark ones begins to glow, and the swallow drops out of the cold to shelter beside it.",
@@ -6733,8 +7268,24 @@ class Component extends DCLogic {
     const C = this._cards(), tC = C[t.id];
     if (t.spent) return true;
     if (t.crowned) return true; // the crown took it: what it takes cannot be taken back
-    if (tC.grantOn && (tC.quad || this._quad(t.id)) === "byakko") return true; // the tiger's grant: the ground holds
+    // THE CHAMBER'S LAW, GUEST-RIGHT (2 sep 2026, measurement's `guestStrip`): a card lodged at the
+    // chamber's own door is a guest under this roof and loses its OWN quarter's grant while it
+    // stands there. strip only, never granted the other way (guestBoth widened the board and is
+    // dead). this is the tiger's hold — the mechanism that makes byakko roads 66.3% — switched off
+    // at exactly one station; engine conformance strips all four quadrant grants at that station.
+    const guestSt = this._bossRule() === "guest" && ti === this._lawSt();
+    if (!guestSt && tC.grantOn && (tC.quad || this._quad(t.id)) === "byakko") return true; // the tiger's grant: the ground holds
     if (tC.ab === "saturn") return true;
+    // THE ROOT'S LAW (2 sep 2026, shipped as measurement's 1a′): what has ALREADY changed hands at
+    // the road's middle station takes root there and cannot be taken back. the opening never roots,
+    // only the answer — the whole reason the seat figure came out at −2.0 where the unconditional
+    // form went +20.2 (a leader cannot plant by arriving first, only by taking back).
+    // CORRECTED 2 sep 2026 (code): the delivered form tested `t.by` alone, but `by` is set at LODGE
+    // and never changes hands (see _lodge's own comment), so it is truthy for every occupied slot —
+    // that is measurement's UNCONDITIONAL 1a, the form that failed (+20.2 fresh seat, spread +37.6)
+    // and that the work order says must never ship. `by !== owner` is the has-it-changed-hands test,
+    // the same one the shell law and the genbu grant already use two methods down in _slotW.
+    if (this._bossRule() === "plant" && ti === this._lawSt() && t.by && t.by !== t.owner) return true;
     if (tC.ab === "gathered" && this._on(tC)) { // held while a card beside it belongs to its holder
       const own = t.ground || t.owner;
       for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) return true; }
@@ -6861,6 +7412,25 @@ class Component extends DCLogic {
       seq.push({ from: xi, to: xi, dir: 1, miss: true, set: { reArm: false }, sig: "the return strikes again." });
       for (const d of [-1, 1]) { const k = this._nb(xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d }); }
     });
+    // THE TURN (m12, turn@0 — 31 aug measurement: passes, and it opens a class of its own, the first
+    // law that changes no totals at all). whatever lodges at the door turns the NEXT station to face
+    // the other way: its two numbers swap, left for right, and stay swapped. a swap conserves both
+    // faces exactly, which is why three of four quadrant rows move less than a point — and the nine
+    // SYMMETRIC cards (the 6/6s and 7/7s) are provably immune, so the sweep happens and finds nothing
+    // to turn. that refusal is the lesson, free, and it is a beat of its own on screen (`refuse`).
+    // fires BEFORE the strike queue, so the turned faces are the ones that fight.
+    if (this._bossRule() === "turn" && i === this._lawSt() && !inPlace) {
+      const kt = this._nb(i, 1);
+      if (kt >= 0 && slots[kt]) {
+        const n = slots[kt];
+        if (n.l !== n.r) {
+          slots[kt] = { ...n, l: n.r, r: n.l };
+          seq.push({ from: i, to: kt, dir: 1, miss: true, set: { l: n.r, r: n.l }, turn: { l: n.r, r: n.l }, sig: "the turn: the next station faces the other way." });
+        } else {
+          seq.push({ from: i, to: kt, dir: 1, miss: true, turn: { l: n.l, r: n.r, refuse: true }, sig: "the snake sweeps, and finds nothing to turn: that card is the same both ways." });
+        }
+      }
+    }
     queue.push({ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 });
     // THE THRONE'S LAW (30 aug 2026 work order, reach@0): strikes from her station carry two
     // stations, firing whether or not the near strike lands, crossing an empty middle, printed
@@ -7237,6 +7807,7 @@ class Component extends DCLogic {
         return { slots, flipIdx: it.to, duelI: it.from, duelSide: it.dir === 1 ? "r" : "l", shakeFx: k === 0 && this._shakeOn ? true : s.shakeFx, toast: it.sig ? { t: it.sig, n: (s.toast ? s.toast.n : 0) + 1 } : s.toast, caps: (s.caps || []).concat([{ i: it.to, t: "claimed by " + aName }]), ...(it.printed ? { reachFx: { n: (s.reachFx ? s.reachFx.n : 0) + 1, pl: this._cards()[slots[it.to].id].l, pr: this._cards()[slots[it.to].id].r } } : {}) };
       }, () => this._step(seq, k + 1, who, keepTurn));
       if (seq[k] && seq[k].printed) { this._sfx("reach"); const rt = setTimeout(() => this.setState({ reachFx: null }), 1800); this._seq.push(rt); }
+      if (seq[k] && seq[k].turn) { this._sfx("creak"); const tn0 = seq[k].turn; this.setState(s3 => ({ turnFx: { n: ((s3.turnFx && s3.turnFx.n) || 0) + 1, l: tn0.l, r: tn0.r, refuse: !!tn0.refuse } })); const tt = setTimeout(() => this.setState({ turnFx: null }), 1700); this._seq.push(tt); }
       if (seq[k] && seq[k].reson) { this._sfx("drumcarry"); this.setState(s2 => ({ resonFx: (s2.resonFx || 0) + 1 })); const rt2 = setTimeout(() => this.setState({ resonFx: null }), 1100); this._seq.push(rt2); }
     }, k === 0 ? 320 : 400);
     this._seq.push(t);
@@ -7309,7 +7880,7 @@ class Component extends DCLogic {
               const rw = this.state.roundWins.filter(x => x === "you").length;
               const rl = this.state.roundWins.filter(x => x === "sky").length;
               const t2 = this._tonight();
-              if (rw >= need) { this._buzz([10, 50, 14]); this._sfx("won"); this._saveWrec(this.state.roadWalker, true); this._saveRung(t2, this.state.roadRung + 1); this._clearWipe(t2, this.state.roadRung + 1); this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
+              if (rw >= need) { this._buzz([10, 50, 14]); this._sfx("won"); this._saveWrec(this.state.roadWalker, true); this._saveRung(t2, this.state.roadRung + 1); this._clearWipe(t2, this.state.roadRung + 1); this.setState({ phase: "round", roundSame: false }); this._armRound(); }
               else if (rl >= need) {
                 this._buzz(24); this._sfx("lantern"); this._saveWrec(this.state.roadWalker, false);
                 const lv = this._lives() - 1; // THREE LIVES a push (28 aug 2026 canon): the third loss wipes
@@ -7320,7 +7891,12 @@ class Component extends DCLogic {
                   this._nmT = setTimeout(() => this.setState({ nmBeat: false }), 2600); }
                 else { this._saveLives(lv); this.setState({ phase: "roadlost", wiped: false, lives: lv }); }
               }
-              else { this._roundX = setTimeout(() => this._advanceRound(true), 240); } // true: same rung, next board of THIS match — see _advanceRound()'s header
+              // THE MID-MATCH SEAM GETS A BEAT (1 sep 2026, user: name who leads next). A board
+              // inside a best-of-three used to re-deal after 240ms with nothing said, so the score
+              // and the loser-leads rule both passed unremarked. Now it holds on the round screen
+              // like every other seam; roundSame carries "this match is not over" through to
+              // _exitRound, which must advance with sameRung true or the rung resets.
+              else { this.setState({ phase: "round", roundSame: true }); this._armRound(); }
               return;
             }
             const w = this.state.roundWins.filter(x => x === "you").length;
@@ -7350,7 +7926,7 @@ class Component extends DCLogic {
             }
             else {
               const asc = false;
-              if (asc) { this.setState({ phase: "round" }); this._roundT = setTimeout(() => this._exitRound(), 3800); }
+              if (asc) { this.setState({ phase: "round", roundSame: false }); this._armRound(); }
               else { this._roundX = setTimeout(() => this._advanceRound(), 240); }
             }
           }), 900);
@@ -7831,8 +8407,8 @@ class Component extends DCLogic {
       edMidStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 14, -10) + "px;transform:translateY(" + ev.e * 24 + "px);opacity:" + [.95, .85, .7, .5, .28, .1, 0, 0, 0][ev.e] + (this._roadKind(this._tonight()) === "walk" && this._tonight() !== 26 ? ";transform:translateX(" + (-ev.e * 62) + "px)" : "") + (this._tonight() === 26 ? ";transform:scale(" + (1 + ev.e * 0.22).toFixed(2) + ");transform-origin:50% 100%" : ""), // _dollyOn: the chamber moves past you, it never sinks
       edNearStyle: "position:absolute;left:0;right:0;height:150px;bottom:-4px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 62 + "px);opacity:" + [.95, .55, .2, 0, 0, 0, 0, 0, 0][ev.e] + (this._roadKind(this._tonight()) === "walk" && this._tonight() !== 26 ? ";transform:translateX(" + (-ev.e * 148) + "px)" : "") + (this._tonight() === 26 ? ";transform:translateY(" + (ev.e * 16) + "px) scale(" + (1 + ev.e * 0.42).toFixed(2) + ");transform-origin:50% 100%" : ""), // _dollyOn: the chamber moves past you, it never sinks
       edTowerStyle: "position:absolute;left:0;right:0;height:330px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease, bottom 1.6s ease;bottom:" + Math.max(ev.gh - 14, -10) + "px;transform:translateY(" + ev.e * 34 + "px);opacity:" + [0, .1, .34, .68, .9, .55, .18, 0, 0][ev.e] + (this._roadKind(this._tonight()) === "walk" && this._tonight() !== 26 ? ";transform:translateX(" + (-ev.e * 88) + "px)" : "") + (this._tonight() === 26 ? ";transform:scale(" + (1 + ev.e * 0.3).toFixed(2) + ");transform-origin:50% 100%" : ""), // the skyline belongs to the rooftops: at street level the alley walls are the view, and their brick is translucent enough that a lit window behind them reads as a light floating in the sky (26 aug 2026)
-      edWallLStyle: "position:absolute;left:0;top:0;width:250px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (-ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e] + (this._tonight() === 26 ? ";transform:translate(" + (-ev.e * 96) + "px," + (ev.e * 14) + "px) scale(" + (1 + ev.e * 0.5).toFixed(2) + ");transform-origin:100% 62%" : ""), // _dollyOn: the chamber moves past you, it never sinks
-      edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e] + (this._tonight() === 26 ? ";transform:translate(" + (ev.e * 96) + "px," + (ev.e * 14) + "px) scale(" + (1 + ev.e * 0.5).toFixed(2) + ");transform-origin:0% 62%" : ""), // _dollyOn: the chamber moves past you, it never sinks
+      edWallLStyle: "position:absolute;left:0;top:0;width:250px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (-ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e] * (this._tonight() === 26 ? 0 : 1), // the chamber draws its own hall walls (chWall*), so the generic pair stands down
+      edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e] * (this._tonight() === 26 ? 0 : 1),
       edOverStyle: "position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 185 + "px);opacity:" + [1, .8, .3, 0, 0, 0, 0, 0, 0][ev.e],
       edDuskStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + (this._tonight() === 24 ? 0 : 1) * this._hw() * [0, .5, .9, .62, .32, .12, 0, 0, 0][ev.e] + ";background:linear-gradient(to top, rgba(196,92,66,.16) 0%, rgba(186,84,110,.13) 22%, rgba(122,66,134,.09) 46%, transparent 68%)",
       edColdStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + Math.min(1, this._hc() + [0, 0, 0, .18, .34, .5, .64, .74, .82][ev.e]) + ";background:linear-gradient(to bottom, rgba(24,36,84,.34) 0%, rgba(30,46,98,.2) 26%, rgba(52,88,150,.07) 52%, transparent 74%)",
@@ -7841,7 +8417,7 @@ class Component extends DCLogic {
       edAuroraStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .15, .5, .8, .4][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
       edGridStyle: "position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + ev.e * 9 + "px);opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : 1) * this._hg() * [.4, .55, .65, .68, .56, .38, .18, 0, 0][ev.e], // no city windows in the tents' desert
       ...this._hourStyles(ev),
-      districtOn: [10, 18, 21, 22, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) < 0,
+      districtOn: [10, 12, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) < 0,
       // ONE copy of the ridge, in the stage's art region, which is mounted behind the menu as well as the
       // board. do not clone it per surface: both regions paint at once and the layers compound.
       heartOn: this._tonight() === 18,
@@ -7921,7 +8497,11 @@ class Component extends DCLogic {
           dtGreat: React.createElement("g", { dangerouslySetInnerHTML: { __html: g.join("") } }),
           dtTierDrums: React.createElement("g", { dangerouslySetInnerHTML: { __html: hd.join("") } }),
           dtDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 62% at 50% " + (72 - e * 4) + "%, rgba(64,46,110," + (.2 + k * .26).toFixed(2) + "), rgba(10,7,18,.98) 70%), #06040C;transition:opacity 1.6s ease;opacity:" + (t23 ? 1 : 0) * hide,
-          dtDrumStyle: "position:absolute;left:50%;top:" + (26 - k * 44).toFixed(0) + "px;width:600px;height:600px;margin-left:-300px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t23 ? [0, .04, .1, .2, .34, .52, .72, .9, 1][e] : 0) * hide,
+          // the great drum is the tower's destination: bottom-anchored on the road's far end so it
+          // can never rise above the horizon, and GROWN by _horizon rather than merely slid down the
+          // frame (the level note always claimed "grows and descends per rung" — top-anchoring it at a
+          // fixed 600px never actually did the growing).
+          dtDrumStyle: ((H) => "position:absolute;left:50%;bottom:" + H.bottom + "px;width:600px;height:600px;margin-left:-300px;pointer-events:none;transform-origin:50% 100%;transform:scale(" + H.scaleFor(600, 600, .3).toFixed(3) + ");transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t23 ? [0, .04, .1, .2, .34, .52, .72, .9, 1][e] : 0) * hide)(this._horizon(e)),
           dtCityStyle: "position:absolute;left:0;right:0;bottom:-4px;height:90px;pointer-events:none;transition:all 1.7s ease;transform:translateY(" + ((8 - e) * 8).toFixed(0) + "px);opacity:" + (t23 ? [0, 0, .1, .2, .34, .48, .6, .7, .75][e] : 0) * hide,
           dtTierStyle: "position:absolute;left:0;right:0;top:0;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 44).toFixed(0) + "px);opacity:" + (t23 ? [.9, 1, 1, .95, .82, .62, .4, .2, .08][e] : 0) * hide,
           dtHallStyle: "position:absolute;left:0;right:0;bottom:-8px;height:210px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform:translateY(" + (e * 62).toFixed(0) + "px);opacity:" + (t23 ? [1, .68, .36, .1, 0, 0, 0, 0, 0][e] : 0) * hide,
@@ -7957,6 +8537,298 @@ class Component extends DCLogic {
           drLit: lit,
         };
       })(this._tonight() === 23),
+      tnOn: this._tonight() === 12,
+      // THE HILL OF VANES (2 sep 2026, user picks off the turning form: the great vane alone above
+      // the world · the snake as the law's body · vermilion-dominant sky · the roster climbs with
+      // you). al-Sarfah is the TURN OF THE WEATHER — a date before it is a place — so the level
+      // rides ONE driving number, the wind: -1 → +1 across the nine rungs, crossing zero at rung
+      // five, the exact middle of the climb (the term is symmetric across the nine, and that is
+      // where a turn belongs). everything planted on the ground — hill vanes, tufts, dust, the
+      // smoke pole, the bell of the change — belongs to the FOOT of the road and is gone by the
+      // top; the kites fade on AIR, not on rung count; the great vane is the one thing tall enough
+      // to still be standing above the world. m12 is suzaku's own wing (翼 Yi), hence the
+      // vermilion-dominant sky rather than the amber the other roads carry.
+      ...(t12 => {
+        const hide = this._inPlay() ? .46 : 1;
+        const e = ev.e, k = e / 8, R = n => +n.toFixed(1);
+        const air = [1, .88, .74, .6, .47, .35, .24, .12, 0][e], sd = [0, .14, .3, .43, .54, .65, .76, .88, 1][e], day = [1, .68, .4, .2, .09, .03, 0, 0, 0][e];
+        const w = -1 + k * 2, slack = Math.abs(w) < .14;
+        const sx = Math.abs(w) < .12 ? (w < 0 ? -.12 : .12) : +w.toFixed(3);
+        const head = "transform:scaleX(" + sx + ") rotate(" + R(w * -5) + "deg)";
+        const arrow = "M-2 -2.6 L25 -2.6 L25 -7.5 L36 0 L25 7.5 L25 2.6 L-2 2.6 Z";
+        const fin = "M-4 -3 L-24 -11 L-24 11 L-4 3 Z";
+        const hl = [], crest = "M0 58 Q150 36 320 52 Q520 66 700 42 Q850 32 932 46";
+        hl.push("<path d='" + crest + " L932 240 L0 240 Z' fill='#2A1206'/>");
+        hl.push("<path d='" + crest + "' fill='none' stroke='rgba(240,216,154,.16)' stroke-width='1'/>");
+        [30, 110, 205, 290, 380, 470, 560, 650, 745, 860].forEach((x, i) => {
+          const y = 62 + (i % 3) * 8, h = 7 + (i % 4) * 2;
+          hl.push("<path d='M" + x + " " + y + " q" + R(w * 4) + " " + R(-h * .6) + " " + R(w * 8) + " " + (-h) + "' fill='none' stroke='rgba(176,140,88,.42)' stroke-width='1.1' stroke-linecap='round'/>");
+        });
+        [90, 250, 430, 610, 800].forEach((x, i) => {
+          const y = 88 + i * 6, d = slack ? 0 : (w > 0 ? 1 : -1);
+          hl.push("<path d='M" + x + " " + y + (d === 0 ? " l0 -4" : " l" + (d * (14 + i * 3)) + " -2") + "' fill='none' stroke='rgba(226,186,140,.3)' stroke-width='1.1' stroke-linecap='round'/>");
+        });
+        [72, 190, 316, 452, 588, 792].forEach((x, i) => {
+          const ps = .72 + (i % 3) * .12, by = 58 + (i % 3) * 6, vh = R(30 * ps);
+          hl.push("<g style='transform:translate(" + x + "px," + by + "px)'><path d='M0 0 L0 " + (-vh) + "' fill='none' stroke='rgba(24,14,8,.96)' stroke-width='" + R(1.4 * ps + .6) + "' stroke-linecap='round'/>"
+            + "<g style='transform:translate(0px," + (-vh) + "px) scale(" + R(ps * .5) + ")'><path d='M-26 26 L26 26 M0 14 L0 38' fill='none' stroke='rgba(240,216,154,.22)' stroke-width='1.4'/>"
+            + "<g style='" + head + "'><path d='" + fin + "' fill='rgba(122,36,22,.9)' stroke='rgba(240,216,154,.4)' stroke-width='1.2'/><path d='" + arrow + "' fill='#1E1108' stroke='rgba(240,216,154,.6)' stroke-width='1.4'/></g></g></g>");
+        });
+        const lean = R(w * 14);
+        hl.push("<g style='transform:translate(248px,64px)'><path d='M0 0 L0 -34' fill='none' stroke='rgba(24,14,8,.96)' stroke-width='2.4'/>"
+          + [0, 1, 2].map(i2 => "<path d='M" + (i2 * 2 - 2) + " " + (-32 - i2 * 14) + (slack ? " q4 -8 -2 -14" : " q" + lean + " -7 " + R(lean * 1.5) + " -14") + "' fill='none' stroke='rgba(226,206,180,.2)' stroke-width='" + (2.2 - i2 * .5).toFixed(1) + "' stroke-linecap='round'/>").join("") + "</g>");
+        hl.push("<g style='transform:translate(690px,50px)'><path d='M-16 0 L-16 -14 L16 -14 L16 0' fill='none' stroke='rgba(240,216,154,.3)' stroke-width='1.4'/>"
+          + "<path d='M-6 -13 q0 -9 6 -9 q6 0 6 9 q3 4 3 7 h-18 q0 -3 3 -7 Z' fill='#241608' stroke='rgba(240,216,154,.45)' stroke-width='1.2'/>"
+          + (slack ? "<path d='M-26 -6 q-6 -7 0 -15 M26 -6 q6 -7 0 -15' fill='none' stroke='rgba(255,214,150,.5)' stroke-width='1.2'/>" : "") + "</g>");
+        const kt = [];
+        [[150, 0], [430, 26], [760, -16]].forEach((a, i) => {
+          const ax = a[0], kx = R(ax + (slack ? 12 : w * 84) + a[1]), ky = R(slack ? 128 - i * 14 : 96 + i * 26 + (1 - air) * 52);
+          kt.push("<path d='M" + ax + " 296 Q" + R((ax + kx) / 2 + 30) + " " + R((296 + ky) / 2 + 20) + " " + kx + " " + ky + "' fill='none' stroke='rgba(240,216,154,.16)' stroke-width='1'/>");
+          kt.push("<g style='transform:translate(" + kx + "px," + ky + "px) rotate(" + (slack ? 58 : R(w * 15)) + "deg)'><g style='animation:mzKiteBob " + (5.4 + i * 1.3).toFixed(1) + "s ease-in-out infinite'>"
+            + "<path d='M0 -12 L10 0 L0 14 L-10 0 Z' fill='" + (i === 1 ? "rgba(150,42,24,.9)" : "rgba(40,24,12,.9)") + "' stroke='rgba(240,216,154,.45)' stroke-width='1.1'/>"
+            + "<path d='M0 14 " + (slack ? "q7 11 -1 21" : "q" + R(w * 7) + " 12 " + R(w * 14) + " 24") + "' fill='none' stroke='rgba(240,216,154,.3)' stroke-width='1'/></g></g>");
+        });
+        const gv = [], mh = 300;
+        gv.push("<path d='M120 430 L120 " + (430 - mh) + "' fill='none' stroke='rgba(20,13,8,.96)' stroke-width='7' stroke-linecap='round'/>");
+        gv.push("<path d='M110 426 L120 " + (430 - mh) + " M130 426 L120 " + (430 - mh) + "' fill='none' stroke='rgba(240,216,154,.26)' stroke-width='1.4'/>");
+        gv.push("<path d='M74 430 L118 " + R(430 - mh * .58) + " M166 430 L122 " + R(430 - mh * .58) + "' fill='none' stroke='rgba(240,216,154,.14)' stroke-width='1'/>");
+        [.3, .56, .78].forEach(f2 => gv.push("<path d='M" + R(120 - 7 * (1 - f2)) + " " + R(430 - mh * f2) + " L" + R(120 + 7 * (1 - f2)) + " " + R(430 - mh * f2) + "' fill='none' stroke='rgba(240,216,154,.18)' stroke-width='1'/>"));
+        gv.push("<g style='transform:translate(120px," + (430 - mh) + "px) scale(.86)'><g style='animation:mzVaneSwing 9s ease-in-out infinite'>"
+          + "<path d='M-30 30 L30 30 M0 16 L0 44' fill='none' stroke='rgba(240,216,154,.26)' stroke-width='1.4'/>"
+          + "<g style='" + head + "'><path d='" + fin + "' fill='rgba(122,36,22,.92)' stroke='rgba(240,216,154,.45)' stroke-width='1.2'/><path d='" + arrow + "' fill='#1E1108' stroke='rgba(240,216,154,.65)' stroke-width='1.5'/></g>"
+          + "<path d='M-4.2 0 a4.2 4.2 0 1 1 -0.01 0 Z' fill='#241608' stroke='rgba(240,216,154,.5)' stroke-width='1.3'/></g></g>");
+        return {
+          tnHill: React.createElement("g", { dangerouslySetInnerHTML: { __html: hl.join("") } }),
+          tnKites: React.createElement("g", { dangerouslySetInnerHTML: { __html: kt.join("") } }),
+          tnVane: React.createElement("g", { dangerouslySetInnerHTML: { __html: gv.join("") } }),
+          tnDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(96% 74% at 50% " + (84 - e * 3) + "%, rgba(" + (day > .4 ? "204,78,38" : "132,38,24") + "," + (.5 - k * .2).toFixed(2) + "), rgba(26,8,10,.98) 62%), linear-gradient(180deg,#0A0407 0%,#1A070A 56%,#2E0C08 100%);transition:opacity 1.6s ease;opacity:" + (t12 ? 1 : 0) * hide,
+          tnStarStyle: "position:absolute;left:66%;top:" + (16 - k * 5).toFixed(0) + "%;width:120px;height:120px;pointer-events:none;transition:opacity 1.7s ease;opacity:" + (t12 ? (.3 + sd * .7).toFixed(2) : 0) * hide,
+          tnKiteStyle: "position:absolute;left:0;right:0;bottom:" + (Math.max(ev.gh, 0) + 26) + "px;height:300px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s ease;transform:translateY(" + (e * 24) + "px);opacity:" + (t12 ? (air * .95).toFixed(2) : 0) * hide,
+          // OFF THE CENTRELINE, AND TALL FROM THE FIRST RUNG (2 sep 2026, verifier): pinned at
+          // centre it sat under the lobby's road gauge and behind the nine slots and read as a
+          // hairline, not an instrument. it now stands to the right of the road cone, and the scale
+          // ramp starts at .68 — the promise is that it is already tall enough to reach where you
+          // end up, so it must never look like a twig at the foot.
+          tnGreatStyle: "position:absolute;left:50%;margin-left:" + (196 - Math.round(k * 26)) + "px;bottom:" + Math.max(ev.gh - 16, -10) + "px;width:240px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform-origin:50% 100%;transform:scale(" + (.68 + k * .5).toFixed(2) + ");opacity:" + (t12 ? 1 : 0) * hide,
+          tnHillStyle: "position:absolute;left:0;right:0;bottom:-8px;height:240px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s ease;transform:translateY(" + Math.round((1 - ev.gh / 98) * 214) + "px);opacity:" + (t12 ? [1, .92, .84, .74, .64, .54, .42, .24, 0][e] : 0) * hide,
+        };
+      })(this._tonight() === 12),
+      // THE LAW'S BODY IS THE SNAKE (2 sep 2026, user pick): 翼's own animal lies at the turning's
+      // door, and when something lodges there it MOVES — along the road to the next station, which
+      // then faces the other way. the pair of numbers it turned stamps in parchment beside the
+      // landing. on a symmetric card the sweep still happens and the card refuses: the overlay
+      // shakes, "the same both ways" reads instead of a pair, and nothing changes. same shape as
+      // the throne's reach comet and the drum's ring — one queue flag, one self-clearing fx.
+      ...((() => {
+        const on = this._bossRule() === "turn" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        if (!on) return { tnLawOn: false, tnSnakeStyle: "display:none", tnSnakeAnim: "", turnFxOn: false, turnFxStyle: "display:none", turnTrailStyle: "opacity:0", turnHeadStyle: "display:none", turnStamp: "", turnStampStyle: "display:none" };
+        const Lt = (st.slots || []).length || 9, et = 466 - (Lt * 86 + (Lt - 1) * 5) / 2, xt = et + this._lawSt() * 91 + 43;
+        const fx = st.turnFx;
+        return { tnLawOn: true,
+          // IT HAS TO READ AS THE ANIMAL, NOT A WIND STREAK (2 sep 2026, verifier): at 68×40 and
+          // 55px above the card it merged with the leftmost kite string. it is now wider than the
+          // card it guards and lies ON the door's top edge, the way the drum's hour-drum hangs
+          // directly over its own station.
+          tnSnakeStyle: "position:absolute;left:" + (xt - 52) + "px;top:116px;width:104px;height:62px;pointer-events:none;z-index:7;transition:opacity .7s ease;opacity:" + (fx ? .22 : .95),
+          tnSnakeAnim: "animation:mzSnakeRead 6.5s ease-in-out infinite;transform-box:fill-box;transform-origin:78% 86%",
+          turnFxOn: !!fx,
+          turnFxStyle: "position:absolute;top:88px;left:" + (xt - 18) + "px;width:150px;height:64px;pointer-events:none;z-index:8" + (fx && fx.refuse ? ";animation:mzTurnRefuse .48s ease-in-out 2" : ""),
+          turnTrailStyle: fx && !fx.refuse ? "animation:mzTurnTrail 1.5s ease both" : "opacity:.25",
+          turnHeadStyle: fx && !fx.refuse ? "position:absolute;left:0;top:0;width:26px;height:14px;offset-path:path('M8 46 Q52 6 96 42');offset-rotate:auto;animation:mzTurnGlide 1.4s cubic-bezier(.4,.1,.3,1) both" : "display:none",
+          turnStamp: fx ? (fx.refuse ? "the same both ways" : fx.l + " · " + fx.r) : "",
+          turnStampStyle: fx ? "position:absolute;left:78px;top:-8px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + (fx.refuse ? 13 : 20) + "px;white-space:nowrap;color:" + (fx.refuse ? "#9A8A5E" : "#F0D89A") + ";text-shadow:0 0 14px rgba(212,90,58,.85);animation:mzTurnStamp 1.6s ease both" : "display:none" };
+      })()),
+      chOn: this._tonight() === 26,
+      // THE COT AND THE SWORD (2 sep 2026, user picked 1c from Manzil - Chamber Level Directions).
+      // mansion 26: al-Fargh al-Muqaddam the fore spout · Pūrva Bhādrapadā, the front feet of the
+      // funeral cot, with a sword for its symbol · xiu 室 Shi, THE CHAMBER, the room you are lodged
+      // in, determinant Markab "the saddle", animal the fire pig. LOCKED DIRECTION: a lodging house
+      // whose road belongs to someone else — the tortoise keeps a room at the head of the white
+      // tiger's road (seven of nine stations are byakko ground), so the level is built from the
+      // INSIDE LOOKING OUT: the house's own light is genbu indigo, and the road beyond the doorway
+      // is tiger-white, wider and colder and never ours. one driving number, HOW FAR DOWN THE HALL
+      // YOU ARE. (2 sep 2026, USER REVERSAL, m0040 — the original "you sit still and the doorway
+      // shrinks away" reading is DEAD: the road walks TOWARD the door, so the doorway GROWS and its
+      // threshold comes down the frame, the way a person closing on a door sees it. the coldness of
+      // the tiger's road is carried by colour and width now, never by the door receding.)
+      // the roofline is the horizon. the cot is the last lodging and the vigil is the house's work
+      // for one night; guest-right still governs — what is laid in this room is covered by this
+      // room's cloth.
+      ...(t26 => {
+        const hide = this._inPlay() ? .66 : 1;
+        const e = ev.e, k = e / 8;
+        const wall = side => {
+          const p = ["<path d='M0 0 H236 V2600 H0 Z' fill='#0F1220'/>"];
+          // the inner edge falls off instead of ending in a hard seam (2 sep 2026, verifier): the
+          // wrapper clips with overflow:hidden, so the last 24px are stepped down in alpha.
+          for (let f = 0; f < 8; f++) p.push("<path d='M" + (236 + f * 3) + " 0 h3 V2600 h-3 Z' fill='rgba(15,18,32," + (.88 - f * .11).toFixed(2) + ")'/>");
+          for (let i = 0; i < 13; i++) {
+            const y = i * 200;
+            p.push("<path d='M40 " + (y + 168) + " V" + (y + 62) + " q46 -42 92 0 V" + (y + 168) + "' fill='#080A12' stroke='rgba(124,138,204,.3)' stroke-width='1.4'/>");
+            p.push("<path d='M14 " + (y + 168) + " H222' stroke='rgba(124,138,204,.13)' stroke-width='1'/>");
+            if (i % 2 === 0) p.push("<g style='transform:translate(178px," + (y + 84) + "px)'><path d='M0 -6 V-24' stroke='rgba(240,216,154,.28)' stroke-width='1'/><circle cx='0' cy='0' r='5.2' fill='rgba(255,196,120,.85)' style='animation:mzLampFlick " + (3 + (i % 3) * .6).toFixed(1) + "s ease-in-out infinite'/></g>");
+            // other people's kit, left in the bays: a saddle over the rail (markab), a bedding roll
+            // every piece of kit gets its own rail, so a bay cropped by the frame top still reads as
+            // furniture on a shelf rather than an ellipse floating in the dark.
+            if (i % 3 === 1) p.push("<g style='transform:translate(72px," + (y + 132) + "px)'><path d='M-24 0 q10 -20 24 -20 q13 0 24 20 q-11 7 -24 7 q-13 0 -24 -7 Z' fill='#1A1526' stroke='rgba(240,216,154,.3)' stroke-width='1.2'/><path d='M-34 8 H34' stroke='rgba(240,216,154,.24)' stroke-width='1.4'/></g>");
+            if (i % 3 === 2) p.push("<g style='transform:translate(84px," + (y + 146) + "px)'><path d='M-28 8 q28 -16 56 0 q-5 9 -28 9 q-23 0 -28 -9 Z' fill='#141A2C' stroke='rgba(214,222,255,.22)' stroke-width='1.1'/><path d='M-36 17 H36' stroke='rgba(214,222,255,.18)' stroke-width='1.4'/></g>");
+          }
+          return side === "r" ? "<g style='transform:translate(260px,0px) scale(-1,1)'>" + p.join("") + "</g>" : p.join("");
+        };
+        const fl = ["<path d='M0 0 H932 V170 H0 Z' fill='#0C0F1A'/>"];
+        for (let r = 0; r < 5; r++) {
+          const y = 18 + r * 34, sp = 78 + r * 22;
+          fl.push("<path d='M0 " + y + " H932' fill='none' stroke='rgba(124,138,204,.11)' stroke-width='1'/>");
+          for (let x = ((r % 2) * sp) / 2; x < 932; x += sp) fl.push("<path d='M" + x.toFixed(0) + " " + y + " V" + (y + 34) + "' fill='none' stroke='rgba(124,138,204,.07)' stroke-width='1'/>");
+        }
+        // THE ROAD RUNS INTO THE DOOR (2 sep 2026, user): the carriageway is centred on the board's
+        // own centre line and converges to the doorway's threshold at the top of the floor band, so
+        // the road visibly enters the room rather than passing it. three stacked bands fake the
+        // falloff of the light coming back down it, brightest at the threshold.
+        // THE ROAD WALKS TOWARD THE DOOR (2 sep 2026, user: "simulate a person walking towards
+        // something"). the carriageway is regenerated per rung: its far end is exactly as wide as the
+        // doorway is at this distance, and its near end stays wide at the player's feet, so the plane
+        // SHORTENS and its far end OPENS as the door is approached — the geometry of walking, instead
+        // of a road collapsing downward. dw is the door's half-width in stage units at this rung.
+        // THE DOOR IS DERIVED FROM THE GAUGE, NOT GUESSED (2 sep 2026, user, fifth pass — and this
+        // time read off the DOM instead of reasoned about). the lobby road is a fixed box, inset 118px
+        // from the top of the 430px stage, and inside it a station sits at top = 78 − 68.8·(i/8)^0.78
+        // percent with the cone's half-width there being 114·v, v = top/100. so the road's FAR END is
+        // at 430 − (118 + 3.12·top) above the floor — 283px at the road's full length, nowhere near the
+        // 114px I had the threshold at, which is the whole "road overshoots the door" fault. the door
+        // now takes its base AND its width from the far station's own line, so the last ring lands on
+        // the threshold and the opening is exactly as wide as the road is when it gets there. the road
+        // shortens as it is walked (the mansion's landing draws nearer each rung), so the far index
+        // walks down with it and the door comes down and grows with the road, not against it.
+        const fi = Math.max(0, 8 - ev.e);
+        const fTop = 78 - 68.8 * Math.pow(fi / 8, 0.78), fv = fTop / 100;
+        const H26 = this._horizon(ev.e);
+        const dBottom = H26.bottom;
+        // LEGIBILITY COMES FROM THE SCALE FLOOR, NOT FROM MOVING THE THRESHOLD (2 sep 2026, second
+        // verifier pass): pulling the weld back one station made the door readable but stranded the
+        // apex station's marks above its foot — the user's complaint, restored. so the BASE stays
+        // welded to the apex and only the door's drawn size is clamped, with the carriageway's far
+        // half-width taken from the SAME clamped number so road and threshold still meet edge to edge.
+        const dScale = H26.scaleFor(160, 228, .3);
+        const dw = Math.round(80 * dScale), b1 = 170 / 3, b2 = 340 / 3;
+        const lerp = (y) => Math.round(dw + (300 - dw) * (y / 170));
+        const band = (yA, yB, a) => "<path d='M" + (466 - lerp(yA)) + " " + Math.round(yA) + " H" + (466 + lerp(yA)) + " L" + (466 + lerp(yB)) + " " + Math.round(yB) + " H" + (466 - lerp(yB)) + " Z' fill='rgba(" + a + ")'/>";
+        fl.push(band(0, b1, "214,228,242,.12"));
+        fl.push(band(b1, b2, "210,224,240,.08"));
+        fl.push(band(b2, 170, "206,218,230,.05"));
+        fl.push("<path d='M" + (466 - dw) + " 0 L166 170 M" + (466 + dw) + " 0 L766 170' fill='none' stroke='rgba(214,228,242,.18)' stroke-width='1'/>");
+        fl.push("<path d='M" + (466 - dw - 6) + " 0 H" + (466 + dw + 6) + " L" + (466 + dw + 12) + " " + Math.round(8 + k * 10) + " H" + (466 - dw - 12) + " Z' fill='rgba(226,238,250,.24)'/>");
+        return {
+          chWallL: React.createElement("g", { dangerouslySetInnerHTML: { __html: wall("l") } }),
+          chWallR: React.createElement("g", { dangerouslySetInnerHTML: { __html: wall("r") } }),
+          chFloor: React.createElement("g", { dangerouslySetInnerHTML: { __html: fl.join("") } }),
+          chDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease, background 1.7s ease;background:radial-gradient(" + (30 + k * 34).toFixed(0) + "% " + (26 + k * 30).toFixed(0) + "% at 50% " + (58 - k * 8).toFixed(0) + "%, rgba(206,222,244," + (.05 + k * .16).toFixed(2) + "), transparent 70%), radial-gradient(58% 40% at 22% 92%, rgba(255,178,104," + (.13 - k * .05).toFixed(2) + "), transparent 66%), linear-gradient(180deg,#070A12 0%,#0F1220 54%,#171A2A 100%);opacity:" + (t26 ? 1 : 0) * hide,
+          // THE DOORWAY IS WALKED TOWARD: it grows and its threshold comes DOWN the frame toward the
+          // player's feet, the way a real door does as you close on it. the carriageway's far end is
+          // cut to the same half-width at the same height, so road and threshold stay welded.
+          chDoorStyle: "position:absolute;left:50%;margin-left:-80px;bottom:" + dBottom + "px;width:160px;height:220px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s ease;transform-origin:50% 100%;transform:scale(" + dScale.toFixed(3) + ");opacity:" + (t26 ? 1 : 0) * hide,
+          // THE DOOR YOU CAME IN BY, at the hall's far end: the tiger's road, out there, indifferent.
+          // THE STAR WINDOW is high on the right wall, so it travels with that wall: as you close on
+          // the door it swings outward and up past your shoulder.
+          chStarStyle: "position:absolute;left:" + (72 + k * 16).toFixed(0) + "%;top:" + (13 - k * 6).toFixed(0) + "%;width:120px;height:96px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform-origin:0% 100%;transform:scale(" + (.8 + k * .7).toFixed(2) + ");opacity:" + (t26 ? (.5 + ev.sd * .5).toFixed(2) : 0) * hide,
+          // THE WALLS OPEN OUTWARD AS YOU CLOSE ON THE DOOR (2 sep 2026, verifier: the first pass
+          // pinned the scale origin to the OUTER edge, so growth pushed each wall INWARD and the
+          // hall pinched shut). the origin is now the INNER edge and the translate outruns the
+          // growth, so each wall's inner edge travels off-frame and the room opens around you.
+          chWallLStyle: "position:absolute;left:" + Math.round(-k * 300) + "px;top:0;width:260px;height:100%;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform-origin:100% 56%;transform:scale(" + (1 + k * .92).toFixed(2) + ");opacity:" + (t26 ? .95 : 0) * hide,
+          chWallRStyle: "position:absolute;right:" + Math.round(-k * 300) + "px;top:0;width:260px;height:100%;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform-origin:0% 56%;transform:scale(" + (1 + k * .92).toFixed(2) + ");opacity:" + (t26 ? .95 : 0) * hide,
+          chWallLInner: "position:absolute;left:0;width:260px;height:2600px;transition:top 1.7s cubic-bezier(.3,.7,.3,1);top:" + Math.round(-150 - k * 980) + "px",
+          chWallRInner: "position:absolute;left:0;width:260px;height:2600px;transition:top 1.7s cubic-bezier(.3,.7,.3,1);top:" + Math.round(-70 - k * 980) + "px",
+          // the cot stands BESIDE the road, not across it: the hall's length runs down the middle
+          // into the doorway, and the bed is laid along the left wall. arrived at, camp math.
+          // THE COT IS PASSED, NOT APPROACHED FOREVER: it stands partway down the hall on the left,
+          // so it grows and slides out of frame past your shoulder as you close on the door.
+          // its base is taken from the SAME floor line as the door, so it can never float: half the
+          // door's height above the floor is half the hall's depth. it grows as that line comes down.
+          // THE COT STANDS IN THE FLOOR THAT ACTUALLY EXISTS (2 sep 2026, second verifier pass): the
+          // carriageway is wider than the gap between the walls at the near end, so there is only
+          // floor beside the road at shallower depths. the cot is pinned at 35% down the band, its
+          // LEFT edge against the wall's inner face and its width clamped to the gap between that
+          // face and the road's edge on its own depth line — so it can cross neither, and it grows
+          // as the walls swing out and that gap opens.
+          chCotStyle: ((wIn, rdL) => "position:absolute;left:50%;margin-left:" + Math.round(wIn + 8 - 466) + "px;bottom:" + Math.round(dBottom * .65) + "px;width:260px;height:210px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform-origin:0% 100%;transform:scale(" + Math.max(.26, Math.min(.55, (rdL - wIn - 16) / 260)).toFixed(3) + ");opacity:" + (t26 ? 1 : 0) * hide)(260 - k * 300, 466 - (dw + (300 - dw) * .35)),
+          // ONE NUMBER OWNS BOTH, IN THE SAME UNITS AS THE ROAD: the floor band's top edge IS the
+          // door's base line, so the ground plane reaches the road's far end and the road lies ON the
+          // floor for its whole length instead of running off into the sky above the doorway.
+          chFloorStyle: "position:absolute;left:0;right:0;bottom:-6px;height:" + (dBottom + 8) + "px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s ease;opacity:" + (t26 ? .9 : 0) * hide,
+        };
+      })(this._tonight() === 26),
+      // GUEST-RIGHT, SEEN (2 sep 2026): the law station is the chamber's own door, index 0. whatever
+      // lodges there has the house's cloth laid over it — its own quarter's grant is stripped while
+      // it stands in the room. state, not a timer: the cloth is on the card for exactly as long as
+      // the rule is. strip only; the give-both-ways form widened the board and is dead.
+      ...((() => {
+        const on = this._bossRule() === "guest" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        if (!on) return { chLawOn: false, chClothStyle: "display:none", chClothLay: "opacity:0" };
+        const Lc = (st.slots || []).length || 9, ec = 466 - (Lc * 86 + (Lc - 1) * 5) / 2, xc = ec + this._lawSt() * 91 + 43;
+        const laid = !!(st.slots || [])[this._lawSt()];
+        return { chLawOn: true,
+          chClothStyle: "position:absolute;left:" + (xc - 65) + "px;top:118px;width:130px;height:84px;pointer-events:none;z-index:7;transition:opacity .7s ease;opacity:" + (laid ? 1 : 0),
+          chClothLay: laid ? "animation:mzClothLay 1s cubic-bezier(.25,.9,.3,1) both;transform-box:fill-box;transform-origin:50% 0%" : "opacity:0" };
+      })()),
+      rtOn: this._tonight() === 19,
+      // THE CUT AT THE ROOT (2 sep 2026, user picks — law directions sheet + the level form).
+      // mansion 19: al-Shawla the raised sting, read through Mūla, "the root", and the reading that
+      // LEADS is the root — buried, dug up, what was actually holding. the people are grave-openers
+      // moving an old burial before the season turns. ROAD PHYSICS "the ground opens" (user): the one
+      // level where the player never travels. the road stands still and the earth is dug BACK from
+      // around it — walls retreat outward and sink, the overhanging lip lifts away, the sky ARRIVES
+      // instead of being climbed to, and the spoil heaps grow because the earth taken out has to go
+      // somewhere. one driving number, `o`: how much ground is gone.
+      ...(t19 => {
+        const hide = this._inPlay() ? .72 : 1;
+        const e = ev.e, o = e / 8, A = a => "rgba(110,127,92," + a + ")";
+        const face = [];
+        face.push("<path d='M0 0 H286 q-16 42 4 80 q18 34 -12 68 q-24 30 2 66 q22 32 -8 68 q-20 26 10 60 q16 22 -6 48 q-12 16 4 40 H0 Z' fill='#2B1F0F'/>");
+        face.push("<path d='M286 0 q-16 42 4 80 q18 34 -12 68 q-24 30 2 66 q22 32 -8 68 q-20 26 10 60 q16 22 -6 48 q-12 16 4 40' fill='none' stroke='rgba(240,216,154,.3)' stroke-width='1.6'/>");
+        face.push("<path d='M286 0 q-16 42 4 80 q18 34 -12 68 q-24 30 2 66 q22 32 -8 68 q-20 26 10 60 q16 22 -6 48 q-12 16 4 40 h-26 q-14 -20 -2 -40 q20 -26 4 -48 q-28 -34 -8 -60 q30 -36 6 -68 q-24 -34 -2 -66 q30 -34 12 -68 q-20 -38 -4 -80 Z' fill='rgba(6,4,2,.42)'/>");
+        [46, 96, 148, 202, 258, 316, 372].forEach((y, i) => face.push("<path d='M0 " + y + " Q" + (110 + (i % 3) * 30) + " " + (y - 7) + " " + (252 - (i % 2) * 28) + " " + (y + 4) + "' fill='none' stroke='rgba(196,160,104," + (.36 - i * .026).toFixed(2) + ")' stroke-width='1.2'/>"));
+        // the cut root-ends standing out of the face: the level's whole argument, drawn once per band
+        [[238, 72], [212, 132], [254, 196], [204, 262], [246, 330], [194, 392]].forEach((r, i) => face.push("<g style='transform:translate(" + r[0] + "px," + r[1] + "px)'><path d='M0 0 q16 5 22 17 M0 0 q19 -2 31 4' fill='none' stroke='" + A((.54 + (i % 3) * .14).toFixed(2)) + "' stroke-width='" + (1.2 + (i % 2) * .8) + "' stroke-linecap='round'/></g>"));
+        // shoring goes in as the cut deepens — the walls are held, the way the card will be
+        [[268, 2], [240, 4], [280, 6]].forEach(pr => { if (e >= pr[1]) face.push("<path d='M" + pr[0] + " 428 L" + (pr[0] - 46) + " " + (300 - pr[1] * 14) + "' fill='none' stroke='rgba(176,140,88,.34)' stroke-width='3' stroke-linecap='round'/>"); });
+        const lip = ["<path d='M932 0 H0 V44 q64 21 132 3 q76 -21 148 9 q70 26 144 1 q78 -25 156 7 q66 22 132 -3 q40 -14 88 5 q52 -18 132 4 H932 V0 Z' fill='#2C2010'/>"];
+        [88, 214, 360, 520, 668, 812].forEach((x, i) => lip.push("<g style='transform:translate(" + x + "px," + (48 + (i % 3) * 6) + "px)'><path d='M0 0 q5 14 -2 24 M0 0 q-8 11 -6 21' fill='none' stroke='" + A(.3 + (i % 2) * .14) + "' stroke-width='1.4' stroke-linecap='round'/></g>"));
+        const fl = [];
+        fl.push("<path d='M0 30 Q240 14 466 22 Q700 30 932 16 L932 200 L0 200 Z' fill='#2C2010'/>");
+        fl.push("<path d='M0 30 Q240 14 466 22 Q700 30 932 16' fill='none' stroke='rgba(240,216,154,.12)' stroke-width='1'/>");
+        // the pit-master's chalked cord: where tomorrow's edge goes
+        fl.push("<path d='M40 62 L892 54' fill='none' stroke='rgba(240,216,154,.17)' stroke-width='1' stroke-dasharray='7 9'/>");
+        const heap = (x, w, h) => "<path d='M" + (x - w) + " 200 Q" + x + " " + (200 - h) + " " + (x + w) + " 200 Z' fill='#33260F' stroke='rgba(196,160,104,.3)' stroke-width='1'/>";
+        fl.push(heap(96, 134, 24 + o * 98)); fl.push(heap(838, 126, 20 + o * 90)); fl.push(heap(402, 88, 6 + o * 46));
+        [[212, 0], [648, 2], [318, 5], [742, 7]].forEach(b => { if (e >= b[1]) fl.push("<g style='transform:translate(" + b[0] + "px,166px)'><path d='M-14 0 L14 0 L10 24 L-10 24 Z' fill='#1B1309' stroke='rgba(240,216,154,.22)' stroke-width='1.1'/><path d='M-14 0 q14 -9 28 0' fill='none' stroke='" + A(.4) + "' stroke-width='1.2'/></g>"); });
+        [[152, 1], [560, 3], [880, 6]].forEach(r => { if (e >= r[1]) fl.push("<path d='M" + r[0] + " 194 L" + (r[0] + 22) + " 94' fill='none' stroke='rgba(176,140,88,.38)' stroke-width='1.6' stroke-linecap='round'/>"); });
+        return {
+          rtLip: React.createElement("g", { dangerouslySetInnerHTML: { __html: lip.join("") } }),
+          rtWallL: React.createElement("g", { dangerouslySetInnerHTML: { __html: face.join("") } }),
+          rtWallR: React.createElement("g", { dangerouslySetInnerHTML: { __html: "<g style='transform:translate(340px,0px) scale(-1,1)'>" + face.join("") + "</g>" } }),
+          rtFloor: React.createElement("g", { dangerouslySetInnerHTML: { __html: fl.join("") } }),
+          rtDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:radial-gradient(88% 60% at 50% " + (100 - o * 26).toFixed(0) + "%, " + A((.12 + o * .2).toFixed(2)) + ", rgba(9,7,5,.99) 64%), linear-gradient(180deg,#05070A 0%,#100C08 " + (38 + o * 22).toFixed(0) + "%,#2A1E10 100%);opacity:" + (t19 ? 1 : 0) * hide,
+          rtStarStyle: "position:absolute;left:62%;top:" + (30 - o * 17).toFixed(0) + "%;width:120px;height:120px;pointer-events:none;transition:all 1.7s ease;opacity:" + (t19 ? (.04 + o * .92).toFixed(2) : 0) * hide,
+          rtLipStyle: "position:absolute;left:0;right:0;height:96px;top:" + Math.round(-o * 132) + "px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s ease;opacity:" + (t19 ? [1, .94, .84, .7, .52, .34, .16, .04, 0][e] : 0) * hide,
+          rtWallLStyle: "position:absolute;left:" + Math.round(-o * 272) + "px;bottom:-20px;width:340px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:translateY(" + Math.round(o * 172) + "px);opacity:" + (t19 ? .92 : 0) * hide,
+          rtWallRStyle: "position:absolute;right:" + Math.round(-o * 272) + "px;bottom:-20px;width:340px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:translateY(" + Math.round(o * 172) + "px);opacity:" + (t19 ? .92 : 0) * hide,
+          rtFloorStyle: "position:absolute;left:0;right:0;bottom:-8px;height:200px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 2) + ";transition:all 1.7s ease;opacity:" + (t19 ? .88 : 0) * hide,
+        };
+      })(this._tonight() === 19),
+      // THE LAW'S BODY IS THE BURIAL (2 sep 2026): the old grave lies open under the road's middle
+      // station — scene furniture, so the law needs no standing tip (the hanging hour-drum rule).
+      // nothing happens when a card first lodges there. the moment it CHANGES HANDS, roots come out
+      // of it into the grave and grip: plantOnTake, the answer roots, not the opening.
+      ...((() => {
+        const on = this._bossRule() === "plant" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        if (!on) return { rtLawOn: false, rtGraveStyle: "display:none", rtRootStyle: "opacity:0" };
+        const Lp = (st.slots || []).length || 9, epx = 466 - (Lp * 86 + (Lp - 1) * 5) / 2, xp = epx + this._lawSt() * 91 + 43;
+        const sl = (st.slots || [])[this._lawSt()], rooted = !!(sl && sl.by && sl.by !== sl.owner);
+        return { rtLawOn: true,
+          rtGraveStyle: "position:absolute;left:" + (xp - 78) + "px;top:106px;width:156px;height:76px;pointer-events:none;z-index:7;transition:opacity .8s ease;opacity:" + (rooted ? 1 : .84),
+          rtRootStyle: rooted ? "animation:mzRootGrip 1.2s cubic-bezier(.3,1.3,.4,1) both;transform-box:fill-box;transform-origin:50% 0%" : "opacity:0" };
+      })()),
       qtOn: this._tonight() === 21,
       // THE QUARTER WITH NO LAMPS (31 aug 2026, user pick 1a from Manzil - District Level
       // Directions.dc.html). the pilot house stops borrowing the generic city and gets its own
@@ -8020,7 +8892,9 @@ class Component extends DCLogic {
           qtRightInnerStyle: inner("right"),
           // the court stands at the far end of the canyon: a shape between the towers the whole
           // climb, only stepping into full view on the last station when the walls have gone by.
-          qtCourtStyle: "position:absolute;left:50%;margin-left:-210px;bottom:" + (Math.max(ev.gh - 10, 0) + 54 + Math.round((1 - k) * 62)) + "px;width:420px;height:250px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:scale(" + (.42 + Math.max(0, k - .18) * 1.1).toFixed(2) + ");transform-origin:50% 100%;opacity:" + (t21 ? [0, 0, .05, .08, .12, .18, .28, .46, 1][e] : 0) * hide,
+          // the court is the canyon's destination, so it stands on the road's far end (_horizon),
+          // not on the near ground rim — ev.gh was putting it wherever the player's feet were.
+          qtCourtStyle: ((H) => "position:absolute;left:50%;margin-left:-210px;bottom:" + H.bottom + "px;width:420px;height:250px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:scale(" + H.scaleFor(420, 554, .3).toFixed(3) + ");transform-origin:50% 100%;opacity:" + (t21 ? [0, 0, .05, .08, .12, .18, .28, .46, 1][e] : 0) * hide)(this._horizon(e)),
           qtLampStyle: "position:absolute;left:22%;bottom:" + (ev.gh + 96) + "px;width:26px;height:34px;pointer-events:none;border-radius:2px;background:linear-gradient(180deg, rgba(240,216,154,.5), rgba(240,216,154,.16));box-shadow:0 0 26px rgba(240,216,154,.3);transition:opacity 1.7s ease;opacity:" + (t21 ? [.85, .7, .48, .28, .13, .05, 0, 0, 0][e] : 0) * hide,
         };
       })(this._tonight() === 21),
@@ -8046,7 +8920,7 @@ class Component extends DCLogic {
     // canyon ran at full strength straight through the nine stations. Same constant, same condition.
     const hide = this._inPlay() ? .46 : 1;
         const e = ev.e, k = e / 8;
-        const mw = 74 + Math.pow(k, 1.7) * 1180, my = 92 - k * 46;
+        const rpMw = 74 + Math.pow(k, 1.7) * 1180, my = 92 - k * 46;
         const wall = [];
         for (let i = 0; i < 9; i++) {
           const y = -60 + i * 62, inset = 96 - k * 62;
@@ -8060,20 +8934,23 @@ class Component extends DCLogic {
           rpDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(" + (30 + k * 60).toFixed(0) + "% " + (24 + k * 46).toFixed(0) + "% at 50% " + (16 + k * 6).toFixed(0) + "%, rgba(38,74,66," + (.3 + k * .5).toFixed(2) + "), rgba(5,10,9,.99) 68%), #040807;transition:opacity 1.6s ease;opacity:" + (t28b ? 1 : 0) * hide,
           rpWalls: React.createElement("g", { dangerouslySetInnerHTML: { __html: wall.join("") + drips.join("") } }),
           rpWallStyle: "position:absolute;inset:0;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s cubic-bezier(.3,.7,.3,1);transform:translateY(" + (e * 26).toFixed(0) + "px) scale(" + (1 + k * .5).toFixed(2) + ");opacity:" + (t28b ? Math.max(0, 1 - Math.max(0, k - .55) * 1.9).toFixed(2) : 0),
-          rpMouthStyle: "position:absolute;left:50%;top:" + (my - mw * .34).toFixed(0) + "px;width:" + mw.toFixed(0) + "px;height:" + (mw * .58).toFixed(0) + "px;margin-left:" + (-mw / 2).toFixed(0) + "px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? 1 : 0) * hide,
+          // the well mouth is the destination and the rim IS the horizon, so its lower edge is
+          // welded to the road's far end instead of riding its own top offset. the aperture's WIDTH
+          // keeps its own driver: growing from a coin to the whole sky is the level's one idea.
+          rpMouthStyle: ((H) => "position:absolute;left:50%;bottom:" + H.bottom + "px;width:" + rpMw.toFixed(0) + "px;height:" + (rpMw * .58).toFixed(0) + "px;margin-left:" + (-rpMw / 2).toFixed(0) + "px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? 1 : 0) * hide)(this._horizon(e)),
           rpAndroStyle: "position:absolute;left:50%;margin-left:-160px;top:" + (10 + (1 - k) * 16).toFixed(0) + "px;width:320px;height:150px;pointer-events:none;transition:all 1.7s ease;opacity:" + (t28b ? [0, 0, .08, .2, .4, .6, .78, .92, 1][e] : 0) * hide,
           rpRopeStyle: "position:absolute;left:50%;margin-left:-108px;top:0;width:56px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:opacity 1.6s ease;opacity:" + (t28b ? .92 : 0) * hide,
           rpRimStyle: "position:absolute;left:0;right:0;top:" + (my - 16).toFixed(0) + "px;height:120px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t28b ? [0, 0, 0, .1, .3, .55, .78, .94, 1][e] : 0) * hide,
         };
       })(this._tonight() === 28),
-      chamOn: this._tonight() === 26,
+      chamOn: false, // SUPERSEDED 2 sep 2026: the old chamber art (kiln floor) gives way to chOn, the cot and the sword
       // the guide travels instead of climbing: the mouth grows, the banks pass you
       ...(t27 => {
         const e = ev.e, k = e / 8;
-        const grow = 0.34 + k * 3.1, mw = 300 * grow, mh = 250 * grow;
+        const grow = 0.34 + k * 3.1, gdMw = 300 * grow, mh = 250 * grow;
         return {
           gdDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 60% at 50% 34%, rgba(20,44,60," + (.5 + k * .4).toFixed(2) + "), rgba(6,14,20,.98) 62%), #04080D;transition:opacity 1.6s ease;opacity:" + (t27 ? 1 : 0),
-          gdMouthStyle: "position:absolute;left:50%;top:" + (134 - mh * .74).toFixed(0) + "px;width:" + mw.toFixed(0) + "px;height:" + mh.toFixed(0) + "px;margin-left:" + (-mw / 2).toFixed(0) + "px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t27 ? (.55 + k * .45).toFixed(2) : 0),
+          gdMouthStyle: "position:absolute;left:50%;top:" + (134 - mh * .74).toFixed(0) + "px;width:" + gdMw.toFixed(0) + "px;height:" + mh.toFixed(0) + "px;margin-left:" + (-gdMw / 2).toFixed(0) + "px;pointer-events:none;transition:all 1.7s cubic-bezier(.3,.7,.3,1);opacity:" + (t27 ? (.55 + k * .45).toFixed(2) : 0),
           gdMouthRimStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease, transform 1.7s ease;transform:scale(" + (1 + k * 1.5).toFixed(2) + ");opacity:" + (t27 ? Math.max(0, .9 - k * 1.1).toFixed(2) : 0),
           gdBankLStyle: "display:none",
           gdBankRStyle: "display:none",
@@ -8104,7 +8981,9 @@ class Component extends DCLogic {
           // level with the top of the moon road, and each rung walked brings it nearer: it slides
           // down off the horizon and grows, arrived-among by the ninth step. bottom-anchored scale
           // so the tents ground themselves as they approach.
-          hdCampStyle: "position:absolute;left:0;right:0;height:96px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform-origin:50% 100%;bottom:" + Math.max(ev.gh + 190 - e * 21, ev.gh + 22).toFixed(0) + "px;transform:scale(" + (0.72 + e * 0.28).toFixed(2) + ");opacity:" + (t25 ? Math.min(1, .85 + e * .02) * hide : 0),
+          // the camp is the road's destination, so it sits on _horizon's line. its own endpoints are
+          // unchanged (.72 → 1.0) — this level's hand math was already close; now it is exact.
+          hdCampStyle: ((H) => "position:absolute;left:0;right:0;height:96px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform-origin:50% 100%;bottom:" + H.bottom + "px;transform:scale(" + H.scaleFor(96, 96, .72).toFixed(3) + ");opacity:" + (t25 ? Math.min(1, .85 + e * .02) * hide : 0))(this._horizon(e)),
           // the horizon holds the camp (30 aug 2026, user: tents above the mountains made no
           // sense): the ridge line rises to the stair's top, the camp sits ON it at the road's
           // foot, and only the camp comes down off it as you close the distance.
@@ -8133,9 +9012,22 @@ class Component extends DCLogic {
           // THE HORIZON HOLDS THE HALL (30 aug 2026, user: the road must never stand above the
           // throne, the hideaway's rule): at the road's foot the terrace sits small ABOVE the road's
           // vanishing point, and each rung brings it down and up in scale until it is underfoot.
-          thrHallStyle: "position:absolute;left:0;right:0;height:300px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform-origin:50% 100%;bottom:" + (96 + Math.max(0, 8 - e10) * 22) + "px;transform:scale(" + (.42 + e10 * .09).toFixed(3) + ");opacity:" + ((.55 + e10 * .056) * hide10).toFixed(3),
+          // ONE SOURCE OF TRUTH (2 sep 2026): the terrace was the level that got this right first,
+          // by hand — it now reads the same _horizon() every other destination does, so "the road
+          // must never stand above the throne" is enforced by construction instead of by tuning.
+          thrHallStyle: ((H) => "position:absolute;left:0;right:0;height:300px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:all 1.7s ease;transform-origin:50% 100%;bottom:" + H.bottom + "px;transform:scale(" + H.scaleFor(300, 342, .42).toFixed(3) + ");opacity:" + ((.55 + e10 * .056) * hide10).toFixed(3))(this._horizon(e10)),
           thrRegStyle: "position:absolute;z-index:5;pointer-events:none;transition:all 1.8s cubic-bezier(.22,1,.36,1);" + (seat ? "left:calc(50% - 108px);top:-104px;width:216px;height:216px" : "left:calc(50% - " + (11 + e10) + "px);top:" + (58 - e10 * 3.4).toFixed(1) + "px;width:" + (22 + e10 * 2) + "px;height:" + (22 + e10 * 2) + "px") + ";opacity:" + ([.5, .58, .66, .74, .82, .9, .96, 1, 1][e10] * (seat ? 1 : hide10)).toFixed(3),
-          thrBraz: brazXY.map((p10, k) => { const lit = k < e10; return { x: p10[0] - 4, y: p10[1] - 4, cx: p10[0], cy: p10[1] - 8, f: lit ? "#FFB000" : "rgba(240,216,154,.16)", g: lit ? "rgba(255,176,0,.22)" : "transparent", fl: lit ? "animation:mzBreathe " + (1.8 + k * .3).toFixed(1) + "s ease-in-out infinite" : "" }; }),
+          // SVG GEOMETRY NEVER RIDES A RAW NUMERIC ATTRIBUTE (1 sep 2026, code's fuzz pass): a
+          // `x="{{ }}"` is parsed by the browser before the runtime substitutes it, and SVG rejects
+          // a mustache where it wants a length — 66 console errors a load, no visual fault. Box goes
+          // out as a path `d`, the fire as one translated <g>, both parse-valid raw.
+          // the brazier's own box is a STATIC `d` inside the translated <g>, not a bound one: a mustache in
+          // a `d` attribute is as invalid to the pre-hydration SVG parse as one in `rect x` was, so the
+          // 1 sep sweep only moved the 39 console errors from `bz.x` to `bz.d` rather than clearing them
+          // (Code's own note to Design saying "path.d bindings are fine" was wrong, and this closes it).
+          // The <g> already carried the translate for the two flame circles; the box's absolute corner
+          // (x-4, y-4) is local (-4, 4) against that origin, so the drawing is unchanged.
+          thrBraz: brazXY.map((p10, k) => { const lit = k < e10; return { gs: "transform:translate(" + p10[0] + "px," + (p10[1] - 8) + "px)", f: lit ? "#FFB000" : "rgba(240,216,154,.16)", g: lit ? "rgba(255,176,0,.22)" : "transparent", fl: lit ? "animation:mzBreathe " + (1.8 + k * .3).toFixed(1) + "s ease-in-out infinite" : "" }; }),
         };
       })(this._tonight() === 10),
       ringSignStyle: "display:none", // the empty circle is the header itself: one ring, not two
@@ -8163,7 +9055,7 @@ class Component extends DCLogic {
       // THE APPROACH (29 aug 2026, level grammar beat 1): the mansion's own star grows nearer as the
       // road climbs, in the avatar's glow color. the level template's first promise: you are walking
       // TOWARD something, and it is the star the mansion is named for.
-      avApproachStyle: ((avA => avA && this._tonight() !== 10 && this._tonight() !== 23 && this._tonight() !== 28 // the throne, the drum and the well own their own stars: thrReg IS regulus on m10, and m23/m28 carry albali and mirach in their own scenes
+      avApproachStyle: ((avA => avA && this._tonight() !== 10 && this._tonight() !== 12 && this._tonight() !== 19 && this._tonight() !== 23 && this._tonight() !== 26 && this._tonight() !== 28 // the throne, the drum and the well own their own stars: thrReg IS regulus on m10, and m23/m28 carry albali and mirach in their own scenes
         ? "position:absolute;left:60%;top:4%;width:240px;height:240px;pointer-events:none;border-radius:50%;background:radial-gradient(circle, " + avA.glow + ", transparent 66%);transition:opacity 1.8s ease, transform 1.8s ease;transform:scale(" + (0.6 + ev.e * 0.08).toFixed(2) + ");opacity:" + (st.road ? [.05, .1, .16, .22, .3, .4, .52, .66, .92][ev.e] : .06)
         : "display:none")(this._avFig(this._tonight()))),
       // the tracker lives on the lobby too (30 aug 2026, user): the road slides out of the frame as
@@ -8186,7 +9078,7 @@ class Component extends DCLogic {
         const t0 = this._tonight();
         // the mansion's own face takes the seat at rung nine, and announces its law
         const AV = this._avatar(t0);
-        if (AV && st.roadBoss) return { introTitle: AV.full, introSubOn: true, introSub: AV.line, introNoteOn: true, introNote: t0 === 18 ? "when the road fills, the heart beats once more. whoever holds the first station gets that beat: one strike, the heart's own ground, a prize for either hand." : t0 === 25 ? "the tent stands midway down the road. what it holds cannot be stolen, only emptied: take it, and it counts for nobody." : t0 === 10 ? "from her seat, a strike carries two stations. at the far one, the card fights as it was born." : "best of five. the mansion plays its planets and its own cards against you." };
+        if (AV && st.roadBoss) return { introTitle: AV.full, introSubOn: true, introSub: AV.line, introNoteOn: true, introNote: t0 === 18 ? "when the road fills, the heart beats once more. whoever holds the first station gets that beat: one strike, the heart's own ground, a prize for either hand." : t0 === 25 ? "the tent stands midway down the road. what it holds cannot be stolen, only emptied: take it, and it counts for nobody." : t0 === 10 ? "from her seat, a strike carries two stations. at the far one, the card fights as it was born." : t0 === 12 ? "her station turns its neighbour around, and the long strikes cross turned ground. on her night the flat cards cannot be turned at all — it is the lopsided ones that change the most." : t0 === 19 ? "the old grave lies open at the road's middle. what is taken on that ground takes root in it, and cannot be taken back by either hand before the board ends." : t0 === 26 ? "what you carry, you leave at her door. inside, you are only what you are: while a card lodges in her doorway its own quarter's grant is put out, yours or hers alike." : "best of five. the mansion plays its planets and its own cards against you." };
         if (st.pickK != null) {
           const kp = st.pickK;
           if (kp >= 8) return ((av2 => av2
@@ -8214,7 +9106,7 @@ class Component extends DCLogic {
         if (k1 >= 8) { const av7 = this._avFig(t1);
           // the arrival (level grammar beat 2): the star lands first and flares; the animal gathers
           // out of the dark around it a half-beat later. the mansion is its star before it is a body.
-          if (av7) return { introFigOn: true, introCardOn: false, introFigPaths: av7.p, introStarOn: true, introStarF: av7.starF || av7.star, introStarS: av7.starS || "none", introStarX: av7.starX, introStarY: av7.starY,
+          if (av7) return { introFigOn: true, introCardOn: false, introFigPaths: av7.p, introStarOn: true, introStarF: av7.starF || av7.star, introStarS: av7.starS || "none", introStarPos: "transform:translate(" + av7.starX + "px," + av7.starY + "px)",
             introStarPX: (av7.starX / 120 * 100).toFixed(1) + "%", introStarPY: (av7.starY / 96 * 100).toFixed(1) + "%",
             introGlowBg: av7.glow || "rgba(255,176,0,.3)",
             introFigWrap: "position:absolute;inset:0;animation:mzWalkerIdle 6s ease-in-out 1.8s infinite, mzFadeUp 1.2s ease .55s both" };
@@ -8234,8 +9126,12 @@ class Component extends DCLogic {
       // the hand row has no overlay of its own: it rides every phase and relied on opaque screens to
       // hide it. the onboarding scrims are translucent (30 aug 2026), so it is gated here instead.
       handCards: this._inPlay() ? handCards : [],
-      pipsInPlate: !(st.roadBoss || st.nightSky || (st.duel && st.duel.mode !== "seat")),
-      pipsTopRight: !!(st.roadBoss || st.nightSky || (st.duel && st.duel.mode !== "seat")) && matchPips.length > 0 && (st.phase === "play" || st.phase === "round" || st.phase === "won" || st.phase === "lost"),
+      // ONE TALLY, ONE PLACE (1 sep 2026, user: the best-of-three count sat under the walker's name
+      // while the mansion's best-of-five sat top right — two positions for the same reading). The
+      // plate copy is gone; every format now counts in the top-right corner, which is also the only
+      // spot that doesn't move when the opponent plate grows a temper line. Same rule as "the arena
+      // is the same every level": a score reads in one place or the player learns two habits.
+      pipsTopRight: matchPips.length > 0 && (st.phase === "play" || st.phase === "round" || st.phase === "won" || st.phase === "lost"),
       skyHandOn: !!(st.roadBoss || st.nightSky),
       // the planets no longer stand across from you: they are a small rail at the edge that empties as she casts
       // the pool's hub: rotating (so they turn around each other) and sliding side to side as she throws
@@ -8269,7 +9165,7 @@ class Component extends DCLogic {
           // people without eight drawings. Every court (throne, heart, tents, drum) now carries its
           // own real `_figs()` entries, so the stand-in is deleted rather than left fighting them.
           figPose: "none",
-          avStarOn: !!av6, avStarF: av6 ? (av6.starF || av6.star) : "", avStarS: av6 ? (av6.starS || "none") : "none", avStarX: av6 ? av6.starX : 0, avStarY: av6 ? av6.starY : 0,
+          avStarOn: !!av6, avStarF: av6 ? (av6.starF || av6.star) : "", avStarS: av6 ? (av6.starS || "none") : "none", avStarPos: av6 ? "transform:translate(" + av6.starX + "px," + av6.starY + "px)" : "",
           wkOn: !!(w && f && !av6 && this._walkerKGlyph(w.name)), wkGlyph: w ? this._walkerKGlyph(w.name) : "",
           ...((sy) => ({
             sayOn: !!(f && sy && sy.t),
@@ -8284,7 +9180,13 @@ class Component extends DCLogic {
           castLinesStyle: wc ? "position:absolute;inset:0;pointer-events:none;transform-origin:76% 45%;animation:mzCastLines" + ab + " .5s ease-out both" : "",
           castGhostStyle: wc ? "position:absolute;left:54px;top:46px;width:11px;height:15px;border-radius:2px;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid rgba(240,216,154,.75);box-shadow:0 0 8px rgba(240,216,154,.25);animation:mzCastGhost" + ab + " .55s cubic-bezier(.3,.7,.5,1) both" : "",
           bubbleOn: !!(wc && wc.f),
-          bubbleText: av6 ? ((this._avVoice(this._tonight()) || {}).word || "held.") : w ? ({ "imra": "oh!", "sef": "counted.", "odel": "there.", "tesh": "kept!", "ruen": "read it.", "brann": "ha!", "mave": "…", "the quiet one": "." })[w.name] || "" : "",
+          bubbleText: av6 ? ((this._avVoice(this._tonight()) || {}).word || "held.") : w ? ({ "imra": "oh!", "sef": "counted.", "odel": "there.", "tesh": "kept!", "ruen": "read it.", "brann": "ha!", "mave": "…", "the quiet one": ".",
+            // the hill of vanes (2 sep 2026): eight words, all of them about the air
+            "nael": "oiled.", "vesh": "now!", "thea": "on the date.", "sabi": "more line.", "orun": "leaning.", "duna": "turned early.", "kip": "cooler.", "the weather-watch": ".",
+            // the cut at the root (2 sep 2026): eight words, all of them about the ground
+            "muza": "marked.", "hev": "propped.", "ansu": "sifted.", "kori": "up.", "zayn": "cut.", "oda": "two.", "veya": "carefully.", "the ground-watch": ".",
+            // the cot and the sword (2 sep 2026): eight words, all of them a host's
+            "tamir": "token.", "nasha": "banked.", "vell": "poured.", "sadir": "tight.", "ennu": "one more.", "borin": "walking.", "raqi": "twice.", "the house-watch": "." })[w.name] || "" : "",
           bubbleStyle: wc ? "position:absolute;left:76px;top:-8px;width:58px;height:40px;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:mzBubble" + ab + " 1.2s cubic-bezier(.34,1.56,.64,1) both" : ""
         };
       })()),
@@ -8990,7 +9892,7 @@ class Component extends DCLogic {
           const stt = m => (ml[m] || 0) >= 4 ? 2 : ((ml[m] || 0) > 0 || (rg2[m] || 0) > 0) ? 1 : 0;
           const ledSpokes = Array.from({ length: 28 }, (_, k) => k + 1).map(m => { const s = stt(m), q = QC3[this._quad(m)];
             const a = pt3(m, 96), b = pt3(m, s === 2 ? 122 : s === 1 ? 112 : 103);
-            return { x1: a.x, y1: a.y, x2: b.x, y2: b.y, c: s === 2 ? "rgba(" + q + ",1)" : s === 1 ? "rgba(" + q + ",.65)" : "rgba(" + q + ",.22)", w: s === 2 ? 3.2 : s === 1 ? 2.2 : 1.4, st: s === 2 ? "filter:drop-shadow(0 0 6px rgba(" + q + ",.7))" : "" }; });
+            return { d: "M" + a.x + " " + a.y + "L" + b.x + " " + b.y, c: s === 2 ? "rgba(" + q + ",1)" : s === 1 ? "rgba(" + q + ",.65)" : "rgba(" + q + ",.22)", w: s === 2 ? 3.2 : s === 1 ? 2.2 : 1.4, st: s === 2 ? "filter:drop-shadow(0 0 6px rgba(" + q + ",.7))" : "" }; });
           const tpos = pt3(t3, 109);
           let lc2 = {}; try { lc2 = JSON.parse(localStorage.getItem("manzil-v2-lastclimb")) || {}; } catch (e) {}
           const fmt2 = ds => { try { return new Date(ds + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric" }); } catch (e) { return ds; } };
@@ -9022,9 +9924,9 @@ class Component extends DCLogic {
           const rows5 = Array.isArray(b3.rows) ? b3.rows : [];
           const ledMarks = rows5.filter(r2 => GL[r2.p] && r2.m >= 1 && r2.m <= 28).map(r2 => {
             const p5 = pt3(r2.m, 136), q5 = QC3[this._quad(r2.m)];
-            return { g: GL[r2.p], x: p5.x, y: p5.y + 4, c: "rgba(" + q5 + ",.95)" };
+            return { g: GL[r2.p], pos: "transform:translate(" + p5.x + "px," + (p5.y + 4) + "px)", c: "rgba(" + q5 + ",.95)" };
           });
-          return { ledSpokes, ledTx: tpos.x, ledTy: tpos.y, ledEntries: entries.slice(0, 7), ledEmptyOn: entries.length === 0, ledMarks, ledChartOn: ledMarks.length > 0, ledReads,
+          return { ledSpokes, ledPos: "transform:translate(" + tpos.x + "px," + tpos.y + "px)", ledEntries: entries.slice(0, 7), ledEmptyOn: entries.length === 0, ledMarks, ledChartOn: ledMarks.length > 0, ledReads,
             ledStatsOn: !!this.state.ledStats,
             ledStatsLabel: this.state.ledStats ? "arena stats ‹" : "arena stats ›",
             ledStatsTap: () => this.setState({ ledStats: !this.state.ledStats }) };
@@ -9043,7 +9945,10 @@ class Component extends DCLogic {
         const dots = rows.map(r => { const q = pt(r.m, 27); return { x: q.x, y: q.y, r: r.p === "sun" ? 1.8 : 1.4, c: r.p === "sun" ? "#FFB000" : "#F0D89A" }; });
         const lines = [];
         for (let i = 0; i < dots.length; i++) { const a2 = dots[i], b2 = dots[(i + 1) % dots.length]; if (a2.x === b2.x && a2.y === b2.y) continue; lines.push({ x1: a2.x, y1: a2.y, x2: b2.x, y2: b2.y, c: i === 0 ? "#FFB000" : "#F0D89A", o: i === 0 ? ".55" : ".38" }); }
-        return { shardDots: dots, shardLines: lines };
+        // dots and chords also go out as paths — same parse rule as the braziers.
+        const cD = p => "M" + (p.x - p.r) + " " + p.y + "a" + p.r + " " + p.r + " 0 1 0 " + (p.r * 2) + " 0a" + p.r + " " + p.r + " 0 1 0 " + (-p.r * 2) + " 0Z";
+        return { shardDots: dots.map(p => Object.assign({}, p, { d: cD(p) })),
+          shardLines: lines.map(l => Object.assign({}, l, { d: "M" + l.x1 + " " + l.y1 + "L" + l.x2 + " " + l.y2 })) };
       })()),
       // the old onboarding is REMOVED (30 aug 2026, user): the legend story + door screens are gone,
       // their phase unreachable. the chess/backgammon lore text survives in _legend() for a future codex page.
@@ -9461,7 +10366,16 @@ class Component extends DCLogic {
       introOn: st.phase === "intro",
       introTap: () => this._startMatch(),
       introStyle: "position:absolute;inset:0;background:radial-gradient(90% 120% at 50% 30%, #1A1305 0%, #0D0903 55%, #070402 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:18px;z-index:9;cursor:pointer" + (st.introExit ? ";animation:mzFadeOut .32s ease both" : ""),
-      roundOverStyle: "position:absolute;inset:0;background:rgba(4,3,2,.82);backdrop-filter:blur(4px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;z-index:9;cursor:pointer;animation:" + (st.roundExit ? "mzFadeOut .32s ease both" : "mzFadeUp .3s ease both"),
+      // THE HINT'S BAND IS RESERVED, NOT HOPED FOR (1 sep 2026). The scrim centres its column over
+      // the whole 430px stage while the continue hint is pinned at bottom:22px, so the two were laid
+      // out independently: any stack tall enough to reach y≈395 collided with the hint, which is
+      // exactly what the format plaque does. Padding the hint's band out of the centring box fixes
+      // the cause — the column now centres in the space that is actually free — instead of shaving
+      // pixels off the plaque until it happens to clear. Only on the road beat: roundOverStyle is
+      // shared with the duel and mansion round screens, which have no pinned hint to reserve for.
+      roundOverStyle: "position:absolute;inset:0;background:rgba(4,3,2,.82);backdrop-filter:blur(4px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;z-index:9;cursor:pointer;"
+        + (st.phase === "round" ? "padding-bottom:48px;" : "")
+        + "animation:" + (st.roundExit ? "mzFadeOut .32s ease both" : "mzFadeUp .3s ease both"),
       deckStartStyle: "margin-top:6px;font-family:'Karla',sans-serif;font-size:12.5px;padding:11px 26px;transition:all .3s ease;" + (st.deckSel.length >= 5 ? "background:rgba(255,176,0,.12);border:1px solid #FFB000;color:#FFB000;cursor:pointer;animation:mzPop .45s cubic-bezier(.22,1,.36,1) both, mzReadyGlow 1.8s ease-in-out .45s infinite" : "background:none;border:1px solid rgba(240,216,154,.2);color:rgba(154,138,94,.6);cursor:default"),
       deckStartLabel: st.deckSel.length >= 5 ? (C[this._tonight()].loan ? "the moon road ›" : "the table ›") : "choose " + (5 - st.deckSel.length) + " more",
       resetTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), deckSel: st.chosen || st.deckSel }); },
@@ -9596,11 +10510,100 @@ class Component extends DCLogic {
       })(st.face),
       faceSeat: () => st.face && (st.duel && st.duel.mode === "live" ? this._netPlace(st.face.id, st.face.i, false) : this._commitPlace(st.face.id, st.face.i, false, "you")),
       faceSerpent: () => st.face && (st.duel && st.duel.mode === "live" ? this._netPlace(st.face.id, st.face.i, true) : this._commitPlace(st.face.id, st.face.i, true, "you")),
+      // THE ROAD BEAT (1 sep 2026, user: "we need more of a moment each time you defeat a walker",
+      // and a transition that names best-of-three / best-of-five). At a walker rung phase "round"
+      // only ever means the MATCH is decided (a mid-match board goes straight to _advanceRound(true)),
+      // so this is the one seam where a walker actually steps off the road — it gets the figure
+      // yielding, the road strip lighting its new rung, and, when the next rung changes format, the
+      // format plaque. The mansion's own seam routes to the avatar intro instead (see _advanceRound).
+      ...((() => {
+        if (!(st.phase === "round" && st.road && !st.roadBoss && lastRound === "you" && st.roadWalker))
+          return { rbOn: false, rbFigOn: false, rbFigPaths: [], rbPips: [], rbFmtOn: false, rbCount: "", rbFmtTitle: "", rbFmtSub: "", rbNextOn: false, rbNextK: "", rbNextName: "", rbNextLine: "", rbTailStyle: "display:none", rbNextStyle: "" };
+        const k = st.roadRung || 0, nk = Math.min(k + 1, 8);
+        const w = this._walkers().find(x => x.name === st.roadWalker);
+        const fg = w ? (this._figs()[w.name] || this._figs()[this._wAlias(w.name)]) : null;
+        // the two format seams: rung five opens best of three, the mansion best of five
+        const fmt = nk === 4 ? { t: "best of three", s: "three boards from here. two of them yours." }
+          : nk === 8 ? { t: "best of five", s: "five boards at the top. three of them yours." } : null;
+        const N = ["one", "two", "three", "four", "five", "six", "seven", "eight"];
+        return {
+          rbOn: true,
+          // THE FORMAT SEAM IS A DIFFERENT SCREEN, NOT THE SAME SCREEN PLUS MORE (1 sep 2026). The
+          // beat is a fixed-height centred column in a hard 430px stage with no compression path, so
+          // stacking the figure (94px), the plaque (95px) AND the next-walker panel (90px) put ~490px
+          // of content in 382px of space: centring pushed it out both edges and the over-constrained
+          // children began overlapping each other. Composition answer rather than shaved margins —
+          // on the two seams that change the match format the PLAQUE is the message, so the walker's
+          // figure stands down and the plaque and the next-walker panel sit side by side. Six of the
+          // eight seams are unchanged and keep the full portrait treatment.
+          rbFigOn: !!fg && !fmt, rbFigPaths: fg ? fg.p : [],
+          rbTailStyle: fmt
+            ? "display:flex;flex-direction:row;align-items:center;justify-content:center;gap:22px;margin-top:16px"
+            : "display:flex;flex-direction:column;align-items:center",
+          rbNextStyle: fmt
+            ? "display:flex;flex-direction:column;align-items:flex-start;gap:3px;max-width:250px;padding-left:22px;border-left:1px solid rgba(240,216,154,.16);text-align:left;animation:mzFadeUp .7s ease 1.4s both"
+            : "display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(240,216,154,.12);min-width:300px;animation:mzFadeUp .7s ease 1.5s both",
+          rbCount: N[nk - 1] + " of eight down",
+          rbPips: Array.from({ length: 9 }, (_, i) => {
+            const done = i < nk, now = i === k, boss = i === 8, sz = boss ? 9 : 7;
+            return { style: "width:" + sz + "px;height:" + sz + "px;transform:rotate(45deg);flex:none;border-radius:1px;"
+              + (done ? "background:#F0D89A;" : boss ? "background:rgba(255,176,0,.14);border:1px solid rgba(255,176,0,.5);" : "background:rgba(240,216,154,.13);border:1px solid rgba(240,216,154,.2);")
+              + (now ? "animation:mzPipLight 1.1s ease .5s both;" : "") };
+          }),
+          rbFmtOn: !!fmt, rbFmtTitle: fmt ? fmt.t : "", rbFmtSub: fmt ? fmt.s : "",
+          // WHO STANDS NEXT (1 sep 2026, user: "sitting down at a new walker"). The authored walker
+          // intro copy — their line, and the `again` greet once they have beaten you — only ever
+          // played when entering from the deck screen, same fault as the mansion splash. Rather than
+          // a second screen to tap through per rung, the seam that just closed introduces the one
+          // ahead: the road reads as meeting people, at no extra tap.
+          ...((() => {
+            if (nk >= 8) {
+              const av = this._avatar();
+              return { rbNextOn: true, rbNextK: "at the top of the road",
+                rbNextName: av ? av.name : "the " + this._mName(this._tonight()) + " itself",
+                rbNextLine: av ? av.line : "the house stands at the top of its own road." };
+            }
+            const w2 = this._walkers()[nk];
+            if (!w2) return { rbNextOn: false, rbNextK: "", rbNextName: "", rbNextLine: "" };
+            const rc2 = this._wrec()[w2.name];
+            return { rbNextOn: true, rbNextK: "next on the road",
+              rbNextName: w2.name,
+              rbNextLine: rc2 && rc2.l > 0 ? (w2.again || this._again(w2.name) || w2.line) : w2.line };
+          })()),
+        };
+      })()),
       roundOverOn: st.phase === "round",
       roundWalkerOn: st.phase === "round" && !!st.road && !st.roadBoss && lastRound === "you" && !!st.roadWalker && st.roadRung < 8,
       roundWalkerLine: ((this._walkers().find(x => x.name === st.roadWalker) || {}).defeat) || "",
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
       roundTitle: st.duel ? "the board rests" : st.road && !st.roadBoss ? (st.roadRung >= 7 ? ((av => av ? "the air thins. " + av.name + " waits." : "the air thins. the " + this._mName(this._tonight()) + " waits.")(this._avatar())) : (st.roadWalker || "the walker") + " steps aside") : "round " + st.round,
+      // THE MID-MATCH BEAT (1 sep 2026). Placed AFTER roundTitle on purpose: when a match is still
+      // running it overrides that key, because the generic title would read "<walker> steps aside"
+      // for a board nobody won the match on. Returns nothing at all otherwise, so the spread is
+      // inert and roundTitle stands.
+      ...((() => {
+        if (!(st.phase === "round" && st.roundSame)) return { rmOn: false, rmLead: "", rmRule: "" };
+        const opp = String(this._oppLabel() || "she").toLowerCase();
+        const N = ["none", "one", "two", "three", "four"];
+        return {
+          rmOn: true,
+          roundTitle: mw === ms ? (mw === 1 ? "one board apiece" : N[mw] + " boards apiece")
+            : mw > ms ? "you lead, " + N[mw] + " to " + N[ms]
+            : opp + " leads, " + N[ms] + " to " + N[mw],
+          rmLead: nextLeader === "you" ? "you lead the next board" : opp + " leads the next board",
+          rmRule: "the loser of a board leads the next one.",
+        };
+      })()),
+      // ONE CONTINUE AFFORDANCE FOR EVERY ROUND BEAT. Nothing auto-advances any more (_roundDwell),
+      // so every one of these screens owes the player a visible way on — including the plain duel and
+      // mansion board seams, which previously just timed out on their own and said nothing.
+      ...((() => {
+        if (st.phase !== "round") return { roundGoOn: false, roundGoLabel: "" };
+        if (st.roundSame) return { roundGoOn: true, roundGoLabel: "next board" };
+        if (st.road && !st.roadBoss && lastRound === "you" && st.roadWalker)
+          return { roundGoOn: true, roundGoLabel: Math.min((st.roadRung || 0) + 1, 8) >= 8 ? "to the mansion" : "on up the road" };
+        return { roundGoOn: true, roundGoLabel: "on" };
+      })()),
       nextRoundTap: () => this._exitRound(),
       ascentOn: false,
       ascentNote: (st.phase === "round" && st.ascentChosen && st.ascentNote) || "",
@@ -9630,11 +10633,55 @@ class Component extends DCLogic {
           livesLamps: [0, 1, 2].map(i => moon(i, i >= 3 - lv))
         };
       })(st.wiped && st.phase === "roadlost" && !st.nmBeat ? 3 : st.lives == null ? this._lives() : st.lives)),
+      // THE LOSS IS THE MOON GOING OUT (1 sep 2026, user: a loss should sting more than a win
+      // pleases). The win side had grown a whole beat while a loss was a decrement and a text line.
+      // The metaphor was already in the file and unused on this screen: the three lives ARE the
+      // moon's last three nights of light (29 aug lore reconciliation), so the beat is the brightest
+      // remaining phase visibly guttering out — centred and large, in ash rather than amber, with
+      // the consequence spelled in words. On the third it is the new moon, and the road folds back.
+      ...((() => {
+        if (st.phase !== "roadlost") return { rlOn: false, rlMoons: [], rlWipeOn: false, rlStrip: [], rlLostLine: "", rlBackLine: "" };
+        const wiped = !!st.wiped;
+        const lv = wiped ? 0 : (st.lives == null ? this._lives() : st.lives);
+        const spent = 2 - lv; // losses darken the brightest that remains, index 0 first
+        const W = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight"];
+        const held = Math.max(0, Math.min(st.roadRung || 0, 8));
+        return {
+          rlOn: true, rlWipeOn: wiped,
+          rlMoons: [0, 1, 2].map(i => {
+            const lit = i >= 3 - lv;
+            const shade = i === 1 ? "radial-gradient(circle 15px at 22px 13px, #0B0704 97%, transparent 100%)," : i === 2 ? "radial-gradient(circle 17px at 20px 13px, #0B0704 97%, transparent 100%)," : "";
+            return {
+              wrap: "position:relative;width:26px;height:26px;flex:none",
+              dark: "position:absolute;inset:2px;border-radius:50%;background:radial-gradient(circle at 45% 40%, rgba(58,52,38,.5), rgba(8,6,3,.94) 72%);border:1px solid rgba(216,200,168,.13)",
+              // on a board loss all three are drawn and the spent one gutters out in place. on a WIPE
+              // the moon is already dark when the screen opens (the nmBeat veil covered that), so the
+              // arc reverses: the three relight one after another under "the three are lit again",
+              // which is the mercy the wipe screen was stating in words and not showing.
+              litOn: wiped ? true : (lit || i === spent),
+              lit: "position:absolute;inset:0;border-radius:50%;background:" + shade + "radial-gradient(circle at 42% 36%, #FFF8E2 0%, #EFDDAE 45%, #C9B382 78%, rgba(120,104,64,.6) 100%);box-shadow:0 0 12px rgba(240,216,154,.55), 0 0 30px rgba(240,216,154,.2)"
+                + (wiped ? ";opacity:0;animation:mzRelight 1.5s ease " + (3.1 + i * .4).toFixed(2) + "s both"
+                  : i === spent ? ";animation:mzGutter 2.1s ease .7s both" : ";opacity:.9"),
+            };
+          }),
+          rlLostLine: wiped
+            ? (held === 0 ? "nothing had been taken yet." : W[held] + (held === 1 ? " station" : " stations") + ", given back to the road.")
+            : (lv === 1 ? "one light still stands." : W[lv] + " lights still stand."),
+          rlBackLine: wiped ? "the three are lit again. the first walker is waiting." : "",
+          // what the road takes back, draining from the top of the climb down to the foot
+          // the stations drain from the top of the climb down to the foot, and STAY burnt orange:
+          // the road remembers where you fell, which is the whole point of the mark
+          rlStrip: !wiped ? [] : Array.from({ length: 9 }, (_, i) => ({
+            style: "width:9px;height:9px;transform:rotate(45deg);flex:none;border-radius:1px;"
+              + (i < held ? "background:#B4531E;border:1px solid rgba(232,140,80,.5);animation:mzDrain 1.6s ease " + (1.5 + (held - 1 - i) * .15).toFixed(2) + "s both;" : "background:rgba(216,200,168,.07);border:1px solid rgba(216,200,168,.14);")
+          })),
+        };
+      })()),
       nmVeilOn: !!st.nmBeat,
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       ...((() => { // the avatar speaks at the door (won: it yields; lost: it holds)
         const avV = (st.roadBoss && (st.phase === "won" || st.phase === "lost" || st.phase === "roadlost")) ? this._avVoice(this._tonight()) : null;
-        if (!avV) return { avVoiceOn: false, avVoice: "", avVoiceC: "#C3B27E" };
+        if (!avV) return { avVoiceOn: false, avVoice: "", avVoiceC: "#C3B27E", avEndOn: false, avEndPaths: [], avEndStarOn: false, avEndFigStyle: "", avEndStarPos: "", avEndStarStyle: "", avEndGlow: "transparent" };
         const won = st.phase === "won";
         const avF2 = this._avFig(this._tonight());
         // FIRST LIGHT (beside the ladder, 29 aug decision): the first win over a mansion on the night
@@ -9646,7 +10693,24 @@ class Component extends DCLogic {
         }
         // 4C (in, 29 aug decision): ascension opens the station's reading in the shard app
         const ascOn = won && this._mlvl(this._tonight()) >= 4;
-        return { avVoiceOn: true, avVoice: won ? avV.yield : avV.hold, avVoiceC: avF2 ? avF2.star : "#C3B27E",
+        // THE ANIMAL ACKNOWLEDGES YOU (1 sep 2026, user's pick for the mansion payoff). Its words
+        // were already here — avV.yield on a win, avV.hold on a loss — but only as italic text; the
+        // body that says them was never drawn on this screen. Now the avatar stands beside the
+        // reading: on a win it bows and settles (mzYield) with its star bright; on a loss it holds,
+        // unmoved and cooled, which is the same figure doing the opposite thing.
+        return {
+        avEndOn: !!avF2, avEndPaths: avF2 ? avF2.p : [],
+        avEndFigStyle: avF2 ? (won
+          // mzBow, not mzYield: a defeated walker fades as it steps aside, but the mansion's animal
+          // acknowledging you must HOLD at full presence — this is the game's biggest payoff and the
+          // figure ending at .46 opacity read as the avatar losing interest.
+          ? "position:absolute;inset:0;width:100%;height:100%;display:block;transform-origin:50% 100%;animation:mzBow 3.2s cubic-bezier(.3,.75,.3,1) .5s both"
+          : "position:absolute;inset:0;width:100%;height:100%;display:block;filter:grayscale(.5) brightness(.72);animation:mzFadeUp 1.6s ease .5s both") : "",
+        avEndStarOn: !!avF2, avEndStarPos: avF2 ? "transform:translate(" + avF2.starX + "px," + avF2.starY + "px)" : "",
+        avEndStarF: avF2 ? (avF2.starF || avF2.star) : "", avEndStarS: avF2 ? (avF2.starS || "none") : "none",
+        avEndStarStyle: won ? "animation:mzShimmer 2.2s ease-in-out .8s infinite" : "animation:mzBreathe 4.4s ease-in-out infinite",
+        avEndGlow: avF2 ? (won ? (avF2.glow || "rgba(255,176,0,.3)") : "rgba(216,200,168,.08)") : "transparent",
+        avVoiceOn: true, avVoice: won ? avV.yield : avV.hold, avVoiceC: avF2 ? avF2.star : "#C3B27E",
           flOn, flLine: "first light: the " + this._mName(this._tonight()) + " knows you now. its true name stands open on the face.",
           ascOn, ascLine: "ascended: the " + this._mName(this._tonight()) + "'s reading opens in the star shard." };
       })()),

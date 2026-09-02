@@ -217,10 +217,49 @@ function mkGame(cfg) {
 // suzaku's reach) firing as it normally would — that's card behavior inside the strike, not law
 // behavior, and needs no special-casing. Structured as a map, per the work order's own template, so
 // the other 25 mansions' station laws can land as entries here.
+//   - 12, "turn" (31 aug measured, shipped 2 sep): station 0. Whatever LODGES there turns the next
+//     station to face the other way — its l/r swap and stay swapped for the rest of the board,
+//     applied BEFORE the strike queue so the turned faces are the ones that fight. A swap conserves
+//     both faces exactly, which is why it moves no totals; the nine symmetric cards (the 6/6s and
+//     7/7s) are provably immune, so the sweep finds nothing to turn. Not a strike: no comparison,
+//     no take, no chain.
+//   - 19, "plant" (2 sep, measurement's 1a', `plantOnTake`): station 4. A slot at the law station
+//     that has ALREADY changed hands is untakeable for the rest of the board, both sides. The
+//     conditional IS the law: the opening lodge never roots (a leader cannot plant by arriving
+//     first, only by taking back). `by !== owner` is that test — the same one the shell law and the
+//     genbu grant already use. The unconditional form (measurement's 1a, "any card here is safe")
+//     FAILED (+20.2 fresh seat, spread +37.6) and must never ship; the client shipped it by
+//     accident on 2 Sep, testing `t.by` alone, and was corrected the same day.
+//   - 21, "hush": station 4. While the law station is FILLED, the station on either side of it
+//     counts for nobody, both sides, until the board ends. A count-path law only: nothing about
+//     striking or taking changes, and the hushed pair are silenced exactly the way the empty
+//     district silences its neighbours (the same `sil` map in ctxOf).
+//   - 23, "reson": station 4. A strike whose origin OR target is the law station carries one
+//     further — from the victim, one extra hop, not recursive. Fires only on a strike that actually
+//     took (it sits in the post-flip success block, beside mars/turning), same as the client.
+//   - 26, "guest" (2 sep, measurement's `guestStrip`): station 0. Whatever lodges in the doorway is
+//     a guest under this roof and loses its OWN quarter's grant while it stands there — whoever
+//     played it. Strip only, never granted the other way (`guestBoth` widened the board and is
+//     dead). The client's own conformance covers the byakko hold ALONE, by Design's explicit scope
+//     note; this engine strips all four, per the same note's "the engine should strip all four
+//     quadrant grants at that station": byakko's ground-hold (shielded), suzaku's two-station reach
+//     (resolve's lodge-time push), genbu's empty shell (slotW), and seiryuu's either-way face (the
+//     rev choice is refused at lodge). That is a KNOWN, deliberate client/engine divergence on the
+//     other three, not drift — flag it if a `gueststrip.js` acceptance ever lands, since
+//     research/gueststrip.js was named as the acceptance but did not ship with the 2 Sep delivery.
+//   - 28, "rope": station 4. What lodges there hauls one enemy card beside it onto the rope: the
+//     first neighbour (checked -1 then +1) owned by the other side changes hands outright. No
+//     comparison, no faces, no deny rules — it is not a strike, so shielded() never runs.
 const LAW_AT = {
-  18: { kind: "beat", station: 0 },
-  25: { kind: "shell", station: 4 },
   10: { kind: "reach", station: 0 },
+  12: { kind: "turn", station: 0 },
+  18: { kind: "beat", station: 0 },
+  19: { kind: "plant", station: 4 },
+  21: { kind: "hush", station: 4 },
+  23: { kind: "reson", station: 4 },
+  25: { kind: "shell", station: 4 },
+  26: { kind: "guest", station: 0 },
+  28: { kind: "rope", station: 4 },
 };
 function lawAt(m) { return LAW_AT[m] || null; }
 
@@ -253,9 +292,16 @@ function faceOf(g, slots, i, dir) {
 function shielded(g, slots, ti) {
   const t = slots[ti]; if (!t) return true;
   const tC = g.C[t.id];
+  const law = lawAt(g.tonight);
+  // the chamber's law (mansion 26): a card standing in the doorway is a guest and loses its own
+  // quarter's grant, so the tiger's ground-hold is off at exactly that station.
+  const guestSt = !!(law && law.kind === "guest" && ti === law.station);
   if (t.spent || t.crowned) return true;
-  if (tC.grantOn && tC.quad === "byakko") return true; // white tiger's grant: the ground holds
+  if (!guestSt && tC.grantOn && tC.quad === "byakko") return true; // white tiger's grant: the ground holds
   if (tC.ab === "saturn") return true;
+  // the root's law (mansion 19): what has already changed hands at the road's middle takes root.
+  // `by !== owner` is the has-it-changed-hands test — `by` is set at lodge and never moves.
+  if (law && law.kind === "plant" && ti === law.station && t.by && t.by !== t.owner) return true;
   if (tC.ab === "gathered" && on(g, tC)) {
     const own = t.ground || t.owner;
     for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) return true; }
@@ -286,6 +332,14 @@ function tryFlip(g, slots, ai, ti, dir, printed) {
 
 function lodge(g, slotsIn, cardId, i, rev, side) {
   const c = g.C[cardId], own = side || c.who, sigs = [];
+  // the chamber's law (mansion 26) strips SEIRYUU's grant at the doorway: the either-way face is a
+  // grant, so a guest cannot choose which way round it stands. Only the grant is refused — mercury
+  // carries twoFaced as its own ability and keeps it, since the law takes quarters' grants, not
+  // cards' signatures.
+  {
+    const law0 = lawAt(g.tonight);
+    if (law0 && law0.kind === "guest" && i === law0.station && c.grantOn && c.quad === "seiryuu") rev = false;
+  }
   const slots = slotsIn.slice().map(x => x ? Object.assign({}, x, { age: (x.age || 0) + 1 }) : x);
   const first = !slotsIn.some(x => x && x.owner === own);
   slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, by: own, age: 0, first };
@@ -364,8 +418,20 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
     seq.push({ from: xi, to: xi, dir: 1, miss: true, sig: "the return strikes again." });
     for (const d of [-1, 1]) { const k = nb(g, xi, d); if (k >= 0) queue.push({ from: xi, to: k, dir: d }); }
   });
-  queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
   const law = lawAt(g.tonight);
+  // the turning's law (mansion 12, station 0): whatever lodges at the door turns the NEXT station to
+  // face the other way — l and r swap and stay swapped. Inserted BEFORE the near-strike push so the
+  // turned faces are the ones that fight. A symmetric card (l === r) refuses: the sweep happens and
+  // finds nothing, which is a real beat in the client and a no-op here.
+  if (law && law.kind === "turn" && i === law.station) {
+    const kt = nb(g, i, 1);
+    if (kt >= 0 && slots[kt] && slots[kt].l !== slots[kt].r) {
+      const n = slots[kt];
+      slots[kt] = Object.assign({}, n, { l: n.r, r: n.l });
+      seq.push({ from: i, to: kt, dir: 1, miss: true, turn: true, sig: "the turn: the next station faces the other way." });
+    }
+  }
+  queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
   // the throne's law (mansion 10, station 0): lodging there also strikes two stations away, printed
   // faces, crossing an empty middle — see the LAW_AT comment above for the lodge-time-only scope.
   if (law && law.kind === "reach" && i === law.station) {
@@ -373,6 +439,29 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
       const far = i + 2 * d;
       if (far >= 0 && far < slots.length) queue.push({ from: i, to: far, dir: d, printed: true, sig: "the throne's law: the strike carries to the far station, as printed." });
     });
+  }
+  // THE VERMILION BIRD'S GRANT, realigned 2 sep 2026 with the client's 31 aug staging-audit fix.
+  // It used to sit in the post-flip success block below, so it struck FROM THE VICTIM's slot, only
+  // after a near strike had already landed, and carried no `printed` flag — three faults from one
+  // bug. It is a lodge-time strike from the granted card's own position with printed faces, in both
+  // directions, exactly like the throne's law above. Stripped at a guest station (mansion 26).
+  if (me.grantOn && me.quad === "suzaku" && !(law && law.kind === "guest" && i === law.station)) {
+    [-1, 1].forEach(d => {
+      const far = i + 2 * d;
+      if (far >= 0 && far < slots.length) queue.push({ from: i, to: far, dir: d, printed: true, sig: "the vermilion bird's strike carries two stations, as printed." });
+    });
+  }
+  // the well-rope (mansion 28, station 4): what lodges there hauls one enemy card beside it onto the
+  // rope and it changes hands outright. Not a strike — no faces are compared, so no deny rule runs.
+  if (law && law.kind === "rope" && i === law.station) {
+    for (const d of [-1, 1]) {
+      const k = nb(g, i, d);
+      if (k >= 0 && slots[k] && slots[k].owner !== own) {
+        slots[k] = Object.assign({}, slots[k], { owner: own });
+        seq.push({ from: i, to: k, dir: d, owner: own, sig: "the rope hauls it in." });
+        break;
+      }
+    }
   }
   const opp = slots.length - 1 - i;
   if (on(g, me) && me.ab === "glance" && opp !== i) queue.push({ from: i, to: opp, dir: opp > i ? 1 : -1, sig: "the glance strikes across the road." });
@@ -422,9 +511,13 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
         break;
       }
     }
+    // the drum's law (mansion 23): a strike whose origin OR target is the resonant station carries
+    // one further — from the victim, one extra hop, not recursive.
+    if (law && law.kind === "reson" && (to === law.station || from === law.station)) {
+      const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, reson: true, sig: "the hour-drum rings: the beat carries onward." });
+    }
     if (fromAb === "mars") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "mars carries the strike onward." }); }
     if (on(g, fromC) && fromAb === "turning") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the turning carries onward." }); }
-    if (fromC.grantOn && fromC.quad === "suzaku") { const far = nb(g, to, dir); if (far >= 0) queue.push({ from: to, to: far, dir, sig: "the vermilion bird's strike carries two stations." }); }
   }
   if (on(g, me) && me.ab === "return" && slots[i] && !seq.some(x => x.from === i && !x.miss)) {
     slots[i] = Object.assign({}, slots[i], { reArm: true });
@@ -439,8 +532,10 @@ function slotW(g, slots, i, ctx) {
   const s = slots[i];
   if (!s) return { who: null, w: 0, silent: !!(ctx && ctx.sil && ctx.sil[i]) };
   const c0 = g.C[s.id];
-  if (c0.grantOn && c0.quad === "genbu" && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true }; // black tortoise's grant
   const law = lawAt(g.tonight);
+  const guestSt = !!(law && law.kind === "guest" && i === law.station);
+  // the chamber's law strips genbu's grant at the doorway the same way it strips the tiger's
+  if (!guestSt && c0.grantOn && c0.quad === "genbu" && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true }; // black tortoise's grant
   // the hideaway's law (mansion 25): the same "empty shell" test as the genbu grant above, just
   // keyed to the law's fixed station instead of a specific card's grant — see the LAW_AT comment.
   if (law && law.kind === "shell" && i === law.station && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true };
@@ -473,6 +568,13 @@ function slotW(g, slots, i, ctx) {
 
 function ctxOf(g, slots) {
   const sil = {}, guide = {};
+  // the quiet middle (mansion 21): whatever lodges at the law station quiets the station on either
+  // side of it, both sides, until the board ends. Folded into the district's own `sil` map so the
+  // count path itself is unchanged — the hush is a silencing, not a new kind of nothing.
+  const law = lawAt(g.tonight);
+  if (law && law.kind === "hush" && slots[law.station]) {
+    for (const k of [law.station - 1, law.station + 1]) if (k >= 0 && k < slots.length) sil[k] = true;
+  }
   slots.forEach((s, i) => {
     if (!s) return;
     const c = g.C[s.id]; if (!on(g, c)) return;
@@ -1363,6 +1465,225 @@ if (require.main === module) {
       slots[2] = { id: 107, l: 3, r: 3, owner: "sky", by: "sky", age: 1 };
       const rr = E.resolve(g, slots, 106, 0, false, "you");
       return rr.slots[2].owner === "sky"; // untouched: no law active tonight, so no reach
+    }, true],
+    // THE TURNING'S LAW (2 sep 2026, WHATS-NEW.md §1) — mansion 12, station 0. A lodge at the door
+    // swaps the NEXT station's two faces, permanently, before the strike queue runs.
+    ["the turning's law: a lodge at the door turns the next station's faces (mansion 12, station 0)", () => {
+      const g = E.mkGame({ tonight: 12 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[1] = { id: 101, l: 2, r: 8, owner: "sky", by: "sky", age: 1 }; // saturn: locked, so it cannot be taken and its faces are all we read
+      const rr = E.resolve(g, slots, 107, 0, false, "you");
+      return rr.slots[1].l === 8 && rr.slots[1].r === 2;
+    }, true],
+    ["the turning's law: the turn happens BEFORE the strike, so the turned face is the one that fights", () => {
+      const g = E.mkGame({ tonight: 12 });
+      const slots = Array.from({ length: 9 }, () => null);
+      // station 1 defends leftward with its `l`. Printed l=9 would hold off the moon's r=6; turned,
+      // l becomes 2 and the strike lands. If the turn ran after the strike, this slot stays sky's.
+      slots[1] = { id: 106, l: 9, r: 2, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 107, 0, false, "you"); // moon 6/6
+      return rr.slots[1].owner === "you";
+    }, true],
+    ["the turning's law: a symmetric card refuses the turn (nine cards are provably immune)", () => {
+      const g = E.mkGame({ tonight: 12 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[1] = { id: 101, l: 6, r: 6, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 107, 0, false, "you");
+      return rr.slots[1].l === 6 && rr.slots[1].r === 6 && !rr.seq.some(x => x.turn);
+    }, true],
+    ["the turning's law does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[1] = { id: 101, l: 2, r: 8, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 107, 0, false, "you");
+      return rr.slots[1].l === 2 && rr.slots[1].r === 8;
+    }, true],
+    // THE ROOT'S LAW (2 sep 2026, WHATS-NEW.md §2) — mansion 19, station 4, `plantOnTake`. Only a
+    // station that has ALREADY changed hands roots; the opening lodge never does. The unconditional
+    // form is measurement's 1a, which failed and must never ship.
+    ["the root's law: an opening lodge at the law station is still takeable (the leader cannot plant by arriving first)", () => {
+      const g = E.mkGame({ tonight: 19 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 107, l: 2, r: 2, owner: "sky", by: "sky", age: 1 }; // lodged by sky, never taken
+      const rr = E.resolve(g, slots, 106, 3, false, "you"); // sun 9/6: r=6 strikes station 4's l=2
+      return rr.slots[4].owner === "you";
+    }, true],
+    ["the root's law: a station that has changed hands cannot be taken back", () => {
+      const g = E.mkGame({ tonight: 19 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 107, l: 2, r: 2, owner: "you", by: "sky", age: 1 }; // by !== owner: it already changed hands
+      const rr = E.resolve(g, slots, 106, 3, false, "sky");
+      return rr.slots[4].owner === "you"; // rooted: sky cannot take it back
+    }, true],
+    ["the root's law does not root a neighbouring station", () => {
+      const g = E.mkGame({ tonight: 19 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[5] = { id: 107, l: 2, r: 2, owner: "you", by: "sky", age: 1 }; // changed hands, but not at station 4
+      const rr = E.resolve(g, slots, 106, 4, false, "sky"); // sun r=6 v station 5's l=2
+      return rr.slots[5].owner === "sky";
+    }, true],
+    ["the root's law does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 107, l: 2, r: 2, owner: "you", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 3, false, "sky");
+      return rr.slots[4].owner === "sky";
+    }, true],
+    // THE QUIET MIDDLE (mansion 21, station 4) — a count-path law: the two stations beside a filled
+    // law station count for nobody, both sides.
+    ["the hush: the two stations beside a filled law station count for nobody (mansion 21, station 4)", () => {
+      const g = E.mkGame({ tonight: 21 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 106, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 106, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 107, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      const [you, sky] = E.counts(g, slots);
+      return you === 1 && sky === 0; // only the law station itself counts; 3 and 5 are quiet
+    }, true],
+    ["the hush does nothing while the law station stands empty", () => {
+      const g = E.mkGame({ tonight: 21 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 106, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 107, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      const [you, sky] = E.counts(g, slots);
+      return you === 1 && sky === 1;
+    }, true],
+    ["the hush does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 106, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 106, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 107, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      const [you, sky] = E.counts(g, slots);
+      return you === 2 && sky === 1;
+    }, true],
+    // THE DRUM'S LAW (mansion 23, station 4) — a strike whose origin or target is the law station
+    // carries one further, from the victim. One extra hop, not recursive.
+    ["the drum's law: a strike landing ON the law station carries one further (mansion 23, station 4)", () => {
+      const g = E.mkGame({ tonight: 23 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 107, l: 2, r: 9, owner: "sky", by: "sky", age: 1 }; // taken, then its own r=9 carries on
+      slots[5] = { id: 107, l: 3, r: 3, owner: "sky", by: "sky", age: 1 }; // l=3 loses to the carried 9
+      const rr = E.resolve(g, slots, 106, 3, false, "you"); // sun r=6 v station 4's l=2
+      return rr.slots[4].owner === "you" && rr.slots[5].owner === "you";
+    }, true],
+    ["the drum's law is bounded: it carries while an endpoint is the law station, and stops the moment neither is", () => {
+      // The chain that actually occurs, and its floor: 3→4 lands ON the station, so it carries to 5;
+      // 4→5 comes FROM the station, so it carries to 6; 5→6 touches the station at neither end and
+      // is the last hop. Two carries, then it dies — matching the client's own `to === reson ||
+      // from === reson` test exactly, which is the thing this vector is pinning down.
+      const g = E.mkGame({ tonight: 23 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 107, l: 2, r: 9, owner: "sky", by: "sky", age: 1 };
+      slots[5] = { id: 107, l: 3, r: 9, owner: "sky", by: "sky", age: 1 };
+      slots[6] = { id: 107, l: 3, r: 9, owner: "sky", by: "sky", age: 1 };
+      slots[7] = { id: 107, l: 3, r: 3, owner: "sky", by: "sky", age: 1 }; // would fall too if it carried a third time
+      const rr = E.resolve(g, slots, 106, 3, false, "you");
+      return [4, 5, 6].every(k => rr.slots[k].owner === "you") && rr.slots[7].owner === "sky";
+    }, true],
+    ["the drum's law does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 107, l: 2, r: 9, owner: "sky", by: "sky", age: 1 };
+      slots[5] = { id: 107, l: 3, r: 3, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 3, false, "you");
+      return rr.slots[4].owner === "you" && rr.slots[5].owner === "sky";
+    }, true],
+    // THE WELL-ROPE (mansion 28, station 4) — what lodges there hauls one enemy neighbour in. Not a
+    // strike: no faces are compared, so the deny rules never run.
+    ["the rope: a lodge at the law station hauls one enemy neighbour in (mansion 28, station 4)", () => {
+      const g = E.mkGame({ tonight: 28 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 107, l: 9, r: 9, owner: "sky", by: "sky", age: 1 }; // unbeatable by faces; the rope takes it anyway
+      const rr = E.resolve(g, slots, 107, 4, false, "you");
+      return rr.slots[3].owner === "you";
+    }, true],
+    ["the rope hauls exactly ONE neighbour, checking -1 before +1", () => {
+      const g = E.mkGame({ tonight: 28 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 101, l: 9, r: 9, owner: "sky", by: "sky", age: 1 }; // saturn: locked to strikes, hauled regardless
+      slots[5] = { id: 101, l: 9, r: 9, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 107, 4, false, "you");
+      return rr.slots[3].owner === "you" && rr.slots[5].owner === "sky";
+    }, true],
+    ["the rope leaves a friendly neighbour alone", () => {
+      const g = E.mkGame({ tonight: 28 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 107, l: 9, r: 9, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 107, l: 9, r: 9, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 107, 4, false, "you");
+      return rr.slots[3].owner === "you" && rr.slots[5].owner === "you"; // the friendly one skipped, the enemy hauled
+    }, true],
+    ["the rope does NOT fire on a different mansion's night", () => {
+      const g = E.mkGame({ tonight: 5 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 107, l: 9, r: 9, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 107, 4, false, "you");
+      return rr.slots[3].owner === "sky";
+    }, true],
+    // GUEST-RIGHT (mansion 26, station 0) — the doorway strips its occupant's OWN quarter's grant.
+    // All four, per the delivery's own engine-conformance note; the client strips byakko alone.
+    ["guest-right strips byakko's ground-hold at the doorway (mansion 26, station 0)", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 26, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      // card 5 (blaze) is byakko and carries no deny rule of its own, so the tiger's grant is the
+      // only thing that could hold this ground — card 1's gate would turn the first strike aside
+      // and mask the result.
+      slots[0] = { id: 5, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 1, false, "you"); // sun l=9 strikes leftward into station 0
+      return g.C[5].grantOn === true && rr.slots[0].owner === "you";
+    }, true],
+    ["guest-right does not strip byakko's hold at any other station", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 26, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[2] = { id: 5, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 1, false, "you");
+      return rr.slots[2].owner === "sky";
+    }, true],
+    ["guest-right strips genbu's empty shell at the doorway", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 26, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      // card 22 (listener) is genbu and, standing alone with no neighbour, adds nothing of its own,
+      // so its plain weight of 1 is a clean read on whether the shell swallowed it.
+      slots[0] = { id: 22, l: 5, r: 5, owner: "you", by: "sky", age: 1 }; // it has changed hands
+      const [you, sky] = E.counts(g, slots);
+      return g.C[22].grantOn === true && you === 1 && sky === 0; // it counts, instead of counting for nobody
+    }, true],
+    ["guest-right strips suzaku's two-station reach when the bird lodges in the doorway", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 26, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[2] = { id: 107, l: 1, r: 1, owner: "sky", by: "sky", age: 1 }; // two stations away: only the reach could touch it
+      const rr = E.resolve(g, slots, 7, 0, false, "you"); // card 7 is suzaku
+      return g.C[7].grantOn === true && rr.slots[2].owner === "sky";
+    }, true],
+    ["suzaku's reach still fires from any other station, at lodge time, with printed faces", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 26, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 107, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 7, 1, false, "you");
+      return rr.slots[3].owner === "you";
+    }, true],
+    ["guest-right strips seiryuu's either-way face: a guest cannot choose which way round it stands", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 26, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      const c = g.C[14]; // card 14 is seiryuu, and twoFaced comes from its grant
+      const rr = E.resolve(g, slots, 14, 0, true, "you"); // asks to stand reversed
+      const other = E.resolve(g, slots, 14, 1, true, "you"); // the same ask, one station along
+      return c.twoFaced === true && rr.slots[0].l === c.l && other.slots[1].l === c.r;
+    }, true],
+    ["guest-right does NOT fire on a different mansion's night", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 5, levels, grants: "all" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[0] = { id: 5, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 1, false, "you");
+      return rr.slots[0].owner === "sky"; // the tiger's ground still holds
     }, true],
   ];
   let fails = 0;

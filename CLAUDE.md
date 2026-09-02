@@ -514,6 +514,89 @@ collections against a claimed ~90%). Gaps are now 5-15 points, not
 plays noticeably easier at 9-14 awake than the report expects (that
 tier's the flattest relative to its neighbor in this engine's numbers).
 
+**The 2 Sep 2026 delivery: three more levels and laws (the turning m12, the
+root m19, the chamber m26), `_horizon()`, and the first delivery that
+needed nothing re-ported.** Design shipped a clean `send-to-code/` folder
+(WHATS-NEW.md + WHATS-NEW-01SEP.md + two memos + a work order + the file),
+carrying two undelivered rounds at once: the 1 Sep road-seam/pacing pass
+(nothing auto-advances, the walker-defeat beat, `_roundDwell`/`_armRound`,
+the mansion intro on the climbed road, `_advanceRound`'s `k >= 8` branch)
+and the 2 Sep levels. Verified by measurement, not by trust: 231 methods
+against the deployed file's 226, **zero Code methods missing**, 52
+differing bodies all named in Design's own contested-method tables, one
+documented `renderVals` key removed (`pipsInPlate`, template consumer
+gone with it), and every one of the fourteen items on
+`docs/MANZIL-CODE-OWNED-BEHAVIORS.md` present. Adopted whole. Three Code
+corrections went in on top of it:
+
+1. **The root's law was shipping measurement's REJECTED form.** The
+   delivered `_shielded` line tested `t.by` alone, with a comment claiming
+   "an opening lodge has no `by`" — but `_lodge` writes `by: own` on every
+   card it places and its own comment says `by` never changes hands (it
+   exists so a captured tortoise can't be called home by its captor). So
+   the condition was truthy for every occupied slot: unconditional denial
+   at station 4, which is `plantAt`/1a — the form measured at +20.2 fresh
+   seat and spread +37.6, that the work order says must never ship.
+   `plantOnTake` never fired at all. Corrected to `t.by && t.by !== t.owner`,
+   the same has-it-changed-hands test the shell law and the genbu grant
+   already use in `_slotW`; `rtRootStyle`'s `rooted` tell had the identical
+   fault and the identical fix. **Lesson for the next law that gates on a
+   slot field: check what actually writes the field before trusting the
+   comment beside the read.**
+2. **The 1 Sep SVG console-error sweep didn't close — and the wrong advice
+   was Code's.** `NOTE-TO-DESIGN-01SEP.md` told Design "`path.d` bindings
+   are fine"; they are not, a mustache in `d` is as invalid to the
+   pre-hydration SVG parse as one in `rect x`. The 66 errors became 39
+   (`{{ bz.d }}`) rather than zero. Fixed by moving the brazier box inside
+   the `<g style="{{ bz.gs }}">` that already wrapped its two flame circles
+   and giving it the static `d="M-4 4h8v12h-8Z"` (absolute corner
+   `(x-4, y-4)` is local `(-4, 4)` against that translate — no visual
+   change). **The standing rule, corrected: a bound geometry attribute is
+   never safe. Use a `style` transform on a wrapping `<g>` with the element
+   at 0,0, or a static attribute.**
+3. Design's own `mw`/`ms` shadowing flag closed — the two scene-local `mw`s
+   renamed `rpMw`/`gdMw` so `renderVals`' board-wins `mw` is unambiguous.
+
+**All nine station laws are now ported into
+`research/manzil-engine-current.cjs` — including three that had been
+client-only since they shipped.** `LAW_AT` had three entries (beat/shell/
+reach) against the client's six, so the rope (m28), the drum (m23) and the
+hush (m21) had never reached the module; those three went in alongside this
+delivery's turn (m12, `resolve()` before the near-strike push), plant (m19,
+`shielded()`) and guest (m26). `LAW_AT` is now nine entries matching
+`_bossRule`/`_lawSt` exactly. 25 new acceptance vectors, **68/68 pass**.
+Three notes that matter for anyone simulating against it:
+- **`guest` strips all four quadrant grants** per the delivery's own engine
+  -conformance note — byakko in `shielded`, genbu in `slotW`, suzaku at the
+  lodge push, seiryuu by refusing the `rev` choice in `lodge` (mercury keeps
+  its intrinsic `twoFaced`: a signature, not a grant). **The client strips
+  byakko alone**, which Design scoped deliberately, so this is a KNOWN
+  divergence on three grants, not drift. `research/gueststrip.js` was named
+  as the acceptance but did not ship with the delivery.
+- **The drum's law carries TWICE, not once** — `to === reson || from === reson`
+  means a strike landing on the station carries to the next, and that strike
+  originates at the station so it carries once more; the third hop touches
+  neither end and stops. A vector pins that floor. Same in the client;
+  flagged to Measurement in case two carries is not what was measured.
+- **Suzaku's grant was realigned with the client's 31 Aug staging-audit fix
+  while porting.** The module still had the pre-fix form: struck from the
+  VICTIM's slot, only after a near strike had landed, no `printed` flag. Now
+  lodge-time, from the granted card's own position, printed faces, both
+  directions. **Any sim run against this module before 2 Sep under-counted
+  the bird.**
+
+The engine still does not model `_boardOff`'s road-window slide (out of
+scope by its own header), so m19/21/23/25/28's law stations are hardcoded
+at their index rather than derived — correct for the laws, silent on the
+window. **The server lib (`starshard-api/lib/manzil-engine.js`/
+`manzil-lobby.js`) is untouched and still diverges in two named ways: it
+passes `tieRule: 'a draw'` (not "the defender"), and it assigns board one's
+leader by coin flip then ALTERNATES each round, where the single-player
+road is loser-leads.** Both are real, both are on the record now
+(`docs/NOTE-TO-DESIGN-02SEP.md` §4), neither is fixed.
+
+`test/fuzz-manzil.mjs` covers all nine built levels cold now, up from six.
+
 Star Shard v4 moved off the
 root to `/star-shard/` — `star-shard/index.html` is a hand-maintained
 copy of `Star Shard v4.dc.html` with every root-relative reference
