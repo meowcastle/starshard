@@ -261,6 +261,13 @@ const forgotPasswordLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
 });
+const verifyEmailLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
 const resetPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
@@ -347,6 +354,11 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
     await conn.commit();
     setSessionCookie(res, result.insertId, 0, normalizedUsername);
     res.status(201).json({ email: normalizedEmail, username: normalizedUsername });
+    // W6, 2 sep 2026: fire-and-forget, AFTER commit and after the response. A mail
+    // failure must never fail a signup or hold the response open — the account is
+    // already real and playable, and /api/auth/resend-verification exists precisely
+    // so a lost mail is recoverable. Deliberately not awaited.
+    sendVerificationEmail(result.insertId, normalizedEmail).catch(() => {});
   } catch (e) {
     await conn.rollback();
     if (e && e.code === 'ER_DUP_ENTRY') {
@@ -416,6 +428,19 @@ app.post('/api/auth/forgot-password', forgotPasswordLimiter, wrap(async (req, re
   const user = rows[0];
 
   if (user) {
+    // RETENTION (2 sep 2026): reset rows were never deleted — not on expiry, not on
+    // use, not ever — so the table grew without bound and kept a per-user audit trail
+    // of every reset anyone ever asked for, indefinitely. Nothing reads a spent or
+    // expired row (verify-reset-token requires used_at IS NULL and expires_at in the
+    // future), so keeping them served no purpose and contradicted "store inputs,
+    // derive everything else". Clearing this user's dead rows on each new request is
+    // the cheap sweep: it needs no scheduler, and the only account that accumulates
+    // rows is one actively asking for resets. See also the interval sweep at startup,
+    // which catches accounts that asked once and never came back.
+    await pool.execute(
+      'DELETE FROM password_resets WHERE user_id = ? AND (used_at IS NOT NULL OR expires_at < NOW())',
+      [user.id]
+    );
     const token = crypto.randomBytes(32).toString('hex');
     const tokenHash = hashToken(token);
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
@@ -493,10 +518,70 @@ app.get('/api/me', wrap(async (req, res) => {
   } catch (e) {
     return res.status(401).json({ error: 'not_authenticated' });
   }
-  const [rows] = await pool.execute('SELECT email, username, token_version FROM users WHERE id = ?', [payload.uid]);
+  const [rows] = await pool.execute('SELECT email, username, token_version, email_verified FROM users WHERE id = ?', [payload.uid]);
   const user = rows[0];
   if (!user || user.token_version !== payload.tv) return res.status(401).json({ error: 'not_authenticated' });
-  res.json({ email: user.email, username: user.username });
+  res.json({ email: user.email, username: user.username, emailVerified: !!user.email_verified });
+}));
+
+// EMAIL VERIFICATION (W6, 2 sep 2026). Deliberately NOT a gate: an unverified
+// account plays Manzil, keeps a chart and holds progress exactly as before. What
+// verification buys is that password reset can actually reach the person, and that
+// a typo'd address is discoverable instead of silently orphaning the account. Gating
+// play on a confirmation click would cost a phone-first, largely teenage funnel far
+// more than it buys, and neither GDPR nor App Store review asks for it. If a future
+// feature does need a confirmed address (billing, say), gate THAT feature, not entry.
+async function sendVerificationEmail(userId, email) {
+  if (!resend) return;
+  await pool.execute(
+    'DELETE FROM email_verifications WHERE user_id = ? AND (used_at IS NOT NULL OR expires_at < NOW())',
+    [userId]
+  );
+  const token = crypto.randomBytes(32).toString('hex');
+  await pool.execute(
+    'INSERT INTO email_verifications (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
+    [userId, hashToken(token), new Date(Date.now() + 24 * 60 * 60 * 1000)]
+  );
+  // Fragment, not query string — same reasoning as the reset link: a fragment never
+  // reaches the server, so the token stays out of access logs and Referer headers.
+  const url = `${APP_URL}/#verifyEmail=${token}`;
+  try {
+    await resend.emails.send({
+      from: RESEND_FROM,
+      to: email,
+      subject: 'confirm your star shard email',
+      html: `<p>welcome to star shard.</p>` +
+        `<p><a href="${url}">confirm this email address</a> (the link works for 24 hours)</p>` +
+        `<p>you can keep playing either way — this only makes sure we can reach you if you ever forget your password.</p>` +
+        `<p>if you didn't make this account, you can ignore this email.</p>`,
+    });
+  } catch (e) {
+    console.error('resend verification send failed', e);
+  }
+}
+
+app.post('/api/auth/verify-email', verifyEmailLimiter, wrap(async (req, res) => {
+  const { token } = req.body || {};
+  if (typeof token !== 'string' || !token) return res.status(400).json({ error: 'invalid_input' });
+  const [rows] = await pool.execute(
+    'SELECT id, user_id FROM email_verifications WHERE token_hash = ? AND used_at IS NULL AND expires_at > NOW()',
+    [hashToken(token)]
+  );
+  const row = rows[0];
+  if (!row) return res.status(400).json({ error: 'invalid_or_expired_token' });
+  await pool.execute('UPDATE email_verifications SET used_at = NOW() WHERE id = ?', [row.id]);
+  await pool.execute('UPDATE users SET email_verified = 1 WHERE id = ?', [row.user_id]);
+  res.status(204).end();
+}));
+
+app.post('/api/auth/resend-verification', verifyEmailLimiter, requireAuth, wrap(async (req, res) => {
+  const [rows] = await pool.execute('SELECT email, email_verified FROM users WHERE id = ?', [req.userId]);
+  const user = rows[0];
+  if (!user) return res.status(401).json({ error: 'not_authenticated' });
+  // Already verified is a no-op, not an error: re-sending would mint a live token
+  // for an address that needs none, and the caller has nothing to do differently.
+  if (!user.email_verified) await sendVerificationEmail(req.userId, user.email);
+  res.status(204).end();
 }));
 
 // Exclusively the Star Shard opt-in path since the 24 Aug PM handoff —
@@ -562,9 +647,17 @@ app.get('/api/me/manzil-pack', requireAuth, wrap(async (req, res) => {
 // recollection is 1:many), and this endpoint runs once in a while for one
 // user, not on a hot path, so four small queries over one wide join is the
 // simpler and more honest shape here.
+// TWO USER-SCOPED TABLES ARE DELIBERATELY ABSENT HERE, and the invariant says to say
+// which and why rather than leave it ambiguous ("every user-scoped table cascades AND
+// appears in the export; one without the other is a bug"). `password_resets` and
+// `email_verifications` hold nothing but live single-use credentials: exporting one
+// would hand a working password-reset token to anyone who ever gets hold of the export
+// file, which is a security hole dressed as compliance. They carry no information about
+// the person beyond "a reset was requested", they are swept on expiry (see
+// sweepExpiredResets), and they cascade on delete. Absent on purpose, not overlooked.
 app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
   const [[user], [state], [deckRow], [sigilRow], [birthRow], [packRow], [progressRow], reports, blocks, recollection] = await Promise.all([
-    pool.execute('SELECT email, username, created_at FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
+    pool.execute('SELECT email, username, created_at, email_verified FROM users WHERE id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT state_json FROM window_state WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT deck_json FROM deck WHERE user_id = ?', [req.userId]).then(([r]) => r),
     pool.execute('SELECT sigil_json FROM sigil WHERE user_id = ?', [req.userId]).then(([r]) => r),
@@ -601,6 +694,7 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
   res.json({
     email: user.email,
     username: user.username,
+    emailVerified: !!user.email_verified,
     accountCreatedAt: user.created_at,
     windowState: state ? parseOr(state.state_json, null) : null,
     deck: deckRow ? parseOr(deckRow.deck_json, null) : null,
@@ -954,6 +1048,31 @@ const io = new SocketIOServer(httpServer, {
   path: '/socket.io',
 });
 createManzilLobby(io, { jwtSecret: JWT_SECRET, pool });
+
+// RETENTION SWEEP (2 sep 2026). The per-user delete in /api/auth/forgot-password
+// only reaches accounts that come back and ask again; this catches the rest. Hourly,
+// and once shortly after boot so a restart is itself a sweep. Deliberately the only
+// scheduled job in this process: everything else here is derived on read, so there is
+// nothing else with a retention clock. Errors are logged and swallowed — a failed
+// sweep must never take the API down, and the next tick retries anyway.
+const RESET_SWEEP_MS = 60 * 60 * 1000;
+async function sweepExpiredResets() {
+  try {
+    const [r] = await pool.execute(
+      'DELETE FROM password_resets WHERE used_at IS NOT NULL OR expires_at < NOW()'
+    );
+    const [v] = await pool.execute(
+      'DELETE FROM email_verifications WHERE used_at IS NOT NULL OR expires_at < NOW()'
+    );
+    if (r.affectedRows || v.affectedRows) {
+      console.log(`[starshard-api] swept ${r.affectedRows} password reset(s), ${v.affectedRows} verification token(s)`);
+    }
+  } catch (e) {
+    console.error('[starshard-api] password reset sweep failed', e);
+  }
+}
+setTimeout(sweepExpiredResets, 30 * 1000).unref();
+setInterval(sweepExpiredResets, RESET_SWEEP_MS).unref();
 
 httpServer.listen(PORT, '127.0.0.1', () => {
   console.log(`starshard-api listening on 127.0.0.1:${PORT} (http + socket.io)`);

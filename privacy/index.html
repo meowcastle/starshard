@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>privacy — star shard</title>
+<meta name="description" content="What Star Shard stores, why, who else sees it, and how to get a copy or delete it.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://starshard.net/privacy/">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#E4D7AE;--dim:#A2946C;--pale:#F2EAD6;--bg:#0A0603;--rule:rgba(240,216,154,.18);--warm:#F0D89A}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Karla',system-ui,sans-serif;font-size:15px;line-height:1.75}
+  main{max-width:680px;margin:0 auto;padding:48px 22px 90px}
+  h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:38px;line-height:1.15;color:var(--pale);margin:0 0 6px}
+  h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:23px;color:var(--pale);margin:38px 0 10px;padding-top:16px;border-top:1px solid var(--rule)}
+  h3{font-family:'Karla',sans-serif;font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--warm);margin:24px 0 6px}
+  p,li{color:var(--ink)}
+  a{color:var(--warm)}
+  .sub{color:var(--dim);font-size:13.5px;margin:0 0 4px}
+  .stamp{color:var(--dim);font-size:12.5px;margin:0 0 30px}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--rule)}
+  th{color:var(--warm);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--pale);background:rgba(240,216,154,.08);padding:1px 5px;border-radius:3px}
+  .box{border:1px solid var(--rule);border-left:2px solid var(--warm);padding:14px 16px;margin:20px 0;background:rgba(240,216,154,.04)}
+  .box p:first-child{margin-top:0}.box p:last-child{margin-bottom:0}
+  footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);color:var(--dim);font-size:12.5px}
+  ul{padding-left:20px}
+  @media (max-width:520px){h1{font-size:30px}main{padding:34px 18px 70px}table{font-size:12.5px}th,td{padding:7px 6px}}
+</style>
+</head>
+<body>
+<main>
+  <h1>privacy</h1>
+  <p class="sub">Star Shard &amp; Manzil</p>
+  <p class="stamp">Last updated 2 September 2026</p>
+
+  <p>This explains what we store, why we store it, who else can see it, and how to get a copy of it or delete it. It describes what the software actually does, not what we intend it to do.</p>
+
+  <div class="box">
+    <p><strong>The short version.</strong> To play Manzil you need an account, and an account needs an email address, a username, a password and your date of birth. Your birth date is used twice: once to check your age, and once to compute five numbers that decide which cards you start with. We do not sell anything to anyone, we run no advertising, and there is no analytics or tracking code anywhere in this product.</p>
+  </div>
+
+  <h2>Who we are</h2>
+  <p>Star Shard is run by Wreck Room. For anything on this page — a question, a copy of your data, a deletion, or a complaint — write to <a href="mailto:privacy@starshard.net">privacy@starshard.net</a>. We are the data controller for everything described below.</p>
+
+  <h2>What we store</h2>
+  <p>Two tiers, and the split is deliberate. Playing the game does <em>not</em> put your full birth details in our database; only asking for an astrological reading does.</p>
+
+  <h3>If you only play Manzil</h3>
+  <table>
+    <tr><th>What</th><th>Why</th></tr>
+    <tr><td>Email address</td><td>Signing in, and password reset</td></tr>
+    <tr><td>Username</td><td>Signing in, and what other players see</td></tr>
+    <tr><td>Password</td><td>Stored only as a bcrypt hash. We cannot read it</td></tr>
+    <tr><td><strong>Five numbers</strong> between 1 and 28, derived from your birth chart</td><td>They decide your starting cards. This is the <em>only</em> thing your birth details are turned into for the game</td></tr>
+    <tr><td>Your birth <strong>year</strong> only</td><td>The age check</td></tr>
+    <tr><td>Game progress — cards, levels, lives, which nights you have walked</td><td>So your save follows you between devices</td></tr>
+    <tr><td>Reports and blocks you file against other players</td><td>Keeping the multiplayer lobby usable</td></tr>
+  </table>
+  <p>We do <strong>not</strong> store your birth date, birth time, or birthplace for this. The five numbers are computed in your browser and only the numbers are sent. They are still personal data — they came from you and they are linked to your account — but a copy of our game database is not a pile of birth certificates, and that is the point of the split.</p>
+
+  <h3>If you ask for a Star Shard reading</h3>
+  <p>A reading needs the real chart, so this is stored separately and only once you ask for one: <strong>birth date, birth time (and whether you knew it), the place name, its latitude and longitude, and its time zone.</strong> Nothing else is added. Readings themselves are recomputed each time rather than stored.</p>
+
+  <h3>The guestbook</h3>
+  <p>If you sign the guestbook we store the name and message you type, and a one-way hash of your IP address. The hash exists to limit spam and to let us remove a flood of posts from one source. It is not linked to your account and we cannot turn it back into an IP address.</p>
+
+  <h2>What we do not do</h2>
+  <ul>
+    <li>We do not sell or rent your data, ever, to anyone.</li>
+    <li>We do not show advertising and we do not work with ad networks.</li>
+    <li>There is no analytics, no tracking pixel, and no third-party tracking code anywhere in this product. We have checked; there is none.</li>
+    <li>We do not build advertising profiles, and we make no automated decisions with legal effects about you.</li>
+    <li>We do not use your birth details for anything except the age check and the astrology the product is built to do.</li>
+  </ul>
+
+  <h2>Cookies</h2>
+  <p>One cookie, <code>starshard_session</code>. It keeps you signed in and it is the only one we set. There is no consent banner because there is nothing to consent to: it is strictly necessary for a service you asked for. Logging out clears it.</p>
+  <p>The game also uses your browser's local storage to keep a copy of your progress and your settings on your own device. That never leaves your device except as the progress we already sync to your account.</p>
+
+  <h2>Who else sees anything</h2>
+  <p>Very few, and we would rather name them than say "trusted partners".</p>
+  <table>
+    <tr><th>Who</th><th>What they see</th></tr>
+    <tr><td><strong>Resend</strong> (email delivery)</td><td>Your email address, when we send a password reset or a confirmation message</td></tr>
+    <tr><td><strong>Open-Meteo</strong> (place search)</td><td>If you type a birthplace, your browser asks their geocoding service directly. They see the place name you typed and your IP address. We do not send them your name, your birth date or your account</td></tr>
+    <tr><td><strong>Google Fonts</strong> and <strong>unpkg</strong></td><td>Your IP address and browser details, because the page loads fonts and code libraries from them on every visit. We are working on serving these ourselves</td></tr>
+  </table>
+  <p>Our servers are our own hardware, not a cloud host. If we are ever legally compelled to hand something over, or if the product changes hands, we will say so here before it happens where we are able to.</p>
+
+  <h2>How old you have to be</h2>
+  <p>At least <strong>13</strong>, and in some countries older, because several EU and EEA states set a higher age for consenting to online services on your own: 16 in Croatia, Germany, Hungary, Ireland, Luxembourg, the Netherlands, Poland, Romania, Slovakia and Slovenia; 15 in Czechia, France and Greece; 14 in Austria, Bulgaria, Cyprus, Italy, Lithuania and Spain.</p>
+  <p>We work out which number applies from your device's time zone, and we check your date of birth against it when you sign up. We are honest about the limits of that: a time zone is a guess, and a date of birth typed into a box is not proof. It is a reasonable effort, not an identity check. If you are below the age where you live, please do not make an account; if you believe a child has made one, write to us and we will delete it.</p>
+
+  <h2>How long we keep it</h2>
+  <table>
+    <tr><th>What</th><th>Kept for</th></tr>
+    <tr><td>Your account and everything attached to it</td><td>Until you delete it. Deletion is immediate and it cascades — nothing of yours is left behind</td></tr>
+    <tr><td>Password reset and email confirmation links</td><td>30 minutes and 24 hours. Spent and expired ones are deleted automatically, at least hourly</td></tr>
+    <tr><td>Guestbook posts</td><td>Until removed by us or by you asking</td></tr>
+    <tr><td>Server logs</td><td>Operational only, and short-lived. They are not used to profile anyone</td></tr>
+  </table>
+  <p>We store inputs and recompute everything else. Your readings, your chart interpretation and your transits are not kept in a table anywhere — they are worked out fresh each time from the few things above.</p>
+
+  <h2>Your rights</h2>
+  <p>If you are in the UK, EU or EEA, the UK GDPR and GDPR give you the right to see your data, correct it, delete it, take it elsewhere, restrict what we do with it, and object to it. We extend all of these to everyone, wherever you live, because drawing that line seemed worse than not drawing it.</p>
+  <p>Two of them are built into the product and you do not need to ask us:</p>
+  <ul>
+    <li><strong>A copy of everything.</strong> One download, machine-readable JSON, containing every field we hold about you. It deliberately leaves out reports other people have filed <em>about</em> you — your own export must not tell you who reported you.</li>
+    <li><strong>Deletion.</strong> Permanent and immediate. It asks for your password first, because it cannot be undone.</li>
+  </ul>
+  <p>For anything else — correction, restriction, objection, or a copy if the in-app route is not working for you — write to <a href="mailto:privacy@starshard.net">privacy@starshard.net</a>. We will answer within 30 days. If you are unhappy with how we handle it you can complain to your national data protection authority; in the UK that is the ICO.</p>
+  <p>Our lawful bases: <em>contract</em> for your account and your saves, because there is no game without them; <em>legal obligation</em> for the age check; and <em>legitimate interests</em> for keeping the multiplayer lobby free of abuse and the service free of spam.</p>
+
+  <h2>Where your data is</h2>
+  <p>Our servers are in the United States. If you are in the UK or EEA, that means your data is transferred there. Our email provider may also process it outside your country. Where a transfer needs a safeguard we rely on the UK and EU Standard Contractual Clauses.</p>
+
+  <h2>Changes</h2>
+  <p>If we change how any of this works we will change this page and move the date at the top. If a change is significant — new data, a new recipient, a new purpose — we will tell account holders directly rather than quietly editing the page.</p>
+
+  <footer>
+    <p><a href="/terms/">terms of service</a> · <a href="/">star shard</a></p>
+    <p>Questions: <a href="mailto:privacy@starshard.net">privacy@starshard.net</a></p>
+  </footer>
+</main>
+</body>
+</html>

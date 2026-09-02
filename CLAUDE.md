@@ -1204,6 +1204,50 @@ unavailability.
   Keeper yet (only the birth-day one, a different value that happens to
   share the name) — not because it's still blocked. Build it when the
   "road-kin" topology feature actually needs it.
+- **W6, mostly closed 2 Sep 2026 — three of the four remaining gaps are done,
+  one is blocked on Design.** Built this pass: **email verification** (Resend was
+  already wired for password reset, so no new dependency — `users.email_verified`,
+  an `email_verifications` table shaped exactly like `password_resets`,
+  `POST /api/auth/verify-email` + `/resend-verification`, `api.me()` now returns
+  `emailVerified`, and the link arrives as a `#verifyEmail=` fragment so the token
+  stays out of access logs, same as the reset link). **It deliberately gates
+  nothing** — an unverified account plays, keeps a chart and holds progress; what
+  it buys is that password reset can reach the person. Gating entry on a
+  confirmation click would cost a phone-first, largely teenage funnel far more
+  than it buys, and neither GDPR nor App Store review asks for it. **A written
+  retention policy**, and the real bug behind it: `password_resets` rows were
+  **never deleted** — not on use, not on expiry, ever — so the table grew without
+  bound and kept a permanent per-user record of every reset ever requested, which
+  nothing read. Now swept two ways (per-user on each new request, plus an hourly
+  interval sweep that also covers accounts that asked once and never came back).
+  **`/privacy/` and `/terms/`**, which did not exist at all: plain static pages,
+  Code-owned (not `.dc.html`), shipped by `deploy.sh` alongside `account/`, and
+  written against what the code actually does — the two-tier split, the per-region
+  age gate, the three third parties that genuinely see a visitor (Resend,
+  Open-Meteo's geocoder called straight from the browser, and Google Fonts/unpkg
+  on every page load), and the explicit "no analytics, no trackers" claim, which
+  was **verified by grep before it was written down, not assumed**. If what the
+  code stores changes, those pages change in the same commit.
+
+  **Still open, and it is an App Store BLOCKER, not a nice-to-have: no screen
+  calls the export or delete endpoints.** Review guideline 5.1.1(v) requires
+  in-app account deletion; `DELETE /api/me` has been live and correct for a week
+  and nothing reaches it, so a Capacitor build gets rejected on submission. The UI
+  is markup, so it is Design's — work order written,
+  `docs/WORKORDER-DESIGN-ACCOUNT-DATA-02SEP.md`. Also still open: the policy pages
+  name a company, two contact addresses and a governing-law state that Code
+  inferred and Justin has not confirmed (see that commit's message).
+
+  Two findings from the same pass, recorded rather than fixed: **`password_resets`
+  and `email_verifications` are deliberately absent from the export** (they hold
+  live single-use credentials — exporting one hands a working reset token to
+  anyone who gets the file), which is a real exception to the "every user-scoped
+  table appears in the export" invariant and is now documented in the handler
+  itself. And **`manzil_reports` cascades on the REPORTED user too**, so an
+  account can erase every report filed against it by deleting itself and signing
+  up again — defensible today at this scale, but it is a moderation-evidence hole
+  worth a decision before wide launch.
+
 - **W6, escalated then partly answered (24 Aug 2026).** Account deletion and
   data export both shipped (`DELETE /api/me`, `GET /api/me/export`) — two of
   the original three gaps are closed. Still no email verification. Manzil now

@@ -179,6 +179,22 @@ export async function resetPassword(token, password) {
   return call('/api/auth/reset-password', { method: 'POST', body: { token, password } });
 }
 
+/** Confirms an email address from the token in the verification link's URL
+ * fragment (`#verifyEmail=…`). Throws on a bad or expired token so the caller
+ * can say so — silently swallowing it would leave the account unverified with
+ * no explanation. Verification gates nothing: an unverified account plays
+ * normally, this only makes password reset able to reach the person. */
+export async function verifyEmail(token) {
+  return call('/api/auth/verify-email', { method: 'POST', body: { token } });
+}
+
+/** Sends the confirmation mail again, for a signed-in account. Resolves either
+ * way, including when the address is already verified (the server treats that
+ * as a no-op) — there is nothing the caller would do differently. */
+export async function resendVerification() {
+  return call('/api/auth/resend-verification', { method: 'POST' });
+}
+
 /** Everything the account owns — the "keep a copy of my data" export.
  * Throws (unlike me()) — this is a confirmed user request for their own
  * data, so a failure needs to surface, not disappear as an empty page. */

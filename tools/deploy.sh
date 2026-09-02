@@ -90,6 +90,16 @@ deploy_frontend() {
   echo "==> account/"
   ssh "$HOST" "mkdir -p $FRONTEND_REMOTE/account"
   ssh "$HOST" "cat > $FRONTEND_REMOTE/account/index.html" < "account/index.html"
+  # privacy/ and terms/ — plain static pages, Code-owned (not .dc.html, so not
+  # Design's). App Store review needs a reachable privacy policy URL, and GDPR
+  # needs one that is accurate, so these ship with the frontend rather than
+  # living in a doc nobody serves. If what the code stores changes, these pages
+  # change in the same commit — they describe real behaviour, not intent.
+  for d in privacy terms; do
+    echo "==> $d/"
+    ssh "$HOST" "mkdir -p $FRONTEND_REMOTE/$d"
+    ssh "$HOST" "cat > $FRONTEND_REMOTE/$d/index.html" < "$d/index.html"
+  done
   echo "frontend deployed."
 }
 

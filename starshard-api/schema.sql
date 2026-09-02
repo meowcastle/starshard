@@ -4,6 +4,11 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(32) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   token_version INT NOT NULL DEFAULT 0,
+  -- W6, 2 sep 2026. Existing accounts default to 0 (unverified), which is honest:
+  -- nobody has confirmed them. It gates nothing today, so a 0 costs an existing
+  -- account nothing but a prompt. Migration for a live DB:
+  --   ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0;
+  email_verified TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -29,6 +34,21 @@ CREATE TABLE IF NOT EXISTS password_resets (
   used_at TIMESTAMP NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_password_resets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- EMAIL VERIFICATION (2 sep 2026, W6). Same shape as password_resets above,
+-- deliberately: single-use hashed token, an expiry, and a used_at stamp, so the
+-- retention sweep in server.js can treat both tables identically. Verification is
+-- NOT a gate — see the handler's own note. `users.email_verified` is the durable
+-- answer; this table only holds tokens in flight and is swept like the resets are.
+CREATE TABLE IF NOT EXISTS email_verifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  token_hash CHAR(64) NOT NULL UNIQUE,
+  expires_at TIMESTAMP NOT NULL,
+  used_at TIMESTAMP NULL DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_email_verifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- The reboot's Sigil/Sounding system. Additive, alongside the pre-reboot
