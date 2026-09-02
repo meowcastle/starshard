@@ -51,7 +51,13 @@ async function withPage(browser, seed, fn, opts = {}) {
   await page.waitForTimeout(2600); // support.js pulls React+Babel from unpkg, then transpiles
   let out;
   try { out = await fn(page); } finally {
-    const html = await page.content().catch(() => '');
+    const raw = await page.content().catch(() => '');
+    // page.content() serializes the <script type="text/x-dc"> block too, and that block is SOURCE,
+    // not rendered DOM — its comments legitimately quote bindings ("as the old `fill=\"{{ p.f }}\"`
+    // binding did"), which read as an unresolved mustache and cost a false FAIL on every level once
+    // Design's _pathG note landed. Strip the block before scanning; everything the user can actually
+    // see is still covered, attributes included.
+    const html = raw.replace(/<script[^>]*text\/x-dc[\s\S]*?<\/script>/g, '');
     const mustache = (html.match(/\{\{\s*[A-Za-z_$][\w$.]*\s*\}\}/g) || []).filter(m => !/\bfalse\b|\btrue\b/.test(m));
     const bodyLen = await page.evaluate(() => document.body.innerHTML.length).catch(() => 0);
     out = { ...(out || {}), errors, consoleErrs, mustache: [...new Set(mustache)], bodyLen };

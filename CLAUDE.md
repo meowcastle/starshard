@@ -597,6 +597,44 @@ road is loser-leads.** Both are real, both are on the record now
 
 `test/fuzz-manzil.mjs` covers all nine built levels cold now, up from six.
 
+**Same day, evening: Design's `_pathG` sweep closed the SVG-parse class for
+good, and it is the cleanest delivery this project has had.** They took the
+fresh deployed copy as-is (not a merge) and built on it, so all three of the
+2 Sep Code fixes came back intact. Measured: **232 methods against 231, zero
+Code methods missing, exactly three differing bodies** (`_tintArt`, `_markRow`,
+`renderVals`) — precisely what their note named. `_pathG(list)` is now the one
+place a shape array becomes markup (an injected `<g>`), `_tintArt` returns that
+group rather than an array so all eleven art sites converted with no producer
+edits, and 26 template sites are gone. **Verified rather than trusted: zero raw
+geometry-attribute bindings left on any shape element.** Their note claims "zero
+console errors"; measured, it is **37 to 10**. The last ten are
+`<svg viewBox="{{ …artBox }}">` across nine art-wrapper sites — the same root
+cause in an attribute neither sweep looked at (both only checked shape elements,
+and so did our own static check). Left for Design: `_artBox` is not inlineable,
+since `_measureArt()` computes a real per-card `getBBox()` at runtime and that
+normalisation is what makes every card's art read at the same weight. The conversion that
+could have silently dropped a visual — `shardLines` bound `opacity="{{ ln2.o }}"`
+and `shardDots` used `.c` for fill, neither of which is in `_pathG`'s fixed
+`d/f/s/w/da/st` vocabulary — was handled correctly (`.c` maps at the producer,
+opacity moved into `st:"opacity:…"`, which is the same property).
+
+**One trap this exposed in our own harness, now fixed.** `test/fuzz-manzil.mjs`
+scanned `page.content()` for literal mustaches, and `page.content()` serializes
+the `<script type="text/x-dc">` block — which is SOURCE, not rendered DOM. Design's
+own comment explaining `_pathG` quotes the binding it replaced (``as the old
+`fill="{{ p.f }}"` binding did``), so the harness failed **every level** on a
+comment. The scan now strips that block first. **A mustache "failure" from this
+harness is not automatically a rendering bug — check whether it is only a comment
+in the script block before chasing it.**
+
+**The guide's law (m27) is a work order only — nothing ported, `LAW_AT` correctly
+stays at nine.** 1a ("the stranger's station": at the guide's station, a card
+whose quarter is not that ground's quarter counts one more, both sides) is
+unbuilt and unmeasured. When it lands it is a `slotW()` change, not a `resolve()`
+one. 1c ("the wall") is deliberately in the drawer, and its rationale records a
+real standing gap worth remembering: **the throne's reach and suzaku's grant both
+carry two stations and nothing in the game currently answers them.**
+
 Star Shard v4 moved off the
 root to `/star-shard/` — `star-shard/index.html` is a hand-maintained
 copy of `Star Shard v4.dc.html` with every root-relative reference

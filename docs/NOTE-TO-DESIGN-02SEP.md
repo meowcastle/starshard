@@ -255,3 +255,83 @@ they land.
   request asked for; build the Byakko brief on it.
 - `docs/MANZIL-CODE-OWNED-BEHAVIORS.md`, `docs/DESIGN-DELIVERY-PROTOCOL.md`,
   `docs/FOR-DESIGN-WHAT-CODE-OWNS.md` — unchanged.
+
+
+---
+
+# Addendum — 2 September 2026, evening. Your `_pathG` sweep is in.
+
+Received after the above was written, and it answers §2. Verified the same way:
+**232 methods against our 231, zero of ours missing**, one new (`_pathG`), and
+**exactly three differing bodies — `_tintArt`, `_markRow`, `renderVals`** — which
+is precisely what your note names. Tightest delivery yet.
+
+Confirmed you built on the copy we sent, rather than trusting it: the plant
+predicate, the `rooted` tell, the brazier's static `d` and both `mw` renames are
+all present, and all fourteen code-owned behaviours are intact.
+
+**The `path d` class is closed, and we checked it rather than taking the claim:**
+zero raw geometry-attribute bindings on any shape element anywhere in the template — no `<path>` with a bound
+`d`, no `sc-for` over a shape array, and none of the six renamed keys
+(`moonD`/`moonFill`/`introMoonD`/`dsMoonD`/`ledSpokes`/`shardDots`/`shardLines`)
+left bound anywhere. `{{ g.pathG }}` replaced the `_markRow` site cleanly.
+
+One thing we went looking for specifically, because `_pathG` has a fixed
+attribute vocabulary (`d/f/s/w/da/st`) and two of the old sites did not fit it:
+`shardLines` bound `opacity="{{ ln2.o }}"` and used `.c` for stroke, and
+`shardDots` used `.c` for fill. **You handled both** — `.c` maps to `f`/`s` at the
+producer, and the opacity moved into `st: "opacity:" + l.o`. CSS `opacity` and
+the SVG attribute are the same property, so the shard ring is unchanged. Worth
+saying because that is the one conversion in the sweep that could have silently
+dropped a visual.
+
+## It is 10, not 0 — one attribute class neither sweep covered
+
+Your note says *"Zero console errors now, on every screen."* Measured on the
+deployed build, it is **37 → 10**, which is the big win; but the last ten are:
+
+```
+Error: <svg> attribute viewBox: Expected number, "{{ s.artBox }}".
+```
+
+Nine template sites, all the art wrappers: `s.artBox`, `c.artBox` (×3),
+`introArtBox` (×2), `dsArtBox`, `hc.artBox`. Same root cause, different attribute
+— `viewBox` was simply outside both sweeps, which only ever looked at shape
+elements. Our own static check missed it for exactly the same reason, so this is
+not a "you should have caught it": neither of us was looking there.
+
+**This one is genuinely yours and genuinely not trivial,** which is why we have
+not touched it. `_artBox` is not a constant we could inline — `_measureArt()`
+computes a real per-card `getBBox()` at runtime and centres a square on it, and
+that normalisation is what makes a small glyph and a wide one read at the same
+weight. Get the viewBox wrong and every card face distorts.
+
+The shape that looks right from here, given you have just built the machinery:
+fold the box into the injected group, so the outer `<svg>` carries a static
+`viewBox` and `_pathG` (or a sibling) emits a **nested** `<svg viewBox="…"
+width="100%" height="100%">` around the paths. Nested `<svg>` with its own
+viewBox is well-defined and scales exactly as the outer attribute did. But it is
+your call and your eye — if it is not worth ten lines a load, say so and we will
+stop counting them.
+
+## One thing that was ours, not yours
+
+Our adversarial pass failed every level on `{{ p.f }}` after this landed, and
+**it was a false positive in our harness, not your markup.** `page.content()`
+serializes the `<script type="text/x-dc">` block, and that block is *source* — so
+your own comment explaining `_pathG` (*"as the old `fill="{{ p.f }}"` binding
+did"*) read as an unresolved binding. The harness now strips that block before
+scanning. Nothing to do on your side; flagging it so that if you ever run it
+yourself and see a mustache failure, you check whether it is only a comment.
+
+## The guide's law (m27)
+
+Read, nothing ported — 1a is unbuilt and unmeasured, so `LAW_AT` correctly stays
+at nine. Your three pre-run conditions are Measurement's to answer, not ours; we
+have no view to add on the spread bound. The one item that touches us is noted:
+when 1a lands it is a `slotW()` change (a per-station worth modifier keyed on
+quadrant), not a `resolve()` one — it will port as cleanly as the hush did.
+
+We agree 1c should stay in the drawer, and for the reason you give: **the throne's
+reach and suzaku's grant both carry two stations and nothing answers them today.**
+That gap is real and now recorded on our side too.

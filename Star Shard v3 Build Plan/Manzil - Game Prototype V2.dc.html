@@ -1529,9 +1529,7 @@
       <div style="width:100%;height:100%;opacity:{{ figOp }};animation:mzWalkerIdle 6s ease-in-out infinite">
         <div style="{{ figCastStyle }}">
           <svg viewBox="0 0 120 96" style="width:100%;height:100%;display:block;transform:{{ figPose }};transform-origin:50% 100%">
-            <sc-for list="{{ figPaths }}" as="p" hint-placeholder-count="3">
-              <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
-            </sc-for>
+            {{ figPaths }}
             <sc-if value="{{ avStarOn }}" hint-placeholder-val="{{ false }}">
               <g style="{{ avStarPos }}"><circle cx="0" cy="0" r="3.4" fill="{{ avStarF }}" stroke="{{ avStarS }}" stroke-width="1.3" style="animation:mzBreathe 2.4s ease-in-out infinite"></circle></g>
             </sc-if>
@@ -1843,9 +1841,7 @@
       <div onClick="{{ s.onTap }}" onMouseEnter="{{ s.onPeek }}" onMouseLeave="{{ s.onPeekEnd }}" onTouchStart="{{ s.onHold }}" onTouchEnd="{{ s.onHoldEnd }}" onTouchCancel="{{ s.onHoldEnd }}" data-mzslot="{{ s.idx }}" style="{{ s.style }}">
         <sc-if value="{{ s.emptyOn }}" hint-placeholder-val="{{ true }}">
           <svg viewBox="0 0 100 100" style="width:58px;height:52px;opacity:.42">
-            <sc-for list="{{ s.emptyShapes }}" as="p" hint-placeholder-count="2">
-              <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-            </sc-for>
+            {{ s.emptyShapes }}
           </svg>
           <sc-if value="{{ s.domPrevOn }}" hint-placeholder-val="{{ false }}">
             <span style="position:absolute;top:4px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1;color:#FFB000;text-shadow:0 0 7px rgba(255,176,0,.85);animation:mzBreathe 1.6s ease-in-out infinite">✦</span>
@@ -1857,12 +1853,10 @@
         <sc-if value="{{ s.cardOn }}" hint-placeholder-val="{{ false }}">
           <svg viewBox="0 0 20 20" style="position:absolute;top:4px;right:4px;width:12px;height:12px;pointer-events:none;z-index:4;overflow:visible">
             <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ s.moonRim }}" stroke-width="1"></circle>
-            <path d="{{ s.moonD }}" fill="{{ s.moonFill }}"></path>
+            {{ s.moonG }}
           </svg>
           <svg viewBox="{{ s.artBox }}" style="{{ s.artStyle }}">
-            <sc-for list="{{ s.shapes }}" as="p" hint-placeholder-count="2">
-              <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-            </sc-for>
+            {{ s.shapes }}
           </svg>
           <div style="{{ s.lStyle }}">{{ s.l }}</div>
           <div style="{{ s.rStyle }}">{{ s.r }}</div>
@@ -1920,9 +1914,7 @@
   <sc-if value="{{ castOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;top:122px;left:50%;transform:translateX(-50%);width:824px;height:124px;pointer-events:none;z-index:3">
       <svg viewBox="0 0 200 40" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
-        <sc-for list="{{ castShapes }}" as="p" hint-placeholder-count="2">
-          <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-        </sc-for>
+        {{ castShapes }}
       </svg>
     </div>
   </sc-if>
@@ -2024,9 +2016,7 @@
         <div style="width:210px;height:284px;border-radius:14px;position:relative;background:linear-gradient(160deg,#241B08,#0B0703);border:1px solid {{ zoomBorder }};box-shadow:0 18px 50px rgba(0,0,0,.78), 0 6px 18px rgba(0,0,0,.5)">
           <div style="position:absolute;top:10px;left:10px;right:10px;bottom:10px;border-radius:9px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.12)"></div>
           <svg viewBox="0 0 100 100" style="position:absolute;top:34px;left:47px;width:116px;height:90px;opacity:.95;animation:mzEmblemBreathe 7s ease-in-out infinite">
-            <sc-for list="{{ zoomShapes }}" as="p" hint-placeholder-count="2">
-              <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-            </sc-for>
+            {{ zoomShapes }}
           </svg>
           <div style="position:absolute;top:14px;left:19px;font-size:23px;color:{{ zoomNumC }};text-shadow:0 0 6px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)">{{ zoomL }}</div>
           <div style="position:absolute;bottom:12px;right:19px;font-size:23px;color:{{ zoomNumC }};text-shadow:0 0 6px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95)">{{ zoomR }}</div>
@@ -2091,7 +2081,7 @@
         <div style="position:absolute;top:2.5px;left:2.5px;right:2.5px;bottom:2.5px;border-radius:5px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.08)"></div>
         <svg viewBox="0 0 20 20" style="position:absolute;top:5px;right:5px;width:13px;height:13px;pointer-events:none;z-index:3;overflow:visible">
           <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ c.moonRim }}" stroke-width="1"></circle>
-          <path d="{{ c.moonD }}" fill="{{ c.moonFill }}"></path>
+          {{ c.moonG }}
         </svg>
         <sc-if value="{{ c.domOn }}" hint-placeholder-val="{{ false }}">
           <svg viewBox="0 0 12 12" style="{{ c.domStyle }}">
@@ -2099,9 +2089,7 @@
           </svg>
         </sc-if>
         <svg viewBox="{{ c.artBox }}" style="{{ c.artStyle }}">
-          <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
-            <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-          </sc-for>
+          {{ c.shapes }}
         </svg>
         <div style="{{ c.lnStyle }}">{{ c.ln }}</div>
         <div style="{{ c.rnStyle }}">{{ c.rn }}</div>
@@ -2109,7 +2097,7 @@
           <div style="{{ c.marksStyle }}">
             <sc-for list="{{ c.marks }}" as="g" hint-placeholder-count="2">
               <div style="{{ g.wrap }}">
-                <svg viewBox="0 0 24 24" style="{{ g.svg }}"><path d="{{ g.d }}" fill="{{ g.f }}" stroke="{{ g.s }}" stroke-width="{{ g.w }}" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <svg viewBox="0 0 24 24" style="{{ g.svg }}">{{ g.pathG }}</svg>
                 <span>{{ g.n }}</span>
               </div>
             </sc-for>
@@ -3742,12 +3730,8 @@
         <svg viewBox="0 0 72 72" style="width:72px;height:72px;margin-bottom:2px;animation:mzFadeUp .5s ease both">
           <circle cx="36" cy="36" r="33" fill="none" stroke="#F0D89A" stroke-width="1.4" pathLength="56" stroke-dasharray="0.55 1.45" opacity=".55"></circle>
           <circle cx="36" cy="36" r="27" fill="none" stroke="#F0D89A" stroke-width=".5" opacity=".3"></circle>
-          <sc-for list="{{ shardLines }}" as="ln2" hint-placeholder-count="4">
-            <path d="{{ ln2.d }}" fill="none" stroke="{{ ln2.c }}" stroke-width=".55" opacity="{{ ln2.o }}"></path>
-          </sc-for>
-          <sc-for list="{{ shardDots }}" as="d2" hint-placeholder-count="5">
-            <path d="{{ d2.d }}" fill="{{ d2.c }}"></path>
-          </sc-for>
+          {{ shardLinesG }}
+          {{ shardDotsG }}
         </svg>
         <a href="Star Shard v4.dc.html" style="font-family:'Karla',sans-serif;font-size:10px;color:#9A8A5E;letter-spacing:.02em;text-decoration:none;cursor:pointer;text-shadow:0 1px 8px rgba(5,3,2,.85);transition:color .15s ease, text-shadow .15s ease;animation:mzFadeUp .5s ease .04s both" style-hover="color:#F0D89A;text-shadow:0 0 10px rgba(240,216,154,.45)" style-active="color:#FFFDF5">your star shard ›</a>
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1.05;color:#F2EAD6;text-wrap:balance;text-shadow:0 2px 16px rgba(5,3,2,.9), 0 0 30px rgba(240,216,154,.25);animation:mzFadeUp .5s ease .08s both">{{ recShard }}</div>
@@ -3758,12 +3742,10 @@
           <div style="position:absolute;top:7px;left:7px;right:7px;bottom:7px;border-radius:6px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.1)"></div>
           <svg viewBox="0 0 20 20" style="position:absolute;top:8px;right:8px;width:18px;height:18px;pointer-events:none;z-index:3;overflow:visible">
             <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ introMoonRim }}" stroke-width=".9"></circle>
-            <path d="{{ introMoonD }}" fill="rgba(250,244,226,.95)"></path>
+            {{ introMoonG }}
           </svg>
           <svg viewBox="{{ introArtBox }}" style="{{ introArtStyle }}">
-            <sc-for list="{{ introShapes }}" as="p" hint-placeholder-count="2">
-              <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-            </sc-for>
+            {{ introShapes }}
           </svg>
           <div style="position:absolute;top:11px;left:13px;font-size:17px;color:#F0D89A">{{ introL }}</div>
           <div style="position:absolute;bottom:11px;right:13px;font-size:17px;color:#F0D89A">{{ introR }}</div>
@@ -3832,9 +3814,7 @@
       <div style="position:relative;width:262px;height:262px;flex:none;animation:mzFadeUp .55s ease both">
         <svg viewBox="0 0 260 260" style="width:100%;height:100%;overflow:visible">
           <circle cx="130" cy="130" r="96" fill="none" stroke="rgba(240,216,154,.14)" stroke-width="1"></circle>
-          <sc-for list="{{ ledSpokes }}" as="lsp" hint-placeholder-count="28">
-            <path d="{{ lsp.d }}" fill="none" stroke="{{ lsp.c }}" stroke-width="{{ lsp.w }}" stroke-linecap="round" style="{{ lsp.st }}"></path>
-          </sc-for>
+          {{ ledSpokesG }}
           <g style="{{ ledPos }}"><circle cx="0" cy="0" r="6" fill="none" stroke="#FFB000" stroke-width="1.2" style="animation:mzBreathe 2.6s ease-in-out infinite"></circle></g>
           <sc-for list="{{ ledMarks }}" as="lm" hint-placeholder-count="5">
             <text x="0" y="0" fill="{{ lm.c }}" font-size="12" text-anchor="middle" style="{{ lm.pos }}">{{ lm.g }}</text>
@@ -3917,12 +3897,10 @@
           <sc-if value="{{ dsFaceOn }}" hint-placeholder-val="{{ true }}">
             <svg viewBox="0 0 20 20" style="position:absolute;top:12px;right:12px;width:22px;height:22px;pointer-events:none;z-index:4;overflow:visible">
               <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ dsMoonRim }}" stroke-width=".9"></circle>
-              <path d="{{ dsMoonD }}" fill="rgba(250,244,226,.95)"></path>
+              {{ dsMoonG }}
             </svg>
             <svg viewBox="{{ dsArtBox }}" style="{{ dsArtStyle }}">
-              <sc-for list="{{ dsShapes }}" as="p" hint-placeholder-count="2">
-                <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-              </sc-for>
+              {{ dsShapes }}
             </svg>
             <div style="position:absolute;top:12px;left:17px;font-size:21px;color:#F0D89A;text-shadow:0 0 5px rgba(4,3,2,.95)">{{ dsL }}</div>
             <div style="position:absolute;bottom:12px;right:17px;font-size:21px;color:#F0D89A;text-shadow:0 0 5px rgba(4,3,2,.95)">{{ dsR }}</div>
@@ -3989,9 +3967,7 @@
               <sc-for list="{{ rw.cards }}" as="c" hint-placeholder-count="7">
                 <div onClick="{{ c.tap }}" onMouseEnter="{{ c.over }}" onMouseLeave="{{ c.out }}" style="{{ c.style }}">
                   <svg viewBox="{{ c.artBox }}" style="{{ c.artStyle }}">
-                    <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
-                      <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-                    </sc-for>
+                    {{ c.shapes }}
                   </svg>
                   <div style="{{ c.pipRow }}">
                     <sc-for list="{{ c.pips }}" as="pp" hint-placeholder-count="4">
@@ -4046,9 +4022,7 @@
           </sc-if>
           <div style="{{ introFigWrap }}">
             <svg viewBox="0 0 120 96" style="width:100%;height:100%;display:block">
-              <sc-for list="{{ introFigPaths }}" as="fp2" hint-placeholder-count="3">
-                <path d="{{ fp2.d }}" fill="{{ fp2.f }}" stroke="{{ fp2.s }}" stroke-width="{{ fp2.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
-              </sc-for>
+              {{ introFigPaths }}
               <sc-if value="{{ introStarOn }}" hint-placeholder-val="{{ false }}">
                 <g style="{{ introStarPos }}"><circle cx="0" cy="0" r="3.6" fill="{{ introStarF }}" stroke="{{ introStarS }}" stroke-width="1.3" style="animation:mzBreathe 2.4s ease-in-out infinite"></circle></g>
               </sc-if>
@@ -4060,9 +4034,7 @@
       <div style="width:118px;height:158px;border-radius:8px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid #F0D89A;box-shadow:0 12px 34px rgba(0,0,0,.65), 0 0 26px rgba(255,176,0,.28);animation:mzZoomIn .6s cubic-bezier(.22,1,.36,1) both">
         <div style="position:absolute;top:7px;left:7px;right:7px;bottom:7px;border-radius:5px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.1)"></div>
         <svg viewBox="{{ introArtBox }}" style="{{ introArtStyle }}">
-          <sc-for list="{{ introShapes }}" as="p" hint-placeholder-count="2">
-            <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-          </sc-for>
+          {{ introShapes }}
         </svg>
         <div style="position:absolute;top:11px;left:14px;font-size:16px;color:#F0D89A">{{ introL }}</div>
         <div style="position:absolute;bottom:11px;right:14px;font-size:16px;color:#F0D89A">{{ introR }}</div>
@@ -4071,7 +4043,7 @@
         </sc-if>
         <svg viewBox="0 0 20 20" style="position:absolute;top:7px;right:7px;width:16px;height:16px;pointer-events:none;z-index:3;overflow:visible">
           <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ introMoonRim }}" stroke-width=".9"></circle>
-          <path d="{{ introMoonD }}" fill="rgba(250,244,226,.95)"></path>
+          {{ introMoonG }}
         </svg>
         
         <div style="position:absolute;inset:-2px;border-radius:10px;padding:2px;overflow:hidden;-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);mask-composite:exclude;opacity:.8"><span style="position:absolute;inset:-40%;background:conic-gradient(rgba(255,176,0,0) 0deg 270deg, #FFB000 330deg, rgba(255,176,0,0) 360deg);animation:mzRingSpin 2s linear infinite"></span></div>
@@ -4119,9 +4091,7 @@
         <div style="position:relative;width:120px;height:94px;flex:none;margin-bottom:2px">
           <div style="position:absolute;left:50%;top:58%;width:124px;height:124px;margin-left:-62px;margin-top:-62px;border-radius:50%;background:radial-gradient(circle,rgba(240,216,154,.13),transparent 66%);pointer-events:none"></div>
           <svg viewBox="0 0 120 96" style="position:absolute;inset:0;width:100%;height:100%;display:block;transform-origin:50% 100%;animation:mzYield 2.8s cubic-bezier(.3,.75,.3,1) both">
-            <sc-for list="{{ rbFigPaths }}" as="rp" hint-placeholder-count="3">
-              <path d="{{ rp.d }}" fill="{{ rp.f }}" stroke="{{ rp.s }}" stroke-width="{{ rp.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
-            </sc-for>
+            {{ rbFigPaths }}
           </svg>
         </div>
       </sc-if>
@@ -4305,9 +4275,7 @@
               <div style="position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:7px;background:rgba(240,216,154,.05);border:1px solid rgba(240,216,154,.14)"></div>
               <div style="position:absolute;left:14px;right:14px;top:10px;bottom:48px;background:radial-gradient(50% 60% at 50% 40%, rgba(255,226,160,.15), transparent 75%)"></div>
               <svg viewBox="{{ hc.artBox }}" style="position:absolute;left:0;right:0;margin:0 auto;top:24px;width:74px;height:64px;opacity:.95;filter:drop-shadow(0 0 11px rgba(255,226,160,.38))">
-                <sc-for list="{{ hc.shapes }}" as="p" hint-placeholder-count="2">
-                  <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-                </sc-for>
+                {{ hc.shapes }}
               </svg>
               <div style="position:absolute;top:8px;left:11px;font-size:13.5px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ hc.l }}</div>
               <div style="position:absolute;bottom:8px;right:11px;font-size:13.5px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ hc.r }}</div>
@@ -4329,9 +4297,7 @@
             <div style="position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:62px;height:8px;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%, rgba(6,4,2,.55), transparent 72%)"></div>
             <div style="position:absolute;inset:0;opacity:{{ wf.op }};{{ wf.sway }}">
               <svg viewBox="0 0 120 96" style="width:100%;height:100%;display:block">
-                <sc-for list="{{ wf.paths }}" as="p" hint-placeholder-count="3">
-                  <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
-                </sc-for>
+                {{ wf.paths }}
               </svg>
             </div>
           </div>
@@ -4353,9 +4319,7 @@
             <div style="{{ c.cardStyle }}">
               <div style="position:absolute;top:2.5px;left:2.5px;right:2.5px;bottom:2.5px;border-radius:5px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.08)"></div>
               <svg viewBox="{{ c.artBox }}" style="position:absolute;left:0;right:0;margin:0 auto;top:16px;width:58px;height:50px;opacity:.94">
-                <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
-                  <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-                </sc-for>
+                {{ c.shapes }}
               </svg>
               <div style="position:absolute;top:6px;left:9px;font-size:12px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.l }}</div>
               <div style="position:absolute;bottom:6px;right:9px;font-size:12px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.r }}</div>
@@ -4385,9 +4349,7 @@
         <sc-for list="{{ tutSeven }}" as="c" hint-placeholder-count="7">
           <div style="flex:none;width:42px;height:56px;border-radius:5px;position:relative;background:linear-gradient(160deg, #241B08, #0B0703);border:1px solid rgba(154,138,94,.4)">
             <svg viewBox="{{ c.artBox }}" style="position:absolute;left:0;right:0;margin:0 auto;top:6px;width:26px;height:26px;opacity:.88">
-              <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="2">
-                <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
-              </sc-for>
+              {{ c.shapes }}
             </svg>
             <div style="position:absolute;top:3px;left:5px;font-size:9px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.l }}</div>
             <div style="position:absolute;bottom:3px;right:5px;font-size:9px;color:#F0D89A;text-shadow:0 0 4px rgba(4,3,2,.95)">{{ c.r }}</div>
@@ -4448,9 +4410,7 @@
         <div style="position:relative;width:150px;height:120px;flex:none">
           <div style="position:absolute;left:50%;top:56%;width:170px;height:170px;margin-left:-85px;margin-top:-85px;border-radius:50%;background:radial-gradient(circle,{{ avEndGlow }},transparent 68%);pointer-events:none"></div>
           <svg viewBox="0 0 120 96" style="{{ avEndFigStyle }}">
-            <sc-for list="{{ avEndPaths }}" as="ap" hint-placeholder-count="3">
-              <path d="{{ ap.d }}" fill="{{ ap.f }}" stroke="{{ ap.s }}" stroke-width="{{ ap.w }}" stroke-linecap="round" stroke-linejoin="round"></path>
-            </sc-for>
+            {{ avEndPaths }}
             <sc-if value="{{ avEndStarOn }}" hint-placeholder-val="{{ false }}">
               <g style="{{ avEndStarPos }}"><circle cx="0" cy="0" r="3.6" fill="{{ avEndStarF }}" stroke="{{ avEndStarS }}" stroke-width="1.3" style="{{ avEndStarStyle }}"></circle></g>
             </sc-if>
@@ -4601,9 +4561,7 @@
     <button onClick="{{ pmTap }}" style="{{ pmChipStyle }}" style-hover="filter:brightness(1.3)">
       <svg viewBox="0 0 72 72" style="width:24px;height:24px;display:block;flex:none">
         <circle cx="36" cy="36" r="33" fill="rgba(10,7,3,.5)" stroke="#F0D89A" stroke-width="1.8" pathLength="28" stroke-dasharray="0.62 0.38" opacity=".6"></circle>
-        <sc-for list="{{ shardDots }}" as="pd" hint-placeholder-count="5">
-          <path d="{{ pd.d }}" fill="{{ pd.c }}"></path>
-        </sc-for>
+        {{ shardDotsG }}
         <rect x="29" y="25" width="14" height="19" rx="2" fill="rgba(10,7,3,.88)" stroke="#F0D89A" stroke-width="1.2"></rect>
       </svg>
       <span style="font-family:'Karla',sans-serif;font-size:10px;letter-spacing:.04em;color:rgba(201,188,150,.7);text-shadow:0 1px 8px rgba(5,3,2,.9)">{{ userName }}</span>
@@ -5419,9 +5377,39 @@ class Component extends DCLogic {
   // quadrant's hue so a card's sky is legible in the LINE as well as the wash, without touching the art
   // files. mix is how far toward the animal's colour: the line keeps most of its parchment so it stays
   // readable on a dark card, and her planets (no mansion) pass through untinted.
+  // THE LAST 37 CONSOLE ERRORS, CLOSED (2 sep 2026, Code's 2 sep note §2). A mustache in ANY
+  // geometry attribute is invalid to the pre-hydration SVG parse — `d` exactly as much as `rect x`,
+  // which is why the 1 sep sweep only moved the count from 66 to 39 to 37. The figure and card-shape
+  // loops could not be made static the way the brazier's box could, because their `d` IS real path
+  // data, so they go in as ONE injected <g> instead: the 1 sep standing rule, applied where it was
+  // hardest rather than skipped there. `rpWalls` is the model.
+  //
+  // _pathG is the one place a shape array becomes markup. Attributes are emitted only when the shape
+  // actually carries them, so a shape with no `f` still takes SVG's default fill exactly as the old
+  // `fill="{{ p.f }}"` binding did — the drawing is unchanged, only the parse is legal now.
+  _pathG(list) {
+    if (!list || !list.length) return null;
+    const q = (v) => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    const html = list.map(p => {
+      if (!p || !p.d) return "";
+      let s = '<path d="' + q(p.d) + '"';
+      if (p.f != null) s += ' fill="' + q(p.f) + '"';
+      if (p.s != null) s += ' stroke="' + q(p.s) + '"';
+      if (p.w != null) s += ' stroke-width="' + q(p.w) + '"';
+      if (p.da != null) s += ' stroke-dasharray="' + q(p.da) + '"';
+      s += ' stroke-linecap="round" stroke-linejoin="round"';
+      if (p.st != null) s += ' style="' + q(p.st) + '"';
+      return s + "></path>";
+    }).join("");
+    return React.createElement("g", { dangerouslySetInnerHTML: { __html: html } });
+  }
+  // _tintArt returns the GROUP, not the array (2 sep 2026): every card, emblem and splash producer
+  // feeds its result straight into a template hole, so converting here fixes all eleven art sites at
+  // once with no producer edits. The two figure loops (_figs/_avFig `.p`) do not pass through here
+  // and call _pathG themselves.
   _tintArt(id, shapes, mix) {
     const tint = this._qTintOf(id);
-    if (!tint || !shapes || !shapes.length) return shapes || [];
+    if (!tint || !shapes || !shapes.length) return this._pathG(shapes);
     const q = tint.split(",").map(Number), k = mix == null ? .58 : mix;
     const P = [244, 236, 214];
     const blend = (a) => "rgb(" + q.map((v, n) => Math.round(P[n] + (v - P[n]) * k)).join(",") + (a != null ? "" : "") + ")";
@@ -5432,7 +5420,7 @@ class Component extends DCLogic {
       const a = m && m[4] != null ? +m[4] : 1;
       return a >= .999 ? blend() : "rgba(" + q.map((v, n) => Math.round(P[n] + (v - P[n]) * k)).join(",") + "," + a + ")";
     };
-    return shapes.map(p => ({ ...p, s: shift(p.s), f: p.f && p.f !== "none" ? shift(p.f) : p.f }));
+    return this._pathG(shapes.map(p => ({ ...p, s: shift(p.s), f: p.f && p.f !== "none" ? shift(p.f) : p.f })));
   }
   // the BOX was centred, the DRAWING inside it was not (27 aug 2026, user, third report): ManzilArt's
   // paths are not centred within their own 100x100 space. parsing the path text guessed badly (control
@@ -7243,7 +7231,7 @@ class Component extends DCLogic {
     const P = this._markPaths();
     return this._marks(c).map(m => {
       const p = P[m.k] || P.counts;
-      return { d: p.d, f: p.fill ? "rgba(240,216,154,.9)" : "none", s: p.fill ? "none" : "rgba(240,216,154,.9)", w: p.w || 0,
+      return { pathG: this._pathG([{ d: p.d, f: p.fill ? "rgba(240,216,154,.9)" : "none", s: p.fill ? "none" : "rgba(240,216,154,.9)", w: p.w || 0 }]),
         svg: "width:" + sz + "px;height:" + sz + "px;display:block" + (m.k === "tap" ? ";animation:mzBreathe 2.2s ease-in-out infinite" : ""),
         n: m.n, wrap: "display:flex;align-items:center;gap:1px" };
     });
@@ -8130,7 +8118,7 @@ class Component extends DCLogic {
         artStyle: "position:absolute;opacity:.9;" + "left:0;right:0;margin:0 auto;" + (lv >= 4 ? "top:12px;width:68px;height:88px" : lv >= 3 ? "top:16px;width:68px;height:80px" : "top:27px;width:48px;height:42px") + (s ? ";animation:mzEmblemBreathe " + (6.5 + (s.id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(s.id % 7)) + "s infinite" : ""),
         shapes: s && window.ManzilArt ? this._tintArt(s.id, window.ManzilArt.get(s.id >= 200 ? s.id - 200 : s.id)) : [],
         artBox: this._artBox(s ? (s.id >= 200 ? s.id - 200 : s.id) : this._boardM(i)),
-          moonD: this._moonD(lv), moonFill: "rgba(250,244,226,.95)",
+          moonG: this._pathG([{ d: this._moonD(lv), f: "rgba(250,244,226,.95)" }]),
           moonRim: "rgba(250,244,226," + (lv >= 4 ? .82 : .4) + ")",
         emptyShapes: !s && window.ManzilArt ? this._tintArt(this._boardM(i), window.ManzilArt.get(this._boardM(i)), .72) : [],
         l: s ? fL : "", r: s ? fR : "",
@@ -8308,7 +8296,7 @@ class Component extends DCLogic {
         onHoldEnd: () => { clearTimeout(this._holdT); },
         onHold: () => { clearTimeout(this._holdT); this.setState({ hov: id }); this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 400); },
         onDown: (e) => { if (this.state.mull) return; clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); this._startDrag(id, e); },
-        moonD: this._moonD(c.lvl), moonFill: "rgba(250,244,226,.95)",
+        moonG: this._pathG([{ d: this._moonD(c.lvl), f: "rgba(250,244,226,.95)" }]),
         moonRim: "rgba(250,244,226," + (c.lvl >= 4 ? .82 : .4) + ")",
         onTap: () => { if (this._dragDid || this.state.mull) return; clearTimeout(this._holdT); const st2 = this.state.peek ? { peek: null } : {}; if (st.turn === "you" && st.phase === "play" && !st.busy) st2.sel = seld ? null : id; this.setState(st2); },
         hover: dragMe ? "" : "transform:perspective(620px) translateX(" + nx + "px) rotate(" + (rot + nr).toFixed(1) + "deg) translateY(-16px) scale(1.05) rotateX(7deg);z-index:9",
@@ -9100,20 +9088,20 @@ class Component extends DCLogic {
         return { introTitle: "match the sky for the " + this._mName(t0), introSubOn: false, introSub: "", introNoteOn: false, introNote: "" };
       })()),
       ...((() => { // the intro shows WHO stands there, not the card (29 aug 2026, user)
-        if (st.phase !== "intro") return { introFigOn: false, introCardOn: true, introFigPaths: [] };
+        if (st.phase !== "intro") return { introFigOn: false, introCardOn: true, introFigPaths: null };
         const t1 = this._tonight();
         const k1 = st.pickK != null ? st.pickK : (this._mlvl(t1) < 4 && !this._climbDoneTonight(t1)) ? Math.min(this._rungs()[t1] || 0, 8) : -1;
         if (k1 >= 8) { const av7 = this._avFig(t1);
           // the arrival (level grammar beat 2): the star lands first and flares; the animal gathers
           // out of the dark around it a half-beat later. the mansion is its star before it is a body.
-          if (av7) return { introFigOn: true, introCardOn: false, introFigPaths: av7.p, introStarOn: true, introStarF: av7.starF || av7.star, introStarS: av7.starS || "none", introStarPos: "transform:translate(" + av7.starX + "px," + av7.starY + "px)",
+          if (av7) return { introFigOn: true, introCardOn: false, introFigPaths: this._pathG(av7.p), introStarOn: true, introStarF: av7.starF || av7.star, introStarS: av7.starS || "none", introStarPos: "transform:translate(" + av7.starX + "px," + av7.starY + "px)",
             introStarPX: (av7.starX / 120 * 100).toFixed(1) + "%", introStarPY: (av7.starY / 96 * 100).toFixed(1) + "%",
             introGlowBg: av7.glow || "rgba(255,176,0,.3)",
             introFigWrap: "position:absolute;inset:0;animation:mzWalkerIdle 6s ease-in-out 1.8s infinite, mzFadeUp 1.2s ease .55s both" };
         }
-        if (k1 < 0 || k1 >= 8) return { introFigOn: false, introCardOn: true, introFigPaths: [], introStarOn: false, introFigWrap: "position:absolute;inset:0;animation:mzWalkerIdle 6s ease-in-out infinite" };
+        if (k1 < 0 || k1 >= 8) return { introFigOn: false, introCardOn: true, introFigPaths: null, introStarOn: false, introFigWrap: "position:absolute;inset:0;animation:mzWalkerIdle 6s ease-in-out infinite" };
         const w1 = this._walkers()[k1], f1 = w1 ? (this._figs()[w1.name] || this._figs()[this._wAlias(w1.name)]) : null;
-        return { introFigOn: !!f1, introCardOn: !f1, introFigPaths: f1 ? f1.p : [], introStarOn: false,
+        return { introFigOn: !!f1, introCardOn: !f1, introFigPaths: this._pathG(f1 && f1.p), introStarOn: false,
           introFigWrap: "position:absolute;inset:0;animation:mzWalkerIdle 6s ease-in-out infinite",
           introKeeper: w1 ? this._walkerKeeper(w1.name) : "", introKeeperOn: !!(w1 && this._walkerKeeper(w1.name)) };
       })()),
@@ -9159,7 +9147,7 @@ class Component extends DCLogic {
         const ab = wc && wc.n % 2 ? "B" : "";
         const gk = av6 ? "Press" : w ? ({ "imra": "Fling", "tesh": "Fling", "sef": "Press", "ruen": "Press", "odel": "Press", "brann": "Slam", "mave": "Still", "the quiet one": "Still" })[this._wAlias(w.name)] || "Press" : "";
         return {
-          walkerFigOn: !!f, figPaths: f ? f.p : [], figOp: f ? f.op : 1,
+          walkerFigOn: !!f, figPaths: this._pathG(f && f.p), figOp: f ? f.op : 1,
           // ALL FOUR COURTS ARE DRAWN NOW (31 aug 2026): the 30 aug per-character transform map was
           // a stand-in — the same eight ink figures leaned/mirrored/scaled so a roster read as eight
           // people without eight drawings. Every court (throne, heart, tents, drum) now carries its
@@ -9293,7 +9281,7 @@ class Component extends DCLogic {
           + "transform:translateY(" + (lvI >= 3 ? "-50%" : "-64%") + ")" + (cI.ab ? " scale(1.12)" : "") + ";"
           + (lvI >= 4 ? "width:84px;height:104px" : lvI >= 3 ? "width:80px;height:96px" : "width:62px;height:52px"),
         introNameOn: lvI < 3,
-        introMoonD: this._moonD(lvI),
+        introMoonG: this._pathG([{ d: this._moonD(lvI), f: "rgba(250,244,226,.95)" }]),
         introMoonRim: "rgba(250,244,226," + (lvI >= 4 ? .82 : .4) + ")",
         introCardStyle: "width:126px;height:170px;border-radius:10px;position:relative;overflow:hidden;background:"
           + this._qWash(this._tonight(), cI.grantOn ? .74 : .42)
@@ -9373,7 +9361,7 @@ class Component extends DCLogic {
                 + (lv2 >= 4 ? "width:164px;height:200px" : lv2 >= 3 ? "width:152px;height:160px" : "width:110px;height:96px"),
               dsPips: Array.from({ length: 4 }, (_, pi) => ({ style: "width:5px;height:5px;border-radius:50%;background:" + (pi < lv2 ? (lv2 >= 4 ? "#FFB000" : "rgba(240,216,154,.85)") : "rgba(240,216,154,.18)") + (pi < lv2 && lv2 >= 4 ? ";box-shadow:0 0 5px rgba(255,176,0,.7)" : "") })),
               dsHouseOn: true,
-              dsMoonD: this._moonD(lv2), dsMoonRim: "rgba(250,244,226," + (lv2 >= 4 ? .82 : .4) + ")",
+              dsMoonG: this._pathG([{ d: this._moonD(lv2), f: "rgba(250,244,226,.95)" }]), dsMoonRim: "rgba(250,244,226," + (lv2 >= 4 ? .82 : .4) + ")",
               // THE LEVEL SCREEN (27 aug 2026, user: "it should go to a new screen where you level the
               // card, otherwise if you hover over a different card it resets"). clicking a card hides
               // the wall of twenty-eight and gives the card its own page, so no hover can take the
@@ -9926,7 +9914,7 @@ class Component extends DCLogic {
             const p5 = pt3(r2.m, 136), q5 = QC3[this._quad(r2.m)];
             return { g: GL[r2.p], pos: "transform:translate(" + p5.x + "px," + (p5.y + 4) + "px)", c: "rgba(" + q5 + ",.95)" };
           });
-          return { ledSpokes, ledPos: "transform:translate(" + tpos.x + "px," + tpos.y + "px)", ledEntries: entries.slice(0, 7), ledEmptyOn: entries.length === 0, ledMarks, ledChartOn: ledMarks.length > 0, ledReads,
+          return { ledSpokesG: this._pathG(ledSpokes.map(s => ({ d: s.d, f: "none", s: s.c, w: s.w, st: s.st }))), ledPos: "transform:translate(" + tpos.x + "px," + tpos.y + "px)", ledEntries: entries.slice(0, 7), ledEmptyOn: entries.length === 0, ledMarks, ledChartOn: ledMarks.length > 0, ledReads,
             ledStatsOn: !!this.state.ledStats,
             ledStatsLabel: this.state.ledStats ? "arena stats ‹" : "arena stats ›",
             ledStatsTap: () => this.setState({ ledStats: !this.state.ledStats }) };
@@ -9947,8 +9935,8 @@ class Component extends DCLogic {
         for (let i = 0; i < dots.length; i++) { const a2 = dots[i], b2 = dots[(i + 1) % dots.length]; if (a2.x === b2.x && a2.y === b2.y) continue; lines.push({ x1: a2.x, y1: a2.y, x2: b2.x, y2: b2.y, c: i === 0 ? "#FFB000" : "#F0D89A", o: i === 0 ? ".55" : ".38" }); }
         // dots and chords also go out as paths — same parse rule as the braziers.
         const cD = p => "M" + (p.x - p.r) + " " + p.y + "a" + p.r + " " + p.r + " 0 1 0 " + (p.r * 2) + " 0a" + p.r + " " + p.r + " 0 1 0 " + (-p.r * 2) + " 0Z";
-        return { shardDots: dots.map(p => Object.assign({}, p, { d: cD(p) })),
-          shardLines: lines.map(l => Object.assign({}, l, { d: "M" + l.x1 + " " + l.y1 + "L" + l.x2 + " " + l.y2 })) };
+        return { shardDotsG: this._pathG(dots.map(p => ({ d: cD(p), f: p.c }))),
+          shardLinesG: this._pathG(lines.map(l => ({ d: "M" + l.x1 + " " + l.y1 + "L" + l.x2 + " " + l.y2, f: "none", s: l.c, w: .55, st: "opacity:" + l.o }))) };
       })()),
       // the old onboarding is REMOVED (30 aug 2026, user): the legend story + door screens are gone,
       // their phase unreachable. the chess/backgammon lore text survives in _legend() for a future codex page.
@@ -10007,7 +9995,7 @@ class Component extends DCLogic {
       shardGo: () => this._go("walkers"),
       walkersOn: st.phase === "walkers",
       walkersGo: () => this._go("tut5", { tutI: 0 }),
-      walkersFigs: st.phase === "walkers" ? ["imra", "brann", "mave"].map((n, i) => { const f = this._figs()[n] || {}; return { paths: f.p || [], op: f.op || 1, glyphC: ["#96A2E0", "#E0C896", "#96E0B4"][i], sway: "animation:mzWalkerIdle " + (5.4 + i * .8) + "s ease-in-out infinite" }; }) : [],
+      walkersFigs: st.phase === "walkers" ? ["imra", "brann", "mave"].map((n, i) => { const f = this._figs()[n] || {}; return { paths: this._pathG(f.p), op: f.op || 1, glyphC: ["#96A2E0", "#E0C896", "#96E0B4"][i], sway: "animation:mzWalkerIdle " + (5.4 + i * .8) + "s ease-in-out infinite" }; }) : [],
       ...((() => {
         if (st.phase !== "shard") return { shardName: "", shardCards: [] };
         const b9 = this._birth() || {}; const rows9 = Array.isArray(b9.rows) ? b9.rows : [];
@@ -10518,7 +10506,7 @@ class Component extends DCLogic {
       // format plaque. The mansion's own seam routes to the avatar intro instead (see _advanceRound).
       ...((() => {
         if (!(st.phase === "round" && st.road && !st.roadBoss && lastRound === "you" && st.roadWalker))
-          return { rbOn: false, rbFigOn: false, rbFigPaths: [], rbPips: [], rbFmtOn: false, rbCount: "", rbFmtTitle: "", rbFmtSub: "", rbNextOn: false, rbNextK: "", rbNextName: "", rbNextLine: "", rbTailStyle: "display:none", rbNextStyle: "" };
+          return { rbOn: false, rbFigOn: false, rbFigPaths: null, rbPips: [], rbFmtOn: false, rbCount: "", rbFmtTitle: "", rbFmtSub: "", rbNextOn: false, rbNextK: "", rbNextName: "", rbNextLine: "", rbTailStyle: "display:none", rbNextStyle: "" };
         const k = st.roadRung || 0, nk = Math.min(k + 1, 8);
         const w = this._walkers().find(x => x.name === st.roadWalker);
         const fg = w ? (this._figs()[w.name] || this._figs()[this._wAlias(w.name)]) : null;
@@ -10536,7 +10524,7 @@ class Component extends DCLogic {
           // on the two seams that change the match format the PLAQUE is the message, so the walker's
           // figure stands down and the plaque and the next-walker panel sit side by side. Six of the
           // eight seams are unchanged and keep the full portrait treatment.
-          rbFigOn: !!fg && !fmt, rbFigPaths: fg ? fg.p : [],
+          rbFigOn: !!fg && !fmt, rbFigPaths: this._pathG(fg && fg.p),
           rbTailStyle: fmt
             ? "display:flex;flex-direction:row;align-items:center;justify-content:center;gap:22px;margin-top:16px"
             : "display:flex;flex-direction:column;align-items:center",
@@ -10681,7 +10669,7 @@ class Component extends DCLogic {
       endOn: st.phase === "won" || st.phase === "lost" || st.phase === "roadlost",
       ...((() => { // the avatar speaks at the door (won: it yields; lost: it holds)
         const avV = (st.roadBoss && (st.phase === "won" || st.phase === "lost" || st.phase === "roadlost")) ? this._avVoice(this._tonight()) : null;
-        if (!avV) return { avVoiceOn: false, avVoice: "", avVoiceC: "#C3B27E", avEndOn: false, avEndPaths: [], avEndStarOn: false, avEndFigStyle: "", avEndStarPos: "", avEndStarStyle: "", avEndGlow: "transparent" };
+        if (!avV) return { avVoiceOn: false, avVoice: "", avVoiceC: "#C3B27E", avEndOn: false, avEndPaths: null, avEndStarOn: false, avEndFigStyle: "", avEndStarPos: "", avEndStarStyle: "", avEndGlow: "transparent" };
         const won = st.phase === "won";
         const avF2 = this._avFig(this._tonight());
         // FIRST LIGHT (beside the ladder, 29 aug decision): the first win over a mansion on the night
@@ -10699,7 +10687,7 @@ class Component extends DCLogic {
         // reading: on a win it bows and settles (mzYield) with its star bright; on a loss it holds,
         // unmoved and cooled, which is the same figure doing the opposite thing.
         return {
-        avEndOn: !!avF2, avEndPaths: avF2 ? avF2.p : [],
+        avEndOn: !!avF2, avEndPaths: this._pathG(avF2 && avF2.p),
         avEndFigStyle: avF2 ? (won
           // mzBow, not mzYield: a defeated walker fades as it steps aside, but the mansion's animal
           // acknowledging you must HOLD at full presence — this is the game's biggest payoff and the
