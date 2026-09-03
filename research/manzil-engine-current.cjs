@@ -264,7 +264,29 @@ function mkGame(cfg) {
 //         misclassifies the whole ladder mirror deck as tiger.
 //       * The ground quarter is COMPUTED, never a table. Design nearly shipped this law at the
 //         wrong station by reasoning about the geography from memory.
+//   - 2, "toll" (3 sep 2026, measured the best-behaved law yet: spread 39.2 -> 31.1, the largest
+//     narrowing any law has produced, seat -0.3 fresh, skill +0.0): station 4. A card standing on
+//     the law station that CANNOT BE TAKEN AT ALL counts one less, both sides. Sheltered ground
+//     pays for its shelter. Implemented as one predicate evaluated at count time, never a flag
+//     written at lodge, and it reuses shielded() so the card the toll charges is by construction
+//     the card tryFlip() refuses. shielded() is attacker-independent (its `ai` is never read), so
+//     a count-time caller can pass anything; this one passes -1. The GATE is added explicitly on
+//     top, because its first-miss lives in tryFlip() and is stateful (`gateUsed`) — a predicate
+//     built from shielded() alone would silently under-charge by one of the four denials, and it
+//     correctly stops paying once the gate is spent. Planets pay nothing: quarterless, unmeasured.
+//   - 4, "crow" (3 sep 2026, narrows 16.7 — twice the toll's record): station 4. The card at the
+//     law station counts one MORE, and the chargeable neighbour worth most counts one LESS. "the
+//     crow takes the bright thing." Both sides, all night. Two things make this delicate and both
+//     are ported deliberately: the neighbour comparison is made on PLAIN worth (a `noLaw` ctx flag,
+//     so slotW cannot recurse into its own law), and the two clauses are ONE TRANSACTION — a point
+//     MOVES from the richest neighbour to the perch, net zero. So the planet guard covers the whole
+//     transaction, never one clause of it: exempting the +1 alone would DESTROY a point, which is
+//     the rear spout's measured failure shape. A planet at the perch switches the law off entirely;
+//     a planet beside it is never the one charged. Ties go to the neighbour NEARER THE DOOR (the
+//     lower index), via a strict `>` in a left-then-right walk.
 const LAW_AT = {
+  2: { kind: "toll", station: 4 },
+  4: { kind: "crow", station: 4 },
   10: { kind: "reach", station: 0 },
   12: { kind: "turn", station: 0 },
   18: { kind: "beat", station: 0 },
@@ -289,7 +311,10 @@ function lawAt(m) { return LAW_AT[m] || null; }
 // where the tiger is the stranger: byakko +14.7, spread 46.0 -> 59.6, WIDENS, fails. Same
 // sentence, same index, inverted law. So: m27 takes no BOARD_OFF entry, deliberately, and the
 // general rule is that a window slide is only free for a law that does not read its own ground.
-const BOARD_OFF = { 19: 4, 21: 4, 23: 4, 25: 4, 28: 4 };
+// m2 slides; m4 deliberately does NOT — the crow was measured on the standard window (road m4...m12).
+// Design's note added `4: 4` in one section and removed it in a later one the same day; the shipped
+// client has 2 and not 4, which is what this mirrors. Checked against the file, not the prose.
+const BOARD_OFF = { 2: 4, 19: 4, 21: 4, 23: 4, 25: 4, 28: 4 };
 function boardM(g, i) {
   const t = g.tonight; if (!t) return null;
   const off = BOARD_OFF[t] || 0;
@@ -340,6 +365,46 @@ function shielded(g, slots, ti) {
     for (const d of [-1, 1]) { const k = nb(g, ti, d); if (k >= 0 && slots[k] && (slots[k].ground || slots[k].owner) === own) return true; }
   }
   return false;
+}
+
+// The toll's predicate (mansion 2). "Cannot be taken at all" = shielded() PLUS the gate's stateful
+// first miss, which lives in tryFlip() rather than shielded() in this module exactly as it does in
+// the client — so neither side holds the gate in shielded(), and the two predicates agree. Adding
+// the gate here rather than moving it into shielded() keeps the strike path untouched; if "cannot
+// be taken" ever wants one definition, that is a shielded()/tryFlip() change and a bigger call.
+// QUARTERLESS = any of her sky cards. Three laws (stranger, toll, crow) must exempt them, and the
+// test is deliberately "id >= 101" rather than the client's "101..107".
+//
+// THE CLIENT'S RANGE IS TOO NARROW AND IT MATTERS (found 3 sep 2026, reported to Design). Her hand
+// on the MANSION BOSS BOARD is `[101,102,103,104,105,108,109]` — Uranus (108) and Neptune (109) sit
+// outside 101..107, so all four of the client's guards miss them, and quadOf()'s byakko catch-all
+// then reports them as TIGER cards. That is precisely the failure Design caught and fixed for
+// 101..107; these two were left behind. It bites only on the boss board, because every walker hand
+// is 2xx mirror mansion cards — which is also why it is easy to miss in play.
+//
+// This module's own deck stops at 107, so the wider test changes nothing here today; it is written
+// this way so a future port of the outer planets cannot silently reintroduce the bug.
+function isQuarterless(id) { return id >= 101; }
+
+function tollOn(g, slots, i) {
+  const st = slots && slots[i]; if (!st) return false;
+  if (isQuarterless(st.id)) return false; // her planets are quarterless and unmeasured
+  const c = g.C[st.id];
+  const gateHold = !!(c && c.ab === "gate" && on(g, c) && !st.gateUsed);
+  return gateHold || shielded(g, slots, i); // shielded() never reads an attacker
+}
+
+// The crow's chargeable neighbour (mansion 4): the one worth most on PLAIN worth, planets never
+// charged, ties to the lower index — a strict `>` in a left-then-right walk gives that for free.
+function crowPays(g, slots, L, plainCtx) {
+  let best = -1, bw = -Infinity;
+  for (const k of [nb(g, L, -1), nb(g, L, 1)]) {
+    if (k < 0 || !slots[k]) continue;
+    if (isQuarterless(slots[k].id)) continue;
+    const w = slotW(g, slots, k, plainCtx).w;
+    if (w > bw) { bw = w; best = k; }
+  }
+  return best;
 }
 
 function tryFlip(g, slots, ai, ti, dir, printed) {
@@ -579,10 +644,22 @@ function slotW(g, slots, i, ctx) {
   let j = 0;
   if (c.ab === "jupiter") j = 1; // jupiterMode "always" — the locked base-layer default
   let w = 1 + j + (home ? 1 : 0);
+  // the toll (mansion 2): sheltered ground on the law station pays a point for its shelter.
+  if (law && law.kind === "toll" && i === law.station && tollOn(g, slots, i)) w -= 1;
+  // the crow (mansion 4): the perch counts one more and the richest chargeable neighbour one less,
+  // as ONE transaction — hence the single planet guard on the perch rather than one per clause.
+  if (law && law.kind === "crow" && !(ctx && ctx.noLaw)) {
+    const L = law.station, plain = Object.assign({}, ctx || {}, { noLaw: true });
+    const perch = slots[L];
+    if (!(perch && isQuarterless(perch.id))) {
+      if (i === L) w += 1;
+      else if (i === crowPays(g, slots, L, plain)) w -= 1;
+    }
+  }
   // the stranger's law (mansion 27, station 4): a card whose quarter is not this ground's quarter
   // counts one more, both sides. Her planets are quarterless and take no bonus; `c.quad` leads the
   // fallback because quadOf() is only valid for ids 1-27. See the LAW_AT comment for all three.
-  if (law && law.kind === "stranger" && i === law.station && !(s.id >= 101 && s.id <= 107)) {
+  if (law && law.kind === "stranger" && i === law.station && !isQuarterless(s.id)) {
     const gm = boardM(g, i);
     if (gm && (c.quad || quadOf(s.id)) !== quadOf(gm)) w += 1;
   }
@@ -1199,7 +1276,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards,
-  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
@@ -1790,6 +1867,142 @@ if (require.main === module) {
       const slid = ((27 - 1 + 4 - 4 + 28) % 28) + 1; // what station 4 would stand on if slid
       return E.boardM(g, 4) === 3 && E.quadOf(3) === "byakko"
         && slid === 27 && E.quadOf(slid) === "genbu"; // the ground's quarter flips, so the law flips
+    }, true],
+    // THE TOLL (mansion 2, station 4) — sheltered ground pays a point. The vectors pin the denial
+    // set, because "cannot be taken at all" is the whole law and it is assembled from two places.
+    // NOTE ON FILLER, learned the hard way: sun(106)/moon(107) are the usual inert filler in these
+    // vectors, but the toll and the crow both EXEMPT ids 101-107, so planet filler silently switches
+    // the law off and the vector passes for the wrong reason (or fails confusingly). Both laws' tests
+    // use level-1 mansion cards instead — abilities off, plain worth 1 — and avoid id === slot+1 so
+    // no card lands on its own dominion.
+    ["the toll: a card that cannot be taken counts one less (a crowned card here)", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 2, levels: lv1 }), plain = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1, crowned: true };
+      return E.shielded(g, slots, 4) === true
+        && E.counts(g, slots)[0] === E.counts(plain, slots)[0] - 1;
+    }, true],
+    ["the toll: an ordinary takeable card pays nothing", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 2, levels: lv1 }), plain = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      return E.counts(g, slots)[0] === E.counts(plain, slots)[0];
+    }, true],
+    ["the toll charges THE GATE, which shielded() alone would miss — and stops once the gate is spent", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 2, levels });
+      const fresh = Array.from({ length: 9 }, () => null);
+      fresh[4] = { id: 1, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // card 1 is the gate
+      const spent = Array.from({ length: 9 }, () => null);
+      spent[4] = { id: 1, l: 5, r: 5, owner: "you", by: "you", age: 1, gateUsed: true };
+      // shielded() does NOT hold the gate in this module (it lives in tryFlip), so this is exactly
+      // the case a shielded()-only predicate would under-charge.
+      return E.shielded(g, fresh, 4) === false
+        && E.tollOn(g, fresh, 4) === true && E.tollOn(g, spent, 4) === false;
+    }, true],
+    ["the toll: her planets are quarterless and pay nothing", () => {
+      const g = E.mkGame({ tonight: 2 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 101, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.tollOn(g, slots, 4) === false; // saturn is locked, but it is also a planet
+    }, true],
+    ["the toll does not charge a neighbouring station, and does not fire on another night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 2, levels: lv1 }), off = E.mkGame({ tonight: 5, levels: lv1 });
+      const side = Array.from({ length: 9 }, () => null);
+      side[3] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1, crowned: true };
+      const at = Array.from({ length: 9 }, () => null);
+      at[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1, crowned: true };
+      return E.counts(g, side)[0] === E.counts(off, side)[0]   // wrong station: no charge
+        && E.counts(off, at)[0] === 1;                          // wrong night: no charge
+    }, true],
+    // THE CROW (mansion 4, station 4) — a point MOVES from the richest neighbour to the perch.
+    ["the crow: the perch counts one more and the richest neighbour one less — net zero", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 4, levels: lv1 }), off = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const [lawYou] = E.counts(g, slots), [plainYou] = E.counts(off, slots);
+      return lawYou === plainYou; // one side holds both: the point moves within the same total
+    }, true],
+    ["the crow: the perch really does gain, and the neighbour really does pay", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 4, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const [you, sky] = E.counts(g, slots);
+      return you === 2 && sky === 0; // perch 1+1, the lone neighbour 1-1
+    }, true],
+    ["the crow charges the RICHER neighbour, not the nearer one", () => {
+      const g = E.mkGame({ tonight: 4 });
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g2 = E.mkGame({ tonight: 4, levels });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 107, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; // plain worth 1
+      slots[4] = { id: 107, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 21, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };  // district: worth 2
+      return E.crowPays(g2, slots, 4, { noLaw: true }) === 5;
+    }, true],
+    ["the crow's tie goes NEARER THE DOOR (the lower index)", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 4, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.slotW(g, slots, 3, { noLaw: true }).w === E.slotW(g, slots, 5, { noLaw: true }).w
+        && E.crowPays(g, slots, 4, { noLaw: true }) === 3;
+    }, true],
+    ["the crow: a planet AT THE PERCH switches the whole law off, both clauses", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 4, levels: lv1 }), off = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      slots[4] = { id: 101, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; // planet on the perch
+      // Exempting only the +1 would DESTROY a point — the rear spout's measured failure shape.
+      return E.counts(g, slots)[1] === E.counts(off, slots)[1];
+    }, true],
+    ["the crow: a planet BESIDE the perch is never the one charged", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 4, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 101, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; // planet: never charged
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.crowPays(g, slots, 4, { noLaw: true }) === 5; // the further, non-planet one pays
+    }, true],
+    ["the crow's neighbour comparison is made on PLAIN worth and cannot recurse into its own law", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 4, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      // slotW under noLaw must not apply the crow again to the neighbour it is pricing.
+      return E.slotW(g, slots, 5, { noLaw: true }).w === 1;
+    }, true],
+    ["the crow does NOT fire on a different mansion's night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 5, levels: lv1 }), off = E.mkGame({ tonight: 6, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      return E.counts(g, slots)[0] === E.counts(off, slots)[0];
+    }, true],
+    ["m2 slides its window, m4 deliberately does not (the crow was measured on the standard road)", () => {
+      return E.BOARD_OFF[2] === 4 && E.BOARD_OFF[4] === undefined;
+    }, true],
+    ["quarterless is `id >= 101`, NOT the client's 101..107 — Uranus and Neptune are on her boss hand", () => {
+      // The live client's mansion-boss hand is [101,102,103,104,105,108,109]. All four of its
+      // quarterless guards test `101..107`, so 108/109 fall through and quadOf()'s byakko catch-all
+      // then calls them tiger cards. Reported to Design 3 sep; this module must not inherit it.
+      return E.isQuarterless(101) && E.isQuarterless(107)
+        && E.isQuarterless(108) && E.isQuarterless(109)
+        && !E.isQuarterless(28) && !E.isQuarterless(1)
+        && E.quadOf(108) === "byakko"; // the catch-all that makes the narrow range dangerous
     }, true],
   ];
   let fails = 0;

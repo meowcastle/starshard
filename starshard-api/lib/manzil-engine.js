@@ -415,7 +415,19 @@ function counts(g, slots) {
 function boardWinner(g, slots) {
   const [you, sky] = counts(g, slots);
   if (you !== sky) return you > sky ? "you" : "sky";
-  return (g.tieRule || "a draw") === "a draw" ? "draw" : (g.tieRule === "the sky" ? "sky" : "you");
+  const tr = g.tieRule || "a draw";
+  if (tr === "a draw") return "draw";
+  // "the defender": a level board goes to whichever side did NOT lead it. Ported 3 sep 2026 from
+  // research/manzil-engine-current.cjs, which has had it since 28 aug — this file did not, and the
+  // gap was not harmless. Design's note asked for "a one-word change to tieRule"; setting the
+  // string alone against the OLD body would have fallen through the final `return "you"` and
+  // handed every drawn board to seat "you" regardless of who led, which is worse than the draw it
+  // replaced and would have looked like a rule rather than a bug. g.leader is who opened THIS
+  // board (mkGame's cfg.leader), not a running match record.
+  if (tr === "the defender") return g.leader === "you" ? "sky" : "you";
+  if (tr === "tonight's holder") return slots[0] ? slots[0].owner : "sky";
+  if (tr === "the sky") return "sky";
+  return "you";
 }
 
 const API = { cards, deal, mkGame, faceOf, shielded, tryFlip, lodge, resolve, isHome, boardM, cardOf, cardById, slotW, ctxOf, counts, boardWinner, on, nb, POOL, QUAD_OF };

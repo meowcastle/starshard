@@ -291,7 +291,13 @@ function createManzilLobby(io, { jwtSecret, pool }) {
       // mane is inherently owner-relative in this engine (see its own header), so no fairness flag
       // is needed the way the file this replaces needed maneFair.
       C: match.C, tonight: match.tonight, len: BOARD_LEN,
-      you: youHand, sky: skyHand, leader, tieRule: 'a draw',
+      // CANON, one rule everywhere (3 sep 2026, Design's §4a): a drawn board goes to whoever played
+      // second, on the road, at the table and here. PvP had kept 'a draw' since before the canon
+      // landed, so the two surfaces disagreed about a level board. Safe to switch only because the
+      // server decides the winner (boardWinner below) and broadcasts it to both seats — no client
+      // infers it, so the two can never award the same drawn board to different players — and
+      // because `leader` is recorded on the game object right here, which is what the rule reads.
+      you: youHand, sky: skyHand, leader, tieRule: 'the defender',
     });
     ['you', 'sky'].forEach(seat => {
       const snap = boardSnapshot(match, seat);
@@ -356,7 +362,7 @@ function createManzilLobby(io, { jwtSecret, pool }) {
   }
 
   function finishBoard(match) {
-    const winner = engine.boardWinner(match.game, match.game.slots); // tieRule "a draw" already set on this game
+    const winner = engine.boardWinner(match.game, match.game.slots); // tieRule "the defender" set on this game
     match.roundWins.push(winner);
     const wins = side => match.roundWins.filter(w => w === side).length;
     const done = wins('you') >= 3 || wins('sky') >= 3;
