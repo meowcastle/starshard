@@ -150,6 +150,25 @@ deploy_backend() {
     echo "==> $f"
     ssh "$HOST" "cat > $BACKEND_REMOTE/${f#starshard-api/}" < "$f"
   done
+  # KNOWN HAZARD, seen for real on 2 sep 2026 — read before "improving" this.
+  # `pkill; sleep 1; start` races: the old process can still hold 127.0.0.1:4001
+  # when the new one binds, so the new one dies on EADDRINUSE while the OLD one
+  # keeps serving. The script still prints "deployed" and exits 0, so you can
+  # believe you shipped code that is not running. ALWAYS check the tail below for
+  # EADDRINUSE, and confirm with a request that only the new code can answer.
+  #
+  # An attempt to harden this in-place caused two outages and was reverted. What
+  # bit, both times, was the environment rather than the logic — record it here so
+  # the next attempt starts ahead:
+  #   * The NAS has NO `pgrep`. A `pgrep ... || break` guard breaks out of its own
+  #     wait loop instantly on "command not found".
+  #   * `ps -ef | grep -c 'node server.js'` also counts the `sh -c` wrapper that
+  #     started it, and an orphaned wrapper can outlive its ssh session, so the
+  #     count is 2 when one API is running. Anchor on the node binary in field 8.
+  #   * Nested quoting (bash -> ssh "..." -> sh -> awk) is where this actually
+  #     failed. Put any non-trivial check in a script file shipped to the box and
+  #     invoke it by name, rather than inlining it in the ssh string.
+  # Test any replacement against the box BEFORE wiring it into a real deploy.
   echo "==> restarting api"
   ssh "$HOST" "
     pkill -f 'node server\\.js\$' || true
