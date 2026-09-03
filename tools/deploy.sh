@@ -16,7 +16,12 @@
 
 set -eu
 
-HOST=justin@wreckroom.nyc
+# Overridable (3 sep 2026): the public hostname stopped accepting SSH on 22 mid-session while the
+# box itself was fine and still serving HTTPS — a router/forwarding change, not a NAS fault. The
+# LAN address worked throughout. So the deploy target is no longer hardcoded:
+#   STARSHARD_HOST=justin@192.168.1.117 tools/deploy.sh frontend
+# Default stays the public name, since that is what works from off the LAN.
+HOST="${STARSHARD_HOST:-justin@wreckroom.nyc}"
 FRONTEND_REMOTE=/volume2/web/starshard-staging
 BACKEND_REMOTE=/volume2/web/starshard-api
 NODE_BIN=/volume2/@appstore/Node.js_v20/usr/local/bin/node
