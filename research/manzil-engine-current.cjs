@@ -106,7 +106,14 @@ const PLANET_HOME_FALLBACK = { saturn: 26, mars: 14, venus: 22, mercury: 8, jupi
 const DEFAULT_SKY_HAND = [101, 102, 103, 104, 105, 106, 107];
 const BOARD_LEN = 9;
 
-function quadOf(id) { return QUAD_OF[id] || "byakko"; }
+// A CARD WITH NO QUARTER HAS NO QUARTER (3 sep 2026, Measurement's general fix, adopted).
+// This used to fall through to "byakko" for anything unmapped, which is a SILENT GRANT: her
+// planets came back as tiger cards, and every law that reads a quarter then treated them as
+// standing on tiger ground. That is the same failure twice already (the guide's door, then
+// Uranus/Neptune slipping past a 101..107 range check). Returning null makes "no quarter" a
+// value a caller has to handle rather than a default it cannot see. Every law that reads a
+// quarter treats null as "not this one".
+function quadOf(id) { return QUAD_OF[id] || null; }
 
 // cfg.levels: {id: 1-4}, default 3 (signature awake) for player cards 1-28. cfg.grants: "none" | "all".
 function cards(cfg) {
@@ -661,7 +668,10 @@ function slotW(g, slots, i, ctx) {
   // fallback because quadOf() is only valid for ids 1-27. See the LAW_AT comment for all three.
   if (law && law.kind === "stranger" && i === law.station && !isQuarterless(s.id)) {
     const gm = boardM(g, i);
-    if (gm && (c.quad || quadOf(s.id)) !== quadOf(gm)) w += 1;
+    const cq = c.quad || quadOf(s.id), gq = gm ? quadOf(gm) : null;
+    // null on either side means "no quarter to compare", so the law simply does not apply —
+    // never "different, therefore pay". A default quarter here is what caused the planet bug.
+    if (cq && gq && cq !== gq) w += 1;
   }
   if (ctx && ctx.guide && ctx.guide[s.ground || s.owner] && home) w += 1;
   if (on(g, c)) {
@@ -1835,14 +1845,18 @@ if (require.main === module) {
       const slots = Array.from({ length: 9 }, () => null);
       slots[4] = { id: 101, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; // saturn: no quarter at all
       const plain = E.mkGame({ tonight: 5 });
-      return E.quadOf(101) === "byakko" && E.counts(g, slots)[1] === E.counts(plain, slots)[1];
+      // quadOf() used to answer "byakko" here, which is exactly how a planet became a tiger card.
+      // It now answers null, so the law has nothing to compare and correctly does not apply.
+      return E.quadOf(101) === null && E.counts(g, slots)[1] === E.counts(plain, slots)[1];
     }, true],
     ["the stranger's law: c.quad leads the fallback, so the ladder's mirror deck is not misread as tiger", () => {
       const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
       const baseC = E.cards({ levels, grants: "all" });
       const C = E.ladderOpponentCards(baseC, levels);
-      // 214 mirrors card 14 (seiryuu). quadOf(214) is the byakko catch-all and would be wrong.
-      return C[214] && C[214].quad === "seiryuu" && E.quadOf(214) === "byakko";
+      // 214 mirrors card 14 (seiryuu). quadOf(214) knows nothing about mirror ids and answers null,
+      // so c.quad must still lead the fallback — null would otherwise read as "no quarter" for a
+      // card that certainly has one. The ordering is the fix; null is what makes it visible.
+      return C[214] && C[214].quad === "seiryuu" && E.quadOf(214) === null;
     }, true],
     ["the stranger's law does not touch a neighbouring station", () => {
       const g = E.mkGame({ tonight: 27 });
@@ -2002,7 +2016,7 @@ if (require.main === module) {
       return E.isQuarterless(101) && E.isQuarterless(107)
         && E.isQuarterless(108) && E.isQuarterless(109)
         && !E.isQuarterless(28) && !E.isQuarterless(1)
-        && E.quadOf(108) === "byakko"; // the catch-all that makes the narrow range dangerous
+        && E.quadOf(108) === null && E.quadOf(109) === null; // no catch-all left to mislabel them
     }, true],
   ];
   let fails = 0;

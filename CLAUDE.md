@@ -627,6 +627,40 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE BIGGEST OUTSTANDING FINDING (3 Sep 2026): every law number measured this
+month describes eight boards out of nine.** Measurement's reference deals the
+sky seven cards from the twenty-eight, which models a WALKER board exactly — and
+the mansion's own board not at all. On the boss board her hand is
+`[101,102,103,104,105,108,109]`, seven planets, and **every count-class law
+exempts planets**, so on that board the stranger can only ever pay the player,
+and the toll and the crow can only ever charge them. One-sided by construction,
+unmeasured, and not designed. Read every law result as "the walker boards" until
+a `bossHand` mode lands. Code supplied the four facts needed to build one
+(`docs/NOTE-TO-MEASUREMENT-BOSS-BOARD-03SEP.md`): the nine-planet table, the
+ephemeris rule for a planet's home station (tropical longitude floored into 28
+equal mansions, read at a 21:00 anchor on a 06:00→06:00 night), the player's
+hand (unchanged — their normal collection), and confirmation from `_bossRule`'s
+own dispatcher that the law fires on all nine boards. **Two things nobody had
+written down:** there are TWO planet hands in the build (the default 101–107
+carries Sun/Moon; the boss board swaps them for Uranus/Neptune), which is
+almost certainly why the quarterless guards were written `101..107` and are
+wrong for the only board planets appear on — and **the mansion always leads
+board one of its own match** (`leader = boss ? "sky" : …`), so seat rows for
+that board are one seat assignment, not an average.
+
+**`quadOf` no longer defaults to byakko — a card with no quarter has no
+quarter.** Measurement's general fix, adopted: the catch-all was a silent grant
+that turned planets into tiger cards, and it had already caused the same bug
+twice. It returns `null` now, and the stranger's law treats null on either side
+as "no comparison" rather than "different, therefore pay". Updating the vectors
+surfaced a third case nobody had listed: **`quadOf(214)` is null too** — the
+ladder's mirror deck isn't in the quarter map, so a default would have
+mislabelled her entire mirror collection as tiger, at 28× the scale and only
+visible in ladder sims. `c.quad` leading the fallback is what saves it. **The
+client still carries the default and the narrow `101..107` range in all four
+guards** — Design's to fix; until then client and engine diverge on the boss
+board and the engine is the one matching what was measured.
+
 **A third delivery the same night built and measured the guide's law (m27), so it
 IS ported — `LAW_AT` is ten.** `stranger@4`: at the road's middle station, a card
 whose quarter is not that ground's quarter counts one more, both sides. Measured
