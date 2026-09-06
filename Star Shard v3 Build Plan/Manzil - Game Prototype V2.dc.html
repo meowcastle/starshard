@@ -35,6 +35,18 @@
   @keyframes mzReachTrail{0%{opacity:0}18%{opacity:.7}70%{opacity:.55}100%{opacity:0}}
   @keyframes mzStampIn{0%{opacity:0;transform:scale(1.8)}22%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
   @keyframes mzResonRing{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.3);opacity:0}}
+  /* mansion 5, the branding yard: the fire at the middle station licks; heat climbs off the iron; the brand glows when shelter stands over it */
+  @keyframes mzBzFlame{0%,100%{transform:scaleY(1) scaleX(1)}30%{transform:scaleY(1.14) scaleX(.92)}62%{transform:scaleY(.9) scaleX(1.06)}}
+  @keyframes mzBzHeat{0%{transform:translateY(0);opacity:.4}100%{transform:translateY(-16px);opacity:0}}
+  @keyframes mzBzBrand{0%,100%{opacity:.55}50%{opacity:1}}
+  /* mansion 3, the threshing floor: the razor's stroke sweeps the road's whole width in one pass; the held stroke starts and stops short */
+  @keyframes mzRazorCut{0%{transform:scaleX(0);transform-origin:50% 50%;opacity:0}12%{opacity:1}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+  @keyframes mzRazorHold{0%{transform:scaleX(0);transform-origin:50% 50%;opacity:0}20%{opacity:.9}45%{transform:scaleX(.28);opacity:.9}100%{transform:scaleX(.28);opacity:0}}
+  @keyframes mzChaff{0%{transform:translateY(0);opacity:.5}100%{transform:translateY(-22px) translateX(14px);opacity:0}}
+  /* mansion 1, the city gate: the two thrown-back leaves flex once against the wall when a strike goes through the gap that any other ground would have held */
+  @keyframes mzLeafL{0%,100%{transform:rotate(0)}22%{transform:rotate(-4deg)}60%{transform:rotate(1deg)}}
+  @keyframes mzLeafR{0%,100%{transform:rotate(0)}22%{transform:rotate(4deg)}60%{transform:rotate(-1deg)}}
+  @keyframes mzGateWindow{0%,100%{opacity:.55}50%{opacity:.9}}
   @keyframes mzTurnGlide{0%{offset-distance:0%;opacity:0}12%{opacity:1}80%{opacity:1}100%{offset-distance:100%;opacity:0}}
   @keyframes mzTurnTrail{0%{opacity:0}20%{opacity:.75}72%{opacity:.5}100%{opacity:0}}
   @keyframes mzTurnStamp{0%{opacity:0;transform:scale(1.6) rotate(-12deg)}26%{opacity:1;transform:scale(1) rotate(0deg)}74%{opacity:1}100%{opacity:0;transform:scale(.95)}}
@@ -128,6 +140,8 @@
   @keyframes mzZoomIn{0%{opacity:0;transform:scale(.45)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
   @keyframes mzReadyGlow{0%,100%{box-shadow:0 0 8px rgba(255,176,0,.25)}50%{box-shadow:0 0 22px rgba(255,176,0,.55)}}
   @keyframes mzFadeOut{from{opacity:1}to{opacity:0}}
+  /* the climb caption rides the 2.1s road step: in with the move, gone before the deal */
+  @keyframes mzClimbCap{0%{opacity:0;transform:translateY(10px)}22%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
   @keyframes mzSlotIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
   @keyframes mzHandIn{0%{opacity:0;translate:150px -190px;rotate:14deg;scale:.72}60%{opacity:1}100%{opacity:1;translate:0 0;rotate:0deg;scale:1}}
   @keyframes bsBreathe{0%,100%{opacity:1}50%{opacity:.5}}
@@ -1047,6 +1061,27 @@
 </sc-if>
 <sc-if value="{{ flCrowOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ flCrowStyle }}"><svg viewBox="0 0 80 52" style="width:100%;height:100%;display:block;overflow:visible">{{ flCrow }}</svg></div>
+</sc-if>
+<sc-if value="{{ cgOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ cgDeepStyle }}"></div>
+<div style="{{ cgCityStyle }}"><svg viewBox="0 0 932 160" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ cgCity }}</svg></div>
+<div style="{{ cgHouseStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ cgHouse }}</svg></div>
+</sc-if>
+<sc-if value="{{ gsOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ gsDeepStyle }}"></div>
+<div style="{{ gsSkyStyle }}"><svg viewBox="0 0 932 140" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ gsSky }}</svg></div>
+<div style="{{ gsFloorStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ gsFloor }}</svg></div>
+</sc-if>
+<sc-if value="{{ gsRazorOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ gsRazorStyle }}"><div style="{{ gsRazorLine }}"></div></div>
+</sc-if>
+<sc-if value="{{ bzOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ bzDeepStyle }}"></div>
+<div style="{{ bzSkyStyle }}"><svg viewBox="0 0 932 140" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ bzSky }}</svg></div>
+<div style="{{ bzYardStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ bzYard }}</svg></div>
+</sc-if>
+<sc-if value="{{ bzFireOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ bzFireStyle }}"><svg viewBox="0 0 80 60" style="width:100%;height:100%;display:block;overflow:visible">{{ bzFire }}</svg></div>
 </sc-if>
 <sc-if value="{{ blOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ blDeepStyle }}"></div>
@@ -2892,6 +2927,27 @@
 <sc-if value="{{ flCrowOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ flCrowStyle }}"><svg viewBox="0 0 80 52" style="width:100%;height:100%;display:block;overflow:visible">{{ flCrow }}</svg></div>
 </sc-if>
+<sc-if value="{{ cgOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ cgDeepStyle }}"></div>
+<div style="{{ cgCityStyle }}"><svg viewBox="0 0 932 160" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ cgCity }}</svg></div>
+<div style="{{ cgHouseStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ cgHouse }}</svg></div>
+</sc-if>
+<sc-if value="{{ gsOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ gsDeepStyle }}"></div>
+<div style="{{ gsSkyStyle }}"><svg viewBox="0 0 932 140" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ gsSky }}</svg></div>
+<div style="{{ gsFloorStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ gsFloor }}</svg></div>
+</sc-if>
+<sc-if value="{{ gsRazorOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ gsRazorStyle }}"><div style="{{ gsRazorLine }}"></div></div>
+</sc-if>
+<sc-if value="{{ bzOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ bzDeepStyle }}"></div>
+<div style="{{ bzSkyStyle }}"><svg viewBox="0 0 932 140" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ bzSky }}</svg></div>
+<div style="{{ bzYardStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ bzYard }}</svg></div>
+</sc-if>
+<sc-if value="{{ bzFireOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ bzFireStyle }}"><svg viewBox="0 0 80 60" style="width:100%;height:100%;display:block;overflow:visible">{{ bzFire }}</svg></div>
+</sc-if>
 <sc-if value="{{ blOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ blDeepStyle }}"></div>
 <div data-mz-dest="2" style="{{ blGateStyle }}"><svg viewBox="0 0 260 210" style="width:100%;height:100%;display:block;overflow:visible">{{ blGate }}</svg></div>
@@ -4114,6 +4170,12 @@
       </sc-if>
     </div>
   </sc-if>
+  <sc-if value="{{ climbOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:150px;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;z-index:9;animation:mzClimbCap 2.4s ease both">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;text-shadow:0 2px 14px rgba(0,0,0,.8)">{{ climbLine }}</div>
+      <div style="font-family:'Karla',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#C3B27E;text-shadow:0 1px 10px rgba(0,0,0,.8)">{{ climbSub }}</div>
+    </div>
+  </sc-if>
   <sc-if value="{{ rulesOn }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ rulesTap }}" style="position:absolute;inset:0;background:rgba(4,3,2,.85);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;z-index:8;cursor:pointer;animation:mzFadeUp .2s ease both">
       <div style="max-width:540px;padding:0 40px;font-size:12.5px;line-height:2;color:#D8C89C">
@@ -4815,7 +4877,9 @@ class Component extends DCLogic {
     const st = this.state;
     if (st.road && !st.roadBoss && !sameRung) {
       // a chosen station keeps climbing from where it was picked; the walked road reads the saved rung
-      const k = st.roadPick ? Math.min((st.roadRung || 0) + 1, 8) : Math.min(this._rungs()[this._tonight()] || 0, 8);
+      // a pinned station (the Design-preview tweak) freezes _rungs(), so without this every climb
+      // re-landed on the same walker — a loop that read as a broken cut in the preview (5 sep 2026)
+      const k = (st.roadPick || this._stationForce() >= 0) ? Math.min((st.roadRung || 0) + 1, 8) : Math.min(this._rungs()[this._tonight()] || 0, 8);
       // THE MANSION GETS HER INTRO ON THE WALKED ROAD TOO (1 sep 2026, user: "the avatar intro only
       // pops up if you lose and face him from the lobby"). phase "intro" was set ONLY by
       // deckStartTap, so the authored avatar splash — figure, star, the road-becomes-you copy — was
@@ -4826,10 +4890,26 @@ class Component extends DCLogic {
       // back on the station that was picked.
       if (k >= 8) { this._clearSeq(); this.setState({ phase: "intro", introExit: false, roundExit: false, pickK: st.roadPick ? 8 : st.pickK }); return; }
       this._clearSeq();
+      // THE CLIMB IS A BEAT OF ITS OWN (5 sep 2026, user: "advancing on the road is clunky"). Before,
+      // the rung bumped and the next hand dealt in the SAME setState, so every scene layer's 1.6s
+      // climb transition played behind a fresh board at 46% opacity — the walk up the road happened
+      // where nobody could see it. Now: the board clears, the rung advances with the scenery at full
+      // brightness (phase "climb" is not _inPlay, so `hide` = 1 and the near band/walls/herd/rails
+      // all move in the open), a caption names the step, and only THEN does the hand deal. The scene
+      // math is untouched — this just gives the transitions it already has a stage to play on.
       const step = this._freshRoadStep(k, st.chosen);
-      this.setState({ ...step, roadPick: st.roadPick, roundExit: false });
-      this._afterDeal();
-      if (step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
+      this._climbStep = { step, roadPick: st.roadPick };
+      this._ghostStage();
+      this.setState({ phase: "climb", roundExit: false, roundSame: false, roadRung: step.roadRung, roadBoss: false, roadWalker: step.roadWalker, slots: (st.slots || []).map(() => null), face: null, sel: null, log: "", climbK: k });
+      this._sfx("deal");
+      this._climbT = setTimeout(() => {
+        const cs = this._climbStep; this._climbStep = null;
+        if (!cs || this.state.phase !== "climb") return;
+        this.setState({ ...cs.step, roadPick: cs.roadPick, roundExit: false });
+        this._afterDeal();
+        if (cs.step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
+      }, 2400);
+      this._seq.push(this._climbT);
       return;
     }
     const r = st.round + 1;
@@ -4851,6 +4931,33 @@ class Component extends DCLogic {
   // needs to move on by itself again. The counterpart obligation: a beat that never advances itself
   // MUST carry a visible continue affordance, or the player is just stuck. See roundGoOn.
   _roundDwell() { return 0; }
+  // THE DISSOLVE (5 sep 2026, user: "it still cuts each time you move station to station"). The built
+  // levels draw their scenery as SVG regenerated per rung — rails, herd, walls, shaft — and a CSS
+  // transition on the wrapper cannot ease a path that was redrawn. Rather than rewrite thirteen scenes,
+  // the stage keeps a GHOST of the outgoing view: a clone of the whole 932×430 stage (minus the plaque
+  // and the hud overlays), pinned on top and faded out over the climb, so every snap underneath —
+  // redrawn SVG, count changes, horizon jumps — reads as a film dissolve into the new rung. Pure DOM,
+  // outside React's tree, self-removing; the scenes themselves are untouched.
+  _ghostStage() {
+    try {
+      const stage = document.querySelector("[data-mzstage]"); if (!stage) return;
+      stage.querySelectorAll("[data-mzghost]").forEach(g => g.remove());
+      const ghost = stage.cloneNode(true);
+      ghost.setAttribute("data-mzghost", "1"); ghost.removeAttribute("data-mzstage"); ghost.removeAttribute("data-screen-label");
+      // strip anything that sits over the scene: the round plaque, hints, the chip, prior ghosts
+      ghost.querySelectorAll("[style]").forEach(el => { const z = parseInt((el.getAttribute("style").match(/z-index:\s*(-?\d+)/) || [])[1]); if (!isNaN(z) && z >= 8) el.remove(); });
+      ghost.style.cssText = "position:absolute;inset:0;width:100%;height:100%;transform:none;box-shadow:none;z-index:7;pointer-events:none;opacity:1;transition:opacity 1.9s cubic-bezier(.4,0,.2,1)";
+      stage.appendChild(ghost);
+      // start the fade synchronously off a forced reflow — rAF starves right after this setState
+      // (full clone + full re-render) and never fires in a backgrounded tab, which left the ghost
+      // opaque until removal: a hard cut wearing a dissolve's name
+      void ghost.offsetWidth; ghost.style.opacity = "0";
+      const t0 = setTimeout(() => { ghost.style.opacity = "0"; }, 30); this._seq.push(t0);
+      let gone = false; const bye = () => { if (gone) return; gone = true; ghost.remove(); };
+      ghost.addEventListener("transitionend", bye);
+      const t = setTimeout(bye, 2400); this._seq.push(t);
+    } catch (e) {}
+  }
   _armRound() { const d = this._roundDwell(); if (d > 0) this._roundT = setTimeout(() => this._exitRound(), d); }
   _exitRound() {
     if (this.state.phase !== "round" || this.state.roundExit) return;
@@ -5377,7 +5484,11 @@ class Component extends DCLogic {
   // — the cut at the root, the burial as the law's body, the grave-openers. eight houses stand.
   // the chamber (26) joins 2 sep 2026: guest@0, the first house taken on the byakko brief — the cot
   // and the sword, the fire pig by the fire, the eight who keep a house for strangers. nine stand.
-  _moonOpen(id) { return [2, 4, 10, 12, 18, 19, 21, 23, 25, 26, 27, 28].indexOf(id) >= 0; }
+  // the blaze (5) joins 4 sep 2026: price@4, the fourth house of the byakko six — the branding yard,
+  // the monkey on the rail, the eight who put marks on things. thirteen stand.
+  // the gathered stars (3) join 5 sep 2026: razor@4, the fifth house of the byakko six — the threshing
+  // floor, the cock on the rim, the seven sisters of whom one is missing. fourteen stand.
+  _moonOpen(id) { return [1, 2, 3, 4, 5, 10, 12, 18, 19, 21, 23, 25, 26, 27, 28].indexOf(id) >= 0; }
   _moonTest(id) { return false; }
   // the four quarters of the sky, al-biruni's numbering. the animals are named to the player
   _quad(m) { return m >= 14 && m <= 20 ? "seiryuu" : m >= 7 && m <= 13 ? "suzaku" : m >= 21 && m <= 27 ? "genbu" : "byakko"; }
@@ -5533,6 +5644,18 @@ class Component extends DCLogic {
   // THE AVATAR'S VOICE (29 aug 2026): one held line and one yielded line per avatar, written from
   // the hunger axis, spoken on the boss end screens. observation, never prophecy; no gloating.
   _avVoice(m) { return ({
+    1: { hold: "the dog does not get up. the gate stands open behind it, and the city stays lit, and you do not go in.",
+         yield: "the dog gets up, stretches, and walks in through the open gate ahead of you. nobody stops either of you.",
+         react: "the dog does not get up.",
+         word: "through." },
+    3: { hold: "the cock does not come down off the rim. the floor stays unswept, and the seventh place stays kept.",
+         yield: "the cock calls once more and steps down off the rim. the floor is swept clean to the edge, and the sisters let you across it.",
+         react: "the cock lifts one foot, and does not put it down.",
+         word: "called." },
+    5: { hold: "the monkey does not get off the rail. the iron goes back in the fire, and the one unbranded horse stays that way.",
+         yield: "the monkey drops off the rail and swings the gate the rest of the way open. the last horse walks through unmarked, and so do you.",
+         react: "the monkey lifts the iron, looks, and puts it back.",
+         word: "marked." },
     4: { hold: "the crow does not leave the post. the lanterns ahead do not slow down for anyone, and they did not for you.",
          yield: "the crow lifts off the post and drops back a station. the line ahead has stopped, and every one of them has turned round.",
          react: "the crow turns its head.",
@@ -5577,6 +5700,50 @@ class Component extends DCLogic {
     "ruen": "\u2609", "brann": "\u2642", "mave": "\u2640", "the quiet one": "\u260A",
   })[n] || ""; }
   _avFig(m) { return ({
+    1: { star: "#E8F0FF", glow: "rgba(232,240,255,.4)", starX: 58, starY: 50, p: [
+      // the DOG of 婁 Lóu, the bond (6 sep 2026): sitting square in the gap of the open gate, seen from
+      // behind and a little to the side, watching the road into the city the way a dog watches a door
+      // nobody has closed. Ears up, tail curled round on the flagstones. SHERATAN at its collar. The
+      // only avatar drawn facing away from the player: it is not guarding, it is waiting to go in.
+      { d: "M6 90 H114", f: "none", s: "rgba(200,190,168,.42)", w: 2.4 },
+      { d: "M40 88 q-2 -26 8 -40 q10 -14 26 -8 q10 6 10 20 q0 16 -6 28 z", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.2 },
+      { d: "M46 46 q-2 -12 10 -16 q12 -3 16 8 q2 8 -6 10 q-12 2 -20 -2 z", f: "#0B0A10", s: "rgba(200,190,168,.55)", w: 1.1 },
+      { d: "M50 34 l-4 -12 l9 7 M66 32 l6 -11 l1 12", f: "#0B0A10", s: "rgba(200,190,168,.55)", w: 1 },
+      { d: "M48 48 q10 5 20 1", f: "none", s: "rgba(200,190,168,.35)", w: 1.4 },
+      { d: "M44 88 V72 M76 88 V70", f: "none", s: "rgba(200,190,168,.5)", w: 2 },
+      { d: "M78 84 q18 -2 22 -14 q2 -8 -6 -10", f: "none", s: "rgba(200,190,168,.5)", w: 2.2 },
+      { d: "M40 90 h8 M72 90 h8", f: "none", s: "rgba(200,190,168,.5)", w: 1.6 },
+    ] },
+    3: { star: "#DCEBFF", glow: "rgba(220,235,255,.42)", starX: 70, starY: 26, p: [
+      // the COCK of 昴 Mǎo, the hairy head (5 sep 2026): standing on the stone rim of the threshing
+      // floor, comb up, one foot raised, tail feathers arched. ALCYONE at the comb's tip — the only
+      // avatar that announces. Drawn in profile facing the road.
+      { d: "M10 84 H110", f: "none", s: "rgba(200,190,168,.42)", w: 2.6 },
+      { d: "M18 84 q0 -6 8 -6 h68 q8 0 8 6", f: "rgba(40,36,30,.6)", s: "rgba(200,190,168,.3)", w: 1 },
+      { d: "M40 70 q-4 -22 18 -26 q14 -2 20 8 q4 8 -4 14 q-10 8 -24 6 q-8 -1 -10 -2 z", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.2 },
+      { d: "M34 66 q-16 -6 -20 -22 q6 4 10 10 q-2 -10 4 -16 q4 8 4 14 q4 -8 12 -8 q-4 8 -6 14", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.1 },
+      { d: "M74 50 q6 -14 2 -22 q6 2 8 8 q4 -4 2 -10", f: "#0B0A10", s: "rgba(200,190,168,.55)", w: 1.1 },
+      { d: "M68 42 l4 -6 l2 -6 l3 6 l2 -4 l1 6", f: "rgba(224,112,90,.7)", s: "rgba(224,112,90,.8)", w: .9 },
+      { d: "M80 40 l8 3 l-8 2 z", f: "rgba(200,190,168,.7)", s: "none", w: 0 },
+      { d: "M77 38 a1.6 1.6 0 1 1 -0.01 0 Z", f: "rgba(200,190,168,.9)", s: "none", w: 0 },
+      { d: "M52 70 L50 84 M46 84 H56", f: "none", s: "rgba(200,190,168,.6)", w: 1.8 },
+      { d: "M64 70 q2 6 -2 8 q-6 1 -8 -2", f: "none", s: "rgba(200,190,168,.6)", w: 1.6 },
+    ] },
+    5: { star: "#E8F0FF", glow: "rgba(232,240,255,.4)", starX: 47, starY: 33, p: [
+      // the MONKEY of 觜 Zī, the beak (4 sep 2026): sitting on the top rail above the fire, knees up,
+      // tail hooked round the rail, one long arm down to the iron's handle. MEISSA at its brow — the
+      // blaze on the monkey's own face, colder than regulus. The only avatar that handles things.
+      { d: "M0 70 H120", f: "none", s: "rgba(200,190,168,.42)", w: 2.4 },
+      { d: "M30 70 V96 M90 70 V96", f: "none", s: "rgba(200,190,168,.3)", w: 2 },
+      { d: "M42 68 q-2 -22 14 -28 q16 -6 24 8 q6 12 -2 20 q-10 6 -22 2 q-12 -2 -14 -2 z", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.2 },
+      { d: "M50 44 q-4 -14 8 -18 q12 -3 16 8 q2 8 -6 11 q-10 3 -18 -1 z", f: "#0B0A10", s: "rgba(200,190,168,.55)", w: 1.1 },
+      { d: "M53 40 a3 3 0 1 1 -0.01 0 Z M64 40 a3 3 0 1 1 -0.01 0 Z", f: "#0B0A10", s: "rgba(200,190,168,.45)", w: .9 },
+      { d: "M56 36 q4 -2 8 0", f: "none", s: "rgba(200,190,168,.45)", w: .9 },
+      { d: "M76 56 q10 14 -6 22 q-12 6 -14 -4", f: "none", s: "rgba(200,190,168,.45)", w: 2.2 },
+      { d: "M46 62 q-8 8 -10 22 L36 92", f: "none", s: "rgba(200,190,168,.5)", w: 2.4 },
+      { d: "M30 92 H42", f: "none", s: "rgba(200,190,168,.5)", w: 2 },
+      { d: "M44 66 L52 70 M62 68 L70 70", f: "none", s: "rgba(200,190,168,.5)", w: 1.6 },
+    ] },
     4: { star: "#E86A5A", glow: "rgba(232,106,90,.42)", starX: 66, starY: 28, p: [
       // the CROW of 畢 Bì, the hunting net (3 sep 2026): on the crossing's post, hunched, facing along
       // the line. ALDEBARAN at its eye — the one red star, and on a cold road the one thing that is
@@ -6244,6 +6411,9 @@ class Component extends DCLogic {
           if (rl === "hush" && idx9 === 4) return "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
           if (rl === "turn" && idx9 === 0) return "the turning's door: whatever lodges here turns the next station to face the other way. its two numbers swap, left for right, and stay swapped until the board ends. a card that reads the same both ways cannot be turned at all.";
           if (rl === "toll" && idx9 === 4) return "the crossing charges for shelter. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own first refusal \u2014 counts one less, either side. whatever can still be fought for counts as it always did.";
+          if (rl === "open" && idx9 === 4) return "the open gate. nothing is held on this ground: not the tiger's hold, not a friend beside it, not a card's own first refusal. the first strike lands, and so does every one after it. the road goes through.";
+          if (rl === "razor" && idx9 === 4) return "the threshing floor. a card lodging on this ground takes both its neighbours or takes neither: the stroke goes the whole width of the road, or it does not go. the sisters cut once.";
+          if (rl === "price" && idx9 === 4) return "the branding fire. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own rule \u2014 strikes two lower from here. shelter has a price on this road, and the price is the mark.";
           if (rl === "crow" && idx9 === 4) return "the crow's perch. whatever lodges here counts one more, and the card worth most beside it counts one less. the crow takes the bright thing — both sides, all night.";
           if (rl === "rope" && idx9 === 4) return "the rope passes closest to the wall here: whatever lodges on this ground hauls one enemy card beside it onto the rope, and it changes hands.";
           if (rl === "plant" && idx9 === 4) return "the old grave lies open here. whatever lodges on this ground can be taken once — but the moment it changes hands it takes root, and cannot be taken back by either side before the board ends.";
@@ -6409,7 +6579,11 @@ class Component extends DCLogic {
   // exactly the way the rope did, same hard delegation, same whole-night gate, its own xorshift
   // hash and walkStep>=2 condition both deleted. Design folded the drum on their side while Code
   // folded the rope on this one, so this map is the MERGE of both — neither delivery had all five.
-  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 2: "toll", 4: "crow", 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson", 21: "hush", 12: "turn", 19: "plant", 26: "guest", 27: "stranger" })[this._tonight()] || null; }
+  // THE PRICE OF THE MARK (4 sep 2026, m5, measured as softShield: seat +0.1/−1.9, spread 31.2→21.4,
+  // byakko −19.2 with every other quarter flat — the first fight-class law to move a tiger night).
+  // Standard window, NO _boardOff entry (m4's precedent): the crossing is m9, the glance, bird ground.
+  // The clause itself lives in _tryFlip, on the ATTACKING face only — see the note there.
+  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 1: "open", 2: "toll", 3: "razor", 4: "crow", 5: "price", 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson", 21: "hush", 12: "turn", 19: "plant", 26: "guest", 27: "stranger" })[this._tonight()] || null; }
   // m4 TAKES NO _boardOff ENTRY (3 sep 2026, user "1a full send" after the sweep): Measurement cut
   // the crow on the STANDARD window (road m4…m12), so the slide would put m4 in the re-cut queue
   // for nothing. The board that ships is the board that was measured; the crossing is m8, the
@@ -6420,7 +6594,7 @@ class Component extends DCLogic {
   // the mansion's own door (index 0); the tents' SHELL and the rope both stand midway, index 4.
   // the turn (m12) stands on the turning's own door, index 0 — measured there and shipped there
   // (31 aug memo: seat +1.2 fresh, the smallest seat move any law has produced, and the spread narrows).
-  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4, hush: 4, turn: 0, plant: 4, guest: 0, stranger: 4, toll: 4, crow: 4 })[this._bossRule()] ?? -1; }
+  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4, hush: 4, turn: 0, plant: 4, guest: 0, stranger: 4, toll: 4, crow: 4, price: 4, razor: 4, open: 4 })[this._bossRule()] ?? -1; }
   // TWO CONVENTIONS, AND THEY ARE NOT THE SAME NUMBER (3 sep 2026, measurement caught this on the
   // toll's card and it was already wrong in the m27 note we shipped): THIS map is a 0-based SLOT
   // INDEX — it is used as `slots[this._lawSt()]` and as `x = e + this._lawSt() * 91`, so the road's
@@ -6571,7 +6745,14 @@ class Component extends DCLogic {
       case "pulse": T({ f: 84, f2: 62, d: .16, v: .05 }); break;
       // the vane's pivot, dry and iron: the one cue the turning's night asks for (2 sep 2026, user)
       case "creak": N({ ft: "bandpass", f: 520, d: .3, v: .15, q: 1.4, a: .06 }); T({ f: 300, f2: 186, d: .32, v: .06 }); N({ ft: "lowpass", f: 760, d: .03, v: .18 }, .24); break;
+      // the price of the mark (4 sep 2026): a hiss, not a knock — hot iron meeting something that holds still
+      // the razor (5 sep 2026): a long steel draw, then two knocks as one; held = the draw that stops short
+      case "razor": N({ ft: "bandpass", f: 3200, d: .5, v: .1, q: 3, a: .04 }); T({ f: 1800, f2: 2600, d: .42, v: .04 }); N({ ft: "lowpass", f: 420, d: .06, v: .22 }, .5); N({ ft: "lowpass", f: 380, d: .06, v: .2 }, .56); break;
+      case "razorhold": N({ ft: "bandpass", f: 3200, d: .26, v: .08, q: 3, a: .04 }); T({ f: 1800, f2: 1500, d: .3, v: .035 }); break;
+      case "price": N({ ft: "highpass", f: 2600, d: .42, v: .11, a: .02 }); N({ ft: "bandpass", f: 900, d: .18, v: .08, q: 2 }, .04); T({ f: 180, f2: 120, d: .3, v: .05 }, .06); break;
       case "hush": N({ ft: "lowpass", f: 1400, d: .5, v: .1, a: .16 }); N({ ft: "lowpass", f: 320, d: .16, v: .16 }, .34); T({ f: 220, f2: 96, d: .5, v: .07 }, .3); break;
+      // the open gate (6 sep 2026): a bolt sliding OPEN, not shut — iron drawn, then the leaf knocking the wall once, then air
+      case "gateopen": N({ ft: "bandpass", f: 1400, d: .22, v: .09, q: 2, a: .01 }); T({ f: 620, f2: 380, d: .2, v: .04 }, .02); N({ ft: "lowpass", f: 300, d: .08, v: .2 }, .26); N({ ft: "highpass", f: 900, d: .5, v: .04, a: .1 }, .3); break;
     } }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
   _saveWrec(name, youWon) { if (!name) return; const r = this._wrec(); const e = r[name] || { w: 0, l: 0 }; youWon ? e.w++ : e.l++; r[name] = e; try { localStorage.setItem("manzil-v2-wrec", JSON.stringify(r)); } catch (e2) {} this._syncProgress(); }
@@ -6647,6 +6828,36 @@ class Component extends DCLogic {
       "borin": { op: .95, p: [P("M59 10 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 30 Q59 23 72 30 L76 58 L80 93 L70 93 L65 68 L54 68 L48 93 L38 93 L42 58 Z", I, S, ".8"), P("M76 32 L76 92", "none", S, "1.5"), P("M74 34 q8 -4 6 -12", "none", F, "1")] },
       "raqi": { op: .95, p: [P("M58 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 30 Q58 25 66 30 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M44 46 L72 42 L74 60 L46 64 Z", I, S, "1.1"), P("M58 44 L60 62", "none", F, ".9")] },
       "the house-watch": { op: .72, p: [P("M56 24 Q57.5 13 63.5 13 Q68 15 66 24 Z", I, S, ".7"), P("M56 24 L66 24 L69 52 L69 68 L57 68 L54 52 Z", I, S, ".7"), P("M57 68 L57 88 L49 88 M69 68 L69 88 L77 88", "none", S, ".9"), P("M44 88 H82", "none", F, "1")] },
+      // THE CITY GATE, THROWN OPEN (6 sep 2026): gatehouse staff drawn with nothing to do. Every prop is a
+      // thing for closing a gate, not in use. The keeper's leash has no dog on it.
+      "orin": { op: .9, p: [P("M64 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M56 32 Q64 27 72 32 L76 62 L72 93 L66 93 L64 74 L62 93 L56 93 L54 62 Z", I, S, ".8"), P("M84 20 v74 M84 22 l-12 18 M84 60 h-10", "none", S, "1.3"), P("M56 46 L46 60 L54 66", "none", S, "1.3"), P("M74 44 L84 38", "none", S, "1.2")] },
+      "sefa": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M66 44 L84 50", "none", S, "1.3"), P("M78 50 q8 -8 16 0", I, S, ".9"), P("M46 46 L38 60", "none", S, "1.2")] },
+      "dagan": { op: .9, p: [P("M56 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 34 Q56 29 64 34 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M20 42 L94 30", "none", S, "2.6"), P("M64 46 L74 34 M48 46 L40 58", "none", S, "1.3")] },
+      "miro": { op: .9, p: [P("M54 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 34 Q54 29 62 34 L65 62 L61 93 L55 93 L54 74 L52 93 L46 93 L44 62 Z", I, S, ".8"), P("M64 46 L80 26", "none", S, "1.3"), P("M80 26 L92 8", "none", S, "1.1"), P("M92 8 q-3 -6 0 -10 q3 4 0 10", "rgba(240,176,80,.85)", "none", "0"), P("M44 46 L36 58", "none", S, "1.2")] },
+      "halla": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M64 46 L78 52 L72 54", "none", S, "1.3"), P("M70 40 h20 v22 h-20 z", I, S, ".9"), P("M73 45 h3 M78 45 h3 M83 45 h3 M73 50 h3 M78 50 h3 M83 50 h3 M73 55 h3 M78 55 h3", "none", S, ".8"), P("M46 46 L38 58", "none", S, "1.2")] },
+      "tesk": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M64 44 L74 30 M46 44 L36 30", "none", S, "1.3"), P("M60 22 q-6 -8 0 -12 M52 22 q6 -8 0 -12", "none", S, ".9"), P("M52 14 q2 3 8 0", "none", S, ".9")] },
+      "the captain": { op: .92, p: [P("M56 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 30 Q56 24 66 30 L70 64 L66 93 L59 93 L56 74 L53 93 L46 93 L42 64 Z", I, S, ".8"), P("M46 44 q-6 10 4 18 h12 q10 -8 4 -18", "none", S, "1.2"), P("M68 40 L72 88", "none", S, "1.4"), P("M66 42 h8", "none", S, "1.6")] },
+      "the dog's keeper": { op: .72, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M66 46 L80 58", "none", S, "1.3"), P("M80 58 a7 7 0 1 1 -0.01 0 Z M80 64 a5 5 0 1 1 -0.01 0 Z", "none", S, "1"), P("M84 70 q4 8 -2 14", "none", S, ".9"), P("M46 46 L38 58", "none", S, "1.2")] },
+      // THE THRESHING FLOOR (5 sep 2026): harvest workers, drawn mid-task, every prop a harvest tool. The
+      // seventh is not a person at all: a sledge standing on its own, and an empty place beside it.
+      "maia": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M66 44 L84 40 L98 46", "none", S, "1.3"), P("M46 44 L34 52", "none", S, "1.3"), P("M84 78 h30 v10 h-30 z", I, S, "1"), P("M86 88 L84 96 M112 88 L114 96", "none", S, "1"), P("M98 46 L100 78", "none", S, "1.1")] },
+      "elet": { op: .9, p: [P("M58 13 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 31 Q58 26 66 31 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M50 46 L36 58", "none", S, "1.3"), P("M66 46 L80 58", "none", S, "1.3"), P("M28 92 L34 58 L40 92 M30 74 h8", "none", S, "1.1"), P("M76 92 L82 58 L88 92 M78 74 h8", "none", S, "1.1"), P("M34 58 q3 -10 8 -6 M82 58 q3 -10 8 -6", "none", F, ".8")] },
+      "tay": { op: .9, p: [P("M55 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 34 Q55 28 64 34 L68 62 L64 93 L58 93 L56 74 L54 93 L48 93 L44 62 Z", I, S, ".8"), P("M66 48 L82 30", "none", S, "1.3"), P("M82 30 L84 22", "none", S, "1.1"), P("M44 48 L30 52", "none", S, "1.3"), P("M22 44 q8 -6 16 0 q-2 8 -16 6 z", I, S, "1"), P("M70 40 q4 -3 8 -1 M74 34 q4 -3 8 -1 M66 46 q4 -3 8 -1", "none", F, ".7")] },
+      "alke": { op: .9, p: [P("M60 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 32 Q60 27 68 32 L71 62 L67 93 L61 93 L60 74 L58 93 L52 93 L50 62 Z", I, S, ".8"), P("M52 46 L40 40", "none", S, "1.3"), P("M70 46 L82 40", "none", S, "1.3"), P("M58 20 q2 -1 4 0", "none", S, ".9"), P("M66 8 q4 -4 8 0 M72 4 q4 -4 8 0", "none", F, ".8")] },
+      "kel\u0101": { op: .9, p: [P("M62 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 30 Q60 25 68 30 L72 60 L70 93 L64 93 L62 72 L58 93 L52 93 L50 60 Z", I, S, ".8"), P("M52 44 L32 60", "none", S, "1.3"), P("M70 44 L56 60", "none", S, "1.3"), P("M32 60 L14 90", "none", S, "1.4"), P("M8 90 h14 M9 90 v5 M12 90 v5 M15 90 v5 M18 90 v5 M21 90 v5", "none", S, "1")] },
+      "aste": { op: .9, p: [P("M56 15 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 33 Q56 28 64 33 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M46 46 L34 52 M66 46 L78 52", "none", S, "1.3"), P("M30 48 q0 -8 6 -10 q6 0 8 6 v10 q-2 4 -8 4 q-6 0 -6 -4 z", I, S, "1"), P("M30 40 q4 -4 8 -2", "none", S, ".9")] },
+      "the eldest": { op: .92, p: [P("M58 13 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 31 Q58 26 66 31 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M50 44 L38 56 L46 60", "none", S, "1.3"), P("M66 44 L78 56 L70 60", "none", S, "1.3"), P("M48 26 q10 -6 20 0", "none", S, ".9")] },
+      "the seventh": { op: .72, p: [P("M30 70 h44 v12 h-44 z", I, S, ".8"), P("M32 82 L28 92 M72 82 L76 92", "none", S, "1"), P("M74 74 L96 62", "none", S, "1.1"), P("M36 70 v-8 M44 70 v-8 M52 70 v-8 M60 70 v-8 M68 70 v-8", "none", S, ".7"), P("M94 92 q4 -12 12 -14 q6 2 4 12", "none", F, ".6")] },
+      // THE BRANDING YARD (4 sep 2026): people who work with their hands, drawn mid-task. Every prop is a
+      // tool of marking. The unbranded is not a person at all: a horse, standing square, with no mark.
+      "tamsin": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M66 44 L86 52", "none", S, "1.3"), P("M86 52 L104 60", "none", S, "1.6"), P("M100 56 l6 6 l6 -6 l-6 9 z", "rgba(255,150,60,.5)", "rgba(255,190,110,.9)", ".9"), P("M92 76 q10 -6 22 0 q-4 8 -22 6 z", "rgba(255,120,40,.18)", "rgba(255,150,60,.5)", ".8"), P("M100 74 q-2 -4 2 -8 q3 3 1 8", "rgba(255,200,120,.6)", "none", "0")] },
+      "bekk": { op: .9, p: [P("M58 13 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M54 10 q3 4 6 2", "none", "rgba(224,176,154,.7)", ".9"), P("M50 31 Q58 26 66 31 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M50 44 L30 40 L22 34", "none", S, "1.4"), P("M66 44 L80 40", "none", S, "1.3"), P("M22 34 q-8 -4 -6 -12 q6 -2 10 4", "none", S, "1.1")] },
+      "ori": { op: .9, p: [P("M55 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 34 Q55 28 64 34 L68 62 L64 93 L58 93 L56 74 L54 93 L48 93 L44 62 Z", I, S, ".8"), P("M44 50 L30 54", "none", S, "1.3"), P("M66 50 L78 46", "none", S, "1.3"), P("M22 48 h20 v16 h-20 z", I, S, "1"), P("M26 53 h12 M26 57 h9 M26 61 h6", "none", F, ".7"), P("M78 46 L84 40", "none", S, "1")] },
+      "sayen": { op: .9, p: [P("M60 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 32 Q60 27 68 32 L71 62 L67 93 L61 93 L60 74 L58 93 L52 93 L50 62 Z", I, S, ".8"), P("M50 46 L46 64", "none", S, "1.3"), P("M70 46 L74 64", "none", S, "1.3"), P("M74 64 L76 78", "none", "rgba(220,220,230,.6)", "1.2"), P("M44 64 h4 M72 64 h6", "none", S, "1")] },
+      "hult": { op: .9, p: [P("M62 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 30 Q60 25 68 30 L72 60 L70 93 L64 93 L62 72 L58 93 L52 93 L50 60 Z", I, S, ".8"), P("M70 40 L84 26", "none", S, "1.3"), P("M84 26 L90 20", "none", S, "1.2"), P("M86 14 l4 4 l4 -4 l-4 7 z", I, S, ".9"), P("M50 44 L36 50", "none", S, "1.3"), P("M30 48 h10 v6 h-10 z", I, S, ".9")] },
+      "marra": { op: .9, p: [P("M56 15 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 33 Q56 28 64 33 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M46 46 L36 58", "none", S, "1.3"), P("M32 58 q0 -6 4 -8 q4 2 4 8 q-2 6 -8 0 z", I, S, "1"), P("M66 46 L80 44", "none", S, "1.3"), P("M80 44 a2.5 2.5 0 1 1 -0.01 0 Z", "none", F, "1")] },
+      "the brander": { op: .92, p: [P("M58 13 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 31 Q58 26 66 31 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M66 44 L88 44", "none", S, "1.4"), P("M88 44 L108 44", "none", S, "1.8"), P("M104 40 l5 5 l5 -5 l-5 8 z", "rgba(232,240,255,.3)", "rgba(232,240,255,.9)", "1"), P("M50 44 L44 58", "none", S, "1.3")] },
+      "the unbranded": { op: .72, p: [P("M28 92 L30 62 Q30 52 40 50 L74 50 Q84 50 88 42 L92 30 L100 32 L96 44 Q92 54 82 56 L82 92 L77 92 L77 58 L46 58 L44 92 L39 92 L40 60 L34 62 L33 92 Z", I, S, ".8"), P("M92 30 q4 -6 6 -2", "none", S, ".8"), P("M40 50 q-8 -8 -12 -20 q3 2 5 8", "none", S, ".7"), P("M30 62 q-6 12 -2 24", "none", F, "1")] },
       // THE PROCESSION (3 sep 2026): every figure carries a lantern on a pole — the line's one prop —
       // and one thing besides that says who they are. The red one's lantern is the only warm glass.
       "nell": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M66 44 L84 30", "none", S, "1.3"), P("M84 30 V4", "none", S, "1.2"), P("M78 8 h12 v12 h-12 z", I, S, "1"), P("M84 12 v6", "none", F, "1.4"), P("M60 18 q-4 2 -6 6", "none", F, ".8")] },
@@ -6728,6 +6939,42 @@ class Component extends DCLogic {
   _wAlias(n) { const e = this._walkers().find(w2 => w2.name === n); return (e && e.fig) || n; }
   _rosterFor(m) { const R = this._rosters(); return R[m] || R[0]; }
   _rosters() { return {
+    1: [ // the city gate, thrown open (6 sep 2026): eight gatehouse staff with nothing to keep out. The
+      // register is WELCOME: nobody here is bored, devoted, skilled or together; they are glad you came,
+      // and slightly at a loss for what to do about it. The quiet one is the dog's keeper, leash coiled.
+      { name: "orin", fig: "imra", line: "orin is the porter. he leans on the open leaf, because in forty years nobody has asked him to close it.", react: "orin shifts his weight on the door.", defeat: "orin waves you in without straightening up.", again: "orin nods. still leaning. still open." },
+      { name: "sefa", fig: "sef", line: "sefa takes the toll. she holds the bowl out upside down, so nobody is confused about the price.", react: "sefa turns the bowl over, and back.", defeat: "sefa puts the bowl away. there was nothing in it.", again: "sefa has the bowl out. upside down." },
+      { name: "dagan", fig: "odel", line: "dagan carries the bar. it is on his shoulder, and it has been on his shoulder since he was given it, and it has never been in the brackets.", react: "dagan shifts the bar to his other shoulder.", defeat: "dagan sets the bar down on the road, and you step over it.", again: "dagan has the bar up again. going nowhere." },
+      { name: "miro", fig: "tesh", line: "miro lights the arch. both torches, every dusk, so nobody coming in at night mistakes an open door for a wall.", react: "miro trims a wick.", defeat: "miro lifts the pole and lights your way through.", again: "miro has both torches going for you." },
+      { name: "halla", fig: "ruen", line: "halla counts who comes in. the tally is full of marks and there is no column for turned away, because there has never been a need for one.", react: "halla makes a mark.", defeat: "halla marks you in, and shows you the tally. everyone.", again: "halla has your mark ready." },
+      { name: "tesk", fig: "brann", line: "tesk is the crier. every hour he calls that the gate stands open, to a city that already knows.", react: "tesk draws a breath to call.", defeat: "tesk calls the hour, and adds your name to it.", again: "tesk called you before you reached the arch." },
+      { name: "the captain", fig: "mave", line: "the captain of a gate that does not close. her sword is sheathed, her hands are behind her back, she gives nothing away twice, and holds your cards awake.", react: "the captain does not move her hands.", defeat: "the captain steps to one side of the arch. the other side was already clear.", again: "the captain is where she was, hands behind her back." },
+      { name: "the dog's keeper", fig: "the quiet one", line: "the dog's keeper holds a leash with no dog on it. the dog is in the gateway, and has been for longer than the keeper has been alive. the hand is yours, every card of it awake.", react: "the keeper coils the leash again.", defeat: "the keeper steps back, and the dog does not get up, and you go through between them.", again: "still holding the leash. still no dog on it." },
+    ],
+    3: [ // the threshing floor (5 sep 2026): eight who work the harvest together and never alone — every
+      // line names someone else. COMPANY, the register: the sisters' people are not bored, not devoted,
+      // not craftsmen; they are together. the quiet one is the sister who is not there.
+      { name: "maia", fig: "imra", line: "maia drives the sledge, and will not start it until everyone is on the floor. she counts heads twice.", react: "maia counts heads again.", defeat: "maia stops the sledge and waves you across the floor.", again: "maia counts you in with the others this time." },
+      { name: "elet", fig: "sef", line: "elet binds the sheaves two at a time, never one. she says a sheaf alone falls over.", react: "elet ties another pair.", defeat: "elet sets down the twine. two sheaves lean on each other behind her.", again: "elet has a pair ready for you." },
+      { name: "tay", fig: "odel", line: "tay winnows, and reads the wind for the others before she throws. nobody on this floor throws first.", react: "tay wets a finger and holds it up.", defeat: "tay lets the wind take the chaff, and you go with it.", again: "tay has already read the wind. it is yours tonight." },
+      { name: "alke", fig: "tesh", line: "alke sings the count so the flails fall together. she has never once sung alone.", react: "alke sings the next line.", defeat: "alke lets the song end, and you cross in the silence.", again: "alke starts the count with your name in it." },
+      { name: "kel\u0101", fig: "ruen", line: "kel\u0101 rakes the chaff and keeps the floor's edge. everyone else works inside the line she draws.", react: "kel\u0101 rakes the edge straight again.", defeat: "kel\u0101 opens a gap in the rim for you.", again: "kel\u0101 has left the gap open." },
+      { name: "aste", fig: "brann", line: "aste carries the water and gives it to everyone else before she drinks. she is always the last to drink.", react: "aste offers the jar around.", defeat: "aste hands you the jar. you drink first, for once.", again: "aste has the jar out already." },
+      { name: "the eldest", fig: "mave", line: "the eldest sets the pace of the floor, and gives nothing away twice, and holds your cards awake. the others watch her hands.", react: "the eldest's hands do not change pace.", defeat: "the eldest slows the pace, and the floor lets you through.", again: "the eldest is where she was, and the pace is hers." },
+      { name: "the seventh", fig: "the quiet one", line: "the seventh sister is not on the floor tonight, or any night. her place is kept: the sledge stands where she would stand, and nobody takes it. the hand is yours, every card of it awake.", react: "the seventh's place stays empty.", defeat: "the seventh's place stays empty, and you walk past it.", again: "still kept. still empty." },
+    ],
+    5: [ // the branding yard (4 sep 2026): eight who put marks on things for a living, and one thing
+      // each of them has never managed to mark. CRAFT, not comedy — the toll's people were bored, the
+      // follower's devoted; the blaze's are good at their jobs, and the best of them is the quiet one.
+      { name: "tamsin", fig: "imra", line: "tamsin heats the irons and has never once touched a horse. she knows the colour a mark wants by the sound the fire makes.", react: "tamsin turns the iron a quarter turn.", defeat: "tamsin banks the fire and lets you past it.", again: "tamsin has the irons hot. she heard you coming." },
+      { name: "bekk", fig: "sef", line: "bekk holds the head. he has a scar from the one that would not be held, and he is proud of both.", react: "bekk takes a firmer grip.", defeat: "bekk lets go of the rail. through you go.", again: "bekk remembers your grip. he has changed his." },
+      { name: "ori", fig: "odel", line: "ori keeps the tally-book of every mark the yard has made. there is one page nobody may read, and it is blank.", react: "ori makes a mark in the book.", defeat: "ori writes you down, and turns the page.", again: "ori has your page open already." },
+      { name: "sayen", fig: "tesh", line: "sayen is the gelder. people are polite to sayen.", react: "sayen says nothing, which is worse.", defeat: "sayen steps aside, politely. you are polite back.", again: "sayen nods. you nod. that is the whole conversation." },
+      { name: "hult", fig: "ruen", line: "hult cuts the brands themselves, the iron heads, and has never made two alike. he would like you to notice.", react: "hult holds one up to the light.", defeat: "hult lets you by and shows you the newest one on the way.", again: "hult has a new one. he cut it after last time." },
+      { name: "marra", fig: "brann", line: "marra buys the marked and sells the unmarked, and says the difference is the whole trade.", react: "marra names a price.", defeat: "marra waves you through. no charge, this once.", again: "marra remembers what you cost her." },
+      { name: "the brander", fig: "mave", line: "the brander's hand does not shake. it has not shaken in thirty years, and she gives nothing away twice, and holds your cards awake.", react: "the brander's hand does not move.", defeat: "the brander sets the iron down, handle toward you.", again: "the brander is where she was. hand steady." },
+      { name: "the unbranded", fig: "the quiet one", line: "the unbranded has stood in this yard for years and never once been marked, because nobody has ever managed to take hold of it. the hand is yours, every card of it awake.", react: "the unbranded does not shy.", defeat: "the unbranded walks to the gate, and waits for you there.", again: "still in the yard. still unmarked." },
+    ],
     4: [ // the procession: eight who walk behind something that is exactly one step ahead and have
       // never once caught it, and are fine. DEVOTION AS COMEDY (Rohiṇī's register) after the
       // bearer's patience-as-comedy. Nobody here is lost; they know precisely where they are going.
@@ -7093,13 +7340,21 @@ class Component extends DCLogic {
     };
   }
   // the walls are scenery: they never stand in front of the board
-  _inPlay() { const p = this.state && this.state.phase; return p === "play" || p === "round" || p === "over" || p === "roadlost" || p === "intro"; }
+  // "climb" is IN play (5 sep 2026, observed): slots/handCards/walker/header all key off this, and
+  // leaving the climb out unmounted the whole arena for two seconds — a black screen, then a snap —
+  // which was the cut the beat existed to remove. The scenery runs at its in-play dim during the
+  // step; the ghost dissolve carries the redraw. Better a dim walk than a vanished table.
+  _inPlay() { const p = this.state && this.state.phase; return p === "play" || p === "round" || p === "over" || p === "roadlost" || p === "intro" || p === "climb"; }
   // never "the sky" when the sky is not the one sitting across from you (25 aug 2026)
   // the mansions are the opponents (26 aug 2026, user): rung nine is the mansion itself, wearing a face drawn
   // from its own record. the sky herself is no longer the road's boss: she stands above all twenty-eight and
   // comes only on special nights. mansions with no avatar authored yet fall back to her.
   _avatars() {
     return {
+      1: { name: "sheratan", full: "sheratan, the first of the two signs",
+        line: "the first house of the year, and its door has never been shut. the dog sits in the gap and lets the whole calendar through.",
+        arrive: "something is sitting in the gateway", arriveSub: "between the two thrown-back leaves a dog sits with its back to you, and sheratan gleams at its collar.",
+        watch: "it is sitting in the open gate, watching the city." },
       18: { name: "antares", full: "antares, the scorpion's heart",
         line: "the rival of mars. it does not rise to meet you: it was standing here first.",
         arrive: "something crests the ridge", arriveSub: "the scorpion comes up out of the dust, and behind it the red star begins to move.",
@@ -7144,6 +7399,14 @@ class Component extends DCLogic {
         line: "the one warm light on a cold rise. nothing here is refused a crossing — the bird only wants what a crossing costs, and it has never once been in a hurry.",
         arrive: "something settles on the lintel", arriveSub: "a long tail comes down over the stone, and botein warms at the pheasant's breast. the queue does not look up.",
         watch: "it waits on the lintel, in no hurry at all." },
+      3: { name: "alcyone", full: "alcyone, the one the sisters stand around",
+        line: "the brightest of the gathered stars, and the one the other six keep close. every sky that ever looked up gave this cluster one name and never argued about it.",
+        arrive: "something calls from the rim", arriveSub: "a cock steps up onto the stone rim of the floor, comb up, one foot raised, and calls the hour. alcyone burns blue at the comb's tip.",
+        watch: "it stands on the rim, and calls the hour whether anyone is listening." },
+      5: { name: "meissa", full: "meissa, the blaze on the brow",
+        line: "the hottest star you can see with your eyes, and three small ones with it, read as the white mark on a horse's face. what it marks, it marks for good.",
+        arrive: "something climbs onto the rail", arriveSub: "a monkey swings up onto the fence above the fire and sits, the iron's handle in reach. meissa burns cold at its brow.",
+        watch: "it sits over the fire, and watches the herd." },
       4: { name: "aldebaran", full: "aldebaran, the follower's eye",
         line: "the red star that walks behind the gathered stars at the same distance forever. it does not chase. it keeps looking, and it takes what shines.",
         arrive: "something lands on the post", arriveSub: "a crow settles on the crossing's post and one red eye opens. the lanterns ahead do not slow.",
@@ -7526,13 +7789,31 @@ class Component extends DCLogic {
       const k = this._nb(ti, d); if (k < 0 || k === ai || !slots[k]) continue;
       const n = C[slots[k].id]; if (n.ab === "bearer" && this._on(n)) { av = Math.max(1, av - 2); break; }
     }
+    // THE PRICE OF THE MARK (4 sep 2026, m5's law, accepted as written): a card standing at the law's
+    // station that CANNOT BE TAKEN strikes two lower from there. Attacking face only — the defending
+    // face of a sheltered card never decides anything, since the refusal happens after the compare
+    // (measurement's vector 84), so pricing it would be a no-op wearing a clause. Reads the same
+    // _shielded the strike path refuses on (vector 83: fires where _shielded is true and nowhere else).
+    // No stored flag: the price is the station's, and a card that leaves takes nothing with it (85).
+    // Planets pay like anything else — the price reads shelter, not quarter; saturn's lock IS a shelter.
+    if (this._bossRule() === "price" && ai === this._lawSt() && this._shielded(slots, ai, ti)) av = Math.max(1, av - 2);
     // base rule (adopted 20 aug 2026): ties flip. THE STORM: no tie takes it, wherever it stands
     const tie = av === tv && !(tC.ab === "storm" && this._on(tC));
     if (!(av > tv || tie)) return false;
-    if (this._shielded(slots, ti, ai)) return false; // one code path owns "can this ground change hands"
+    // THE OPEN GATE (5 sep 2026, m1's law, user picked 1a over Measurement's 1b by fiction; every strike,
+    // openN=all — the first-only notch measured identical to a tenth): at the law's station NOTHING IS
+    // HELD. The tiger's ground, the sisters' friend, the crown, the root's plant and the gate card's own
+    // first miss all stand open here; the strike lands on numbers alone. Planets keep their locks (the
+    // toll's guard: saturn's lock is a planet, not a shelter the road knows). Ownership is fought for as
+    // on a plain board; count and faces untouched. Measured m1 plain 50.8 → 42.6 (−8.2), byakko −8.0,
+    // seat +0.4/−2.5, one-sided narrowing (the tortoise unmoved). Standard window, no _boardOff.
+    const openSt = this._bossRule() === "open" && ti === this._lawSt() && !(t.id >= 101 && t.id <= 107);
+    // the tell: remember when the open gate let through a strike that any other ground would have held
+    this._openLet = openSt && (this._shielded(slots, ti, ai) || (tC.ab === "gate" && this._on(tC) && !t.gateUsed));
+    if (!openSt && this._shielded(slots, ti, ai)) return false; // one code path owns "can this ground change hands"
     if (this._bossRule() === "void") { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && k !== ai && slots[k]) n++; } if (n === 0) return false; }
     // THE GATE turns the first strike against it aside, and stands open from then on
-    if (tC.ab === "gate" && this._on(tC) && !t.gateUsed) { t.gateUsed = true; return "gate"; }
+    if (!openSt && tC.ab === "gate" && this._on(tC) && !t.gateUsed) { t.gateUsed = true; return "gate"; }
     t.owner = a.owner;
     return tie ? "tie" : true;
   }
@@ -7651,7 +7932,31 @@ class Component extends DCLogic {
         }
       }
     }
-    queue.push({ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 });
+    // THE RAZOR (5 sep 2026, m3's law, measured as razorAt: seat −3.1/−4.5, spread 19.0→17.2, the best
+    // seat row on any sheet — a SUBTRACTIVE strike law, the class that reaches seat by points). At the
+    // law's station a lodge takes both neighbours or neither: both near strikes are weighed first on
+    // the board as it stands, and queued only if every enemy neighbour would fall. A friendly or empty
+    // neighbour is not a stroke and does not count against the pair; one enemy neighbour (the door
+    // edge) means "both" is that one. Far strikes (the bird's reach) are untouched. Ownership of the
+    // middle and its count are untouched — that is the constraint the whole m3 sheet was written under.
+    const razor = this._bossRule() === "razor" && i === this._lawSt() && !inPlace;
+    if (razor) {
+      // THE TRIAL RUNS ON A COPY (6 sep 2026, code). As delivered this probed with
+      // `_tryFlip(slots, …)` — the real board — and _tryFlip MUTATES on success (`t.owner =
+      // a.owner`, and `t.gateUsed = true` on the gate's first miss). So the question the razor asks
+      // was answering itself: with two enemy neighbours where only one would flip, the trial flipped
+      // it, `all` came out false, and the seq then announced "it takes neither" over a neighbour that
+      // had already changed hands — the exact opposite of the law. And when both would flip, the
+      // queued strikes re-ran _tryFlip against an already-taken slot, returned false on
+      // `t.owner === a.owner`, and produced no strike entries, so the stroke never animated.
+      // A shallow copy of the slot objects is enough: _tryFlip only ever writes to slots[ti]'s own
+      // fields, never deeper.
+      const probe = slots.map(x => x ? { ...x } : x);
+      const trials = [-1, 1].map(d => { const k = this._nb(i, d); if (k < 0 || !slots[k] || (slots[k].ground || slots[k].owner) === own) return null; return { k, d, hit: this._tryFlip(probe, i, k, d) === true }; }).filter(Boolean);
+      const all = trials.length > 0 && trials.every(t => t.hit);
+      if (trials.length > 0 && !all) seq.push({ from: i, to: i, dir: 1, miss: true, razor: { held: true }, sig: trials.length === 2 ? "the razor: one stroke takes both or neither. it takes neither." : "the razor: the stroke stops short." });
+      if (all) { seq.push({ from: i, to: i, dir: 1, miss: true, razor: { held: false }, sig: "the razor: one stroke, the whole width of the road." }); trials.forEach(t => queue.push({ from: i, to: t.k, dir: t.d })); }
+    } else queue.push({ from: i, to: this._nb(i, -1), dir: -1 }, { from: i, to: this._nb(i, 1), dir: 1 });
     // THE THRONE'S LAW (30 aug 2026 work order, reach@0): strikes from her station carry two
     // stations, firing whether or not the near strike lands, crossing an empty middle, printed
     // faces at the far one. lodge-time reach here; full conformance (every strike class) is the
@@ -7706,7 +8011,8 @@ class Component extends DCLogic {
       if (this._on(fromC) && fromAb === "crown") set.crowned = true;
       const hasSet = set.boon != null || set.crowned === true;
       if (hasSet) slots[to] = { ...slots[to], ...set };
-      seq.push({ from, to, dir, owner: slots[to].owner, sig: cur.sig, set: hasSet ? set : null, printed: cur.printed });
+      seq.push({ from, to, dir, owner: slots[to].owner, sig: this._openLet ? "the gate stands open: nothing is held here. the strike goes through." : cur.sig, set: hasSet ? set : null, printed: cur.printed, open: !!this._openLet });
+      this._openLet = false;
       // the tie cascade is GONE (26 aug 2026, user): a tie still claims the card, and stops there.
       // THE GHOST: take it and you trade places, so the striker changes hands too
       if (this._on(tC) && tC.ab === "ghost" && slots[from] && (slots[from].ground || slots[from].owner) !== tOwn) {
@@ -8041,6 +8347,8 @@ class Component extends DCLogic {
     this._sfx(this._boardM(i) === cardId ? "dominion" : "lodge");
     // the hush lands the moment the middle station is taken: dust lifts, two stations go quiet
     if (this._hush() === i) { this._sfx("hush"); this.setState(s2 => ({ hushFx: (s2.hushFx || 0) + 1 })); const ht = setTimeout(() => this.setState({ hushFx: null }), 1300); this._seq.push(ht); }
+    // the price of the mark: a sheltered card lodging on the fire's station gets the hiss as it lands
+    if (this._bossRule() === "price" && i === this._lawSt()) { try { const sl5 = this.state.slots.slice(); sl5[i] = { id: cardId, owner: who, by: who, l: 1, r: 1, age: 0 }; if (this._shielded(sl5, i, -1)) this._sfx("price"); } catch (e) {} }
     const rr = this._resolve(this.state.slots, cardId, i, rev, who);
     const seq = rr.seq;
     const flipsN = seq.filter(x => !x.ret).length;
@@ -8104,6 +8412,8 @@ class Component extends DCLogic {
       }, () => this._step(seq, k + 1, who, keepTurn));
       if (seq[k] && seq[k].printed) { this._sfx("reach"); const rt = setTimeout(() => this.setState({ reachFx: null }), 1800); this._seq.push(rt); }
       if (seq[k] && seq[k].turn) { this._sfx("creak"); const tn0 = seq[k].turn; this.setState(s3 => ({ turnFx: { n: ((s3.turnFx && s3.turnFx.n) || 0) + 1, l: tn0.l, r: tn0.r, refuse: !!tn0.refuse } })); const tt = setTimeout(() => this.setState({ turnFx: null }), 1700); this._seq.push(tt); }
+      if (seq[k] && seq[k].razor) { this._sfx(seq[k].razor.held ? "razorhold" : "razor"); const rz = seq[k].razor; this.setState(s4 => ({ razorFx: { n: ((s4.razorFx && s4.razorFx.n) || 0) + 1, held: rz.held } })); const rzt = setTimeout(() => this.setState({ razorFx: null }), 1500); this._seq.push(rzt); }
+      if (seq[k] && seq[k].open) { this._sfx("gateopen"); this.setState(s5 => ({ openFx: ((s5.openFx || 0) + 1) })); const ot = setTimeout(() => this.setState({ openFx: null }), 1500); this._seq.push(ot); }
       if (seq[k] && seq[k].reson) { this._sfx("drumcarry"); this.setState(s2 => ({ resonFx: (s2.resonFx || 0) + 1 })); const rt2 = setTimeout(() => this.setState({ resonFx: null }), 1100); this._seq.push(rt2); }
     }, k === 0 ? 320 : 400);
     this._seq.push(t);
@@ -8388,6 +8698,8 @@ class Component extends DCLogic {
         if (s.spent) { tag = "spent"; tagColor = "rgba(154,138,94,.7)"; }
         else if (hk) { tag = "tap it: " + hk.label; tagColor = hk.kind === "burst" ? "#E85630" : "#F0D89A"; }
         else if (s.owner === "you" && c.ab === "throne" && this._on(c) && !st.throneUsed && st.phase === "play" && st.turn === "you" && !st.busy) { tag = "tap it: it turns"; tagColor = "#F0D89A"; }
+        else if (this._bossRule() === "price" && i === this._lawSt() && this._shielded(st.slots, i, -1)) { tag = "marked: strikes two lower"; tagColor = "#E8F0FF"; }
+        else if (this._bossRule() === "open" && i === this._lawSt() && !(s.id >= 101 && s.id <= 107) && (this._shielded(st.slots, i, -1) || (c.ab === "gate" && this._on(c) && !s.gateUsed))) { tag = "the gate is open: nothing held here"; tagColor = "#E8F0FF"; }
         else if (s.ground && s.owner !== s.ground) { tag = "the ground stays yours"; tagColor = "#F0D89A"; }
         else if (c.ab === "heart" && this._on(c)) { tag = "strikes when the road fills"; tagColor = "#E8A090"; }
 
@@ -8713,7 +9025,7 @@ class Component extends DCLogic {
       edAuroraStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .15, .5, .8, .4][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
       edGridStyle: "position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + ev.e * 9 + "px);opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : 1) * this._hg() * [.4, .55, .65, .68, .56, .38, .18, 0, 0][ev.e], // no city windows in the tents' desert
       ...this._hourStyles(ev),
-      districtOn: [2, 4, 10, 12, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) < 0,
+      districtOn: [1, 2, 3, 4, 5, 10, 12, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) < 0,
       // ONE copy of the ridge, in the stage's art region, which is mounted behind the menu as well as the
       // board. do not clone it per surface: both regions paint at once and the layers compound.
       heartOn: this._tonight() === 18,
@@ -8806,7 +9118,7 @@ class Component extends DCLogic {
       // the hanging hour-drum over the resonant station (pinned mid-road): rings when the beat carries
       ...((() => {
         const rI = this._reson();
-        if (rI < 0 || !(st.phase === "play" || st.phase === "round" || st.phase === "over")) return { resonOn: false, resonStyle: "display:none", resonBeatStyle: "", resonRingStyle: "opacity:0" };
+        if (rI < 0 || !(st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb")) return { resonOn: false, resonStyle: "display:none", resonBeatStyle: "", resonRingStyle: "opacity:0" };
         const Lr = (st.slots || []).length || 9, er = 466 - (Lr * 86 + (Lr - 1) * 5) / 2, xr = er + rI * 91 + 43;
         const bpmR = (1.9 - (Math.min(this._elev(), 8) / 8) * .78).toFixed(2);
         return { resonOn: true,
@@ -8916,7 +9228,7 @@ class Component extends DCLogic {
       // shakes, "the same both ways" reads instead of a pair, and nothing changes. same shape as
       // the throne's reach comet and the drum's ring — one queue flag, one self-clearing fx.
       ...((() => {
-        const on = this._bossRule() === "turn" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        const on = this._bossRule() === "turn" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
         if (!on) return { tnLawOn: false, tnSnakeStyle: "display:none", tnSnakeAnim: "", turnFxOn: false, turnFxStyle: "display:none", turnTrailStyle: "opacity:0", turnHeadStyle: "display:none", turnStamp: "", turnStampStyle: "display:none" };
         const Lt = (st.slots || []).length || 9, et = 466 - (Lt * 86 + (Lt - 1) * 5) / 2, xt = et + this._lawSt() * 91 + 43;
         const fx = st.turnFx;
@@ -9059,7 +9371,7 @@ class Component extends DCLogic {
       // it stands in the room. state, not a timer: the cloth is on the card for exactly as long as
       // the rule is. strip only; the give-both-ways form widened the board and is dead.
       ...((() => {
-        const on = this._bossRule() === "guest" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        const on = this._bossRule() === "guest" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
         if (!on) return { chLawOn: false, chClothStyle: "display:none", chClothLay: "opacity:0" };
         const Lc = (st.slots || []).length || 9, ec = 466 - (Lc * 86 + (Lc - 1) * 5) / 2, xc = ec + this._lawSt() * 91 + 43;
         const laid = !!(st.slots || [])[this._lawSt()];
@@ -9117,7 +9429,7 @@ class Component extends DCLogic {
       // nothing happens when a card first lodges there. the moment it CHANGES HANDS, roots come out
       // of it into the grave and grip: plantOnTake, the answer roots, not the opening.
       ...((() => {
-        const on = this._bossRule() === "plant" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        const on = this._bossRule() === "plant" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
         if (!on) return { rtLawOn: false, rtGraveStyle: "display:none", rtRootStyle: "opacity:0" };
         const Lp = (st.slots || []).length || 9, epx = 466 - (Lp * 86 + (Lp - 1) * 5) / 2, xp = epx + this._lawSt() * 91 + 43;
         const sl = (st.slots || [])[this._lawSt()], rooted = !!(sl && sl.by && sl.by !== sl.owner);
@@ -9196,7 +9508,7 @@ class Component extends DCLogic {
       })(this._tonight() === 21),
       ...((() => {
         const hI = this._hush();
-        if (hI < 0 || !(st.phase === "play" || st.phase === "round" || st.phase === "over")) return { hushOn: false, hushStyle: "display:none", hushRingStyle: "opacity:0", hushLit: false };
+        if (hI < 0 || !(st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb")) return { hushOn: false, hushStyle: "display:none", hushRingStyle: "opacity:0", hushLit: false };
         const Lh = (st.slots || []).length || 9, eh = 466 - (Lh * 86 + (Lh - 1) * 5) / 2, xh = eh + hI * 91 + 43;
         return { hushOn: true, hushLit: !!(st.slots || [])[hI],
           hushStyle: "position:absolute;left:" + (xh - 62) + "px;top:132px;width:124px;height:116px;pointer-events:none;z-index:1;transition:opacity .8s ease;opacity:" + ((st.slots || [])[hI] ? .9 : .5),
@@ -9381,7 +9693,7 @@ class Component extends DCLogic {
         [[-14, 6], [-8, 14], [4, 16], [10, 8]].forEach(p => sk.push("<circle cx='" + (px + 118 + p[0]) + "' cy='" + (py + 22 + p[1]).toFixed(1) + "' r='.9' fill='rgba(240,216,154,.4)'/>"));
         // THE LAW'S TELL: the crow at the crossing turns its head to the neighbour it will charge. It
         // reads the same _crowPays the count reads, so the picture and the arithmetic cannot disagree.
-        const lawOn = this._bossRule() === "crow" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        const lawOn = this._bossRule() === "crow" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
         const L = this._lawSt(), slots = st.slots || [], Lb = slots.length || 9, eb = 466 - (Lb * 86 + (Lb - 1) * 5) / 2, xb = eb + L * 91 + 43;
         const perchPlanet = !!(slots[L] && slots[L].id >= 101 && slots[L].id <= 107);
         const pays = lawOn && !perchPlanet ? this._crowPays(slots, L, Object.assign({}, this._ctx(slots), { noLaw: true })) : -1;
@@ -9409,6 +9721,252 @@ class Component extends DCLogic {
           flCrowStyle: "position:absolute;left:" + (xb - 40).toFixed(0) + "px;top:120px;width:80px;height:52px;pointer-events:none;z-index:7;transition:opacity .7s ease;opacity:" + (lawOn ? 1 : 0),
         };
       })(this._tonight() === 4, this._horizon(ev.e)),
+      cgOn: this._tonight() === 1,
+      // ═══ THE CITY GATE, THROWN OPEN (6 sep 2026, user "1a full send" from Manzil - Gate Level Directions) ═══
+      // m1, al-Sharaṭān, THE GATE — the two signs, β Sheratan and γ Mesarthim, first of the twenty-eight,
+      // where the year's count begins; elections beginnings, journeys, safe travel and return. India:
+      // Aśvinī, the horsemen who arrive first. China: 婁 Lóu, the bond, the tether at a threshold; animal
+      // the DOG. Its law is THE OPEN GATE: at the crossing nothing is held. The level is the picture of it.
+      //
+      // A walled city's gatehouse on the horizon, approached per rung (hideaway camp math): two square
+      // towers, the arch between them, and the two LEAVES of the door flung back flat against the walls —
+      // iron bands, bar-brackets with nothing in them, the bar itself lying on the ground beside the road
+      // where somebody set it down. Through the arch the CITY, lit: warm windows stacked up a hill, more
+      // per rung. Torches at the arch burn all night. At the boss the arch frames the board and the leaves
+      // stand wall-sized either side. The bearer's threshold (m2) is two bare stones on a rise — this is a
+      // door, and it is open. The tell: the two leaves flex once against the wall when a strike goes
+      // through the gap that any other ground would have held (st.openFx from _step). Standard window.
+      ...((t1, H) => {
+        if (!t1) return { cgDeepStyle: "display:none", cgCityStyle: "display:none", cgCity: null, cgHouseStyle: "display:none", cgHouse: null };
+        const e = ev.e, o = e / 8, hide = this._inPlay() ? .46 : 1, boss = !!st.roadBoss && e >= 8;
+        const HZ = H.bottom, hy = 430 - HZ;
+        const fx = st.openFx, fxOn = !!fx && this._bossRule() === "open" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
+        // ── THE CITY behind the wall: windows stacked up a hill, more and brighter per rung; drawn in the sky
+        // band so it sits behind the gatehouse and above the horizon. the hill's silhouette first.
+        const ck = [];
+        const hillH = 30 + o * 80;
+        ck.push("<path d='M0 160 L0 " + (160 - hillH * .5).toFixed(1) + " Q200 " + (160 - hillH * .9).toFixed(1) + " 466 " + (160 - hillH).toFixed(1) + " Q732 " + (160 - hillH * .9).toFixed(1) + " 932 " + (160 - hillH * .5).toFixed(1) + " L932 160 Z' fill='rgba(20,14,10,.96)'/>");
+        const wn = Math.round(8 + o * 70);
+        for (let k = 0; k < wn; k++) {
+          const u = ((k * 61.8) % 100) / 100, v = ((k * 37.3) % 100) / 100;
+          const x = 466 + (u - .5) * (200 + o * 620), yTop = 160 - hillH * (1 - Math.pow(Math.abs(u - .5) * 2, 1.6)) + 6, y = yTop + v * Math.max(4, (160 - yTop - 6));
+          if (y > 158) continue;
+          const w = 1.4 + o * 2.2, hh = w * 1.5;
+          ck.push("<rect x='" + (x - w / 2).toFixed(1) + "' y='" + (y - hh / 2).toFixed(1) + "' width='" + w.toFixed(1) + "' height='" + hh.toFixed(1) + "' fill='rgba(240,176,80," + (.5 + v * .45).toFixed(2) + ")' style='animation:mzGateWindow " + (3 + (k % 7) * .7).toFixed(1) + "s ease-in-out " + ((k * .53) % 3).toFixed(2) + "s infinite'/>");
+        }
+        // a warm haze over the city, the glow of a lit town seen from outside its wall
+        ck.push("<ellipse cx='466' cy='150' rx='" + (160 + o * 380).toFixed(0) + "' ry='" + (30 + o * 60).toFixed(0) + "' fill='rgba(240,150,60," + (.05 + o * .07).toFixed(3) + ")'/>");
+        // ── THE GATEHOUSE: scale s grows per rung; anchored to the horizon line hy. All dimensions in a unit
+        // frame where the arch spans −40..40 and the towers stand outside it.
+        const fl = [];
+        fl.push("<path d='M0 " + hy + " H932 V430 H0 Z' fill='rgba(28,22,14," + (.18 + o * .1).toFixed(2) + ")'/>");
+        const s = .5 + o * 5.2, gx = 466, W = 40 * s, TW = 22 * s, TH = 78 * s, WH = 56 * s, AH = 46 * s;
+        const G = (d, f, st2, w) => fl.push("<path d='" + d + "' fill='" + f + "' stroke='" + st2 + "' stroke-width='" + w + "'/>");
+        const ink = "rgba(16,12,8,.97)", line = "rgba(240,216,154," + (.26 + o * .16).toFixed(2) + ")";
+        // the wall running off both sides to the frame edge
+        G("M0 " + hy + " V" + (hy - WH * .8).toFixed(1) + " H" + (gx - W - TW).toFixed(1) + " V" + hy + " Z", ink, line, 1);
+        G("M932 " + hy + " V" + (hy - WH * .8).toFixed(1) + " H" + (gx + W + TW).toFixed(1) + " V" + hy + " Z", ink, line, 1);
+        // crenellations along the wall
+        if (o > .25) for (let k = 0; k < 40; k++) { const cx = (k + .5) * 24 * s * .9; if (cx > gx - W - TW - 4 * s || (932 - cx) < 0) { /* skip */ } if (cx < gx - W - TW - 6 * s) G("M" + cx.toFixed(1) + " " + (hy - WH * .8).toFixed(1) + " v" + (-5 * s).toFixed(1) + " h" + (10 * s).toFixed(1) + " v" + (5 * s).toFixed(1), ink, line, 1); const cx2 = 932 - cx; if (cx2 > gx + W + TW + 6 * s + 10 * s) G("M" + (cx2 - 10 * s).toFixed(1) + " " + (hy - WH * .8).toFixed(1) + " v" + (-5 * s).toFixed(1) + " h" + (10 * s).toFixed(1) + " v" + (5 * s).toFixed(1), ink, line, 1); }
+        // the arch opening: the city shows through it (the house svg is above the city svg, so the opening is cut as
+        // a lit gradient wash rather than a hole — warm, brighter per rung)
+        fl.push("<defs><linearGradient id='cgArch' x1='0' y1='1' x2='0' y2='0'><stop offset='0' stop-color='rgba(240,150,60," + (.18 + o * .3).toFixed(2) + ")'/><stop offset='1' stop-color='rgba(240,176,80," + (.06 + o * .12).toFixed(2) + ")'/></linearGradient></defs>");
+        G("M" + (gx - W).toFixed(1) + " " + hy + " V" + (hy - AH).toFixed(1) + " Q" + gx + " " + (hy - AH - W * .9).toFixed(1) + " " + (gx + W).toFixed(1) + " " + (hy - AH).toFixed(1) + " V" + hy + " Z", "url(#cgArch)", "none", 0);
+        // the gatehouse block above and around the arch
+        G("M" + (gx - W - TW).toFixed(1) + " " + hy + " V" + (hy - WH).toFixed(1) + " H" + (gx + W + TW).toFixed(1) + " V" + hy + " H" + (gx + W).toFixed(1) + " V" + (hy - AH).toFixed(1) + " Q" + gx + " " + (hy - AH - W * .9).toFixed(1) + " " + (gx - W).toFixed(1) + " " + (hy - AH).toFixed(1) + " V" + hy + " Z", ink, line, 1.1);
+        // the two towers
+        [-1, 1].forEach(d => {
+          const x0 = d < 0 ? gx - W - TW : gx + W;
+          G("M" + x0.toFixed(1) + " " + hy + " V" + (hy - TH).toFixed(1) + " H" + (x0 + TW).toFixed(1) + " V" + hy + " Z", ink, line, 1.1);
+          for (let k = 0; k < 3; k++) G("M" + (x0 + (k * 8 + 1) * s).toFixed(1) + " " + (hy - TH).toFixed(1) + " v" + (-6 * s).toFixed(1) + " h" + (6 * s).toFixed(1) + " v" + (6 * s).toFixed(1), ink, line, 1);
+          if (o > .3) G("M" + (x0 + TW / 2 - 2 * s).toFixed(1) + " " + (hy - TH * .6).toFixed(1) + " v" + (7 * s).toFixed(1) + " h" + (4 * s).toFixed(1) + " v" + (-7 * s).toFixed(1) + " z", "rgba(240,176,80,.55)", "none", 0);
+        });
+        // THE LEAVES, thrown back flat against the gatehouse face either side of the arch: tall planks with
+        // iron bands and an empty bar-bracket. They rotate a hair on the tell (mzLeafL/R), hinge at the arch edge.
+        const LW = 34 * s, LH = AH + W * .5;
+        [-1, 1].forEach(d => {
+          const hx = d < 0 ? gx - W : gx + W, x0 = d < 0 ? hx - LW : hx;
+          const anim = fxOn ? " style='animation:" + (d < 0 ? "mzLeafL" : "mzLeafR") + " 1.3s cubic-bezier(.2,.8,.2,1) both;transform-origin:" + hx.toFixed(1) + "px " + hy + "px;transform-box:view-box'" : "";
+          fl.push("<g" + anim + ">");
+          G("M" + x0.toFixed(1) + " " + hy + " V" + (hy - LH).toFixed(1) + " H" + (x0 + LW).toFixed(1) + " V" + hy + " Z", "rgba(46,32,18,.98)", "rgba(240,216,154," + (.4 + o * .2).toFixed(2) + ")", 1.2);
+          for (let k = 1; k < 4; k++) G("M" + (x0 + k * LW / 4).toFixed(1) + " " + hy + " V" + (hy - LH).toFixed(1), "none", "rgba(240,216,154,.14)", 1);
+          [.22, .55, .85].forEach(f => G("M" + x0.toFixed(1) + " " + (hy - LH * f).toFixed(1) + " H" + (x0 + LW).toFixed(1), "none", "rgba(200,190,168,.55)", Math.max(1, 1.6 * s * .35)));
+          // the empty bracket
+          G("M" + (x0 + LW * .5 - 3 * s).toFixed(1) + " " + (hy - LH * .5).toFixed(1) + " h" + (6 * s).toFixed(1) + " v" + (5 * s).toFixed(1) + " h" + (-6 * s).toFixed(1) + " z", "none", "rgba(200,190,168,.6)", 1);
+          fl.push("</g>");
+        });
+        // THE BAR, lying on the ground beside the road where it was set down; arrives once the house is near
+        if (o >= .3) { const bx = gx + W + TW * .3, by = hy + 6 + o * 26, bl = 60 * s; G("M" + bx.toFixed(1) + " " + by.toFixed(1) + " l" + bl.toFixed(1) + " " + (bl * .08).toFixed(1) + " l0 " + (4 * s).toFixed(1) + " l" + (-bl).toFixed(1) + " " + (-bl * .08).toFixed(1) + " z", "rgba(46,32,18,.98)", "rgba(240,216,154,.45)", 1); [.2, .8].forEach(f => G("M" + (bx + bl * f).toFixed(1) + " " + (by + bl * .08 * f).toFixed(1) + " v" + (4 * s).toFixed(1), "none", "rgba(200,190,168,.6)", 1)); }
+        // THE TORCHES at the arch, burning all night
+        [-1, 1].forEach(d => { const tx = gx + d * (W + 3 * s), ty = hy - AH * .85; G("M" + tx.toFixed(1) + " " + ty.toFixed(1) + " v" + (8 * s).toFixed(1), "none", "rgba(200,190,168,.55)", Math.max(1, 1.2 * s)); fl.push("<circle cx='" + tx.toFixed(1) + "' cy='" + (ty - 2 * s).toFixed(1) + "' r='" + (2.2 * s).toFixed(1) + "' fill='rgba(240,176,80,.95)' style='animation:mzFlicker " + (d < 0 ? 2.1 : 2.7) + "s ease-in-out infinite'/><circle cx='" + tx.toFixed(1) + "' cy='" + (ty - 2 * s).toFixed(1) + "' r='" + (9 * s).toFixed(1) + "' fill='rgba(240,150,60," + (.08 + o * .05).toFixed(3) + ")'/>"); });
+        // flagstones through the gap, toward the player, at the boss only (the arch frames the board)
+        if (boss) for (let k = 0; k < 6; k++) { const yy = hy + 8 + k * 22, ww = W * 1.6 + k * 40; fl.push("<path d='M" + (gx - ww / 2).toFixed(1) + " " + yy + " H" + (gx + ww / 2).toFixed(1) + "' stroke='rgba(240,216,154,.08)' stroke-width='1' fill='none'/>"); }
+        // the road, lit from the arch: a warm wedge on the ground fading toward the player
+        G("M" + (gx - W * .9).toFixed(1) + " " + hy + " L" + (gx + W * .9).toFixed(1) + " " + hy + " L" + (gx + W * 2.4).toFixed(1) + " 430 L" + (gx - W * 2.4).toFixed(1) + " 430 Z", "rgba(240,150,60," + (.03 + o * .05).toFixed(3) + ")", "none", 0);
+        return {
+          cgCity: React.createElement("g", { dangerouslySetInnerHTML: { __html: ck.join("") } }),
+          cgHouse: React.createElement("g", { dangerouslySetInnerHTML: { __html: fl.join("") } }),
+          cgDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:radial-gradient(50% 34% at 50% " + (100 - (HZ / 430) * 100 - 14).toFixed(0) + "%, rgba(240,150,60," + (.06 + o * .08).toFixed(2) + "), transparent), linear-gradient(180deg,#05060C 0%,#0C0B10 " + (100 - (HZ / 430) * 100 - 8).toFixed(0) + "%,#1A1410 " + (100 - (HZ / 430) * 100).toFixed(0) + "%,#231A10 100%);opacity:" + hide,
+          cgCityStyle: "position:absolute;left:0;right:0;bottom:" + HZ + "px;height:160px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s ease;opacity:" + hide,
+          cgHouseStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
+        };
+      })(this._tonight() === 1, this._horizon(ev.e)),
+      gsOn: this._tonight() === 3,
+      // ═══ THE THRESHING FLOOR (5 sep 2026, user "1a full send" from Manzil - Gathered Stars Level Directions) ═══
+      // m3, al-Thurayya, THE GATHERED STARS — the Pleiades, the one cluster every sky names the same.
+      // India: Kṛttikā, the cutters, the razor. China: 昴 Mǎo, animal the COCK. Greece: seven sisters, one
+      // always missing. Determinant Alcyone. The harvest stars in every tradition that watched them.
+      //
+      // A threshing floor at night on a high open plain: a great flat ELLIPSE of packed earth with a low
+      // stone rim, GROWING per rung from a coin at the horizon to the whole ground under the board (the
+      // approach — hideaway camp math on a disc instead of a building). SHEAVES stacked at the far edge
+      // resolve from a silhouette row into a wall. CHAFF drifts in the air, catching starlight. The
+      // PLEIADES hang above the far end — six stars, Alcyone brightest, the seventh only at the boss —
+      // and come down as you climb. At the mansion the floor is swept clean and the grain stands in heaps.
+      // The calmest tiger night (spread 19.0): this is not tiger country closing in, it is a wide open
+      // place under one cluster of stars. Standard window; the crossing is m7, the return, bird ground.
+      ...((t3, H) => {
+        if (!t3) return { gsDeepStyle: "display:none", gsSkyStyle: "display:none", gsSky: null, gsFloorStyle: "display:none", gsFloor: null, gsRazorOn: false, gsRazorStyle: "display:none", gsRazorLine: "" };
+        const e = ev.e, o = e / 8, hide = this._inPlay() ? .46 : 1, boss = !!st.roadBoss && e >= 8;
+        const HZ = H.bottom, hy = 430 - HZ;
+        const fl = [];
+        // the plain, faintly lit from the cluster overhead
+        fl.push("<path d='M0 " + hy + " H932 V430 H0 Z' fill='rgba(30,26,14," + (.16 + o * .1).toFixed(2) + ")'/>");
+        // THE FLOOR: an ellipse whose far edge sits on the horizon line and whose near edge comes toward
+        // the player per rung; by the boss it fills the ground. rim = a stone line; the floor is packed
+        // earth a shade warmer than the plain, with the sledge's arcs swept into it.
+        const ry = 6 + o * 150, rx = Math.max(H.half * 1.2, 24) + o * 520, cy = hy + ry * .55;
+        fl.push("<ellipse cx='466' cy='" + cy.toFixed(1) + "' rx='" + rx.toFixed(1) + "' ry='" + ry.toFixed(1) + "' fill='rgba(60,48,26," + (.32 + o * .18).toFixed(2) + ")' stroke='rgba(240,216,154," + (.22 + o * .14).toFixed(2) + ")' stroke-width='" + (1.2 + o * 1.6).toFixed(1) + "'/>");
+        if (o > .2) [.72, .5, .28].forEach((f, k) => fl.push("<ellipse cx='466' cy='" + cy.toFixed(1) + "' rx='" + (rx * f).toFixed(1) + "' ry='" + (ry * f).toFixed(1) + "' fill='none' stroke='rgba(240,216,154," + ((.06 + o * .06) * (boss ? .4 : 1)).toFixed(3) + ")' stroke-width='1' stroke-dasharray='" + (6 + k * 4) + " " + (9 + k * 5) + "'/>"));
+        // THE SHEAVES along the far edge: a row of bound bundles standing on the horizon, more and taller
+        // per rung; at the boss they are heaps of grain instead, and the sheaves are gone.
+        const sn = boss ? 0 : Math.round(4 + o * 14), sw = Math.max(rx * .9, 40);
+        for (let k = 0; k < sn; k++) {
+          const t = (k + .5) / sn, x = 466 + (t - .5) * 2 * sw, dep = ((k * 37) % 11) / 11;
+          const h = (5 + o * 20) * (.8 + dep * .4), w = h * .42;
+          fl.push("<path d='M" + (x - w).toFixed(1) + " " + (hy + 1) + " L" + (x - w * .3).toFixed(1) + " " + (hy + 1 - h).toFixed(1) + " L" + (x + w * .3).toFixed(1) + " " + (hy + 1 - h).toFixed(1) + " L" + (x + w).toFixed(1) + " " + (hy + 1) + " Z' fill='rgba(14,11,6,.92)' stroke='rgba(240,216,154," + (.26 - dep * .1).toFixed(2) + ")' stroke-width='.7'/>");
+          fl.push("<path d='M" + (x - w * .45).toFixed(1) + " " + (hy + 1 - h * .55).toFixed(1) + " h" + (w * .9).toFixed(1) + "' stroke='rgba(240,216,154," + (.3 - dep * .1).toFixed(2) + ")' stroke-width='.8' fill='none'/>");
+          if (o > .4) fl.push("<path d='M" + (x - w * .2).toFixed(1) + " " + (hy + 1 - h).toFixed(1) + " l-2 -5 M" + x.toFixed(1) + " " + (hy + 1 - h).toFixed(1) + " l0 -6 M" + (x + w * .2).toFixed(1) + " " + (hy + 1 - h).toFixed(1) + " l2 -5' stroke='rgba(240,216,154,.35)' stroke-width='.7' fill='none'/>");
+        }
+        if (boss) [-.7, -.35, .35, .7].forEach((f, k) => { const x = 466 + f * rx * .8, hh = 22 + (k % 2) * 8; fl.push("<path d='M" + (x - hh * 1.3).toFixed(1) + " " + (hy + 2) + " Q" + x.toFixed(1) + " " + (hy + 2 - hh * 1.6).toFixed(1) + " " + (x + hh * 1.3).toFixed(1) + " " + (hy + 2) + " Z' fill='rgba(90,72,34,.85)' stroke='rgba(240,216,154,.4)' stroke-width='.9'/>"); });
+        // THE SEVENTH'S PLACE: the sledge standing alone on the floor's near right, where she would stand;
+        // arrives from mid-climb. a flat board on two runners, the traces lying slack.
+        if (o >= .4 && !boss) { const sx = 466 + rx * .58, sy = cy + ry * .5, ss = .5 + o * .5; fl.push("<g transform='translate(" + sx.toFixed(1) + " " + sy.toFixed(1) + ") scale(" + ss.toFixed(2) + ")'><path d='M-22 0 h44 v6 h-44 z' fill='rgba(14,11,6,.9)' stroke='rgba(240,216,154,.4)' stroke-width='1'/><path d='M-20 6 l-3 6 M20 6 l3 6' stroke='rgba(240,216,154,.35)' stroke-width='1' fill='none'/><path d='M22 2 q18 -6 30 -14' stroke='rgba(240,216,154,.28)' stroke-width='.9' fill='none'/></g>"); }
+        // CHAFF in the air: small flecks drifting up and across, catching the cluster's light; gone at the boss (swept)
+        if (!boss) for (let k = 0; k < Math.round(6 + o * 14); k++) { const x = 466 + (((k * 61.8) % 100) / 100 - .5) * rx * 1.6, y = cy - ((k * 37) % 40) - 6; fl.push("<circle cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='" + (.8 + ((k * 7) % 3) * .35).toFixed(2) + "' fill='rgba(240,216,154," + (.3 + o * .2).toFixed(2) + ")' style='animation:mzChaff " + (2.6 + (k % 5) * .5).toFixed(1) + "s ease-out " + ((k * .37) % 2.6).toFixed(2) + "s infinite'/>"); }
+        // THE PLEIADES above the far end: six stars in the cluster's real shape (Alcyone, Atlas, Electra,
+        // Maia, Merope, Taygeta), the seventh (Pleione, the faint one) appearing only at the boss. they
+        // come down with the far end and brighten as the road climbs. nothing else in the sky.
+        const sk = [], py = 40 + o * 10, sc = 1 + o * .9;
+        const P7 = [[0, 0, 2.6, "alcyone"], [7, 3, 1.5, ""], [-8, -4, 1.4, ""], [-13, 2, 1.3, ""], [4, 8, 1.2, ""], [-4, -10, 1.3, ""], [9, -3, .9, "pleione"]];
+        P7.forEach(([dx, dy, r, nm]) => {
+          if (nm === "pleione" && !boss) return;
+          const x = 466 + dx * sc * 2.2, y = py + dy * sc * 1.6, big = nm === "alcyone";
+          sk.push("<circle cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='" + (r * (1 + o * .4)).toFixed(2) + "' fill='#DCEBFF'" + (big ? " style='animation:mzFlicker 3.4s ease-in-out infinite'" : "") + " opacity='" + (big ? 1 : (.55 + o * .4).toFixed(2)) + "'/>");
+          if (big) sk.push("<circle cx='" + x.toFixed(1) + "' cy='" + y.toFixed(1) + "' r='" + (14 + o * 16).toFixed(0) + "' fill='rgba(220,235,255," + (.05 + o * .06).toFixed(3) + ")'/>");
+        });
+        sk.push("<circle cx='466' cy='" + py.toFixed(1) + "' r='" + (30 + o * 30).toFixed(0) + "' fill='rgba(220,235,255," + (.03 + o * .03).toFixed(3) + ")'/>");
+        // THE LAW'S TELL: the razor's stroke, a single bright line that sweeps the road's whole width through
+        // the middle station when a lodge there takes both neighbours; a line that starts and stops short
+        // when it would take only one. Rides st.razorFx from _step, the same seq entry the sfx reads.
+        const lawOn = this._bossRule() === "razor" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
+        const rz = st.razorFx;
+        return {
+          gsFloor: React.createElement("g", { dangerouslySetInnerHTML: { __html: fl.join("") } }),
+          gsSky: React.createElement("g", { dangerouslySetInnerHTML: { __html: sk.join("") } }),
+          gsDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:radial-gradient(40% 30% at 50% " + (100 - (HZ / 430) * 100 - 20).toFixed(0) + "%, rgba(220,235,255," + (.05 + o * .05).toFixed(2) + "), transparent), linear-gradient(180deg,#05070F 0%,#0C0E14 " + (100 - (HZ / 430) * 100 - 6).toFixed(0) + "%,#1A1610 " + (100 - (HZ / 430) * 100).toFixed(0) + "%,#2A2210 100%);opacity:" + hide,
+          gsSkyStyle: "position:absolute;left:0;right:0;bottom:" + HZ + "px;height:140px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s ease;opacity:" + hide,
+          gsFloorStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
+          gsRazorOn: lawOn && !!rz,
+          gsRazorStyle: "position:absolute;left:0;right:0;top:143px;height:2px;pointer-events:none;z-index:7;display:flex;justify-content:center",
+          gsRazorLine: rz ? "width:100%;height:2px;background:linear-gradient(90deg, transparent, #F4F8FF 12%, #F4F8FF 88%, transparent);box-shadow:0 0 10px rgba(220,235,255,.9), 0 0 26px rgba(220,235,255,.5);animation:" + (rz.held ? "mzRazorHold 1.4s ease both" : "mzRazorCut 1.4s cubic-bezier(.2,.8,.2,1) both") : "",
+        };
+      })(this._tonight() === 3, this._horizon(ev.e)),
+      bzOn: this._tonight() === 5,
+      // ═══ THE BRANDING YARD (4 sep 2026, user "1a full send" from Manzil - Blaze Level Directions) ═══
+      // m5, al-Haqʻa, THE BLAZE — λ φ¹ φ² Orionis, three small stars in Orion's head, read by the Arabs
+      // as the white mark on a horse's forehead. India: Mṛgaśīrṣa, the deer's head. China: 觜 Zī the
+      // beak, animal the MONKEY. Determinant Meissa, one of the hottest stars the eye can see.
+      //
+      // A horse-brander's yard at the edge of a steppe town, at night, during the autumn branding.
+      // RAIL FENCES either side of the road converge on the road's far end (the district's canyon math,
+      // in wood: posts taller and closer per rung). The FIRE-PIT stands at the middle station — the law's
+      // station — with the iron in it, its head the three-star blaze. Beyond the far rails, THE HERD:
+      // horse silhouettes on the plain, more of them per rung, each with one white mark on the brow —
+      // Orion's head, dozens of times over. At the mansion the yard gate stands open and the herd has
+      // gone through it, all but one: the unbranded, the one shelter the yard never priced.
+      //
+      // Standard window, no slide: the crossing is m9, the glance, BIRD GROUND. The blaze's law is a
+      // tiger's toll levied in the bird's quarter — the mark is made on someone else's ground.
+      ...((t5, H) => {
+        if (!t5) return { bzDeepStyle: "display:none", bzSkyStyle: "display:none", bzSky: null, bzYardStyle: "display:none", bzYard: null, bzFireOn: false, bzFireStyle: "display:none", bzFire: null };
+        const e = ev.e, o = e / 8, hide = this._inPlay() ? .46 : 1, boss = !!st.roadBoss && e >= 8;
+        const HZ = H.bottom, hy = 430 - HZ;
+        const yd = [];
+        // the plain beyond the far rails, lit faintly from the fire behind the player
+        yd.push("<path d='M0 " + hy + " H932 V430 H0 Z' fill='rgba(40,22,14," + (.18 + o * .1).toFixed(2) + ")'/>");
+        // THE HERD stands on the horizon line and never above it. spread across the far plain, small,
+        // with a gap in the middle where the gate is; per rung more of them come into the light.
+        const hn = boss ? 0 : Math.round(2 + o * 12);
+        const horse = (x, y, s, mark, dir) => {
+          yd.push("<g transform='translate(" + x.toFixed(1) + " " + y.toFixed(1) + ") scale(" + (s * dir).toFixed(3) + " " + s.toFixed(3) + ")'>");
+          yd.push("<path d='M-18 0 L-16 -13 Q-14 -19 -6 -19 L10 -19 Q16 -19 18 -25 L20 -31 L25 -29 L23 -22 Q21 -16 14 -14 L14 0 L11 0 L11 -12 L-8 -12 L-10 0 L-13 0 L-12 -12 L-15 0 Z' fill='rgba(8,6,10,.92)' stroke='rgba(200,190,168,.22)' stroke-width='.6'/>");
+          yd.push("<path d='M-16 -13 q-6 6 -7 14' fill='none' stroke='rgba(200,190,168,.25)' stroke-width='.8'/>");
+          if (mark) yd.push("<circle cx='22' cy='-27.5' r='1.5' fill='rgba(232,240,255,.95)'/>");
+          yd.push("</g>");
+        };
+        for (let k = 0; k < hn; k++) {
+          const t = (k + .5) / hn, side = t < .5 ? -1 : 1;
+          const x = 466 + side * (H.half * .55 + Math.abs(t - .5) * 2 * (420 - H.half * .55)) + ((k * 37) % 23) - 11;
+          const dep = ((k * 53) % 17) / 17;
+          horse(x, hy + 1 + dep * 3, .42 + dep * .12, true, k % 3 === 0 ? -1 : 1);
+        }
+        // THE GATE in the far fence, on the road's far end. closed until the mansion; at the boss it stands
+        // open, and the one unbranded horse stands in it, larger than any of the herd, with no mark.
+        const gw = Math.max(18, H.half * .9);
+        yd.push("<path d='M" + (466 - gw) + " " + hy + " V" + (hy - 30 * H.v * 1.3) + " M" + (466 + gw) + " " + hy + " V" + (hy - 30 * H.v * 1.3) + "' stroke='rgba(240,216,154,.4)' stroke-width='" + (2.4 * H.v * 1.2).toFixed(2) + "' fill='none'/>");
+        if (!boss) [0.35, 0.7].forEach(f => yd.push("<path d='M" + (466 - gw) + " " + (hy - 30 * H.v * 1.3 * f) + " H" + (466 + gw) + "' stroke='rgba(240,216,154,.3)' stroke-width='" + (1.6 * H.v * 1.2).toFixed(2) + "' fill='none'/>"));
+        else { yd.push("<path d='M" + (466 - gw) + " " + (hy - 30 * H.v * 1.3 * .35) + " L" + (466 - gw * .45) + " " + (hy - 30 * H.v * 1.3 * .1) + " M" + (466 - gw) + " " + (hy - 30 * H.v * 1.3 * .7) + " L" + (466 - gw * .45) + " " + (hy - 30 * H.v * 1.3 * .45) + "' stroke='rgba(240,216,154,.34)' stroke-width='" + (1.6 * H.v * 1.2).toFixed(2) + "' fill='none'/>"); horse(466 + gw * .2, hy + 2, .9, false, 1); }
+        // THE RAILS: three rails a side from the bottom corners to the far end; posts at perspective
+        // spacing, taller and closer per rung. wood, not stone — the district's canyon in a yard.
+        for (const sgn of [-1, 1]) {
+          const x0 = 466 + sgn * (330 + o * 150), x1 = 466 + sgn * (H.half + 10 * H.v);
+          const ph = 58 * (1 + o * .7);
+          [0, .38, .74].forEach((f, r) => yd.push("<path d='M" + x0.toFixed(1) + " " + (430 - ph * f).toFixed(1) + " L" + x1.toFixed(1) + " " + (hy + 1 - ph * f * H.v * .18).toFixed(1) + "' stroke='rgba(240,216,154," + (.26 - r * .05).toFixed(2) + ")' stroke-width='" + (2.4 - r * .5).toFixed(2) + "' fill='none'/>"));
+          for (let k = 0; k < 8; k++) {
+            const t = Math.pow(k / 8, 1.55), x = x0 + (x1 - x0) * t, yb = 430 + (hy + 1 - 430) * t, h = ph * (1 - t * .93);
+            yd.push("<path d='M" + x.toFixed(1) + " " + yb.toFixed(1) + " V" + (yb - h).toFixed(1) + "' stroke='rgba(240,216,154," + (.36 - t * .26).toFixed(2) + ")' stroke-width='" + (3.4 - t * 2.6).toFixed(2) + "' stroke-linecap='round' fill='none'/>");
+          }
+        }
+        // ORION'S HEAD: three stars, Meissa brightest and cold, above the far end, coming down with it.
+        // nothing else in the sky — the blaze is the one thing the Arabs saw on this head.
+        const sk = [], py = 46;
+        sk.push("<circle cx='466' cy='" + py + "' r='" + (2.4 + o * 1.2).toFixed(1) + "' fill='#E8F0FF' style='animation:mzFlicker 3.6s ease-in-out infinite'/><circle cx='466' cy='" + py + "' r='" + (12 + o * 14).toFixed(0) + "' fill='rgba(232,240,255," + (.05 + o * .06).toFixed(3) + ")'/>");
+        sk.push("<circle cx='486' cy='" + (py + 14) + "' r='" + (1.3 + o * .5).toFixed(1) + "' fill='rgba(232,240,255," + (.5 + o * .4).toFixed(2) + ")'/><circle cx='498' cy='" + (py + 9) + "' r='" + (1.1 + o * .5).toFixed(1) + "' fill='rgba(232,240,255," + (.45 + o * .4).toFixed(2) + ")'/>");
+        // THE LAW'S TELL: the fire-pit at the law's station, the iron standing in it. When a card that
+        // cannot be taken stands over the fire, the brand's head glows white and the card wears the tag
+        // "marked: strikes two lower" — both read the same _shielded the strike path reads (vector 83).
+        const lawOn = this._bossRule() === "price" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
+        const L = this._lawSt(), slots = st.slots || [], Lb = slots.length || 9, eb = 466 - (Lb * 86 + (Lb - 1) * 5) / 2, xb = eb + L * 91 + 43;
+        const priced = lawOn && !!slots[L] && this._shielded(slots, L, -1);
+        const fr = ["<ellipse cx='40' cy='52' rx='26' ry='6' fill='rgba(30,16,8,.9)' stroke='rgba(240,216,154,.28)' stroke-width='1'/>"];
+        fr.push("<ellipse cx='40' cy='50' rx='18' ry='4' fill='rgba(255,120,40," + (priced ? .5 : .3) + ")'/>");
+        fr.push("<g style='transform-origin:40px 50px;animation:mzBzFlame 1.7s ease-in-out infinite'><path d='M28 50 Q32 34 40 38 Q44 26 52 50 Z' fill='rgba(255,150,60," + (priced ? .85 : .6) + ")'/><path d='M33 50 Q37 40 40 42 Q43 36 47 50 Z' fill='rgba(255,220,150," + (priced ? .9 : .65) + ")'/></g>");
+        fr.push("<g style='animation:mzBzHeat 1.6s ease-out infinite'><path d='M34 30 q3 -5 0 -10 M46 30 q-3 -5 0 -10' fill='none' stroke='rgba(255,200,140,.5)' stroke-width='1'/></g>");
+        fr.push("<path d='M40 50 V16' stroke='rgba(200,190,168,.7)' stroke-width='2'/>");
+        fr.push("<g" + (priced ? " style='animation:mzBzBrand 1.1s ease-in-out infinite'" : "") + "><path d='M33 14 l7 6 l7 -6 M40 20 v-9' fill='none' stroke='" + (priced ? "#E8F0FF" : "rgba(200,190,168,.6)") + "' stroke-width='1.8' stroke-linecap='round'/>" + (priced ? "<circle cx='40' cy='13' r='7' fill='rgba(232,240,255,.16)'/>" : "") + "</g>");
+        return {
+          bzYard: React.createElement("g", { dangerouslySetInnerHTML: { __html: yd.join("") } }),
+          bzSky: React.createElement("g", { dangerouslySetInnerHTML: { __html: sk.join("") } }),
+          bzFire: React.createElement("g", { dangerouslySetInnerHTML: { __html: fr.join("") } }),
+          bzDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:radial-gradient(34% 26% at 50% 66%, rgba(255,120,40," + (.1 + o * .06).toFixed(2) + "), transparent), linear-gradient(180deg,#07070E 0%,#120D0C " + (100 - (HZ / 430) * 100 - 8).toFixed(0) + "%,#1E1410 " + (100 - (HZ / 430) * 100).toFixed(0) + "%,#2A1810 100%);opacity:" + hide,
+          bzSkyStyle: "position:absolute;left:0;right:0;bottom:" + HZ + "px;height:140px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:all 1.7s ease;opacity:" + hide,
+          // the yard's box IS the stage (932×430), so the rails land on the gauge's own far end 1:1
+          bzYardStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
+          bzFireOn: lawOn,
+          bzFireStyle: "position:absolute;left:" + (xb - 40).toFixed(0) + "px;top:116px;width:80px;height:60px;pointer-events:none;z-index:7;transition:opacity .7s ease;opacity:" + (lawOn ? 1 : 0),
+        };
+      })(this._tonight() === 5, this._horizon(ev.e)),
       blOn: this._tonight() === 2,
       // ═══ THE THRESHOLD (3 sep 2026, user picked 1b from Manzil - Bearer Level Directions) ═══
       // m2, al-Buṭayn, the ram's LITTLE BELLY — three faint stars (ε, δ, ρ Arietis, and δ is Botein).
@@ -9461,7 +10019,7 @@ class Component extends DCLogic {
         // THE LAW'S STANDING TELL: a hanging balance over the crossing, level all night, and it DIPS
         // while a card that cannot be taken is standing there. It reads the same _tollOn the count
         // reads, so the picture and the arithmetic cannot disagree.
-        const lawOn = this._bossRule() === "toll" && (st.phase === "play" || st.phase === "round" || st.phase === "over");
+        const lawOn = this._bossRule() === "toll" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
         const Lb = (st.slots || []).length || 9, eb = 466 - (Lb * 86 + (Lb - 1) * 5) / 2, xb = eb + this._lawSt() * 91 + 43;
         const charged = lawOn && this._tollOn(st.slots || [], this._lawSt());
         const bs = [];
@@ -9733,8 +10291,8 @@ class Component extends DCLogic {
       ...((() => {
         const w = st.practice ? null : (st.road && !st.roadBoss) ? this._walkers()[st.roadRung] : (!st.road && !st.nightSky && st.nightWalker) ? this._walkers().find(x => x.name === st.nightWalker) : null;
         // the mansion's avatar stands where a walker would, when its figure exists (the heart's fox first)
-        const av6 = (st.roadBoss && (st.phase === "play" || st.phase === "round" || st.phase === "over")) ? this._avFig(this._tonight()) : null;
-        const f = av6 ? { p: av6.p, op: 1 } : w && (st.phase === "play" || st.phase === "round" || st.phase === "over") ? (this._figs()[w.name] || this._figs()[this._wAlias(w.name)]) : null;
+        const av6 = (st.roadBoss && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb")) ? this._avFig(this._tonight()) : null;
+        const f = av6 ? { p: av6.p, op: 1 } : w && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb") ? (this._figs()[w.name] || this._figs()[this._wAlias(w.name)]) : null;
         const wc = f ? this._wCast : null;
         const ab = wc && wc.n % 2 ? "B" : "";
         const gk = av6 ? "Press" : w ? ({ "imra": "Fling", "tesh": "Fling", "sef": "Press", "ruen": "Press", "odel": "Press", "brann": "Slam", "mave": "Still", "the quiet one": "Still" })[this._wAlias(w.name)] || "Press" : "";
@@ -9763,8 +10321,14 @@ class Component extends DCLogic {
           bubbleText: av6 ? ((this._avVoice(this._tonight()) || {}).word || "held.") : w ? ({ "imra": "oh!", "sef": "counted.", "odel": "there.", "tesh": "kept!", "ruen": "read it.", "brann": "ha!", "mave": "…", "the quiet one": ".",
             // the hill of vanes (2 sep 2026): eight words, all of them about the air
             "nael": "oiled.", "vesh": "now!", "thea": "on the date.", "sabi": "more line.", "orun": "leaning.", "duna": "turned early.", "kip": "cooler.", "the weather-watch": ".",
+            // the city gate (6 sep 2026): eight words from people who keep nothing out
+            "orin": "in.", "sefa": "nothing.", "dagan": "set down.", "miro": "lit.", "halla": "all.", "tesk": "open!", "the captain": "stand easy.", "the dog's keeper": ".",
             // the cut at the root (2 sep 2026): eight words, all of them about the ground
             "muza": "marked.", "hev": "propped.", "ansu": "sifted.", "kori": "up.", "zayn": "cut.", "oda": "two.", "veya": "carefully.", "the ground-watch": ".",
+            // the threshing floor (5 sep 2026): eight words from people working together
+            "maia": "all here?", "elet": "two.", "tay": "wait for it.", "alke": "and—", "kel\u0101": "inside the line.", "aste": "you first.", "the eldest": "together.", "the seventh": ".",
+            // the branding yard (4 sep 2026): eight words from people at work
+            "tamsin": "hot.", "bekk": "held.", "ori": "one more.", "sayen": ".", "hult": "new one.", "marra": "that'll cost.", "the brander": "steady.", "the unbranded": ".",
             // the procession (3 sep 2026): eight words from people walking behind something
             "nell": "ahead.", "osk": "eleven.", "pim": "ready.", "rahel": "this way anyway.", "tal": "gaining.", "hesper": "same.", "the red one": "not in front.", "the first lantern": ".",
             // the queue at the threshold (3 sep 2026): eight words, all of them a waiting-room word
@@ -9781,7 +10345,7 @@ class Component extends DCLogic {
       tutWhy: tutF ? tutF.why : ((sc) => sc && sc.w === "sky" ? sc.why : "watch what it claims.")(st.practice && st.tutor ? this._demoScript()[st.tutStep || 0] : null),
       tutSkipTap: () => { this._clearSeq(); this.setState({ ...this._deckState(), phase: this._noteDue() ? "note" : "menu" }); },
       countOn: st.phase === "play" || st.phase === "over", roadN: st.slots.length,
-      matchHdrOn: st.phase === "play" || st.phase === "round" || st.phase === "over",
+      matchHdrOn: st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb",
       ...((() => { // the last word: whoever lodges the final card (measured 64-69% of boards)
         const emptN = (st.slots || []).filter(s => !s).length;
         const on = st.phase === "play" && !st.mull && !!st.dealt && emptN > 0 && !st.practice;
@@ -9847,13 +10411,13 @@ class Component extends DCLogic {
       reachCometStyle: st.reachFx ? "position:absolute;left:0;top:0;width:9px;height:9px;border-radius:50%;background:#FFD9C2;box-shadow:0 0 12px rgba(212,90,58,.95), 0 0 28px rgba(212,90,58,.55);offset-path:path('M14 62 Q135 -14 256 54');animation:" + (st.reachFx.n % 2 ? "mzReachB" : "mzReachA") + " .95s ease-in both" : "display:none",
       reachStamp: st.reachFx ? st.reachFx.pl + " · " + st.reachFx.pr : "",
       reachStampStyle: st.reachFx ? "position:absolute;right:-10px;top:34px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#F0D89A;text-shadow:0 0 14px rgba(212,90,58,.85), 0 1px 4px rgba(4,3,2,.95);animation:mzStampIn 1.5s ease .6s both" : "display:none",
-      // ROUTED THROUGH _pathG (6 sep 2026, code): the 2 sep _pathG sweep replaced this site's
-      // <sc-for> loop with a bare {{ castShapes }} hole, but _castFor() was never converted and
-      // still returns a RAW array of {d,f,s,w,da,st} objects. React cannot render an object as a
-      // child, so the whole app threw "Minified React error #31" the instant any card was cast —
-      // i.e. on the first move of every board. It survived review because the cast fx only exists
-      // mid-play: a load-time check, and "zero console errors on the lobby, the collection, the
-      // ledger and a live board", all pass without ever placing a card.
+      // ROUTED THROUGH _pathG (6 sep 2026, code — re-applied, this delivery still carried the bug).
+      // The 2 sep _pathG sweep replaced this site's <sc-for> loop with a bare {{ castShapes }} hole,
+      // but _castFor() was never converted and still returns a RAW array of {d,f,s,w,da,st} objects.
+      // React cannot render an object as a child, so the app threw "Minified React error #31" and
+      // went blank on the FIRST CARD OF EVERY BOARD. It survives review because the cast fx only
+      // exists mid-play: load-time checks, the adversarial pass and "no console errors on a live
+      // board" all pass without ever placing a card.
       castShapes: st.castFx ? this._pathG(this._castFor(st.castFx)) : null,
       userNameOn: this._inPlay() && !st.practice,
       leaveAskOn: !!st.leaveAsk,
@@ -10130,7 +10694,7 @@ class Component extends DCLogic {
       recordTap: () => this._go("record"),
       modeBackTap: () => this._go("menu"),
       noteOn: st.phase === "note",
-      marginTitleOn: st.phase === "menu" || st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "moon" || st.phase === "ledger" || st.phase === "record" || st.phase === "shardapp",
+      marginTitleOn: st.phase === "menu" || st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb" || st.phase === "moon" || st.phase === "ledger" || st.phase === "record" || st.phase === "shardapp",
       marginTitle: st.phase === "moon" ? "level select" : st.phase === "ledger" ? "the ledger" : st.phase === "record" ? "star shard" : st.phase === "shardapp" ? "the shard app" : "the " + this._mName(this._tonight()),
       noteN: this._tonight(),
       noteCard: (() => { const t4 = this._tonight(), lv = this._mlvl(t4), r = this._rungs()[t4] || 0;
@@ -11198,6 +11762,10 @@ class Component extends DCLogic {
         return { roundGoOn: true, roundGoLabel: "on" };
       })()),
       nextRoundTap: () => this._exitRound(),
+      // the climb caption (5 sep 2026): one line over the moving scenery while the road steps up
+      climbOn: st.phase === "climb",
+      climbLine: st.phase === "climb" ? ((k9 => k9 >= 7 ? "the last rung before the top" : ["the second rung", "the third rung", "the fourth rung", "the fifth rung", "the sixth rung", "the seventh rung"][Math.max(0, k9 - 1)] || "up the road")(st.climbK || 0)) : "",
+      climbSub: st.phase === "climb" ? ((w9 => w9 ? w9.name + " stands ahead" : "")(this._walkers()[st.climbK || 0])) : "",
       ascentOn: false,
       ascentNote: (st.phase === "round" && st.ascentChosen && st.ascentNote) || "",
       ascentBtns: [

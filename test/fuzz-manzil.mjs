@@ -12,7 +12,7 @@
 //      This is the highest-value target right now: lives just changed from a
 //      bare int to a per-mansion object, and old saves in the wild still hold
 //      the int. A reader that assumes shape will throw on someone's real save.
-//   2. Every built level, opened cold — twelve mansions, each booted from a fresh
+//   2. Every built level, opened cold AND PLAYED — fifteen mansions, each booted from a fresh
 //      context, checked for page errors and unresolved {{ bindings }}.
 //   3. Rapid/duplicate input — double-fire on the same control, Escape spam,
 //      clicking during animation windows.
@@ -108,7 +108,7 @@ for (const [label, seed] of Object.entries(hostile)) {
 
 // ---- 2. every built level, cold ---------------------------------------------
 console.log('\n2. each built level, opened cold');
-for (const [id, name] of [[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],[21,'empty district'],[23,'drum'],[25,'hideaway'],[2,'bearer'],[4,'follower'],[26,'chamber'],[27,'causeway'],[28,'thread']]) {
+for (const [id, name] of [[1,'gate'],[2,'bearer'],[3,'gathered stars'],[4,'follower'],[5,'blaze'],[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],[21,'empty district'],[23,'drum'],[25,'hideaway'],[26,'chamber'],[27,'causeway'],[28,'thread']]) {
   const r = await withPage(browser, { [K + 'moon']: String(id) }, async page => {
     // walk in: the moon road -> the road -> sit down, tolerating whichever beats appear
     for (const label of ['the moon road', 'the moon road', 'click to sit down']) {
@@ -118,6 +118,35 @@ for (const [id, name] of [[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],
     return {};
   });
   check(`level ${id} (${name})`, r);
+}
+
+// ---- 2b. ACTUALLY PLAY A CARD on every level --------------------------------
+// Added 6 Sep 2026, because a crash shipped that this file could not see. The _pathG
+// sweep left castShapes returning a raw object array, and React threw on the FIRST CARD
+// OF EVERY BOARD — the whole app went blank. Section 2 above missed it completely: it
+// opens each level and stops. So did Design's "no console errors on a live board", and
+// so did every load-time check. Opening a level is not playing one.
+console.log('\n2b. place a card on every built level (the gap that shipped the #31 crash)');
+for (const [id, name] of [[1,'gate'],[3,'gathered stars'],[5,'blaze'],[18,'heart'],[23,'drum'],[27,'causeway']]) {
+  const r = await withPage(browser, { [K + 'moon']: String(id) }, async page => {
+    // Drive through the dev handle rather than the UI: this is about the render path
+    // surviving a lodge, not about hit-testing the board.
+    return await page.evaluate(async () => {
+      const m = window.manzil;
+      if (!m) return { skipped: 'no dev handle' };
+      const five = (m.state.deckSel && m.state.deckSel.length) ? m.state.deckSel : [1,2,3,4,5,6,7];
+      m.setState({ ...m._deckState(), ...m._freshRoadStep(0, five), phase: 'play', dealt: true });
+      await new Promise(r => setTimeout(r, 900));
+      const id2 = (m.state.hand || [])[0];
+      const slot = (m.state.slots || []).findIndex(x => !x);
+      if (id2 == null || slot < 0) return { skipped: 'no legal move' };
+      m._commitPlace(id2, slot, false, 'you');
+      await new Promise(r => setTimeout(r, 2200));
+      return { filled: (m.state.slots || []).filter(Boolean).length, phase: m.state.phase };
+    });
+  });
+  check(`played a card on level ${id} (${name})`, r);
+  if (r.skipped) note('note', `level ${id}`, 'could not place', r.skipped);
 }
 
 // ---- 3. rapid + duplicate input ---------------------------------------------

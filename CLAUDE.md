@@ -627,6 +627,39 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**A CRASH SHIPPED AND LIVE PLAYERS HIT IT (6 Sep 2026, user: "my friends
+said they couldn't play after starting a level").** Placing ANY card threw
+Minified React error #31 and blanked the app — every board, every night,
+first move. Cause: the 2 Sep `_pathG` sweep replaced the cast-fx site's
+`<sc-for>` loop with a bare `{{ castShapes }}` hole, but `_castFor()` was
+never converted and still returned a RAW array of `{d,f,s,w,da,st}`
+objects, which React cannot render as a child. Of the 51 bare mustache
+holes inside an `<svg>`, `castShapes` was the ONLY producer not routed
+through `_pathG`/`dangerouslySetInnerHTML`/`createElement` — audited, one
+site, one fix. **The 6 Sep delivery still carried it**, so it had to be
+re-applied on adoption.
+
+**Why every check missed it, and the lesson: the cast fx only exists
+mid-play.** A load-time check passes. Design's "zero console errors on the
+lobby, the collection, the ledger and a live board" passes. And
+`test/fuzz-manzil.mjs` — which opens all fifteen levels cold — passes,
+because **it never places a card.** Opening a level is not playing one.
+The harness now has a section 2b that actually lodges a card on six
+representative levels through the dev handle; that gap is closed.
+
+**THE RAZOR (m3) SHIPPED ASKING A QUESTION THAT CHANGED THE ANSWER.** Its
+"take both neighbours or neither" pre-evaluated with
+`_tryFlip(slots, …)` — the REAL board — and `_tryFlip` mutates on success
+(`t.owner`, and `t.gateUsed` on the gate's first miss). So with two enemy
+neighbours where only one would fall, the trial FLIPPED it, `all` came out
+false, and the beat announced *"it takes neither"* over a card that had
+already changed hands. When both would fall, the queued strikes then
+re-ran against already-taken slots, returned false on
+`t.owner === a.owner`, and produced no strike entries at all — the stroke
+never animated. Fixed by probing a shallow copy (`slots.map(x => ({...x}))`),
+in the client and in the module, and verified in the live game: one weak
+and one strong enemy neighbour, neither changes hands.
+
 **THE BIGGEST OUTSTANDING FINDING (3 Sep 2026): every law number measured this
 month describes eight boards out of nine.** Measurement's reference deals the
 sky seven cards from the twenty-eight, which models a WALKER board exactly — and

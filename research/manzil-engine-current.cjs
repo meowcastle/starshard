@@ -291,8 +291,32 @@ function mkGame(cfg) {
 //     the rear spout's measured failure shape. A planet at the perch switches the law off entirely;
 //     a planet beside it is never the one charged. Ties go to the neighbour NEARER THE DOOR (the
 //     lower index), via a strict `>` in a left-then-right walk.
+//   - 1, "open" (5 sep 2026, m1 plain 50.8 -> 42.6, one-sided narrowing): station 4. At the law
+//     station NOTHING IS HELD — every deny rule stands open and the strike lands on numbers alone,
+//     the gate card's own stateful first miss included. Her planets keep their locks (the same
+//     quarterless guard the toll uses: saturn's lock is a planet's, not a shelter the road knows).
+//     Ownership is fought for as on a plain board; count and faces are untouched. Every strike, not
+//     just the first — the first-only variant measured identical to a tenth, so there is no dial.
+//   - 3, "razor" (5 sep 2026, spread 19.0 -> 17.2): station 4. A card lodging at the law station
+//     takes BOTH near neighbours or NEITHER. Only ENEMY neighbours are strokes: a friendly or empty
+//     one is not counted against the pair, and one enemy neighbour means "both" is that one. Far
+//     strikes (the throne's reach, suzaku's grant, the glance, the heart, the return) are untouched
+//     — they queue on their own lines. THE TRIAL MUST NOT MUTATE: tryFlip() writes `owner` and
+//     `gateUsed` on success, so the probe runs against a copy. Asking the board a question with a
+//     function that changes the board is how the client shipped a razor that took one neighbour and
+//     announced it had taken none (reported 6 sep).
+//   - 5, "price" (4 sep 2026, spread 31.2 -> 21.4, byakko -19.2 with the other three inside half a
+//     point): station 4. A card standing AT the law station that cannot be taken strikes two lower
+//     FROM there. Attacking face only — the defending face of a sheltered card never decides
+//     anything, because the refusal happens after the compare, so pricing it would be a no-op. It
+//     reads the same shielded() the strike path refuses on, and it reads the ATTACKER's shelter,
+//     not the target's. No stored flag: the price belongs to the station, and a card that leaves
+//     takes nothing with it. Planets pay like anything else — this law reads shelter, not quarter.
 const LAW_AT = {
+  1: { kind: "open", station: 4 },
   2: { kind: "toll", station: 4 },
+  3: { kind: "razor", station: 4 },
+  5: { kind: "price", station: 4 },
   4: { kind: "crow", station: 4 },
   10: { kind: "reach", station: 0 },
   12: { kind: "turn", station: 0 },
@@ -418,6 +442,7 @@ function tryFlip(g, slots, ai, ti, dir, printed) {
   const a = slots[ai], t = slots[ti];
   if (!t || t.spent || t.owner === a.owner) return false;
   const tC = g.C[t.id];
+  const law = lawAt(g.tonight);
   let av = faceOf(g, slots, ai, dir), tv = faceOf(g, slots, ti, -dir);
   // the throne's law (mansion 10): the far strike reads the attacker's PRINTED pool face — the
   // card table's own l/r, not the slot's live (boon/blaze/neighbour-modified) face. Reads g.C, not
@@ -427,10 +452,16 @@ function tryFlip(g, slots, ai, ti, dir, printed) {
     const k = nb(g, ti, d); if (k < 0 || k === ai || !slots[k]) continue;
     const n = g.C[slots[k].id]; if (n.ab === "bearer" && on(g, n)) { av = Math.max(1, av - 2); break; }
   }
+  // the price of the mark (mansion 5): a sheltered card striking FROM the law station fights two
+  // lower. Reads the ATTACKER's shelter, and the attacking face only — see the LAW_AT comment.
+  if (law && law.kind === "price" && ai === law.station && shielded(g, slots, ai)) av = Math.max(1, av - 2);
   const tie = av === tv && !(tC.ab === "storm" && on(g, tC));
   if (!(av > tv || tie)) return false;
-  if (shielded(g, slots, ti)) return false;
-  if (tC.ab === "gate" && on(g, tC) && !t.gateUsed) { t.gateUsed = true; return "gate"; }
+  // the open gate (mansion 1): at the law station nothing is held — every deny rule and the gate
+  // card's own first miss stand open. Her planets keep their locks.
+  const openSt = !!(law && law.kind === "open" && ti === law.station && !isQuarterless(t.id));
+  if (!openSt && shielded(g, slots, ti)) return false;
+  if (!openSt && tC.ab === "gate" && on(g, tC) && !t.gateUsed) { t.gateUsed = true; return "gate"; }
   t.owner = a.owner;
   return tie ? "tie" : true;
 }
@@ -536,7 +567,24 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
       seq.push({ from: i, to: kt, dir: 1, miss: true, turn: true, sig: "the turn: the next station faces the other way." });
     }
   }
-  queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
+  // the razor (mansion 3): a lodge at the law station takes BOTH near neighbours or NEITHER. Only
+  // enemy neighbours are strokes. The trial runs against a COPY, because tryFlip() mutates on
+  // success — probing the real board is how the client shipped a razor that took one and said none.
+  if (law && law.kind === "razor" && i === law.station) {
+    const probe = slots.map(x => x ? Object.assign({}, x) : x);
+    const trials = [-1, 1].map(d => {
+      const k = nb(g, i, d);
+      if (k < 0 || !slots[k] || (slots[k].ground || slots[k].owner) === own) return null;
+      return { k, d, hit: tryFlip(g, probe, i, k, d) === true };
+    }).filter(Boolean);
+    if (trials.length && trials.every(x => x.hit)) {
+      trials.forEach(x => queue.push({ from: i, to: x.k, dir: x.d, sig: "the razor: one stroke, the whole width of the road." }));
+    } else if (trials.length) {
+      seq.push({ from: i, to: i, dir: 1, miss: true, razor: { held: true }, sig: "the razor: one stroke takes both or neither. it takes neither." });
+    }
+  } else {
+    queue.push({ from: i, to: nb(g, i, -1), dir: -1 }, { from: i, to: nb(g, i, 1), dir: 1 });
+  }
   // the throne's law (mansion 10, station 0): lodging there also strikes two stations away, printed
   // faces, crossing an empty middle — see the LAW_AT comment above for the lodge-time-only scope.
   if (law && law.kind === "reach" && i === law.station) {
@@ -2008,6 +2056,118 @@ if (require.main === module) {
     }, true],
     ["m2 slides its window, m4 deliberately does not (the crow was measured on the standard road)", () => {
       return E.BOARD_OFF[2] === 4 && E.BOARD_OFF[4] === undefined;
+    }, true],
+    // THE OPEN GATE (mansion 1, station 4) — nothing is held there.
+    ["the open gate: a sheltered card at the law station CAN be taken (m1)", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 1, levels: lv1 }), off = E.mkGame({ tonight: 6, levels: lv1 });
+      const mk = () => { const sl = Array.from({ length: 9 }, () => null);
+        sl[3] = { id: 9, l: 9, r: 9, owner: "you", by: "you", age: 1 };
+        sl[4] = { id: 10, l: 1, r: 1, owner: "sky", by: "sky", age: 1, crowned: true }; return sl; };
+      // resolve() COPIES the slot array (lodge does slotsIn.slice().map), so read its return value,
+      // never the array passed in — tryFlip mutates in place but resolve does not.
+      const a = E.resolve(g, mk(), 11, 5, false, "you");    // lodge beside it on m1: the gate is open
+      const b = E.resolve(off, mk(), 11, 5, false, "you");  // same board, plain night: the crown holds
+      return a.slots[4].owner === "you" && b.slots[4].owner === "sky";
+    }, true],
+    ["the open gate: HER PLANETS KEEP THEIR LOCKS (saturn is not a shelter the road knows)", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 1, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 9, r: 9, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 101, l: 1, r: 1, owner: "sky", by: "sky", age: 1 }; // saturn's lock
+      return E.resolve(g, slots, 11, 5, false, "you").slots[4].owner === "sky";
+    }, true],
+    ["the open gate: it does not open a neighbouring station, nor another night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 1, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 1, r: 1, owner: "sky", by: "sky", age: 1, crowned: true }; // not the law station
+      slots[4] = { id: 10, l: 9, r: 9, owner: "you", by: "you", age: 1 };
+      return E.resolve(g, slots, 11, 5, false, "you").slots[3].owner === "sky";
+    }, true],
+    // THE RAZOR (mansion 3, station 4) — both near neighbours or neither.
+    ["the razor: both enemy neighbours fall together when both would fall", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 3, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      slots[5] = { id: 11, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 4, false, "you"); // sun 9/6 beats both
+      return rr.slots[3].owner === "you" && rr.slots[5].owner === "you";
+    }, true],
+    ["THE RAZOR HOLDS: if one neighbour would survive, NEITHER is taken — and the trial does not take it either", () => {
+      // This is the bug the client shipped: it probed with tryFlip against the REAL board, so the
+      // weaker neighbour was already flipped by the question, `all` came out false, and the beat
+      // announced "it takes neither" over a card that had changed hands. The probe runs on a copy.
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 3, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };  // would fall
+      slots[5] = { id: 11, l: 9, r: 9, owner: "sky", by: "sky", age: 1 }; // would not
+      const rr = E.resolve(g, slots, 106, 4, false, "you");
+      return rr.slots[3].owner === "sky" && rr.slots[5].owner === "sky";
+    }, true],
+    ["the razor: one enemy neighbour means \"both\" is that one", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 3, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 4, false, "you");
+      return rr.slots[3].owner === "you";
+    }, true],
+    ["the razor: a FRIENDLY neighbour is not a stroke and does not hold the pair back", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 3, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 9, r: 9, owner: "you", by: "you", age: 1 };  // friendly, unflippable
+      slots[5] = { id: 11, l: 1, r: 1, owner: "sky", by: "sky", age: 1 }; // the only stroke
+      const rr = E.resolve(g, slots, 106, 4, false, "you");
+      return rr.slots[5].owner === "you";
+    }, true],
+    ["the razor does NOT fire on a different mansion's night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 6, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 1, r: 1, owner: "sky", by: "sky", age: 1 };
+      slots[5] = { id: 11, l: 9, r: 9, owner: "sky", by: "sky", age: 1 };
+      const rr = E.resolve(g, slots, 106, 4, false, "you");
+      return rr.slots[3].owner === "you" && rr.slots[5].owner === "sky"; // the weak one falls alone
+    }, true],
+    // THE PRICE OF THE MARK (mansion 5, station 4) — sheltered attackers fight two lower.
+    ["the price: a sheltered card striking FROM the law station fights two lower", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 5, levels: lv1 }), off = E.mkGame({ tonight: 6, levels: lv1 });
+      const mk = () => { const sl = Array.from({ length: 9 }, () => null);
+        sl[4] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1, crowned: true }; // sheltered attacker
+        sl[5] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 }; return sl; };   // 6 beats 5, 4 does not
+      const a = mk(), b = mk();
+      return E.tryFlip(g, a, 4, 5, 1) === false && E.tryFlip(off, b, 4, 5, 1) === true;
+    }, true],
+    ["the price: an UNSHELTERED attacker at the same station pays nothing", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.tryFlip(g, slots, 4, 5, 1) === true;
+    }, true],
+    ["the price is the ATTACKER's, not the defender's: a sheltered DEFENDER is untouched by it", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1, crowned: true };
+      // The crown still refuses the take, but not because the price lowered anything.
+      return E.tryFlip(g, slots, 3, 4, 1) === false && E.shielded(g, slots, 4) === true;
+    }, true],
+    ["the price does NOT fire from another station, nor on another night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 5, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1, crowned: true }; // not the law station
+      slots[4] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.tryFlip(g, slots, 3, 4, 1) === true;
     }, true],
     ["quarterless is `id >= 101`, NOT the client's 101..107 — Uranus and Neptune are on her boss hand", () => {
       // The live client's mansion-boss hand is [101,102,103,104,105,108,109]. All four of its
