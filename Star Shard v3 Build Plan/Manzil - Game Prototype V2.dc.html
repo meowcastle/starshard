@@ -9847,7 +9847,14 @@ class Component extends DCLogic {
       reachCometStyle: st.reachFx ? "position:absolute;left:0;top:0;width:9px;height:9px;border-radius:50%;background:#FFD9C2;box-shadow:0 0 12px rgba(212,90,58,.95), 0 0 28px rgba(212,90,58,.55);offset-path:path('M14 62 Q135 -14 256 54');animation:" + (st.reachFx.n % 2 ? "mzReachB" : "mzReachA") + " .95s ease-in both" : "display:none",
       reachStamp: st.reachFx ? st.reachFx.pl + " · " + st.reachFx.pr : "",
       reachStampStyle: st.reachFx ? "position:absolute;right:-10px;top:34px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#F0D89A;text-shadow:0 0 14px rgba(212,90,58,.85), 0 1px 4px rgba(4,3,2,.95);animation:mzStampIn 1.5s ease .6s both" : "display:none",
-      castShapes: st.castFx ? this._castFor(st.castFx) : [],
+      // ROUTED THROUGH _pathG (6 sep 2026, code): the 2 sep _pathG sweep replaced this site's
+      // <sc-for> loop with a bare {{ castShapes }} hole, but _castFor() was never converted and
+      // still returns a RAW array of {d,f,s,w,da,st} objects. React cannot render an object as a
+      // child, so the whole app threw "Minified React error #31" the instant any card was cast —
+      // i.e. on the first move of every board. It survived review because the cast fx only exists
+      // mid-play: a load-time check, and "zero console errors on the lobby, the collection, the
+      // ledger and a live board", all pass without ever placing a card.
+      castShapes: st.castFx ? this._pathG(this._castFor(st.castFx)) : null,
       userNameOn: this._inPlay() && !st.practice,
       leaveAskOn: !!st.leaveAsk,
       leaveBtnOn: !st.leaveAsk,
