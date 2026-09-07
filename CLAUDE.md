@@ -627,6 +627,37 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE GAME FOLLOWS THE MOON, AND THE LAUNCH ACCESS RULE IS ON THE RECORD
+(7 Sep 2026, Justin's call).** `_tonight()` used to fall through to a
+hardcoded 18, and the level-select pick was written to `localStorage`, so
+one visit to the ring pinned the game to that house forever and the real
+sky never got a say. Now: her true house if a level is built there, else
+the next built house **walking forward** (ascending mansion, wrapping
+28→1 — always the house she is travelling toward, never one she has left),
+via the new `_nextOpen(m)`. **The ring pick is session-only** — memory,
+never disk — so it is still how you look at another house, and the next
+load reads the sky again. `manzil-v2-moon` is no longer written, no longer
+in `_syncProgress`/`_applyProgress` (a restore must not re-pin a house the
+sky has left), and a legacy value is actively cleared on read; it stays in
+`_deckState`'s `#fresh` list on purpose, because old saves still carry it.
+Verified across all 28 mansions exhaustively, and live: the moon is in the
+throne tonight and the game opens there.
+
+**THE LAUNCH RULE, NOT BUILT ON PURPOSE:** *"if you don't complete the
+mansion on the day it occupies it, you can't access that level until the
+moon arrives back."* A house is playable only while the moon stands in it;
+miss the night and it closes for roughly 27 nights, one circuit of the
+road. That is the game's whole retention shape — the sky sets the
+schedule. **It is deliberately OFF while testing** so a new level can be
+played the day it lands instead of a month later; every built house stays
+reachable through the ring. The full design note, including where the gate
+belongs (the ring's own node state and `_go("moon")`, **never**
+`_tonight()` — conflating "which house is this" with "may I enter" is what
+put the 30 Aug default on a closed house), and the open question of whether
+an unfinished climb persists or resets, sits beside `_moonTest` in the
+`.dc.html`. **Do not wire the gate in without asking — the open ring is a
+decision, not an oversight.**
+
 **A CRASH SHIPPED AND LIVE PLAYERS HIT IT (6 Sep 2026, user: "my friends
 said they couldn't play after starting a level").** Placing ANY card threw
 Minified React error #31 and blanked the app — every board, every night,

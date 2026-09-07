@@ -5469,8 +5469,18 @@ class Component extends DCLogic {
   // real ephemeris (truncated meeus, ~0.005°); the drum only as a dead fallback if the script fails.
   _tonightReal() { const m = this._trueMoon(); return m >= 1 && m <= 28 ? m : 23; }
   // the moon glyph (25 aug 2026): the test build walks her to any BUILT house
+  // THE PICK LASTS THE SESSION, NOT THE SAVE (7 sep 2026, user: "it should follow the moon").
+  // This used to seed itself from localStorage, so one visit to the level-select ring pinned the
+  // game to that house forever and the real sky never got a say again. The moon moves; the game
+  // follows her. A ring pick is still honoured for as long as the player is here — it is how you
+  // look at another house — but it is memory only, and the next load reads the sky again.
+  // The legacy key is actively cleared rather than merely ignored: leaving it would resurrect an
+  // old pin on any device that later restored progress from the server.
   _moon() {
-    if (this._moonC == null) { let v = 0; try { v = parseInt(localStorage.getItem("manzil-v2-moon")) || 0; } catch (e) {} this._moonC = (v >= 1 && v <= 28) ? v : 0; }
+    if (this._moonC == null) {
+      this._moonC = 0;
+      try { if (localStorage.getItem("manzil-v2-moon") != null) localStorage.removeItem("manzil-v2-moon"); } catch (e) {}
+    }
     return this._moonOpen(this._moonC) ? this._moonC : 0;
   }
   // nine houses are built (26 aug 2026): the heart, and the empty district through the thread.
@@ -5497,6 +5507,31 @@ class Component extends DCLogic {
   // floor, the cock on the rim, the seven sisters of whom one is missing. fourteen stand.
   _moonOpen(id) { return [1, 2, 3, 4, 5, 10, 12, 18, 19, 21, 23, 25, 26, 27, 28].indexOf(id) >= 0; }
   _moonTest(id) { return false; }
+  // ────────────────────────────────────────────────────────────────────────────────────────────
+  // NOT BUILT YET, AND DELIBERATELY SO — THE LAUNCH ACCESS RULE (7 sep 2026, Justin's call):
+  //
+  //   "if you don't complete the mansion on the day it occupies it, you can't access that level
+  //    until the moon arrives back."
+  //
+  // So at launch a house is playable only while the moon actually stands in it. Miss the night and
+  // it closes until she comes round again — roughly 27 nights later, one full circuit of the road.
+  // That is the whole retention shape of the game: the sky sets the schedule, not the player.
+  //
+  // IT IS OFF ON PURPOSE WHILE WE TEST. Every built house stays reachable through the level-select
+  // ring so a level can be played the day it lands rather than a month later. Do not "finish" this
+  // by wiring the gate in without asking — the open ring is the testing decision, not an oversight.
+  //
+  // When it does go in, the pieces already exist and this is roughly the shape:
+  //   - _trueMoon() is her real house tonight; _rungs()/_mlvl() already say whether a mansion was
+  //     completed; _claims() and manzil-v2-wipe already record per-mansion history.
+  //   - the gate belongs in the ring's own node state (the `moonNodes` block in renderVals) and in
+  //     whatever _go("moon") allows, NOT in _tonight() — _tonight() answers "which house is this",
+  //     and conflating that with "may I enter" is how the 30 Aug default landed on a closed house.
+  //   - it needs a "she returns in N nights" line for a closed house, or the rule reads as a bug.
+  //   - decide before building: does an unfinished climb persist until she returns, or reset? The
+  //     lives/rungs code already forfeits a climb on leaving a road, which suggests reset, but that
+  //     was written for a world where you could come straight back.
+  // ────────────────────────────────────────────────────────────────────────────────────────────
   // THE NEAREST OPEN HOUSE, WALKING FORWARD (7 sep 2026, user: "if the moon is in a level that is
   // currently live have the game open in that level; if not, open the level closest forward to where
   // the moon actually is"). Forward means the direction the moon travels — ascending mansion number,
@@ -5992,7 +6027,9 @@ class Component extends DCLogic {
   }
   _noteDue() { const t = this._tonight(); try { const n = JSON.parse(localStorage.getItem("manzil-v2-noted")) || {}; return n[t] !== new Date().toISOString().slice(0, 10); } catch (e) { return true; } }
   _noteSeen() { const t = this._tonight(); try { const n = JSON.parse(localStorage.getItem("manzil-v2-noted")) || {}; n[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-v2-noted", JSON.stringify(n)); } catch (e) {} }
-  _setMoon(m) { this._moonC = (m >= 1 && m <= 28) ? m : 0; this._C = null; try { localStorage.setItem("manzil-v2-moon", String(this._moonC)); } catch (e) {} this._syncProgress(); }
+  // Memory only — see _moon(). _syncProgress() still runs because this fires on level entry and
+  // everything else it carries (rungs, lives, claims) does need saving; only the pick itself does not.
+  _setMoon(m) { this._moonC = (m >= 1 && m <= 28) ? m : 0; this._C = null; try { localStorage.removeItem("manzil-v2-moon"); } catch (e) {} this._syncProgress(); }
   // the hideaway's road is walked with her tent MIDWAY (30 aug 2026, user): on m25's night the
   // nine-station window slides back four, so mansion 25 itself stands at the law's station (index 4)
   // and the road still ends nine houses on. every other night keeps tonight's mansion at the door.
@@ -7535,7 +7572,11 @@ class Component extends DCLogic {
       climbs: raw("climbs", {}), rungs: raw("rungs", {}), lives: raw("lives", {}),
       build: raw("build", {}), buildv: (() => { try { return localStorage.getItem("manzil-v2-buildv"); } catch (e) { return null; } })(),
       wrec: raw("wrec", {}), noted: raw("noted", {}), stairseen: raw("stairseen", {}), wipe: raw("wipe", {}),
-      moon: rawInt("moon", 0), lastclimb: raw("lastclimb", {}), respec: rawInt("respec", 0),
+      // `moon` is deliberately NOT synced any more (7 sep 2026): the level-select pick is
+      // session-only now, so there is nothing durable to carry between devices. Kept out of both
+      // this payload and _applyProgress below so a restore cannot re-pin a house the sky has left.
+      // It stays in _deckState's #fresh list on purpose — legacy saves still have the key to wipe.
+      lastclimb: raw("lastclimb", {}), respec: rawInt("respec", 0),
       claims: raw("claims", {}), lock: raw("lock", []), shards: rawInt("shards", 0), firstlight: raw("firstlight", {}),
     });
   }
@@ -7554,7 +7595,7 @@ class Component extends DCLogic {
     put("build", d.build || {});
     try { localStorage.setItem("manzil-v2-buildv", d.buildv || "2"); } catch (e) {}
     put("wrec", d.wrec || {}); put("noted", d.noted || {}); put("stairseen", d.stairseen || {}); put("wipe", d.wipe || {});
-    putInt("moon", d.moon || 0); put("lastclimb", d.lastclimb || {}); putInt("respec", d.respec || 0);
+    put("lastclimb", d.lastclimb || {}); putInt("respec", d.respec || 0); // no `moon`: see _syncProgress
     put("claims", d.claims || {}); put("lock", d.lock || []); putInt("shards", d.shards || 0); put("firstlight", d.firstlight || {});
     this._clC = null; this._moonC = null; this._C = null;
   }
