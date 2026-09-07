@@ -5449,6 +5449,13 @@ class Component extends DCLogic {
     if (o >= 1 && o <= 28) return o;
     const mv = this._moon();
     if (mv) return mv;                 // the moon glyph: wherever the player last walked her
+    // THE REAL SKY DECIDES THE OPENING (7 sep 2026, user). With no pick of the player's own standing,
+    // the game opens where the moon ACTUALLY is — this is a game played against the real sky, so the
+    // default should be the sky, not a constant. If her true house has no level built yet, walk
+    // FORWARD to the next one that does: the next house she is travelling toward, never one behind
+    // her. Fifteen of twenty-eight stand today, so the walk is short and it shortens as houses open.
+    const real = this._trueMoon();
+    if (real >= 1 && real <= 28) { const near = this._nextOpen(real); if (near) return near; }
     // 30 aug 2026 (code): was `return 23` (the drum), correct while the built houses were 21-28 and
     // _moonOpen() lit that whole range. Now that _moonOpen() only lights 18/10/25 (the three mansions
     // with a real station law), a fresh device or a stale manzil-v2-moon value pointing at a now-
@@ -5490,6 +5497,17 @@ class Component extends DCLogic {
   // floor, the cock on the rim, the seven sisters of whom one is missing. fourteen stand.
   _moonOpen(id) { return [1, 2, 3, 4, 5, 10, 12, 18, 19, 21, 23, 25, 26, 27, 28].indexOf(id) >= 0; }
   _moonTest(id) { return false; }
+  // THE NEAREST OPEN HOUSE, WALKING FORWARD (7 sep 2026, user: "if the moon is in a level that is
+  // currently live have the game open in that level; if not, open the level closest forward to where
+  // the moon actually is"). Forward means the direction the moon travels — ascending mansion number,
+  // wrapping 28 -> 1 — so the answer is always the next house she will actually reach, never one she
+  // has already left. Returns m itself when m is open, so callers can use it unconditionally. Returns
+  // 0 only if nothing is open at all, which cannot happen today but is not worth crashing over.
+  _nextOpen(m) {
+    if (!(m >= 1 && m <= 28)) return 0;
+    for (let k = 0; k < 28; k++) { const id = ((m - 1 + k) % 28) + 1; if (this._moonOpen(id)) return id; }
+    return 0;
+  }
   // the four quarters of the sky, al-biruni's numbering. the animals are named to the player
   _quad(m) { return m >= 14 && m <= 20 ? "seiryuu" : m >= 7 && m <= 13 ? "suzaku" : m >= 21 && m <= 27 ? "genbu" : "byakko"; }
   _quadName(q) { return { seiryuu: "azure dragon", byakko: "white tiger", suzaku: "vermilion bird", genbu: "black tortoise" }[q] || ""; }
