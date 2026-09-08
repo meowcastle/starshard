@@ -108,7 +108,7 @@ for (const [label, seed] of Object.entries(hostile)) {
 
 // ---- 2. every built level, cold ---------------------------------------------
 console.log('\n2. each built level, opened cold');
-for (const [id, name] of [[1,'gate'],[2,'bearer'],[3,'gathered stars'],[4,'follower'],[5,'blaze'],[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],[21,'empty district'],[23,'drum'],[25,'hideaway'],[26,'chamber'],[27,'causeway'],[28,'thread']]) {
+for (const [id, name] of [[1,'gate'],[2,'bearer'],[3,'gathered stars'],[4,'follower'],[5,'blaze'],[10,'throne'],[12,'turning'],[18,'heart'],[19,'root'],[21,'empty district'],[23,'drum'],[25,'hideaway'],[26,'chamber'],[6,'storm'],[15,'veil'],[24,'void'],[27,'causeway'],[28,'thread']]) {
   const r = await withPage(browser, { [K + 'moon']: String(id) }, async page => {
     // walk in: the moon road -> the road -> sit down, tolerating whichever beats appear
     for (const label of ['the moon road', 'the moon road', 'click to sit down']) {
@@ -127,7 +127,7 @@ for (const [id, name] of [[1,'gate'],[2,'bearer'],[3,'gathered stars'],[4,'follo
 // opens each level and stops. So did Design's "no console errors on a live board", and
 // so did every load-time check. Opening a level is not playing one.
 console.log('\n2b. place a card on every built level (the gap that shipped the #31 crash)');
-for (const [id, name] of [[1,'gate'],[3,'gathered stars'],[5,'blaze'],[18,'heart'],[23,'drum'],[27,'causeway']]) {
+for (const [id, name] of [[1,'gate'],[3,'gathered stars'],[5,'blaze'],[6,'storm'],[18,'heart'],[23,'drum'],[24,'void'],[27,'causeway']]) {
   const r = await withPage(browser, { [K + 'moon']: String(id) }, async page => {
     // Drive through the dev handle rather than the UI: this is about the render path
     // surviving a lodge, not about hit-testing the board.

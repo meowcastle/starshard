@@ -627,6 +627,33 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**EIGHTEEN HOUSES, AND THE FROZEN CHAPTER IS CLOSED (8 Sep 2026).** Design's
+8 Sep delivery: the storm (m6, `eye@4` — a tie at the crossing whose striker
+LED the board takes nothing; the answerer's tie stands), the veil (m15,
+`hush@4` — the empty district's own verb at a second address, the same law
+object as m21), and the void (m24, `void@4` "right" — the crossing counts one
+more, the station to its RIGHT one less, floored at 0, stacking with the void
+card's own signature). All three slide (`_boardOff` 6/15/24 join 2/19/21/23/25/28).
+No frozen branch remains behind `_bossRule`. **`LAW_AT` is eighteen; 118 vectors.**
+
+**THE HARDEST ROAD — the two dials only Code can build, now built in both
+places.** On m6 only: `_handicapFor` returns 0 (the full mirror from walker one,
+no knockdown) and `_cautionsFor` reads two higher capped at 8. In the engine they
+are opt-in via a new `tonight` argument, so every existing caller and every
+measured number is untouched. Confirmed live: caution 2 on the storm against 0 on
+m7, handicap gated from 0.75 to 0, `_lifeCap` 2 (two lanterns), `_boLen` 3 at
+rung 0 (best of three from walker one).
+
+**THE CRASH FIX WAS REVERTED FOR THE THIRD TIME, and this delivery reverted the
+MARKUP too — the two halves would have broken each other.** Design restored the
+cast site to an `<sc-for>` loop over `castShapes` while Code's producer returns a
+`_pathG` group, so re-applying the fix naively would have fed a React element to
+a list iterator. Reconciled to the injected-group form on both sides, which is
+Design's own 2 Sep standing rule ("no `path` with a bound `d` anywhere in the
+file") — the loop also reintroduced the pre-hydration console errors. **A
+delivery can revert a fix in the script AND in the template independently; check
+both halves, and check that what you re-apply still matches the markup it feeds.**
+
 **THE GAME FOLLOWS THE MOON, AND THE LAUNCH ACCESS RULE IS ON THE RECORD
 (7 Sep 2026, Justin's call).** `_tonight()` used to fall through to a
 hardcoded 18, and the level-select pick was written to `localStorage`, so

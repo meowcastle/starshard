@@ -21,6 +21,15 @@
   @keyframes mzHeartHold{0%,100%{box-shadow:0 5px 15px rgba(0,0,0,.6), 0 0 26px rgba(255,176,0,.55), inset 0 1px 0 rgba(255,248,228,.2)}50%{box-shadow:0 5px 15px rgba(0,0,0,.6), 0 0 36px rgba(255,176,0,.78), inset 0 1px 0 rgba(255,248,228,.2)}}
   @keyframes mzHeartBurst{0%{box-shadow:0 0 0 0 rgba(232,86,48,.9), 0 0 60px rgba(232,86,48,.8);filter:brightness(2.4)}45%{box-shadow:0 0 0 46px rgba(232,86,48,0), 0 0 90px rgba(232,86,48,.4);filter:brightness(1.4)}100%{box-shadow:0 0 0 90px rgba(232,86,48,0), 0 0 0 rgba(232,86,48,0);filter:grayscale(1) brightness(.4)}}
   @keyframes mzHusk{0%,100%{filter:grayscale(1) brightness(.42)}50%{filter:grayscale(1) brightness(.5)}}
+  /* mansion 15, the hem of the robe: the sky-cloth breathes at its hem, the faint stars barely there, cloth tongues drop over the covered stations, the drying-lines sway */
+  @keyframes mzHemSway{0%,100%{transform:translateX(0) scaleY(1)}50%{transform:translateX(9px) scaleY(1.015)}}
+  @keyframes mzFaintStar{0%,100%{opacity:.22}50%{opacity:.42}}
+  @keyframes mzLineSway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+  @keyframes mzClothDrop{0%{transform:translateY(-120%) scaleY(.6);opacity:0}55%{transform:translateY(0) scaleY(1.04);opacity:1}75%{transform:translateY(0) scaleY(.98)}100%{transform:translateY(0) scaleY(1);opacity:1}}
+  @keyframes mzClothFold{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+  /* mansion 24, the room with nothing in it: one star breathing, and the ground line going out */
+  @keyframes mzVoidStar{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.18)}}
+  @keyframes mzVoidHalo{0%,100%{opacity:.18;transform:scale(1)}50%{opacity:.3;transform:scale(1.08)}}
   /* mansion 18, the scorpion's ridge: antares is variable, so the star breathes; the rains break at the summit */
   /* the browser's autofill wash (30 aug 2026, user: "a white spot"): repaint it as the night */
   input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
@@ -50,6 +59,19 @@
   @keyframes mzTurnGlide{0%{offset-distance:0%;opacity:0}12%{opacity:1}80%{opacity:1}100%{offset-distance:100%;opacity:0}}
   @keyframes mzTurnTrail{0%{opacity:0}20%{opacity:.75}72%{opacity:.5}100%{opacity:0}}
   @keyframes mzTurnStamp{0%{opacity:0;transform:scale(1.6) rotate(-12deg)}26%{opacity:1;transform:scale(1) rotate(0deg)}74%{opacity:1}100%{opacity:0;transform:scale(.95)}}
+  /* mansion 6, the eye of the storm: three rain sheets at three speeds (each 60px-periodic so the loop is seamless), the cloud flanks breathing, the flash + bolt alternating so a re-fire restarts, puddle ripples, gusts, the red star, and the held breath over the middle station */
+  @keyframes mzRainFall{0%{transform:translateY(0)}100%{transform:translateY(60px)}}
+  @keyframes mzStormWallL{0%,100%{transform:translateX(0) skewX(0)}50%{transform:translateX(7px) skewX(.6deg)}}
+  @keyframes mzStormWallR{0%,100%{transform:translateX(0) skewX(0)}50%{transform:translateX(-7px) skewX(-.6deg)}}
+  @keyframes mzStormFlashA{0%{opacity:0}6%{opacity:1}14%{opacity:.25}22%{opacity:.8}100%{opacity:0}}
+  @keyframes mzStormFlashB{0%{opacity:0}6%{opacity:1}14%{opacity:.25}22%{opacity:.8}100%{opacity:0}}
+  @keyframes mzBoltA{0%{opacity:0}5%{opacity:1}18%{opacity:.3}26%{opacity:1}60%{opacity:.4}100%{opacity:0}}
+  @keyframes mzBoltB{0%{opacity:0}5%{opacity:1}18%{opacity:.3}26%{opacity:1}60%{opacity:.4}100%{opacity:0}}
+  @keyframes mzRipple{0%{transform:scale(.2);opacity:.5}100%{transform:scale(1.1);opacity:0}}
+  @keyframes mzGust{0%{transform:translateX(0);opacity:0}15%{opacity:.6}85%{opacity:.5}100%{transform:translateX(-260px);opacity:0}}
+  @keyframes mzRedStar{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+  @keyframes mzEyeBreath{0%{transform:scale(.1);opacity:.9;border-width:3px}70%{opacity:.5}100%{transform:scale(1);opacity:0;border-width:1px}}
+  @keyframes mzEyeStill{0%{opacity:0}20%{opacity:1}80%{opacity:1}100%{opacity:0}}
   @keyframes mzTurnRefuse{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}44%{transform:translateX(5px)}68%{transform:translateX(-2px)}}
   @keyframes mzVaneSwing{0%,100%{transform:rotate(-3.5deg)}50%{transform:rotate(4.5deg)}}
   @keyframes mzKiteBob{0%,100%{transform:translateY(0px) rotate(-5deg)}50%{transform:translateY(-9px) rotate(6deg)}}
@@ -174,6 +196,9 @@
   @keyframes mzRoadBreathe{0%,100%{opacity:.76}50%{opacity:1}}
   @keyframes mzEmblemBreathe{0%,100%{opacity:.76}50%{opacity:.96}}
   @keyframes mzCardDrift{0%,100%{translate:0 0}50%{translate:0 -2.5px}}
+  /* the storm's hand (7 sep 2026): the cards lean into the wind and a gust jostles them; `translate`/`rotate` compose over the fan's own transform */
+  @keyframes mzCardGust{0%,100%{translate:0 0;rotate:0deg}28%{translate:-3px -3px;rotate:-2.2deg}52%{translate:-1px -1px;rotate:-.8deg}68%{translate:-4.5px -2px;rotate:-3deg}84%{translate:-1px 0;rotate:-.6deg}}
+  @keyframes mzDropRun{0%{transform:translateY(0) scaleY(1);opacity:0}8%{opacity:.7}70%{opacity:.5}100%{transform:translateY(120px) scaleY(2.2);opacity:0}}
   @keyframes mzBandTurn{from{transform:translateX(-50%) rotate(0deg)}to{transform:translateX(-50%) rotate(360deg)}}
   @keyframes mzFadeUp2{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   @keyframes mzSway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.6deg)}}
@@ -1067,6 +1092,24 @@
 <div style="{{ cgCityStyle }}"><svg viewBox="0 0 932 160" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ cgCity }}</svg></div>
 <div style="{{ cgHouseStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ cgHouse }}</svg></div>
 </sc-if>
+<sc-if value="{{ smOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ smDeepStyle }}"></div>
+<div style="{{ smSceneStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ smScene }}</svg></div>
+<div style="{{ smFlashStyle }}"></div>
+<div style="{{ smGlassStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ smGlass }}</svg></div>
+<div style="{{ smFlashHiStyle }}"></div>
+</sc-if>
+<sc-if value="{{ smHoldOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ smHoldStyle }}"><div style="{{ smHoldRing }}"></div><div style="{{ smHoldWord }}">the wind drops</div></div>
+</sc-if>
+<sc-if value="{{ vdOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ vdDeepStyle }}"></div>
+<div style="{{ vdSceneStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ vdScene }}</svg></div>
+</sc-if>
+<sc-if value="{{ vlOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ vlDeepStyle }}"></div>
+<div style="{{ vlSceneStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ vlScene }}</svg></div>
+</sc-if>
 <sc-if value="{{ gsOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ gsDeepStyle }}"></div>
 <div style="{{ gsSkyStyle }}"><svg viewBox="0 0 932 140" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ gsSky }}</svg></div>
@@ -1941,6 +1984,9 @@
             <span style="position:absolute;right:10px;bottom:6px;width:3.5px;height:3.5px;border-radius:50%;background:rgba(240,216,154,.75);animation:mzDustB .6s ease both;pointer-events:none"></span>
             <span style="position:absolute;left:50%;bottom:3px;width:3px;height:3px;border-radius:50%;background:rgba(240,216,154,.7);animation:mzDustC .5s ease .05s both;pointer-events:none"></span>
           </sc-if>
+        </sc-if>
+        <sc-if value="{{ s.coverOn }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ s.coverStyle }}"><div style="position:absolute;left:0;right:0;bottom:-1px;height:7px;background:linear-gradient(90deg, transparent 0 8%, rgba(240,216,154,.22) 8% 12%, transparent 12% 30%, rgba(240,216,154,.22) 30% 34%, transparent 34% 66%, rgba(240,216,154,.22) 66% 70%, transparent 70% 88%, rgba(240,216,154,.22) 88% 92%, transparent 92%);border-bottom:1px dashed rgba(240,216,154,.3)"></div><div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg, rgba(200,206,236,.04) 0 2px, transparent 2px 7px)"></div></div>
         </sc-if>
         <sc-if value="{{ s.veilOn }}" hint-placeholder-val="{{ false }}">
           <div style="position:absolute;inset:5px;border-radius:4px;background:rgba(255,176,0,.05);border:1px solid rgba(255,176,0,.18);display:flex;align-items:center;justify-content:center;color:rgba(255,176,0,.4);font-size:12px">✦</div>
@@ -2931,6 +2977,24 @@
 <div style="{{ cgDeepStyle }}"></div>
 <div style="{{ cgCityStyle }}"><svg viewBox="0 0 932 160" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible">{{ cgCity }}</svg></div>
 <div style="{{ cgHouseStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;overflow:visible">{{ cgHouse }}</svg></div>
+</sc-if>
+<sc-if value="{{ smOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ smDeepStyle }}"></div>
+<div style="{{ smSceneStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ smScene }}</svg></div>
+<div style="{{ smFlashStyle }}"></div>
+<div style="{{ smGlassStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ smGlass }}</svg></div>
+<div style="{{ smFlashHiStyle }}"></div>
+</sc-if>
+<sc-if value="{{ smHoldOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ smHoldStyle }}"><div style="{{ smHoldRing }}"></div><div style="{{ smHoldWord }}">the wind drops</div></div>
+</sc-if>
+<sc-if value="{{ vdOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ vdDeepStyle }}"></div>
+<div style="{{ vdSceneStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ vdScene }}</svg></div>
+</sc-if>
+<sc-if value="{{ vlOn }}" hint-placeholder-val="{{ false }}">
+<div style="{{ vlDeepStyle }}"></div>
+<div style="{{ vlSceneStyle }}"><svg viewBox="0 0 932 430" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;overflow:visible">{{ vlScene }}</svg></div>
 </sc-if>
 <sc-if value="{{ gsOn }}" hint-placeholder-val="{{ false }}">
 <div style="{{ gsDeepStyle }}"></div>
@@ -4828,7 +4892,7 @@ class Component extends DCLogic {
       else { this.setState({ drag: null, dragOver: null }); this._commitPlace(p.id, i, false, "you"); }
     } else this.setState({ drag: null, dragOver: null, sel: null });
   }
-  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearInterval(this._pulseT); clearTimeout(this._logT); clearTimeout(this._aiT); clearTimeout(this._gazeT); clearTimeout(this._seekT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); clearTimeout(this._burstT); }
+  _clearSeq() { this._seq.forEach(t => clearTimeout(t)); this._seq = []; clearInterval(this._pulseT); clearTimeout(this._stormT); clearTimeout(this._logT); clearTimeout(this._aiT); clearTimeout(this._gazeT); clearTimeout(this._seekT); clearTimeout(this._endT); clearTimeout(this._introT); clearTimeout(this._roundT); clearTimeout(this._dealT); clearTimeout(this._introX); clearTimeout(this._roundX); clearTimeout(this._castT); clearTimeout(this._cfA); clearTimeout(this._cfB); clearTimeout(this._cfC); clearTimeout(this._cfD); clearTimeout(this._cfE); clearTimeout(this._burstT); }
   _fxKind(id) { return ({ 6: "sweep", 102: "sweep", 5: "flash", 14: "flash", 18: "pulse", 103: "pulse", 10: "rise", 3: "sparkle", 17: "sparkle", 27: "sparkle", 8: "mist", 15: "mist", 101: "lock", 104: "flicker", 105: "swell" })[id] || "shimmer"; }
   _castFor(fx) {
     const c = fx.owner === "sky" ? "255,176,0" : "240,216,154";
@@ -4857,6 +4921,7 @@ class Component extends DCLogic {
       const ms = Math.round((1.9 - (Math.min(this._elev(), 8) / 8) * .78) * 1000);
       this._pulseT = setInterval(() => { const s = this.state; if (s.phase === "play" && s.road && this._tonight() === 23) this._sfx("pulse"); }, ms);
     }
+    this._stormArm(); // the storm's lightning (7 sep 2026): self-rescheduling, cleared with the seq
     clearTimeout(this._dealT); this._dealT = setTimeout(() => { this.setState({ dealt: true }); this._say("open"); }, 1100);
     // the stride (level grammar beat 4): entering a station is a step taken, in the level's physics
     if (this.state.road && !this.state.practice) {
@@ -5308,7 +5373,12 @@ class Component extends DCLogic {
     // knocking the weakest fraction of the player's own AWAKE cards down to level 1 in the
     // walkers' mirror deck. Computed here, from `owned`'s real levels, before either card table exists.
     const awakeIds = Object.keys(owned).map(Number).filter(id => owned[id].lvl >= 2);
-    const handicap = this._handicapFor(awakeIds.length);
+    // THE HARDEST ROAD, 1 of 2 (8 sep 2026, Design's work order — "two things only Code can build"):
+    // the storm's road takes NO handicap. Every other night knocks the weakest fraction of the
+    // player's own awake cards down to level 1 in the walkers' mirror deck; m6 faces the full mirror
+    // from walker one. Still a mirror — the canon is unchanged, the dial just fades in at once.
+    // _stormRoad() is Design's own predicate, hung here rather than reimplemented.
+    const handicap = this._stormRoad() ? 0 : this._handicapFor(awakeIds.length);
     const dropN = Math.round(handicap * awakeIds.length);
     const weakestFirst = awakeIds.slice().sort((a, b) => owned[a].lvl - owned[b].lvl || a - b);
     const dropSet = new Set(weakestFirst.slice(0, dropN));
@@ -5448,12 +5518,10 @@ class Component extends DCLogic {
     if (typeof o === "string") { const k = this._mList().indexOf(o.trim().toLowerCase()); if (k >= 0) return k + 1; }
     if (o >= 1 && o <= 28) return o;
     const mv = this._moon();
-    if (mv) return mv;                 // the moon glyph: wherever the player last walked her
-    // THE REAL SKY DECIDES THE OPENING (7 sep 2026, user). With no pick of the player's own standing,
-    // the game opens where the moon ACTUALLY is — this is a game played against the real sky, so the
-    // default should be the sky, not a constant. If her true house has no level built yet, walk
-    // FORWARD to the next one that does: the next house she is travelling toward, never one behind
-    // her. Fifteen of twenty-eight stand today, so the walk is short and it shortens as houses open.
+    if (mv) return mv;                 // the ring pick, for this session only
+    // THE REAL SKY DECIDES THE OPENING (7 sep 2026, user). With no pick standing, the game opens
+    // where the moon ACTUALLY is. If her true house has no level built, walk FORWARD to the next
+    // one that does — the house she is travelling toward, never one behind her.
     const real = this._trueMoon();
     if (real >= 1 && real <= 28) { const near = this._nextOpen(real); if (near) return near; }
     // 30 aug 2026 (code): was `return 23` (the drum), correct while the built houses were 21-28 and
@@ -5470,12 +5538,9 @@ class Component extends DCLogic {
   _tonightReal() { const m = this._trueMoon(); return m >= 1 && m <= 28 ? m : 23; }
   // the moon glyph (25 aug 2026): the test build walks her to any BUILT house
   // THE PICK LASTS THE SESSION, NOT THE SAVE (7 sep 2026, user: "it should follow the moon").
-  // This used to seed itself from localStorage, so one visit to the level-select ring pinned the
-  // game to that house forever and the real sky never got a say again. The moon moves; the game
-  // follows her. A ring pick is still honoured for as long as the player is here — it is how you
-  // look at another house — but it is memory only, and the next load reads the sky again.
-  // The legacy key is actively cleared rather than merely ignored: leaving it would resurrect an
-  // old pin on any device that later restored progress from the server.
+  // Seeding from localStorage pinned the game to one house forever and the sky never got a say.
+  // A ring pick is still honoured while the player is here; the next load reads the sky again.
+  // The legacy key is actively cleared, or a server restore would resurrect an old pin.
   _moon() {
     if (this._moonC == null) {
       this._moonC = 0;
@@ -5505,44 +5570,36 @@ class Component extends DCLogic {
   // the monkey on the rail, the eight who put marks on things. thirteen stand.
   // the gathered stars (3) join 5 sep 2026: razor@4, the fifth house of the byakko six — the threshing
   // floor, the cock on the rim, the seven sisters of whom one is missing. fourteen stand.
-  _moonOpen(id) { return [1, 2, 3, 4, 5, 10, 12, 18, 19, 21, 23, 25, 26, 27, 28].indexOf(id) >= 0; }
+  _moonOpen(id) { return [1, 2, 3, 4, 5, 6, 10, 12, 15, 18, 19, 21, 23, 24, 25, 26, 27, 28].indexOf(id) >= 0; }
+  // NO MOON WHERE THE SKY ALREADY HAS A BODY (7 sep 2026, user: "remove the moon from any battle where there
+  // is a clear celestial body conflict in the sky"). The boss-board moon is the generic sky's one light;
+  // on these nights the level has its own — the Pleiades (3), Betelgeuse in the eye (6), the galactic centre
+  // (19), al-Butayn's three over the lintel (2) — beside the earlier set (Aldebaran 4, Regulus 10, Antares
+  // 18, Delphinus 23, the kiln 25/26, the causeway 27, Andromeda 28). One list, read by edMoonStyle.
+  _noMoon(m) { return [2, 3, 4, 6, 10, 15, 18, 19, 23, 24, 25, 26, 27, 28].indexOf(m) >= 0; }
   _moonTest(id) { return false; }
-  // ────────────────────────────────────────────────────────────────────────────────────────────
-  // NOT BUILT YET, AND DELIBERATELY SO — THE LAUNCH ACCESS RULE (7 sep 2026, Justin's call):
-  //
-  //   "if you don't complete the mansion on the day it occupies it, you can't access that level
-  //    until the moon arrives back."
-  //
-  // So at launch a house is playable only while the moon actually stands in it. Miss the night and
-  // it closes until she comes round again — roughly 27 nights later, one full circuit of the road.
-  // That is the whole retention shape of the game: the sky sets the schedule, not the player.
-  //
-  // IT IS OFF ON PURPOSE WHILE WE TEST. Every built house stays reachable through the level-select
-  // ring so a level can be played the day it lands rather than a month later. Do not "finish" this
-  // by wiring the gate in without asking — the open ring is the testing decision, not an oversight.
-  //
-  // When it does go in, the pieces already exist and this is roughly the shape:
-  //   - _trueMoon() is her real house tonight; _rungs()/_mlvl() already say whether a mansion was
-  //     completed; _claims() and manzil-v2-wipe already record per-mansion history.
-  //   - the gate belongs in the ring's own node state (the `moonNodes` block in renderVals) and in
-  //     whatever _go("moon") allows, NOT in _tonight() — _tonight() answers "which house is this",
-  //     and conflating that with "may I enter" is how the 30 Aug default landed on a closed house.
-  //   - it needs a "she returns in N nights" line for a closed house, or the rule reads as a bug.
-  //   - decide before building: does an unfinished climb persist until she returns, or reset? The
-  //     lives/rungs code already forfeits a climb on leaving a road, which suggests reset, but that
-  //     was written for a world where you could come straight back.
-  // ────────────────────────────────────────────────────────────────────────────────────────────
-  // THE NEAREST OPEN HOUSE, WALKING FORWARD (7 sep 2026, user: "if the moon is in a level that is
-  // currently live have the game open in that level; if not, open the level closest forward to where
-  // the moon actually is"). Forward means the direction the moon travels — ascending mansion number,
-  // wrapping 28 -> 1 — so the answer is always the next house she will actually reach, never one she
-  // has already left. Returns m itself when m is open, so callers can use it unconditionally. Returns
-  // 0 only if nothing is open at all, which cannot happen today but is not worth crashing over.
+  // THE NEAREST OPEN HOUSE, WALKING FORWARD (7 sep 2026, user). Forward is the direction the moon
+  // travels — ascending mansion, wrapping 28 -> 1 — so the answer is always the next house she will
+  // actually reach. Returns m itself when m is open, so callers can use it unconditionally.
   _nextOpen(m) {
     if (!(m >= 1 && m <= 28)) return 0;
     for (let k = 0; k < 28; k++) { const id = ((m - 1 + k) % 28) + 1; if (this._moonOpen(id)) return id; }
     return 0;
   }
+  // ────────────────────────────────────────────────────────────────────────────────────────────
+  // NOT BUILT YET, AND DELIBERATELY SO — THE LAUNCH ACCESS RULE (7 sep 2026, Justin's call):
+  //   "if you don't complete the mansion on the day it occupies it, you can't access that level
+  //    until the moon arrives back."
+  // A house is playable only while the moon stands in it; miss the night and it closes until she
+  // comes round again, one full circuit of the road. That is the retention shape of the game.
+  // IT IS OFF ON PURPOSE WHILE WE TEST — every built house stays reachable through the ring so a
+  // level can be played the day it lands. Do not wire the gate in without asking.
+  // When it goes in: the gate belongs in the ring's node state and _go("moon"), NOT in _tonight()
+  // — conflating "which house is this" with "may I enter" is what put the 30 Aug default on a
+  // closed house. It needs a "she returns in N nights" line, or it reads as a bug. And decide
+  // first whether an unfinished climb persists until she returns or resets; the forfeit-on-leaving
+  // code says reset, but it was written for a world where you could come straight back.
+  // ────────────────────────────────────────────────────────────────────────────────────────────
   // the four quarters of the sky, al-biruni's numbering. the animals are named to the player
   _quad(m) { return m >= 14 && m <= 20 ? "seiryuu" : m >= 7 && m <= 13 ? "suzaku" : m >= 21 && m <= 27 ? "genbu" : "byakko"; }
   _quadName(q) { return { seiryuu: "azure dragon", byakko: "white tiger", suzaku: "vermilion bird", genbu: "black tortoise" }[q] || ""; }
@@ -5701,6 +5758,18 @@ class Component extends DCLogic {
          yield: "the dog gets up, stretches, and walks in through the open gate ahead of you. nobody stops either of you.",
          react: "the dog does not get up.",
          word: "through." },
+    24: { hold: "the rat does not leave the rim. the empty place is full enough, and it is not yours.",
+         yield: "the rat sits back, and the empty place is yours to stand in.",
+         react: "the rat's whiskers go forward.",
+         word: "empty." },
+    15: { hold: "the dragon does not lift the cover. what is under it stays under it, and so do you.",
+         yield: "the dragon draws the cover back one length, and the neck turns, and lets you under.",
+         react: "the dragon's coil shifts under the cloth.",
+         word: "kept." },
+    6: { hold: "the ape does not move. the rain does, and you did. the still stays where it is, and you are not in it.",
+         yield: "the ape unfolds, shakes the water off in one long shudder, and steps aside. the still is yours, and the storm goes round you now.",
+         react: "the ape lowers one arm.",
+         word: "waited." },
     3: { hold: "the cock does not come down off the rim. the floor stays unswept, and the seventh place stays kept.",
          yield: "the cock calls once more and steps down off the rim. the floor is swept clean to the edge, and the sisters let you across it.",
          react: "the cock lifts one foot, and does not put it down.",
@@ -5753,6 +5822,45 @@ class Component extends DCLogic {
     "ruen": "\u2609", "brann": "\u2642", "mave": "\u2640", "the quiet one": "\u260A",
   })[n] || ""; }
   _avFig(m) { return ({
+    24: { star: "#F4E3A6", glow: "rgba(244,227,166,.45)", starX: 60, starY: 22, p: [
+      // the RAT of 虛 Xū (8 sep 2026): small, sitting up on its haunches at the rim of nothing, whiskers
+      // forward, tail curled round its feet. SADALSUUD at the brow. The only figure on the only empty night.
+      { d: "M20 90 H100", f: "none", s: "rgba(200,190,168,.3)", w: 1.6 },
+      { d: "M48 88 q-6 -22 6 -34 q10 -10 20 0 q8 12 2 34 z", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.1 },
+      { d: "M54 52 q-2 -14 8 -16 q10 -1 12 10 q1 8 -6 9 q-10 1 -14 -3 z", f: "#0B0A10", s: "rgba(200,190,168,.55)", w: 1.1 },
+      { d: "M56 40 q-3 -8 2 -10 q4 2 3 8 M70 38 q4 -8 8 -6 q1 5 -4 8", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1 },
+      { d: "M62 46 h1.2", f: "none", s: "rgba(244,227,166,.9)", w: 2 },
+      { d: "M74 50 l14 -3 M74 52 l14 1 M74 54 l13 5", f: "none", s: "rgba(200,190,168,.4)", w: .8 },
+      { d: "M76 88 q14 2 16 -10 q0 -6 -6 -6", f: "none", s: "rgba(200,190,168,.5)", w: 1.4 },
+      { d: "M52 88 h8 M64 88 h8", f: "none", s: "rgba(200,190,168,.5)", w: 1.4 },
+    ] },
+    15: { star: "#FFB870", glow: "rgba(255,184,112,.4)", starX: 84, starY: 30, p: [
+      // the DRAGON of 亢 Kàng, the neck (8 sep 2026): a long body HALF UNDER CLOTH — a draped cover lying along
+      // the ground with the coils showing where it slips — and the neck rising bare at the right, turned away.
+      // ARCTURUS at the throat. The only way a dragon belongs on a night about not showing.
+      { d: "M4 90 H116", f: "none", s: "rgba(200,190,168,.42)", w: 2.4 },
+      { d: "M6 88 q10 -28 30 -26 q14 -22 34 -14 q12 -14 26 -4 L96 88 Z", f: "#141C24", s: "rgba(200,206,236,.5)", w: 1.1 },
+      { d: "M12 84 q14 -10 30 -6 M40 66 q12 -8 26 -2 M66 56 q10 -6 22 0", f: "none", s: "rgba(200,206,236,.28)", w: 1 },
+      { d: "M22 88 q4 -10 14 -8 q8 2 6 10 z M50 88 q5 -12 16 -9 q9 3 6 11 z", f: "#0E1A18", s: "rgba(79,168,154,.7)", w: 1.1 },
+      { d: "M26 82 l3 -3 M30 80 l3 -3 M56 80 l3 -3 M60 78 l3 -3", f: "none", s: "rgba(79,168,154,.5)", w: 1 },
+      { d: "M86 76 q-2 -18 8 -34 q6 -10 14 -12 q6 0 8 6 q-4 6 -10 6 q-4 10 -6 22 q-2 10 -8 14 z", f: "#0E1A18", s: "rgba(79,168,154,.8)", w: 1.2 },
+      { d: "M92 66 l4 -2 M94 56 l4 -2 M98 46 l4 -3", f: "none", s: "rgba(79,168,154,.55)", w: 1 },
+      { d: "M104 34 q6 -6 10 -2", f: "none", s: "rgba(200,206,236,.4)", w: 1 },
+    ] },
+    6: { star: "#F4F6FF", glow: "rgba(244,246,255,.4)", starX: 62, starY: 28, p: [
+      // the APE of 參 Shēn (7 sep 2026): hunched on the one dry patch, arms wrapped round its knees, head
+      // sunk between its shoulders, fur streaming one way in a wind that does not move it. ALHENA at the
+      // brow. Everything on this night moves except this.
+      { d: "M6 90 H114", f: "none", s: "rgba(200,190,168,.42)", w: 2.4 },
+      { d: "M36 88 q-6 -30 14 -46 q18 -12 36 4 q10 12 4 42 z", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.2 },
+      { d: "M50 46 q-2 -16 12 -19 q14 -2 17 12 q2 10 -7 13 q-14 3 -22 -6 z", f: "#0B0A10", s: "rgba(200,190,168,.55)", w: 1.1 },
+      { d: "M54 36 q10 -5 20 -1", f: "none", s: "rgba(200,190,168,.45)", w: 1.2 },
+      { d: "M58 41 h1.5 M68 40 h1.5", f: "none", s: "rgba(244,246,255,.85)", w: 2 },
+      { d: "M40 70 q14 -9 34 -5 q8 2 6 9 q-22 5 -40 -3 z", f: "#0B0A10", s: "rgba(200,190,168,.5)", w: 1.1 },
+      { d: "M44 78 q6 -9 15 -7 M64 76 q9 -7 18 -3", f: "none", s: "rgba(200,190,168,.4)", w: 1.2 },
+      { d: "M34 52 l-12 3 M35 60 l-13 4 M37 68 l-13 5 M40 76 l-12 5 M46 44 l-10 -1", f: "none", s: "rgba(200,190,168,.32)", w: 1 },
+      { d: "M34 90 h10 M74 90 h12", f: "none", s: "rgba(200,190,168,.5)", w: 1.6 },
+    ] },
     1: { star: "#E8F0FF", glow: "rgba(232,240,255,.4)", starX: 58, starY: 50, p: [
       // the DOG of 婁 Lóu, the bond (6 sep 2026): sitting square in the gap of the open gate, seen from
       // behind and a little to the side, watching the road into the city the way a dog watches a door
@@ -6027,8 +6135,8 @@ class Component extends DCLogic {
   }
   _noteDue() { const t = this._tonight(); try { const n = JSON.parse(localStorage.getItem("manzil-v2-noted")) || {}; return n[t] !== new Date().toISOString().slice(0, 10); } catch (e) { return true; } }
   _noteSeen() { const t = this._tonight(); try { const n = JSON.parse(localStorage.getItem("manzil-v2-noted")) || {}; n[t] = new Date().toISOString().slice(0, 10); localStorage.setItem("manzil-v2-noted", JSON.stringify(n)); } catch (e) {} }
-  // Memory only — see _moon(). _syncProgress() still runs because this fires on level entry and
-  // everything else it carries (rungs, lives, claims) does need saving; only the pick itself does not.
+  // Memory only — see _moon(). _syncProgress() still runs: this fires on level entry and everything
+  // else it carries (rungs, lives, claims) does need saving; only the pick itself does not.
   _setMoon(m) { this._moonC = (m >= 1 && m <= 28) ? m : 0; this._C = null; try { localStorage.removeItem("manzil-v2-moon"); } catch (e) {} this._syncProgress(); }
   // the hideaway's road is walked with her tent MIDWAY (30 aug 2026, user): on m25's night the
   // nine-station window slides back four, so mansion 25 itself stands at the law's station (index 4)
@@ -6061,7 +6169,7 @@ class Component extends DCLogic {
   // m27 corrected 2 sep 2026 to Measurement's own m27-plain run (46.0, byakko 68.9 / suzaku 28.1 /
   // seiryuu 27.3 / genbu 22.9). The 44.2 here was the 31 Aug sweep's estimate for that night.
   _nightSpread(m) { return [47.5, 40.2, 20.8, 46.4, 31.9, 30.1, 27.2, 35.0, 26.8, 38.2, 20.5, 12.7, 24.6, 31.7, 12.7, 21.2, 29.5, 21.9, 15.0, 37.3, 10.0, 25.4, 32.8, 36.2, 34.8, 49.1, 46.0, 48.7][(m || 1) - 1]; }
-  _boardOff(t) { return ({ 25: 4, 23: 4, 28: 4, 21: 4, 19: 4, 2: 4 })[t] || 0; }
+  _boardOff(t) { return ({ 25: 4, 23: 4, 28: 4, 21: 4, 19: 4, 2: 4, 6: 4, 15: 4, 24: 4 })[t] || 0; }
   _boardM(i) { const t = this._tonight(); const off = this._boardOff(t); return ((t - 1 + i - off + 28) % 28) + 1; }
   _mName(id) { return this._cards()[id].name.replace("The ", "").toLowerCase(); }
   _claims() { try { return JSON.parse(localStorage.getItem("manzil-v2-claims")) || {}; } catch (e) { return {}; } }
@@ -6463,9 +6571,12 @@ class Component extends DCLogic {
           if (rl === "reach" && idx9 === 0) return "a strike from this station carries two stations. at the far one, the card fights with its printed numbers.";
           if (rl === "shell" && idx9 === 4) return "whatever lodges here counts as normal, but if it is ever taken it counts for nobody, both sides, to the end of the board.";
           if (rl === "reson" && idx9 === 4) return "the resonant ground: a strike that starts here or lands here carries one station further. the hour-drum overhead rings when the beat travels on.";
-          if (rl === "hush" && idx9 === 4) return "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
+          if (rl === "void" && idx9 === 4) return "the empty circle. this ground counts two at the end, whoever holds it, and the station on its right counts one less. the empty place weighs more than what stands beside it.";
+          if (rl === "void" && idx9 === 5) return "the station beside the empty circle. what stands here counts one less at the end: the void draws the worth out of its right hand.";
+          if (rl === "hush" && idx9 === 4) return this._tonight() === 15 ? "the cover. whatever lodges here draws the veil over the station on either side of it: those two count for nobody, both sides, until the board ends. faint stars, praised for being faint." : "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
           if (rl === "turn" && idx9 === 0) return "the turning's door: whatever lodges here turns the next station to face the other way. its two numbers swap, left for right, and stay swapped until the board ends. a card that reads the same both ways cannot be turned at all.";
           if (rl === "toll" && idx9 === 4) return "the crossing charges for shelter. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own first refusal \u2014 counts one less, either side. whatever can still be fought for counts as it always did.";
+          if (rl === "eye" && idx9 === 4) return "the eye of the storm. on this ground a tie is not a take for whoever led the board: equal numbers stand where they are. the one who answered still takes on a tie. the weather does not favour whoever moves first.";
           if (rl === "open" && idx9 === 4) return "the open gate. nothing is held on this ground: not the tiger's hold, not a friend beside it, not a card's own first refusal. the first strike lands, and so does every one after it. the road goes through.";
           if (rl === "razor" && idx9 === 4) return "the threshing floor. a card lodging on this ground takes both its neighbours or takes neither: the stroke goes the whole width of the road, or it does not go. the sisters cut once.";
           if (rl === "price" && idx9 === 4) return "the branding fire. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own rule \u2014 strikes two lower from here. shelter has a price on this road, and the price is the mark.";
@@ -6477,7 +6588,6 @@ class Component extends DCLogic {
           return this._mPoem(m); })()) };
     }
     if (k[0] === "s") { i = +k.slice(1); s = this.state.slots[i]; if (!s) return null; c = C[s.id];
-      if (s.owner === "sky" && this._bossRule() === "veil") return { back: true, notes: this._rows([{ label: "the veil's night", body: "her lodged cards close again once played." }]) };
     }
     else { c = C[+k.slice(1)]; if (!c) return null; }
     const cid = s ? s.id : +k.slice(1);
@@ -6620,8 +6730,8 @@ class Component extends DCLogic {
   // before the boss). table nights are law-free (reverted: the tempers are their identity, no law
   // was measured against that opponent); practice and duels law-free too. only the heart's law
   // (18) is live. the tents law (25) is OUT: zeroing a station flips the seat to the follower
-  // (−23.3 fresh, byakko −24.8). storm weather (6), the veil (15), the void (24), the thread (28)
-  // are FROZEN pending measurement — their branches below stay dormant until this map returns them.
+  // (−23.3 fresh, byakko −24.8). the void (24) is the one frozen branch left (storm → eye 7 sep, veil →
+  // hush 7 sep, thread → rope 31 aug); its branch below stays dormant until this map returns it.
   // THE ROPE IS NOW MANSION 28'S LAW (31 aug 2026, THE-ROPE-28AUG.md's own spec + staging audit +
   // work order): folded into this same whole-night map instead of its own separately-hashed
   // _rope() (deleted). Was a per-board hash keyed on roadRung AND round, so the rope moved
@@ -6638,7 +6748,28 @@ class Component extends DCLogic {
   // byakko −19.2 with every other quarter flat — the first fight-class law to move a tiger night).
   // Standard window, NO _boardOff entry (m4's precedent): the crossing is m9, the glance, bird ground.
   // The clause itself lives in _tryFlip, on the ATTACKING face only — see the note there.
-  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 1: "open", 2: "toll", 3: "razor", 4: "crow", 5: "price", 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson", 21: "hush", 12: "turn", 19: "plant", 26: "guest", 27: "stranger" })[this._tonight()] || null; }
+  // THE EYE (7 sep 2026, m6's law, user "ship it"): the storm's dormant "weather: all faces −1" branch
+  // is DELETED here and in _tryFlip — form A, board-wide arithmetic, the rejected class. What ships is
+  // eyeN=defender: at the law station a tie is refused when the striker is the board's LEADER and
+  // honoured when the striker answered. Measured both windows: seat −5.5 door / −5.3 slid (second only
+  // to the hush), spread flat, door-first costs suzaku −12.1 on the throne's crossing, slid clean —
+  // so SLID (_boardOff 6:4, road m2…m10, the storm on its own tiger ground). A seat law, the first that
+  // reads the seat and passes; the storm's night is the house that pays komi.
+  // THE VEIL'S NIGHT IS THE HUSH (7 sep 2026, user "do it" on Measurement's memo): the cover failed both
+  // windows (a swap law taxes whichever quarter holds the lopsided cards — genbu −14.7), the hidden face is
+  // invisible to the mirror even blinded (held for a PvP-only night), and the district's hush on the SLID
+  // window narrows 20.0→6.1 — the narrowest board measured on any night — with deep skill a tenth over
+  // the bound (−5.6), accepted. "a quiet night": same kind, index 4, _boardOff 15:4 (road m11…m19, the
+  // veil at the middle; the silenced stations are the jewel and the claws, dragon ground). The dormant
+  // display-only "veiled" branch (her faces hidden, no rule) is DELETED from _zoomFor and the slot map.
+  // THE VOID'S LAW IS THE EMPTY CIRCLE (8 sep 2026, user "do it" on Measurement's memo): the LAST frozen
+  // branch ("a lonely card cannot be taken", deny 0/4, would have refused 45-50% of all strikes) is DELETED
+  // from _tryFlip. What ships is the card's own count as a place: the middle station counts two, the station
+  // on its right counts one less. Measured SLID: spread 39.0→14.7 (−24.3, THE RECORD NARROWING), tiger −30.2,
+  // seat +4.2 inside bound. Door-first FAILS (+11.5). The `best` dial (crow's chase) retired: deep seat +10.7.
+  // THE WINDOW ITSELF is the seat cure here — door-first deep seat 29.7 (worst on the calendar) → slid 15.4
+  // (the median) with no law at all. _boardOff 24:4, road m20…m28, the tortoise's road.
+  _bossRule() { const st = this.state; if (!st || st.practice || st.duel || !st.road) return null; return ({ 24: "void", 15: "hush", 6: "eye", 1: "open", 2: "toll", 3: "razor", 4: "crow", 5: "price", 18: "beat", 25: "shell", 10: "reach", 28: "rope", 23: "reson", 21: "hush", 12: "turn", 19: "plant", 26: "guest", 27: "stranger" })[this._tonight()] || null; }
   // m4 TAKES NO _boardOff ENTRY (3 sep 2026, user "1a full send" after the sweep): Measurement cut
   // the crow on the STANDARD window (road m4…m12), so the slide would put m4 in the re-cut queue
   // for nothing. The board that ships is the board that was measured; the crossing is m8, the
@@ -6649,7 +6780,7 @@ class Component extends DCLogic {
   // the mansion's own door (index 0); the tents' SHELL and the rope both stand midway, index 4.
   // the turn (m12) stands on the turning's own door, index 0 — measured there and shipped there
   // (31 aug memo: seat +1.2 fresh, the smallest seat move any law has produced, and the spread narrows).
-  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4, hush: 4, turn: 0, plant: 4, guest: 0, stranger: 4, toll: 4, crow: 4, price: 4, razor: 4, open: 4 })[this._bossRule()] ?? -1; }
+  _lawSt() { return ({ beat: 0, reach: 0, shell: 4, rope: 4, reson: 4, hush: 4, turn: 0, plant: 4, guest: 0, stranger: 4, toll: 4, crow: 4, price: 4, razor: 4, open: 4, eye: 4, void: 4 })[this._bossRule()] ?? -1; }
   // TWO CONVENTIONS, AND THEY ARE NOT THE SAME NUMBER (3 sep 2026, measurement caught this on the
   // toll's card and it was already wrong in the m27 note we shipped): THIS map is a 0-based SLOT
   // INDEX — it is used as `slots[this._lawSt()]` and as `x = e + this._lawSt() * 91`, so the road's
@@ -6798,6 +6929,9 @@ class Component extends DCLogic {
       case "gaze": T({ f: 2093, d: .28, v: .018, a: .05 }); break;
       case "drumcarry": N({ ft: "bandpass", f: 240, d: .12, v: .28, q: 2 }); T({ f: 180, f2: 120, d: .3, v: .15 }); C({ f: 554, d: .6, v: .05 }, .04); break;
       case "pulse": T({ f: 84, f2: 62, d: .16, v: .05 }); break;
+      // the storm (7 sep 2026): thunder near — a crack, then the roll; and far — only the roll, under everything
+      case "thunder": N({ ft: "lowpass", f: 900, f2: 120, d: .18, v: .3, a: .004 }); N({ ft: "lowpass", f: 180, f2: 55, d: 2.2, v: .26, a: .06 }, .1); T({ f: 52, f2: 34, d: 1.6, v: .1, a: .05 }, .12); break;
+      case "thunderfar": N({ ft: "lowpass", f: 110, f2: 48, d: 2.8, v: .13, a: .5 }); T({ f: 44, f2: 32, d: 2, v: .05, a: .4 }, .3); break;
       // the vane's pivot, dry and iron: the one cue the turning's night asks for (2 sep 2026, user)
       case "creak": N({ ft: "bandpass", f: 520, d: .3, v: .15, q: 1.4, a: .06 }); T({ f: 300, f2: 186, d: .32, v: .06 }); N({ ft: "lowpass", f: 760, d: .03, v: .18 }, .24); break;
       // the price of the mark (4 sep 2026): a hiss, not a knock — hot iron meeting something that holds still
@@ -6805,8 +6939,11 @@ class Component extends DCLogic {
       case "razor": N({ ft: "bandpass", f: 3200, d: .5, v: .1, q: 3, a: .04 }); T({ f: 1800, f2: 2600, d: .42, v: .04 }); N({ ft: "lowpass", f: 420, d: .06, v: .22 }, .5); N({ ft: "lowpass", f: 380, d: .06, v: .2 }, .56); break;
       case "razorhold": N({ ft: "bandpass", f: 3200, d: .26, v: .08, q: 3, a: .04 }); T({ f: 1800, f2: 1500, d: .3, v: .035 }); break;
       case "price": N({ ft: "highpass", f: 2600, d: .42, v: .11, a: .02 }); N({ ft: "bandpass", f: 900, d: .18, v: .08, q: 2 }, .04); T({ f: 180, f2: 120, d: .3, v: .05 }, .06); break;
-      case "hush": N({ ft: "lowpass", f: 1400, d: .5, v: .1, a: .16 }); N({ ft: "lowpass", f: 320, d: .16, v: .16 }, .34); T({ f: 220, f2: 96, d: .5, v: .07 }, .3); break;
+      case "hush": if (this._tonight() === 15) { N({ ft: "lowpass", f: 2200, f2: 500, d: .7, v: .09, a: .2 }); N({ ft: "lowpass", f: 700, d: .3, v: .06, a: .1 }, .5); break; } // the cover: cloth settling, no knock
+        N({ ft: "lowpass", f: 1400, d: .5, v: .1, a: .16 }); N({ ft: "lowpass", f: 320, d: .16, v: .16 }, .34); T({ f: 220, f2: 96, d: .5, v: .07 }, .3); break;
       // the open gate (6 sep 2026): a bolt sliding OPEN, not shut — iron drawn, then the leaf knocking the wall once, then air
+      // the eye (7 sep 2026): the wind drops — a held breath of air, then a single dull knock that goes nowhere
+      case "eyehold": N({ ft: "lowpass", f: 900, f2: 180, d: .42, v: .09, a: .12 }); N({ ft: "lowpass", f: 260, d: .07, v: .14 }, .4); break;
       case "gateopen": N({ ft: "bandpass", f: 1400, d: .22, v: .09, q: 2, a: .01 }); T({ f: 620, f2: 380, d: .2, v: .04 }, .02); N({ ft: "lowpass", f: 300, d: .08, v: .2 }, .26); N({ ft: "highpass", f: 900, d: .5, v: .04, a: .1 }, .3); break;
     } }
   _wrec() { try { return JSON.parse(localStorage.getItem("manzil-v2-wrec")) || {}; } catch (e) { return {}; } }
@@ -6883,6 +7020,36 @@ class Component extends DCLogic {
       "borin": { op: .95, p: [P("M59 10 a6 6 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 30 Q59 23 72 30 L76 58 L80 93 L70 93 L65 68 L54 68 L48 93 L38 93 L42 58 Z", I, S, ".8"), P("M76 32 L76 92", "none", S, "1.5"), P("M74 34 q8 -4 6 -12", "none", F, "1")] },
       "raqi": { op: .95, p: [P("M58 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 30 Q58 25 66 30 L69 60 L65 93 L59 93 L58 72 L56 93 L50 93 L48 60 Z", I, S, ".8"), P("M44 46 L72 42 L74 60 L46 64 Z", I, S, "1.1"), P("M58 44 L60 62", "none", F, ".9")] },
       "the house-watch": { op: .72, p: [P("M56 24 Q57.5 13 63.5 13 Q68 15 66 24 Z", I, S, ".7"), P("M56 24 L66 24 L69 52 L69 68 L57 68 L54 52 Z", I, S, ".7"), P("M57 68 L57 88 L49 88 M69 68 L69 88 L77 88", "none", S, ".9"), P("M44 88 H82", "none", F, "1")] },
+      // THE ROOM WITH NOTHING IN IT (8 sep 2026): eight silhouettes at the edge of the dark who never resolve.
+      // No props, no faces, one standing shape each, low opacity — the hundred physicians as absence.
+      "nefa": { op: .38, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".6")] },
+      "brann": { op: .34, p: [P("M54 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M46 34 Q54 29 62 34 L65 62 L61 93 L55 93 L54 74 L52 93 L46 93 L44 62 Z", I, S, ".6")] },
+      "oda": { op: .36, p: [P("M58 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M50 32 Q58 27 66 32 L69 62 L65 93 L59 93 L58 74 L56 93 L50 93 L48 62 Z", I, S, ".6")] },
+      "tam": { op: .34, p: [P("M56 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M48 30 Q56 25 64 30 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".6")] },
+      "hesh": { op: .36, p: [P("M56 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M48 34 Q56 29 64 34 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".6")] },
+      "sil": { op: .34, p: [P("M54 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M46 32 Q54 27 62 32 L65 62 L61 93 L55 93 L54 74 L52 93 L46 93 L44 62 Z", I, S, ".6")] },
+      "the old physician": { op: .4, p: [P("M56 18 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".6"), P("M46 36 Q56 31 66 36 L70 70 L62 93 L50 93 L42 70 Z", I, S, ".6")] },
+      "the hundredth": { op: .16, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".5"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".5")] },
+      // THE HEM OF THE ROBE (8 sep 2026): people who keep things covered. Every posture hides a hand, a
+      // face, or a thing; every prop is cloth or what cloth goes over.
+      "hala": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 32 Q56 27 66 32 L72 64 L64 93 L48 93 L40 64 Z", I, S, ".8"), P("M40 64 q-6 6 -4 14 q6 2 10 -2 M72 64 q6 6 4 14 q-6 2 -10 -2", I, S, "1"), P("M44 90 h24", "none", "rgba(79,120,168,.6)", "3")] },
+      "merin": { op: .9, p: [P("M40 22 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M32 40 Q40 35 48 40 L51 66 L47 93 L33 93 L29 66 Z", I, S, ".8"), P("M60 92 h40 v-8 h-40 z M60 84 h40 v-8 h-40 z M60 76 h40 v-8 h-40 z M60 68 h40 v-8 h-40 z M60 60 h40 v-8 h-40 z M60 52 h40 v-8 h-40 z M60 44 h40 v-8 h-40 z M60 36 h40 v-8 h-40 z M60 28 h40 v-8 h-40 z", "#141C24", S, ".8"), P("M48 52 L62 26", "none", S, "1.2")] },
+      "tobiah": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 17 h8", "none", S, "1.8"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M64 40 L80 22 M46 40 L30 22", "none", S, "1.2"), P("M10 20 H110", "none", S, "1"), P("M18 20 q8 30 20 0 M74 20 q8 34 22 0", "#141C24", S, ".8")] },
+      "senna": { op: .9, p: [P("M56 20 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 38 Q56 33 66 38 L70 70 L62 93 L50 93 L42 70 Z", I, S, ".8"), P("M14 60 q30 -10 50 6 q26 -12 50 -2 v34 H14 z", "#141C24", S, ".9"), P("M52 74 l6 -8 M56 64 l1 4", "none", S, "1"), P("M60 72 q6 -6 4 -12", "none", "rgba(200,206,236,.5)", ".8")] },
+      "ilke": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M36 44 h40 v22 h-40 z", "#F0E8D8", S, ".9"), P("M36 52 h40 M36 58 h40", "none", "rgba(20,28,36,.4)", ".8"), P("M44 66 L40 74 M68 66 L72 74", "none", S, "1.2")] },
+      "oran": { op: .9, p: [P("M40 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M32 32 Q40 27 48 32 L51 62 L47 93 L41 93 L40 74 L38 93 L32 93 L30 62 Z", I, S, ".8"), P("M60 92 q0 -34 22 -34 q22 0 22 34 z", "#141C24", S, ".9"), P("M58 58 h48", "none", S, "2.4"), P("M48 46 L60 56", "none", S, "1.2")] },
+      "the seamstress": { op: .92, p: [P("M56 24 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M44 42 Q56 36 68 42 L74 76 L64 93 L48 93 L38 76 Z", I, S, ".8"), P("M68 56 L84 40", "none", S, "1.2"), P("M84 40 l6 -6", "none", "rgba(200,206,236,.7)", "1.2"), P("M44 56 L36 66", "none", S, "1.2")] },
+      "the covered one": { op: .72, p: [P("M34 93 q0 -50 14 -70 q6 -10 12 -10 q6 0 12 10 q14 20 14 70 z", "#141C24", S, ".9"), P("M40 60 q8 -4 12 2 M58 74 q8 -6 14 0 M42 84 q10 -4 18 2", "none", "rgba(200,206,236,.22)", ".8")] },
+      // THE EYE OF THE STORM (7 sep 2026): people waiting weather out. Every posture is a way of NOT moving —
+      // crouched, sitting, hand on the ground — and every prop is a tool nobody is using tonight.
+      "ashur": { op: .9, p: [P("M58 34 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M40 92 Q42 62 58 56 Q74 62 76 92 Z", I, S, ".8"), P("M44 60 Q58 50 72 60", "none", S, "1"), P("M46 74 L40 88 M70 74 L76 88", "none", S, "1.2"), P("M26 40 l-8 3 M28 52 l-9 4 M30 64 l-9 4", "none", F, ".9")] },
+      "temi": { op: .9, p: [P("M58 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M50 34 Q58 29 66 34 L70 66 L64 93 L52 93 L46 66 Z", I, S, ".8"), P("M36 64 L84 60", "none", S, "2.2"), P("M84 60 a4 4 0 1 1 -0.01 0 Z", "none", S, "1"), P("M48 70 L38 64 M68 70 L80 62", "none", S, "1.2")] },
+      "rook": { op: .9, p: [P("M60 12 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M52 30 Q60 25 68 30 L71 62 L67 93 L61 93 L60 74 L58 93 L52 93 L50 62 Z", I, S, ".8"), P("M68 42 L92 22", "none", S, "1.3"), P("M92 22 l4 -4", "none", S, "1.3"), P("M18 18 q14 -8 30 -2 q10 -6 20 2", "none", F, "1"), P("M50 44 L40 56", "none", S, "1.2")] },
+      "isen": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M64 46 L74 54", "none", S, "1.2"), P("M74 54 q6 20 -2 36 q-4 4 -8 2", "none", S, "1.3"), P("M46 46 L40 58", "none", S, "1.2")] },
+      "ghalib": { op: .9, p: [P("M56 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M48 32 Q56 27 64 32 L67 62 L63 93 L57 93 L56 74 L54 93 L48 93 L46 62 Z", I, S, ".8"), P("M78 92 l10 -14 l10 14 z M80 92 l6 -6 M96 92 l-8 -8", "none", S, "1.1"), P("M64 46 L70 62 M46 46 L40 60", "none", S, "1.2")] },
+      "suri": { op: .9, p: [P("M54 16 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 34 Q54 29 62 34 L65 62 L61 93 L55 93 L54 74 L52 93 L46 93 L44 62 Z", I, S, ".8"), P("M62 50 L82 66", "none", S, "1.2"), P("M76 92 q6 -30 30 -26 q10 4 8 26 z", I, S, ".8"), P("M40 22 q3 -3 0 -6 M36 26 q4 -4 0 -8", "none", F, "1"), P("M44 48 L36 60", "none", S, "1.2")] },
+      "the old drover": { op: .92, p: [P("M56 30 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M46 48 Q56 42 66 48 L70 78 L62 92 L46 92 L42 78 Z", I, S, ".8"), P("M46 60 L30 90", "none", S, "1.3"), P("M24 90 h14", "none", S, "1.6"), P("M66 60 L74 74", "none", S, "1.2"), P("M40 78 L30 92 M70 78 L78 92", "none", S, "1.1")] },
+      "the stray": { op: .72, p: [P("M56 14 Q57.5 3 63.5 3 Q68 5 66 14 Z", I, S, ".7"), P("M56 14 L66 14 L67.5 60 L65 93 L57 93 L54.5 60 Z", I, S, ".7"), P("M30 20 l-2 8 M40 40 l-2 8 M84 30 l-2 8 M92 56 l-2 8 M34 70 l-2 8 M86 76 l-2 8", "none", F, ".9")] },
       // THE CITY GATE, THROWN OPEN (6 sep 2026): gatehouse staff drawn with nothing to do. Every prop is a
       // thing for closing a gate, not in use. The keeper's leash has no dog on it.
       "orin": { op: .9, p: [P("M64 14 a5.5 5.5 0 1 1 -0.01 0 Z", I, S, ".7"), P("M56 32 Q64 27 72 32 L76 62 L72 93 L66 93 L64 74 L62 93 L56 93 L54 62 Z", I, S, ".8"), P("M84 20 v74 M84 22 l-12 18 M84 60 h-10", "none", S, "1.3"), P("M56 46 L46 60 L54 66", "none", S, "1.3"), P("M74 44 L84 38", "none", S, "1.2")] },
@@ -6994,6 +7161,43 @@ class Component extends DCLogic {
   _wAlias(n) { const e = this._walkers().find(w2 => w2.name === n); return (e && e.fig) || n; }
   _rosterFor(m) { const R = this._rosters(); return R[m] || R[0]; }
   _rosters() { return {
+    24: [ // the room with nothing in it (8 sep 2026): eight of the hundred physicians, at the edge of the
+      // dark, never resolving — their figures are bare silhouettes with no props. The register is RELEASE:
+      // every line is about something let go, drained, or given up; every bubble is one verb of letting go.
+      { name: "nefa", fig: "imra", line: "nefa cuts the ice, where there is ice. tonight there is nothing to cut and she is standing with the saw down, and does not seem to mind.", react: "nefa lowers the saw.", defeat: "nefa sets the saw on nothing, and it stays.", again: "nefa is standing there. saw down." },
+      { name: "brann", fig: "sef", line: "brann fishes. through the ice, when there is ice; tonight through nothing at all. he has caught nothing and is not surprised.", react: "brann lets the line out.", defeat: "brann draws the line up. empty. good.", again: "brann is fishing nothing." },
+      { name: "oda", fig: "odel", line: "oda draws the blood off. the jar is at her hip and it is empty, which is how a physician likes a jar.", react: "oda taps the empty jar.", defeat: "oda turns the jar over. nothing falls.", again: "oda has the jar. empty." },
+      { name: "tam", fig: "tesh", line: "tam sets bones. nothing is broken here. he is holding the splints anyway, because a physician who puts them down is not a physician.", react: "tam shifts the splints.", defeat: "tam lays the splints on the dark and steps over them.", again: "tam has the splints. nothing broken." },
+      { name: "hesh", fig: "ruen", line: "hesh carries water. two pails on a yoke, both empty, both light, and he walks as if they were full.", react: "hesh eases the yoke.", defeat: "hesh sets the pails down, and they do not ring, because there is nothing in them.", again: "hesh has the yoke. light." },
+      { name: "sil", fig: "brann", line: "sil bleeds the fever out. there is no fever. she has let everything go that could be let go, and it went.", react: "sil opens one hand.", defeat: "sil opens both hands. empty. that is the cure.", again: "sil is here. hands open." },
+      { name: "the old physician", fig: "mave", line: "the old physician's bag is closed. there is nothing left in it to give and nothing left out here to give it to. she gives nothing away twice, and holds your cards awake.", react: "the old physician does not open the bag.", defeat: "the old physician opens the bag and shows you: nothing. it was always nothing.", again: "the old physician's bag is closed." },
+      { name: "the hundredth", fig: "the quiet one", line: "the hundredth physician is the one who healed by leaving. you cannot quite see them. the hand is yours, every card of it awake.", react: "nothing moves.", defeat: "nothing moves, and the way is open.", again: "nothing is there. it is waiting." },
+    ],
+    15: [ // the hem of the robe (8 sep 2026): eight who keep things covered. The register is DISCRETION:
+      // every line is about something not being shown. Nobody hides anything here out of shame; they
+      // keep it covered because that is the work. The quiet one is entirely under a sheet and says nothing.
+      { name: "hala", fig: "imra", line: "hala dyes. her hands are stained to the wrist and her sleeves are down over them, and the colour of tonight's vat is nobody's business.", react: "hala pulls her sleeve down.", defeat: "hala pushes both sleeves up. indigo, to the elbow. she does not mind you seeing now.", again: "hala's sleeves are down again." },
+      { name: "merin", fig: "sef", line: "merin folds. the stack beside her is taller than she is, every fold the same width, and what is in the middle of it has not been seen since it went in.", react: "merin smooths a fold.", defeat: "merin lifts the top of the stack an inch and lets you look. cloth, all the way down.", again: "merin is folding. the stack is taller." },
+      { name: "tobiah", fig: "odel", line: "tobiah hangs the lines. he keeps the pegs in his mouth, which is why he says nothing, which is also why they gave him the lines.", react: "tobiah takes a peg from his mouth.", defeat: "tobiah unpegs one sheet and lets it down. behind it, the road.", again: "tobiah has a mouthful of pegs." },
+      { name: "senna", fig: "tesh", line: "senna mends. there is a tear in the great cloth that nobody else has noticed, and she has been at it for three nights, and nobody will ever notice that either.", react: "senna bites a thread.", defeat: "senna holds the mended place up to arcturus. you cannot find it. good.", again: "senna is mending. the same place." },
+      { name: "ilke", fig: "ruen", line: "ilke carries the bride's cloth. she has carried it three years, folded, and has never seen the bride, and has never asked.", react: "ilke shifts the bundle.", defeat: "ilke sets the bundle down on the road, and does not unfold it, and steps back.", again: "ilke has the bundle. still folded." },
+      { name: "oran", fig: "brann", line: "oran keeps the vat. the lid is on. it has been on all night and it will be on in the morning, and the dye keeps better for it.", react: "oran rests a hand on the lid.", defeat: "oran lifts the lid one finger's width. steam, and a colour you did not expect.", again: "oran's hand is on the lid." },
+      { name: "the seamstress", fig: "mave", line: "the seamstress has a needle and no thread you can see. she gives nothing away twice, and holds your cards awake.", react: "the seamstress does not look up from the needle.", defeat: "the seamstress ties off, and there was thread after all, the colour of the cloth.", again: "the seamstress has the needle. no thread showing." },
+      { name: "the covered one", fig: "the quiet one", line: "the covered one stands under a sheet. all of them. nobody has said who it is, and the hand is yours, every card of it awake.", react: "the sheet does not move.", defeat: "the covered one steps aside, still covered, and the hem lifts an inch off the road.", again: "the covered one is standing there. under it." },
+    ],
+    6: [ // the eye of the storm (7 sep 2026): eight who know how to wait weather out. The register is
+      // PATIENCE: every line is about not moving yet. Nobody here is afraid of the storm; they have
+      // simply seen it before, and know the one who runs is the one who gets wet. The quiet one is the
+      // stray, standing out in the rain and not minding it.
+      { name: "ashur", fig: "imra", line: "ashur drives the herd, when there is a herd to drive. tonight he is crouched with his back to it, counting breaths until the rain lets up.", react: "ashur counts another breath.", defeat: "ashur stands, at last, and the rain has thinned. he does not say he told you so.", again: "ashur is crouched again. still counting." },
+      { name: "temi", fig: "sef", line: "temi keeps the brand-iron. it lies across her lap, cold, because nothing gets marked in a storm and she is in no hurry to warm it.", react: "temi turns the iron over in her lap.", defeat: "temi lifts the iron, looks at it, and puts it away unlit.", again: "temi has the iron across her knees. cold." },
+      { name: "rook", fig: "odel", line: "rook reads the cloud wall. he can tell you which way it is turning and how long it has left, and he will not tell you it is safe until it is.", react: "rook tilts his head at the wall.", defeat: "rook points: there. the wall is opening, and you were standing in the right place.", again: "rook is reading the wall. it is turning." },
+      { name: "isen", fig: "tesh", line: "isen holds the well-rope. it hangs slack in her hands, because the well is full to the lip tonight and there is nothing to draw.", react: "isen lets the rope out an inch.", defeat: "isen coils the rope. the well has given you what it had.", again: "isen has the rope. slack." },
+      { name: "ghalib", fig: "ruen", line: "ghalib lit no fire. he laid it, and looked at the sky, and left it laid. a fire in this is a thing you do for the look of it.", react: "ghalib glances at the unlit fire.", defeat: "ghalib strikes the flint, once, and it takes. the rain is done.", again: "ghalib's fire is laid, and not lit." },
+      { name: "suri", fig: "brann", line: "suri sings the herd still. low, the same three notes, one hand flat on a wet neck, and not one of them has bolted.", react: "suri does not stop singing.", defeat: "suri lets the song end. the herd stands, and lets you through it.", again: "suri is singing. the same three notes." },
+      { name: "the old drover", fig: "mave", line: "the old drover has one hand flat on the ground, feeling for the moment the rain stops. she gives nothing away twice, and holds your cards awake.", react: "the old drover does not lift her hand.", defeat: "the old drover lifts her hand off the ground and looks at the palm. dry.", again: "the old drover's hand is on the ground. waiting." },
+      { name: "the stray", fig: "the quiet one", line: "the stray stands in the rain, out past the herd, and does not mind it. nobody knows whose it was. the hand is yours, every card of it awake.", react: "the stray does not come in out of the rain.", defeat: "the stray steps aside, wet through, and lets you into the dry.", again: "the stray is out in it. not minding." },
+    ],
     1: [ // the city gate, thrown open (6 sep 2026): eight gatehouse staff with nothing to keep out. The
       // register is WELCOME: nobody here is bored, devoted, skilled or together; they are glad you came,
       // and slightly at a loss for what to do about it. The quiet one is the dog's keeper, leash coiled.
@@ -7299,7 +7503,10 @@ class Component extends DCLogic {
     // UNCHANGED on purpose — its own comment elsewhere in this file ("the last battle never
     // softens as you climb") predates and is not touched by this decision; nothing flagged it as
     // wrong, only the walkers were.
-    if (st.road) return st.roadBoss ? 20 : this._cautionsFor(this._awake())[Math.min(st.roadRung || 0, 7)];
+    // THE HARDEST ROAD, 2 of 2 (8 sep 2026): m6's walkers weigh the reply TWO higher than the
+    // collection would give, capped at the table's own ceiling of 8. The mansion (roadBoss) is
+    // untouched — it already reads 20 and "the last battle never softens as you climb".
+    if (st.road) return st.roadBoss ? 20 : Math.min(8, this._cautionsFor(this._awake())[Math.min(st.roadRung || 0, 7)] + (this._stormRoad() ? 2 : 0));
     if (st.nightSky) return 12;
     if (st.nightWalker) return 10;
     return 8;
@@ -7406,6 +7613,18 @@ class Component extends DCLogic {
   // comes only on special nights. mansions with no avatar authored yet fall back to her.
   _avatars() {
     return {
+      24: { name: "sadalsuud", full: "sadalsuud, the luck of lucks",
+        line: "the empty place. one star, and a rat on the rim of nothing, and everything frozen melting somewhere you cannot see.",
+        arrive: "something is sitting on the rim", arriveSub: "where the ground gives out, a rat sits up with its whiskers forward, and sadalsuud burns gold at its brow. there is nothing behind it.",
+        watch: "it has not moved off the rim, and there is nothing to move to." },
+      15: { name: "arcturus", full: "arcturus, the one that keeps the bear",
+        line: "the cover. three faint stars at the hem of the robe, praised for being faint, and a dragon under a cloth that shows only its neck.",
+        arrive: "something is lying under the cloth", arriveSub: "a long shape under a cover, along the far side of the ground. only the neck shows, and arcturus at the throat, warm through the weave.",
+        watch: "it has not lifted the cover, and it will not." },
+      6: { name: "alhena", full: "alhena, the brand on the neck",
+        line: "the mark the weather leaves. the rain goes round the one still place on the road, and the ape sits in it and does not look up.",
+        arrive: "something is sitting in the dry", arriveSub: "where the rain does not fall, an ape sits with its arms round its knees, and alhena burns white at its brow. the storm goes round it.",
+        watch: "it is sitting in the still, and it has not moved." },
       1: { name: "sheratan", full: "sheratan, the first of the two signs",
         line: "the first house of the year, and its door has never been shut. the dog sits in the gap and lets the whole calendar through.",
         arrive: "something is sitting in the gateway", arriveSub: "between the two thrown-back leaves a dog sits with its back to you, and sheratan gleams at its collar.",
@@ -7549,8 +7768,16 @@ class Component extends DCLogic {
   // honest way to say which road it belonged to — a non-object simply reads as "everything full",
   // which is the generous direction and costs nobody a climb they earned.
   _livesMap() { try { const v = JSON.parse(localStorage.getItem("manzil-v2-lives")); return (v && typeof v === "object" && !Array.isArray(v)) ? v : {}; } catch (e) { return {}; } }
-  _lives(m) { const k = m || this._tonight(); const v = this._livesMap()[k]; return typeof v === "number" ? Math.max(0, Math.min(3, v)) : 3; }
-  _saveLives(n, m) { const k = m || this._tonight(); try { const L2 = this._livesMap(); L2[k] = Math.max(0, Math.min(3, n)); localStorage.setItem("manzil-v2-lives", JSON.stringify(L2)); } catch (e) {} this._syncProgress(); }
+  _lives(m) { const k = m || this._tonight(); const cap = this._lifeCap(k); const v = this._livesMap()[k]; return typeof v === "number" ? Math.max(0, Math.min(cap, v)) : cap; }
+  // THE STORM TAKES A LANTERN (7 sep 2026, user "this road should also be the hardest"): m6 is walked with
+  // TWO lights, not three — the wind has the first one out before you reach the door. The cap is read
+  // everywhere lives are read or written, so the lamp UI, the wipe and the save all agree without a flag.
+  _lifeCap(m) { return (m || this._tonight()) === 6 ? 2 : 3; }
+  _stormRoad() { const st = this.state; return !!st && this._tonight() === 6 && !!st.road && !st.practice && !st.duel; }
+  // the match format per rung: single boards 1-4, best of three 5-8, the mansion best of five — except
+  // on the storm's night, where EVERY rung is best of three (7 sep 2026): the eye's komi needs boards.
+  _boLen(k, boss) { return boss ? 5 : (k >= 4 || this._tonight() === 6) ? 3 : 1; }
+  _saveLives(n, m) { const k = m || this._tonight(); try { const L2 = this._livesMap(); L2[k] = Math.max(0, Math.min(this._lifeCap(k), n)); localStorage.setItem("manzil-v2-lives", JSON.stringify(L2)); } catch (e) {} this._syncProgress(); }
   // is a climb under way on this road? either the ladder has been started or a light is out.
   // a mansion already at level four has nothing left to climb, so it never asks.
   _climbing(m) { const k = m || this._tonight(); return this._mlvl(k) < 4 && (((this._rungs()[k] || 0) > 0) || this._lives(k) < 3); }
@@ -7572,10 +7799,9 @@ class Component extends DCLogic {
       climbs: raw("climbs", {}), rungs: raw("rungs", {}), lives: raw("lives", {}),
       build: raw("build", {}), buildv: (() => { try { return localStorage.getItem("manzil-v2-buildv"); } catch (e) { return null; } })(),
       wrec: raw("wrec", {}), noted: raw("noted", {}), stairseen: raw("stairseen", {}), wipe: raw("wipe", {}),
-      // `moon` is deliberately NOT synced any more (7 sep 2026): the level-select pick is
-      // session-only now, so there is nothing durable to carry between devices. Kept out of both
-      // this payload and _applyProgress below so a restore cannot re-pin a house the sky has left.
-      // It stays in _deckState's #fresh list on purpose — legacy saves still have the key to wipe.
+      // `moon` is deliberately NOT synced (7 sep 2026): the ring pick is session-only, so there is
+      // nothing durable to carry. Out of _applyProgress too, so a restore cannot re-pin a house the
+      // sky has left. It stays in _deckState's #fresh list on purpose — legacy saves still have it.
       lastclimb: raw("lastclimb", {}), respec: rawInt("respec", 0),
       claims: raw("claims", {}), lock: raw("lock", []), shards: rawInt("shards", 0), firstlight: raw("firstlight", {}),
     });
@@ -7618,6 +7844,27 @@ class Component extends DCLogic {
       ? "vipat, the first dark: the full light is out, a crescent and a sliver remain."
       : "pratyari, the adversary: one sliver of light left.")
       + " the same walker stands where you fell, and the road gives its shard regardless.";
+  }
+  // THE STORM'S LIGHTNING (7 sep 2026, m6's level): a bolt every five to twelve seconds, nearer and more
+  // often as the wall closes, and from inside the eye only ever OUTSIDE the ring. Thunder arrives late
+  // when the storm is far, at once when the wall is beside you, late and low again from the still.
+  // Armed in _afterDeal beside the drum's pulse; the timer is cleared in _clearSeq.
+  _stormArm() {
+    clearTimeout(this._stormT);
+    const st0 = this.state;
+    if (!st0 || this._tonight() !== 6 || !st0.road || st0.practice || st0.duel) return;
+    const fire = () => {
+      const s = this.state; if (!s || this._tonight() !== 6 || !s.road) return;
+      const e = Math.min(this._elev(), 8), o = e / 8, eye = !!s.roadBoss && e >= 8;
+      const side = Math.random() < .5 ? -1 : 1;
+      const bx = eye ? 466 + side * (310 + Math.random() * 150) : 466 + side * (o * 210 + Math.random() * (440 - o * 210));
+      this.setState(s2 => ({ smBolt: (s2.smBolt || 0) + 1, smBoltX: Math.round(bx) }));
+      const far = eye ? 1.7 : (1 - o) * 1.5;
+      const th = setTimeout(() => { if (this._tonight() === 6 && this.state.road) this._sfx(eye || o < .3 ? "thunderfar" : "thunder"); }, 120 + far * 1000);
+      this._seq.push(th);
+      this._stormT = setTimeout(fire, (eye ? 7000 : 4200) + Math.random() * 6500 - o * 1800);
+    };
+    this._stormT = setTimeout(fire, 1600 + Math.random() * 2600);
   }
   _saveRung(m, k) { if (this._stationForce() >= 0 || (this.state && this.state.roadPick)) return; try { const r = this._rungs(); r[m] = Math.max(r[m] || 0, k); localStorage.setItem("manzil-v2-rungs", JSON.stringify(r)); } catch (e) {} this._syncProgress(); }
   _elev() {
@@ -7842,7 +8089,6 @@ class Component extends DCLogic {
     // the throne's law's far strike reads the attacker AS PRINTED (30 aug work order: a pumped face
     // does not carry two stations); the defender still answers with its lived face.
     if (printed) { const aC9 = C[slots[ai].id]; av = dir === 1 ? aC9.r : aC9.l; }
-    if (this._bossRule() === "storm") { av = Math.max(1, av - 1); tv = Math.max(1, tv - 1); } // storm weather: all faces fight at -1
     // THE BEARER shelters whatever stands beside it: anything striking its neighbour fights two lower
     for (const d of [-1, 1]) {
       const k = this._nb(ti, d); if (k < 0 || k === ai || !slots[k]) continue;
@@ -7857,7 +8103,13 @@ class Component extends DCLogic {
     // Planets pay like anything else — the price reads shelter, not quarter; saturn's lock IS a shelter.
     if (this._bossRule() === "price" && ai === this._lawSt() && this._shielded(slots, ai, ti)) av = Math.max(1, av - 2);
     // base rule (adopted 20 aug 2026): ties flip. THE STORM: no tie takes it, wherever it stands
-    const tie = av === tv && !(tC.ab === "storm" && this._on(tC));
+    let tie = av === tv && !(tC.ab === "storm" && this._on(tC));
+    // THE EYE (7 sep 2026, m6's law, eyeN=defender): at the law's station the LEADER's tie takes nothing;
+    // the answerer's tie takes as on a plain board. The tie-to-attacker rule is the seat's own instrument
+    // (the leader gets to tie first), so refusing it at one station is a small komi paid at the crossing.
+    // Faces, count, ownership otherwise untouched. The storm card itself refuses ties everywhere already,
+    // so on its own night it is the one card the eye does nothing to — correct by the predicate.
+    if (tie && this._bossRule() === "eye" && ti === this._lawSt() && a.owner === (this.state.leader || "you")) { tie = false; if (!printed) return "eye"; }
     if (!(av > tv || tie)) return false;
     // THE OPEN GATE (5 sep 2026, m1's law, user picked 1a over Measurement's 1b by fiction; every strike,
     // openN=all — the first-only notch measured identical to a tenth): at the law's station NOTHING IS
@@ -7870,7 +8122,6 @@ class Component extends DCLogic {
     // the tell: remember when the open gate let through a strike that any other ground would have held
     this._openLet = openSt && (this._shielded(slots, ti, ai) || (tC.ab === "gate" && this._on(tC) && !t.gateUsed));
     if (!openSt && this._shielded(slots, ti, ai)) return false; // one code path owns "can this ground change hands"
-    if (this._bossRule() === "void") { let n = 0; for (const d of [-1, 1]) { const k = this._nb(ti, d); if (k >= 0 && k !== ai && slots[k]) n++; } if (n === 0) return false; }
     // THE GATE turns the first strike against it aside, and stands open from then on
     if (!openSt && tC.ab === "gate" && this._on(tC) && !t.gateUsed) { t.gateUsed = true; return "gate"; }
     t.owner = a.owner;
@@ -8000,16 +8251,12 @@ class Component extends DCLogic {
     // middle and its count are untouched — that is the constraint the whole m3 sheet was written under.
     const razor = this._bossRule() === "razor" && i === this._lawSt() && !inPlace;
     if (razor) {
-      // THE TRIAL RUNS ON A COPY (6 sep 2026, code). As delivered this probed with
-      // `_tryFlip(slots, …)` — the real board — and _tryFlip MUTATES on success (`t.owner =
-      // a.owner`, and `t.gateUsed = true` on the gate's first miss). So the question the razor asks
-      // was answering itself: with two enemy neighbours where only one would flip, the trial flipped
-      // it, `all` came out false, and the seq then announced "it takes neither" over a neighbour that
-      // had already changed hands — the exact opposite of the law. And when both would flip, the
-      // queued strikes re-ran _tryFlip against an already-taken slot, returned false on
-      // `t.owner === a.owner`, and produced no strike entries, so the stroke never animated.
-      // A shallow copy of the slot objects is enough: _tryFlip only ever writes to slots[ti]'s own
-      // fields, never deeper.
+      // THE TRIAL RUNS ON A COPY (re-applied 8 sep 2026). _tryFlip MUTATES on success (`t.owner`, and
+      // `t.gateUsed` on the gate's first miss), so probing the real board made the question answer
+      // itself: with two enemy neighbours where only one would fall, the trial flipped it, `all` came
+      // out false, and the beat announced "it takes neither" over a card that had already changed
+      // hands. When both would fall, the queued strikes then re-ran against already-taken slots and
+      // produced no strike entries, so the stroke never animated.
       const probe = slots.map(x => x ? { ...x } : x);
       const trials = [-1, 1].map(d => { const k = this._nb(i, d); if (k < 0 || !slots[k] || (slots[k].ground || slots[k].owner) === own) return null; return { k, d, hit: this._tryFlip(probe, i, k, d) === true }; }).filter(Boolean);
       const all = trials.length > 0 && trials.every(t => t.hit);
@@ -8062,6 +8309,7 @@ class Component extends DCLogic {
       if (tC.ab === "chamber" && !tgt.struck) { slots[to] = { ...slots[to], struck: true }; seq.push({ from, to, dir, miss: true, set: { struck: true } }); }
       const res = this._tryFlip(slots, from, to, dir, cur.printed);
       if (res === "gate") { seq.push({ from, to, dir, miss: true, set: { gateUsed: true }, sig: "the gate turns the first strike aside." }); continue; }
+      if (res === "eye") { seq.push({ from, to, dir, miss: true, eye: true, sig: "the eye of the storm: equal numbers, and the one who moved first takes nothing." }); continue; }
       if (!res) continue;
       const fromC = C[slots[from].id] || {}, fromAb = fromC.ab;
       // ON CLAIM: the throne raises what it takes, the crown keeps what it takes
@@ -8241,6 +8489,10 @@ class Component extends DCLogic {
         else if (i === this._crowPays(slots, L, plain)) w -= 1;
       }
     }
+    // THE EMPTY CIRCLE (8 sep 2026, m24's law): the void card's two count lines, keyed on the STATION instead of
+    // the card. Fixed debit on the right-hand neighbour — not the crow's chase — which is what keeps it a
+    // spread law and not a seat law (Measurement, 8 sep). Reads before the card signatures so both can stack.
+    if (this._bossRule() === "void" && !(ctx && ctx.noLaw)) { const L = this._lawSt(); if (i === L) w += 1; else if (i === L + 1) w = Math.max(0, w - 1); }
     if (this._on(c)) {
       if (c.ab === "district") w += 1; // counts two
       if (c.ab === "void") w += 1;     // counts two
@@ -8472,6 +8724,7 @@ class Component extends DCLogic {
       if (seq[k] && seq[k].printed) { this._sfx("reach"); const rt = setTimeout(() => this.setState({ reachFx: null }), 1800); this._seq.push(rt); }
       if (seq[k] && seq[k].turn) { this._sfx("creak"); const tn0 = seq[k].turn; this.setState(s3 => ({ turnFx: { n: ((s3.turnFx && s3.turnFx.n) || 0) + 1, l: tn0.l, r: tn0.r, refuse: !!tn0.refuse } })); const tt = setTimeout(() => this.setState({ turnFx: null }), 1700); this._seq.push(tt); }
       if (seq[k] && seq[k].razor) { this._sfx(seq[k].razor.held ? "razorhold" : "razor"); const rz = seq[k].razor; this.setState(s4 => ({ razorFx: { n: ((s4.razorFx && s4.razorFx.n) || 0) + 1, held: rz.held } })); const rzt = setTimeout(() => this.setState({ razorFx: null }), 1500); this._seq.push(rzt); }
+      if (seq[k] && seq[k].eye) { this._sfx("eyehold"); this.setState(s6 => ({ eyeFx: ((s6.eyeFx || 0) + 1) })); const et = setTimeout(() => this.setState({ eyeFx: null }), 1400); this._seq.push(et); }
       if (seq[k] && seq[k].open) { this._sfx("gateopen"); this.setState(s5 => ({ openFx: ((s5.openFx || 0) + 1) })); const ot = setTimeout(() => this.setState({ openFx: null }), 1500); this._seq.push(ot); }
       if (seq[k] && seq[k].reson) { this._sfx("drumcarry"); this.setState(s2 => ({ resonFx: (s2.resonFx || 0) + 1 })); const rt2 = setTimeout(() => this.setState({ resonFx: null }), 1100); this._seq.push(rt2); }
     }, k === 0 ? 320 : 400);
@@ -8541,7 +8794,7 @@ class Component extends DCLogic {
             if (this.state.road && !this.state.roadBoss) {
               // THE SHORTENED ROAD (28 aug 2026 sim canon): walkers 1-4 are a single board, walkers 5-8 are
               // best of three, the mansion best of five. a clean push is 18.6 boards (was 23.4), 28-37 minutes.
-              const need = this.state.roadRung >= 4 ? 2 : 1;
+              const need = this._boLen(this.state.roadRung, false) === 3 ? 2 : 1;
               const rw = this.state.roundWins.filter(x => x === "you").length;
               const rl = this.state.roundWins.filter(x => x === "sky").length;
               const t2 = this._tonight();
@@ -8691,6 +8944,9 @@ class Component extends DCLogic {
       if (st1.tutor || st1.duel) return { n: 1, ms: 260, sweep: false };
       if (st1.roadBoss || st1.nightSky) return { n: 4, ms: 1180, sweep: true };
       const e = Math.min(this._elev(), 7);
+      // the storm's walkers read one station deeper than anyone else's (7 sep 2026, the hardest road):
+      // two from the foot, sweeping from the fifth rung, three from the seventh
+      if (this._stormRoad()) return e <= 3 ? { n: 2, ms: 380 + e * 30, sweep: false } : { n: e >= 6 ? 3 : 2, ms: 560 + (e - 4) * 90, sweep: true };
       if (e <= 3) return { n: 1, ms: 230 + e * 24, sweep: false };
       return { n: 2, ms: 400 + (e - 4) * 74, sweep: e >= 6 };
     })();
@@ -8729,7 +8985,7 @@ class Component extends DCLogic {
     const mw = st.roundWins.filter(x => x === "you").length;
     const ms = st.roundWins.filter(x => x === "sky").length;
     // walkers 1-4 are a single board (no pips: a board is not a match), 5-8 best of three, the mansion five
-    const boLen = st.road && !st.roadBoss ? (st.roadRung >= 4 ? 3 : 1) : 5;
+    const boLen = st.road && !st.roadBoss ? this._boLen(st.roadRung, false) : 5;
     const matchPips = st.practice || boLen === 1 ? [] : Array.from({ length: Math.max(boLen, st.roundWins.length) }, (_, i) => {
       const r = st.roundWins[i];
       return { style: "width:7px;height:7px;transform:rotate(45deg);display:inline-block;" + (r === "you" ? "background:#F0D89A" : r === "sky" ? "background:#FFB000" : r === "draw" ? "background:rgba(154,138,94,.55)" : "border:1px solid rgba(154,138,94,.6)") };
@@ -8740,7 +8996,7 @@ class Component extends DCLogic {
     const listenI = this._listen(), loudest = listenI >= 0 ? this._herLoudest() : 0, remedyI = this._remedy(), kilnI = this._kiln(), crossI = this._cross(), ropeI = this._bossRule() === "rope" ? this._lawSt() : -1, resonI = this._reson();
     const slots = st.slots.map((s, i) => {
       const empty = !s;
-      const veiled = !!s && s.owner === "sky" && this._bossRule() === "veil";
+      const veiled = false; // the display-only veil branch is dead (7 sep 2026); m15's law is the hush
       const selOn = st.sel !== null && st.turn === "you" && st.phase === "play" && !st.busy && this._legalSlot(st.slots, i);
       let tag = "", tagColor = "#9A8A5E", heartSty = "";
       const fL = s ? this._faceOf(st.slots, i, -1) : 0, fR = s ? this._faceOf(st.slots, i, 1) : 0;
@@ -8777,7 +9033,11 @@ class Component extends DCLogic {
       // The no-law fallback (light the mansion's own ground) stays boss-only as before.
       const avG = ((this._bossRule() ? (st.road && !st.practice && !st.duel && i === this._lawSt()) : (st.roadBoss && this._boardM(i) === this._tonight())) && this._avFig(this._tonight())) ? this._avFig(this._tonight()).glow : null;
       return {
-        wrapStyle: "position:relative;transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (avG ? ";filter:drop-shadow(0 0 11px " + avG + ")" : hushI.indexOf(i) >= 0 ? ";filter:grayscale(.85) brightness(.72);transition:filter .7s ease" : "") + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
+        wrapStyle: "position:relative;transform:translateY(" + (Math.pow(i - 4, 2) * 3).toFixed(1) + "px) rotate(" + ((i - 4) * 1.5).toFixed(1) + "deg);transform-origin:center top" + (avG ? ";filter:drop-shadow(0 0 11px " + avG + ")" : (this._tonight() === 24 && this._bossRule() === "void" && i === this._lawSt() + 1 && !empty) ? ";filter:brightness(.55);transition:filter .7s ease" : hushI.indexOf(i) >= 0 ? (this._tonight() === 15 ? ";filter:brightness(.82);transition:filter .7s ease" : ";filter:grayscale(.85) brightness(.72);transition:filter .7s ease") : "") + (st.shakeFx ? ";animation:mzShake .34s ease both" : ""),
+        // THE COVER (8 sep 2026, m15): on the veil's night a hushed station is not greyed, it is CLOTHED — a
+        // tongue of the sky-robe hangs over the card and its numbers dim behind the weave. Same sil map, different tell.
+        coverOn: this._tonight() === 15 && hushI.indexOf(i) >= 0 && !empty,
+        coverStyle: "position:absolute;inset:-6px -4px -4px -4px;border-radius:0 0 8px 8px;pointer-events:none;z-index:6;transform-origin:center top;animation:mzClothDrop .9s cubic-bezier(.3,.8,.3,1) both;background:linear-gradient(180deg, rgba(20,28,36,.96), rgba(26,34,44,.9) 40%, rgba(30,38,50,.86));box-shadow:0 6px 14px rgba(0,0,0,.45), inset 0 1px 0 rgba(200,206,236,.18);border:1px solid rgba(200,206,236,.22);border-top:none",
         idx: i,
         num: String(20 + i),
         mname: this._mansions()[i],
@@ -8919,7 +9179,8 @@ class Component extends DCLogic {
       const cl = c.l, cr = c.r;
       const seld = st.sel === id;
       const dragMe = !!(st.drag && st.drag.id === id);
-      const rot = (i - (n - 1) / 2) * 1.1;
+      const wind = this._stormRoad() && !(st.roadBoss && this._elev() >= 8) ? -(1.8 + Math.abs(i - (n - 1) / 2) * .5) : 0; // the storm's hand leans into the wind; in the eye it stands straight
+      const rot = (i - (n - 1) / 2) * 1.1 + wind;
       const f = frame(c.lvl);
       // EACH DOOR SHOWS ON THE FACE (27 aug 2026, user). the grant deepens the wash, the signature
         // brings the art forward, and points land on the FRAME as a keel (_keel) rather than on the
@@ -8986,7 +9247,7 @@ class Component extends DCLogic {
             ? "transform:translate(" + st.drag.dx.toFixed(1) + "px," + (st.drag.dy - 12).toFixed(1) + "px) rotate(" + (st.drag.tilt || 0).toFixed(1) + "deg) scale(1.06);z-index:30;pointer-events:none;"
             : "transform:translateX(" + nx + "px) rotate(" + (rot + nr).toFixed(1) + "deg) translateY(" + (seld ? -20 : 0) + "px)" + (seld ? " scale(1.12)" : "") + ";" +
               "z-index:" + (seld ? 9 : i) + ";" +
-              "animation:mzCardDrift " + (7.5 + i * 0.9).toFixed(1) + "s ease-in-out " + (-i * 1.6).toFixed(1) + "s infinite" + (!st.dealt && st.phase === "play" ? ",mzHandIn .55s cubic-bezier(.3,1.2,.4,1) " + (380 + i * 110) + "ms both" : "") + ";") +
+              "animation:" + (wind ? "mzCardGust " + (2.6 + i * .45).toFixed(2) + "s ease-in-out " + (-i * .7).toFixed(1) + "s infinite" : "mzCardDrift " + (7.5 + i * 0.9).toFixed(1) + "s ease-in-out " + (-i * 1.6).toFixed(1) + "s infinite") + (!st.dealt && st.phase === "play" ? ",mzHandIn .55s cubic-bezier(.3,1.2,.4,1) " + (380 + i * 110) + "ms both" : "") + ";") +
           (seld || dragMe ? "border:1px solid #FFFDF5;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 22px rgba(240,216,154,.45), inset 0 1px 0 rgba(255,248,228,.2)" + this._keel(c, this._qTintOf(id) || "240,216,154") : "border:1px solid " + (c.loan ? "rgba(196,176,124,.7)" : f.b) + ";box-shadow:0 8px 20px rgba(0,0,0,.6), 0 0 18px rgba(240,216,154,.16), inset 0 1px 0 rgba(255,248,228,.14)" + this._keel(c, this._qTintOf(id) || "240,216,154") + (c.loan ? "" : f.glow)) +
           (tutF ? (id === tutF.id ? ";border:1px solid #FFB000;box-shadow:0 12px 28px rgba(0,0,0,.7), 0 0 18px rgba(255,176,0,.45)" : ";opacity:.38;filter:saturate(.6)") : ""),
       };
@@ -9027,12 +9288,12 @@ class Component extends DCLogic {
           style: "position:absolute;left:" + p[0] + "%;top:" + p[1] + "%;width:" + p[2] + "px;height:" + p[2] + "px;border-radius:50%;background:rgba(" + hue + "," + (p[2] > 1.4 ? ".8" : ".5") + ");animation:bsTwinkle " + (3 + (i % 5)) + "s ease-in-out " + (i * .6) + "s infinite" + (p[2] > 1.9 ? ";box-shadow:0 0 6px rgba(" + hue + ",.55)" : ""),
         };
       }),
-      elevAirStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.air + ";background:radial-gradient(78% 38% at 50% 106%, rgba(255,198,116,.19), transparent 62%), linear-gradient(to top, rgba(255,166,72,.13) 0%, rgba(198,118,66,.09) 14%, rgba(122,88,134,.06) 32%, transparent 54%)",
+      elevAirStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + (this._tonight() === 24 ? 0 : ev.air) + ";background:radial-gradient(78% 38% at 50% 106%, rgba(255,198,116,.19), transparent 62%), linear-gradient(to top, rgba(255,166,72,.13) 0%, rgba(198,118,66,.09) 14%, rgba(122,88,134,.06) 32%, transparent 54%)",
       starDimStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ev.sd,
       elevGroundStyle: "position:absolute;left:0;right:0;bottom:0;pointer-events:none;transition:height 1.6s ease, opacity 1.6s ease;height:" + ev.gh + "px;opacity:" + (this._tonight() === 24 ? ev.go * .35 : ev.go) + ";background:linear-gradient(to top, #090603 0%, #0C0805 58%, rgba(62,44,24,.9) 100%)",
       elevRimStyle: "position:absolute;left:0;right:0;height:1px;pointer-events:none;transition:bottom 1.6s ease, opacity 1.6s ease;bottom:" + ev.gh + "px;opacity:" + (this._tonight() === 24 ? 0 : ev.go) + ";background:linear-gradient(to right, transparent, rgba(255,190,120,.4) 22%, rgba(255,214,150,.62) 50%, rgba(255,190,120,.4) 78%, transparent)",
       elevDayStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : ev.day) + ";background:radial-gradient(10% 17% at 74% 71%, rgba(255,240,198,.9), rgba(255,208,120,.38) 42%, transparent 72%), linear-gradient(to top, rgba(255,206,128,.30) 0%, rgba(210,160,108,.20) 26%, rgba(134,126,162,.15) 58%, rgba(98,106,150,.12) 100%)",
-      elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + (this._tonight() === 25 ? 0 : ev.wo) + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.24), 0 -4px 18px rgba(255,198,116,.26)",
+      elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : ev.wo) + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.24), 0 -4px 18px rgba(255,198,116,.26)",
       ...((f => {
         if (!f) return { countFxOn: false, cfLights: [], cfOrbYou: "display:none", cfOrbSky: "display:none", cfYouN: "", cfSkyN: "", cfWrapStyle: "", cfBoomOn: false, cfFlash: "", cfRing: "", cfSparks: [], cfStamp: "", cfStampT: "", cfVeil: "", cfVerdictT: "", cfVerdictStyle: "", cfStampNumStyle: "" };
         const L = st.slots.length, edge = 466 - (L * 86 + (L - 1) * 5) / 2, mx = 466, my = 200;
@@ -9078,13 +9339,13 @@ class Component extends DCLogic {
       edWallRStyle: "position:absolute;right:0;top:0;width:250px;height:430px;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 3) + ";transition:transform 1.6s ease, opacity 1.6s ease;transform:translate(" + (ev.e * 26) + "px," + (ev.e * 150) + "px);opacity:" + [1, 1, .9, .45, .12, 0, 0, 0, 0][ev.e] * (this._tonight() === 26 ? 0 : 1),
       edOverStyle: "position:absolute;left:0;right:0;top:0;height:150px;pointer-events:none;transition:transform 1.6s ease, opacity 1.6s ease;transform:translateY(" + ev.e * 185 + "px);opacity:" + [1, .8, .3, 0, 0, 0, 0, 0, 0][ev.e],
       edDuskStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + (this._tonight() === 24 ? 0 : 1) * this._hw() * [0, .5, .9, .62, .32, .12, 0, 0, 0][ev.e] + ";background:linear-gradient(to top, rgba(196,92,66,.16) 0%, rgba(186,84,110,.13) 22%, rgba(122,66,134,.09) 46%, transparent 68%)",
-      edColdStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + Math.min(1, this._hc() + [0, 0, 0, .18, .34, .5, .64, .74, .82][ev.e]) + ";background:linear-gradient(to bottom, rgba(24,36,84,.34) 0%, rgba(30,46,98,.2) 26%, rgba(52,88,150,.07) 52%, transparent 74%)",
+      edColdStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + (this._tonight() === 24 ? 0 : Math.min(1, this._hc() + [0, 0, 0, .18, .34, .5, .64, .74, .82][ev.e])) + ";background:linear-gradient(to bottom, rgba(24,36,84,.34) 0%, rgba(30,46,98,.2) 26%, rgba(52,88,150,.07) 52%, transparent 74%)",
       edMilkyStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .1, .3, .58, .85][ev.e] + ";background:linear-gradient(118deg, transparent 30%, rgba(242,234,214,.05) 43%, rgba(242,234,214,.11) 50%, rgba(170,190,255,.07) 57%, transparent 70%)" + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
       edStars2Style: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, .12, .28, .5, .75, 1][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
-      edAuroraStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .15, .5, .8, .4][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
+      edAuroraStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .15, .5, .8, .4][ev.e] + ([10, 18, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
       edGridStyle: "position:absolute;left:0;right:0;bottom:0;height:120px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + ev.e * 9 + "px);opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : 1) * this._hg() * [.4, .55, .65, .68, .56, .38, .18, 0, 0][ev.e], // no city windows in the tents' desert
       ...this._hourStyles(ev),
-      districtOn: [1, 2, 3, 4, 5, 10, 12, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) < 0,
+      districtOn: [1, 2, 3, 4, 5, 6, 10, 12, 15, 18, 19, 21, 22, 23, 24, 25, 26, 27, 28].indexOf(this._tonight()) < 0,
       // ONE copy of the ridge, in the stage's art region, which is mounted behind the menu as well as the
       // board. do not clone it per surface: both regions paint at once and the layers compound.
       heartOn: this._tonight() === 18,
@@ -9567,7 +9828,7 @@ class Component extends DCLogic {
       })(this._tonight() === 21),
       ...((() => {
         const hI = this._hush();
-        if (hI < 0 || !(st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb")) return { hushOn: false, hushStyle: "display:none", hushRingStyle: "opacity:0", hushLit: false };
+        if (hI < 0 || this._tonight() === 15 || !(st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb")) return { hushOn: false, hushStyle: "display:none", hushRingStyle: "opacity:0", hushLit: false }; // m15 carries its own tell (the cloth), not the district's fountain
         const Lh = (st.slots || []).length || 9, eh = 466 - (Lh * 86 + (Lh - 1) * 5) / 2, xh = eh + hI * 91 + 43;
         return { hushOn: true, hushLit: !!(st.slots || [])[hI],
           hushStyle: "position:absolute;left:" + (xh - 62) + "px;top:132px;width:124px;height:116px;pointer-events:none;z-index:1;transition:opacity .8s ease;opacity:" + ((st.slots || [])[hI] ? .9 : .5),
@@ -9870,6 +10131,232 @@ class Component extends DCLogic {
           cgHouseStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
         };
       })(this._tonight() === 1, this._horizon(ev.e)),
+      smOn: this._tonight() === 6,
+      vlOn: this._tonight() === 15,
+      vdOn: this._tonight() === 24,
+      // ═══ THE ROOM WITH NOTHING IN IT (8 sep 2026, user "1c full send" from Manzil - Void Level Directions) ═══
+      // m24, Saʿd al-Suʿūd, THE VOID — β Aqr SADALSUUD, the luck of lucks ("everything frozen melts"); Śatabhiṣā, the
+      // hundred physicians, symbol an empty circle; 虛 Xū, EMPTINESS, animal the RAT. Its law is the empty
+      // circle (the middle counts two, its right one less). The level is Xū taken at its word: NO SCENE. A
+      // black field, Sadalsuud alone, and per rung LESS — the last stars go out one by one, the ground line
+      // fades, the horizon goes — until at the boss there is the star, the board, and nothing else. The
+      // ARENA RULE HOLDS: the board's own chrome is untouched; only the backdrop empties. The tell rides the
+      // slot map: the law station glows Sadalsuud gold (the avatar glow), its right-hand neighbour is the
+      // darkest card on the board (brightness .55). The old TON 618 black-hole art (voidOn) is dormant.
+      ...((t24, H) => {
+        if (!t24) return { vdDeepStyle: "display:none", vdSceneStyle: "display:none", vdScene: null };
+        const e = ev.e, o = e / 8, hide = this._inPlay() ? .46 : 1, boss = !!st.roadBoss && e >= 8;
+        const HZ = H.bottom, hy = 430 - HZ;
+        const R = (n) => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+        const f = [];
+        // the last stars: 40 at the foot, going out one by one as you climb; none at the boss
+        const nS = boss ? 0 : Math.round(40 * (1 - o));
+        for (let k = 0; k < nS; k++) f.push("<circle cx='" + (R(k + 10) * 932).toFixed(1) + "' cy='" + (R(k + 60) * (hy - 20)).toFixed(1) + "' r='" + (.5 + R(k) * .6).toFixed(1) + "' fill='rgba(234,240,255," + ((.2 + R(k + 3) * .3) * (1 - o * .6)).toFixed(2) + ")'/>");
+        // the ground line, fading; the horizon goes by mid-climb
+        if (!boss) f.push("<path d='M0 " + hy + " H932' fill='none' stroke='rgba(200,190,168," + (.22 * (1 - o)).toFixed(3) + ")' stroke-width='1'/>");
+        if (o < .5) f.push("<rect x='0' y='" + hy + "' width='932' height='" + (430 - hy) + "' fill='rgba(14,14,20," + (.5 * (1 - o * 2)).toFixed(3) + ")'/>");
+        // SADALSUUD, alone, breathing; larger and warmer the emptier it gets
+        const sx = 466, sy = Math.max(40, hy * .32), sr = 2.4 + o * 2.2;
+        f.push("<circle cx='" + sx + "' cy='" + sy.toFixed(1) + "' r='" + (sr * 14).toFixed(1) + "' fill='rgba(244,227,166,.06)' style='animation:mzVoidHalo 6s ease-in-out infinite;transform-origin:" + sx + "px " + sy.toFixed(1) + "px;transform-box:view-box'/>");
+        f.push("<circle cx='" + sx + "' cy='" + sy.toFixed(1) + "' r='" + (sr * 4).toFixed(1) + "' fill='rgba(244,227,166,.14)'/>");
+        f.push("<circle cx='" + sx + "' cy='" + sy.toFixed(1) + "' r='" + sr.toFixed(1) + "' fill='#F4E3A6' style='animation:mzVoidStar 6s ease-in-out infinite;transform-origin:" + sx + "px " + sy.toFixed(1) + "px;transform-box:view-box'/>");
+        // the empty circle, drawn once on the ground under the middle, faint, only while there is ground to draw it on
+        if (o < .75) f.push("<ellipse cx='466' cy='" + (hy + (430 - hy) * .4).toFixed(0) + "' rx='" + (30 + o * 60).toFixed(0) + "' ry='" + (8 + o * 14).toFixed(0) + "' fill='none' stroke='rgba(244,227,166," + (.16 * (1 - o / .75)).toFixed(3) + ")' stroke-width='1'/>");
+        return {
+          vdScene: React.createElement("g", { dangerouslySetInnerHTML: { __html: f.join("") } }),
+          vdDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:#020204;opacity:" + hide,
+          vdSceneStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
+        };
+      })(this._tonight() === 24, this._horizon(ev.e)),
+      // ═══ THE HEM OF THE ROBE (8 sep 2026, user "1a full send" from Manzil - Veil Level Directions) ═══
+      // m15, al-Ghafr, THE COVER — ι κ λ Vir, three faint stars at the hem of the Virgin's robe, praised for
+      // being faint. Svātī / Arcturus / Vāyu. 亢 Kàng the neck, animal the DRAGON. Its law is the hush at a second
+      // address, read here as COVER: the sky is a hanging cloth whose hem LOWERS per rung toward the road (the
+      // storm's roof inverted — a curtain descending, not a hole opening). The three faint stars are woven on
+      // the hem. Below: a dressing-ground — drying-lines with sheets, folded stacks, a lidded vat — everything
+      // covered. ARCTURUS burns warm through the weave, top right, the one light that shows through cloth. At
+      // the boss the hem hangs just above the station row. The tell rides the slot map (coverOn/coverStyle):
+      // a tongue of cloth drops over each hushed neighbour. Slid window; no moon.
+      ...((t15, H) => {
+        if (!t15) return { vlDeepStyle: "display:none", vlSceneStyle: "display:none", vlScene: null };
+        const e = ev.e, o = e / 8, hide = this._inPlay() ? .46 : 1, boss = !!st.roadBoss && e >= 8;
+        const HZ = H.bottom, hy = 430 - HZ;
+        const R = (n) => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+        const f = [];
+        f.push("<defs><linearGradient id='vlRobe' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#0E141C'/><stop offset='.7' stop-color='#161E28'/><stop offset='1' stop-color='#1C2632'/></linearGradient><linearGradient id='vlGround' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='rgba(22,28,36,.6)'/><stop offset='1' stop-color='rgba(30,36,46,.35)'/></linearGradient><radialGradient id='vlArc' cx='.5' cy='.5' r='.5'><stop offset='0' stop-color='rgba(255,184,112,.5)'/><stop offset='.4' stop-color='rgba(255,184,112,.12)'/><stop offset='1' stop-color='rgba(255,184,112,0)'/></radialGradient></defs>");
+        // ── the sky behind the robe: a few real stars, dim (the robe covers most of them)
+        for (let k = 0; k < 26; k++) f.push("<circle cx='" + (R(k + 10) * 932).toFixed(1) + "' cy='" + (R(k + 60) * hy).toFixed(1) + "' r='" + (.5 + R(k) * .6).toFixed(1) + "' fill='rgba(234,240,255," + (.25 + R(k + 3) * .3).toFixed(2) + ")'/>");
+        // ── THE ROBE: the hem lowers per rung. hemY = where the cloth's bottom edge sits; the hem is a slow wave
+        const hemY = boss ? hy - 26 : 40 + o * (hy - 90);
+        const amp = 14 + o * 10, seg = 116;
+        let hem = "M-20 -40 H952 V" + (hemY - amp).toFixed(1);
+        for (let x = 952; x > -20; x -= seg) hem += " q" + (-seg / 2) + " " + (amp * 2 * (((x / seg) | 0) % 2 ? 1 : -1) * .5 + amp).toFixed(1) + " " + (-seg) + " 0";
+        hem += " Z";
+        f.push("<g style='animation:mzHemSway " + (11 + o * 3).toFixed(1) + "s ease-in-out infinite;transform-origin:466px 0px;transform-box:view-box'>");
+        f.push("<path d='" + hem + "' fill='url(#vlRobe)' stroke='rgba(200,206,236,.22)' stroke-width='1.2'/>");
+        // weave: faint diagonal threads across the cloth
+        let wv = ""; for (let k = -6; k < 20; k++) wv += "M" + (k * 60) + " -40 L" + (k * 60 + hemY + 60).toFixed(0) + " " + (hemY + 20).toFixed(0) + " ";
+        f.push("<path d='" + wv + "' fill='none' stroke='rgba(200,206,236,.05)' stroke-width='1'/>");
+        // hanging folds: vertical shadow bands
+        for (let k = 0; k < 9; k++) { const fx = 40 + k * 106 + R(k + 90) * 30; f.push("<path d='M" + fx + " -40 q" + (R(k) * 30 - 15).toFixed(0) + " " + (hemY * .5).toFixed(0) + " " + (R(k + 1) * 24 - 12).toFixed(0) + " " + (hemY + 10).toFixed(0) + "' fill='none' stroke='rgba(6,10,16," + (.25 + R(k + 5) * .25).toFixed(2) + ")' stroke-width='" + (10 + R(k + 7) * 16).toFixed(0) + "' stroke-linecap='round'/>"); }
+        // the hem's embroidered edge
+        f.push("<path d='" + hem.replace("M-20 -40 H952 V", "M952 ").replace(" Z", "") + "' fill='none' stroke='rgba(240,216,154,.2)' stroke-width='1.4' stroke-dasharray='6 4'/>");
+        // AL-GHAFR: three faint stars woven ON the hem, over the middle; never brighter than .42
+        [[-52, 6], [0, 12], [52, 6]].forEach((p, k) => f.push("<circle cx='" + (466 + p[0]) + "' cy='" + (hemY - amp - 26 + p[1]).toFixed(1) + "' r='1.6' fill='#EAF0FF' style='animation:mzFaintStar " + (4.5 + k * .7) + "s ease-in-out " + (k * .9) + "s infinite'/>"));
+        // ARCTURUS through the weave, top right: warm, the one light that shows through cloth
+        const ax = 466 + 250, ay = Math.max(28, hemY * .35);
+        f.push("<circle cx='" + ax + "' cy='" + ay.toFixed(1) + "' r='" + (30 + o * 26).toFixed(0) + "' fill='url(#vlArc)'/><circle cx='" + ax + "' cy='" + ay.toFixed(1) + "' r='" + (2.6 + o * 1.4).toFixed(1) + "' fill='#FFB870'/>");
+        f.push("</g>");
+        // ── THE GROUND: a dressing-yard. drying-lines with sheets either side, folded stacks, a lidded vat, the dragon under a cover along the far side
+        f.push("<rect x='0' y='" + hy + "' width='932' height='" + (430 - hy) + "' fill='url(#vlGround)'/>");
+        const ys = 1 + o * .9;
+        // drying-lines (sway), sheets hanging; they grow as you approach
+        [[120, -1], [812, 1]].forEach((L, li) => {
+          const lx = L[0] + L[1] * (1 - o) * 90, ly = hy - 30 * ys;
+          f.push("<g style='animation:mzLineSway " + (6 + li * 1.3) + "s ease-in-out infinite;transform-origin:" + lx + "px " + hy + "px;transform-box:view-box'>");
+          f.push("<path d='M" + (lx - 120 * ys).toFixed(0) + " " + ly.toFixed(0) + " Q" + lx + " " + (ly + 8).toFixed(0) + " " + (lx + 120 * ys).toFixed(0) + " " + ly.toFixed(0) + "' fill='none' stroke='rgba(200,190,168,.35)' stroke-width='1'/>");
+          f.push("<path d='M" + (lx - 120 * ys).toFixed(0) + " " + ly.toFixed(0) + " V" + hy + " M" + (lx + 120 * ys).toFixed(0) + " " + ly.toFixed(0) + " V" + hy + "' fill='none' stroke='rgba(200,190,168,.4)' stroke-width='1.4'/>");
+          for (let k = 0; k < 3; k++) { const sx = lx - 90 * ys + k * 70 * ys, sw = 44 * ys, sh = (26 + R(k + li * 9) * 14) * ys; f.push("<path d='M" + sx.toFixed(0) + " " + (ly + 3).toFixed(0) + " h" + sw.toFixed(0) + " v" + sh.toFixed(0) + " q-" + (sw / 2).toFixed(0) + " 6 -" + sw.toFixed(0) + " 0 z' fill='" + (k === 1 ? "#DDD4C2" : "#1A222C") + "' stroke='rgba(200,206,236,.3)' stroke-width='1'/>"); }
+          f.push("</g>");
+        });
+        // folded stacks and the vat, near the road
+        const gy = hy + (430 - hy) * .5;
+        for (let k = 0; k < 5; k++) { const sx = 60 + k * 190 + R(k + 200) * 40, sh = (8 + k % 3 * 4) * ys; if (Math.abs(sx - 466) < 160) continue; for (let j = 0; j < 4 + (k % 3); j++) f.push("<rect x='" + sx.toFixed(0) + "' y='" + (gy - j * sh * .9).toFixed(1) + "' width='" + (36 * ys).toFixed(0) + "' height='" + (sh * .8).toFixed(1) + "' rx='1.5' fill='" + (j % 2 ? "#1A222C" : "#222C38") + "' stroke='rgba(200,206,236,.22)' stroke-width='.8'/>"); }
+        const vx = 760 + (1 - o) * 60, vr = 22 * ys;
+        f.push("<path d='M" + (vx - vr).toFixed(0) + " " + (gy + 10).toFixed(0) + " q0 -" + (vr * 1.4).toFixed(0) + " " + vr.toFixed(0) + " -" + (vr * 1.4).toFixed(0) + " q" + vr.toFixed(0) + " 0 " + vr.toFixed(0) + " " + (vr * 1.4).toFixed(0) + " z' fill='#141C24' stroke='rgba(200,206,236,.35)' stroke-width='1'/><ellipse cx='" + vx.toFixed(0) + "' cy='" + (gy + 10 - vr * 1.4).toFixed(0) + "' rx='" + (vr + 3).toFixed(0) + "' ry='" + (vr * .28).toFixed(1) + "' fill='#222C38' stroke='rgba(200,206,236,.4)' stroke-width='1'/>");
+        // THE DRAGON UNDER A COVER: a long draped shape along the far side, coils showing where the cloth slips; the neck rises at the middle
+        const dy = hy + 6, dl = 160 + o * 220;
+        let dp = "M" + (466 - dl).toFixed(0) + " " + (dy + 12 * ys).toFixed(0); for (let k = 0; k < 6; k++) dp += " q" + (dl / 6).toFixed(0) + " -" + ((k % 2 ? 22 : 10) * ys).toFixed(0) + " " + (dl / 3).toFixed(0) + " 0"; dp += " V" + (dy + 14 * ys).toFixed(0) + " Z";
+        f.push("<g style='animation:mzClothFold 5s ease-in-out infinite'><path d='" + dp + "' fill='#141C24' stroke='rgba(200,206,236,.4)' stroke-width='1'/>");
+        for (let k = 0; k < 3; k++) { const cx = 466 - dl * .6 + k * dl * .5; f.push("<path d='M" + cx.toFixed(0) + " " + (dy + 12 * ys).toFixed(0) + " q6 -" + (9 * ys).toFixed(0) + " 16 -" + (7 * ys).toFixed(0) + " q8 2 8 " + (7 * ys).toFixed(0) + " z' fill='#0E1A18' stroke='rgba(79,168,154,.7)' stroke-width='1'/>"); }
+        f.push("</g>");
+        return {
+          vlScene: React.createElement("g", { dangerouslySetInnerHTML: { __html: f.join("") } }),
+          vlDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:linear-gradient(180deg,#080C12 0%,#0E141C " + (100 - (HZ / 430) * 100 - 6).toFixed(0) + "%,#1A222C " + (100 - (HZ / 430) * 100).toFixed(0) + "%,#222A34 100%);opacity:" + hide,
+          vlSceneStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
+        };
+      })(this._tonight() === 15, this._horizon(ev.e)),
+      // ═══ THE EYE OF THE STORM (7 sep 2026, user "1a full send" from Manzil - Storm Level Directions) ═══
+      // m6, al-Hanʿa, THE STORM — the brand on the camel's neck, γ/ξ Gem, determinant ALHENA, a rain-bringing
+      // nawʾ. India: Ārdrā, the moist one, Betelgeuse, Rudra the howler who is asked not to strike. China: 參
+      // Shēn, Orion's three, animal the APE. Its law is THE EYE: at the crossing the leader's tie takes nothing.
+      //
+      // The road walks INTO a storm. At the foot: open ground, a cloud bank on the horizon lit from inside,
+      // rain slanting across the sky, lightning far off. Per rung two CLOUD FLANKS close in from the frame
+      // edges (the well's sliding walls turned into weather), the rain thickens and speeds, gusts cross the
+      // ground, puddles ripple. The rain never falls on the middle station: a gap in every sheet, widening
+      // as the eye nears. From mid-climb the cloud ROOF opens a hole overhead and the only stars of the
+      // night appear in it — Betelgeuse red and huge, Alhena, Orion's three. At the boss you stand in the
+      // EYE: no rain at all, the flanks a full ring, the stars in the puddles. Lightning is driven by
+      // _stormArm (st.smBolt/smBoltX): flash + bolt, thunder late when far and at once when near. The tell
+      // (st.eyeFx): every rain sheet and both flanks FREEZE for the held breath, a ring breathes out over
+      // the middle station, and then it all resumes. Slid window: the storm at the crossing on tiger ground.
+      ...((t6, H) => {
+        if (!t6) return { smDeepStyle: "display:none", smSceneStyle: "display:none", smScene: null, smFlashStyle: "display:none", smFlashHiStyle: "display:none", smGlassStyle: "display:none", smGlass: null, smHoldOn: false, smHoldStyle: "display:none", smHoldRing: "", smHoldWord: "" };
+        const e = ev.e, o = e / 8, hide = this._inPlay() ? .46 : 1, boss = !!st.roadBoss && e >= 8;
+        // THE STORM ANSWERS THE MATCH (7 sep 2026): every board she takes brings the flanks a stride closer
+        // and a lantern already out keeps them there; every board you take opens the hole overhead wider.
+        const rwS = (st.roundWins || []).filter(x => x === "sky").length, rwY = (st.roundWins || []).filter(x => x === "you").length;
+        const surge = Math.min(3, rwS + (this._lifeCap() - this._lives())), lift = Math.min(3, rwY);
+        const HZ = H.bottom, hy = 430 - HZ;
+        const lawOn = this._bossRule() === "eye";
+        const held = !!st.eyeFx && lawOn && this._inPlay();
+        const eye = boss;
+        const ps = held ? ";animation-play-state:paused" : "";
+        const R = (n) => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+        const f = [];
+        const A = (d, fill, s, w, extra) => f.push("<path d='" + d + "' fill='" + fill + "' stroke='" + s + "' stroke-width='" + w + "'" + (extra || "") + "/>");
+        // ── THE ROOF: the whole sky is cloud; from mid-climb a hole opens over the middle and the stars are in it
+        const rx = (eye ? 236 : Math.max(0, o - .45) * 360) + (o > .45 || eye ? lift * 22 : 0), ry = rx * .42, hcy = Math.max(30, hy * .3);
+        const roof = "M0 0 H932 V" + (hy + 30).toFixed(0) + " H0 Z" + (rx > 2 ? " M" + (466 - rx).toFixed(1) + " " + hcy.toFixed(1) + " a" + rx.toFixed(1) + " " + ry.toFixed(1) + " 0 1 0 " + (2 * rx).toFixed(1) + " 0 a" + rx.toFixed(1) + " " + ry.toFixed(1) + " 0 1 0 " + (-2 * rx).toFixed(1) + " 0 Z" : "");
+        // the stars, under the roof so the hole reveals them
+        const starA = eye ? 1 : Math.min(1, Math.max(0, (o - .5) * 2.2));
+        if (starA > 0) {
+          f.push("<g opacity='" + starA.toFixed(2) + "'>");
+          const bR = 3 + o * 3, bxs = 466 - 118, bys = hcy - 6;
+          f.push("<circle cx='" + bxs + "' cy='" + bys.toFixed(1) + "' r='" + (bR * 6).toFixed(1) + "' fill='rgba(255,122,74," + (.06 + o * .06).toFixed(2) + ")'/>");
+          f.push("<circle cx='" + bxs + "' cy='" + bys.toFixed(1) + "' r='" + bR.toFixed(1) + "' fill='#FF7A4A' style='animation:mzRedStar 4.2s ease-in-out infinite;transform-origin:" + bxs + "px " + bys.toFixed(1) + "px;transform-box:view-box'/>");
+          f.push("<circle cx='" + (466 + 92).toFixed(0) + "' cy='" + (hcy + 4).toFixed(1) + "' r='2' fill='#F4F6FF'/><circle cx='" + (466 + 92).toFixed(0) + "' cy='" + (hcy + 4).toFixed(1) + "' r='7' fill='rgba(244,246,255,.1)'/>");
+          [[-40, 26], [-14, 22], [12, 18]].forEach(p => f.push("<circle cx='" + (466 + p[0]) + "' cy='" + (hcy + p[1]).toFixed(1) + "' r='1.5' fill='#EAF0FF'/>"));
+          for (let k = 0; k < 22; k++) { const ax = 466 + (R(k + 300) - .5) * rx * 1.9, ay = hcy + (R(k + 400) - .5) * ry * 1.8; f.push("<circle cx='" + ax.toFixed(1) + "' cy='" + ay.toFixed(1) + "' r='" + (.6 + R(k + 500) * .7).toFixed(1) + "' fill='rgba(244,246,255," + (.4 + R(k) * .5).toFixed(2) + ")'/>"); }
+          f.push("</g>");
+        }
+        f.push("<defs><linearGradient id='smUnder' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='rgba(150,162,224,0)'/><stop offset='1' stop-color='rgba(150,162,224," + (.12 + o * .08).toFixed(2) + ")'/></linearGradient><linearGradient id='smGround' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='rgba(24,28,40,.55)'/><stop offset='1' stop-color='rgba(40,44,60,.3)'/></linearGradient><radialGradient id='smEyeG' cx='.5' cy='.5' r='.5'><stop offset='0' stop-color='rgba(244,246,255," + (eye ? .1 : .05).toFixed(2) + ")'/><stop offset='1' stop-color='rgba(244,246,255,0)'/></radialGradient></defs>");
+        A(roof, "rgba(9,11,18,.94)", "none", 0, " fill-rule='evenodd'");
+        // cloud bellies: soft lighter bands across the roof, the way a storm ceiling catches light from below
+        for (let k = 0; k < 5; k++) { const yy = 10 + k * (hy / 5), amp = 10 + R(k + 40) * 14; A("M0 " + yy.toFixed(0) + " q233 " + amp.toFixed(0) + " 466 0 t466 0 v" + (hy / 5 * .6).toFixed(0) + " H0 Z", "rgba(150,162,224," + (.025 + R(k) * .02).toFixed(3) + ")", "none", 0); }
+        // lit underside at the horizon
+        f.push("<rect x='0' y='" + (hy - 46).toFixed(0) + "' width='932' height='46' fill='url(#smUnder)'/>");
+        // ── THE FAR WALL on the horizon, tallest at the foot and swallowed by the flanks as they close
+        const wallH = Math.max(0, 26 + o * 24 - o * o * 36);
+        if (wallH > 2) A("M0 " + hy + " V" + (hy - wallH).toFixed(1) + " q120 -" + (wallH * .5).toFixed(1) + " 233 0 t233 0 t233 0 t233 0 V" + hy + " Z", "rgba(12,14,22,.96)", "rgba(150,162,224,.14)", 1);
+        // ── THE CLOUD FLANKS closing from both frame edges; a full ring at the boss
+        const xi = eye ? 226 : Math.max(-60, 560 - o * 330 - surge * 38);
+        [-1, 1].forEach(d => {
+          const g = (v) => (466 + d * v).toFixed(1);
+          const bul = 26 + o * 30;
+          const dPath = "M" + g(xi) + " 0 q" + (d * -bul).toFixed(1) + " " + (hy * .18).toFixed(1) + " 0 " + (hy * .36).toFixed(1) + " t" + (d * -bul * .6).toFixed(1) + " " + (hy * .34).toFixed(1) + " q" + (d * bul * .5).toFixed(1) + " " + (hy * .2).toFixed(1) + " " + (d * -bul * .8).toFixed(1) + " " + (hy * .3 + 40).toFixed(1) + " L" + (d < 0 ? -40 : 972) + " " + (hy + 40).toFixed(0) + " V0 Z";
+          f.push("<g style='animation:" + (d < 0 ? "mzStormWallL" : "mzStormWallR") + " " + (9 + o * 2).toFixed(1) + "s ease-in-out infinite" + ps + "'>");
+          A(dPath, "rgba(8,10,16,.97)", "rgba(150,162,224," + (.12 + o * .1).toFixed(2) + ")", 1.2);
+          // the flank's lit inner rim
+          A("M" + g(xi - 6) + " 0 q" + (d * -bul).toFixed(1) + " " + (hy * .18).toFixed(1) + " 0 " + (hy * .36).toFixed(1) + " t" + (d * -bul * .6).toFixed(1) + " " + (hy * .34).toFixed(1), "none", "rgba(150,162,224," + (.05 + o * .06).toFixed(2) + ")", 6);
+          f.push("</g>");
+        });
+        // ── THE GROUND, wet; the still place under the middle station brighter
+        f.push("<rect x='0' y='" + hy + "' width='932' height='" + (430 - hy) + "' fill='url(#smGround)'/>");
+        f.push("<ellipse cx='466' cy='" + (hy + (430 - hy) * .45).toFixed(0) + "' rx='" + (60 + o * 200).toFixed(0) + "' ry='" + (20 + o * 70).toFixed(0) + "' fill='url(#smEyeG)'/>");
+        // puddles, rippling while it rains, holding the stars in the eye
+        const pn = Math.round(6 + o * 12);
+        for (let k = 0; k < pn; k++) {
+          const px = R(k + 700) * 932, py = hy + 8 + R(k + 800) * (430 - hy - 16), prx = (8 + R(k + 900) * 26) * (1 + o), pry = prx * .2;
+          f.push("<ellipse cx='" + px.toFixed(1) + "' cy='" + py.toFixed(1) + "' rx='" + prx.toFixed(1) + "' ry='" + pry.toFixed(1) + "' fill='rgba(120,140,190," + (.1 + o * .07).toFixed(2) + ")'/>");
+          if (!eye) f.push("<ellipse cx='" + px.toFixed(1) + "' cy='" + py.toFixed(1) + "' rx='" + prx.toFixed(1) + "' ry='" + pry.toFixed(1) + "' fill='none' stroke='rgba(190,205,235,.3)' stroke-width='1' style='animation:mzRipple " + (1.3 + R(k) * .9).toFixed(2) + "s ease-out " + (R(k + 50) * 1.6).toFixed(2) + "s infinite;transform-origin:" + px.toFixed(1) + "px " + py.toFixed(1) + "px;transform-box:view-box" + ps + "'/>");
+          else if (Math.abs(px - 466) < 240) f.push("<circle cx='" + (px + (R(k) - .5) * prx).toFixed(1) + "' cy='" + (py - 1).toFixed(1) + "' r='1' fill='" + (k % 5 === 0 ? "rgba(255,122,74,.7)" : "rgba(244,246,255,.6)") + "'/>");
+        }
+        // ── THE LIGHTNING: one bolt per _stormArm fire, alternating keyframes so a re-fire restarts
+        const bolt = st.smBolt || 0, bxr = st.smBoltX || 300;
+        if (bolt > 0 && (!eye || Math.abs(bxr - 466) > 280)) {
+          let bd = "M" + bxr + " 0", x = bxr, y = 0; const segs = 7, endY = hy - 8;
+          for (let k = 1; k <= segs; k++) { x += (R(bolt * 31 + k) - .5) * 54; y = (endY / segs) * k; bd += " L" + x.toFixed(1) + " " + y.toFixed(1); if (k === 3) bd += " l" + ((R(bolt + k) - .5) * 40).toFixed(1) + " 26 M" + x.toFixed(1) + " " + y.toFixed(1); }
+          const ba = (bolt % 2 ? "mzBoltA" : "mzBoltB") + " " + (eye ? "1.1s" : ".75s") + " ease-out both";
+          f.push("<g style='animation:" + ba + "'><path d='" + bd + "' fill='none' stroke='rgba(200,214,255," + (eye ? .18 : .32) + ")' stroke-width='7' stroke-linejoin='round'/><path d='" + bd + "' fill='none' stroke='#EAF0FF' stroke-width='" + (eye ? 1.2 : 2) + "' stroke-linejoin='round'/></g>");
+        }
+        // ── THE RAIN: three sheets, near/mid/far, each one path, 60px-periodic in y so the fall loops seamlessly;
+        // a gap over the middle station that widens toward the eye; none at all inside it
+        if (!eye) {
+          const gap = 30 + o * 66;
+          [[.42, 1.1, 14, 62], [.68, .9, 11, 54], [1.05, .7, 8, 46]].forEach((sh, gi) => {
+            let d = ""; const n = Math.round(sh[3] * (.55 + o * .75));
+            for (let k = 0; k < n; k++) { const x0 = R(k + gi * 1000) * 932, y0 = R(k * 3 + gi * 77) * 60; if (Math.abs(x0 - 466) < gap) continue; const ln = sh[2] * (.8 + R(k + 9) * .5); for (let rep = -1; rep < 8; rep++) d += "M" + x0.toFixed(1) + " " + (y0 + rep * 60).toFixed(1) + "l" + (-ln * .22).toFixed(1) + " " + ln.toFixed(1); }
+            f.push("<path d='" + d + "' fill='none' stroke='rgba(190,205,235," + (.1 + o * .16 + (2 - gi) * .05).toFixed(2) + ")' stroke-width='" + sh[1] + "' stroke-linecap='round' style='animation:mzRainFall " + sh[0] + "s linear infinite" + ps + "'/>");
+          });
+          // gusts along the ground: torn grass and leaf crossing right to left
+          for (let k = 0; k < 4; k++) { const gy = hy + 10 + R(k + 60) * (430 - hy - 30), gx = 300 + R(k + 61) * 700; f.push("<path d='M" + gx.toFixed(0) + " " + gy.toFixed(0) + " q14 -4 30 -1 q10 3 22 -2' fill='none' stroke='rgba(200,190,168,.32)' stroke-width='1.2' style='animation:mzGust " + (1.6 + R(k) * 1.2).toFixed(2) + "s linear " + (R(k + 7) * 3).toFixed(2) + "s infinite" + ps + "'/>"); }
+        }
+        const tint = eye ? "#0A0C14" : "#0C0E18";
+        // RAIN ON THE GLASS (7 sep 2026): in play, a sparse slow sheet and running beads ABOVE the board, as if
+        // the arena were seen through a wet pane; gone in the eye
+        let glass = "";
+        if (!eye && this._inPlay()) {
+          let gd = ""; const gn = Math.round(14 + o * 16);
+          for (let k = 0; k < gn; k++) { const x0 = R(k + 5000) * 932, y0 = R(k + 5100) * 60; const ln = 18 + R(k + 5200) * 16; for (let rep = -1; rep < 8; rep++) gd += "M" + x0.toFixed(1) + " " + (y0 + rep * 60).toFixed(1) + "l" + (-ln * .18).toFixed(1) + " " + ln.toFixed(1); }
+          glass += "<path d='" + gd + "' fill='none' stroke='rgba(200,214,240,.16)' stroke-width='1.4' stroke-linecap='round' style='animation:mzRainFall .34s linear infinite" + ps + "'/>";
+          for (let k = 0; k < 7; k++) { const bx = R(k + 6000) * 932, by = R(k + 6100) * 260; glass += "<ellipse cx='" + bx.toFixed(1) + "' cy='" + by.toFixed(1) + "' rx='1.6' ry='4' fill='rgba(214,226,250,.42)' style='animation:mzDropRun " + (3.2 + R(k + 6200) * 3).toFixed(2) + "s ease-in " + (R(k + 6300) * 5).toFixed(2) + "s infinite" + ps + "'/>"; }
+        }
+        return {
+          smScene: React.createElement("g", { dangerouslySetInnerHTML: { __html: f.join("") } }),
+          smDeepStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;background:linear-gradient(180deg,#05060B 0%," + tint + " " + (100 - (HZ / 430) * 100 - 6).toFixed(0) + "%,#14161E " + (100 - (HZ / 430) * 100).toFixed(0) + "%,#1A1B22 100%);opacity:" + hide,
+          smSceneStyle: "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";transition:opacity 1.7s ease;opacity:" + (boss ? Math.min(1, hide + .3).toFixed(2) : hide),
+          smFlashStyle: bolt > 0 ? "position:absolute;inset:0;pointer-events:none;z-index:" + (this._inPlay() ? 0 : 1) + ";background:radial-gradient(60% 70% at " + (bxr / 932 * 100).toFixed(0) + "% 20%, rgba(200,214,255," + (eye ? .16 : .34 * (.5 + o * .5)).toFixed(2) + "), transparent);animation:" + (bolt % 2 ? "mzStormFlashA" : "mzStormFlashB") + " .8s ease-out both" : "display:none",
+          smFlashHiStyle: bolt > 0 && this._inPlay() ? "position:absolute;inset:0;pointer-events:none;z-index:8;background:linear-gradient(180deg, rgba(200,214,255," + (eye ? .06 : .16).toFixed(2) + "), rgba(200,214,255,0) 55%), radial-gradient(40% 30% at " + (bxr / 932 * 100).toFixed(0) + "% 0%, rgba(230,238,255," + (eye ? .08 : .22).toFixed(2) + "), transparent);mix-blend-mode:screen;animation:" + (bolt % 2 ? "mzStormFlashA" : "mzStormFlashB") + " .8s ease-out both" : "display:none",
+          smGlassStyle: glass ? "position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;opacity:.9" : "display:none",
+          smGlass: glass ? React.createElement("g", { dangerouslySetInnerHTML: { __html: glass } }) : null,
+          smHoldOn: held,
+          smHoldStyle: "position:absolute;left:0;right:0;top:143px;height:0;pointer-events:none;z-index:7;display:flex;justify-content:center;align-items:center",
+          smHoldRing: "width:180px;height:180px;border-radius:50%;border:2px solid rgba(244,246,255,.7);box-shadow:0 0 18px rgba(244,246,255,.3), inset 0 0 24px rgba(244,246,255,.12);animation:mzEyeBreath 1.4s cubic-bezier(.2,.7,.2,1) both",
+          smHoldWord: "position:absolute;top:96px;font-family:'Karla',sans-serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(244,246,255,.75);text-shadow:0 0 8px rgba(244,246,255,.4);animation:mzEyeStill 1.4s ease both",
+        };
+      })(this._tonight() === 6, this._horizon(ev.e)),
       gsOn: this._tonight() === 3,
       // ═══ THE THRESHING FLOOR (5 sep 2026, user "1a full send" from Manzil - Gathered Stars Level Directions) ═══
       // m3, al-Thurayya, THE GATHERED STARS — the Pleiades, the one cluster every sky names the same.
@@ -10232,8 +10719,8 @@ class Component extends DCLogic {
       hundredBStyle: "position:absolute;inset:0;pointer-events:none;z-index:4;transition:opacity 2s ease;opacity:" + [0, 0, .3, .7, 1, 1, 1, 1, 1][ev.e],
       hundredCStyle: "position:absolute;inset:0;pointer-events:none;z-index:4;transition:opacity 2s ease;opacity:" + [0, 0, 0, 0, .3, .7, 1, 1, 1][ev.e],
       hundredDStyle: "position:absolute;inset:0;pointer-events:none;z-index:4;transition:opacity 2s ease;opacity:" + [0, 0, 0, 0, 0, 0, .35, .75, 1][ev.e],
-      voidOn: this._tonight() === 24,
-      voidSignOn: this._tonight() === 24 && ev.e < 4,
+      voidOn: false, // TON 618 (the pre-law black-hole art, aug 2026) is DORMANT: m24's level is the room with nothing in it (8 sep 2026); markup kept for the codex
+      voidSignOn: false,
       ...this._ton(ev),
       listenerOn: this._tonight() === 22,
       stillCls: this._tonight() === 22 && ev.e < 8 ? "mzStill" : "",
@@ -10247,7 +10734,7 @@ class Component extends DCLogic {
       edWindStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, .1, .3, .55, .78, .45, .1][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
       edSatStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, 0, .25, .7, .95][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
       edShootStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [0, 0, 0, 0, 0, .2, .5, .8, 1][ev.e] + ([10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln
-      edMoonStyle: "position:absolute;left:66%;top:8%;width:58px;height:58px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (8 - ev.e) * 12 + "px);opacity:" + [0, 0, 0, 0, 0, 0, 0, .22, 1][ev.e] + ([4, 10, 18, 23, 25, 26, 27, 28].indexOf(this._tonight()) >= 0 ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln; no moon on the follower's night (user, 3 sep) — Aldebaran is the sky's one light
+      edMoonStyle: "position:absolute;left:66%;top:8%;width:58px;height:58px;pointer-events:none;transition:opacity 1.6s ease, transform 1.6s ease;transform:translateY(" + (8 - ev.e) * 12 + "px);opacity:" + [0, 0, 0, 0, 0, 0, 0, .22, 1][ev.e] + (this._noMoon(this._tonight()) ? ";opacity:0" : ""), // _noSky: nothing flies inside a kiln; no moon on the follower's night (user, 3 sep) — Aldebaran is the sky's one light
       ringWrapStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + [.12, .18, .28, .42, .58, .72, .85, 1, 1][ev.e],
       // THE APPROACH (29 aug 2026, level grammar beat 1): the mansion's own star grows nearer as the
       // road climbs, in the avatar's glow color. the level template's first promise: you are walking
@@ -10275,20 +10762,20 @@ class Component extends DCLogic {
         const t0 = this._tonight();
         // the mansion's own face takes the seat at rung nine, and announces its law
         const AV = this._avatar(t0);
-        if (AV && st.roadBoss) return { introTitle: AV.full, introSubOn: true, introSub: AV.line, introNoteOn: true, introNote: t0 === 4 ? "the crow takes the bright thing. best of five. whatever stands at the middle of the road counts one more, and the card worth most beside it counts one less — either side, all night." : t0 === 2 ? "the crossing takes a toll. best of five. whatever stands at the middle of the road and cannot be taken at all counts one less — either side, all night. shelter is not free ground here." : t0 === 18 ? "when the road fills, the heart beats once more. whoever holds the first station gets that beat: one strike, the heart's own ground, a prize for either hand." : t0 === 25 ? "the tent stands midway down the road. what it holds cannot be stolen, only emptied: take it, and it counts for nobody." : t0 === 10 ? "from her seat, a strike carries two stations. at the far one, the card fights as it was born." : t0 === 12 ? "her station turns its neighbour around, and the long strikes cross turned ground. on her night the flat cards cannot be turned at all — it is the lopsided ones that change the most." : t0 === 19 ? "the old grave lies open at the road's middle. what is taken on that ground takes root in it, and cannot be taken back by either hand before the board ends." : t0 === 26 ? "what you carry, you leave at her door. inside, you are only what you are: while a card lodges in her doorway its own quarter's grant is put out, yours or hers alike." : t0 === 27 ? "the middle of the crossing keeps the stranger. a card standing there on ground that is not its own quarter's is worth one more, either hand \u2014 she holds the road open for whoever does not know the water." : "best of five. the mansion plays its planets and its own cards against you." };
+        if (AV && st.roadBoss) return { introTitle: AV.full, introSubOn: true, introSub: AV.line, introNoteOn: true, introNote: t0 === 24 ? "the empty place weighs more. best of five. whatever stands at the middle of the road counts two at the end, and the station on its right counts one less — either side, all night." : t0 === 4 ? "the crow takes the bright thing. best of five. whatever stands at the middle of the road counts one more, and the card worth most beside it counts one less — either side, all night." : t0 === 2 ? "the crossing takes a toll. best of five. whatever stands at the middle of the road and cannot be taken at all counts one less — either side, all night. shelter is not free ground here." : t0 === 18 ? "when the road fills, the heart beats once more. whoever holds the first station gets that beat: one strike, the heart's own ground, a prize for either hand." : t0 === 25 ? "the tent stands midway down the road. what it holds cannot be stolen, only emptied: take it, and it counts for nobody." : t0 === 10 ? "from her seat, a strike carries two stations. at the far one, the card fights as it was born." : t0 === 12 ? "her station turns its neighbour around, and the long strikes cross turned ground. on her night the flat cards cannot be turned at all — it is the lopsided ones that change the most." : t0 === 19 ? "the old grave lies open at the road's middle. what is taken on that ground takes root in it, and cannot be taken back by either hand before the board ends." : t0 === 26 ? "what you carry, you leave at her door. inside, you are only what you are: while a card lodges in her doorway its own quarter's grant is put out, yours or hers alike." : t0 === 27 ? "the middle of the crossing keeps the stranger. a card standing there on ground that is not its own quarter's is worth one more, either hand \u2014 she holds the road open for whoever does not know the water." : "best of five. the mansion plays its planets and its own cards against you." };
         if (st.pickK != null) {
           const kp = st.pickK;
           if (kp >= 8) return ((av2 => av2
-            ? { introTitle: av2.full, introSubOn: true, introSub: av2.line, introNoteOn: true, introNote: "best of five. she plays your own cards back at you: at the foot of the road she holds them asleep, and the further you have walked the more of your hand stands awake in hers. you taught her this road." }
-            : { introTitle: "the " + this._mName(this._tonight()) + " itself", introSubOn: true, introSub: "the house stands at the top of its own road.", introNoteOn: true, introNote: "best of five. the house deals your own hand against you: at the foot of the road it holds your cards asleep, and the further you have walked the more of them stand awake. you taught this road what you know." })(this._avatar(t0)));
+            ? { introTitle: av2.full, introSubOn: true, introSub: av2.line, introNoteOn: true, introNote: "best of five." }
+            : { introTitle: "the " + this._mName(this._tonight()) + " itself", introSubOn: true, introSub: "the house stands at the top of its own road.", introNoteOn: true, introNote: "best of five." })(this._avatar(t0)));
           const wp = this._walkers()[kp];
           return { introTitle: wp.name + " stands on the road", introSubOn: true, introSub: wp.line, introNoteOn: true, introNote: "a chosen station. the climb goes on from here, but nothing is kept." };
         }
         if (this._mlvl(t0) < 4 && !this._climbDoneTonight(t0)) {
           const k0 = Math.min(this._rungs()[t0] || 0, 8);
           if (k0 >= 8) return ((av2 => av2
-            ? { introTitle: av2.full, introSubOn: true, introSub: av2.line, introNoteOn: true, introNote: "best of five. she plays your own cards back at you: at the foot of the road she holds them asleep, and the further you have walked the more of your hand stands awake in hers. you taught her this road." }
-            : { introTitle: "the " + this._mName(this._tonight()) + " itself", introSubOn: true, introSub: "the house stands at the top of its own road.", introNoteOn: true, introNote: "best of five. the house deals your own hand against you: at the foot of the road it holds your cards asleep, and the further you have walked the more of them stand awake. you taught this road what you know." })(this._avatar(t0)));
+            ? { introTitle: av2.full, introSubOn: true, introSub: av2.line, introNoteOn: true, introNote: "best of five." }
+            : { introTitle: "the " + this._mName(this._tonight()) + " itself", introSubOn: true, introSub: "the house stands at the top of its own road.", introNoteOn: true, introNote: "best of five." })(this._avatar(t0)));
           const w0 = this._walkers()[k0];
           const rc0 = this._wrec()[w0.name];
           return { introTitle: w0.name + " stands on the road", introSubOn: true, introSub: rc0 && rc0.l > 0 ? (w0.again || this._again(w0.name) || w0.line) : w0.line,
@@ -10382,6 +10869,12 @@ class Component extends DCLogic {
             "nael": "oiled.", "vesh": "now!", "thea": "on the date.", "sabi": "more line.", "orun": "leaning.", "duna": "turned early.", "kip": "cooler.", "the weather-watch": ".",
             // the city gate (6 sep 2026): eight words from people who keep nothing out
             "orin": "in.", "sefa": "nothing.", "dagan": "set down.", "miro": "lit.", "halla": "all.", "tesk": "open!", "the captain": "stand easy.", "the dog's keeper": ".",
+            // the eye of the storm (7 sep 2026): eight words, all of them about not moving yet
+            "ashur": "not yet.", "temi": "cold.", "rook": "turning.", "isen": "slack.", "ghalib": "no.", "suri": "hush now.", "the old drover": "wait.", "the stray": ".",
+            // the hem of the robe (8 sep 2026): things left unsaid; the covered one has no bubble at all
+            "hala": "fast.", "merin": "folded.", "tobiah": ".", "senna": "mended.", "ilke": "hers.", "oran": "lidded.", "the seamstress": "there.", "the covered one": "",
+            // the room with nothing in it (8 sep 2026): one verb of release each
+            "nefa": "cut.", "brann": "nothing.", "oda": "drawn.", "tam": "set.", "hesh": "light.", "sil": "let.", "the old physician": "gone.", "the hundredth": ".",
             // the cut at the root (2 sep 2026): eight words, all of them about the ground
             "muza": "marked.", "hev": "propped.", "ansu": "sifted.", "kori": "up.", "zayn": "cut.", "oda": "two.", "veya": "carefully.", "the ground-watch": ".",
             // the threshing floor (5 sep 2026): eight words from people working together
@@ -10470,13 +10963,11 @@ class Component extends DCLogic {
       reachCometStyle: st.reachFx ? "position:absolute;left:0;top:0;width:9px;height:9px;border-radius:50%;background:#FFD9C2;box-shadow:0 0 12px rgba(212,90,58,.95), 0 0 28px rgba(212,90,58,.55);offset-path:path('M14 62 Q135 -14 256 54');animation:" + (st.reachFx.n % 2 ? "mzReachB" : "mzReachA") + " .95s ease-in both" : "display:none",
       reachStamp: st.reachFx ? st.reachFx.pl + " · " + st.reachFx.pr : "",
       reachStampStyle: st.reachFx ? "position:absolute;right:-10px;top:34px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#F0D89A;text-shadow:0 0 14px rgba(212,90,58,.85), 0 1px 4px rgba(4,3,2,.95);animation:mzStampIn 1.5s ease .6s both" : "display:none",
-      // ROUTED THROUGH _pathG (6 sep 2026, code — re-applied, this delivery still carried the bug).
-      // The 2 sep _pathG sweep replaced this site's <sc-for> loop with a bare {{ castShapes }} hole,
-      // but _castFor() was never converted and still returns a RAW array of {d,f,s,w,da,st} objects.
-      // React cannot render an object as a child, so the app threw "Minified React error #31" and
-      // went blank on the FIRST CARD OF EVERY BOARD. It survives review because the cast fx only
-      // exists mid-play: load-time checks, the adversarial pass and "no console errors on a live
-      // board" all pass without ever placing a card.
+      // ROUTED THROUGH _pathG (re-applied 8 sep 2026 — this delivery reverted it AGAIN, third time).
+      // _castFor() returns a RAW array of {d,f,s,w,da,st} objects and this hole renders it as a React
+      // child, which throws "Minified React error #31" and blanks the app ON THE FIRST CARD OF EVERY
+      // BOARD. Live players hit this on 6 sep. It survives review because the cast fx only exists
+      // mid-play — no load-time check and no level-open sweep ever places a card.
       castShapes: st.castFx ? this._pathG(this._castFor(st.castFx)) : null,
       userNameOn: this._inPlay() && !st.practice,
       leaveAskOn: !!st.leaveAsk,
@@ -10487,7 +10978,7 @@ class Component extends DCLogic {
       pauseLeaveSub: st.road && !st.practice && !st.duel ? "the climb folds back to the first walker" : "the board is let go",
       turnLine: st.duel && st.phase === "play" ? (st.turn === "you" ? (st.busy ? "" : st.duel.a + " to play") : st.duel.mode === "net" ? st.duel.b + " is thinking…" : st.busy ? "" : st.duel.b + " to play") : skyThinking ? ((st.road ? (st.roadBoss ? this._oppLabel() : st.roadWalker || "the walker") : st.nightSky ? "the sky" : st.nightWalker || "the sky") + " is thinking…") : "",
       deckOn: st.phase === "deck",
-      roadTag: st.duel ? "sagittarius a* · " + ["the approach", "the dust lanes", "the disk", "the ring", "the horizon"][Math.min((st.roundWins || []).length, 4)] + " · nothing staked" : st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? ({ storm: "storm weather: all faces fight at -1", veil: "her cards close again", thread: "the road wraps", void: "a lone card cannot be claimed" }[this._bossRule()] || "she reads deeper tonight") : (this._tonight() === 24 ? ["the far dark", "the drift", "the dust lane", "the far disk", "the outer disk", "the photon sphere", "the shadow", "the horizon", "inside"][Math.min(st.roadRung || 0, 8)] : this._tonight() === 23 ? ["the first drum", "the second drum", "the crossing", "the tower", "the high platform", "the roof line", "the last drum", "the hollow", "the skin"][Math.min(st.roadRung || 0, 8)] : this._tonight() === 28 ? ["the bottom", "the wet stone", "the first knot", "the second knot", "the dry stone", "the near rim", "the coping", "the rim", "out"][Math.min(st.roadRung || 0, 8)] : this._tonight() === 27 ? ["the landing", "the towpath", "the low bridge", "the high bridge", "the high air", "the cold air", "the thin air", "the edge of the air", "above the world"][Math.min(st.roadRung || 0, 8)] : this._elevSpec().name)) : st.nightSky ? "she returns to the table" : st.nightWalker ? "at the table tonight" : "",
+      roadTag: st.duel ? "sagittarius a* · " + ["the approach", "the dust lanes", "the disk", "the ring", "the horizon"][Math.min((st.roundWins || []).length, 4)] + " · nothing staked" : st.phase === "deck" || st.phase === "menu" ? "" : st.road ? (st.roadBoss ? ({ thread: "the road wraps", void: "the empty circle: the middle counts two, its right one less" }[this._bossRule()] || "she reads deeper tonight") : (this._tonight() === 24 ? ["the last of the ground", "fewer stars", "the line going", "no horizon", "the dark widens", "almost nothing", "one star", "the rim", "the empty place"][Math.min(st.roadRung || 0, 8)] : this._tonight() === 23 ? ["the first drum", "the second drum", "the crossing", "the tower", "the high platform", "the roof line", "the last drum", "the hollow", "the skin"][Math.min(st.roadRung || 0, 8)] : this._tonight() === 28 ? ["the bottom", "the wet stone", "the first knot", "the second knot", "the dry stone", "the near rim", "the coping", "the rim", "out"][Math.min(st.roadRung || 0, 8)] : this._tonight() === 27 ? ["the landing", "the towpath", "the low bridge", "the high bridge", "the high air", "the cold air", "the thin air", "the edge of the air", "above the world"][Math.min(st.roadRung || 0, 8)] : this._elevSpec().name)) : st.nightSky ? "she returns to the table" : st.nightWalker ? "at the table tonight" : "",
       roadTagC: st.roadBoss || st.nightSky ? "#FFB000" : "#9A8A5E",
       deckCount: (st.deckSel || []).length,
       tonightName: this._mName(this._tonight()),
@@ -10887,8 +11378,8 @@ class Component extends DCLogic {
             num: boss ? "✦" : "station " + (k + 1),
             hereOn: cur, fellOn: fell === k,
             // the format is legible BEFORE you commit (28 aug 2026 design checklist): one diamond a board
-            fmt: boss ? "best of five" : k >= 4 ? "best of three" : "one board",
-            fmtPips: Array.from({ length: boss ? 5 : k >= 4 ? 3 : 1 }, () => ({
+            fmt: boss ? "best of five" : this._boLen(k, false) === 3 ? "best of three" : "one board",
+            fmtPips: Array.from({ length: this._boLen(k, boss) }, () => ({
               style: boss
                 ? "width:7px;height:7px;transform:rotate(45deg);background:rgba(255,176,0,.9);box-shadow:0 0 7px rgba(255,176,0,.45)"
                 : "width:4.5px;height:4.5px;border-radius:50%;background:" + (cur ? "rgba(240,216,154,.85)" : "rgba(240,216,154,.5)")
@@ -11739,7 +12230,8 @@ class Component extends DCLogic {
         const w = this._walkers().find(x => x.name === st.roadWalker);
         const fg = w ? (this._figs()[w.name] || this._figs()[this._wAlias(w.name)]) : null;
         // the two format seams: rung five opens best of three, the mansion best of five
-        const fmt = nk === 4 ? { t: "best of three", s: "three boards from here. two of them yours." }
+        const fmt = this._tonight() === 6 && nk === 0 ? { t: "the storm takes a lantern", s: "two lights on this road, not three. and every step is best of three, from the first." }
+          : nk === 4 && this._tonight() !== 6 ? { t: "best of three", s: "three boards from here. two of them yours." }
           : nk === 8 ? { t: "best of five", s: "five boards at the top. three of them yours." } : null;
         const N = ["one", "two", "three", "four", "five", "six", "seven", "eight"];
         return {

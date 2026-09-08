@@ -312,8 +312,26 @@ function mkGame(cfg) {
 //     reads the same shielded() the strike path refuses on, and it reads the ATTACKER's shelter,
 //     not the target's. No stored flag: the price belongs to the station, and a card that leaves
 //     takes nothing with it. Planets pay like anything else — this law reads shelter, not quarter.
+//   - 6, "eye" (7 sep 2026, eyeN "defender", the second-largest seat cut of any passing law): station
+//     4, slid window. At the law station a tie whose STRIKER IS THE BOARD'S LEADER takes nothing; the
+//     answerer's tie takes as on a plain board. It is a seat law — the storm's night is the house that
+//     pays komi. Reads the board's leader (`g.leader`), stores nothing. Note for anyone tuning it: a
+//     tie at the crossing happens on ~1 board in 4 and is a third of all strikes there, yet refusing
+//     it flat (the rejected "stand" dial) barely moved the board — firing often and mattering are
+//     different things.
+//   - 15, "hush": station 4, slid window. The empty district's own verb at a second address — the
+//     same law object as m21, no new mechanic. Both entries point at the same `hush` kind.
+//   - 24, "void" (8 sep 2026, voidN "right", narrows 39.0 -> 14.7, THE RECORD): station 4, slid
+//     window. The law station counts one MORE and the station to its RIGHT counts one less (floored
+//     at 0). Purely a count law. It stacks with the void CARD's own signature rather than replacing
+//     it — the void card standing on the void station counts three, and its right neighbour two
+//     less. The door-first window fails; the window alone was the seat cure here (deep seat 29.7,
+//     the worst on the calendar, to 15.4 with no law at all), which is why 24 slides.
 const LAW_AT = {
   1: { kind: "open", station: 4 },
+  6: { kind: "eye", station: 4 },
+  15: { kind: "hush", station: 4 },
+  24: { kind: "void", station: 4 },
   2: { kind: "toll", station: 4 },
   3: { kind: "razor", station: 4 },
   5: { kind: "price", station: 4 },
@@ -345,7 +363,11 @@ function lawAt(m) { return LAW_AT[m] || null; }
 // m2 slides; m4 deliberately does NOT — the crow was measured on the standard window (road m4...m12).
 // Design's note added `4: 4` in one section and removed it in a later one the same day; the shipped
 // client has 2 and not 4, which is what this mirrors. Checked against the file, not the prose.
-const BOARD_OFF = { 2: 4, 19: 4, 21: 4, 23: 4, 25: 4, 28: 4 };
+// 6, 15 and 24 join the slid nights (8 sep 2026). m24's slide is not decoration: Measurement found
+// the window alone worth up to 14 points of deep seat there, and the empty circle only passes on the
+// slid road. The six earlier slides were made for fiction and are owed a deep-seat read on both
+// windows — Measurement's standing bookmark, ahead of the rest of the re-cut queue.
+const BOARD_OFF = { 2: 4, 6: 4, 15: 4, 19: 4, 21: 4, 23: 4, 24: 4, 25: 4, 28: 4 };
 function boardM(g, i) {
   const t = g.tonight; if (!t) return null;
   const off = BOARD_OFF[t] || 0;
@@ -455,7 +477,13 @@ function tryFlip(g, slots, ai, ti, dir, printed) {
   // the price of the mark (mansion 5): a sheltered card striking FROM the law station fights two
   // lower. Reads the ATTACKER's shelter, and the attacking face only — see the LAW_AT comment.
   if (law && law.kind === "price" && ai === law.station && shielded(g, slots, ai)) av = Math.max(1, av - 2);
-  const tie = av === tv && !(tC.ab === "storm" && on(g, tC));
+  let tie = av === tv && !(tC.ab === "storm" && on(g, tC));
+  // the eye of the storm (mansion 6): at the law station a tie whose striker LED this board takes
+  // nothing. The answerer's tie takes normally. Returns a "eye" miss, the same shape as the gate's.
+  if (tie && law && law.kind === "eye" && ti === law.station && a.owner === (g.leader || "you")) {
+    tie = false;
+    if (!printed) return "eye";
+  }
   if (!(av > tv || tie)) return false;
   // the open gate (mansion 1): at the law station nothing is held — every deny rule and the gate
   // card's own first miss stand open. Her planets keep their locks.
@@ -722,6 +750,12 @@ function slotW(g, slots, i, ctx) {
     if (cq && gq && cq !== gq) w += 1;
   }
   if (ctx && ctx.guide && ctx.guide[s.ground || s.owner] && home) w += 1;
+  // the empty circle (mansion 24): the law station counts one more, the station to its RIGHT one
+  // less. Stacks with the void CARD's own signature below rather than replacing it.
+  if (law && law.kind === "void" && !(ctx && ctx.noLaw)) {
+    if (i === law.station) w += 1;
+    else if (i === law.station + 1) w = Math.max(0, w - 1);
+  }
   if (on(g, c)) {
     if (c.ab === "district") w += 1;
     if (c.ab === "void") w += 1;
@@ -1111,7 +1145,14 @@ function awakeCount(playerLevels) {
 // past a true mirror barely moves its result while costing a fresh player almost nothing, so
 // there's no value left to extract there.
 const HANDICAP_BANDS = [[8, 0.75], [14, 0.5], [21, 0.25], [28, 0]]; // [maxAwakeInclusive, fractionKnockedDown]
-function handicapFor(awake) {
+// THE HARDEST ROAD (8 sep 2026, Design's "two things only Code can build"): the storm's night is
+// walked against a full mirror from walker one, and its walkers weigh the reply two higher than the
+// collection would give. She is still a mirror — the ladder canon is unchanged — the dials just fade
+// in at once instead of over eight rungs. Pass `tonight` to opt in; omitted, both behave as before,
+// so every existing caller and every measured number is untouched.
+const HARDEST_ROAD = 6;
+function handicapFor(awake, tonight) {
+  if (tonight === HARDEST_ROAD) return 0; // no handicap: the full mirror from the first walker
   for (const [max, h] of HANDICAP_BANDS) if (awake <= max) return h;
   return HANDICAP_BANDS[HANDICAP_BANDS.length - 1][1];
 }
@@ -1126,9 +1167,12 @@ const CAUTION_BANDS = [
   [21, [0, 1, 1, 2, 2, 4, 4, 6, 6]],
   [28, [0, 1, 2, 2, 4, 4, 6, 8, 8]],
 ];
-function cautionsFor(awake) {
-  for (const [max, arr] of CAUTION_BANDS) if (awake <= max) return arr;
-  return CAUTION_BANDS[CAUTION_BANDS.length - 1][1];
+function cautionsFor(awake, tonight) {
+  let arr = CAUTION_BANDS[CAUTION_BANDS.length - 1][1];
+  for (const [max, a] of CAUTION_BANDS) if (awake <= max) { arr = a; break; }
+  // the storm reads two higher, capped at the table's own ceiling of 8.
+  if (tonight === HARDEST_ROAD) return arr.map(v => Math.min(8, v + 2));
+  return arr;
 }
 
 // the opponent's 28-card level map: a full mirror of the player's real levels, then the weakest
@@ -1333,7 +1377,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   temperFeat, pickMove, skyMove, youMove, playBoard, playMatch, MATCH_FORMATS,
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
-  awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards,
+  awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards, HARDEST_ROAD,
   playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
@@ -2168,6 +2212,106 @@ if (require.main === module) {
       slots[3] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1, crowned: true }; // not the law station
       slots[4] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
       return E.tryFlip(g, slots, 3, 4, 1) === true;
+    }, true],
+    // THE EYE OF THE STORM (mansion 6, station 4) — the leader's tie at the crossing takes nothing.
+    ["the eye: the LEADER's tie at the law station takes nothing", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 6, levels: lv1, leader: "you" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1 };  // you led, so your tie is refused
+      slots[4] = { id: 11, l: 6, r: 6, owner: "sky", by: "sky", age: 1 };
+      return E.tryFlip(g, slots, 3, 4, 1) === "eye" && slots[4].owner === "sky";
+    }, true],
+    ["the eye: the ANSWERER's tie takes as on a plain board", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 6, levels: lv1, leader: "sky" }); // sky led, so YOUR tie stands
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 11, l: 6, r: 6, owner: "sky", by: "sky", age: 1 };
+      return E.tryFlip(g, slots, 3, 4, 1) === "tie" && slots[4].owner === "you";
+    }, true],
+    ["the eye touches ties only — the leader still takes on a win", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 6, levels: lv1, leader: "you" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 9, r: 9, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.tryFlip(g, slots, 3, 4, 1) === true && slots[4].owner === "you";
+    }, true],
+    ["the eye: not at another station, not on another night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const off = E.mkGame({ tonight: 7, levels: lv1, leader: "you" });
+      const g = E.mkGame({ tonight: 6, levels: lv1, leader: "you" });
+      const mk = a => { const sl = Array.from({ length: 9 }, () => null);
+        sl[a] = { id: 9, l: 6, r: 6, owner: "you", by: "you", age: 1 };
+        sl[a + 1] = { id: 11, l: 6, r: 6, owner: "sky", by: "sky", age: 1 }; return sl; };
+      return E.tryFlip(g, mk(6), 6, 7, 1) === "tie" && E.tryFlip(off, mk(3), 3, 4, 1) === "tie";
+    }, true],
+    // THE EMPTY CIRCLE (mansion 24, station 4) — the middle counts two, its right one less.
+    ["the empty circle: the law station counts one more, its RIGHT one less", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 24, levels: lv1 }), off = E.mkGame({ tonight: 7, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 11, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      return E.counts(g, slots)[0] === 2 && E.counts(off, slots)[0] === 2; // 2 -> (1+1) + (1-1)
+    }, true],
+    ["the empty circle: the LEFT neighbour is untouched — it is the right that pays", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 24, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      return E.slotW(g, slots, 3, {}).w === 1;
+    }, true],
+    ["the empty circle floors at zero rather than going negative", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 24, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[5] = { id: 25, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // the hideaway counts 0 already
+      return E.slotW(g, slots, 5, {}).w === 0;
+    }, true],
+    ["the empty circle STACKS with the void card's own signature, it does not replace it", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3; // card 24's signature awake
+      const g = E.mkGame({ tonight: 24, levels });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 24, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // the void, on the void station
+      // 1 base + 1 signature + 1 law = 3, exactly as the delivery describes.
+      return E.slotW(g, slots, 4, {}).w === 3;
+    }, true],
+    ["the empty circle does NOT fire on a different mansion's night", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 7, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      return E.slotW(g, slots, 4, {}).w === 1;
+    }, true],
+    // THE VEIL (mansion 15) — the district's verb at a second address, same law object as m21.
+    ["the veil is the hush at a second address: m15 and m21 are the same law", () => {
+      return E.LAW_AT[15].kind === "hush" && E.LAW_AT[21].kind === "hush"
+        && E.LAW_AT[15].station === E.LAW_AT[21].station;
+    }, true],
+    ["the veil hushes the stations either side of a filled crossing, like m21 does", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 15, levels: lv1 }), off = E.mkGame({ tonight: 7, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[3] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[4] = { id: 10, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[5] = { id: 11, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      return E.counts(g, slots)[0] === 1 && E.counts(off, slots)[0] === 2;
+    }, true],
+    // THE HARDEST ROAD (mansion 6) — the two dials only this module and the client can set.
+    ["the hardest road: m6 takes NO handicap, every other night keeps its bands", () => {
+      return E.handicapFor(0, 6) === 0 && E.handicapFor(28, 6) === 0
+        && E.handicapFor(0) === E.HANDICAP_BANDS[0][1] && E.handicapFor(0, 7) === E.HANDICAP_BANDS[0][1];
+    }, true],
+    ["the hardest road: m6's caution reads two higher, capped at 8", () => {
+      const base = E.cautionsFor(28), storm = E.cautionsFor(28, 6);
+      const ok = base.every((v, i) => storm[i] === Math.min(8, v + 2));
+      return ok && storm.every(v => v <= 8) && E.cautionsFor(28, 7).join() === base.join();
+    }, true],
+    ["the hardest road: omitting `tonight` leaves both dials exactly as measured", () => {
+      return E.handicapFor(10) === E.handicapFor(10, undefined)
+        && E.cautionsFor(10).join() === E.cautionsFor(10, undefined).join();
     }, true],
     ["quarterless is `id >= 101`, NOT the client's 101..107 — Uranus and Neptune are on her boss hand", () => {
       // The live client's mansion-boss hand is [101,102,103,104,105,108,109]. All four of its
