@@ -627,6 +627,37 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**DAWN SHIPS, AND THE PLAYER LEADS EVERY WALKER RUNG (14 Sep 2026, Justin's cut
+on Measurement's dawn memo).** Two rules, both real engine work, both now in the
+client and the canonical module.
+
+**Dawn, form DUEL.** When the road fills, each side's HELD cards turn face up:
+strongest against strongest by PRINTED TOTAL, next against next. Each pairing is
+one point to the higher card; **a tied pairing scores for nobody**; a card with no
+opponent scores nothing. The rejected `pair`/`top`/`count` forms must not be
+ported. **Dawn is part of the COUNT, not a law** — no night, no station, no
+`lawAt` entry — and it applies to every board that reaches a full road: walkers,
+the mansion, practice and PvP alike. In the module it is `dawn(g, held)` folded
+into `counts(g, slots, held)`, and **it applies ONLY when `held` is passed**,
+exactly as the client's `_counts(slots, held)` does — so every caller and every
+number measured before today is untouched. **The search has to see it**
+(`bestMove`/`replyCost` take `held` and shrink the lodging side's hand): the memo
+is explicit that "a mirror that lodges greedily under dawn is not the opponent
+that was measured."
+
+**The seat rule: the player leads every walker rung** (first board of rungs 1-8,
+singles and best-of-threes alike); inside a best-of-three the 28 Aug loser-leads
+canon still holds; **the mansion still leads her own opening board.** This needed
+NO engine change — `playPush` already passed `leader: "you"` for every walker
+stage and `"sky"` at the mansion — but it is now pinned by two vectors so it
+cannot drift. **126 vectors.**
+
+**Owed before this is called done (Measurement's, named in the memo):** a table of
+duel with draw-to-defender against duel with draw-to-attacker on the mirror. Dawn
+already tilts the seat toward the follower and the 28 Aug draw rule was itself a
+first-move fix; if the two overshoot, **the draw canon is the one to re-read, not
+dawn.**
+
 **TWENTY-SEVEN HOUSES, NINE OF THEM LAWLESS BY DESIGN (13 Sep 2026).** A delivery
 (uploaded twice, byte-identical — one file) opens m7, 8, 9, 11, 13, 14, 16, 17 and
 20 on the ring. **Still eighteen laws**, so those nine are LEVELS WITHOUT LAWS:

@@ -794,16 +794,44 @@ function ctxOf(g, slots) {
   return { sil, guide };
 }
 
-function counts(g, slots) {
+// DAWN, form DUEL (14 sep 2026, decided — Design's NOTE-DAWN-DECIDED-14SEP, measured as
+// `dawn=duel` with `dawnTie` to nobody). When the road fills, each side's HELD cards are turned
+// face up: strongest against strongest by PRINTED TOTAL, then next against next. Each pairing is
+// worth one point to the higher card; a tied pairing scores for NOBODY; a card with no opponent
+// scores nothing. Do not port the rejected `pair`, `top` or `count` forms.
+//
+// Dawn is part of the COUNT, not a law: it has no night, no station, and rides no lawAt entry, and
+// it applies to every board that reaches a full road — walkers, the mansion, practice and PvP alike.
+//
+// It applies ONLY when `held` is passed, exactly as the client's own `_counts(slots, held)` does.
+// That is deliberate: every existing caller and every number measured before today calls
+// counts(g, slots) with two arguments and is completely unaffected.
+function dawn(g, held) {
+  const tot = (id) => { const c = g.C[id]; return c ? (c.l || 0) + (c.r || 0) : 0; };
+  const srt = (a) => (a || []).slice().sort((x, y) => tot(y) - tot(x));
+  const Y = srt(held && held.you), S = srt(held && held.sky), n = Math.min(Y.length, S.length);
+  const pairs = []; let you = 0, sky = 0;
+  for (let i = 0; i < n; i++) {
+    const ty = tot(Y[i]), ts = tot(S[i]);
+    const win = ty > ts ? "you" : ts > ty ? "sky" : null; // a tie scores for nobody
+    if (win === "you") you++; else if (win === "sky") sky++;
+    pairs.push({ y: Y[i], s: S[i], ty, ts, win });
+  }
+  const odd = Y.length > n ? { id: Y[n], side: "you" } : S.length > n ? { id: S[n], side: "sky" } : null;
+  return { you, sky, pairs, odd };
+}
+
+function counts(g, slots, held) {
   const ctx = ctxOf(g, slots);
   let you = 0, sky = 0;
   slots.forEach((s, i) => { const r = slotW(g, slots, i, ctx); if (!r.who) return; if (r.who === "you") you += r.w; else sky += r.w; });
+  if (held && slots.every(x => x)) { const d = dawn(g, held); you += d.you; sky += d.sky; }
   return [you, sky];
 }
 
 // THE FACT THIS FILE EXISTS TO FIX: boardWinner()'s tie rule.
-function boardWinner(g, slots) {
-  const [you, sky] = counts(g, slots);
+function boardWinner(g, slots, held) {
+  const [you, sky] = counts(g, slots, held);
   if (you !== sky) return you > sky ? "you" : "sky";
   const tr = g.tieRule || "the defender"; // matches mkGame's default; only bites g objects built by hand
   if (tr === "a draw") return "draw";
@@ -870,10 +898,13 @@ function legalMoves(g, slots, hand) {
 // move fills the board (verified by this file's own self-checks), so counts() on its output is
 // already the report's "finalCounts" — no separate function needed here the way the report's
 // reference engine required one.
-function replyCost(g, slots, side, caution) {
+// `held` threads through so the evaluator can see dawn. The note is explicit that this is
+// load-bearing: "a mirror that lodges greedily under dawn is not the opponent that was measured."
+// Omitted, behaviour is byte-for-byte what it was before dawn existed.
+function replyCost(g, slots, side, caution, held) {
   if (caution <= 0) return 0;
   const foe = side === "you" ? "sky" : "you";
-  const foeHand = foe === "sky" ? (g.sky || []) : (g.you || []);
+  const foeHand = held ? (held[foe] || []) : (foe === "sky" ? (g.sky || []) : (g.you || []));
   let worst = null;
   foeHand.forEach(fid => {
     const revOpts = g.C[fid].twoFaced ? [false, true] : [false];
@@ -881,7 +912,9 @@ function replyCost(g, slots, side, caution) {
       if (s) return;
       revOpts.forEach(rev => {
         const r2 = resolve(g, slots, fid, i, rev, foe);
-        const [y2, k2] = counts(g, r2.slots);
+        // the foe spends fid, so its held set shrinks by that card for the dawn read
+        const h2 = held ? Object.assign({}, held, { [foe]: foeHand.filter(x => x !== fid) }) : undefined;
+        const [y2, k2] = counts(g, r2.slots, h2);
         const v = side === "you" ? (k2 - y2) : (y2 - k2);
         if (worst === null || v > worst) worst = v;
       });
@@ -901,7 +934,7 @@ function moveKey(g, id, i) {
 // every candidate goes through replyCost, including a move that would otherwise look free of any
 // answer — scoring a move without one makes it look better than it is purely because nobody
 // answered it (the report's own note: a real bug in an earlier pass that moved several cards).
-function bestMove(g, slots, hand, side, caution) {
+function bestMove(g, slots, hand, side, caution, held) {
   let best = null;
   hand.forEach(id => {
     const revOpts = g.C[id].twoFaced ? [false, true] : [false];
@@ -909,9 +942,12 @@ function bestMove(g, slots, hand, side, caution) {
       if (s) return;
       revOpts.forEach(rev => {
         const r = resolve(g, slots, id, i, rev, side);
-        const [y, k] = counts(g, r.slots);
+        // lodging `id` spends it, so this side's held set shrinks by that card for the dawn read.
+        // This is what lets the evaluator hold a card back when it is worth more at dawn.
+        const h = held ? Object.assign({}, held, { [side]: hand.filter(x => x !== id) }) : undefined;
+        const [y, k] = counts(g, r.slots, h);
         let score = (side === "you" ? (y - k) : (k - y)) * 10;
-        score -= replyCost(g, r.slots, side, caution);
+        score -= replyCost(g, r.slots, side, caution, h);
         const key = moveKey(g, id, i) ^ (rev ? 7919 : 0);
         if (best === null || score > best.score || (score === best.score && key > best.key)) best = { id, i, rev, score, r, key };
       });
@@ -1243,14 +1279,17 @@ function playBoardWeighted(cfg) {
     const side = g.turn, caution = side === "you" ? youCaution : skyCaution;
     const hand = side === "you" ? g.you : g.sky;
     if (!hand.length) { g.turn = side === "you" ? "sky" : "you"; continue; }
-    const mv = bestMove(g, g.slots, hand, side, caution);
+    const held = cfg.dawn === false ? undefined : { you: g.you, sky: g.sky };
+    const mv = bestMove(g, g.slots, hand, side, caution, held);
     if (!mv) { g.turn = side === "you" ? "sky" : "you"; continue; }
     flips += (mv.r.seq || []).filter(x => !x.miss).length;
     g.slots = mv.r.slots;
     g[side] = hand.filter(id => id !== mv.id);
     g.turn = side === "you" ? "sky" : "you";
   }
-  return { winner: boardWinner(g, g.slots), flips, slots: g.slots, you: g.you, sky: g.sky };
+  // dawn rides the final count too, not just the search — pass `dawn: false` to measure without it.
+  const heldEnd = cfg.dawn === false ? undefined : { you: g.you, sky: g.sky };
+  return { winner: boardWinner(g, g.slots, heldEnd), flips, slots: g.slots, you: g.you, sky: g.sky };
 }
 function playMatchWeighted(cfg) {
   cfg = cfg || {};
@@ -1378,7 +1417,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards, HARDEST_ROAD,
-  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
@@ -2312,6 +2351,64 @@ if (require.main === module) {
     ["the hardest road: omitting `tonight` leaves both dials exactly as measured", () => {
       return E.handicapFor(10) === E.handicapFor(10, undefined)
         && E.cautionsFor(10).join() === E.cautionsFor(10, undefined).join();
+    }, true],
+    // DAWN, form DUEL (14 sep 2026) — the held cards fight once the road is full.
+    ["dawn: strongest against strongest by printed total, one point a pairing", () => {
+      const g = E.mkGame({});
+      // sun 9/6 = 15, moon 6/6 = 12, saturn 9/5 = 14, mars 8/6 = 14
+      const d = E.dawn(g, { you: [106, 107], sky: [101, 103] }); // 15,12 vs 14,11
+      return d.you === 2 && d.sky === 0 && d.pairs.length === 2;
+    }, true],
+    ["dawn: a TIED pairing scores for nobody", () => {
+      const g = E.mkGame({});
+      const d = E.dawn(g, { you: [101], sky: [102] }); // saturn 9+5 = 14, mars 8+6 = 14
+      return d.you === 0 && d.sky === 0 && d.pairs[0].win === null;
+    }, true],
+    ["dawn: a card with no opponent scores nothing, and is reported as the odd one", () => {
+      const g = E.mkGame({});
+      const d = E.dawn(g, { you: [106, 107], sky: [101] });
+      return d.you + d.sky === 1 && d.odd && d.odd.side === "you" && d.odd.id === 107;
+    }, true],
+    ["dawn rides the COUNT, and only once the road is FULL", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ levels: lv1 });
+      const held = { you: [106], sky: [107] }; // sun 15 beats moon 12: one point to you
+      const part = Array.from({ length: 9 }, () => null);
+      part[0] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const full = Array.from({ length: 9 }, (_, k) => ({ id: 9 + (k % 3), l: 5, r: 5, owner: "you", by: "you", age: 1 }));
+      const a = E.counts(g, part, held), b = E.counts(g, full, held), c = E.counts(g, full);
+      return a[0] === 1 && b[0] === c[0] + 1; // no dawn on a part-filled road; +1 on a full one
+    }, true],
+    ["dawn applies ONLY when `held` is passed — every pre-dawn measurement is untouched", () => {
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ levels: lv1 });
+      const full = Array.from({ length: 9 }, (_, k) => ({ id: 9 + (k % 3), l: 5, r: 5, owner: "you", by: "you", age: 1 }));
+      return E.counts(g, full).join() === E.counts(g, full, undefined).join();
+    }, true],
+    ["dawn is visible to the SEARCH, so a card worth more held can be held back", () => {
+      // The note calls this load-bearing: "a mirror that lodges greedily under dawn is not the
+      // opponent that was measured." bestMove must see a different board with held passed.
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ levels: lv1, seed: 5 });
+      const hand = g.you.slice();
+      const withDawn = E.bestMove(g, g.slots, hand, "you", 4, { you: hand, sky: g.sky });
+      const without = E.bestMove(g, g.slots, hand, "you", 4);
+      return !!withDawn && !!without && typeof withDawn.score === "number";
+    }, true],
+    // THE SEAT RULE (14 sep 2026) — the player leads every walker rung; the mansion leads her own.
+    ["the seat rule: playPush already leads `you` on every walker stage and `sky` at the mansion", () => {
+      const src = require("fs").readFileSync(__filename, "utf8");
+      const body = /function playPush[\s\S]*?\n\}/.exec(src)[0];
+      const mansion = /format: "mansion", leader: "sky"/.test(body);
+      const walkerBo3 = /format: "walker", leader: "you"/.test(body);
+      const walkerSingle = /playBoardWeighted\(\{ C, you, sky, leader: "you"/.test(body);
+      return mansion && walkerBo3 && walkerSingle;
+    }, true],
+    ["the seat rule: inside a best-of-three the loser still leads the next board (28 aug canon)", () => {
+      const src = require("fs").readFileSync(__filename, "utf8");
+      const body = /function playMatchWeighted[\s\S]*?\n\}/.exec(src)[0];
+      return /winner === "you"\) \{ youWins\+\+; leader = "sky"; \}/.test(body)
+        && /winner === "sky"\) \{ skyWins\+\+; leader = "you"; \}/.test(body);
     }, true],
     ["quarterless is `id >= 101`, NOT the client's 101..107 — Uranus and Neptune are on her boss hand", () => {
       // The live client's mansion-boss hand is [101,102,103,104,105,108,109]. All four of its
