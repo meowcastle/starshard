@@ -627,6 +627,31 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**TWENTY-SEVEN HOUSES, NINE OF THEM LAWLESS BY DESIGN (13 Sep 2026).** A delivery
+(uploaded twice, byte-identical — one file) opens m7, 8, 9, 11, 13, 14, 16, 17 and
+20 on the ring. **Still eighteen laws**, so those nine are LEVELS WITHOUT LAWS:
+scene, avatar and a full authored roster each, playing on a plain board. Verified
+by playing all nine — every one deals, takes a card and resolves, zero console
+errors. Only m22 (the listener) remains closed. Also new: a **dev/sim harness**
+(`_devInit`/`_simBoard`/`_simClimb`/`_devRun`/`_devTele`, ~19 methods) gated on
+`window.location.hash === "#dev"`, same pattern as `#fresh` — off for players; and
+a **codex page** (`_codexVals`, `cdx*`), which is the presentational work Design
+had listed as unblocked.
+
+**THE CRASH FIX WAS REVERTED FOR THE FOURTH TIME, along with five other markers**
+(the razor's probe, the session-only moon, `_nextOpen`, and BOTH m6 dials that
+Design's own work order had asked Code to build). This copy predates the 8 Sep
+merge. All six re-applied; all 42 markers checked back in. **The cast site again
+arrived as an `<sc-for>` loop, so producer and template had to move together** —
+that pairing is now the thing to check first on any delivery.
+
+**Two findings handed back rather than fixed, both Design's own markup:**
+`_destinations()` has no row for 1, 3, 5, 6, 9, 15, 22 or 24, and their own rule
+says "a missing row is itself a finding", so `_physicsAudit()` will flag them; and
+the new codex panel adds two raw geometry bindings (`<path d="{{ mk.d }}">`,
+`<circle cx="{{ rp.x }}">`), which is the pre-hydration console-error class their
+own 2 Sep standing rule closed. Neither crashes anything.
+
 **EIGHTEEN HOUSES, AND THE FROZEN CHAPTER IS CLOSED (8 Sep 2026).** Design's
 8 Sep delivery: the storm (m6, `eye@4` — a tie at the crossing whose striker
 LED the board takes nothing; the answerer's tie stands), the veil (m15,
