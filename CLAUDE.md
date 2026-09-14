@@ -627,6 +627,40 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE ACCESS RULE IS LIVE (14 Sep 2026, Justin: "only access to the levels the
+user has completed, or the mansion the moon is in by default").** A house is
+reachable iff a level stands there AND either **the moon is standing in it
+tonight** or **you have completed it before** (`manzil-v2-claims`, stamped by
+`_recordWin` on the first win). So the sky sets tonight's door and your own
+history keeps the doors you have already opened; miss a house while she stands in
+it and it shuts until she comes round again — one circuit of the road.
+
+`_moonReach(id)` is the predicate, with `_claimed(id)` and `_moonReturnIn(id)`
+beside it. **It lives in the ring's node state, NOT `_tonight()`** — `_tonight()`
+answers "which house is this", and conflating that with "may I enter" is what put
+the 30 Aug default on a closed house. The ring's `open` now means *may enter*, so
+size, fill, `shut` and `tap` all gate at once; `_moon()` filters on `_moonReach`
+too, so a forced or preview pick cannot smuggle in a shut house. **The moon's
+house is `_nextOpen(_trueMoon())`, not `_trueMoon()`** — if her true house has no
+level (m22 today) the game already opens on the next built house forward, and
+that is the one the gate must open.
+
+**A shut door says why and when**: *"shut until you have walked it — the moon
+returns here in N nights"*, with the ring's existing footer ("the moon crosses one
+house a night") making the count self-explanatory. A rule that does not explain
+itself reads as a bug.
+
+**TESTING HATCH: `#allopen`** (or `?allopen`), the same shape as `#dev`/`#fresh` —
+every built house reachable, so a new level can be played the day it lands.
+Verified: 1 of 27 reachable on a fresh save, 27 with the hatch.
+
+**One consequence, stated rather than discovered later:** a half-finished climb on
+a house that shuts is NOT lost — rungs, lives and wipe points are all keyed by
+mansion in storage, so it is waiting when the moon returns. Nothing was needed to
+make that true, but nothing enforces it either; if the intent is that an abandoned
+climb resets, that is a separate decision and `_recordWin`/`_saveRung` are where it
+would go.
+
 **THE REVERT PROBLEM IS ENFORCED NOW, NOT DOCUMENTED (14 Sep 2026).**
 `tools/check-manzil.mjs`, wired into `npm run check`, fails the build on the two
 regressions that keep shipping: **any of the 44 code-owned behaviour markers going

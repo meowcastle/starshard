@@ -6142,7 +6142,10 @@ class Component extends DCLogic {
       this._moonC = 0;
       try { if (localStorage.getItem("manzil-v2-moon") != null) localStorage.removeItem("manzil-v2-moon"); } catch (e) {}
     }
-    return this._moonOpen(this._moonC) ? this._moonC : 0;
+    // filtered on _moonReach, not _moonOpen: the ring already refuses to set a shut house, but a
+    // forced/preview value must not be able to smuggle one in either. No recursion — _moonReach
+    // reads _trueMoon and _claims, never _tonight.
+    return this._moonReach(this._moonC) ? this._moonC : 0;
   }
   // nine houses are built (26 aug 2026): the heart, and the empty district through the thread.
   // the other nineteen are dark on the ring and cannot be walked to until their level exists.
@@ -6192,12 +6195,53 @@ class Component extends DCLogic {
     return 0;
   }
   // ────────────────────────────────────────────────────────────────────────────────────────────
-  // NOT BUILT YET, DELIBERATELY — THE LAUNCH ACCESS RULE (7 sep 2026, Justin): "if you don't
-  // complete the mansion on the day it occupies it, you can't access that level until the moon
-  // arrives back." OFF while testing; every built house stays reachable through the ring. When it
-  // goes in it belongs in the ring's node state and _go("moon"), NOT _tonight() — and decide first
-  // whether an unfinished climb persists until she returns or resets.
+  // THE ACCESS RULE — LIVE as of 14 sep 2026 (Justin: "only access to the levels the user has
+  // completed, or the mansion the moon is in by default").
+  //
+  //   A house is reachable if a level stands there AND either
+  //     · the moon is standing in it tonight, or
+  //     · you have completed it before (manzil-v2-claims, written by _recordWin on your first win).
+  //
+  // So the sky sets tonight's door and your own history keeps the doors you have already opened.
+  // Miss a house while she stands in it and it closes again until she comes back round — one
+  // circuit of the road — unless you had already claimed it.
+  //
+  // WHERE IT LIVES, and why: the ring's own node state, NOT _tonight(). _tonight() answers "which
+  // house is this", and conflating that with "may I enter" is what put the 30 Aug default on a
+  // closed house. _tonight() is left alone; the ring simply refuses to send you somewhere shut.
+  //
+  // THE MOON'S HOUSE is _nextOpen(_trueMoon()), not _trueMoon() itself — if her true house has no
+  // level yet (m22 today) the game already opens on the next built house forward, and that is the
+  // house you can actually play, so that is the one the gate must open.
+  //
+  // ESCAPE HATCH FOR TESTING: load with #allopen (or ?allopen) and every built house is reachable,
+  // the same shape as #dev and #fresh. That is how a new level gets played the day it lands rather
+  // than a month later — the rule stays on for everyone else.
   // ────────────────────────────────────────────────────────────────────────────────────────────
+  _allOpen() {
+    if (this._allOpenC == null) {
+      let v = false;
+      try { v = /(^|[#&?])allopen\b/.test(String(location.hash || "") + String(location.search || "")); } catch (e) {}
+      this._allOpenC = v;
+    }
+    return this._allOpenC;
+  }
+  // has this house ever been won? _recordWin stamps a date on the first win, road or night match.
+  _claimed(id) { const c = this._claims(); return !!(c && c[id]); }
+  // may the player enter this house tonight? built AND (the moon's house OR already claimed).
+  _moonReach(id) {
+    if (!this._moonOpen(id)) return false;
+    if (this._allOpen()) return true;
+    if (id === this._nextOpen(this._trueMoon())) return true;
+    return this._claimed(id);
+  }
+  // how many nights until the moon reaches a given house again — for the locked node's copy.
+  // The moon walks one house a night, so the distance forward around the ring IS the wait.
+  _moonReturnIn(id) {
+    const now = this._trueMoon();
+    if (!(now >= 1 && now <= 28) || !(id >= 1 && id <= 28)) return 0;
+    return (id - now + 28) % 28;
+  }
   // the four quarters of the sky, al-biruni's numbering. the animals are named to the player
   _quad(m) { return m >= 14 && m <= 20 ? "seiryuu" : m >= 7 && m <= 13 ? "suzaku" : m >= 21 && m <= 27 ? "genbu" : "byakko"; }
   _quadName(q) { return { seiryuu: "azure dragon", byakko: "white tiger", suzaku: "vermilion bird", genbu: "black tortoise" }[q] || ""; }
@@ -13581,9 +13625,14 @@ class Component extends DCLogic {
         const nodes = Array.from({ length: 28 }, (_, i) => {
           const id = i + 1, a = (-90 + i * (360 / 28)) * Math.PI / 180;
           const x = 466 + Math.cos(a) * 330, y = 206 + Math.sin(a) * 136;
-          const l = this._mlvl(id), here = id === t, real = id === this._tonightReal(), hov = st.moonHover === id, open = this._moonOpen(id);
+          // `open` now means MAY ENTER, not merely "a level stands here" — see _moonReach. Every
+          // read below (size, fill, shut, tap) keys off it, so the gate lands everywhere at once.
+          const l = this._mlvl(id), here = id === t, real = id === this._tonightReal(), hov = st.moonHover === id;
+          const built = this._moonOpen(id), open = this._moonReach(id);
           const test = this._moonTest(id);
-          const size = here ? 15 : !open ? 3.5 : test ? 8 : l >= 4 ? 10 : l > 0 ? 9 : 7;
+          // a built-but-locked house keeps a little more presence than bare ground: it is a door
+          // you cannot open tonight, not an absence.
+          const size = here ? 15 : !open ? (built ? 5 : 3.5) : test ? 8 : l >= 4 ? 10 : l > 0 ? 9 : 7;
           const fill = here ? "#FFB000" : !open ? "rgba(240,216,154,.075)" : test ? "transparent;border:1px solid rgba(255,176,0,.7)" : l >= 4 ? "#F0D89A" : l > 0 ? "rgba(240,216,154,.6)" : "rgba(240,216,154,.24)";
           return {
             // the crescent marks where the moon TRULY stands (real transit, 29 aug 2026 user law:
@@ -13631,11 +13680,18 @@ class Component extends DCLogic {
               moonFairC: sp <= 15 ? "rgba(160,196,178,.9)" : "rgba(198,124,94,.9)" };
           })()),
           moonCount: "house " + focus + " of 28",
-          moonTier: focus === this._tonightReal() && focus === t ? "the moon is here · you're here" : focus === this._tonightReal() ? "the moon is here" : focus === t ? "you're here" : this._moonTest(focus) ? "a test house" : !this._moonOpen(focus) ? "no level here yet" : lv >= 4 ? "claimed · the table is yours" : lv > 0 ? "its card walks with you at level " + lv : "still asleep",
+          moonTier: focus === this._tonightReal() && focus === t ? "the moon is here · you're here" : focus === this._tonightReal() ? "the moon is here" : focus === t ? "you're here" : (this._moonOpen(focus) && !this._moonReach(focus)) ? "shut tonight" : this._claimed(focus) ? "claimed" : this._moonTest(focus) ? "a test house" : !this._moonOpen(focus) ? "no level here yet" : lv >= 4 ? "claimed · the table is yours" : lv > 0 ? "its card walks with you at level " + lv : "still asleep",
           moonTierC: focus === this._tonightReal() || focus === t ? "#FFB000" : this._moonTest(focus) ? "#FFB000" : !this._moonOpen(focus) ? "rgba(154,138,94,.7)" : lv > 0 ? "#F0D89A" : "#9A8A5E",
           moonHint: this._moonTest(focus) && focus !== t ? "an azure dragon house, opened without its level art."
             : !this._moonOpen(focus) ? "no level stands here yet."
+            // THE ACCESS RULE'S OWN SENTENCE (14 sep 2026). A shut door has to say why it is shut
+            // and when it opens, or it reads as a bug rather than a rule. The wait is real: the
+            // moon walks one house a night, so the distance round the ring IS the number of nights.
+            : !this._moonReach(focus)
+              ? ((n) => n === 1 ? "shut. the moon reaches this house tomorrow night."
+                  : "shut until you have walked it — the moon returns here in " + n + " nights.")(this._moonReturnIn(focus))
             : focus === this._tonightReal() ? "her house tonight: the climb here counts."
+            : this._claimed(focus) && focus !== t ? "claimed: this house stays open to you."
             : focus === t ? "tap another house to walk its level."
             : "walked for practice: nothing new wakes here."
         };
