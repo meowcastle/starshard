@@ -1,0 +1,176 @@
+#!/usr/bin/env node
+// Guards the deployed Manzil page against the regressions that have actually shipped.
+//
+//   node tools/check-manzil.mjs          # part of `npm run check`
+//
+// WHY THIS EXISTS. Two agents write to the same <script type="text/x-dc"> block, and a Design
+// delivery replaces the page rather than merging it. Five separate deliveries have now reverted the
+// same crash fix, and one of those reverts reached real players: placing any card threw
+// "Minified React error #31" and blanked the app. Every check either side runs by default passed —
+// a load-time check, a level-open sweep, and "no console errors on a live board" all pass without
+// ever placing a card, and the cast fx only exists mid-play.
+//
+// A note in CLAUDE.md asking people not to revert it has now failed five times. This turns that
+// note into a build failure.
+//
+// FAILURES (exit 1) are things that break the game or lose Code-owned behaviour.
+// WARNINGS (exit 0) are things that only pollute the console — real, but Design's markup to fix,
+// and listed so they can be handed back precisely instead of re-derived each time.
+
+import fs from "node:fs";
+
+const PAGE = "Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html";
+const fails = [];
+const warns = [];
+const notes = [];
+
+const src0 = fs.readFileSync(PAGE, "utf8");
+const scriptAt = src0.indexOf('<script type="text/x-dc"');
+const tagEnd = src0.indexOf(">", scriptAt);
+const scriptEnd = src0.indexOf("</script>", scriptAt);
+const tmpl = src0.slice(0, scriptAt) + src0.slice(scriptEnd);
+const code = src0.slice(tagEnd + 1, scriptEnd);
+
+// ---- 1. data-props must be valid JSON -------------------------------------------------------
+// The dc-runtime parses this attribute; a malformed one takes the whole page down before React
+// ever runs, and it is easy to break by hand-editing the tag.
+{
+  const m = /data-props="([^"]*)"/.exec(src0.slice(scriptAt, tagEnd + 1));
+  if (!m) fails.push("the <script> tag has no data-props attribute");
+  else {
+    const decoded = m[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&")
+      .replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    try { JSON.parse(decoded); } catch (e) { fails.push("data-props is not valid JSON: " + e.message); }
+  }
+}
+
+// ---- 2. THE CRASH CLASS ---------------------------------------------------------------------
+// A bare {{ hole }} as a direct child of <svg> renders whatever the producer returns. If that is a
+// raw array of shape objects, React throws #31 and the app goes blank. The producer must return an
+// element — via _pathG, _tintArt, createElement or dangerouslySetInnerHTML.
+//
+// This is the exact shape of the bug that reached players on 6 Sep.
+const GROUP_BUILDERS = /_pathG|_tintArt|dangerouslySetInnerHTML|createElement/;
+const svgHoles = new Set();
+for (const block of tmpl.matchAll(/<svg\b[^>]*>([\s\S]*?)<\/svg>/g))
+  for (const h of block[1].matchAll(/^\s*\{\{\s*([A-Za-z_$][\w$.]*)\s*\}\}\s*$/gm))
+    svgHoles.add(h[1]);
+
+// A dotted hole (s.shapes) is produced inside some other object literal; resolve on the last segment.
+// Producers are written two ways in this file: as an object-literal key (`foo: ...`) and as a
+// property assignment (`out.foo = ...`, which _codexVals uses). Match both — a key the checker
+// cannot find is reported as unchecked, and unchecked is exactly where a crash would hide.
+const producerLines = (name) => {
+  const leaf = name.includes(".") ? name.split(".").pop() : name;
+  const esc = leaf.replace(/\$/g, "\\$");
+  const asKey = new RegExp("(^|[\\s{,(])" + esc + "\\s*:");
+  const asProp = new RegExp("\\.\\s*" + esc + "\\s*=[^=]");
+  return code.split("\n").filter(l => asKey.test(l) || asProp.test(l));
+};
+
+for (const hole of [...svgHoles].sort()) {
+  const lines = producerLines(hole);
+  if (!lines.length) { notes.push(`svg hole {{ ${hole} }} — no producer line found, not checked`); continue; }
+  // Safe if ANY producer line for that key builds a group. Chains (zoomShapes <- z.shapes <-
+  // _tintArt) are resolved by also accepting a line that hands off to another checked key.
+  const ok = lines.some(l => GROUP_BUILDERS.test(l)) ||
+             lines.some(l => /\.shapes\b|\bshapes\b/.test(l) && producerLines("shapes").some(x => GROUP_BUILDERS.test(x)));
+  if (!ok) {
+    fails.push(
+      `CRASH RISK: <svg> renders {{ ${hole} }} directly, but its producer does not build an element.\n` +
+      `          If it returns a raw array of shape objects React throws "Minified React error #31"\n` +
+      `          and the page goes blank on the first card of every board.\n` +
+      `          Producer: ${lines[0].trim().slice(0, 110)}\n` +
+      `          Fix: wrap it — this._pathG(...) — or make the template an <sc-for> loop again.\n` +
+      `          Producer and template must always change together.`);
+  }
+}
+
+// ---- 3. PRODUCER / TEMPLATE AGREEMENT for the site that keeps flipping -----------------------
+// castShapes has been reverted five times, in BOTH directions: the template comes back as an
+// <sc-for> loop while the producer returns a group, or the reverse. Either mismatch is broken.
+{
+  const loop = /<sc-for list="\{\{ castShapes \}\}"/.test(tmpl);
+  const hole = /\{\{ castShapes \}\}/.test(tmpl.replace(/<sc-for list="\{\{ castShapes \}\}"[^>]*>/g, ""));
+  const grouped = /castShapes:\s*st\.castFx \? this\._pathG\(/.test(code);
+  const raw = /castShapes:\s*st\.castFx \? this\._castFor\(/.test(code);
+  if (loop && grouped) fails.push("castShapes: the template is an <sc-for> loop but the producer returns a _pathG group — the loop would iterate a React element.");
+  if (hole && raw && !grouped) fails.push("castShapes: the template is a bare hole but the producer returns a RAW array — this is the #31 crash that reached players on 6 Sep.");
+}
+
+// ---- 4. CODE-OWNED BEHAVIOURS ---------------------------------------------------------------
+// docs/MANZIL-CODE-OWNED-BEHAVIORS.md, as greppable markers. These live in the shared script block
+// and have been silently dropped by full-file regenerations repeatedly.
+const MARKERS = [
+  ["the real account gate", "await this.api.me()"],
+  ["age check at signup", "api.ageCheck("],
+  ["real signup", "api.signup("],
+  ["sign-in by username", "api.loginWithUsername("],
+  ["real server-side logout", "api.logout("],
+  ["chart restore", "_restoreChart("],
+  ["one-time chart grab", "api.saveBirth("],
+  ["rotate-to-landscape prompt", "rotateOn"],
+  ["orientationchange listener", "orientationchange"],
+  ["mobile touch-hold panel", "onHoldEnd"],
+  ["on-station name offset", "top:74px"],
+  ["_zoomFor routes through _simpleMove", "_simpleMove(cid)"],
+  ["dominion tutorial pin", "st.practice && st.tutor"],
+  ["walker 5-8 tally", "_advanceRound(sameRung"],
+  ["per-mansion lives", "_livesMap("],
+  ["forfeit confirm", "_climbing("],
+  ["third-loss wipe beat", "nmBeat"],
+  ["escape opens the lobby menu", "pmOpen: true"],
+  ["PvP move routing", "_netPlace("],
+  ["PvP queue", "queue_join"],
+  ["PvP server moves", "move_confirmed"],
+  ["PvP deliberate exit", "leave_match"],
+  ["PvP live guard", 'mode === "live"'],
+  ["timezone-correct chart", "dstInfo("],
+  ["real geocoder", "_searchPlace("],
+  ["webaudio sfx", "_sfxAc"],
+  ["button press listener", "_sfxBtnL"],
+  ["sound toggle", "manzil-v2-sound"],
+  ["#fresh wipes stairseen", "stairseen"],
+  ["#fresh wipes firstlight", "firstlight"],
+  ["progress sync", "_syncProgress"],
+  ["progress restore", "_applyProgress"],
+  ["ladder handicap", "_handicapFor"],
+  ["ladder caution", "_cautionsFor"],
+  ["the root's law is plantOnTake", "t.by !== t.owner"],
+  ["the root's tell fires on the take", "sl.by !== sl.owner"],
+  ["brazier box is static", "M-4 4h8v12h-8Z"],
+  ["shadowed mw renamed", "rpMw"],
+  ["cast fx routes through _pathG", "_pathG(this._castFor"],
+  ["the razor probes a copy", "const probe = slots.map"],
+  ["the moon pick is session-only", "THE PICK LASTS THE SESSION"],
+  ["walk forward to the next open house", "_nextOpen(m)"],
+  ["m6 takes no handicap", "_stormRoad() ? 0 : this._handicapFor"],
+  ["m6 caution reads two higher", "_stormRoad() ? 2 : 0"],
+];
+for (const [label, marker] of MARKERS)
+  if (!src0.includes(marker)) fails.push(`code-owned behaviour LOST: ${label}  (marker: ${marker})`);
+
+// ---- 5. pre-hydration console noise (Design's markup) ----------------------------------------
+// A mustache in a geometry attribute is invalid to the browser's SVG parse, which happens before
+// the runtime substitutes bindings. It renders correctly afterwards — this is console pollution,
+// not a break — but enough of it buries a real error.
+{
+  const seen = new Map();
+  for (const m of tmpl.matchAll(
+    /<(rect|circle|line|path|text|ellipse|polygon|polyline)\b[^>]*?\s(x|y|cx|cy|r|x1|y1|x2|y2|d|rx|ry|width|height|points|viewBox)="\{\{\s*([\w$.]+)/g))
+    seen.set(`${m[1]}.${m[2]}`, (seen.get(`${m[1]}.${m[2]}`) || 0) + 1);
+  for (const [k, n] of seen)
+    warns.push(`${k} bound to a mustache ×${n} — invalid to the pre-hydration SVG parse (console noise only)`);
+}
+
+// ---- report ----------------------------------------------------------------------------------
+for (const n of notes) console.log(`  note: ${n}`);
+for (const w of warns) console.log(`  warn: ${w}`);
+if (warns.length) console.log(`  (warnings are Design's markup: a bound geometry attribute is never safe — use a style\n   transform on a wrapping <g>, a static attribute, or an injected string.)`);
+if (fails.length) {
+  console.error(`\n✗ manzil check: ${fails.length} failure(s)\n`);
+  for (const f of fails) console.error("  - " + f + "\n");
+  process.exit(1);
+}
+console.log(`✓ manzil check — ${svgHoles.size} svg holes resolved, ${MARKERS.length} code-owned behaviours present` +
+            (warns.length ? `, ${warns.length} console-noise warning(s)` : ""));

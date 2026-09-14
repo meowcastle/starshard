@@ -17,6 +17,30 @@ new engine-module imports.** If Design ships a narrowly-scoped patch
 (one function, one screen) rather than a full regeneration, this list
 still matters — check the specific items the patch's own area touches.
 
+## It is enforced now, not just written down (14 Sep 2026)
+
+**`npm run check` fails if any item below goes missing.** `tools/check-manzil.mjs` greps the
+deployed page for one marker per behaviour and exits non-zero on the first one that is gone, so a
+full-file regeneration that drops a fix is a build failure rather than a discovery weeks later.
+
+It also guards the two things this list could never express:
+
+- **The #31 crash class.** Every bare `{{ hole }}` rendered directly inside an `<svg>` must have a
+  producer that builds an *element* (`_pathG`, `_tintArt`, `createElement`,
+  `dangerouslySetInnerHTML`). A raw array of shape objects there throws
+  "Minified React error #31" and blanks the app on the first card of every board — which reached
+  real players on 6 Sep. All 85 holes are checked; a hole whose producer cannot be found is
+  reported rather than silently skipped.
+- **Producer/template agreement on `castShapes`**, which has now been reverted five times in BOTH
+  directions — template back to an `<sc-for>` loop while the producer returns a group, and the
+  reverse. Either mismatch is a failure, with the message naming which way round it is.
+
+Bound geometry attributes (`path d`, `circle cx`, `text x`, `svg viewBox`) are reported as
+**warnings**, not failures: they are console noise rather than breakage, and they are Design's
+markup to fix. The count is printed so it can be handed back precisely instead of re-derived.
+
+**Verified by breaking it on purpose**, both ways, before it was wired in.
+
 ## The checklist
 
 - [ ] **Real account system.** `componentDidMount` is `async`, calls

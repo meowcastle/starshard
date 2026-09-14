@@ -627,6 +627,17 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE REVERT PROBLEM IS ENFORCED NOW, NOT DOCUMENTED (14 Sep 2026).**
+`tools/check-manzil.mjs`, wired into `npm run check`, fails the build on the two
+regressions that keep shipping: **any of the 44 code-owned behaviour markers going
+missing**, and **the #31 crash class** — a bare `{{ hole }}` inside an `<svg>` whose
+producer returns a raw array instead of an element. It also pins
+**producer/template agreement on `castShapes`**, which had been reverted five times
+in BOTH directions. Bound geometry attributes are warnings, not failures: console
+noise, and Design's markup. Verified by breaking it deliberately, both ways, before
+wiring it in. **A note asking people not to revert something failed five times; a
+failing build will not.**
+
 **DAWN SHIPS, AND THE PLAYER LEADS EVERY WALKER RUNG (14 Sep 2026, Justin's cut
 on Measurement's dawn memo).** Two rules, both real engine work, both now in the
 client and the canonical module.
