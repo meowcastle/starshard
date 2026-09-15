@@ -588,12 +588,50 @@ Three notes that matter for anyone simulating against it:
 The engine still does not model `_boardOff`'s road-window slide (out of
 scope by its own header), so m19/21/23/25/28's law stations are hardcoded
 at their index rather than derived — correct for the laws, silent on the
-window. **The server lib (`starshard-api/lib/manzil-engine.js`/
-`manzil-lobby.js`) is untouched and still diverges in two named ways: it
-passes `tieRule: 'a draw'` (not "the defender"), and it assigns board one's
-leader by coin flip then ALTERNATES each round, where the single-player
-road is loser-leads.** Both are real, both are on the record now
-(`docs/NOTE-TO-DESIGN-02SEP.md` §4), neither is fixed.
+window. ~~**The server lib is untouched and still diverges in two named
+ways: it passes `tieRule: 'a draw'`, and it assigns board one's leader by
+coin flip then ALTERNATES each round.**~~ **CORRECTED 15 Sep 2026 by
+reading the file rather than this note: the `tieRule` half is STALE — the
+lobby has passed `'the defender'` since 3 Sep (`manzil-lobby.js`, the
+`startRound` comment says so explicitly). The leader half is still true
+and is probably CORRECT rather than a bug: coin-flip-then-alternate is a
+fair seat assignment between two real players, where loser-leads is a
+single-player difficulty rule. Treat it as a deliberate difference unless
+someone decides otherwise.**
+
+**PvP's real divergence was dawn, found and closed 15 Sep 2026.** PvP
+deals 7 cards a side onto a 9-station board, so both seats still hold 2-3
+when the road fills and dawn fires on **every** PvP board. The client
+animates it in duel mode — `_dawn()` carries no duel guard, unlike
+`_bossRule()` — while the server, which is authoritative and broadcasts
+the winner, counted the stations alone. Any board dawn swung was shown one
+way and recorded the other. `dawn(g, held)` is now in
+`starshard-api/lib/manzil-engine.js`, folded into `counts`/`boardWinner`
+behind an **optional `held`** (the same discipline the module and client
+use, which is why all 24 pre-existing self-checks passed untouched), and
+`board_result` now carries the authoritative seat-relative dawn.
+**The one thing that differs from both other implementations: they price
+printed totals off a single flat card table; the server has TWO, and a
+held card belongs to its owner's collection — id 6 can be level 3 in one
+hand and level 1 in the other — so pricing goes through
+`cardById(g, id, side)`.** A flat lookup would value both hands at one
+seat's table and call a real difference a tie. 8 new vectors, 32/32.
+
+**What is NOT ported into PvP, deliberately — do not "fix" this:** station
+laws, road grounds, and the `BOARD_OFF` window slide. The client's
+`_bossRule()` returns null whenever `st.duel` is set and every road ground
+returns -1 under the same guard, so **duels have never had laws**; the
+server file's own header says so and predicted someone would come along
+and reintroduce them. Dawn is different in kind — no night, no station, no
+`LAW_AT` entry, part of the COUNT — and the 14 Sep cut names PvP
+explicitly. Laws in PvP would be a new product call, not a parity fix.
+
+**A lesson worth more than the fix: the server lib's own header had
+documented today's `isHome` bug when it was written** ("a genuine,
+confirmed divergence from `research/manzil-engine-current.cjs`'s `isHome`,
+which hardcodes slotIdx+1"). It implemented `boardM` correctly and flagged
+the module as wrong, and the finding sat uncollected for two weeks. **Our
+file headers are carrying findings nobody re-reads.**
 
 `test/fuzz-manzil.mjs` covers all nine built levels cold now, up from six.
 
