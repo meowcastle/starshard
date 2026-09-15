@@ -150,6 +150,59 @@ const MARKERS = [
 for (const [label, marker] of MARKERS)
   if (!src0.includes(marker)) fails.push(`code-owned behaviour LOST: ${label}  (marker: ${marker})`);
 
+// ---- 4b. THE WALKER ROSTERS MUST MATCH walker-sheet.js ---------------------------------------
+// A walker's name is a LOOKUP KEY in three places: the roster, `_figs` (their art) and
+// `_skyMove`'s bubble maps (their voice). Design's sheet v2 renamed three walkers to resolve
+// duplicate keys — an object literal with two "hessa" keys silently keeps the LAST one, so one
+// house's walker was wearing another's face. Renaming in one place and not the others is
+// invisible until you look at that specific walker on that specific night.
+//
+// Pronouns matter the same way: {them} in the copy table reads roster data, and `deal.awake`
+// fires on the eighth rung, whose walker is a quiet one on most houses.
+{
+  const sheetSrc = fs.existsSync("walker-sheet.js") ? fs.readFileSync("walker-sheet.js", "utf8") : null;
+  if (!sheetSrc) notes.push("walker-sheet.js absent — roster drift not checked");
+  else {
+    const unq = (x) => { try { return JSON.parse('"' + x + '"'); } catch { return x; } };
+    const byHouse = (txt, re) => {
+      const out = {}; let cur = null;
+      for (const line of txt.split("\n")) {
+        const h = /^\s*(\d+):\s*\[/.exec(line);
+        if (h) { cur = h[1]; out[cur] = []; continue; }
+        const m = re.exec(line);
+        if (m && cur) out[cur].push([unq(m[1]), m[2] ? unq(m[2]) : ""]);
+      }
+      return out;
+    };
+    const rosterSrc = src0.slice(src0.indexOf("  _rosters() { return {"), src0.indexOf("\n  }", src0.indexOf("  _rosters() { return {")));
+    const R = byHouse(rosterSrc, /\{\s*name:\s*"((?:[^"\\]|\\.)*)",\s*fig:\s*"(?:[^"\\]|\\.)*",\s*them:\s*"((?:[^"\\]|\\.)*)"/);
+    const S = byHouse(sheetSrc.slice(sheetSrc.indexOf("export const WALKERS = {")), /\{\s*name:\s*"((?:[^"\\]|\\.)*)",\s*fig:\s*"(?:[^"\\]|\\.)*",\s*them:\s*"((?:[^"\\]|\\.)*)"/);
+    for (const h of Object.keys(S)) {
+      const a = R[h] || [], b = S[h];
+      if (a.length !== b.length) { fails.push(`walker roster house ${h}: ${a.length} walkers, the sheet has ${b.length}`); continue; }
+      b.forEach(([n, t], k) => {
+        if (a[k][0] !== n) fails.push(`walker roster house ${h} #${k}: named "${a[k][0]}", the sheet says "${n}" — a name is a lookup key for _figs art and _skyMove bubbles; rename all three together.`);
+        else if (a[k][1] !== t) fails.push(`walker "${n}" (house ${h}): pronoun "${a[k][1]}", the sheet says "${t}" — the copy table's {them} reads this.`);
+      });
+    }
+    // every name must resolve to art, or the walker renders faceless
+    const figSrc = src0.slice(src0.indexOf("  _figs() {"), src0.indexOf("\n  _", src0.indexOf("  _figs() {") + 12));
+    const figKeys = [...figSrc.matchAll(/^\s{6}"((?:[^"\\]|\\.)*)":\s*\{/gm)].map(m => unq(m[1]));
+    const K = new Set(figKeys);
+    const dupes = figKeys.filter((k, i) => figKeys.indexOf(k) !== i);
+    for (const [h, rows] of Object.entries(R)) {
+      if (h === "0") continue;
+      for (const [n] of rows) if (!K.has(n)) fails.push(`walker "${n}" (house ${h}) has no _figs entry — they render with no figure.`);
+    }
+    // a duplicate key is a silent overwrite: report it, but brann is a known archetype/walker
+    // collision that nothing currently reaches (every walker has art under their own name).
+    for (const d of [...new Set(dupes)]) {
+      if (d === "brann") warns.push(`_figs has two "brann" keys (the archetype figure and house 24's walker) — the later wins, so the archetype drawing is unreachable. Latent: no walker falls back to it today.`);
+      else fails.push(`_figs has two "${d}" keys — the later silently wins and one walker wears the other's face.`);
+    }
+  }
+}
+
 // ---- 5. pre-hydration console noise (Design's markup) ----------------------------------------
 // A mustache in a geometry attribute is invalid to the browser's SVG parse, which happens before
 // the runtime substitutes bindings. It renders correctly afterwards — this is console pollution,

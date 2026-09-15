@@ -1014,17 +1014,6 @@ function playBoard(cfg){
   else if(sky>you) winner="sky";
   else if(g.drawTo==="defender") winner = g.first==="you" ? "sky" : "you";
   else if(g.drawTo==="leader")   winner = g.first;
-  // THE DRAW TABLE (15 Sep): two night-read tiebreaks and an honest draw, measured beside the defender.
-  //   "moon"   the side holding more stations of tonight's quarter (the moon's house's quadrant) takes a
-  //            level board; still level, the defender. Reads the night, not the seat.
-  //   "house"  the side whose card of tonight's house stands on the road takes it; absent, the defender.
-  //   "nobody" a level board is a draw: nobody takes it.
-  else if(g.drawTo==="moon"){ const q=QUAD[g.tonight]; let a=0,b=0;
-    g.slots.forEach((x,i)=>{ if(!x) return; if(QUAD[boardM(g,i)]===q){ if(x.owner==="you") a++; else b++; } });
-    winner = a>b ? "you" : b>a ? "sky" : (g.first==="you" ? "sky" : "you"); }
-  else if(g.drawTo==="house"){ const h=g.slots.find(x=>x && (g.C[x.id].homeM||x.id)===g.tonight);
-    winner = h ? h.owner : (g.first==="you" ? "sky" : "you"); }
-  else if(g.drawTo==="nobody") winner="draw";
   else winner="you";
   return { winner, you, sky, level: you===sky, slots:g.slots,
            aimed:g.aimed||0, stayed:g.stayed||0, firstLodger:g.firstLodger||null, firstLodgerId:g.firstLodgerId||0,

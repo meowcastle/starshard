@@ -48,6 +48,7 @@ export const TABLE = [
   { m: "deal", k: "hand.six", now: "shuffle once, take six", p: "six: a fresh hand, and one card held at dawn instead of two", note: "the cost of six in words; it is a real decision, not a reroll" },
   { m: "deal", k: "dawn.first", now: "(nothing)", p: "at dawn the held cards fight: hold something worth holding.", note: "once, the first night dawn is live for this player", flag: "new" },
   { m: "deal", k: "series.open", now: "(three unlabeled diamonds)", p: "best of three · first to two", note: "under the pips at the deal of board one; the pips stay (user, 15 sep)" },
+  { m: "deal", k: "awake", now: "(a clause on 54 walker intros: 'she gives nothing away twice, and holds your cards awake' / 'the hand is yours, every card of it awake')", p: "{walker} holds your hand awake: every card of yours that is awake stands awake with {them}.", note: "the road-becomes-you canon, said ONCE at the deal of the seventh and eighth rungs (the mave and quiet-one walkers) instead of 54 times as character copy; the intros are character only now (walker sheet v2). PRONOUN: shipped as 'in hers', changed to {them} on binding (Design flagged it) — this row fires on the seventh and eighth rungs and the eighth rung walker is the quiet one, who the sheet gives `them` on 21 of 27 houses, so 'hers' was wrong on most eighth rungs. Do not put a fixed pronoun back.", flag: "new" },
 
   // ─── the turn: make the board legible ───
   { m: "play", k: "thinking", now: "bekk is thinking…", p: "{walker} is thinking…", note: "kept" },
