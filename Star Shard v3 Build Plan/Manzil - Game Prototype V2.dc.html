@@ -5885,37 +5885,36 @@ class Component extends DCLogic {
   // its own ground, plus the guide's grant), dawn (every pairing, itemised), total, level, levelTo,
   // winner and reason. Those are the fields the scales caption needs.
   //
-  // WHAT IS NOT SPLIT, AND WHY IT IS HONEST TO SAY SO: `extra` is one bucket holding BOTH a card's
-  // own signature weight (a district counts two, a listener one per neighbour, the chamber four)
-  // AND tonight's law's contribution to the count. Splitting those apart needs _slotW itemised the
-  // way the module's slotW now is, and _slotW is on the contested 33 — that is its own reviewed
-  // change, not something to bundle into this. The module's settleOf() DOES split them, so the
-  // conformance pack can check the split against the engine even while the client reports one
-  // bucket. `total = stations + dominion + extra + dawn` holds exactly, by construction.
-  //
-  // Note for the fixtures: the order's invariant `total = stations + dominion + dawn + law` cannot
-  // hold on any board where a signature moves the count. The module carries a fifth component for
-  // that reason and this carries `extra`; the expectations need the extra field either way.
+  // FIVE TERMS, and `cards` is the one the order was missing (Measurement, 15 sep: "that's a real
+  // gap in my shape, not theirs"). `total = stations + dominion + cards + law + dawn` holds exactly
+  // and is asserted below. `cards` is what a card's own signature does to the count — a district
+  // counts two, a listener one per neighbour, the chamber four — and `cards.notes` names them, so
+  // the caption stack can say "the listener · one to her" instead of an unexplained number.
+  // _slotW is itemised for this (it reports `parts` and `notes` as it computes), which is the
+  // contested-method change this deliberately waited for rather than guessing at.
   _settle(slots, held) {
     const d = this._dawn(held), full = slots.every(x => x);
     const dp = full ? { you: d.you, sky: d.sky } : { you: 0, sky: 0 };
     const ctx = this._ctx(slots);
     const stations = { you: 0, sky: 0 }, dominion = { you: 0, sky: 0 };
+    const cards = { you: 0, sky: 0, notes: [] }, lawPts = { you: 0, sky: 0 };
     slots.forEach((sl, i) => {
       const r = this._slotW(slots, i, ctx);
       if (!r.who) return;
-      stations[r.who] += 1;
-      if (sl && this._isHome(sl.id, i)) dominion[r.who] += 1;
+      const pp = r.parts || { base: r.w, dominion: 0, cards: 0, law: 0 };
+      stations[r.who] += 1;                          // one point for standing there
+      dominion[r.who] += pp.dominion;
+      cards[r.who] += pp.cards + (pp.base - 1);      // jupiter's own +1 is its signature, not a station
+      lawPts[r.who] += pp.law;
+      (r.notes || []).forEach(n => { if (n) cards.notes.push({ side: r.who, station: i, note: n }); });
     });
     const [ty, ts] = this._counts(slots, held);
     const total = { you: ty, sky: ts };
-    const extra = { you: ty - stations.you - dominion.you - dp.you,
-                    sky: ts - stations.sky - dominion.sky - dp.sky };
     const level = ty === ts;
     const levelTo = level ? ((this.state && this.state.leader) === "you" ? "sky" : "you") : null;
     const winner = this._boardWinner(slots, held);
     // reason: the first component after which the running lead matches the winner and never flips.
-    const order = [["stations", stations], ["dominion", dominion], ["extra", extra], ["dawn", dp]];
+    const order = [["stations", stations], ["dominion", dominion], ["cards", cards], ["law", lawPts], ["dawn", dp]];
     const want = level ? 0 : (winner === "you" ? 1 : -1);
     let run = { you: 0, sky: 0 }; const tail = [];
     order.forEach(([k, v]) => { run = { you: run.you + v.you, sky: run.sky + v.sky };
@@ -5927,13 +5926,13 @@ class Component extends DCLogic {
     const card = (id) => ({ id, total: C[id] ? (C[id].l || 0) + (C[id].r || 0) : 0 });
     const law = this._bossRule();
     return {
-      stations, dominion, extra,
+      stations, dominion, cards,
       dawn: full ? { form: "duel", held: { you: (held.you || []).map(card), sky: (held.sky || []).map(card) },
                      pairs: d.pairs.map(p => ({ you: card(p.y), sky: card(p.s), to: p.win })),
                      unopposed: d.odd ? [{ side: d.odd.side, id: d.odd.id, total: card(d.odd.id).total }] : [],
                      points: dp }
                  : { form: "none", held: { you: [], sky: [] }, pairs: [], unopposed: [], points: dp },
-      law: { night: this._tonight(), name: law || null, points: null, notes: law ? ["law weight is inside `extra`; see _settle's header"] : [] },
+      law: { night: this._tonight(), name: law || null, points: lawPts, notes: [] },
       total, level, levelTo, winner, reason: level ? "level" : (at || "stations"),
     };
   }
@@ -10241,7 +10240,13 @@ class Component extends DCLogic {
     if (c.ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
     const own = s.ground || s.owner;
     let w = 1 + j + (home ? 1 : 0);
-    if (this._kiln() === i) w += 1; // fired in the chamber
+    // PARTS (15 sep 2026, Measurement's `cards` term): the same arithmetic, itemised as it happens.
+    // `base` is the card standing there, `dominion` its own ground, `law` tonight's law, `cards`
+    // everything a card's own signature does — the term the invariant was missing. Nothing below
+    // moves `w` without also saying which bucket it went to.
+    const P = { base: 1 + j, dominion: home ? 1 : 0, law: 0, cards: 0 }, NOTE = [];
+    const bill = (b, before, note) => { const d = w - before; if (!d) return; P[b] += d; if (note) NOTE.push(note); };
+    { const b = w; if (this._kiln() === i) w += 1; bill("law", b, "the kiln"); } // fired in the chamber
     // THE GUIDE'S LAW (2 sep 2026, measurement's 1a, shipped at station 4): at the road's middle a
     // card standing on ground that is not its own quarter's counts one more. Both sides. On m27's
     // night that ground is byakko for seven of nine stations, so the law pays the three quarters the
@@ -10262,9 +10267,9 @@ class Component extends DCLogic {
     //     misclassify her whole mirror deck as tiger. Do not "simplify" this line.
     if (this._bossRule() === "stranger" && i === this._lawSt() && !(s.id >= 101 && s.id <= 109)) {
       const q = c.quad || this._quad(s.id);
-      if (q !== this._quad(this._boardM(i))) w += 1;
+      { const b = w; if (q !== this._quad(this._boardM(i))) w += 1; bill("law", b, "the stranger"); }
     }
-    if (ctx && ctx.guide && ctx.guide[own] && home) w += 1; // THE GUIDE: your cards on their own mansion count one more
+    { const b = w; if (ctx && ctx.guide && ctx.guide[own] && home) w += 1; bill("dominion", b, "the guide"); }
     // THE BEARER'S LAW, THE TOLL (3 sep 2026, measurement's 1b — the best-behaved law measured):
     // at the road's middle a card that cannot be taken AT ALL counts one less. Both sides. It does
     // not remove a shield (that is the chamber's guest-right, one house over, and we do not repeat a
@@ -10300,7 +10305,7 @@ class Component extends DCLogic {
     // shell for that one card. That cannot go negative at this site, so there is no floor in the
     // way, but if `tollBy` floored at 1 the numbers above are not the numbers this ships. Ask
     // before the next re-cut.
-    if (this._bossRule() === "toll" && i === this._lawSt() && this._tollOn(slots, i)) w -= 1;
+    { const b = w; if (this._bossRule() === "toll" && i === this._lawSt() && this._tollOn(slots, i)) w -= 1; bill("law", b, "the toll"); }
     // THE CROW (3 sep 2026, the follower's law, measured 16.7 narrowing on m4 — twice the record):
     // the crossing counts one MORE, and the neighbour worth MOST counts one LESS. "the crow takes the
     // bright thing." Both clauses read the same function this one is, with `noLaw` so the neighbour
@@ -10315,26 +10320,34 @@ class Component extends DCLogic {
       const L = this._lawSt(), c0 = ctx || {}, plain = Object.assign({}, c0, { noLaw: true });
       const perch = slots[L], perchPlanet = !!(perch && perch.id >= 101 && perch.id <= 109);
       if (!perchPlanet) {
+        const b = w;
         if (i === L) w += 1;
         else if (i === this._crowPays(slots, L, plain)) w -= 1;
+        bill("law", b, "the crow");
       }
     }
     // THE EMPTY CIRCLE (8 sep 2026, m24's law): the void card's two count lines, keyed on the STATION instead of
     // the card. Fixed debit on the right-hand neighbour — not the crow's chase — which is what keeps it a
     // spread law and not a seat law (Measurement, 8 sep). Reads before the card signatures so both can stack.
+    { const b = w;
     if (this._bossRule() === "void" && !(ctx && ctx.noLaw)) { const L = this._lawSt(); if (i === L) w += 1; else if (i === L + 1) w = Math.max(0, w - 1); }
+      bill("law", b, "the empty circle"); }
     if (this._on(c)) {
+      const bAb = w;
       if (c.ab === "district") w += 1; // counts two
       if (c.ab === "void") w += 1;     // counts two
       if (c.ab === "listener") for (const d of [-1, 1]) { const k = this._nb(i, d); if (k >= 0 && k !== i && slots[k]) w += 1; } // one more for every card beside it
       if (c.ab === "hideaway") w = 0;  // counts nothing itself
       if (c.ab === "chamber" && !(s.by && s.by !== s.owner)) w = (!s.struck && slots.every(x => x)) ? 4 : 2;
+      bill("cards", bAb, c.ab ? "the " + String(c.name || "").replace(/^The /, "").toLowerCase() : "");
     }
     for (const d of [-1, 1]) { // what the neighbours do to this station's worth
       const k = this._nb(i, d); if (k < 0 || k === i || !slots[k]) continue;
       const n = C[slots[k].id]; if (!this._on(n)) continue;
+      const bNb = w;
       if (n.ab === "hideaway") w += 1;                         // both stations beside it count one more
       if (n.ab === "void" && d === -1) w = Math.max(0, w - 1); // the station on the void's right counts one less
+      bill("cards", bNb, n.ab ? "the " + String(n.name || "").replace(/^The /, "").toLowerCase() + " beside it" : "");
     }
     // the tents' law is OUT (29 aug settled memo: "scores nothing" is parity surgery — an
     // eight-station count hands the last word to the follower, seat −23.3 fresh, byakko −24.8.
@@ -10342,7 +10355,7 @@ class Component extends DCLogic {
     let who = own;
     const dl = this._nb(i, -1); // THE DRUM: the station on its right counts for the drum's side
     if (dl >= 0 && dl !== i && slots[dl]) { const n = C[slots[dl].id]; if (n.ab === "drum" && this._on(n)) who = slots[dl].ground || slots[dl].owner; }
-    return { who, w };
+    return { who, w, parts: P, notes: NOTE };
   }
   _ctx(slots) {
     const C = this._cards();

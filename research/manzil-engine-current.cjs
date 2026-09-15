@@ -861,34 +861,34 @@ function counts(g, slots, held) {
 // THE SETTLE RECORD (15 sep 2026, Measurement's work order item 1). One object saying how a board
 // was counted, so a surface can caption the scales instead of being handed a total.
 //
-// ONE DEVIATION FROM THE SPEC AS WRITTEN, and it is deliberate. The order asserts
-// `total = stations + dominion + dawn + law` per side. That cannot hold on any board where a card's
-// own signature moves the count — a district counts two, a listener counts one per neighbour, the
-// chamber counts four. Their worked example happens to contain none of those, which is why it
-// balances there and nowhere else. Rather than fold ability weight into a bucket it does not belong
-// in, the record carries a fifth component, `abilities`, and the invariant becomes
-// `total = stations + dominion + abilities + dawn + law`. Flagged to Measurement; the fixtures will
-// need the extra field.
+// FIVE TERMS. The order originally asserted `total = stations + dominion + dawn + law`, which
+// cannot hold on any board where a card's own signature moves the count — a district counts two, a
+// listener one per neighbour, the chamber four. Raised 15 sep and adopted by Measurement the same
+// day ("a real gap in my shape, not theirs"), so the record carries `cards: {you, sky, notes}` and
+// the invariant is `total = stations + dominion + cards + law + dawn`. `notes` names which card
+// moved it, so a caption can read "the listener, one to her" rather than an unexplained number.
 //
 // `stations` is the plain count of lodged cards a side holds, as the order specifies — the head
 // count, not the weight. Everything above one point a card is itemised into the other buckets.
 function settleOf(g, slots, held) {
   const ctx = ctxOf(g, slots);
   const S = { stations: { you: 0, sky: 0 }, dominion: { you: 0, sky: 0 },
-              abilities: { you: 0, sky: 0 }, law: { you: 0, sky: 0 } };
+              cards: { you: 0, sky: 0 }, law: { you: 0, sky: 0 } };
+  const cardNotes = [];
   slots.forEach((sl, i) => {
     const r = slotW(g, slots, i, ctx);
     if (!r.who) return;
     const p = r.parts || { base: r.w, dominion: 0, ability: 0, law: 0 };
     S.stations[r.who] += 1;                       // one point for standing there
     S.dominion[r.who] += p.dominion;
-    S.abilities[r.who] += p.ability + (p.base - 1); // jupiter's own +1 is its signature, not a station
+    S.cards[r.who] += p.ability + (p.base - 1); // jupiter's own +1 is its signature, not a station
+    if (p.ability) { const c = g.C[sl.id]; cardNotes.push({ side: r.who, station: i, note: "the " + String((c && c.name) || "").replace(/^The /, "").toLowerCase() }); }
     S.law[r.who] += p.law;
   });
   const lw = lawAt(g.tonight);
   const full = slots.every(x => x);
   const d = (held && full) ? dawn(g, held) : null;
-  const tot = (side) => S.stations[side] + S.dominion[side] + S.abilities[side] + S.law[side] + (d ? d[side] : 0);
+  const tot = (side) => S.stations[side] + S.dominion[side] + S.cards[side] + S.law[side] + (d ? d[side] : 0);
   const total = { you: tot("you"), sky: tot("sky") };
   const level = total.you === total.sky;
   const levelTo = level ? (g.leader === "you" ? "sky" : "you") : null; // the defender, per canon
@@ -896,7 +896,7 @@ function settleOf(g, slots, held) {
 
   // `reason` is the last line that decided it: walk the components in order and find the first one
   // after which the running lead matches the final winner and never flips again.
-  const order = ["stations", "dominion", "abilities", "law", "dawn"];
+  const order = ["stations", "dominion", "cards", "law", "dawn"];
   const step = (k) => k === "dawn" ? (d ? { you: d.you, sky: d.sky } : { you: 0, sky: 0 }) : S[k];
   let run = { you: 0, sky: 0 }, settledAt = null;
   const sign = (r) => r.you === r.sky ? 0 : (r.you > r.sky ? 1 : -1);
@@ -909,7 +909,8 @@ function settleOf(g, slots, held) {
 
   const card = (id) => ({ id, total: (g.C[id] ? (g.C[id].l || 0) + (g.C[id].r || 0) : 0) });
   return {
-    stations: S.stations, dominion: S.dominion, abilities: S.abilities,
+    stations: S.stations, dominion: S.dominion,
+    cards: { you: S.cards.you, sky: S.cards.sky, notes: cardNotes },
     dawn: d ? {
       form: "duel",
       held: { you: (held.you || []).map(card), sky: (held.sky || []).map(card) },
@@ -2501,6 +2502,27 @@ if (require.main === module) {
       const body = /function playMatchWeighted[\s\S]*?\n\}/.exec(src)[0];
       return /winner === "you"\) \{ youWins\+\+; leader = "sky"; \}/.test(body)
         && /winner === "sky"\) \{ skyWins\+\+; leader = "you"; \}/.test(body);
+    }, true],
+    ["the settle record's five terms add to the total, on a board where a signature moves the count", () => {
+      // The invariant the order was missing: a district counts two, so `cards` has to exist or the
+      // sum is short. Card 21 is the district; 22 the listener.
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 7, levels });
+      const slots = Array.from({ length: 9 }, (_, k) => ({ id: 9 + (k % 3), l: 5, r: 5, owner: k < 5 ? "you" : "sky", by: k < 5 ? "you" : "sky", age: 1 }));
+      slots[2] = { id: 21, l: 5, r: 5, owner: "you", by: "you", age: 1 };   // the district
+      slots[6] = { id: 22, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };   // the listener
+      const st = E.settleOf(g, slots, { you: [106], sky: [107] });
+      const ok = ["you", "sky"].every(k =>
+        st.total[k] === st.stations[k] + st.dominion[k] + st.cards[k] + st.law.points[k] + st.dawn.points[k]);
+      return ok && st.cards.you > 0 && st.cards.sky > 0 && st.cards.notes.length >= 2;
+    }, true],
+    ["the settle record names which card moved the count, so a caption can say it", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const g = E.mkGame({ tonight: 7, levels });
+      const slots = Array.from({ length: 9 }, (_, k) => ({ id: 9 + (k % 3), l: 5, r: 5, owner: "you", by: "you", age: 1 }));
+      slots[4] = { id: 22, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };   // the listener, two neighbours
+      const st = E.settleOf(g, slots, null);
+      return st.cards.notes.some(n => n.note === "the listener" && n.side === "sky" && n.station === 4);
     }, true],
     ["QUARTERLESS IS 101-109: her planets only, and NEVER the mirror deck", () => {
       // Corrected 15 sep. `id >= 101` swallowed 200+ — the walker deck — so four laws were wrong
