@@ -627,6 +627,38 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE RUNTIME FIXES ARE IN (15 Sep 2026, Measurement's work order item 7).** Six
+Code items; the seventh (menu hover states) is CSS and Design's.
+
+- **The black frame.** `_go()` drove a full-screen veil to OPAQUE black over 240ms,
+  swapped the phase at the bottom of that fade, then lifted it over another 240ms —
+  half a second with a genuinely black middle, and the destination laid out only
+  AFTER the swap, which is why the star shard painted over the lobby and re-laid.
+  **The fix is the order, not the duration:** the veil now only dims (capped .62,
+  never black) and the phase swaps at 110ms, while the dim is still deepening, so
+  the destination lays out under cover and rises into place. Asymmetric timing —
+  .11s to dim, .3s to lift.
+- **Ceremony input is gated.** `_armRound()` stamps `_roundAt`; `_exitRound()`
+  refuses a tap inside a 900ms floor **and re-arms for the remainder**, so the tap
+  is deferred rather than swallowed. Verified: a tap at 60ms does not skip, and the
+  beat still advances on its own at ~900ms.
+- **Tooltips.** Hover delay 500 → 300ms, and a capture-phase `pointerdown` listener
+  dismisses any open peek and cancels a pending one — nothing but mouseleave ever
+  closed them before, so resting the pointer left them covering the road.
+- **The scene box.** A `ResizeObserver` on `documentElement` (rAF-throttled, guarded
+  for older Safari) plus a re-measure one frame after every scene swap. The stage
+  scale is computed from `innerWidth/innerHeight` at render time and only a window
+  `resize` ever re-rendered it, so a box that changed for any other reason stayed
+  stale — which is the clipped mode-select overlay.
+- **The camera.** `window.stage.look(target, {ms, ease})` moves the lobby as a unit;
+  targets `road`/`hand`/`ring`/`fence`/`sky`, `look(null)` returns. It **composes
+  with** the fitted scale rather than replacing it, so the stage still fits the
+  window at any look, and dx/dy are fractions of the stage so it is
+  resolution-independent. **Code owns the machine, Design owns the numbers:**
+  `window.stage.looks` overrides any target without a Code cycle, and
+  `window.stage.timing` carries item 2's durations (settle 2400, verdict until tap,
+  road 900).
+
 **A REAL RULES BUG OF CODE'S OWN, FOUND BY MEASUREMENT'S COPY-READ (15 Sep 2026).**
 `isQuarterless(id)` read `id >= 101` — widened on 3 Sep to catch Uranus (108) and
 Neptune (109) past the client's too-narrow `101..107`, and **widened too far: it
