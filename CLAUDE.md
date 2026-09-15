@@ -627,6 +627,28 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE VERDICT RECORD AND THE MOMENT MACHINE (15 Sep 2026, work order item 2 — the
+thing Design's five surfaces were blocked on).**
+
+**Moments are DERIVED, not driven**, and that is the design decision worth keeping:
+`_momentNow()` computes `deal · play · settle · verdict · road` from the state that
+already exists, so `phase` keeps every value it has and every surface reading it
+keeps working. A parallel machine advanced by hand would be one more thing a
+delivery could forget; a derived one cannot fall out of step with what it reads.
+`componentDidUpdate` mirrors it to `state.moment` and fires `manzil:moment`.
+
+**`_verdict()`** returns one payload for the four cards that each used to read a
+different corner of state: `kind` (the LARGEST thing that just ended — board ·
+series · rung · climb), `board` from the settle record, `series` (null on singles),
+`rung`, `lights`, `climb`, `walker` with its four roster lines, and `next` with the
+coming walker and who leads. Fired as `manzil:verdict` on arrival at the moment.
+
+Verified live across all four kinds: mid-series at rung 5 reads `series` 1–1 not
+over with no next walker; the decided series reads `rung` won with the next walker
+named; a lost climb reads `climb` over, not cleared; the mansion cleared reads
+`climb` cleared with **`next.leader: "sky"`** — she leads her own board, the 14 Sep
+canon, coming through the record rather than being restated by a surface.
+
 **THE COPY TABLE IS WIRED (15 Sep 2026, Design's item 6 — FINAL).** `manzil-copy.js`
 at the repo root (Design's file, imported not reimplemented) carries `COPY`,
 `TIMING`, `PLACEHOLDERS`, `fill` and `SAMPLE`: **97 rows across six moments**

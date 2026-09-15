@@ -5937,6 +5937,67 @@ class Component extends DCLogic {
       total, level, levelTo, winner, reason: level ? "level" : (at || "stations"),
     };
   }
+  // THE MOMENT MACHINE (15 sep 2026, Measurement's work order item 2). Five named steps —
+  // deal · play · settle · verdict · road — so a surface keys off one word instead of guessing from
+  // `phase`, `roundWins`, `roadRung`, `lives` and `roadWalker` at once.
+  //
+  // DERIVED, NOT DRIVEN, and that is the point: `phase` keeps every value it has and every surface
+  // reading it keeps working, while `moment` is computed from the same state. A parallel machine
+  // that had to be advanced by hand would be one more thing to forget in a delivery; this cannot
+  // fall out of step with the phase it is derived from. componentDidUpdate fires `manzil:moment`
+  // when it changes, and mirrors it to state.moment for surfaces that would rather read state.
+  _momentNow() {
+    const st = this.state || {};
+    const p = st.phase;
+    if (p === "round" || p === "roadlost" || p === "won" || p === "over") return "verdict";
+    if (p === "climb") return "road";
+    if (p === "play") {
+      if (st.countFx) return "settle";          // the count is running
+      if (!st.dealt) return "deal";             // cards still landing
+      return "play";
+    }
+    return null;                                // lobby, menus, everything off the board
+  }
+  // THE VERDICT RECORD (item 2). One payload for the four cards that used to read four different
+  // bits of state. `kind` is the LARGEST thing that just ended, so a surface can pick its own
+  // treatment: a board inside a series, the series, the rung, or the climb.
+  _verdict() {
+    const st = this.state || {};
+    if (!st.road && !st.duel && !st.nightWalker) return null;
+    const se = st.settle || null;
+    const wins = (st.roundWins || []);
+    const w = wins.filter(x => x === "you").length, l = wins.filter(x => x === "sky").length;
+    const boss = !!st.roadBoss;
+    const fmt = this._boLen(st.roadRung || 0, boss);
+    const need = fmt === 1 ? 1 : Math.ceil(fmt / 2);
+    const seriesOver = fmt > 1 && (w >= need || l >= need);
+    const rungWon = fmt === 1 ? (wins[wins.length - 1] === "you") : w >= need;
+    const rungOver = fmt === 1 ? wins.length > 0 : seriesOver;
+    const cap = this._lifeCap(this._tonight());
+    const standing = this._lives(this._tonight());
+    const climbOver = st.phase === "roadlost" || (boss && rungOver && rungWon);
+    const idx = st.roadRung || 0;
+    const ORD = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"];
+    const wname = st.roadWalker || st.nightWalker || "";
+    const roster = this._rosterFor ? this._rosterFor(this._tonight()) : null;
+    const entry = (roster || []).find(r => r && r.name === wname) || null;
+    const nextW = (!boss && rungOver && rungWon) ? ((this._walkers() || [])[Math.min(idx + 1, 7)] || null) : null;
+    const kind = climbOver ? "climb" : (rungOver ? "rung" : (fmt > 1 ? "series" : "board"));
+    return {
+      kind,
+      board: se ? { winner: se.winner, totals: se.total, reason: se.reason } : null,
+      series: fmt > 1 ? { format: fmt, need, wins: { you: w, sky: l }, over: seriesOver } : null,
+      rung: { index: idx, name: "the " + (ORD[Math.min(idx, 7)] || "first") + " rung", won: !!rungWon, over: !!rungOver },
+      lights: { standing, cap, lost: st.phase === "roadlost" || standing < cap },
+      climb: { over: !!climbOver, cleared: !!(boss && rungWon) },
+      walker: wname ? { id: wname, name: wname,
+        lines: { in: (entry && entry.line) || "", out: (entry && entry.defeat) || "",
+                 ready: (entry && entry.again) || "", next: (entry && entry.react) || "" } } : null,
+      next: { walker: nextW ? { id: nextW.name, name: nextW.name } : null,
+              // the player leads every walker rung; the mansion leads her own (14 sep canon)
+              leader: boss ? "sky" : "you" },
+    };
+  }
   _countCeremony(done) {
     const slots = this.state.slots;
     const held = this._heldNow(), dawn = this._dawn(held);
@@ -8899,7 +8960,23 @@ class Component extends DCLogic {
   _devTele() { try { return JSON.parse(localStorage.getItem("manzil-v2-telemetry")) || []; } catch (e) { return []; } }
   _devTeleAdd(e) { try { const a = this._devTele(); a.push({ t: Date.now(), ...e }); localStorage.setItem("manzil-v2-telemetry", JSON.stringify(a.slice(-2000))); } catch (e2) {} }
   componentDidUpdate(pp, ps) {
-    const s = this.state; if (!ps || !s || !s.road || s.practice || s.duel) return;
+    const s = this.state;
+    // THE MOMENT EVENT (item 2): fired wherever we are, board or not, so a surface can key off it
+    // without also tracking phase. Guarded above the road-only return below on purpose.
+    try {
+      const mnow = this._momentNow();
+      if (mnow !== this._momentLast) {
+        this._momentLast = mnow;
+        if (s && s.moment !== mnow) this.setState({ moment: mnow });
+        window.dispatchEvent(new CustomEvent("manzil:moment", { detail: { moment: mnow, phase: s && s.phase } }));
+        // the verdict record rides the arrival of its own moment
+        if (mnow === "verdict") {
+          const v = this._verdict();
+          if (v) { this.setState({ verdict: v }); window.dispatchEvent(new CustomEvent("manzil:verdict", { detail: v })); }
+        }
+      }
+    } catch (e) {}
+    if (!ps || !s || !s.road || s.practice || s.duel) return;
     const rw = s.roundWins || [], prw = ps.roundWins || [];
     if (rw.length > prw.length && s.slots && s.slots.length) {
       const [you, sky] = this._counts(s.slots);
