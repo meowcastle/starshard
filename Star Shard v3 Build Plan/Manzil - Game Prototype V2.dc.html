@@ -5824,7 +5824,13 @@ class Component extends DCLogic {
     const nextLeader = this._nextLeader(st); // the loser of the board just played leads the next one
     this._clearSeq();
     const fr = this._freshRound(r, nextLeader, st.chosen, !st.nightWalker && !st.road && !st.duel);
-    if (st.nightWalker) fr.sky = this._walkerFor(this._tonight()).hand.slice();
+    // A WALKER WITHOUT A HAND IS NOT AN ERROR (15 sep 2026, Measurement's blocker). This read
+    // `.hand.slice()` with no guard, and only three rosters (houses 0, 18 and 25) ever authored a
+    // `hand` at all — so on every other night it threw TypeError mid-_advanceRound, the board never
+    // advanced, and the series was lost with the road still full and no control. The road's own
+    // call one line below never had this problem because _seven does `(base || []).slice()`.
+    // Fall back to the hand _freshRound already dealt rather than crashing the seam.
+    if (st.nightWalker) { const nw = this._walkerFor(this._tonight()); if (nw && nw.hand) fr.sky = nw.hand.slice(); }
     // a road rung mid-match: same walker as the board just played, re-padded with a round-varied
     // seed so the filler cards differ board to board instead of repeating _freshRoadStep's fixed one
     if (st.road && !st.roadBoss) fr.sky = this._seven(this._walkers()[st.roadRung].hand, st.roadRung + 11 + r);
@@ -8781,14 +8787,14 @@ class Component extends DCLogic {
       { name: "the tower-heart", fig: "the quiet one", them: "her", line: "the tower-heart has stood under the great drum so long her pulse keeps the hour.", react: "the tower-heart misses no beat.", defeat: "the tower-heart steps from under the skin.", again: "the hour never stopped. the tower-heart kept it for you." },
     ],
     18: [ // the heart: kiln-tenders and rain-watchers, mars-red people. antares is their hearth.
-      { name: "asha", fig: "imra", them: "her", line: "asha feeds the kiln before she fights.", react: "asha stokes it higher.", defeat: "asha banks the fire. the road goes on.", again: "back again. asha kept the kiln hot for you." },
-      { name: "derev", fig: "sef", them: "him", line: "derev counts embers, not cards.", react: "derev counts again, slower.", defeat: "derev nods at the ground you kept.", again: "derev remembers your count. it was short then." },
-      { name: "onna", fig: "odel", them: "her", line: "onna waits the way the sting waits.", react: "onna stops waiting.", defeat: "onna: you reached, and it held.", again: "onna turned you back once. she waits the same way." },
-      { name: "kel", fig: "tesh", them: "him", line: "kel keeps the rain off his corners.", react: "kel gives up a corner.", defeat: "kel trades you the night.", again: "kel kept the corners dry last time too." },
-      { name: "sorev", fig: "ruen", them: "him", line: "sorev reads heat the way others read hands.", react: "sorev misread that one.", defeat: "sorev reads your walk back with respect.", again: "sorev read you once already. the heat says you changed." },
-      { name: "brakka", fig: "brann", them: "her", line: "brakka answers red with red.", react: "brakka found the fight she wanted.", defeat: "brakka wanted this fight. you ended it.", again: "brakka remembers the fight. she wants it again." },
-      { name: "immi", fig: "mave", them: "her", line: "immi gives the fire nothing to eat.", react: "immi gave that one away.", defeat: "immi gives you this one, once.", again: "immi starved you out before. nothing has changed." },
-      { name: "the rain-keeper", fig: "the quiet one", them: "them", line: "the rain-keeper has tended this road since the first rains broke.", react: "the rain-keeper says nothing.", defeat: "the rain-keeper steps aside.", again: "the rains have broken here before. the rain-keeper remembers." },
+      { name: "asha", fig: "imra", them: "her", line: "asha feeds the kiln before she fights.", react: "asha stokes it higher.", defeat: "asha banks the fire. the road goes on.", again: "back again. asha kept the kiln hot for you." , hand: [201, 202, 208, 211, 227] },
+      { name: "derev", fig: "sef", them: "him", line: "derev counts embers, not cards.", react: "derev counts again, slower.", defeat: "derev nods at the ground you kept.", again: "derev remembers your count. it was short then." , hand: [203, 207, 212, 219, 222] },
+      { name: "onna", fig: "odel", them: "her", line: "onna waits the way the sting waits.", react: "onna stops waiting.", defeat: "onna: you reached, and it held.", again: "onna turned you back once. she waits the same way." , hand: [204, 214, 213, 226, 216] },
+      { name: "kel", fig: "tesh", them: "him", line: "kel keeps the rain off his corners.", react: "kel gives up a corner.", defeat: "kel trades you the night.", again: "kel kept the corners dry last time too." , hand: [205, 209, 217, 223, 225] },
+      { name: "sorev", fig: "ruen", them: "him", line: "sorev reads heat the way others read hands.", react: "sorev misread that one.", defeat: "sorev reads your walk back with respect.", again: "sorev read you once already. the heat says you changed." , hand: [202, 210, 216, 220, 228] },
+      { name: "brakka", fig: "brann", them: "her", line: "brakka answers red with red.", react: "brakka found the fight she wanted.", defeat: "brakka wanted this fight. you ended it.", again: "brakka remembers the fight. she wants it again." , hand: [206, 215, 218, 210, 220] },
+      { name: "immi", fig: "mave", them: "her", line: "immi gives the fire nothing to eat.", react: "immi gave that one away.", defeat: "immi gives you this one, once.", again: "immi starved you out before. nothing has changed." , hand: [201, 213, 219, 224, 226] },
+      { name: "the rain-keeper", fig: "the quiet one", them: "them", line: "the rain-keeper has tended this road since the first rains broke.", react: "the rain-keeper says nothing.", defeat: "the rain-keeper steps aside.", again: "the rains have broken here before. the rain-keeper remembers." , hand: [206, 215, 218, 221, 224] },
     ],
     10: [ // the throne: the court of an absent king. they serve a star, and the chair stays empty.
       { name: "halim", fig: "imra", them: "him", line: "halim the herald announces every walker to an empty chair. he will announce you too.", react: "halim clears his throat.", defeat: "halim announces your passing, to no one in particular.", again: "back again. halim remembers the name." },
@@ -8801,14 +8807,14 @@ class Component extends DCLogic {
       { name: "the throne-warden", fig: "the quiet one", them: "them", line: "the throne-warden has dusted an empty chair longer than anyone has been alive.", react: "the warden straightens the seat.", defeat: "the warden steps aside from the dais.", again: "the chair is clean. the warden is waiting." },
     ],
     25: [ // the tents: keepers of secrets. each guards one hidden thing, and none of them name it twice.
-      { name: "naila", fig: "imra", them: "her", line: "naila keeps a name that was never written down.", react: "naila writes nothing down.", defeat: "naila keeps your name now, with the other one.", again: "back again. naila never forgot your name." },
-      { name: "veth", fig: "sef", them: "him", line: "veth counts what the camp buried, and where.", react: "veth adds it to the count.", defeat: "veth marks your win where no one will find it.", again: "veth dug up your record. it was thin." },
-      { name: "orna", fig: "odel", them: "her", line: "orna guards a grave with no stone on it.", react: "orna stands a little closer to it.", defeat: "orna: the grave keeps. so do you.", again: "orna turned you back once, and told no one." },
-      { name: "pell", fig: "tesh", them: "him", line: "pell holds a debt nobody living can collect.", react: "pell calls a little of it in.", defeat: "pell strikes your night off the ledger.", again: "pell knows what you owe from last time." },
-      { name: "sarai", fig: "ruen", them: "her", line: "sarai keeps a letter she has never opened.", react: "sarai turns the letter over.", defeat: "sarai: some things are better handed on.", again: "sarai read your game the way she won't read the letter." },
-      { name: "dov", fig: "brann", them: "him", line: "dov guards the way in, which is also the way out.", react: "dov closes the way behind him.", defeat: "dov steps out of the doorway.", again: "dov barred this way to you before." },
-      { name: "lys", fig: "mave", them: "her", line: "lys shows you seven tents. she sleeps in the eighth.", react: "lys moves her bed again.", defeat: "lys leaves the eighth tent unlit for you.", again: "lys counted you out once. the eighth tent has moved." },
-      { name: "the lamp-keeper", fig: "the quiet one", them: "them", line: "the lamp-keeper trims the one lit wick, and has kept every secret the camp ever gave.", react: "the lamp-keeper shields the flame.", defeat: "the lamp-keeper opens the flap.", again: "the light went out for you once. the lamp-keeper relit it." },
+      { name: "naila", fig: "imra", them: "her", line: "naila keeps a name that was never written down.", react: "naila writes nothing down.", defeat: "naila keeps your name now, with the other one.", again: "back again. naila never forgot your name." , hand: [201, 202, 208, 211, 227] },
+      { name: "veth", fig: "sef", them: "him", line: "veth counts what the camp buried, and where.", react: "veth adds it to the count.", defeat: "veth marks your win where no one will find it.", again: "veth dug up your record. it was thin." , hand: [203, 207, 212, 219, 222] },
+      { name: "orna", fig: "odel", them: "her", line: "orna guards a grave with no stone on it.", react: "orna stands a little closer to it.", defeat: "orna: the grave keeps. so do you.", again: "orna turned you back once, and told no one." , hand: [204, 214, 213, 226, 216] },
+      { name: "pell", fig: "tesh", them: "him", line: "pell holds a debt nobody living can collect.", react: "pell calls a little of it in.", defeat: "pell strikes your night off the ledger.", again: "pell knows what you owe from last time." , hand: [205, 209, 217, 223, 225] },
+      { name: "sarai", fig: "ruen", them: "her", line: "sarai keeps a letter she has never opened.", react: "sarai turns the letter over.", defeat: "sarai: some things are better handed on.", again: "sarai read your game the way she won't read the letter." , hand: [202, 210, 216, 220, 228] },
+      { name: "dov", fig: "brann", them: "him", line: "dov guards the way in, which is also the way out.", react: "dov closes the way behind him.", defeat: "dov steps out of the doorway.", again: "dov barred this way to you before." , hand: [206, 215, 218, 210, 220] },
+      { name: "lys", fig: "mave", them: "her", line: "lys shows you seven tents. she sleeps in the eighth.", react: "lys moves her bed again.", defeat: "lys leaves the eighth tent unlit for you.", again: "lys counted you out once. the eighth tent has moved." , hand: [201, 213, 219, 224, 226] },
+      { name: "the lamp-keeper", fig: "the quiet one", them: "them", line: "the lamp-keeper trims the one lit wick, and has kept every secret the camp ever gave.", react: "the lamp-keeper shields the flame.", defeat: "the lamp-keeper opens the flap.", again: "the light went out for you once. the lamp-keeper relit it." , hand: [206, 215, 218, 221, 224] },
     ],
     26: [ // the cot and the sword: a house that keeps a room for strangers, keeping one night's watch.
       // hosts, not workers — the first roster whose job is other people arriving.
@@ -15517,7 +15523,11 @@ class Component extends DCLogic {
           }
           // the menu STAYS open across the walk (29 aug 2026, user): only the chip itself closes it
           if (dest === "deck") this._go("deck", { ...(inMatch ? this._deckState() : {}), pmOpen: true, pauseOn: false, navFrom: "menu" });
-          else if (dest === "record" || dest === "ledger" || dest === "codex" || dest === "shardapp") this._go(dest, { ...(inMatch ? this._deckState() : {}), pmOpen: true, pauseOn: false, navFrom: null });
+          // howto/gloss added 15 sep 2026 (Measurement: "how to play - dead - the chip activates and
+          // nothing renders"). This list is an ALLOW-LIST: anything not named here falls through to the
+          // else below and lands on the lobby, so the two new pages were reachable from the scene mark
+          // (which routes through _look) and nowhere else. A new phase needs its name here as well.
+          else if (dest === "record" || dest === "ledger" || dest === "codex" || dest === "shardapp" || dest === "howto" || dest === "gloss") this._go(dest, { ...(inMatch ? this._deckState() : {}), pmOpen: true, pauseOn: false, navFrom: null });
           else this._go("menu", { ...this._deckState(), deckSel: st.deckSel, pmOpen: true, pauseOn: false, navFrom: null });
         };
         return {

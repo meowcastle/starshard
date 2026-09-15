@@ -146,6 +146,7 @@ const MARKERS = [
   ["walk forward to the next open house", "_nextOpen(m)"],
   ["m6 takes no handicap", "_stormRoad() ? 0 : this._handicapFor"],
   ["m6 caution reads two higher", "_stormRoad() ? 2 : 0"],
+  ["a walker without a hand does not crash the seam", "nw && nw.hand"],
 ];
 for (const [label, marker] of MARKERS)
   if (!src0.includes(marker)) fails.push(`code-owned behaviour LOST: ${label}  (marker: ${marker})`);
@@ -185,6 +186,30 @@ for (const [label, marker] of MARKERS)
         else if (a[k][1] !== t) fails.push(`walker "${n}" (house ${h}): pronoun "${a[k][1]}", the sheet says "${t}" — the copy table's {them} reads this.`);
       });
     }
+    // WALKER HANDS SURVIVE A SHEET PORT. The 15 Sep walker-sheet bind rebuilt each roster row from
+    // the sheet's five fields instead of merging them into the row, so `hand` — which the sheet does
+    // not carry — was dropped from the two houses that author one. Every night's road then stalled
+    // after the first board. The sheet is authoritative for name/fig/them/line/react/defeat/again and
+    // for NOTHING ELSE: a field the roster carries that the sheet does not must be preserved.
+    {
+      const HANDED = ["18", "25"]; // the houses whose walkers author their own hands
+      for (const h of HANDED) {
+        const rows = (rosterSrc.split(new RegExp("^\\s*" + h + ":\\s*\\[", "m"))[1] || "").split(/^\s*\d+:\s*\[/m)[0];
+        const n = (rows.match(/\bhand:\s*\[/g) || []).length;
+        if (n !== 8) fails.push(`walker house ${h} carries ${n} hands, not 8 — a sheet port that rebuilds rows instead of merging into them drops every field the sheet does not define, and the road stalls after board one.`);
+      }
+      // and a partial loss inside any house is the same bug caught earlier
+      let cur = null, seen = {};
+      for (const line of rosterSrc.split("\n")) {
+        const hh = /^\s*(\d+):\s*\[/.exec(line); if (hh) { cur = hh[1]; continue; }
+        if (!/\{\s*name:\s*"/.test(line) || !cur) continue;
+        seen[cur] = seen[cur] || { n: 0, hands: 0 };
+        seen[cur].n++; if (/\bhand:\s*\[/.test(line)) seen[cur].hands++;
+      }
+      for (const [h, v] of Object.entries(seen))
+        if (v.hands && v.hands !== v.n) fails.push(`walker house ${h}: ${v.hands} of ${v.n} rows carry a hand — all or none.`);
+    }
+
     // every name must resolve to art, or the walker renders faceless
     const figSrc = src0.slice(src0.indexOf("  _figs() {"), src0.indexOf("\n  _", src0.indexOf("  _figs() {") + 12));
     const figKeys = [...figSrc.matchAll(/^\s{6}"((?:[^"\\]|\\.)*)":\s*\{/gm)].map(m => unq(m[1]));
