@@ -5937,6 +5937,85 @@ class Component extends DCLogic {
       total, level, levelTo, winner, reason: level ? "level" : (at || "stations"),
     };
   }
+  // TONIGHT'S LAW AND THE GROUND, AS DATA (15 sep 2026, work order item 4). The station hover was
+  // showing the station's OWN mansion law on every night — wrong on 27 nights in 28, because a
+  // station carries a law only when it is tonight's marker. These two records separate the two
+  // facts a surface actually needs: what is true of THIS NIGHT, and what is true of a station's
+  // GROUND. No law text belongs on a station unless tonight.marker.station === i.
+  //
+  // The law's sentence is NOT new copy invented here: it is the first sentence of the station copy
+  // that already exists in _zoomFor, so there is one source. Em dashes are normalised out, since
+  // the house rule is no dashes and Measurement flagged them by name. If Design would rather own
+  // the short line, a `surfaces.law.<key>` row in the copy table overrides it with no Code cycle.
+  // THE LAW'S STATION COPY, factored out 15 sep 2026 so there is ONE source. _zoomFor's station
+  // hover and the `tonight` record (item 4) both read this. Before, the sentences lived inline in
+  // _zoomFor and nothing else could reach them without copying the strings — which is how the
+  // 28-entry ability table went stale twice.
+  _lawCopy(rl, idx9) {
+          if (rl === "beat" && idx9 === 0) return "when the road fills, this station strikes the station beside it once more, before the count. one strike, for whoever holds it.";
+          if (rl === "reach" && idx9 === 0) return "a strike from this station carries two stations. at the far one, the card fights with its printed numbers.";
+          if (rl === "shell" && idx9 === 4) return "whatever lodges here counts as normal, but if it is ever taken it counts for nobody, both sides, to the end of the board.";
+          if (rl === "reson" && idx9 === 4) return "the resonant ground: a strike that starts here or lands here carries one station further. the hour-drum overhead rings when the beat travels on.";
+          if (rl === "void" && idx9 === 4) return "the empty circle. this ground counts two at the end, whoever holds it, and the station on its right counts one less. the empty place weighs more than what stands beside it.";
+          if (rl === "void" && idx9 === 5) return "the station beside the empty circle. what stands here counts one less at the end: the void draws the worth out of its right hand.";
+          if (rl === "hush" && idx9 === 4) return this._tonight() === 15 ? "the cover. whatever lodges here draws the veil over the station on either side of it: those two count for nobody, both sides, until the board ends. faint stars, praised for being faint." : "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
+          if (rl === "turn" && idx9 === 0) return "the turning's door: whatever lodges here turns the next station to face the other way. its two numbers swap, left for right, and stay swapped until the board ends. a card that reads the same both ways cannot be turned at all.";
+          if (rl === "toll" && idx9 === 4) return "the crossing charges for shelter. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own first refusal \u2014 counts one less, either side. whatever can still be fought for counts as it always did.";
+          if (rl === "eye" && idx9 === 4) return "the eye of the storm. on this ground a tie is not a take for whoever led the board: equal numbers stand where they are. the one who answered still takes on a tie. the weather does not favour whoever moves first.";
+          if (rl === "open" && idx9 === 4) return "the open gate. nothing is held on this ground: not the tiger's hold, not a friend beside it, not a card's own first refusal. the first strike lands, and so does every one after it. the road goes through.";
+          if (rl === "razor" && idx9 === 4) return "the threshing floor. a card lodging on this ground takes both its neighbours or takes neither: the stroke goes the whole width of the road, or it does not go. the sisters cut once.";
+          if (rl === "price" && idx9 === 4) return "the branding fire. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own rule \u2014 strikes two lower from here. shelter has a price on this road, and the price is the mark.";
+          if (rl === "crow" && idx9 === 4) return "the crow's perch. whatever lodges here counts one more, and the card worth most beside it counts one less. the crow takes the bright thing — both sides, all night.";
+          if (rl === "rope" && idx9 === 4) return "the rope passes closest to the wall here: whatever lodges on this ground hauls one enemy card beside it onto the rope, and it changes hands.";
+          if (rl === "plant" && idx9 === 4) return "the old grave lies open here. whatever lodges on this ground can be taken once — but the moment it changes hands it takes root, and cannot be taken back by either side before the board ends.";
+          if (rl === "stranger" && idx9 === 4) return "the middle of the crossing. a card standing here on ground that is not its own quarter's counts one more \u2014 either side. a card at home on this ground counts as it always did.";
+          if (rl === "guest" && idx9 === 0) return "the house's own door. whatever lodges here is a guest under this roof: while it stands on this ground it loses its own quarter's grant, whoever played it. the house's cloth goes over it.";
+    return "";
+  }
+  _lawLine(key) {
+    if (!key) return "";
+    const S = (typeof window !== "undefined" && window.stage && window.stage.copy) || null;
+    const own = S && S.surfaces && S.surfaces["law." + key];
+    if (own) return own;
+    let txt = "";
+    try { txt = this._lawCopy(key, this._lawSt()); } catch (e) {}
+    if (!txt) return key;
+    // TWO sentences, not one: the first names the ground ("the branding fire.") and the second is
+    // the rule. Measurement's own sample is that pair — "the price. a card at the middle that
+    // cannot be taken strikes two lower." Taking one sentence gave the name with no rule at all.
+    const parts = String(txt).split(/(?<=\.)\s+/);
+    const line = parts.slice(0, 2).join(" ");
+    return line.replace(/\s*[\u2014\u2013]\s*/g, ", ").replace(/\s{2,}/g, " ").trim();
+  }
+  _tonightRecord() {
+    const t = this._tonight(), names = this._mList();
+    const key = this._bossRule();
+    const st = this._lawSt();
+    return {
+      night: t,
+      house: names[t - 1] || "",
+      law: key ? { key, line: this._lawLine(key) } : null,
+      window: { tonight: t, offset: this._boardOff(t) },
+      marker: { station: key && st >= 0 ? st : null },
+    };
+  }
+  // GROUND FACTS ONLY, one per station. `ground` is whether the quadrant standing there holds its
+  // cards — the tiger's grant is the only quadrant rule that refuses a take, so every other
+  // quadrant's ground is open. quadrantRule is that quadrant's own sentence, not tonight's law.
+  _stationsRecord() {
+    const names = this._mList(), len = (this.state && this.state.slots && this.state.slots.length) || 9;
+    const RULE = {
+      seiryuu: "it may be lodged either way round.",
+      suzaku: "its strikes carry two stations.",
+      byakko: "the ground holds: this card cannot be taken.",
+      genbu: "the empty shell: once she takes this station, it counts for nobody.",
+    };
+    return Array.from({ length: len }, (_, i) => {
+      const m = this._boardM(i), q = this._quad(m);
+      return { index: i, house: names[m - 1] || "", quadrant: this._quadName(q),
+               ground: q === "byakko" ? "holds" : "open", quadrantRule: RULE[q] || "" };
+    });
+  }
   // THE MOMENT MACHINE (15 sep 2026, Measurement's work order item 2). Five named steps —
   // deal · play · settle · verdict · road — so a surface keys off one word instead of guessing from
   // `phase`, `roundWins`, `roadRung`, `lives` and `roadWalker` at once.
@@ -7544,24 +7623,7 @@ class Component extends DCLogic {
         // mansion. table nights carry no law and say none. dominion needs no billing here.
         line: ((() => { const rl = this._bossRule(); const idx9 = (m - this._boardM(0) + 28) % 28;
           // the active law station explains the LAW, plainly; the poetry belongs to the quiet stations
-          if (rl === "beat" && idx9 === 0) return "when the road fills, this station strikes the station beside it once more, before the count. one strike, for whoever holds it.";
-          if (rl === "reach" && idx9 === 0) return "a strike from this station carries two stations. at the far one, the card fights with its printed numbers.";
-          if (rl === "shell" && idx9 === 4) return "whatever lodges here counts as normal, but if it is ever taken it counts for nobody, both sides, to the end of the board.";
-          if (rl === "reson" && idx9 === 4) return "the resonant ground: a strike that starts here or lands here carries one station further. the hour-drum overhead rings when the beat travels on.";
-          if (rl === "void" && idx9 === 4) return "the empty circle. this ground counts two at the end, whoever holds it, and the station on its right counts one less. the empty place weighs more than what stands beside it.";
-          if (rl === "void" && idx9 === 5) return "the station beside the empty circle. what stands here counts one less at the end: the void draws the worth out of its right hand.";
-          if (rl === "hush" && idx9 === 4) return this._tonight() === 15 ? "the cover. whatever lodges here draws the veil over the station on either side of it: those two count for nobody, both sides, until the board ends. faint stars, praised for being faint." : "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
-          if (rl === "turn" && idx9 === 0) return "the turning's door: whatever lodges here turns the next station to face the other way. its two numbers swap, left for right, and stay swapped until the board ends. a card that reads the same both ways cannot be turned at all.";
-          if (rl === "toll" && idx9 === 4) return "the crossing charges for shelter. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own first refusal \u2014 counts one less, either side. whatever can still be fought for counts as it always did.";
-          if (rl === "eye" && idx9 === 4) return "the eye of the storm. on this ground a tie is not a take for whoever led the board: equal numbers stand where they are. the one who answered still takes on a tie. the weather does not favour whoever moves first.";
-          if (rl === "open" && idx9 === 4) return "the open gate. nothing is held on this ground: not the tiger's hold, not a friend beside it, not a card's own first refusal. the first strike lands, and so does every one after it. the road goes through.";
-          if (rl === "razor" && idx9 === 4) return "the threshing floor. a card lodging on this ground takes both its neighbours or takes neither: the stroke goes the whole width of the road, or it does not go. the sisters cut once.";
-          if (rl === "price" && idx9 === 4) return "the branding fire. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own rule \u2014 strikes two lower from here. shelter has a price on this road, and the price is the mark.";
-          if (rl === "crow" && idx9 === 4) return "the crow's perch. whatever lodges here counts one more, and the card worth most beside it counts one less. the crow takes the bright thing — both sides, all night.";
-          if (rl === "rope" && idx9 === 4) return "the rope passes closest to the wall here: whatever lodges on this ground hauls one enemy card beside it onto the rope, and it changes hands.";
-          if (rl === "plant" && idx9 === 4) return "the old grave lies open here. whatever lodges on this ground can be taken once — but the moment it changes hands it takes root, and cannot be taken back by either side before the board ends.";
-          if (rl === "stranger" && idx9 === 4) return "the middle of the crossing. a card standing here on ground that is not its own quarter's counts one more \u2014 either side. a card at home on this ground counts as it always did.";
-          if (rl === "guest" && idx9 === 0) return "the house's own door. whatever lodges here is a guest under this roof: while it stands on this ground it loses its own quarter's grant, whoever played it. the house's cloth goes over it.";
+          const lc = this._lawCopy(rl, idx9); if (lc) return lc;
           return this._mPoem(m); })()) };
     }
     if (k[0] === "s") { i = +k.slice(1); s = this.state.slots[i]; if (!s) return null; c = C[s.id];
@@ -8964,6 +9026,12 @@ class Component extends DCLogic {
     // THE MOMENT EVENT (item 2): fired wherever we are, board or not, so a surface can key off it
     // without also tracking phase. Guarded above the road-only return below on purpose.
     try {
+      // item 4's two records ride any change of night or board length
+      const tkey = this._tonight() + "/" + (this._bossRule() || "-") + "/" + ((s && s.slots && s.slots.length) || 0);
+      if (tkey !== this._tonightKey) {
+        this._tonightKey = tkey;
+        this.setState({ tonight: this._tonightRecord(), stations: this._stationsRecord() });
+      }
       const mnow = this._momentNow();
       if (mnow !== this._momentLast) {
         this._momentLast = mnow;
@@ -9892,7 +9960,20 @@ class Component extends DCLogic {
     const first = !slotsIn.some(x => x && x.owner === own);
     // `by` is who lodged it, and it never changes hands. only the side that lodged a card may tap it,
     // so a captured black tortoise can never be called home into the captor's hand (25 aug 2026)
-    slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, by: own, age: 0, first };
+    // ITEM 5 (15 sep 2026): every slot carries the card's NAME, its home mansion and its quadrant,
+    // resolved here for BOTH sides. The surface named the player's cards by looking `id` up in the
+    // card table and left her side nameless, because mirror ids (201-228) miss that lookup — the
+    // same id-family problem as the quarterless guard. No surface should have to know that 214 is
+    // the jewel. Resolved from the card table, which already carries the mirror, so it is right for
+    // her deck as well as yours.
+    // NOTE: a LIVE PvP board reconciles slots from the server snapshot and will not carry these
+    // three fields; state.stations (item 4) is computed at render and is correct on every path, so
+    // a surface that must work in PvP should read that rather than the slot.
+    const q0 = c.quad || this._quad(cardId);
+    slots[i] = { id: cardId, l: rev ? c.r : c.l, r: rev ? c.l : c.r, owner: own, by: own, age: 0, first,
+                 name: (c.name || "").replace(/^The /, "").toLowerCase(),
+                 homeM: c.homeM || (cardId >= 1 && cardId <= 28 ? cardId : 0),
+                 quadrant: this._quadName(q0) };
     if (own === "sky" && this.state && this.state.glanceOn) slots[i].glanced = true;
     let at = i;
     // THE MOVERS FIRST. the flock trades places, the claws shove her card along: both change where the

@@ -627,6 +627,33 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**TONIGHT'S LAW AND THE GROUND, AS DATA (15 Sep 2026, item 4 — THE FLOW ORDER IS
+COMPLETE).** The station hover was showing each station's OWN mansion law on every
+night, wrong on 27 nights in 28. Two records separate the two facts a surface needs:
+`state.tonight` (night, house, `law {key, line}`, window, and `marker.station` — the
+one station that carries a law tonight, `null` on a law-free night) and
+`state.stations[i]` (**ground facts only**: house, quadrant, `ground: holds|open`,
+and that quadrant's own rule). No law text reaches a station unless
+`tonight.marker.station === i`.
+
+**The law sentence is not new copy.** `_lawCopy(rl, idx9)` was **factored out of
+`_zoomFor`**, where those 18 sentences lived inline and nothing else could reach
+them without copying the strings — which is exactly how the 28-entry ability table
+went stale twice. Both the hover and the record read it now. The record takes the
+first **two** sentences (the ground's name and its rule — one gave the name with no
+rule) and normalises em dashes out, since the house rule is no dashes. A
+`surfaces.law.<key>` row in Design's copy table overrides it with no Code cycle.
+Checked across all 18 law nights: every line reads, none carries a dash.
+
+**Item 5: every slot carries `name`, `homeM` and `quadrant`, resolved for BOTH
+sides.** The surface named your cards by looking `id` up in the card table and left
+hers nameless, because mirror ids (201–228) miss that lookup — the same id-family
+problem as the quarterless guard. Her card 226 now reads "chamber · black tortoise"
+without any surface knowing what 226 is. **One caveat recorded:** a LIVE PvP board
+reconciles slots from the server snapshot and will not carry the three fields, so a
+surface that must work in PvP should read `state.stations`, which is computed at
+render and correct on every path.
+
 **THE VERDICT RECORD AND THE MOMENT MACHINE (15 Sep 2026, work order item 2 — the
 thing Design's five surfaces were blocked on).**
 
