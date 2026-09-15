@@ -405,15 +405,57 @@ function ctxOf(g, slots) {
   return { sil, guide };
 }
 
-function counts(g, slots) {
+// DAWN, form DUEL (ported 15 sep 2026 from research/manzil-engine-current.cjs's `dawn`, which is
+// itself the decided form). When the road fills, each side's HELD cards turn face up: strongest
+// against strongest by PRINTED TOTAL, next against next. Each pairing is one point to the higher
+// card; A TIED PAIRING SCORES FOR NOBODY; a card with no opponent scores nothing.
+//
+// WHY THIS IS HERE AT ALL, since this file's own header says station laws are deliberately excluded
+// from duels: DAWN IS NOT A LAW. It has no night, no station and no LAW_AT entry — it is part of the
+// COUNT, and the 14 Sep cut states it applies to "every board that reaches a full road: walkers, the
+// mansion, practice and PvP alike". The client agrees in code: `_bossRule()` returns null on
+// `st.duel`, but `_dawn()` carries no duel guard whatsoever and `_counts` folds it in on any full
+// road with held cards. So PvP was the ONLY surface in the product counting a full board without it.
+//
+// THE BUG THIS CLOSES, and it was player-visible: PvP deals 7 cards a side onto a 9-station board,
+// so both seats still hold 2-3 cards when the road fills and dawn fires on EVERY PvP board. The
+// client animated the dawn sequence while this server — which is authoritative and broadcasts the
+// winner — scored without it. On any board dawn swung, the seats watched one result and were sent
+// another.
+//
+// THE ONE REAL DIVERGENCE FROM BOTH OTHER IMPLEMENTATIONS: they read printed totals off a single
+// flat card table. Here there are two, and a held card belongs to ITS OWNER'S collection, so it must
+// be valued at that player's own levels/builds — id 6 can be level 3 in one hand and level 1 in the
+// other at the same time. `cardById(g, id, side)` is what makes that right; a flat lookup would
+// silently price both hands at one seat's table.
+function dawn(g, held) {
+  const tot = (id, side) => { const c = cardById(g, id, side); return c ? (c.l || 0) + (c.r || 0) : 0; };
+  const srt = (a, side) => (a || []).slice().sort((x, y) => tot(y, side) - tot(x, side));
+  const Y = srt(held && held.you, "you"), S = srt(held && held.sky, "sky");
+  const n = Math.min(Y.length, S.length);
+  const pairs = []; let you = 0, sky = 0;
+  for (let i = 0; i < n; i++) {
+    const ty = tot(Y[i], "you"), ts = tot(S[i], "sky");
+    const win = ty > ts ? "you" : ts > ty ? "sky" : null; // a tie scores for nobody
+    if (win === "you") you++; else if (win === "sky") sky++;
+    pairs.push({ y: Y[i], s: S[i], ty, ts, win });
+  }
+  const odd = Y.length > n ? { id: Y[n], side: "you" } : S.length > n ? { id: S[n], side: "sky" } : null;
+  return { you, sky, pairs, odd };
+}
+
+// `held` is OPTIONAL and dawn applies only when it is passed, exactly as the module and the client
+// both do. That is what keeps every existing caller and every previously measured number untouched.
+function counts(g, slots, held) {
   const ctx = ctxOf(g, slots);
   let you = 0, sky = 0;
   slots.forEach((s, i) => { const r = slotW(g, slots, i, ctx); if (!r.who) return; if (r.who === "you") you += r.w; else sky += r.w; });
+  if (held && slots.every(x => x)) { const d = dawn(g, held); you += d.you; sky += d.sky; }
   return [you, sky];
 }
 
-function boardWinner(g, slots) {
-  const [you, sky] = counts(g, slots);
+function boardWinner(g, slots, held) {
+  const [you, sky] = counts(g, slots, held);
   if (you !== sky) return you > sky ? "you" : "sky";
   const tr = g.tieRule || "a draw";
   if (tr === "a draw") return "draw";
@@ -430,7 +472,7 @@ function boardWinner(g, slots) {
   return "you";
 }
 
-const API = { cards, deal, mkGame, faceOf, shielded, tryFlip, lodge, resolve, isHome, boardM, cardOf, cardById, slotW, ctxOf, counts, boardWinner, on, nb, POOL, QUAD_OF };
+const API = { cards, deal, mkGame, faceOf, shielded, tryFlip, lodge, resolve, isHome, boardM, cardOf, cardById, slotW, ctxOf, counts, dawn, boardWinner, on, nb, POOL, QUAD_OF };
 if (typeof module !== "undefined") module.exports = API;
 
 // ---- self-checks: node starshard-api/lib/manzil-engine.js -----------------------------------
@@ -592,6 +634,48 @@ if (require.main === module) {
     g2.slots[1] = { id: 6, l: 5, r: 8, owner: "you", by: "you", age: 0 }; // your awake storm, defending
     const r = tryFlip(g2, g2.slots, 0, 1, 1); // 5 vs 5 would tie anywhere else — your storm can't be tied
     ok("a tie against your awake storm still doesn't take it", r === false);
+  }
+
+  // ---- DAWN (15 sep 2026) ---------------------------------------------------------------------
+  // The form is decided and the rejected ones (pair/top/count) must not come back. These pin the
+  // four properties plus the two-table pricing that is unique to this file.
+  {
+    const flat = mkGame({ tonight: 7 });
+    const dTie = dawn(flat, { you: [6], sky: [6] });
+    ok("dawn: a tied pairing scores for NOBODY", dTie.you === 0 && dTie.sky === 0 && dTie.pairs[0].win === null);
+
+    const dOdd = dawn(flat, { you: [6, 7], sky: [6] });
+    ok("dawn: the unopposed card scores nothing and is reported",
+       dOdd.odd && dOdd.odd.side === "you" && dOdd.pairs.length === 1);
+
+    // strongest against strongest, not in hand order: sky's weak card is sorted to meet your weak one
+    const hi = POOL.find(c => c.l + c.r >= 14) || POOL[0];
+    const lo = POOL.slice().sort((a, b) => (a.l + a.r) - (b.l + b.r))[0];
+    const dSort = dawn(flat, { you: [hi.id, lo.id], sky: [lo.id, hi.id] });
+    ok("dawn: pairs by printed total, not hand order", dSort.you === 0 && dSort.sky === 0);
+
+    // TWO TABLES: the same id in both hands, built differently. The better-built copy must win —
+    // a flat lookup would price both off one seat and call it a tie.
+    const g2t = mkGame({ tonight: 7, youConfig: { levels: { 6: 4 }, builds: { 6: { a: 1, b: 1, c: 1 } } }, skyConfig: { levels: {} } });
+    const dSeat = dawn(g2t, { you: [6], sky: [6] });
+    ok("dawn: a held card is priced at ITS OWNER'S levels, not one shared table",
+       dSeat.you === 1 && dSeat.sky === 0 &&
+       (cardById(g2t, 6, "you").l + cardById(g2t, 6, "you").r) > (cardById(g2t, 6, "sky").l + cardById(g2t, 6, "sky").r));
+
+    // the discipline that keeps every pre-dawn number valid
+    const full = Array.from({ length: 9 }, (_, i) => ({ id: 1 + i, l: 5, r: 5, owner: i < 5 ? "you" : "sky", by: i < 5 ? "you" : "sky", age: 1 }));
+    const bare = counts(flat, full), withHeld = counts(flat, full, { you: [20], sky: [21] });
+    ok("dawn: counts() WITHOUT held is byte-identical to before the port",
+       bare[0] === 5 && bare[1] === 4);
+    ok("dawn: counts() WITH held folds the points in", withHeld[0] !== bare[0] || withHeld[1] !== bare[1]);
+
+    const partial = [...full.slice(0, 8), null];
+    const pa = counts(flat, partial), pb = counts(flat, partial, { you: [20], sky: [21] });
+    ok("dawn: a PARTIAL road never scores dawn", pa[0] === pb[0] && pa[1] === pb[1]);
+
+    // and it has to be able to decide a board, which is the whole reason it is here
+    const bw = boardWinner(flat, full), bwd = boardWinner(flat, full, { you: [20, 21], sky: [22] });
+    ok("dawn: boardWinner accepts held and still returns a seat", (bw === "you" || bw === "sky" || bw === "draw") && (bwd === "you" || bwd === "sky" || bwd === "draw"));
   }
 
   const fails = checks.filter(([, c]) => !c);

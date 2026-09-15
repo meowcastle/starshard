@@ -362,7 +362,18 @@ function createManzilLobby(io, { jwtSecret, pool }) {
   }
 
   function finishBoard(match) {
-    const winner = engine.boardWinner(match.game, match.game.slots); // tieRule "the defender" set on this game
+    // DAWN (15 sep 2026). `g.you`/`g.sky` are the LIVE hands — `place` filters each card out as it
+    // lodges — so at a full road they are exactly the held cards dawn reads. PvP deals 7 a side onto
+    // 9 stations, so both seats always hold 2-3 here and dawn fires on every board.
+    //
+    // This was the one surface in the product counting a full board without it: the client animates
+    // dawn in duel mode (`_dawn` has no duel guard, unlike `_bossRule`), while this server decided
+    // the winner from the stations alone and broadcast that. Any board dawn swung was shown one way
+    // and recorded the other.
+    const g = match.game;
+    const held = { you: g.you.slice(), sky: g.sky.slice() };
+    const dawnRec = engine.dawn(g, held);
+    const winner = engine.boardWinner(g, g.slots, held); // tieRule "the defender" set on this game
     match.roundWins.push(winner);
     const wins = side => match.roundWins.filter(w => w === side).length;
     const done = wins('you') >= 3 || wins('sky') >= 3;
@@ -372,6 +383,20 @@ function createManzilLobby(io, { jwtSecret, pool }) {
         matchId: match.id,
         winner: winner === 'draw' ? 'draw' : view(seat, winner),
         roundWins: match.roundWins.map(w => (w === 'draw' ? 'draw' : view(seat, w))),
+        // the AUTHORITATIVE dawn, seat-relative like everything else in this payload. The client
+        // cannot compute this correctly on its own in PvP: `_dawn` prices both hands off its single
+        // local `_cards()` table, but a held card belongs to its owner's collection and must be read
+        // at THAT player's levels. Sending it means both seats see the pairing the winner came from.
+        dawn: {
+          you: view(seat, 'you') === 'you' ? dawnRec.you : dawnRec.sky,
+          sky: view(seat, 'you') === 'you' ? dawnRec.sky : dawnRec.you,
+          pairs: dawnRec.pairs.map(pr => ({
+            mine: seat === 'you' ? pr.y : pr.s, theirs: seat === 'you' ? pr.s : pr.y,
+            mineTotal: seat === 'you' ? pr.ty : pr.ts, theirsTotal: seat === 'you' ? pr.ts : pr.ty,
+            win: pr.win === null ? null : view(seat, pr.win),
+          })),
+          odd: dawnRec.odd ? { id: dawnRec.odd.id, side: view(seat, dawnRec.odd.side) } : null,
+        },
       }));
       if (done) {
         const matchWinner = wins('you') >= 3 ? 'you' : 'sky';
