@@ -5798,7 +5798,22 @@ class Component extends DCLogic {
       this._climbT = setTimeout(() => {
         const cs = this._climbStep; this._climbStep = null;
         if (!cs || this.state.phase !== "climb") return;
-        this.setState({ ...cs.step, roadPick: cs.roadPick, roundExit: false });
+        // THE STATIONS ARE ALREADY STANDING (15 sep 2026, user: "the stations on the arena reshuffle
+        // ... then it happens again before the battle starts"). The climb beat above already cleared
+        // the board and advanced the rung 2.4s ago, but _freshRoadStep's return ALSO carries
+        // roadRung/roadBoss/roadWalker and its own fresh all-null slots array — so applying it whole
+        // handed the station row a brand-new array and re-set three values it already held, and the
+        // row visibly re-settled a second time. Measured: two rebuilds per walker, at ~600ms and
+        // ~3290ms. Keep what is already correct; this beat is about the HAND.
+        this.setState(prev => {
+          const next = { ...cs.step, roadPick: cs.roadPick, roundExit: false };
+          if (Array.isArray(prev.slots) && Array.isArray(next.slots) && prev.slots.length === next.slots.length
+              && prev.slots.every(x => !x)) next.slots = prev.slots;
+          if (prev.roadRung === next.roadRung) delete next.roadRung;
+          if (prev.roadBoss === next.roadBoss) delete next.roadBoss;
+          if (prev.roadWalker === next.roadWalker) delete next.roadWalker;
+          return next;
+        });
         this._afterDeal();
         if (cs.step.turn === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
       }, 2400);
@@ -6420,7 +6435,7 @@ class Component extends DCLogic {
     }
     const Cg = this._cards();
     if (leader === "sky" && hand.some(id => Cg[id] && Cg[id].ab === "gate" && this._on(Cg[id]))) leader = "you"; // the gate lodges before her lead
-    return { mull: { n: 0 }, retUsed: false, tapUsed: false, handUsed: false, guideUsed: false, throneUsed: false, heartHold: null, holdUsed: false, burstUsed: false, poolSide: 1, glanceOn: false, pick: null, slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, log: "" };
+    return { mull: { n: 0 }, retUsed: false, tapUsed: false, handUsed: false, guideUsed: false, throneUsed: false, heartHold: null, holdUsed: false, burstUsed: false, poolSide: 1, glanceOn: false, pick: null, slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, countFx: null, log: "" };
   }
   _cards() {
     const fl = 0; // the forceLevel tweak and the level buttons are gone (27 aug 2026): true levels only
@@ -14152,7 +14167,14 @@ class Component extends DCLogic {
       pipsTopRight: matchPips.length > 0 && (st.phase === "play" || st.phase === "round" || st.phase === "won" || st.phase === "lost"),
       skyHandOn: !!(st.roadBoss || st.nightSky),
       // the hand rail steps aside while its cards are in the sky at dawn (the risen copies ARE the hand)
-      handRailStyle: "position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;z-index:6;transition:opacity .4s ease" + (st.countFx && st.countFx.step < 4 ? ";opacity:0;pointer-events:none" : ""),
+      // THE LEFT-OVER CARDS DO NOT COME BACK (15 sep 2026, user: "after the duel count the players
+      // left over cards dont need to reappear"). This tested `step < 4`, so the rail faded back in for
+      // the last beat of the count and the cards the player never got to play rose again under the
+      // result — a board that is over, dealing itself back out. The count only ever runs on a FULL
+      // road, so once it begins the hand has no move left in it: keep it down until the next deal.
+      // That is safe to test by presence now only because _freshRound clears countFx above; before
+      // this it survived into the next board and would have hidden a live hand.
+      handRailStyle: "position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;z-index:6;transition:opacity .4s ease" + (st.countFx ? ";opacity:0;pointer-events:none" : ""),
       // the planets no longer stand across from you: they are a small rail at the edge that empties as she casts
       // the pool's hub: rotating (so they turn around each other) and sliding side to side as she throws
       skyRailStyle: "position:absolute;left:calc(50% + " + ((st.poolSide || 1) * 158) + "px);top:56px;width:0;height:0;pointer-events:none;z-index:5;animation:mzHubSpin 30s linear infinite;transition:left 1.5s cubic-bezier(.22,1,.36,1)",
