@@ -1,0 +1,22 @@
+
+MANSION 19. m23 the reson, slid. 896 boards a cell, two seeds.
+cfg {"resonAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      52.9%      50.2%     2.7     9.7%   25.7%    28.9%
+  deep   the law                      58.0%      42.4%    15.6    12.7%   39.4%    13.7%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      52.9%      44.8%     8.1
+  deep   the law                      58.0%      35.6%    22.4
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       44.9%
+  suzaku       42.7%
+  seiryuu      49.9%
+  genbu        32.1%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         70.4%       29.6%     17.2%    17.3%     35.5%   30.0%
+  deep          67.0%       33.0%     24.2%    25.8%     22.6%   27.4%

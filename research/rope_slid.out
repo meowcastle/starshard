@@ -1,0 +1,22 @@
+
+MANSION 24. m28 the rope, slid. 896 boards a cell, two seeds.
+cfg {"ropeAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      52.9%      42.5%    10.4     9.7%   29.7%    23.8%
+  deep   the law                      65.5%      34.6%    30.9    12.1%   35.7%    15.6%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      52.9%      51.2%     1.7
+  deep   the law                      65.5%      39.1%    26.5
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       62.9%
+  suzaku       29.9%
+  seiryuu      36.6%
+  genbu        30.7%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         71.3%       28.7%     23.5%    20.6%     19.6%   36.2%
+  deep          71.9%       28.1%     16.9%    19.9%     15.4%   47.8%

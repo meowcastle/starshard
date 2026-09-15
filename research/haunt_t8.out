@@ -1,0 +1,22 @@
+
+MANSION 8. 8a the haunted station. 896 boards a cell, two seeds.
+cfg {"hauntAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      55.7%      38.4%    17.3    12.2%   34.1%    18.0%
+  deep   the law                      57.8%      42.0%    15.8    15.0%   40.8%    12.5%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      55.7%      37.7%    18.0
+  deep   the law                      57.8%      26.9%    30.9
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       18.8%
+  suzaku       51.7%
+  seiryuu      62.9%
+  genbu        45.9%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         62.7%       37.3%     15.8%    34.0%     23.2%   27.1%
+  deep          70.3%       29.7%     17.1%    27.4%     16.9%   38.6%

@@ -1,0 +1,80 @@
+{
+ "road": {
+  "random": {
+   "win": 4.0,
+   "flips": 2.43,
+   "tied": 3.6,
+   "margin": 3.89,
+   "legal": 22.1,
+   "uniq": 51
+  },
+  "1-ply": {
+   "win": 30.8,
+   "flips": 4.67,
+   "tied": 8.0,
+   "margin": 2.28,
+   "legal": 22.8,
+   "uniq": 34
+  },
+  "2-ply": {
+   "win": 67.4,
+   "flips": 2.42,
+   "tied": 14.7,
+   "margin": 2.07,
+   "legal": 22.5,
+   "uniq": 36
+  }
+ },
+ "wrapped": {
+  "random": {
+   "win": 4.0,
+   "flips": 2.59,
+   "tied": 4.9,
+   "margin": 3.98,
+   "legal": 22.1,
+   "uniq": 49
+  },
+  "1-ply": {
+   "win": 35.3,
+   "flips": 5.22,
+   "tied": 18.8,
+   "margin": 1.95,
+   "legal": 22.7,
+   "uniq": 33
+  },
+  "2-ply": {
+   "win": 65.6,
+   "flips": 2.58,
+   "tied": 18.3,
+   "margin": 2.08,
+   "legal": 22.8,
+   "uniq": 36
+  }
+ },
+ "contiguous": {
+  "random": {
+   "win": 17.9,
+   "flips": 3.03,
+   "tied": 15.2,
+   "margin": 2.25,
+   "legal": 14.2,
+   "uniq": 46
+  },
+  "1-ply": {
+   "win": 46.4,
+   "flips": 4.59,
+   "tied": 13.8,
+   "margin": 2.14,
+   "legal": 13.4,
+   "uniq": 41
+  },
+  "2-ply": {
+   "win": 83.5,
+   "flips": 3.0,
+   "tied": 8.5,
+   "margin": 2.79,
+   "legal": 13.8,
+   "uniq": 40
+  }
+ }
+}

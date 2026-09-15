@@ -1,0 +1,26 @@
+SHARED RULES (every batch)
+- Read /root/design-packet/run/PROMPT.txt first. It is the constitution. Obey all of it,
+  especially the `lead` rules and THE FRAME TRAP.
+- Never describe a mansion. Its portrait renders on the same page directly below your text.
+  Write only what happens when a person is both. If a paragraph would work unchanged with a
+  different partner mansion, it is wrong.
+- Attribute NOTHING. No "the old books", "the traditions", "every tradition", "the older
+  readings", "classical sources". There is no inherited literature on mansion pairings —
+  that is why this corpus is being written. Authority comes from the observation being true.
+- Permitted astrology terms ONLY: planets, twelve signs, sun/moon/rising, houses, the five
+  aspects, retrograde, new/full moon, orbs in degrees. Nothing else. No "significator",
+  no "aversion".
+- Never mention that the traditions disagree about a mansion. That is in the portrait.
+- BANNED FRAMES (the harness misses some mid-sentence — audit by hand too):
+  "what it costs is" · "what that costs is" · "and not one of them" · "not one of them knows"
+  "and every one of them" · "and you are the only" · "and there is nothing to"
+  "is real and it is" · "and you have never been" · "and none of them" · "is the word and"
+  "the word and it" · "and it is the" · "you have never once" · "at full size and"
+- If three of your four slots of one kind open alike, two are wrong. Rewrite before submitting.
+- `lead` must not begin "sun in X, moon in Y" — the page header already prints it. Your four
+  leads must not share one syntax.
+- Each packet's `banned` list is absolute.
+- Verify with: cd /root/design-packet && node combo-harness.mjs check <yourfile>
+  Then merge with combos.json into a PRIVATE temp file and check again. Fix until clean,
+  0 collisions, 0 over-used frames. Do not modify combos.json or other agents' files.
+- Return only DONE, the final gate output, and one line per cell naming its angle.

@@ -1,0 +1,24 @@
+{
+ "rung1_imra": {
+  "careful": 100.0,
+  "casual": 92.4
+ },
+ "rung2_sef": {
+  "careful": 98.7,
+  "casual": 72.8
+ },
+ "rung3_odel": {
+  "careful": 91.5,
+  "casual": 54.0
+ },
+ "rung4_brann": {
+  "careful": 95.5,
+  "casual": 59.4
+ },
+ "rung5_the quiet one": {
+  "careful": 95.1,
+  "casual": 79.9
+ },
+ "boss_careful": 58.9,
+ "boss_casual": 35.3
+}

@@ -5900,13 +5900,16 @@ class Component extends DCLogic {
     const cards = { you: 0, sky: 0, notes: [] }, lawPts = { you: 0, sky: 0 };
     slots.forEach((sl, i) => {
       const r = this._slotW(slots, i, ctx);
-      if (!r.who) return;
+      // a shelled station counts for nobody but is still itemised against whoever holds it, so the
+      // record can name the law that emptied it. Anything else with no `who` is genuinely absent.
+      const side = r.who || (r.shell ? r.owner : null);
+      if (!side) return;
       const pp = r.parts || { base: r.w, dominion: 0, cards: 0, law: 0 };
-      stations[r.who] += 1;                          // one point for standing there
-      dominion[r.who] += pp.dominion;
-      cards[r.who] += pp.cards + (pp.base - 1);      // jupiter's own +1 is its signature, not a station
-      lawPts[r.who] += pp.law;
-      (r.notes || []).forEach(n => { if (n) cards.notes.push({ side: r.who, station: i, note: n }); });
+      stations[side] += 1;                           // one point for standing there
+      dominion[side] += pp.dominion;
+      cards[side] += pp.cards + (pp.base - 1);       // jupiter's own +1 is its signature, not a station
+      lawPts[side] += pp.law;
+      (r.notes || []).forEach(n => { if (n) cards.notes.push({ side, station: i, note: n }); });
     });
     const [ty, ts] = this._counts(slots, held);
     const total = { you: ty, sky: ts };
@@ -6068,12 +6071,35 @@ class Component extends DCLogic {
       rung: { index: idx, name: "the " + (ORD[Math.min(idx, 7)] || "first") + " rung", won: !!rungWon, over: !!rungOver },
       lights: { standing, cap, lost: st.phase === "roadlost" || standing < cap },
       climb: { over: !!climbOver, cleared: !!(boss && rungWon) },
-      walker: wname ? { id: wname, name: wname,
-        lines: { in: (entry && entry.line) || "", out: (entry && entry.defeat) || "",
-                 ready: (entry && entry.again) || "", next: (entry && entry.react) || "" } } : null,
-      next: { walker: nextW ? { id: nextW.name, name: nextW.name } : null,
+      // THE WALKER IS THE ROSTER ROW (15 sep 2026, Measurement). The verdict used to re-label the
+      // sheet into lines:{in,out,ready,next}, which lost `fig` and — worse — named `react` "next",
+      // so a surface reading lines.next got the mid-board reaction rather than anything about the
+      // walker coming. The row now goes out under its OWN field names; `lines` is kept as an alias
+      // so nothing written against the 14 Sep record breaks, but it is the copy of record no longer.
+      //
+      // `them` is the fifth field the copy table asks for ({them}, needed by verdict.rung.lost).
+      // NO roster row carries one today — all 216 across 28 mansions are name/fig/line/react/
+      // defeat/again. It therefore defaults to the neutral "them", which is right for every walker
+      // and wrong for none, and reads entry.them the moment Design adds the field per row. It is
+      // deliberately NOT inferred from the prose: a stray "she says" in a line is not a pronoun
+      // declaration, and a guess here misgenders a character in a way the default never does.
+      walker: wname ? this._walkerRow(wname, entry) : null,
+      next: { walker: nextW ? this._walkerRow(nextW.name, nextW) : null,
               // the player leads every walker rung; the mansion leads her own (14 sep canon)
               leader: boss ? "sky" : "you" },
+    };
+  }
+  // one shape for a walker anywhere a surface needs one: the roster row plus the pronoun, with the
+  // 14 Sep `lines` aliases riding along. `entry` may be null when a walker is named but has no row.
+  _walkerRow(name, entry) {
+    const e = entry || {};
+    return {
+      id: name, name: name,
+      fig: e.fig || (this._wAlias ? this._wAlias(name) : name),
+      them: e.them || "them",
+      line: e.line || "", react: e.react || "", defeat: e.defeat || "", again: e.again || "",
+      // deprecated aliases, kept so the 14 Sep record's readers keep working. `next` is `react`.
+      lines: { in: e.line || "", out: e.defeat || "", ready: e.again || "", next: e.react || "" },
     };
   }
   _countCeremony(done) {
@@ -6272,8 +6298,11 @@ class Component extends DCLogic {
       // the third door, so a hand whose moves are awake stands at three. the scripted lessons need the
       // signatures live, and this is the honest level for them to be live at.
       if (dem && lvl < 3) lvl = 3;
-      const sigOn = (lvl >= 3 && bd.b === "s") || dem;
-      const grantOn = lvl >= 2 && bd.a === "g";
+      // `_confAwake` / `_confGrants` are the conformance hook's seam (15 sep 2026): a fixture has to
+      // be able to stand a district or a listener on a board without also owning this save's build
+      // state. Set only inside stage.settleOf, restored in its finally, and false in normal play.
+      const sigOn = (lvl >= 3 && bd.b === "s") || dem || !!this._confAwake;
+      const grantOn = (lvl >= 2 && bd.a === "g") || !!this._confGrants;
       let dl = 0, dr = 0;
       if (lvl >= 2 && bd.a === "n" && bd.aS) { if (bd.aS === "r") dr += 2; else dl += 2; }
       if (lvl >= 3 && bd.b === "n" && bd.bS) { if (bd.bS === "r") dr += 1; else dl += 1; }
@@ -8840,6 +8869,49 @@ class Component extends DCLogic {
       return !!ok;
     };
     api.looking = () => (this.state && this.state.look && this.state.look.target) || null;
+    // THE CONFORMANCE HOOK (15 sep 2026, Measurement's ask). Their adapter needs to drive the
+    // CLIENT's end-of-board path, not just the module's, because the two are separate code paths
+    // and the whole point of the pack is to catch them drifting. This runs the real _settle on a
+    // board handed in, with no side effects: nothing is rendered, no state is set, no timers arm.
+    //
+    //   stage.settleOf({ tonight, slots, held, leader })  ->  the settle record
+    //
+    // `slots` may be given as plain {id, owner, by} — the faces are filled from the card table, so
+    // a fixture does not have to know them. `held` is {you:[ids], sky:[ids]}; omit it for a board
+    // that never filled. `leader` decides a level board, since the defender rule reads it.
+    api.settleOf = (spec) => {
+      const o = spec || {};
+      // `awake: true` wakes every signature for this call, and `grants: true` every quadrant grant,
+      // so a fixture can stand a district or a listener without owning this save's build state.
+      this._confAwake = !!o.awake; this._confGrants = !!o.grants;
+      this._C = null;
+      const C = this._cards();
+      const slots = (o.slots || []).map(x => {
+        if (!x) return null;
+        const c = C[x.id] || {};
+        return Object.assign({ l: c.l, r: c.r, by: x.owner, age: 1 }, x);
+      });
+      const st0 = this.state || {};
+      const prev = { moonC: this._moonC, leader: st0.leader, road: st0.road,
+                     practice: st0.practice, duel: st0.duel, slots: st0.slots };
+      try {
+        if (o.tonight) this._moonC = o.tonight;            // _tonight reads the session pick
+        // _bossRule only answers on a road, and never in practice or a duel — a fixture is asking
+        // "what would tonight's law do", so put it on a road for the call.
+        st0.road = o.road === false ? false : true;
+        st0.practice = false; st0.duel = null;
+        st0.slots = slots;                                  // _lawSt/_boardM read the board length
+        if (o.leader) st0.leader = o.leader;                // read by the level rule only
+        return this._settle(slots, o.held || { you: [], sky: [] });
+      } finally {
+        this._moonC = prev.moonC; this._confAwake = false; this._confGrants = false;
+        if (this.state) {
+          this.state.leader = prev.leader; this.state.road = prev.road;
+          this.state.practice = prev.practice; this.state.duel = prev.duel; this.state.slots = prev.slots;
+        }
+        this._C = null;
+      }
+    };
     // seeded only for the window before manzil-copy.js loads; the real table replaces this wholesale.
     if (!api.timing) api.timing = { verdict: { buttonLive: 550, hold: "until tapped" }, hover: { tooltipDelay: 350 }, road: { total: 900 } };
   }
@@ -10222,16 +10294,31 @@ class Component extends DCLogic {
   }
   // the count's own signatures (card sheet, 27 aug 2026): the district, the listener, the drum, the
   // void, the hideaway, the chamber and the guide. plus jupiter, dominion, the kiln, the tortoise's grant.
+  // A SHELLED STATION, READ DIFFERENTIALLY (15 sep 2026 — the naming decision, matched to
+  // Measurement's reference). It still counts for NOBODY, so `who` stays null and `w` stays 0 and
+  // no measured number moves; but the record reports the station and its dominion as they would
+  // have been, with `law` carrying the debit that cancels them, so a caption can name what the law
+  // took. Reads stations 2, dominion 1, law -2, total 1 — row for row with the reference.
+  _shellParts(slots, i, s) {
+    const c = this._cards()[s.id];
+    const jm = this.props.jupiterMode || "always";
+    const home = this._isHome(s.id, i);
+    let j = 0;
+    if (c && c.ab === "jupiter") j = jm === "on its home only" ? (home ? 1 : 0) : jm === "while she holds it" ? (s.owner === "sky" ? 1 : 0) : 1;
+    const base = 1 + j, dom = home ? 1 : 0;
+    return { who: null, w: 0, shell: true, owner: s.ground || s.owner,
+             parts: { base, dominion: dom, cards: 0, law: -(base + dom) }, notes: [] };
+  }
   _slotW(slots, i, ctx) {
     const s = slots[i];
     if (!s) return { who: null, w: 0, silent: !!(ctx && ctx.sil && ctx.sil[i]) };
     // the black tortoise's grant: the empty shell. once the other side takes this station it counts
     // for nobody, so capturing it gains them nothing.
     const c0 = this._cards()[s.id];
-    if (c0 && c0.grantOn && (c0.quad || this._quad(s.id)) === "genbu" && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true };
+    if (c0 && c0.grantOn && (c0.quad || this._quad(s.id)) === "genbu" && s.by && s.by !== s.owner) return this._shellParts(slots, i, s);
     // THE TENTS LAW, SHIPPED (30 aug memo, shell@4): the tent stands midway down the road. take it,
     // and it counts for nobody, both sides, to the end of the board: theft succeeds and gains nothing.
-    if (this._bossRule() === "shell" && i === this._lawSt() && s.by && s.owner !== s.by) return { who: null, w: 0, shell: true };
+    if (this._bossRule() === "shell" && i === this._lawSt() && s.by && s.owner !== s.by) return this._shellParts(slots, i, s);
     if (ctx && ctx.sil && ctx.sil[i]) return { who: null, w: 0, silent: true };
     if (s.spent) return { who: null, w: 0, silent: true };
     const C = this._cards(), c = C[s.id], jm = this.props.jupiterMode || "always";

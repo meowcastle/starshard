@@ -1,0 +1,159 @@
+{
+ "I1 simultaneous, sky picks 1 of her top 1": {
+  "careful": {
+   "win": 76.6,
+   "night_sd": 29.7,
+   "n": 448
+  },
+  "casual": {
+   "win": 58.7,
+   "night_sd": 15.9,
+   "n": 448
+  },
+  "skill_gap": 17.9
+ },
+ "I2 simultaneous, sky picks 1 of her top 2": {
+  "careful": {
+   "win": 83.5,
+   "night_sd": 15.9,
+   "n": 448
+  },
+  "casual": {
+   "win": 63.6,
+   "night_sd": 13.5,
+   "n": 448
+  },
+  "skill_gap": 19.9
+ },
+ "I3 simultaneous, sky picks 1 of her top 3": {
+  "careful": {
+   "win": 85.9,
+   "night_sd": 10.9,
+   "n": 448
+  },
+  "casual": {
+   "win": 65.8,
+   "night_sd": 14.2,
+   "n": 448
+  },
+  "skill_gap": 20.1
+ },
+ "J L2 drafted 12: choose 1 of 3, no carry": {
+  "careful": {
+   "win": 47.1,
+   "night_sd": 11.3,
+   "n": 448
+  },
+  "casual": {
+   "win": 38.2,
+   "night_sd": 10.3,
+   "n": 448
+  },
+  "skill_gap": 8.9
+ },
+ "J L2 drafted 12: choose 1 of 3 + carry 1": {
+  "careful": {
+   "win": 50.9,
+   "night_sd": 10.5,
+   "n": 448
+  },
+  "casual": {
+   "win": 35.3,
+   "night_sd": 9.9,
+   "n": 448
+  },
+  "skill_gap": 15.6
+ },
+ "J L2 all 28: choose 1 of 3, no carry": {
+  "careful": {
+   "win": 51.8,
+   "night_sd": 12.5,
+   "n": 448
+  },
+  "casual": {
+   "win": 39.3,
+   "night_sd": 11.6,
+   "n": 448
+  },
+  "skill_gap": 12.5
+ },
+ "J L2 all 28: choose 1 of 3 + carry 1": {
+  "careful": {
+   "win": 47.1,
+   "night_sd": 10.8,
+   "n": 448
+  },
+  "casual": {
+   "win": 39.7,
+   "night_sd": 12.5,
+   "n": 448
+  },
+  "skill_gap": 7.4
+ },
+ "J L3 drafted 12: choose 1 of 3, no carry": {
+  "careful": {
+   "win": 46.7,
+   "night_sd": 15.9,
+   "n": 448
+  },
+  "casual": {
+   "win": 32.6,
+   "night_sd": 14.4,
+   "n": 448
+  },
+  "skill_gap": 14.1
+ },
+ "J L3 drafted 12: choose 1 of 3 + carry 1": {
+  "careful": {
+   "win": 44.6,
+   "night_sd": 17.5,
+   "n": 448
+  },
+  "casual": {
+   "win": 32.1,
+   "night_sd": 17.6,
+   "n": 448
+  },
+  "skill_gap": 12.5
+ },
+ "J L3 all 28: choose 1 of 3, no carry": {
+  "careful": {
+   "win": 49.8,
+   "night_sd": 12.0,
+   "n": 448
+  },
+  "casual": {
+   "win": 40.8,
+   "night_sd": 12.1,
+   "n": 448
+  },
+  "skill_gap": 9.0
+ },
+ "J L3 all 28: choose 1 of 3 + carry 1": {
+  "careful": {
+   "win": 46.7,
+   "night_sd": 12.7,
+   "n": 448
+  },
+  "casual": {
+   "win": 32.8,
+   "night_sd": 10.2,
+   "n": 448
+  },
+  "skill_gap": 13.9
+ },
+ "K choose-1-of-3 + carry, drafted 12 @L3": {
+  "best": "The Heart @2 rev1",
+  "best_win": 76.2,
+  "best_perfect_nights": 8,
+  "openings_at_100": 0,
+  "openings_all28": 0
+ },
+ "K choose-1-of-3 + carry, all 28 @L3": {
+  "best": "The Heart @7 rev1",
+  "best_win": 70.2,
+  "best_perfect_nights": 4,
+  "openings_at_100": 0,
+  "openings_all28": 0
+ }
+}

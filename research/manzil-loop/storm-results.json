@@ -1,0 +1,62 @@
+{
+ "19 Aug baseline": {
+  "1-ply": {
+   "win": 33.9,
+   "flips": 4.48,
+   "tied": 12.9
+  },
+  "2-ply": {
+   "win": 66.5,
+   "flips": 2.44,
+   "tied": 16.7
+  }
+ },
+ "Same universal, no Storm rule": {
+  "1-ply": {
+   "win": 31.7,
+   "flips": 7.91,
+   "tied": 6.9
+  },
+  "2-ply": {
+   "win": 57.1,
+   "flips": 5.06,
+   "tied": 12.1
+  }
+ },
+ "SHIPPED: Storm immune both ways": {
+  "1-ply": {
+   "win": 35.5,
+   "flips": 6.7,
+   "tied": 10.0
+  },
+  "2-ply": {
+   "win": 67.2,
+   "flips": 3.77,
+   "tied": 19.9
+  }
+ },
+ "Storm defensive only (cannot BE tied)": {
+  "1-ply": {
+   "win": 33.5,
+   "flips": 7.18,
+   "tied": 8.5
+  },
+  "2-ply": {
+   "win": 72.1,
+   "flips": 4.28,
+   "tied": 13.6
+  }
+ },
+ "Storm offensive only": {
+  "1-ply": {
+   "win": 32.8,
+   "flips": 7.55,
+   "tied": 9.6
+  },
+  "2-ply": {
+   "win": 52.7,
+   "flips": 4.61,
+   "tied": 13.2
+  }
+ }
+}

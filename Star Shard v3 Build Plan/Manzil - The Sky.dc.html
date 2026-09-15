@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>window.__mzRetry=function(f){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src="./"+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js")};</script>
+<script src="./support.js" onerror="__mzRetry('support.js')"></script>
+<script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#040302;font-family:'Varela Round',sans-serif;color:#F2EAD6}
+  a{color:#F0D89A;text-decoration:none}
+  a:hover{color:#FFFDF5}
+  @keyframes skTurn{to{stroke-dashoffset:-44}}
+  @keyframes skFlare{0%,100%{opacity:.55}10%,20%{opacity:1}32%{opacity:.65}}
+  @keyframes skBreathe{0%,100%{opacity:1}50%{opacity:.45}}
+  @keyframes skSwap{0%,42%,100%{opacity:1}50%,92%{opacity:.15}}
+  @keyframes skSwapB{0%,42%,100%{opacity:.15}50%,92%{opacity:1}}
+  @keyframes skSwell{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+  @keyframes skSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+  @keyframes skBlur{0%,100%{opacity:.9}50%{opacity:.3}}
+  @keyframes skRare{0%,88%,100%{opacity:0}92%,96%{opacity:1}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #241403 0%, #0F0903 45%, #080502 100%);display:flex;justify-content:center;padding:70px 32px 120px">
+<div style="width:100%;max-width:960px;display:flex;flex-direction:column">
+  <div style="font-size:12px;color:#9A8A5E">manzil · the opponent's deck · living mock, amber envelope</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:44px;line-height:1.05;margin:10px 0 0;color:#F2EAD6">the sky's hand</h1>
+  <p style="font-size:13px;line-height:1.8;color:#9A8A5E;margin:12px 0 0;max-width:640px;text-wrap:pretty">her cards are not collected, leveled, or owned: they are the planets, whole from the first night. amber is her color; her hand is closed until played. each stands tonight in a real mansion, and holds dominion there.</p>
+
+  <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:36px;justify-content:center">
+    <sc-for list="{{ planets }}" as="c" hint-placeholder-count="5">
+      <div style="{{ c.style }}">
+        <div style="position:absolute;top:6px;left:9px;font-size:14px;color:#FFB000">{{ c.l }}</div>
+        <div style="position:absolute;bottom:40px;right:8px;font-size:14px;color:#FFB000">{{ c.r }}</div>
+        <div style="position:absolute;top:5px;right:9px;font-size:13px;color:rgba(255,176,0,.6)">{{ c.glyph }}</div>
+        <svg viewBox="0 0 100 100" style="position:absolute;top:24px;left:14px;right:14px;bottom:54px;width:calc(100% - 28px);height:calc(100% - 78px)">
+          <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="3">
+            <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+          </sc-for>
+        </svg>
+        <div style="position:absolute;bottom:24px;left:0;right:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#FFE9B8;text-align:center">{{ c.name }}</div>
+        <div style="position:absolute;bottom:11px;left:0;right:0;font-size:7.5px;color:#FFB000;text-align:center;padding:0 6px;white-space:nowrap;overflow:hidden">{{ c.move }}</div>
+        <div style="position:absolute;bottom:-18px;left:0;right:0;font-size:8.5px;color:#9A8A5E;text-align:center">{{ c.home }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:72px"></div>
+  <div style="font-size:12px;color:#9A8A5E">event nights: designed, not yet dealt</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;margin:8px 0 0">the slow sky</h2>
+  <p style="font-size:12.5px;line-height:1.8;color:#9A8A5E;margin:10px 0 0;max-width:620px">the outer planets never sit in her nightly hand: they arrive only on real event nights (an eclipse, a station, a never-in-your-life transit), one at a time, replacing her weakest card. rare because the sky is rare.</p>
+  <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:26px">
+    <sc-for list="{{ outers }}" as="c" hint-placeholder-count="3">
+      <div style="{{ c.style }}">
+        <div style="position:absolute;top:6px;left:9px;font-size:14px;color:rgba(255,176,0,.75)">{{ c.l }}</div>
+        <div style="position:absolute;bottom:40px;right:8px;font-size:14px;color:rgba(255,176,0,.75)">{{ c.r }}</div>
+        <div style="position:absolute;top:5px;right:9px;font-size:13px;color:rgba(255,176,0,.45)">{{ c.glyph }}</div>
+        <svg viewBox="0 0 100 100" style="position:absolute;top:24px;left:14px;right:14px;bottom:54px;width:calc(100% - 28px);height:calc(100% - 78px)">
+          <sc-for list="{{ c.shapes }}" as="p" hint-placeholder-count="3">
+            <path d="{{ p.d }}" fill="{{ p.f }}" stroke="{{ p.s }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.da }}" stroke-linecap="round" stroke-linejoin="round" style="{{ p.st }}"></path>
+          </sc-for>
+        </svg>
+        <div style="position:absolute;bottom:24px;left:0;right:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:rgba(255,233,184,.85);text-align:center">{{ c.name }}</div>
+        <div style="position:absolute;bottom:11px;left:0;right:0;font-size:7.5px;color:rgba(255,176,0,.75);text-align:center;padding:0 6px;white-space:nowrap;overflow:hidden">{{ c.move }}</div>
+        <div style="position:absolute;bottom:-18px;left:0;right:0;font-size:8.5px;color:#9A8A5E;text-align:center">{{ c.home }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:64px"></div>
+  <div style="border-left:2px solid #FFB000;padding:6px 0 6px 20px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;line-height:1.5;color:#FFB000;max-width:640px">her hand is checkable: the five she plays tonight are the five that truly ride tonight's sky, in their true mansions. power without invention.</div>
+  <div style="font-size:11px;line-height:1.8;color:rgba(154,138,94,.7);margin-top:30px">your side: <a href="Manzil - Base Set.dc.html">the base set</a> · briefs: <a href="Manzil - Art Briefs.dc.html">commissioning sheet</a> · play her: <a href="Manzil - Prototype.dc.html">the prototype</a></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const A = "#FFB000", W = "#FFE9B8", DA = "rgba(255,176,0,.45)", FA = "rgba(255,176,0,.14)";
+    const CI = (x, y, r) => `M ${x - r} ${y} a ${r} ${r} 0 1 0 ${r * 2} 0 a ${r} ${r} 0 1 0 ${-r * 2} 0`;
+    const TB = "transform-box:fill-box;transform-origin:center;";
+    const sh = (d, o) => ({ d, f: o.f || "none", s: o.s || "none", w: o.w || 0, da: o.da || "none", st: (o.tr ? TB : "") + (o.a ? "animation:" + o.a : "") });
+    const card = (dim) => "position:relative;width:150px;height:210px;border-radius:9px;background:linear-gradient(160deg,#2A1A02,#0B0703);box-shadow:0 10px 26px rgba(0,0,0,.6);margin-bottom:20px;border:1.5px solid " + (dim ? "rgba(255,176,0,.3)" : "rgba(255,176,0,.6)") + (dim ? ";opacity:.85" : "");
+    const planets = [
+      { name: "Saturn", glyph: "♄", l: 9, r: 5, move: "its ground is locked", home: "tonight: the chamber", shapes: [
+        sh(CI(50, 50, 11), { s: A, w: 2.2 }),
+        sh("M 22 55 a 28 9 0 1 0 56 0 a 28 9 0 1 0 -56 0", { s: DA, w: 1.6, da: "7 4", a: "skTurn 6s linear infinite" }),
+      ]},
+      { name: "Mars", glyph: "♂", l: 8, r: 6, move: "its claim strikes onward", home: "tonight: the jewel", shapes: [
+        sh(CI(46, 56, 10), { s: A, w: 2.2, a: "skFlare 4.5s ease-in-out infinite" }),
+        sh("M 54 48 L 68 34 M 68 34 h -9 M 68 34 v 9", { s: W, w: 2.2, a: "skFlare 4.5s ease-in-out .2s infinite" }),
+      ]},
+      { name: "Venus", glyph: "♀", l: 4, r: 7, move: "softens both neighbors", home: "tonight: the listener", shapes: [
+        sh(CI(50, 44, 10), { s: A, w: 2.2 }),
+        sh(CI(50, 44, 17), { s: FA, w: 5, a: "skBreathe 5s ease-in-out infinite" }),
+        sh("M 50 54 V 72 M 42 64 H 58", { s: DA, w: 2 }),
+      ]},
+      { name: "Mercury", glyph: "☿", l: 6, r: 5, move: "picks its better face", home: "tonight: the ghost", shapes: [
+        sh(CI(44, 50, 10), { s: A, w: 2.2, a: "skSwap 6s ease-in-out infinite" }),
+        sh(CI(56, 50, 10), { s: W, w: 2.2, a: "skSwapB 6s ease-in-out infinite" }),
+      ]},
+      { name: "Jupiter", glyph: "♃", l: 7, r: 8, move: "counts as two at the count", home: "tonight: the bearer", shapes: [
+        sh(CI(50, 50, 13), { s: A, w: 2.4, tr: 1, a: "skSwell 6s ease-in-out infinite" }),
+        sh(CI(28, 38, 1.8) + CI(74, 60, 1.8) + CI(68, 32, 1.4), { f: DA }),
+      ]},
+    ].map(p => ({ ...p, style: card(false) }));
+    const outers = [
+      { name: "Uranus", glyph: "♅", l: 8, r: 8, move: "swaps two lodged cards", home: "arrives: on a station night", shapes: [
+        sh(CI(50, 50, 10), { s: A, w: 2 }),
+        sh("M 50 26 a 24 10 0 1 0 0.01 0", { s: DA, w: 1.6, tr: 1, a: "skSway 7s ease-in-out infinite" }),
+      ]},
+      { name: "Neptune", glyph: "♆", l: 3, r: 9, move: "her numbers turn to mist", home: "arrives: on an eclipse night", shapes: [
+        sh("M 36 34 V 52 M 50 30 V 52 M 64 34 V 52 M 36 46 Q 50 58 64 46 M 50 52 V 72", { s: A, w: 2, a: "skBlur 5s ease-in-out infinite" }),
+      ]},
+      { name: "Pluto", glyph: "♇", l: 9, r: 1, move: "removes one card from the night", home: "arrives: never in most lives", shapes: [
+        sh(CI(50, 50, 15), { s: FA, w: 4 }),
+        sh(CI(50, 50, 3), { f: W, a: "skRare 10s ease-in-out infinite" }),
+      ]},
+    ].map(p => ({ ...p, style: card(true) }));
+    return { planets, outers };
+  }
+}
+</script>
+</body>
+</html>

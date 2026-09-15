@@ -1,0 +1,470 @@
+[
+ {
+  "tier": "weak",
+  "size": 4,
+  "awake": 4,
+  "strong": 99.6
+ },
+ {
+  "tier": "weak",
+  "size": 4,
+  "awake": 0,
+  "strong": 99.1
+ },
+ {
+  "tier": "mid",
+  "size": 4,
+  "awake": 0,
+  "strong": 99.1
+ },
+ {
+  "tier": "mid",
+  "size": 4,
+  "awake": 1,
+  "strong": 99.1
+ },
+ {
+  "tier": "mid",
+  "size": 4,
+  "awake": 3,
+  "strong": 99.1
+ },
+ {
+  "tier": "weak",
+  "size": 4,
+  "awake": 3,
+  "strong": 98.7
+ },
+ {
+  "tier": "mid",
+  "size": 4,
+  "awake": 4,
+  "strong": 98.7
+ },
+ {
+  "tier": "strong",
+  "size": 4,
+  "awake": 0,
+  "strong": 97.3
+ },
+ {
+  "tier": "weak",
+  "size": 4,
+  "awake": 2,
+  "strong": 96
+ },
+ {
+  "tier": "mid",
+  "size": 4,
+  "awake": 2,
+  "strong": 96
+ },
+ {
+  "tier": "weak",
+  "size": 4,
+  "awake": 1,
+  "strong": 95.1
+ },
+ {
+  "tier": "strong",
+  "size": 4,
+  "awake": 1,
+  "strong": 95.1
+ },
+ {
+  "tier": "weak",
+  "size": 5,
+  "awake": 0,
+  "strong": 92.9
+ },
+ {
+  "tier": "strong",
+  "size": 4,
+  "awake": 2,
+  "strong": 91.1
+ },
+ {
+  "tier": "weak",
+  "size": 5,
+  "awake": 3,
+  "strong": 90.6
+ },
+ {
+  "tier": "strong",
+  "size": 4,
+  "awake": 3,
+  "strong": 90.2
+ },
+ {
+  "tier": "weak",
+  "size": 5,
+  "awake": 2,
+  "strong": 89.7
+ },
+ {
+  "tier": "weak",
+  "size": 5,
+  "awake": 1,
+  "strong": 89.3
+ },
+ {
+  "tier": "weak",
+  "size": 5,
+  "awake": 4,
+  "strong": 87.9
+ },
+ {
+  "tier": "mid",
+  "size": 5,
+  "awake": 5,
+  "strong": 86.6
+ },
+ {
+  "tier": "strong",
+  "size": 5,
+  "awake": 0,
+  "strong": 86.6
+ },
+ {
+  "tier": "mid",
+  "size": 5,
+  "awake": 3,
+  "strong": 86.2
+ },
+ {
+  "tier": "strong",
+  "size": 4,
+  "awake": 4,
+  "strong": 86.2
+ },
+ {
+  "tier": "mid",
+  "size": 5,
+  "awake": 4,
+  "strong": 85.7
+ },
+ {
+  "tier": "weak",
+  "size": 5,
+  "awake": 5,
+  "strong": 85.3
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 1,
+  "strong": 83.5
+ },
+ {
+  "tier": "mid",
+  "size": 5,
+  "awake": 2,
+  "strong": 83.5
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 2,
+  "strong": 83
+ },
+ {
+  "tier": "mid",
+  "size": 5,
+  "awake": 0,
+  "strong": 83
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 4,
+  "strong": 79.9
+ },
+ {
+  "tier": "mid",
+  "size": 5,
+  "awake": 1,
+  "strong": 79.9
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 0,
+  "strong": 79
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 1,
+  "strong": 79
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 3,
+  "strong": 78.6
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 2,
+  "strong": 78.1
+ },
+ {
+  "tier": "strong",
+  "size": 5,
+  "awake": 1,
+  "strong": 78.1
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 3,
+  "strong": 77.7
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 1,
+  "strong": 76.8
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 4,
+  "strong": 74.6
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 5,
+  "strong": 73.2
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 3,
+  "strong": 73.2
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 0,
+  "strong": 73.2
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 1,
+  "strong": 72.8
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 6,
+  "strong": 72.3
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 2,
+  "strong": 71.4
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 5,
+  "strong": 70.1
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 5,
+  "strong": 70.1
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 0,
+  "strong": 70.1
+ },
+ {
+  "tier": "weak",
+  "size": 6,
+  "awake": 6,
+  "strong": 69.2
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 1,
+  "strong": 69.2
+ },
+ {
+  "tier": "strong",
+  "size": 5,
+  "awake": 2,
+  "strong": 69.2
+ },
+ {
+  "tier": "mid",
+  "size": 6,
+  "awake": 4,
+  "strong": 68.8
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 0,
+  "strong": 68.3
+ },
+ {
+  "tier": "strong",
+  "size": 5,
+  "awake": 3,
+  "strong": 68.3
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 0,
+  "strong": 67.4
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 7,
+  "strong": 65.2
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 0,
+  "strong": 65.2
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 2,
+  "strong": 64.7
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 6,
+  "strong": 63.8
+ },
+ {
+  "tier": "strong",
+  "size": 5,
+  "awake": 4,
+  "strong": 63.4
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 3,
+  "strong": 62.1
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 7,
+  "strong": 62.1
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 4,
+  "strong": 61.6
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 5,
+  "strong": 57.1
+ },
+ {
+  "tier": "strong",
+  "size": 5,
+  "awake": 5,
+  "strong": 57.1
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 3,
+  "strong": 55.4
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 1,
+  "strong": 54.9
+ },
+ {
+  "tier": "mid",
+  "size": 7,
+  "awake": 2,
+  "strong": 54.5
+ },
+ {
+  "tier": "weak",
+  "size": 7,
+  "awake": 6,
+  "strong": 51.3
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 2,
+  "strong": 48.2
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 5,
+  "strong": 47.8
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 4,
+  "strong": 46.4
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 4,
+  "strong": 44.2
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 3,
+  "strong": 43.3
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 5,
+  "strong": 35.3
+ },
+ {
+  "tier": "strong",
+  "size": 6,
+  "awake": 6,
+  "strong": 34.8
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 7,
+  "strong": 31.7
+ },
+ {
+  "tier": "strong",
+  "size": 7,
+  "awake": 6,
+  "strong": 20.1
+ }
+]

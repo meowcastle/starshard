@@ -1,0 +1,51 @@
+@import "https://fonts.googleapis.com/css2?family=Varela+Round&family=Cormorant+Garamond:wght@500;600;700&display=swap";
+
+/* Star Shard v2.0 tokens — read directly out of the live product's own
+   code (Star Shard v4.dc.html, Manzil - The Empty District.dc.html).
+   Retired v1.0 tokens (teal/pink/cream, bevel, card-context, foil) are
+   gone — see readme.md for what replaced them and why. */
+:root {
+  --bg-outer:#040302;
+  --bg-top:#1E1706;
+  --bg-mid:#0F0B03;
+  --bg-bottom:#080502;
+
+  --ink:#F2EAD6;
+  --ink-muted:#9A8A5E;
+  --ink-highlight:#FFFDF5;
+
+  --parchment:#F0D89A;
+  --amber:#FFB000;      /* "tonight" only — never anything else */
+  --error:#E8A87C;
+
+  --border-soft:rgba(240,216,154,.1);
+  --border:rgba(240,216,154,.2);
+  --border-strong:rgba(240,216,154,.3);
+  --glow-soft:rgba(240,216,154,.12);
+  --glow:rgba(240,216,154,.25);
+
+  --font-display:'Cormorant Garamond',serif;
+  --font-body:'Varela Round',sans-serif;
+
+  --tap-min:44px;
+  --radius-none:0;
+  --radius-round:50%;
+  --radius-soft:6px;
+}
+
+/* the current tab bar — exactly three destinations, navigation only */
+.ss-tabbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: var(--space-2, 6px);
+  padding: 14px 16px;
+  background: var(--bg-outer);
+  border-top: 1px solid var(--border-soft);
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.ss-tabbar__item[data-active="true"] {
+  color: var(--parchment);
+}

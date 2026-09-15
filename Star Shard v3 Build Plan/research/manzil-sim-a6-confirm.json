@@ -1,0 +1,32 @@
+{
+ "ran": "2026-08-20",
+ "rows": [
+  {
+   "q": "a6-confirm",
+   "storm": "none",
+   "boards": 672,
+   "careful": 60.9,
+   "casual": 34.7,
+   "tied": 10.6,
+   "flips": 4.27
+  },
+  {
+   "q": "a6-confirm",
+   "storm": "home",
+   "boards": 672,
+   "careful": 62.1,
+   "casual": 36.8,
+   "tied": 9.2,
+   "flips": 4.28
+  },
+  {
+   "q": "a6-confirm",
+   "storm": "oneway",
+   "boards": 672,
+   "careful": 74.9,
+   "casual": 36.8,
+   "tied": 14.6,
+   "flips": 3.45
+  }
+ ]
+}

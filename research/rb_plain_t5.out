@@ -1,0 +1,22 @@
+
+MANSION 5. plain_t5. 896 boards a cell, two seeds.
+cfg {}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      50.8%      44.0%     6.8    10.4%   32.5%    20.4%
+  deep   the law                      60.6%      40.0%    20.6    12.5%   35.2%    13.6%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      50.8%      45.1%     5.7
+  deep   the law                      60.6%      34.4%    26.2
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       73.3%
+  suzaku       53.5%
+  seiryuu      43.3%
+  genbu        44.0%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         69.3%       30.7%     43.0%     9.2%     19.7%   28.2%
+  deep          69.6%       30.4%     44.5%     7.7%      9.4%   38.4%

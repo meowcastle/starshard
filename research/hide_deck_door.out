@@ -1,0 +1,17 @@
+
+MANSION 15. the hidden face, blind/deck (door-first). 448 boards a cell, two seeds.
+cfg {"hideAt":4,"blind":"deck"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      48.4%      45.8%     2.7     7.3%   26.7%    29.0%
+  deep   the law                      57.6%      41.7%    15.8    12.2%   39.7%    14.6%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      48.4%      45.3%     3.1
+  deep   the law                      57.6%      29.2%    28.3
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       43.3%
+  suzaku       46.0%
+  seiryuu      49.8%
+  genbu        37.5%

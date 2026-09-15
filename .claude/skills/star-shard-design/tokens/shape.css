@@ -1,22 +1,17 @@
 :root{
-  /* Radius is 0 unless the thing is physically round or physically a card. */
+  /* Sharp rectangles by default. No bevel system, no raised/inset
+     border treatment, no hard-offset drop shadows — that was the
+     retired v1.0 (Windows-95) direction. */
   --radius-none:0;
-  --radius-round:50%;
-  --radius-card:16px;
-  /* miniature cards only — deck grids and collection thumbnails, where 16px
-     would eat the whole tile. Same concept as --radius-card, scaled. */
-  --radius-card-sm:6px;
+  --radius-round:50%;      /* rings, dots, planet glyphs */
+  --radius-soft:6px;       /* small card/panel softening, when used at all */
+  --radius-card:14px;      /* the occasional minigame card corner — not a system-wide "card radius" law like v1.0 had */
 
-  --bevel:2px;
-  --bevel-raised:var(--bevel) solid;
-  --border-raised-colors:var(--edge-light) var(--edge-dark) var(--edge-dark) var(--edge-light);
-  --border-inset-colors:var(--edge-dark) var(--edge-light) var(--edge-light) var(--edge-dark);
+  /* The only shadow language in the current system is a soft colored
+     glow, not a hard offset. Applied to emphasized elements (rings,
+     armed buttons, focused panels). */
+  --glow-shadow:0 0 14px rgba(240,216,154,.25);
+  --glow-shadow-strong:0 0 20px rgba(255,176,0,.3);
 
-  /* Hard offsets. No blur, ever. */
-  --shadow-window:4px 4px 0 rgba(16,40,40,.45);
-  --shadow-raised:3px 3px 0 rgba(16,40,40,.35);
-  --shadow-chip:2px 2px 0 rgba(16,40,40,.30);
-
-  --focus-ring:3px solid var(--focus);
   --focus-offset:2px;
 }

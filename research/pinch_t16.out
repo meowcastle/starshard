@@ -1,0 +1,22 @@
+
+MANSION 16. 16a the pinch. 896 boards a cell, two seeds.
+cfg {"pinchAt":[3,5]}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      76.0%      28.3%    47.7     7.3%   24.9%    30.7%
+  deep   the law                      72.3%      28.8%    43.5     9.0%   29.1%    22.8%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      76.0%      48.0%    28.0
+  deep   the law                      72.3%      41.0%    31.4
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       35.6%
+  suzaku       44.9%
+  seiryuu      70.4%
+  genbu        66.9%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         45.4%       54.6%     21.7%    25.4%     37.1%   15.8%
+  deep          60.0%       40.0%     18.0%    22.2%     33.5%   26.3%

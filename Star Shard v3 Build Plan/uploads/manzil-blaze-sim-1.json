@@ -1,0 +1,50 @@
+{
+ "A/2ply": {
+  "lead": 52.1,
+  "follow": 62.1,
+  "all": 57.1,
+  "match": 61.5,
+  "n": 280,
+  "bail": false
+ },
+ "A/1ply": {
+  "lead": 36.8,
+  "follow": 22.7,
+  "all": 29.7,
+  "match": 17.6,
+  "n": 1120,
+  "bail": false
+ },
+ "A/random": {
+  "lead": 3.1,
+  "follow": 2,
+  "all": 2.5,
+  "match": 0,
+  "n": 2240,
+  "bail": false
+ },
+ "B1/2ply": {
+  "lead": 57.9,
+  "follow": 59.3,
+  "all": 58.6,
+  "match": 65.5,
+  "n": 280,
+  "bail": false
+ },
+ "B1/1ply": {
+  "lead": 36.4,
+  "follow": 23.2,
+  "all": 29.8,
+  "match": 17.6,
+  "n": 1120,
+  "bail": false
+ },
+ "B1/random": {
+  "lead": 3.9,
+  "follow": 1.2,
+  "all": 2.5,
+  "match": 0,
+  "n": 2240,
+  "bail": false
+ }
+}

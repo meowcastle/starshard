@@ -1,0 +1,94 @@
+{
+ "A0 shipped: fixed chart five": {
+  "careful": {
+   "win": 73.1,
+   "win_s1": 73.4,
+   "win_s2": 72.8,
+   "flips": 4.16,
+   "night_sd": 18.0,
+   "night_min": 31.2,
+   "night_max": 100.0,
+   "n": 896
+  },
+  "casual": {
+   "win": 32.9,
+   "win_s1": 33.5,
+   "win_s2": 32.4,
+   "flips": 7.15,
+   "night_sd": 15.7,
+   "night_min": 0.0,
+   "night_max": 62.5,
+   "n": 896
+  },
+  "skill_gap": 40.2
+ },
+ "B3 draw 3 from shuffled 28 (chart five owned)": {
+  "careful": {
+   "win": 27.8,
+   "win_s1": 27.7,
+   "win_s2": 27.9,
+   "flips": 4.88,
+   "night_sd": 9.2,
+   "night_min": 0.0,
+   "night_max": 50.0,
+   "n": 896
+  },
+  "casual": {
+   "win": 17.2,
+   "win_s1": 18.1,
+   "win_s2": 16.3,
+   "flips": 6.7,
+   "night_sd": 9.9,
+   "night_min": 0.0,
+   "night_max": 50.0,
+   "n": 896
+  },
+  "skill_gap": 10.6
+ },
+ "B4 draw 4 from shuffled 28 (chart five owned)": {
+  "careful": {
+   "win": 37.1,
+   "win_s1": 39.7,
+   "win_s2": 34.4,
+   "flips": 4.97,
+   "night_sd": 11.3,
+   "night_min": 12.5,
+   "night_max": 56.2,
+   "n": 896
+  },
+  "casual": {
+   "win": 20.4,
+   "win_s1": 19.6,
+   "win_s2": 21.2,
+   "flips": 7.14,
+   "night_sd": 10.8,
+   "night_min": 0.0,
+   "night_max": 43.8,
+   "n": 896
+  },
+  "skill_gap": 16.7
+ },
+ "B5 draw 5 from shuffled 28 (chart five owned)": {
+  "careful": {
+   "win": 45.8,
+   "win_s1": 46.9,
+   "win_s2": 44.6,
+   "flips": 4.92,
+   "night_sd": 10.3,
+   "night_min": 25.0,
+   "night_max": 68.8,
+   "n": 896
+  },
+  "casual": {
+   "win": 26.8,
+   "win_s1": 27.2,
+   "win_s2": 26.3,
+   "flips": 7.67,
+   "night_sd": 10.4,
+   "night_min": 12.5,
+   "night_max": 56.2,
+   "n": 896
+  },
+  "skill_gap": 19.0
+ }
+}

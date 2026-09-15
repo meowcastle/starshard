@@ -1,0 +1,22 @@
+
+MANSION 4. the crow, credit only. 896 boards a cell, two seeds.
+cfg {"crowAt":4,"crowN":"credit"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      53.0%      44.6%     8.4    11.7%   28.2%    26.5%
+  deep   the law                      66.5%      35.5%    31.0    10.5%   31.8%    21.4%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      53.0%      55.5%    -2.5
+  deep   the law                      66.5%      38.5%    28.0
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       70.8%
+  suzaku       56.3%
+  seiryuu      28.2%
+  genbu        32.3%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         65.8%       34.2%     27.8%    28.6%     24.8%   18.8%
+  deep          60.1%       39.9%     33.4%    19.3%     16.6%   30.6%

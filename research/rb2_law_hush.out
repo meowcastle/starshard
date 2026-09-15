@@ -1,0 +1,22 @@
+
+MANSION 17. the hush, seed pair B. 896 boards a cell, two seeds.
+cfg {"hushAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      49.9%      56.3%    -6.4    11.0%   36.9%    15.0%
+  deep   the law                      53.5%      47.7%     5.8    16.4%   46.2%     9.0%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      49.9%      35.4%    14.5
+  deep   the law                      53.5%      34.0%    19.4
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       46.7%
+  suzaku       34.5%
+  seiryuu      64.1%
+  genbu        34.9%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         62.8%       37.2%     20.9%    29.4%     37.3%   12.4%
+  deep          60.1%       39.9%     23.7%    25.3%     29.2%   21.8%

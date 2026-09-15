@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Glance of the Turning</title>
+<style>
+  :root{
+    --ground:#020606;--panel:#08110f;--edge:#12201f;--edge-hi:#1d3532;
+    --ink:#e8e4d9;--muted:#98a2a0;--dim:#5d6a68;
+    --lit:#f0c674;--rose:#e0879a;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+       line-height:1.66;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:620px;margin:0 auto;padding:52px 24px 110px}
+
+  .hero{text-align:center;padding:6px 0 40px}
+  .addr{font-family:var(--mono);font-size:12px;letter-spacing:.34em;color:var(--lit);margin-bottom:14px}
+  .name{font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1.06;margin:0 0 18px}
+  .sub{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:2}
+  .sub .d{color:var(--dim)}
+
+  .rule{border:0;height:1px;background:var(--edge);margin:44px 0}
+  .star{text-align:center;color:var(--edge-hi);font-size:13px;letter-spacing:1.4em;margin:44px 0}
+
+  h2{font-size:10.5px;font-family:var(--mono);letter-spacing:.2em;text-transform:uppercase;
+     color:var(--dim);margin:0 0 20px;font-weight:400;text-align:center}
+
+  p{margin:0 0 17px;font-size:17px;letter-spacing:-.003em}
+  p strong{color:#fff;font-weight:600}
+  p em{color:var(--muted)}
+  .lead{font-size:20px;line-height:1.55}
+
+  .glyphline{text-align:center;margin:0 0 26px}
+  .glyphline .g{font-size:30px;color:var(--lit);letter-spacing:.1em}
+  .glyphline .t{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+                color:var(--dim);margin-top:8px}
+
+  .mname{text-align:center;font-size:31px;font-weight:600;letter-spacing:-.025em;margin:0 0 6px}
+  .mcoord{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--dim);
+          letter-spacing:.05em;margin-bottom:26px;line-height:1.9}
+
+  .said{display:grid;grid-template-columns:64px 1fr;gap:5px 15px;margin:0 0 24px}
+  .said .sk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+            color:var(--dim);padding-top:6px}
+  .said .tx{font-size:15px;color:var(--muted);padding-top:2px}
+  .said .tx b{color:var(--ink);font-weight:600}
+
+  .pull{border-left:2px solid #3a3320;padding:4px 0 4px 20px;margin:26px 0;
+        font-size:19px;line-height:1.5;color:var(--ink)}
+  .pull b{color:#fff}
+
+  .sig{border:1px solid #3a3320;border-radius:12px;background:#0c0a05;padding:24px 22px;margin:0 0 26px;
+       text-align:center}
+  .sig .n{font-family:var(--mono);font-size:28px;color:var(--lit);line-height:1;margin-bottom:12px}
+  .sig .h{font-size:19px;font-weight:600;line-height:1.42;margin-bottom:12px}
+  .sig .d{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.9}
+
+  .close{text-align:center;color:var(--dim);font-size:13.5px;font-style:italic;margin-top:8px}
+  .foot{margin-top:60px;padding-top:18px;border-top:1px solid var(--edge);
+        font-family:var(--mono);font-size:10px;color:var(--dim);line-height:2;text-align:center}
+  .foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--edge-hi)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="addr">9 &middot; 12</div>
+    <h1 class="name">The Glance<br>of the Turning</h1>
+    <div class="sub">
+      sun in The Glance &nbsp;&middot;&nbsp; moon in The Turning<br>
+      capricorn rising &nbsp;&middot;&nbsp; homebound &nbsp;&middot;&nbsp; waxing crescent<br>
+      <span class="d">10 july 1986, 6:26 pm &middot; grants pass, oregon</span>
+    </div>
+  </div>
+
+  <h2>the combination</h2>
+
+  <p class="lead">the arabs saw a lion here so enormous it took up a third of the sky. your sun is on
+    its <strong>eye</strong>. your moon is on its <strong>tail</strong>.
+    <em>you are both ends of the same animal.</em></p>
+
+  <p>the eye is <em>al-ṭarf</em> — the glance, the look itself. it is the part of you that
+    <strong>wants to know the thing nobody announced</strong>: the pause before the answer, the name
+    that stopped getting mentioned, who stopped being cc'd. you read rooms at a resolution most
+    people do not have, and you have been doing it so long you no longer notice you are doing it.</p>
+
+  <p>and what you see, you keep. china put a <em>willow</em> on this stretch — the tree that bends and
+    trails and never quite lets go of the water. india called it <em>the embrace</em>, the coiled
+    serpent. three cultures, three images of holding on.</p>
+
+  <p>the tail is <em>al-ṣarfa</em>, <strong>the turning</strong> — the star whose rising the old
+    almanacs said broke the back of the summer heat. its animal is the snake, which grows only by
+    shedding, and its keeper is mars, which has no patience. <strong>your inner life molts.</strong>
+    it does it on a schedule that is nobody's business but yours, and it does it suddenly.</p>
+
+  <div class="pull">
+    so you hold everything, and then you let go all at once. <b>the eye grips. the skin sheds.
+    there is nothing in between.</b>
+  </div>
+
+  <p>this is why people around you say the same sentence: <em>you never said anything.</em> and they
+    are right, and you were saying it for months. <strong>you do your grieving in advance and your
+    announcing at the end.</strong> by the time you speak, the decision is a year old and completely
+    finished — and to everyone who was not watching the weeks before, it looks like it came out of
+    nowhere and it looks cold.</p>
+
+  <p>it is not cold. it is the cost of a chart that notices everything and shows nothing until the
+    molt. <strong>what you are unusually good at is knowing, long before anyone else, that a thing is
+    over.</strong> what it costs you is that no one ever gets a warning, including the people who
+    would have changed if they had one.</p>
+
+  <div class="star">✦ ✦ ✦</div>
+
+  <h2>the ninth mansion</h2>
+  <div class="glyphline"><div class="g">柳宿</div><div class="t">the lion's eye</div></div>
+  <div class="mname">The Glance</div>
+  <div class="mcoord">12&deg;51&prime; &ndash; 25&deg;43&prime; cancer<br>your sun stands here</div>
+
+  <p>this is the only mansion on the road named after <strong>an act of perception.</strong> not a
+    thing, not a creature — a look.</p>
+
+  <div class="said">
+    <div class="sk">arabia</div><div class="tx"><b>al-Ṭarf</b> &mdash; the glance. the eye of the
+      great lion, which in the old Arab sky sprawled across a third of the heavens.</div>
+    <div class="sk">india</div><div class="tx"><b>Āśleṣā</b> &mdash; the embrace. the coiled serpent,
+      the sky of the nāgas &mdash; who in that tradition keep <em>the knowledge that is not said out
+      loud.</em></div>
+    <div class="sk">china</div><div class="tx"><b>柳 Liǔ</b> &mdash; the willow, of the Vermilion Bird.
+      the tree that bends and trails and never quite lets go of the water.</div>
+  </div>
+
+  <p>the eye, the coil, the willow. every one of them is about <strong>contact that does not
+    release.</strong></p>
+
+  <p>and the medieval election books were <em>wary</em> of this mansion. they marked it for discord,
+    said it hindered travel, and gave it a wide berth. the honest reading of that is not that the
+    stretch is unlucky. <strong>the lion's eye misses nothing, and calendar-keepers found that
+    uncomfortable.</strong> a sky that sees everything is not a restful sky to plan a wedding under.</p>
+
+  <p>the question this mansion sets is not whether you see clearly. it is <em>when seeing turns into
+    not letting go.</em></p>
+
+  <div class="star">✦ ✦ ✦</div>
+
+  <h2>the twelfth mansion</h2>
+  <div class="glyphline"><div class="g">翼宿</div><div class="t">denebola &middot; the lion's tail</div></div>
+  <div class="mname">The Turning</div>
+  <div class="mcoord">21&deg;26&prime; leo &ndash; 4&deg;17&prime; virgo<br>your moon stands here</div>
+
+  <p>denebola is <em>dhanab al-asad</em> — the tail of the lion. and the arabs named the mansion for
+    what happens when it rises: <strong>al-ṣarfa, the turning of the heat.</strong> the point in the
+    year when summer breaks and the weather changes its mind.</p>
+
+  <div class="said">
+    <div class="sk">arabia</div><div class="tx"><b>al-Ṣarfa</b> &mdash; the turning. the end of the
+      heat, named for a change rather than a thing.</div>
+    <div class="sk">india</div><div class="tx"><b>Uttara Phālgunī</b> &mdash; the second of the
+      fig-tree pair, on Denebola. the mansion of contracts kept.</div>
+    <div class="sk">china</div><div class="tx"><b>翼 Yì</b> &mdash; the wings, of the Vermilion Bird.
+      its animal is the snake &mdash; the creature that grows only by leaving a skin behind.</div>
+  </div>
+
+  <p>the election books gave it harvests and the household, and warned against putting to sea.
+    a mansion for <strong>bringing things in and finishing them</strong>, and a poor one for
+    setting out.</p>
+
+  <p>and there is a detail in your chart worth sitting with: <strong>your moon is not just in The
+    Turning &mdash; it is at the turning.</strong> it stands less than two degrees from the far edge
+    of this mansion, on the point of crossing out of it. of every light in your chart, that is the
+    one already in motion, and the ground it is moving onto is <strong>The Hand</strong> — india's
+    <em>hasta</em>, skill, craft, the maker's touch.</p>
+
+  <div class="pull">
+    the eye that will not let go, and the snake that sheds. <b>and the next thing after the shedding
+    is a pair of hands.</b>
+  </div>
+
+  <div class="star">✦ ✦ ✦</div>
+
+  <h2>your signature</h2>
+
+  <div class="sig">
+    <div class="n">1 in 218</div>
+    <div class="h">your moon and your venus are standing<br>in the same mansion.</div>
+    <div class="d">
+      moon &nbsp;2&deg;25&prime; virgo &nbsp;&middot;&nbsp; venus &nbsp;29&deg;17&prime; leo<br>
+      different signs &middot; 3&deg;08&prime; apart &middot; one stretch of sky
+    </div>
+  </div>
+
+  <p>any chart will tell you these two are close. what no chart will tell you is that they are in the
+    <em>same place</em> — because the twelve-sign zodiac cuts a border straight between them and files
+    them under Leo and Virgo, on separate pages, in separate moods.</p>
+
+  <p>venus is what you find beautiful and how you love. your moon is what you actually need.
+    <strong>for you those are not two questions.</strong> what you are drawn to and what feeds you are
+    standing on the same ground, which is a kind of luck most people do not get — you rarely want the
+    thing that is bad for you.</p>
+
+  <p>but they are standing in <strong>The Turning</strong>, the mansion of the molt. so the thing you
+    love and the thing you need <em>change at the same time, and they change all at once.</em> when
+    you are done with something you are not done with part of it. <strong>the affection and the need
+    go together, and they go on the same day.</strong></p>
+
+  <p>this is the rarest thing in your chart, and it is what makes the eye so costly. a person who let
+    go slowly could keep the love and release the need, or the reverse. <strong>you shed the whole
+    skin.</strong></p>
+
+  <hr class="rule">
+
+  <div class="close">
+    the sky writes this once, at the minute you arrive, and never revises it.<br>
+    what moves across it is another matter &mdash; and that is what tonight is for.
+  </div>
+
+  <div class="foot">
+    the glance of the turning &nbsp;·&nbsp; 9 &middot; 12<br>
+    one of 784 &nbsp;·&nbsp; <a href="#">what the twenty-eight are &rarr;</a>
+  </div>
+
+</div>
+</body>
+</html>

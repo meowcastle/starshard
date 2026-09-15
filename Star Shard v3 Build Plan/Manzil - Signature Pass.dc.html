@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>window.__mzRetry=function(f){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src="./"+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js")};</script>
+<script src="./support.js" onerror="__mzRetry('support.js')"></script>
+<script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#040302;font-family:'Varela Round',sans-serif;color:#F2EAD6}
+  a{color:#F0D89A;text-decoration:none}
+  a:hover{color:#FFFDF5}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #1B1505 0%, #0E0A03 45%, #070402 100%);padding:80px 32px 140px">
+<div style="max-width:1000px;margin:0 auto">
+
+  <div style="font-size:12px;color:#9A8A5E">manzil · design sheet · the slate as decided · 22 aug 2026</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;color:#F0D89A;margin:10px 0 0">twenty-eight signatures</h1>
+  <p style="font-size:13px;line-height:1.8;color:#D8C89C;max-width:660px;margin:16px 0 0;text-wrap:pretty">this sheet is the record of what each mansion does and why. everything on it is decided and live in the prototype. the drafts that lost are gone: an earlier version of this page carried both, and a research session read the wrong column, so two cards were measured against wordings we had already discarded.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:34px;max-width:820px">
+    <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#F0D89A">28 of 28</div><div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:4px">live in the prototype. every mansion changes a board, none is a trophy</div></div>
+    <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#F0D89A">33</div><div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:4px">conformance vectors, one per law and per signature, all passing</div></div>
+    <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#F0D89A">54.8 · 34.5</div><div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:4px">careful and casual play, boards won. a 20.3-point skill gap</div></div>
+  </div>
+
+  <div style="height:72px"></div>
+  <div style="font-size:12px;color:#9A8A5E">the slate</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0;color:#F2EAD6">every card, and when it is the right card</h2>
+  <div style="display:grid;grid-template-columns:26px 150px 46px 1fr 88px 1.05fr;gap:12px;font-size:10.5px;color:rgba(154,138,94,.7);margin:24px 0 0;padding-bottom:10px;border-bottom:1px solid rgba(154,138,94,.25)">
+    <span></span><span>card</span><span></span><span>the move</span><span>class</span><span>correct when</span>
+  </div>
+  <div style="display:flex;flex-direction:column">
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="28">
+      <div style="display:grid;grid-template-columns:26px 150px 46px 1fr 88px 1.05fr;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(240,216,154,.07)">
+        <span style="font-size:10px;color:rgba(154,138,94,.6)">{{ r.n }}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:{{ r.c }}">{{ r.name }}</span>
+        <span style="font-size:11px;color:#F0D89A">{{ r.num }}</span>
+        <span style="font-size:12px;line-height:1.55;color:#D8C89C">{{ r.move }}</span>
+        <span style="font-size:11px;color:#9A8A5E">{{ r.cls }}</span>
+        <span style="font-size:11.5px;line-height:1.55;color:#9A8A5E">{{ r.when }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <p style="font-size:11.5px;line-height:1.8;color:rgba(154,138,94,.75);margin:16px 0 0;max-width:660px">the four in parchment are the divergent family: the traditions disagree at those degrees, and the cards carry the widest gap between their two numbers. the hand and the guide are the only two the sim cannot play: both are taps, so their worth has to come from playtest.</p>
+
+  <div style="height:72px"></div>
+  <div style="font-size:12px;color:#9A8A5E">what the sim changed, and what it cost</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0;color:#F2EAD6">seven cards were rewritten</h2>
+  <div style="display:flex;flex-direction:column;gap:16px;margin-top:22px;max-width:740px;font-size:12.5px;line-height:1.75">
+    <sc-for list="{{ reworks }}" as="w" hint-placeholder-count="7">
+      <div><span style="color:#FFB000">{{ w.name }}</span> <span style="color:#9A8A5E">{{ w.note }}</span></div>
+    </sc-for>
+  </div>
+
+  <div style="height:72px"></div>
+  <div style="font-size:12px;color:#9A8A5E">six classes, by what a signature is worth</div>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;max-width:820px">
+    <sc-for list="{{ classes }}" as="c" hint-placeholder-count="6">
+      <div style="display:grid;grid-template-columns:150px 84px 1fr;gap:16px;align-items:baseline;font-size:12px;line-height:1.65">
+        <span style="color:#F0D89A">{{ c.name }}</span>
+        <span style="color:{{ c.c }};font-size:11px">{{ c.worth }}</span>
+        <span style="color:#9A8A5E">{{ c.note }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:72px"></div>
+  <div style="font-size:12px;color:#9A8A5E">the rule that outlived the pass</div>
+  <div style="border-left:2px solid #F0D89A;padding:6px 0 6px 20px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.5;color:#F0D89A;max-width:640px;margin-top:14px">a −1 spends a tie. ties pay twice now, flipping in the fight and falling to you at the count, so every softening move has to be scored net of the ties it destroys.</div>
+  <p style="font-size:12.5px;line-height:1.8;color:#9A8A5E;margin:18px 0 0;max-width:660px">it is why the empty district was negative while it softened, and why the softening family does not stack: a second dimming move is worth nothing next to the first. the ghost keeps its −1 and pays for it with a condition that expires as the road fills.</p>
+
+  <div style="height:72px"></div>
+  <div style="font-size:12px;color:#9A8A5E">still unsimmed</div>
+  <div style="font-size:12.5px;line-height:1.9;color:#D8C89C;margin-top:14px;max-width:680px">the hand and the guide, both player-side taps · the nine rungs of the walkers' road, whose reading depths are authored rather than measured · what levels 3 and 4 are worth now that numbers never move · which twelve is the starter twelve.</div>
+  <div style="font-size:11px;line-height:1.9;color:rgba(154,138,94,.7);margin-top:28px">the engine and its vectors: research/manzil-engine-v6.js · the reply to the 22 august design handoff: research/manzil-v6-handoff.md · the rules as printed: <a href="Manzil - Rules & Cards.dc.html">rules &amp; cards v7</a> · the cards: <a href="Manzil - Base Set.dc.html">the base set</a> · play it: <a href="Manzil - Prototype.dc.html">the prototype</a>.</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  renderVals() {
+    const AMBER = "#FFB000", PARCH = "#F0D89A", INK = "#D8C89C", MUTE = "#9A8A5E";
+    const DIV = [10, 15, 21, 24];
+    const D = [
+      ["The Gate", "6|6", "lodges before her lead, once a board", "tempo", "the rounds you follow: the seat the sim calls a forced loss under perfect play"],
+      ["The Bearer", "6|5", "your cards beside it fight +1", "faces", "beside a 7 it makes an 8: the mars and jupiter floor"],
+      ["The Gathered Stars", "7|7", "counts as two at the count", "count", "any night. your own jupiter, in the strongest class in the game"],
+      ["The Follower", "8|7", "its left face copies whatever stands to its left", "faces", "beside a 9: the void, the throne, or her saturn's strong side"],
+      ["The Blaze", "6|6", "its mansion counts yours, whoever holds the card", "count", "live every board: one point of nine, guaranteed"],
+      ["The Storm", "8|6", "cannot be tied on its own mansion", "faces", "its own night, where an 8|6 becomes unclaimable by four of her five"],
+      ["The Return", "7|7", "the first time she claims it, it comes home", "tempo", "only when she takes it, but she claims twice as often now"],
+      ["The Ghost", "7|6", "her cards beside it fight −1 while the road is under half full", "faces", "the opening, beside her planets: saturn's 9 reads 8, and an 8 can be tied"],
+      ["The Glance", "5|6", "her next card fights −1", "faces", "the turn before her strongest card lands"],
+      ["The Throne", "7|9", "two-faced: seat or serpent", "faces", "every night: taking the choice away costs 5 to 11 points"],
+      ["The Mane", "6|6", "+1 while it stands between two cards", "faces", "a filled pocket, late on a board that fills"],
+      ["The Turning", "7|6", "turns a neighbour's numbers as it lodges", "geometry", "saturn and mars nights: the unbeatable 9 turns to face the other way"],
+      ["The Hand", "7|5", "may be lifted once and lodged again", "tempo", "turn five, the sim's one-legal-move turn, un-forced"],
+      ["The Jewel", "8|7", "cannot be softened", "faces", "her venus lands beside something every night: the hard light ignores it"],
+      ["The Veil", "8|3", "safe the turn it lands", "protection", "the 8 lands and her answer comes a turn late, on a board that bites five times"],
+      ["The Claws", "7|6", "whatever claims it fights −1 after", "faces", "given to her strongest planet: the price of taking it follows her"],
+      ["The Crown", "7|6", "counts two on an edge mansion", "count", "two of nine slots lift it out of the unwinnable class"],
+      ["The Heart", "8|7", "while it stands, nothing of yours can be softened", "protection", "any night she holds venus, and against the ghost and the district too"],
+      ["The Root", "7|7", "+1 as your first lodge", "faces", "turn one, where the +1 is armour as much as teeth"],
+      ["The Flock", "7|6", "your cards beside it gain +1 when it claims", "faces", "mid-road, with two of yours already standing"],
+      ["The Empty District", "3|8", "counts two while nothing of yours touches it", "count", "thrown deep into her half, alone: the abandoned quarter is worth double"],
+      ["The Listener", "7|5", "strikes what lands beside it", "claim", "the turn she commits her best card next to you"],
+      ["The Drum", "5|7", "its claim strikes one further", "claim", "when the 7 takes her venus or mercury: then it plays like her mars"],
+      ["The Void", "9|3", "safe while it stands alone", "protection", "early and apart: the safety covers the 3 while the 9 works"],
+      ["The Hideaway", "6|6", "closes the loudest mansion beside it", "count", "beside her jupiter or a planet standing on its own mansion"],
+      ["The Chamber", "7|6", "your landings beside it are safe", "protection", "the turn you have to lodge into her reach"],
+      ["The Guide", "6|6", "may trade grounds with another of your cards", "tempo", "after her lodges commit: two of your cards change mansions"],
+      ["The Thread", "6|6", "holds both ends of the road", "count", "any board where she holds an edge: two slots change column at the count"],
+    ];
+    const rows = D.map((d, i) => ({ n: String(i + 1).padStart(2, "0"), name: d[0], num: d[1], move: d[2], cls: d[3], when: d[4], c: DIV.includes(i + 1) ? PARCH : "#F2EAD6" }));
+    const reworks = [
+      ["the storm", "its old move, claims ties, became the base rule when ties began flipping. the inversion it was given, cannot be tied, measured 74.9% careful at every directionality, ten points past the band. the condition fixed it: immunity only on its own mansion, 62.1 careful and 36.8 casual."],
+      ["the heart", "fights +1 while behind measured −8.8. a card that is only strong while you are losing rewards falling behind and is dead once you are ahead. it is an aura now: while it stands, nothing of yours can be softened."],
+      ["the hideaway", "its mansion is silent measured exactly 0.0, because silencing its own mansion also silenced its own dominion. aimed outward it cannot cancel itself: it closes the loudest mansion beside it."],
+      ["the empty district", "both neighbours fight −1 measured −2.1: it softened your own flank too, and targeting did not save it. moved onto the count, where it rewards being thrown deep and alone."],
+      ["the thread", "the board wraps measured +0.9 careful and 0.0 casual: the wrap adds exactly one adjacency, for both sides, from the turn it lodges. the wheel closing is a count now, not a geometry."],
+      ["the glance · the listener", "both read her closed hand, and her hand is not closed: her five planets render as five distinguishable lights, so the information was worth nothing. hiding her hand was measured at a cost of 4 to 12 points and gives nothing back. the glance dims her next card; the listener strikes what lands beside it."],
+      ["the ghost", "the strongest thing measured at +27 points alone, which is a card that flattens every other decision. it kept the −1 and took a condition: the aura holds only while the road is under half full."],
+    ].map(r => ({ name: r[0], note: r[1] }));
+    const classes = [
+      ["the count", "strongest", PARCH, "changes what a mansion is worth rather than who wins a fight. jupiter's counts-two moved the sim more than any other single rule, by 24 to 34 points."],
+      ["faces", "sharpest", PARCH, "a ±1 that reaches equality is not a near miss: it is a claim, and a tie-claim strikes both neighbours. the widest class, and the one the flip-density pass made real."],
+      ["protection", "live", INK, "one safe turn was insurance against a board that did not bite. it bites about five times a board now."],
+      ["tempo · geometry", "live", INK, "pre-lodges, relocations, swaps, turned numbers. placement is still the game; the board just answers back harder."],
+      ["claim", "live", INK, "reach past what you take. the gate opens about twice a board instead of never, so a claim that carries onward lands into a board that answers."],
+      ["information", "retired", MUTE, "her hand is public by design and that is one of the game's better ideas. no card is built on hiding it."],
+    ].map(c => ({ name: c[0], worth: c[1], c: c[2], note: c[3] }));
+    return { rows, reworks, classes };
+  }
+}
+</script>
+</body>
+</html>

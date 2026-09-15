@@ -1,0 +1,79 @@
+{
+ "question": "addendum 6 - is the storm's level the lever?",
+ "ran": "2026-08-20",
+ "samples": 6,
+ "rows": [
+  {
+   "stormLvl": 2,
+   "storm": "none",
+   "careful": 56.3,
+   "casual": 28.6,
+   "tied": 11.3,
+   "flips": 4.19
+  },
+  {
+   "stormLvl": 2,
+   "storm": "oneway",
+   "careful": 75.3,
+   "casual": 47.6,
+   "tied": 14.6,
+   "flips": 3.42
+  },
+  {
+   "stormLvl": 2,
+   "storm": "weak",
+   "careful": 56.3,
+   "casual": 28.6,
+   "tied": 11,
+   "flips": 4.1
+  },
+  {
+   "stormLvl": 3,
+   "storm": "none",
+   "careful": 60.1,
+   "casual": 33.3,
+   "tied": 9.8,
+   "flips": 4.37
+  },
+  {
+   "stormLvl": 3,
+   "storm": "oneway",
+   "careful": 76.2,
+   "casual": 35.4,
+   "tied": 12.8,
+   "flips": 3.41
+  },
+  {
+   "stormLvl": 3,
+   "storm": "weak",
+   "careful": 65.2,
+   "casual": 33.3,
+   "tied": 9.2,
+   "flips": 4.04
+  },
+  {
+   "stormLvl": 4,
+   "storm": "none",
+   "careful": 78.3,
+   "casual": 45.2,
+   "tied": 12.5,
+   "flips": 3.38
+  },
+  {
+   "stormLvl": 4,
+   "storm": "oneway",
+   "careful": 76.2,
+   "casual": 46.4,
+   "tied": 11,
+   "flips": 3.53
+  },
+  {
+   "stormLvl": 4,
+   "storm": "weak",
+   "careful": 76.2,
+   "casual": 46.4,
+   "tied": 11,
+   "flips": 3.53
+  }
+ ]
+}

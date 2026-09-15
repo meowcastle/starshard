@@ -1,0 +1,166 @@
+{
+ "base1": {
+  "winPct": 26.2,
+  "tiedPct": 13.1,
+  "flipsPerBoard": 4.02,
+  "tellRate": 0,
+  "boards": 336
+ },
+ "base2": {
+  "winPct": 50,
+  "tiedPct": 23.8,
+  "flipsPerBoard": 1.89,
+  "tellRate": 0,
+  "boards": 168
+ },
+ "mars_you": {
+  "5": {
+   "p1": {
+    "winPct": 30.7,
+    "tiedPct": 10.1,
+    "flipsPerBoard": 4.1,
+    "tellRate": 10.8,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 55.4,
+    "tiedPct": 17.3,
+    "flipsPerBoard": 2.23,
+    "tellRate": 26.5,
+    "boards": 168
+   }
+  },
+  "10": {
+   "p1": {
+    "winPct": 31,
+    "tiedPct": 10.4,
+    "flipsPerBoard": 4.12,
+    "tellRate": 11.1,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 53.6,
+    "tiedPct": 17.3,
+    "flipsPerBoard": 2.37,
+    "tellRate": 29.6,
+    "boards": 168
+   }
+  },
+  "20": {
+   "p1": {
+    "winPct": 31.5,
+    "tiedPct": 10.1,
+    "flipsPerBoard": 4.18,
+    "tellRate": 13.6,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 56,
+    "tiedPct": 22,
+    "flipsPerBoard": 2.47,
+    "tellRate": 33.6,
+    "boards": 168
+   }
+  }
+ },
+ "mars_press": {
+  "5": {
+   "p1": {
+    "winPct": 32.4,
+    "tiedPct": 9.5,
+    "flipsPerBoard": 4.19,
+    "tellRate": 15.2,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 62.5,
+    "tiedPct": 17.3,
+    "flipsPerBoard": 2.79,
+    "tellRate": 35.8,
+    "boards": 168
+   }
+  },
+  "10": {
+   "p1": {
+    "winPct": 33,
+    "tiedPct": 9.2,
+    "flipsPerBoard": 4.21,
+    "tellRate": 16.3,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 60.1,
+    "tiedPct": 16.7,
+    "flipsPerBoard": 3.02,
+    "tellRate": 35.8,
+    "boards": 168
+   }
+  },
+  "20": {
+   "p1": {
+    "winPct": 34.2,
+    "tiedPct": 8.9,
+    "flipsPerBoard": 4.12,
+    "tellRate": 20.8,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 62.5,
+    "tiedPct": 14.9,
+    "flipsPerBoard": 3.2,
+    "tellRate": 36.2,
+    "boards": 168
+   }
+  }
+ },
+ "mars_front": {
+  "5": {
+   "p1": {
+    "winPct": 31.3,
+    "tiedPct": 9.8,
+    "flipsPerBoard": 4.08,
+    "tellRate": 14.6,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 54.8,
+    "tiedPct": 17.9,
+    "flipsPerBoard": 2.28,
+    "tellRate": 30.7,
+    "boards": 168
+   }
+  },
+  "10": {
+   "p1": {
+    "winPct": 31.8,
+    "tiedPct": 10.1,
+    "flipsPerBoard": 4.12,
+    "tellRate": 15.9,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 56.5,
+    "tiedPct": 16.7,
+    "flipsPerBoard": 2.42,
+    "tellRate": 32.9,
+    "boards": 168
+   }
+  },
+  "20": {
+   "p1": {
+    "winPct": 36.6,
+    "tiedPct": 11,
+    "flipsPerBoard": 4.33,
+    "tellRate": 21.2,
+    "boards": 336
+   },
+   "p2": {
+    "winPct": 61.3,
+    "tiedPct": 17.3,
+    "flipsPerBoard": 2.76,
+    "tellRate": 38.1,
+    "boards": 168
+   }
+  }
+ }
+}

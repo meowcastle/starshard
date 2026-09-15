@@ -1,0 +1,59 @@
+{
+ "shipped: one rule": {
+  "careful": {
+   "win": 73.1,
+   "flips": 4.16,
+   "night_sd": 16.6,
+   "night_min": 34.4,
+   "night_max": 100.0,
+   "n": 896
+  },
+  "casual": {
+   "win": 32.9,
+   "flips": 7.15,
+   "night_sd": 13.7,
+   "night_min": 3.1,
+   "night_max": 62.5,
+   "n": 896
+  },
+  "skill_gap": 40.2
+ },
+ "7 rules rotating": {
+  "careful": {
+   "win": 69.4,
+   "flips": 3.71,
+   "night_sd": 22.7,
+   "night_min": 18.8,
+   "night_max": 100.0,
+   "n": 896
+  },
+  "casual": {
+   "win": 34.4,
+   "flips": 6.86,
+   "night_sd": 16.1,
+   "night_min": 6.2,
+   "night_max": 68.8,
+   "n": 896
+  },
+  "skill_gap": 35.0
+ },
+ "28 rules (7 x 4 phases)": {
+  "careful": {
+   "win": 73.3,
+   "flips": 3.79,
+   "night_sd": 19.8,
+   "night_min": 31.2,
+   "night_max": 100.0,
+   "n": 896
+  },
+  "casual": {
+   "win": 32.3,
+   "flips": 6.82,
+   "night_sd": 13.6,
+   "night_min": 6.2,
+   "night_max": 59.4,
+   "n": 896
+  },
+  "skill_gap": 41.0
+ }
+}

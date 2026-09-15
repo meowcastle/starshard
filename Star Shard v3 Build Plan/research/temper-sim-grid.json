@@ -1,0 +1,346 @@
+{
+ "date": "2026-08-19",
+ "baseline": {
+  "p1": 26.8,
+  "p2": 48.2
+ },
+ "crownLiveBaseline2ply": {
+  "winPct": 60.7,
+  "tiedPct": 21.4,
+  "flipsPerBoard": 1.96,
+  "tellRate": 0,
+  "boards": 56
+ },
+ "grid": {
+  "mars": {
+   "5": {
+    "p1": {
+     "winPct": 28.6,
+     "tiedPct": 11.6,
+     "flipsPerBoard": 4.26,
+     "tellRate": 2.2,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 23.2,
+     "flipsPerBoard": 2.11,
+     "tellRate": 7.5,
+     "boards": 56
+    }
+   },
+   "10": {
+    "p1": {
+     "winPct": 29.5,
+     "tiedPct": 11.6,
+     "flipsPerBoard": 4.32,
+     "tellRate": 2.8,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 50,
+     "tiedPct": 23.2,
+     "flipsPerBoard": 2.21,
+     "tellRate": 8.3,
+     "boards": 56
+    }
+   },
+   "20": {
+    "p1": {
+     "winPct": 29.5,
+     "tiedPct": 13.4,
+     "flipsPerBoard": 4.48,
+     "tellRate": 5,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 51.8,
+     "tiedPct": 25,
+     "flipsPerBoard": 2.29,
+     "tellRate": 9.5,
+     "boards": 56
+    }
+   },
+   "2.5": {
+    "p1": {
+     "winPct": 28.6,
+     "tiedPct": 11.6,
+     "flipsPerBoard": 4.26,
+     "tellRate": 2.2,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 23.2,
+     "flipsPerBoard": 2.11,
+     "tellRate": 7.5,
+     "boards": 56
+    }
+   }
+  },
+  "saturn": {
+   "5": {
+    "p1": {
+     "winPct": 22.3,
+     "tiedPct": 8,
+     "flipsPerBoard": 4.21,
+     "tellRate": 22.8,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 55.4,
+     "tiedPct": 19.6,
+     "flipsPerBoard": 2.36,
+     "tellRate": 34.1,
+     "boards": 56
+    }
+   },
+   "10": {
+    "p1": {
+     "winPct": 17,
+     "tiedPct": 7.1,
+     "flipsPerBoard": 4.2,
+     "tellRate": 25.8,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 53.6,
+     "tiedPct": 17.9,
+     "flipsPerBoard": 2.39,
+     "tellRate": 34.9,
+     "boards": 56
+    }
+   },
+   "20": {
+    "p1": {
+     "winPct": 22.3,
+     "tiedPct": 8,
+     "flipsPerBoard": 3.97,
+     "tellRate": 37.1,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 55.4,
+     "tiedPct": 25,
+     "flipsPerBoard": 2.59,
+     "tellRate": 42.9,
+     "boards": 56
+    }
+   },
+   "2.5": {
+    "p1": {
+     "winPct": 27.7,
+     "tiedPct": 9.8,
+     "flipsPerBoard": 4.31,
+     "tellRate": 21.4,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 53.6,
+     "tiedPct": 19.6,
+     "flipsPerBoard": 2.43,
+     "tellRate": 34.1,
+     "boards": 56
+    }
+   }
+  },
+  "venus": {
+   "5": {
+    "p1": {
+     "winPct": 25,
+     "tiedPct": 9.8,
+     "flipsPerBoard": 4.21,
+     "tellRate": 13.3,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 17.9,
+     "flipsPerBoard": 1.89,
+     "tellRate": 21,
+     "boards": 56
+    }
+   },
+   "10": {
+    "p1": {
+     "winPct": 25,
+     "tiedPct": 10.7,
+     "flipsPerBoard": 4.21,
+     "tellRate": 13.5,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 50,
+     "tiedPct": 16.1,
+     "flipsPerBoard": 1.89,
+     "tellRate": 23.8,
+     "boards": 56
+    }
+   },
+   "20": {
+    "p1": {
+     "winPct": 27.7,
+     "tiedPct": 9.8,
+     "flipsPerBoard": 4.3,
+     "tellRate": 17.5,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 21.4,
+     "flipsPerBoard": 1.96,
+     "tellRate": 27.4,
+     "boards": 56
+    }
+   },
+   "2.5": {
+    "p1": {
+     "winPct": 25,
+     "tiedPct": 9.8,
+     "flipsPerBoard": 4.25,
+     "tellRate": 13.1,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 17.9,
+     "flipsPerBoard": 1.89,
+     "tellRate": 21,
+     "boards": 56
+    }
+   }
+  },
+  "mercury": {
+   "5": {
+    "p1": {
+     "winPct": 27.7,
+     "tiedPct": 14.3,
+     "flipsPerBoard": 4.1,
+     "tellRate": 12.1,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 17.9,
+     "flipsPerBoard": 1.82,
+     "tellRate": 23,
+     "boards": 56
+    }
+   },
+   "10": {
+    "p1": {
+     "winPct": 27.7,
+     "tiedPct": 14.3,
+     "flipsPerBoard": 4.02,
+     "tellRate": 15.1,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 50,
+     "tiedPct": 16.1,
+     "flipsPerBoard": 1.96,
+     "tellRate": 28.2,
+     "boards": 56
+    }
+   },
+   "20": {
+    "p1": {
+     "winPct": 26.8,
+     "tiedPct": 17,
+     "flipsPerBoard": 3.96,
+     "tellRate": 22.4,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 64.3,
+     "tiedPct": 12.5,
+     "flipsPerBoard": 2.34,
+     "tellRate": 37.3,
+     "boards": 56
+    }
+   },
+   "2.5": {
+    "p1": {
+     "winPct": 28.6,
+     "tiedPct": 14.3,
+     "flipsPerBoard": 4.1,
+     "tellRate": 11.7,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 17.9,
+     "flipsPerBoard": 1.82,
+     "tellRate": 22.6,
+     "boards": 56
+    }
+   }
+  },
+  "jupiter": {
+   "5": {
+    "p1": {
+     "winPct": 30.4,
+     "tiedPct": 12.5,
+     "flipsPerBoard": 4.08,
+     "tellRate": 9.1,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 48.2,
+     "tiedPct": 23.2,
+     "flipsPerBoard": 2,
+     "tellRate": 15.5,
+     "boards": 56
+    }
+   },
+   "10": {
+    "p1": {
+     "winPct": 29.5,
+     "tiedPct": 16.1,
+     "flipsPerBoard": 4.38,
+     "tellRate": 18.7,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 41.1,
+     "tiedPct": 23.2,
+     "flipsPerBoard": 2.29,
+     "tellRate": 23.8,
+     "boards": 56
+    }
+   },
+   "20": {
+    "p1": {
+     "winPct": 32.1,
+     "tiedPct": 15.2,
+     "flipsPerBoard": 4.24,
+     "tellRate": 25.2,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 50,
+     "tiedPct": 14.3,
+     "flipsPerBoard": 2.32,
+     "tellRate": 29.4,
+     "boards": 56
+    }
+   },
+   "2.5": {
+    "p1": {
+     "winPct": 27.7,
+     "tiedPct": 14.3,
+     "flipsPerBoard": 4.02,
+     "tellRate": 7.3,
+     "boards": 112
+    },
+    "p2": {
+     "winPct": 50,
+     "tiedPct": 25,
+     "flipsPerBoard": 1.8,
+     "tellRate": 12.7,
+     "boards": 56
+    }
+   }
+  }
+ }
+}

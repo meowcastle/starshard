@@ -1,0 +1,22 @@
+
+MANSION 17. 17a the crown holds. 896 boards a cell, two seeds.
+cfg {"plantAt":4,"plantOnTake":true}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      51.0%      48.2%     2.8    11.4%   30.2%    24.1%
+  deep   the law                      54.0%      46.3%     7.7    14.8%   42.1%    11.0%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      51.0%      43.0%     8.0
+  deep   the law                      54.0%      28.2%    25.8
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       42.7%
+  suzaku       37.3%
+  seiryuu      54.0%
+  genbu        27.9%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         72.7%       27.3%     18.0%    26.5%     42.9%   12.7%
+  deep          67.1%       32.9%     25.4%    24.9%     29.6%   20.1%

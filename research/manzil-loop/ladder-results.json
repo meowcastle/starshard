@@ -1,0 +1,112 @@
+{
+ "old_hands": [
+  {
+   "careful": 100.0,
+   "casual": 92.4
+  },
+  {
+   "careful": 98.7,
+   "casual": 72.8
+  },
+  {
+   "careful": 91.5,
+   "casual": 54.0
+  },
+  {
+   "careful": 95.5,
+   "casual": 59.4
+  },
+  {
+   "careful": 95.1,
+   "casual": 79.9
+  }
+ ],
+ "new_hands": [
+  {
+   "careful": 100.0,
+   "casual": 86.2
+  },
+  {
+   "careful": 94.2,
+   "casual": 68.8
+  },
+  {
+   "careful": 99.1,
+   "casual": 73.2
+  },
+  {
+   "careful": 100.0,
+   "casual": 76.8
+  },
+  {
+   "careful": 76.8,
+   "casual": 26.3
+  }
+ ],
+ "new_sig": [
+  {
+   "careful": 100.0,
+   "casual": 86.2
+  },
+  {
+   "careful": 94.2,
+   "casual": 68.8
+  },
+  {
+   "careful": 100.0,
+   "casual": 81.2
+  },
+  {
+   "careful": 100.0,
+   "casual": 81.2
+  },
+  {
+   "careful": 96.9,
+   "casual": 44.2
+  }
+ ],
+ "new_full": [
+  {
+   "careful": 100.0,
+   "casual": 86.2
+  },
+  {
+   "careful": 94.2,
+   "casual": 68.8
+  },
+  {
+   "careful": 100.0,
+   "casual": 81.2
+  },
+  {
+   "careful": 100.0,
+   "casual": 92.0
+  },
+  {
+   "careful": 99.1,
+   "casual": 41.5
+  }
+ ],
+ "new_full_s2": [
+  {
+   "careful": 100.0,
+   "casual": 86.6
+  },
+  {
+   "careful": 93.8,
+   "casual": 65.6
+  },
+  {
+   "careful": 100.0,
+   "casual": 85.7
+  },
+  {
+   "careful": 100.0,
+   "casual": 88.8
+  },
+  {
+   "careful": 99.1,
+   "casual": 32.1
+  }
+ ]
+}

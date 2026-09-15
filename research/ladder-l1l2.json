@@ -1,0 +1,16130 @@
+{
+ "1.1.1": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.1.2": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.1.3": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.1.4": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "1.1.5": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.1.6": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.1.7": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.1.8": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "1.1.9": {
+  "level": 1,
+  "mansion": 1,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "1.2.1": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.2.2": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "1.2.3": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.2.4": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.2.5": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.2.6": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.2.7": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.2.8": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.2.9": {
+  "level": 1,
+  "mansion": 2,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.3.1": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.3.2": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.3.3": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.3.4": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.3.5": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.3.6": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.3.7": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.3.8": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "1.3.9": {
+  "level": 1,
+  "mansion": 3,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "1.4.1": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.4.2": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.4.3": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.4.4": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.4.5": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.4.6": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.4.7": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.4.8": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.4.9": {
+  "level": 1,
+  "mansion": 4,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "1.5.1": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.5.2": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.5.3": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.5.4": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.5.5": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.5.6": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "1.5.7": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.5.8": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "1.5.9": {
+  "level": 1,
+  "mansion": 5,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "1.6.1": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.6.2": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.6.3": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.6.4": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.6.5": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.6.6": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.6.7": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.6.8": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.6.9": {
+  "level": 1,
+  "mansion": 6,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "1.7.1": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.7.2": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.7.3": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.7.4": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.7.5": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.7.6": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.7.7": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.7.8": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.7.9": {
+  "level": 1,
+  "mansion": 7,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.8.1": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.8.2": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.8.3": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.8.4": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.8.5": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.8.6": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.8.7": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.8.8": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.8.9": {
+  "level": 1,
+  "mansion": 8,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.9.1": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.9.2": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.9.3": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.9.4": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.9.5": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.9.6": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.9.7": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.9.8": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.9.9": {
+  "level": 1,
+  "mansion": 9,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.10.1": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.10.2": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.10.3": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.10.4": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.10.5": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.10.6": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "1.10.7": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "1.10.8": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "1.10.9": {
+  "level": 1,
+  "mansion": 10,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 39.3,
+  "n": 28
+ },
+ "1.11.1": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.11.2": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.11.3": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.11.4": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.11.5": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.11.6": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.11.7": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.11.8": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.11.9": {
+  "level": 1,
+  "mansion": 11,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.12.1": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.12.2": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.12.3": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "1.12.4": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.12.5": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.12.6": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.12.7": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "1.12.8": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.12.9": {
+  "level": 1,
+  "mansion": 12,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.13.1": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.13.2": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.13.3": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.13.4": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.13.5": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.13.6": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.13.7": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "1.13.8": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.13.9": {
+  "level": 1,
+  "mansion": 13,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.14.1": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.14.2": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.14.3": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.14.4": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.14.5": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.14.6": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.14.7": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.14.8": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.14.9": {
+  "level": 1,
+  "mansion": 14,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.15.1": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.15.2": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.15.3": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.15.4": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.15.5": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "1.15.6": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 39.3,
+  "n": 28
+ },
+ "1.15.7": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "1.15.8": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 25,
+  "n": 28
+ },
+ "1.15.9": {
+  "level": 1,
+  "mansion": 15,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.16.1": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.16.2": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.16.3": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.16.4": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.16.5": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.16.6": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.16.7": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.16.8": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.16.9": {
+  "level": 1,
+  "mansion": 16,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.17.1": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.17.2": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.17.3": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.17.4": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.17.5": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.17.6": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.17.7": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.17.8": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "1.17.9": {
+  "level": 1,
+  "mansion": 17,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "1.18.1": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.18.2": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.18.3": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.18.4": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.18.5": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.18.6": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.18.7": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "1.18.8": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.18.9": {
+  "level": 1,
+  "mansion": 18,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.19.1": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.19.2": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.19.3": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.19.4": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.19.5": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.19.6": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.19.7": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.19.8": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.19.9": {
+  "level": 1,
+  "mansion": 19,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "1.20.1": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.20.2": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.20.3": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.20.4": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "1.20.5": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.20.6": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.20.7": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.20.8": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.20.9": {
+  "level": 1,
+  "mansion": 20,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.21.1": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.21.2": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.21.3": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.21.4": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.21.5": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "1.21.6": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.21.7": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.21.8": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 32.1,
+  "n": 28
+ },
+ "1.21.9": {
+  "level": 1,
+  "mansion": 21,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.22.1": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.22.2": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.22.3": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "1.22.4": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "1.22.5": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.22.6": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "1.22.7": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "1.22.8": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.22.9": {
+  "level": 1,
+  "mansion": 22,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 32.1,
+  "n": 28
+ },
+ "1.23.1": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.23.2": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.23.3": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.23.4": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.23.5": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "1.23.6": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.23.7": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.23.8": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.23.9": {
+  "level": 1,
+  "mansion": 23,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "1.24.1": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.24.2": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.24.3": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.24.4": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.24.5": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 39.3,
+  "n": 28
+ },
+ "1.24.6": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.24.7": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "1.24.8": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "1.24.9": {
+  "level": 1,
+  "mansion": 24,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "1.25.1": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.25.2": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.25.3": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.25.4": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.25.5": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.25.6": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.25.7": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.25.8": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.25.9": {
+  "level": 1,
+  "mansion": 25,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.26.1": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.26.2": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.26.3": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.26.4": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.26.5": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.26.6": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.26.7": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.26.8": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.26.9": {
+  "level": 1,
+  "mansion": 26,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.27.1": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.27.2": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.27.3": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.27.4": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.27.5": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.27.6": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "1.27.7": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "1.27.8": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "1.27.9": {
+  "level": 1,
+  "mansion": 27,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "1.28.1": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 1,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.28.2": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 2,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "1.28.3": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 3,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "1.28.4": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 4,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "1.28.5": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 5,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "1.28.6": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 6,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "1.28.7": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 7,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "1.28.8": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 8,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "1.28.9": {
+  "level": 1,
+  "mansion": 28,
+  "rung": 9,
+  "size": 5,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "2.1.1": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.1.2": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.1.3": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.1.4": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "2.1.5": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.1.6": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.1.7": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.1.8": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.1.9": {
+  "level": 2,
+  "mansion": 1,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 1,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.2.1": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.2.2": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.2.3": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.2.4": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.2.5": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.2.6": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.2.7": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.2.8": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.2.9": {
+  "level": 2,
+  "mansion": 2,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 2,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "2.3.1": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.3.2": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.3.3": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.3.4": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.3.5": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.3.6": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.3.7": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.3.8": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.3.9": {
+  "level": 2,
+  "mansion": 3,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 3,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.4.1": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.4.2": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.4.3": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.4.4": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.4.5": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.4.6": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.4.7": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.4.8": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.4.9": {
+  "level": 2,
+  "mansion": 4,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "2.5.1": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.5.2": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.5.3": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.5.4": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.5.5": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 39.3,
+  "n": 28
+ },
+ "2.5.6": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.5.7": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.5.8": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 39.3,
+  "n": 28
+ },
+ "2.5.9": {
+  "level": 2,
+  "mansion": 5,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 14.3,
+  "n": 28
+ },
+ "2.6.1": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.6.2": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.6.3": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.6.4": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.6.5": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.6.6": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.6.7": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.6.8": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.6.9": {
+  "level": 2,
+  "mansion": 6,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 6,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.7.1": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.7.2": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.7.3": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.7.4": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.7.5": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.7.6": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.7.7": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.7.8": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "2.7.9": {
+  "level": 2,
+  "mansion": 7,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 7,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   }
+  ],
+  "win": 14.3,
+  "n": 28
+ },
+ "2.8.1": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.8.2": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.8.3": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.8.4": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.8.5": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.8.6": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.8.7": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.8.8": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.8.9": {
+  "level": 2,
+  "mansion": 8,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 8,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "2.9.1": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.9.2": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.9.3": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.9.4": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "2.9.5": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.9.6": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.9.7": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.9.8": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.9.9": {
+  "level": 2,
+  "mansion": 9,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 9,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "2.10.1": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.10.2": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "2.10.3": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.10.4": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.10.5": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.10.6": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 7.1,
+  "n": 28
+ },
+ "2.10.7": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "2.10.8": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.10.9": {
+  "level": 2,
+  "mansion": 10,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "2.11.1": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.11.2": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.11.3": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.11.4": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.11.5": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "2.11.6": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.11.7": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.11.8": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.11.9": {
+  "level": 2,
+  "mansion": 11,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 11,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "2.12.1": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.12.2": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.12.3": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.12.4": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.12.5": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.12.6": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.12.7": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.12.8": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.12.9": {
+  "level": 2,
+  "mansion": 12,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 12,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.13.1": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.13.2": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.13.3": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.13.4": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.13.5": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.13.6": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.13.7": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.13.8": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "2.13.9": {
+  "level": 2,
+  "mansion": 13,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "2.14.1": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.14.2": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.14.3": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.14.4": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.14.5": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.14.6": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.14.7": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.14.8": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.14.9": {
+  "level": 2,
+  "mansion": 14,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "2.15.1": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.15.2": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.15.3": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.15.4": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "2.15.5": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.15.6": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.15.7": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 32.1,
+  "n": 28
+ },
+ "2.15.8": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.15.9": {
+  "level": 2,
+  "mansion": 15,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 15,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   }
+  ],
+  "win": 21.4,
+  "n": 28
+ },
+ "2.16.1": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.16.2": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.16.3": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.16.4": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.16.5": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.16.6": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "2.16.7": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.16.8": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.16.9": {
+  "level": 2,
+  "mansion": 16,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   }
+  ],
+  "win": 46.4,
+  "n": 28
+ },
+ "2.17.1": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.17.2": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.17.3": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.17.4": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.17.5": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.17.6": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.17.7": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 75,
+  "n": 28
+ },
+ "2.17.8": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "2.17.9": {
+  "level": 2,
+  "mansion": 17,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.18.1": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.18.2": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.18.3": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.18.4": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.18.5": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.18.6": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.18.7": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "2.18.8": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.18.9": {
+  "level": 2,
+  "mansion": 18,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 18,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "2.19.1": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.19.2": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.19.3": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.19.4": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "2.19.5": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "2.19.6": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ },
+ "2.19.7": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "2.19.8": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "2.19.9": {
+  "level": 2,
+  "mansion": 19,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 19,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.20.1": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.20.2": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.20.3": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.20.4": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.20.5": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.20.6": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.20.7": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.20.8": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.20.9": {
+  "level": 2,
+  "mansion": 20,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 20,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.21.1": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.21.2": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.21.3": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.21.4": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "2.21.5": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.21.6": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 25,
+  "n": 28
+ },
+ "2.21.7": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 17.9,
+  "n": 28
+ },
+ "2.21.8": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 32.1,
+  "n": 28
+ },
+ "2.21.9": {
+  "level": 2,
+  "mansion": 21,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 21,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.22.1": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.22.2": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.22.3": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "2.22.4": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.22.5": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 57.1,
+  "n": 28
+ },
+ "2.22.6": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.22.7": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.22.8": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "2.22.9": {
+  "level": 2,
+  "mansion": 22,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   }
+  ],
+  "win": 32.1,
+  "n": 28
+ },
+ "2.23.1": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.23.2": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.23.3": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.23.4": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.23.5": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.23.6": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.23.7": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.23.8": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.23.9": {
+  "level": 2,
+  "mansion": 23,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 23,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   }
+  ],
+  "win": 42.9,
+  "n": 28
+ },
+ "2.24.1": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.24.2": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.24.3": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.24.4": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 39.3,
+  "n": 28
+ },
+ "2.24.5": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 32.1,
+  "n": 28
+ },
+ "2.24.6": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 71.4,
+  "n": 28
+ },
+ "2.24.7": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 28.6,
+  "n": 28
+ },
+ "2.24.8": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 53.6,
+  "n": 28
+ },
+ "2.24.9": {
+  "level": 2,
+  "mansion": 24,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 24,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   }
+  ],
+  "win": 21.4,
+  "n": 28
+ },
+ "2.25.1": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.25.2": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.25.3": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.25.4": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.25.5": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.25.6": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.25.7": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.25.8": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.25.9": {
+  "level": 2,
+  "mansion": 25,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.26.1": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.26.2": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.26.3": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.26.4": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   }
+  ],
+  "win": 67.9,
+  "n": 28
+ },
+ "2.26.5": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 21,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.26.6": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.26.7": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 21,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 100,
+  "n": 28
+ },
+ "2.26.8": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 10,
+    "awake": true
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.26.9": {
+  "level": 2,
+  "mansion": 26,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 26,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   }
+  ],
+  "win": 78.6,
+  "n": 28
+ },
+ "2.27.1": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.27.2": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.27.3": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.27.4": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.27.5": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.27.6": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": false
+   },
+   {
+    "id": 1,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.27.7": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 50,
+  "n": 28
+ },
+ "2.27.8": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   }
+  ],
+  "win": 64.3,
+  "n": 28
+ },
+ "2.27.9": {
+  "level": 2,
+  "mansion": 27,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 27,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 4,
+    "awake": true
+   }
+  ],
+  "win": 35.7,
+  "n": 28
+ },
+ "2.28.1": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 1,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 23,
+    "awake": false
+   },
+   {
+    "id": 26,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 96.4,
+  "n": 28
+ },
+ "2.28.2": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 2,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 89.3,
+  "n": 28
+ },
+ "2.28.3": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 3,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.28.4": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 4,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 2,
+    "awake": false
+   },
+   {
+    "id": 8,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.28.5": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 5,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 15,
+    "awake": false
+   },
+   {
+    "id": 11,
+    "awake": false
+   },
+   {
+    "id": 7,
+    "awake": false
+   }
+  ],
+  "win": 92.9,
+  "n": 28
+ },
+ "2.28.6": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 6,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": false
+   },
+   {
+    "id": 20,
+    "awake": false
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 85.7,
+  "n": 28
+ },
+ "2.28.7": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 7,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 3,
+    "awake": false
+   },
+   {
+    "id": 12,
+    "awake": false
+   },
+   {
+    "id": 27,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.28.8": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 8,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 16,
+    "awake": true
+   },
+   {
+    "id": 22,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 9,
+    "awake": false
+   },
+   {
+    "id": 3,
+    "awake": false
+   }
+  ],
+  "win": 82.1,
+  "n": 28
+ },
+ "2.28.9": {
+  "level": 2,
+  "mansion": 28,
+  "rung": 9,
+  "size": 6,
+  "hand": [
+   {
+    "id": 28,
+    "awake": true
+   },
+   {
+    "id": 14,
+    "awake": true
+   },
+   {
+    "id": 17,
+    "awake": true
+   },
+   {
+    "id": 25,
+    "awake": true
+   },
+   {
+    "id": 5,
+    "awake": true
+   },
+   {
+    "id": 13,
+    "awake": true
+   }
+  ],
+  "win": 60.7,
+  "n": 28
+ }
+}

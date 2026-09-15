@@ -1,0 +1,86 @@
+{
+ "shipped": {
+  "exploit": {
+   "Throne@8": 100.0,
+   "Crown@8": 100.0,
+   "Veil@8": 100.0
+  },
+  "balance": {
+   "careful": 72.6,
+   "casual": 42.3
+  },
+  "worst_opening": 100.0
+ },
+ "boss": {
+  "exploit": {
+   "Throne@8": 75.0,
+   "Crown@8": 89.3,
+   "Veil@8": 91.1
+  },
+  "balance": {
+   "careful": 74.1,
+   "casual": 28.9
+  },
+  "worst_opening": 91.1
+ },
+ "eps2_early3": {
+  "exploit": {
+   "Throne@8": 100.0,
+   "Crown@8": 100.0,
+   "Veil@8": 100.0
+  },
+  "balance": {
+   "careful": 69.9,
+   "casual": 40.2
+  },
+  "worst_opening": 100.0
+ },
+ "eps5_early3": {
+  "exploit": {
+   "Throne@8": 81.7,
+   "Crown@8": 84.8,
+   "Veil@8": 89.3
+  },
+  "balance": {
+   "careful": 66.1,
+   "casual": 33.0
+  },
+  "worst_opening": 89.3
+ },
+ "eps5_early1": {
+  "exploit": {
+   "Throne@8": 85.7,
+   "Crown@8": 85.7,
+   "Veil@8": 87.9
+  },
+  "balance": {
+   "careful": 71.1,
+   "casual": 37.8
+  },
+  "worst_opening": 87.9
+ },
+ "eps5_early3_r12": {
+  "exploit": {
+   "Throne@8": 79.9,
+   "Crown@8": 84.4,
+   "Veil@8": 86.6
+  },
+  "balance": {
+   "careful": 65.5,
+   "casual": 30.1
+  },
+  "worst_opening": 86.6
+ },
+ "eps8_early3_r12": {
+  "exploit": {
+   "Throne@8": 81.2,
+   "Crown@8": 84.4,
+   "Veil@8": 86.6
+  },
+  "balance": {
+   "careful": 65.5,
+   "casual": 31.0
+  },
+  "worst_opening": 86.6
+ }
+}

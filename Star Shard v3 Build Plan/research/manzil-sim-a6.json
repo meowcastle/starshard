@@ -1,0 +1,83 @@
+{
+ "question": "addendum 6 - the storm's immunity",
+ "ran": "2026-08-20",
+ "samples": 6,
+ "bands": {
+  "careful": "55-65",
+  "casual": "35-45"
+ },
+ "rows": [
+  {
+   "storm": "none",
+   "depth": 1,
+   "boards": 336,
+   "winPct": 33.3,
+   "tiedPct": 7.7,
+   "flipsPerBoard": 7.7,
+   "tieFlipsPerBoard": 2.97
+  },
+  {
+   "storm": "none",
+   "depth": 2,
+   "boards": 336,
+   "winPct": 60.1,
+   "tiedPct": 9.8,
+   "flipsPerBoard": 4.37,
+   "tieFlipsPerBoard": 1.79
+  },
+  {
+   "storm": "once",
+   "depth": 1,
+   "boards": 336,
+   "winPct": 35.4,
+   "tiedPct": 7.4,
+   "flipsPerBoard": 6.9,
+   "tieFlipsPerBoard": 2.21
+  },
+  {
+   "storm": "once",
+   "depth": 2,
+   "boards": 336,
+   "winPct": 76.2,
+   "tiedPct": 12.8,
+   "flipsPerBoard": 3.41,
+   "tieFlipsPerBoard": 1.26
+  },
+  {
+   "storm": "oneway",
+   "depth": 1,
+   "boards": 336,
+   "winPct": 35.4,
+   "tiedPct": 7.4,
+   "flipsPerBoard": 6.9,
+   "tieFlipsPerBoard": 2.21
+  },
+  {
+   "storm": "oneway",
+   "depth": 2,
+   "boards": 336,
+   "winPct": 76.2,
+   "tiedPct": 12.8,
+   "flipsPerBoard": 3.41,
+   "tieFlipsPerBoard": 1.26
+  },
+  {
+   "storm": "sym",
+   "depth": 1,
+   "boards": 336,
+   "winPct": 34.8,
+   "tiedPct": 7.4,
+   "flipsPerBoard": 6.34,
+   "tieFlipsPerBoard": 1.95
+  },
+  {
+   "storm": "sym",
+   "depth": 2,
+   "boards": 336,
+   "winPct": 75.3,
+   "tiedPct": 17,
+   "flipsPerBoard": 3.21,
+   "tieFlipsPerBoard": 1.15
+  }
+ ]
+}

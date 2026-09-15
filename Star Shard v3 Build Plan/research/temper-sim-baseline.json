@@ -1,0 +1,62 @@
+{
+ "date": "2026-08-19",
+ "baseline2ply": {
+  "winPct": 48.2,
+  "tiedPct": 23.2,
+  "flipsPerBoard": 1.77,
+  "tellRate": 0,
+  "boards": 56
+ },
+ "baseline1ply": {
+  "winPct": 26.8,
+  "tiedPct": 12.5,
+  "flipsPerBoard": 4.2,
+  "tellRate": 0,
+  "boards": 112
+ },
+ "tellAt10": {
+  "mars": 9.5,
+  "saturn": 38.9,
+  "venus": 21.4,
+  "mercury": 29,
+  "jupiter": 31
+ },
+ "agreePct": {
+  "mars": {
+   "mars": 100,
+   "saturn": 59,
+   "venus": 77,
+   "mercury": 68,
+   "jupiter": 67
+  },
+  "saturn": {
+   "mars": 59,
+   "saturn": 100,
+   "venus": 71,
+   "mercury": 53,
+   "jupiter": 53
+  },
+  "venus": {
+   "mars": 77,
+   "saturn": 71,
+   "venus": 100,
+   "mercury": 63,
+   "jupiter": 58
+  },
+  "mercury": {
+   "mars": 68,
+   "saturn": 53,
+   "venus": 63,
+   "mercury": 100,
+   "jupiter": 53
+  },
+  "jupiter": {
+   "mars": 67,
+   "saturn": 53,
+   "venus": 58,
+   "mercury": 53,
+   "jupiter": 100
+  }
+ },
+ "states": 252
+}

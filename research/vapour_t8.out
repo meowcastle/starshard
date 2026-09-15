@@ -1,0 +1,22 @@
+
+MANSION 8. 8b the vapour. 896 boards a cell, two seeds.
+cfg {"vapourAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      54.2%      44.1%    10.2     8.8%   28.4%    26.2%
+  deep   the law                      55.8%      43.0%    12.8    12.4%   37.1%    13.7%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      54.2%      45.0%     9.3
+  deep   the law                      55.8%      26.6%    29.2
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       33.9%
+  suzaku       36.5%
+  seiryuu      64.7%
+  genbu        33.5%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         69.0%       31.0%     16.1%    33.7%     24.8%   25.4%
+  deep          69.6%       30.4%     13.7%    27.5%     15.4%   43.4%

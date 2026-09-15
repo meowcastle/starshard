@@ -1,0 +1,43 @@
+{
+ "question": "the thread's wrap",
+ "ran": "2026-08-20",
+ "samples": 6,
+ "rows": [
+  {
+   "thread": false,
+   "depth": 1,
+   "boards": 336,
+   "winPct": 25.6,
+   "tiedPct": 4.5,
+   "flipsPerBoard": 5.94,
+   "tieFlipsPerBoard": 1.66
+  },
+  {
+   "thread": false,
+   "depth": 2,
+   "boards": 336,
+   "winPct": 59.2,
+   "tiedPct": 21.7,
+   "flipsPerBoard": 2.65,
+   "tieFlipsPerBoard": 0.79
+  },
+  {
+   "thread": true,
+   "depth": 1,
+   "boards": 336,
+   "winPct": 25.6,
+   "tiedPct": 4.5,
+   "flipsPerBoard": 6.18,
+   "tieFlipsPerBoard": 1.74
+  },
+  {
+   "thread": true,
+   "depth": 2,
+   "boards": 336,
+   "winPct": 60.1,
+   "tiedPct": 23.8,
+   "flipsPerBoard": 2.68,
+   "tieFlipsPerBoard": 0.8
+  }
+ ]
+}

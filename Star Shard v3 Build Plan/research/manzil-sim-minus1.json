@@ -1,0 +1,56 @@
+{
+ "question": "the -1 softening family, ablated",
+ "ran": "2026-08-20",
+ "samples": 6,
+ "hand": "ghost/district/jewel/throne/heart at L2",
+ "rows": [
+  {
+   "cfg": "all on",
+   "boards": 336,
+   "winPct": 56.5,
+   "tiedPct": 9.5,
+   "flipsPerBoard": 3.31,
+   "tieFlipsPerBoard": 0.95
+  },
+  {
+   "cfg": "ghost off",
+   "boards": 336,
+   "winPct": 39.9,
+   "tiedPct": 10.7,
+   "flipsPerBoard": 3.5,
+   "tieFlipsPerBoard": 1.53
+  },
+  {
+   "cfg": "district off",
+   "boards": 336,
+   "winPct": 58.6,
+   "tiedPct": 14.9,
+   "flipsPerBoard": 4.02,
+   "tieFlipsPerBoard": 1.31
+  },
+  {
+   "cfg": "both off",
+   "boards": 336,
+   "winPct": 37.8,
+   "tiedPct": 10.7,
+   "flipsPerBoard": 4.42,
+   "tieFlipsPerBoard": 2.02
+  },
+  {
+   "cfg": "jewel off",
+   "boards": 336,
+   "winPct": 55.4,
+   "tiedPct": 10.4,
+   "flipsPerBoard": 3.26,
+   "tieFlipsPerBoard": 0.92
+  },
+  {
+   "cfg": "her venus off",
+   "boards": 336,
+   "winPct": 55.7,
+   "tiedPct": 9.2,
+   "flipsPerBoard": 3.43,
+   "tieFlipsPerBoard": 1.37
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+
+MANSION 24. the empty circle, best (door-first). 896 boards a cell, two seeds.
+cfg {"voidAt":4,"voidN":"best"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      55.4%      43.3%    12.1     8.1%   28.6%    24.2%
+  deep   the law                      68.1%      34.9%    33.1    12.5%   36.3%    16.6%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      55.4%      53.2%     2.1
+  deep   the law                      68.1%      43.3%    24.8
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       66.0%
+  suzaku       42.0%
+  seiryuu      28.7%
+  genbu        47.3%

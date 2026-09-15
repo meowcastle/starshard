@@ -1,0 +1,22 @@
+
+MANSION 9. dawn/pair on m9 plain. 896 boards a cell, two seeds.
+cfg {"dawn":"pair"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      38.5%      67.2%   -28.7    10.3%   29.5%    24.6%
+  deep   the law                      36.7%      61.8%   -25.1    13.9%   39.9%    12.9%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      38.5%      25.0%    13.5
+  deep   the law                      36.7%      20.3%    16.4
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       20.5%
+  suzaku       22.5%
+  seiryuu      49.8%
+  genbu        13.8%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         71.3%       28.7%     25.2%    36.3%     19.4%   19.1%
+  deep          70.3%       29.7%     25.7%    20.9%     18.0%   35.4%

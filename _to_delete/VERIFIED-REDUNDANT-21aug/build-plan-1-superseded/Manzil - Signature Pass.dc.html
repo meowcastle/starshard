@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#14100B}
+body{font-family:'Varela Round',sans-serif;color:#D8C89C;-webkit-font-smoothing:antialiased}
+a{color:#F0D89A;text-decoration:none}a:hover{color:#FFB000}
+::selection{background:rgba(240,216,154,.25)}
+</style>
+</helmet>
+<div style="max-width:1060px;margin:0 auto;padding:64px 40px 140px">
+
+  <div style="font-size:12px;color:#9A8A5E">manzil · design sheet · 19 aug 2026</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;color:#F0D89A;margin:10px 0 0">the signature pass</h1>
+  <p style="font-size:13px;line-height:1.8;color:#D8C89C;max-width:660px;margin:16px 0 0">the sim found 22 of 28 cards strictly dominated on numbers: trophies, not tools. numbers are canon, so signatures are the only lever. this sheet audits all 28 drafted moves against what the sim says actually works, and proposes reworks for the four that fail.</p>
+
+  <div style="height:64px"></div>
+
+  <div style="font-size:12px;color:#9A8A5E">the law</div>
+  <div style="border-left:2px solid #F0D89A;padding:6px 0 6px 20px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.5;color:#F0D89A;max-width:640px;margin-top:14px">a signature must make a low card correct on some nights. a move that waits for a flip waits forever.</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:28px;max-width:820px">
+    <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#F0D89A">0.16</div><div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:4px">flips per turn between careful players. 87% of turns flip nothing. anything gated on a claim is gated on the rarest event in the game.</div></div>
+    <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#F0D89A">±24–34</div><div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:4px">points the count class moves the game (jupiter's counts-two, ablated). the count is the strongest thing a move can touch.</div></div>
+    <div><div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#F0D89A">1 in 6</div><div style="font-size:11.5px;line-height:1.7;color:#9A8A5E;margin-top:4px">duels end tied. tie moves and face nudges past the 8 threshold are live every single night.</div></div>
+  </div>
+
+  <div style="height:64px"></div>
+
+  <div style="font-size:12px;color:#9A8A5E">five classes, by what the sim says</div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;max-width:820px">
+    <sc-for list="{{ classes }}" as="c" hint-placeholder-count="5">
+      <div style="display:grid;grid-template-columns:170px 90px 1fr;gap:16px;align-items:baseline;font-size:12px;line-height:1.65">
+        <span style="color:#F0D89A">{{ c.name }}</span>
+        <span style="color:{{ c.vc }}">{{ c.verdict }}</span>
+        <span style="color:#9A8A5E">{{ c.note }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:64px"></div>
+
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <div style="font-size:12px;color:#9A8A5E">the twenty-eight · {{ viewLabel }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:26px 168px 1fr 92px 104px 1.15fr;gap:12px;font-size:10.5px;color:rgba(154,138,94,.7);margin:20px 0 0;padding-bottom:10px;border-bottom:1px solid rgba(154,138,94,.25)">
+    <span></span><span>card</span><span>the move</span><span>class</span><span>verdict</span><span>correct when</span>
+  </div>
+  <div style="display:flex;flex-direction:column">
+    <sc-for list="{{ rows }}" as="r" hint-placeholder-count="28">
+      <div style="display:grid;grid-template-columns:26px 168px 1fr 92px 104px 1.15fr;gap:12px;padding:11px 0;border-bottom:1px solid rgba(154,138,94,.12);font-size:12px;line-height:1.6;align-items:baseline">
+        <span style="color:rgba(154,138,94,.6);font-size:10.5px">{{ r.n }}</span>
+        <span style="color:{{ r.nameC }}">{{ r.name }} <span style="color:#9A8A5E;font-size:10.5px">{{ r.vals }}</span></span>
+        <span style="color:#D8C89C">{{ r.move }}</span>
+        <span style="color:#9A8A5E;font-size:11px">{{ r.cls }}</span>
+        <span style="color:{{ r.vc }};font-size:11px">{{ r.verdict }}</span>
+        <span style="color:#9A8A5E;font-size:11.5px">{{ r.note }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:64px"></div>
+
+  <div style="font-size:12px;color:#9A8A5E">the five reworks · decided 19 aug 2026 · canon</div>
+  <div style="display:flex;flex-direction:column;gap:36px;margin-top:24px;max-width:760px">
+    <sc-for list="{{ reworks }}" as="w" hint-placeholder-count="4">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:12px">
+          <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:#F0D89A">{{ w.name }}</span>
+          <span style="font-size:11px;color:#9A8A5E">{{ w.tag }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:64px 1fr;gap:12px;margin-top:12px;font-size:12.5px;line-height:1.7">
+          <span style="color:rgba(154,138,94,.7);font-size:11px">was</span>
+          <span style="color:#9A8A5E">{{ w.old }} <span style="font-size:11px;color:rgba(154,138,94,.7)">· {{ w.oldWhy }}</span></span>
+          <span style="color:#FFB000;font-size:11px">now</span>
+          <span style="color:#F0D89A">{{ w.next }}</span>
+          <span style="color:rgba(154,138,94,.7);font-size:11px">why</span>
+          <span style="color:#9A8A5E">{{ w.why }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:64px"></div>
+
+  <div style="font-size:12px;color:#9A8A5E">flags, not reworks</div>
+  <div style="display:flex;flex-direction:column;gap:14px;margin-top:18px;max-width:720px;font-size:12.5px;line-height:1.75">
+    <div><span style="color:#F0D89A">the claws · the flock</span> <span style="color:#9A8A5E">stay claim-gated: teeth that need a 6|6 to win a fight first. left as drafted because the sky sims abilities, so a deterrent shapes her play even when it never fires. cheap to revisit after the four land.</span></div>
+    <div><span style="color:#F0D89A">the hideaway</span> <span style="color:#9A8A5E">decided: the hiding was theater against a sky that reads everything, so it is cut. the tent closes to the count instead: its mansion counts for nobody. live in the prototype, wakes at L2.</span></div>
+    <div><span style="color:#F0D89A">the thread</span> <span style="color:#9A8A5E">is the research's wrap geometry wearing a card. it changes every fight on the board for both sides. sim it before believing it: it may be the best card in the game or a coin flip.</span></div>
+    <div><span style="color:#F0D89A">the storm</span> <span style="color:#9A8A5E">and the tieRule tweak share one space: if tied counts go to tonight's holder, storm's tie-claim gets stronger, not weaker. no conflict, just watch the pairing in the re-sim.</span></div>
+  </div>
+
+  <div style="height:64px"></div>
+
+  <div style="font-size:12px;color:#9A8A5E">next</div>
+  <div style="font-size:12.5px;line-height:1.9;color:#D8C89C;margin-top:14px;max-width:660px">done: heart and blaze are awake in the prototype, jewel and crown are coded and wake at L2, the art briefs are synced. remaining: re-sim the four with the tieRule variants to check the dominated count actually falls, then the hideaway decision and the thread sim.</div>
+  <div style="font-size:11px;line-height:1.9;color:rgba(154,138,94,.7);margin-top:28px">sources: uploads/manzil-sim-report.md §3 §5 §9 · move drafts from Manzil - Art Briefs.dc.html · values at L1 from the base set (storm runs L3 in the prototype: 8|6)</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;view&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;as decided&quot;,&quot;as first drafted&quot;],&quot;default&quot;:&quot;as decided&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;description&quot;:&quot;table shows the four reworks in place (canon), or the moves as first drafted before the pass&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const proposed = (this.props.view || "as decided") !== "as first drafted";
+    const AMBER = "#FFB000", PARCH = "#F0D89A", INK = "#D8C89C", MUTE = "#9A8A5E";
+    const classes = [
+      ["the count", "strongest", PARCH, "changes what mansions are worth. jupiter's counts-two moved the sim more than any other single rule (±24–34 pts). moves here are live every board."],
+      ["faces", "live", INK, "+1s and −1s past the thresholds: 8 touches mars and jupiter, only 9 ties saturn. a nudge that crosses a threshold changes real fights nightly."],
+      ["tempo · geometry", "live", INK, "pre-lodges, relocations, swaps, turned numbers. the game is placement, not capture (0.9–1.5 flips a board), so moving the placement rules is moving the game."],
+      ["information", "human-only", MUTE, "her hand is the game's one hidden thing. real value to a person, invisible to every sim agent. keep, but never load-bearing."],
+      ["claim-gated", "dead", AMBER, "fires only after a flip, and flips barely exist (0.16 per turn). insurance against events that never happen. no move should live here."],
+    ].map(c => ({ name: c[0], verdict: c[1], vc: c[2], note: c[3] }));
+    // [name, l|r, move, class, verdict, vc, note] + optional rework override
+    const R = (v) => v; // clarity only
+    const D = [
+      ["The Gate", "6|5", "lodges before her lead, once", "tempo", "live", INK, "the rounds you follow: the seat the sim calls a forced loss under perfect play"],
+      ["The Bearer", "6|4", "your neighbors gain +1", "faces", "live", INK, "beside a 7 it makes an 8: the mars and jupiter floor"],
+      ["The Gathered Stars", "7|6", "counts as two at the count", "count", "strong", PARCH, "any night. your jupiter: the strongest class in the game"],
+      ["The Follower", "7|7", "copies its left neighbor's number", "faces", "live", INK, "beside a 9: void, throne, or her saturn's strong side"],
+      ["The Blaze", "5|6", "its claims are final", "claim-gated", "rework", AMBER, "never fires: it insures against a second claim that almost never comes"],
+      ["The Storm", "8|5", "claims ties", "tie", "strong", PARCH, "every night: one duel in six is a tie, and the storm takes them"],
+      ["The Return", "7|6", "returns to hand once when claimed", "claim-gated", "soft", MUTE, "only when she takes it: but then the follower's fifth card finally plays"],
+      ["The Ghost", "6|6", "her neighbors fight at −1", "faces", "live", INK, "mid-road beside her planets: saturn's 9 reads 8, and 8 can be tied"],
+      ["The Glance", "4|6", "reveals one of her closed cards", "information", "soft", MUTE, "her hand is closed: real to a person, worthless to the count"],
+      ["The Throne", "6|9", "two-faced: seat or serpent", "faces", "strong", PARCH, "every night: ablating the choice costs 5–11 points"],
+      ["The Mane", "6|5", "+1 while both neighbors stand", "faces", "soft", MUTE, "a filled pocket, late in the board: a fragile condition for a small nudge"],
+      ["The Turning", "7|5", "swaps a neighbor's numbers on lodge", "geometry", "strong", PARCH, "saturn and mars nights: the unbeatable 9 turns to face the other way"],
+      ["The Hand", "7|4", "may relocate once", "tempo", "live", INK, "turn five, the sim's one-legal-move turn, un-forced"],
+      ["The Jewel", "7|7", "fights with its higher number", "faces", "rework", AMBER, "never at L1: the higher of 7|7 is 7. the move is a no-op until L3"],
+      ["The Veil", "8|2", "safe the turn it lands", "tempo", "live", INK, "the 8 lands and her answer comes a turn late"],
+      ["The Claws", "6|6", "its claimer fights at −1 after", "claim-gated", "flagged", MUTE, "needs her to claim a 6|6 that threatens nothing: revenge without a body"],
+      ["The Crown", "6|6", "+1 on an edge mansion", "faces", "rework", AMBER, "an edge lodge at 7|7 is still the sixes class: 0% even for the oracle"],
+      ["The Heart", "7|7", "safe while touching your card", "protection", "rework", AMBER, "protection where flips barely exist: ablation says 0–2 points"],
+      ["The Root", "7|6", "+1 as your first lodge", "faces", "soft", MUTE, "turn one: the turn the sim says is already nearly free"],
+      ["The Flock", "6|6", "your neighbors +1 when it claims", "claim-gated", "flagged", MUTE, "a 6|6 must win a fight before anything happens: it rarely can"],
+      ["The Empty District", "2|8", "both neighbors fight at −1", "faces", "strong", PARCH, "every night it lands mid-road: both her flanks soften"],
+      ["The Listener", "7|4", "her next card plays face-up", "information", "soft", MUTE, "the turn before her strongest card: sharper than the glance"],
+      ["The Drum", "4|7", "its claim strikes one further", "claim-chain", "soft", MUTE, "when the 7 takes her venus or mercury: then it plays like her mars"],
+      ["The Void", "9|2", "safe while standing alone", "protection", "live", INK, "early and alone: the safety covers the 2 while the 9 works"],
+      ["The Hideaway", "5|6", "numbers hidden until fought", "information", "decide", MUTE, "hidden from whom? the sky reads everything. needs a decision, then a draft"],
+      ["The Chamber", "7|5", "neighbors safe the turn they land", "protection", "soft", MUTE, "it shields landings from flips that were already rare"],
+      ["The Guide", "6|5", "may swap with your other card", "tempo", "live", INK, "after her lodges commit: two of your cards trade grounds"],
+      ["The Thread", "5|6", "the board wraps: edges touch", "geometry", "wild: sim it", INK, "every night, for everyone: the wheel closes. the research's wrap variant as a card"],
+    ];
+    const RW = {
+      5: { move: "the mark takes the ground: its mansion counts yours, whoever holds the card", cls: "count", note: "live every board: one point of nine, guaranteed, the honest version of a permanent mark" },
+      14: { move: "cannot be softened: venus, the ghost, the empty district pass over it", cls: "faces", note: "her venus lands beside something every night: the hard light ignores it" },
+      17: { move: "wears dominion on an edge mansion: counts two there", cls: "count", note: "two of nine slots lift a chart-owned 6|6 out of the unwinnable class" },
+      25: { move: "its mansion is silent: counts for nobody", cls: "count", note: "lodge it where you cannot win: the point leaves her column too. whoever holds the card, the tent stays closed" },
+      18: { move: "burns brighter behind: both faces +1 while she holds more of the road", cls: "faces", note: "live in the follower seat, the structurally losing one. quenches itself when you lead" },
+    };
+    const rows = D.map((d, i) => {
+      const id = i + 1, w = proposed && RW[id];
+      return {
+        n: String(id).padStart(2, "0"),
+        name: d[0], vals: d[1],
+        move: w ? w.move : d[2],
+        cls: w ? w.cls : d[3],
+        verdict: w ? "canon · live" : d[4],
+        vc: w ? PARCH : d[5],
+        note: w ? w.note : d[6],
+        nameC: (d[4] === "rework") ? PARCH : "#F2EAD6",
+      };
+    });
+    const reworks = [
+      { name: "the heart", tag: "chart-owned · L2 in the prototype today, a placebo", old: "safe while touching your card", oldWhy: "ablation 0–2 pts; flips 0.16/turn", next: "burns brighter behind: both faces +1 while she holds more of the road", why: "antares, the ember: courage when the night leans her way. it is strongest in the follower seat, which the sim calls a forced loss under perfect play, and it turns itself off once you lead the count. an L2 wake a player feels the same night." },
+      { name: "the blaze", tag: "chart-owned · L2 today, never fires", old: "its claims are final", oldWhy: "needs a re-claim; ~never happens", next: "the mark takes the ground: its mansion counts yours, whoever holds the card", why: "the white mark burned permanent, made real in the count instead of in insurance. the count class is the strongest in the sim, and dominion already set the precedent that ground can keep what the card loses. she can still flip the card; the point stays." },
+      { name: "the jewel", tag: "no-op at L1", old: "fights with its higher number", oldWhy: "the higher of 7|7 is 7", next: "cannot be softened", why: "hard, exact light: venus, the ghost and the empty district pass over it. her venus softens neighbors every single night, so the immunity is live from the first board, at every level." },
+      { name: "the crown", tag: "chart-owned · weak as drafted", old: "+1 on an edge mansion", oldWhy: "7|7 at an edge is still the sixes class", next: "wears dominion on an edge mansion: counts two there", why: "the crown sits at the head of the road. count teeth on two of nine slots, position-flavored so spotting the edge stays skill, and a chart-owned card stops being the dead one in the five." },
+      { name: "the hideaway", tag: "chart-neutral · decided in the follow-up round, hiding cut", old: "numbers hidden until fought", oldWhy: "hidden from whom: the sky reads the whole board", next: "its mansion is silent: counts for nobody", why: "the tent of stars, closed to the count. a denial card in the strongest class: lodge it on the mansion you cannot hold and the point leaves both columns, whoever ends up with the card. it also makes tied counts likelier, so it leans on the tieRule call: watch the pairing." },
+    ];
+    return { classes, rows, reworks, viewLabel: proposed ? "as decided 19 aug 2026" : "as first drafted, before the pass" };
+  }
+}
+</script>
+</body>
+</html>

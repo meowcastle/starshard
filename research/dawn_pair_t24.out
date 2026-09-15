@@ -1,0 +1,22 @@
+
+MANSION 24. dawn/pair on t24 (the thread/void road, deep seat 30). 896 boards a cell, two seeds.
+cfg {"dawn":"pair"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      39.5%      61.6%   -22.1    11.1%   31.3%    19.5%
+  deep   the law                      43.4%      56.8%   -13.4    13.8%   38.9%    12.1%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      39.5%      33.1%     6.4
+  deep   the law                      43.4%      24.8%    18.6
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       47.7%
+  suzaku        8.1%
+  seiryuu      34.2%
+  genbu        11.4%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         71.8%       28.2%     19.3%    22.3%     21.9%   36.4%
+  deep          69.5%       30.5%     16.5%    20.2%     13.5%   49.8%

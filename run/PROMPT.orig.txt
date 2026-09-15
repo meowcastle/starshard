@@ -1,0 +1,101 @@
+You are writing one cell of a 784-cell corpus for an astrology product. A cell
+describes what it is to have the sun in one lunar mansion and the moon in another.
+
+You are given two mansion portraits. THOSE PORTRAITS RENDER ON THE SAME PAGE AS
+YOUR TEXT, DIRECTLY BELOW IT. Anything you explain about a mansion, the reader is
+about to read again in better words. Do not describe the mansions. Write only what
+happens when one person is both.
+
+You may name each mansion by its epithet and its keyword. Nothing else. No star
+names, no tradition names, no deities, no election lore, no guardian animals. The
+`banned` list in the packet is absolute — check your draft against it word by word.
+
+════ THE TWO RULES THE LAST PASS BROKE ════
+
+1. ATTRIBUTE NOTHING. Seven of eight cells in the first pilot invented a source:
+   "the old books call neither reading wrong", "the older readings gave these two
+   stretches of sky opposite work", "the tradition is blunt about this trade".
+   NOBODY SAID ANY OF THAT. 784 mansion pairings are not a tradition anyone wrote
+   down — that is exactly why this layer is generated. The portrait does all
+   attribution. You never write "the old books", "the traditions", "every
+   tradition", "classical sources", or any variant. Carry your authority in the
+   observation itself.
+
+2. VOCABULARY IS A WHITELIST. Permitted astrology terms: the planets, the twelve
+   signs, sun / moon / rising, the houses, the five aspects, retrograde, new and
+   full moon, orbs in degrees. EVERYTHING ELSE IS OFF-LIMITS. The last pass reached
+   for "significator" and "aversion" to sound authoritative; "aversion" describes
+   signs, not mansions, so it is a category error a reader can catch. If you are
+   reaching for a technical word to add weight, that is the tell — write the
+   observation plainly instead.
+
+════ VOICE ════
+
+Second person. Lowercase throughout except proper nouns and the mansion epithets.
+No first person — "we" appears nowhere. The reader is the subject of every sentence.
+
+Banned moves: announcing a reveal ("here's the part nobody knows"), labelling the
+move ("the cost is..."), not-X-but-Y ("this isn't restlessness, it's..."), meta-
+commentary about the reading, throat-clearing openers, advice of any kind, and any
+sentence whose subject is the app.
+
+Recognition, not flattery. Accuracy that includes the cost is what gets
+screenshotted; a compliment is not. Say the hard thing plainly and do not soften it.
+
+════ SLOTS ════
+
+lead     25-40w  the two mansions as one sentence. sets the paradox and stops
+sun      55-75w  what the sun's mansion does IN THIS PAIRING
+moon     50-70w  what the moon's mansion does AGAINST THAT SUN
+pull     20-35w  the fusion. rendered as a pull-quote. the line someone screenshots
+tension  60-80w  what the pairing makes hard, or what it gets called
+cost     50-70w  what it is unusually good at, and what that costs
+
+Word counts are hard limits; outside range fails the gate.
+
+THE TEST for `sun` and `moon`: could this paragraph appear unchanged in a cell with
+a different partner mansion? If yes it belongs in the portrait, and it is already
+there. Delete it and write the interaction.
+
+`cost` says what it costs. It never says what to do about it.
+
+Return ONLY a JSON object:
+{"address":"NN·NN","lead":"...","sun":"...","moon":"...","pull":"...","tension":"...","cost":"..."}
+
+ONE MORE: the page already prints "sun in the storm · moon in the throne" in the
+header, directly above your text. `lead` must NOT restate it. Do not begin with
+"sun in X, moon in Y" — open on the two epithets doing something, or on the paradox
+itself. Six of eight cells in the last pass opened with the template and it is the
+most visible tell in the product.
+
+LEAD VARIETY. The last tranche closed the header-restating problem and then settled
+into a new pattern: twelve leads in a row shaped "[Moon epithet] does X, and [Sun
+epithet] does Y, so Z." Across 784 cells that becomes just as visible. Vary it. Some
+leads should open on the consequence and never name either epithet at all. Some
+should open mid-situation. Naming both epithets in the lead is permitted, not
+required — and if you write three cells, they must not all open the same way.
+
+════ THE FRAME TRAP — read this before you write the cost slot ════
+
+"the cost is" was banned as a tic in an earlier draft. The writers did not stop
+labelling the move; they routed into a synonym, and "what it costs is" ended up in
+a THIRD of the last thirty cells. A ban produces a paraphrase unless you know what
+the slot does instead.
+
+  `cost` says what the pairing is unusually good at and what that trade takes. It
+  does that BY DESCRIBING THE TRADE, never by introducing it. If your sentence can
+  start at its second clause, start it there.
+
+  `tension` names the thing. It never announces that it is about to.
+
+These exact frames are banned outright — do not use them, and do not evade them by
+inserting a word (an earlier pass turned "from people" into "from the people",
+which fools the tool and not the reader):
+
+  "what it costs is"    "what that costs is"   "at full size and"
+  "is the word and"     "the word and it"      "there is no way"
+  "is no way to"        "and it is the"        "so there is no"
+  "and it does not"     "you have never once"  "and none of them"
+
+More generally: if three of your cells open a sentence the same way, two of them
+are wrong. A 4-gram appearing in more than 10% of the set fails the gate.

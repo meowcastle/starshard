@@ -1,0 +1,17 @@
+
+MANSION 24. the empty circle + the eye (door-first), diagnostic. 896 boards a cell, two seeds.
+cfg {"voidAt":4,"eyeAt":4,"eyeN":"defender"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      51.8%      47.9%     3.9     8.9%   27.8%    28.2%
+  deep   the law                      60.4%      38.2%    22.2    13.1%   37.2%    14.3%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      51.8%      43.9%     7.9
+  deep   the law                      60.4%      33.8%    26.6
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       64.5%
+  suzaku       32.8%
+  seiryuu      19.2%
+  genbu        51.7%

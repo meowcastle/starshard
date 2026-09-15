@@ -1,0 +1,22 @@
+
+MANSION 7. 7a the second strike, door-first. 896 boards a cell, two seeds.
+cfg {"againAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      53.9%      45.1%     8.8    11.0%   32.3%    20.0%
+  deep   the law                      56.3%      44.0%    12.3    14.1%   40.0%    10.4%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      53.9%      36.5%    17.4
+  deep   the law                      56.3%      32.3%    24.0
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       41.3%
+  suzaku       48.8%
+  seiryuu      51.3%
+  genbu        35.2%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         72.5%       27.5%     35.9%    21.7%     14.2%   28.2%
+  deep          73.0%       27.0%     36.7%    12.3%     17.3%   33.6%

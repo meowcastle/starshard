@@ -1,0 +1,22 @@
+
+MANSION 8. 8c the goat's gap. 896 boards a cell, two seeds.
+cfg {"gapAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      53.1%      47.9%     5.2     8.9%   27.1%    26.5%
+  deep   the law                      54.7%      42.9%    11.8    12.9%   39.3%    13.8%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      53.1%      35.9%    17.2
+  deep   the law                      54.7%      24.2%    30.5
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       36.0%
+  suzaku       45.6%
+  seiryuu      62.9%
+  genbu        32.5%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         68.9%       31.1%     16.9%    32.8%     24.0%   26.3%
+  deep          71.8%       28.2%     15.8%    26.8%     15.5%   41.9%

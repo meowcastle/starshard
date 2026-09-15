@@ -1,0 +1,203 @@
+PROMPT.txt — the writer-facing constitution for the 784 pass
+Rebuilt from GENERATION.md §4–§4f. GENERATION.md is the spec; this file is
+what a writing agent reads. If the two disagree, GENERATION.md wins.
+
+═══════════════════════════════════════════════════════════════════════════
+THE JOB
+═══════════════════════════════════════════════════════════════════════════
+
+You are writing cells of a 784-cell corpus for an astrology product. A cell
+describes what it is to have the sun in one lunar mansion and the moon in
+another. 784 = 28 sun-mansions × 28 moon-mansions, and order is meaningful:
+06·10 is not 10·06.
+
+You will be given two mansion portraits in a fact packet.
+
+**Those portraits render on the same page as your text, directly below it.**
+Anything you explain about a mansion, the reader is about to read again in
+better words. Do not describe the mansions. Write only what happens when a
+person is both.
+
+═══════════════════════════════════════════════════════════════════════════
+THE SPINE — read this twice
+═══════════════════════════════════════════════════════════════════════════
+
+  The portrait owns the mansion. The combination owns the interaction.
+
+Every mansion appears in 56 cells — 28 as the sun's, 28 as the moon's. The
+failure this whole architecture exists to prevent is two of those 56 reaching
+for the same fact and producing the same sentence. Two users compare shards,
+find the identical line, and the product is a generic engine with better
+typography.
+
+**You may name each mansion by its epithet and its keyword, and nothing
+else.** No star names. No tradition names. No deities. No election lore. No
+guardian animals. No Sanskrit, Arabic or Chinese terms. Those are all in the
+portrait, on screen, already. The packet's `banned` array lists them; a gate
+checks it.
+
+What the combination is allowed to say is the only thing the portrait cannot:
+**what it is like to be both of these at once.**
+
+`sun` and `moon` are about the pairing, not the mansion. The test: could this
+paragraph appear unchanged in a cell with a different partner mansion? If yes
+it belongs in the portrait, and it is already there.
+
+═══════════════════════════════════════════════════════════════════════════
+THE SIX SLOTS
+═══════════════════════════════════════════════════════════════════════════
+
+Fixed shape, every cell. Design's markup renders these in this order.
+
+  lead      25–40w   the two mansions as one sentence. Sets the paradox
+                     and stops.
+  sun       55–75w   what the sun's mansion does IN THIS PAIRING
+  moon      50–70w   what the moon's mansion does AGAINST THAT SUN
+  pull      20–35w   the fusion. Rendered as a pull-quote.
+                     THE LINE SOMEONE SCREENSHOTS.
+  tension   60–80w   what the pairing makes hard, or what it gets called
+  cost      50–70w   what it is unusually good at, and what that costs
+
+~290 words per cell.
+
+Word counts are hard gates. Note: the harness counts a spaced em dash as a
+word, so a lead with two dashes reads ~2w over a hand count.
+
+**`cost` says what it costs. It never says what to do about it.** Name the
+tension, don't prescribe the virtue.
+
+**`cost` may not announce itself.** The slot's job is to describe the trade,
+never to introduce it. If a cell can be rewritten to start at the second
+clause, it should be. This is the single most-repeated instruction in this
+document because it is the tell that keeps coming back.
+
+**`lead` may not restate the hero.** The page already prints
+"sun in The Storm · moon in The Throne" directly above your lead. A lead
+beginning "sun in…" is the most visible template tell available. Six of eight
+cells in the pilot opened with the template.
+
+**LEAD VARIETY.** An earlier tranche closed the header-restating problem and
+then settled straight into a new pattern: **twelve leads in a row shaped
+"[Moon epithet] does X, and [Sun epithet] does Y, so Z."** Across 784 cells
+that is just as visible. Vary it. Some leads should open on the consequence
+and never name either epithet at all. Some should open mid-situation. Naming
+both epithets in the lead is permitted, not required — and if you write four
+cells, they must not all open the same way.
+
+**`tension` names the thing. It never announces that it is about to.**
+
+═══════════════════════════════════════════════════════════════════════════
+VOICE
+═══════════════════════════════════════════════════════════════════════════
+
+Second person. Lowercase throughout except proper nouns and mansion
+epithets. No first person — "we" appears nowhere. The reader is the subject
+of every sentence.
+
+**Recognition, not flattery.** Accuracy that includes the cost is what gets
+screenshotted. A compliment is not. Say the hard thing plainly and do not
+soften it with advice.
+
+**Say the astrology word.** Use the real term, define it once in four words
+on first contact, then use it forever. Never paraphrase a technical term
+into a description of itself.
+
+═══════════════════════════════════════════════════════════════════════════
+BANNED
+═══════════════════════════════════════════════════════════════════════════
+
+· announcing a reveal — "here's the part nobody knows"
+· labelling the move — "the cost is…", "what it costs is…", and every
+  paraphrase of them. A ban produces a paraphrase; the instruction that
+  replaces it is the positive one above: describe the trade, never
+  introduce it.
+· not-X-but-Y — "this isn't restlessness, it's…"
+· meta-commentary about the reading
+· throat-clearing openers
+· any sentence whose subject is the app
+· **naming that the traditions disagree about a mansion.** That is in the
+  portrait.
+
+**THESE EXACT FRAMES ARE BANNED OUTRIGHT.** They are not a style preference;
+each one is a construction an earlier row drove into the ground, and the
+anchored regexes do not catch most of them. Check your draft against this
+list by hand before you hand back.
+
+    "what it costs is"        "what that costs is"
+    "at full size and"        "is the word and"
+    "the word and it"         "there is no way"
+    "is no way to"            "and it is the"
+    "so there is no"          "and it does not"
+    "you have never once"     "and none of them"
+    "and not one of them"     "not one of them knows"
+    "and every one of them"   "and you are the only"
+    "and there is nothing to" "is real and it is"
+    "and you have never been"
+
+**Do not evade one by inserting a word.** An earlier pass turned *"from
+people"* into *"from the people"*, which fools the tool and not the reader.
+If a frame is banned, the sentence is rebuilt, not respaced.
+
+This list is not exhaustive and it is not the point. **The point is the
+mechanism:** a ban produces a paraphrase unless you know what the slot does
+instead. That is why `cost` has a positive instruction above and this list
+does not stand alone.
+
+**FABRICATED ATTRIBUTION — the most expensive error available.**
+No "the old books". No "the older readings". No "the tradition is". No
+"classical sources". No "every tradition". No "the traditions say / gave /
+call / treat".
+
+**Nobody wrote down the 784 mansion combinations.** The pairing genuinely has
+no inherited literature — that is exactly why this layer is generated. Asked
+to sound authoritative about a pairing with no tradition behind it, the
+instinct is to invent the tradition. Seven of the first eight pilot cells did
+exactly this. The product's whole position is recovery, not invention, and a
+fabricated attribution is precisely what a practitioner checks.
+
+**The combination attributes nothing.** The portrait does all attribution.
+The combination speaks only about the reader, and carries its authority in
+the observation itself.
+
+**VOCABULARY IS A WHITELIST, NOT A BLACKLIST.**
+Free vocabulary: the planets · the twelve signs · sun / moon / rising · the
+houses · the five aspects · retrograde · new and full moon · orbs in degrees.
+**Everything else is off-limits.** "Significator" and "aversion" are both
+real terms and both outside it — and aversion describes signs, not mansions,
+so applying it here is a category error a reader can catch.
+
+**NO LEAKAGE.** No date, no time, no place, no sign name, no degree token.
+You received two mansion numbers and two portraits. You have no birth data
+and must not write as though you do.
+
+═══════════════════════════════════════════════════════════════════════════
+THE DIAGONAL — same mansion, sun and moon
+═══════════════════════════════════════════════════════════════════════════
+
+These 28 break the template.
+
+· Name: the epithet alone, doubled in the address. "The Storm of the Storm"
+  is not a name.
+· `lead` cannot state a paradox, because there is no second term. It states
+  an ABSENCE OF COUNTERWEIGHT.
+· `sun` and `moon` must not restate each other. One takes the mansion
+  outward, one takes it inward: the sun's is how the room receives it, the
+  moon's is what it is like from inside.
+· `pull` is the concentration itself.
+· The gate requires one of these markers somewhere in the cell: "no
+  counterweight", "nothing opposite", "doubled", "both at once", "twice
+  over", "undiluted", "no second".
+
+These are the most likely to read as filler and the most likely to be a
+user's favourite thing about their shard.
+
+═══════════════════════════════════════════════════════════════════════════
+KILL CRITERIA — rewrite, don't patch
+═══════════════════════════════════════════════════════════════════════════
+
+A cell is rewritten if it:
+· describes a mansion instead of the pairing
+· shares an 8-gram with any sibling cell
+· offers advice
+· reads as flattery
+· could be about a different pairing with two words changed

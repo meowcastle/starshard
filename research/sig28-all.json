@@ -1,0 +1,254 @@
+[
+ {
+  "id": 1,
+  "name": "the gate",
+  "ab": "gate",
+  "asleep": 86.22448979591837,
+  "awake": 80.86734693877551,
+  "worth": 5.357142857142861,
+  "sig": true
+ },
+ {
+  "id": 2,
+  "name": "the bearer",
+  "ab": "bearer",
+  "asleep": 87.24489795918367,
+  "awake": 89.03061224489795,
+  "worth": -1.7857142857142776,
+  "sig": false
+ },
+ {
+  "id": 3,
+  "name": "the gathered stars",
+  "ab": "gathered",
+  "asleep": 84.18367346938776,
+  "awake": 79.97448979591837,
+  "worth": 4.209183673469383,
+  "sig": true
+ },
+ {
+  "id": 4,
+  "name": "the follower",
+  "ab": "follower",
+  "asleep": 79.20918367346938,
+  "awake": 78.4438775510204,
+  "worth": 0.7653061224489761,
+  "sig": false
+ },
+ {
+  "id": 5,
+  "name": "the blaze",
+  "ab": "blaze",
+  "asleep": 82.2704081632653,
+  "awake": 74.23469387755102,
+  "worth": 8.035714285714278,
+  "sig": true
+ },
+ {
+  "id": 6,
+  "name": "the storm",
+  "ab": "storm",
+  "asleep": 80.2295918367347,
+  "awake": 80.61224489795919,
+  "worth": -0.38265306122448806,
+  "sig": false
+ },
+ {
+  "id": 7,
+  "name": "the return",
+  "ab": "return",
+  "asleep": 78.31632653061224,
+  "awake": 82.78061224489795,
+  "worth": -4.464285714285708,
+  "sig": true
+ },
+ {
+  "id": 8,
+  "name": "the ghost",
+  "ab": "ghost",
+  "asleep": 84.56632653061224,
+  "awake": 81.76020408163265,
+  "worth": 2.8061224489795933,
+  "sig": false
+ },
+ {
+  "id": 9,
+  "name": "the glance",
+  "ab": "glance",
+  "asleep": 90.17857142857143,
+  "awake": 90.56122448979592,
+  "worth": -0.38265306122448806,
+  "sig": false
+ },
+ {
+  "id": 10,
+  "name": "the throne",
+  "ab": "throne",
+  "asleep": 80.48469387755102,
+  "awake": 74.61734693877551,
+  "worth": 5.867346938775512,
+  "sig": true
+ },
+ {
+  "id": 11,
+  "name": "the mane",
+  "ab": "mane",
+  "asleep": 85.0765306122449,
+  "awake": 83.29081632653062,
+  "worth": 1.7857142857142776,
+  "sig": false
+ },
+ {
+  "id": 12,
+  "name": "the turning",
+  "ab": "turning",
+  "asleep": 87.5,
+  "awake": 77.93367346938776,
+  "worth": 9.566326530612244,
+  "sig": true
+ },
+ {
+  "id": 13,
+  "name": "the hand",
+  "ab": "hand",
+  "asleep": 84.82142857142857,
+  "awake": 84.82142857142857,
+  "worth": 0,
+  "sig": false
+ },
+ {
+  "id": 14,
+  "name": "the jewel",
+  "ab": "jewel",
+  "asleep": 78.31632653061224,
+  "awake": 78.31632653061224,
+  "worth": 0,
+  "sig": false
+ },
+ {
+  "id": 15,
+  "name": "the veil",
+  "ab": "veil",
+  "asleep": 87.75510204081633,
+  "awake": 88.77551020408163,
+  "worth": -1.0204081632653015,
+  "sig": false
+ },
+ {
+  "id": 16,
+  "name": "the claws",
+  "ab": "claws",
+  "asleep": 85.58673469387755,
+  "awake": 86.4795918367347,
+  "worth": -0.892857142857153,
+  "sig": false
+ },
+ {
+  "id": 17,
+  "name": "the crown",
+  "ab": "crown",
+  "asleep": 84.0561224489796,
+  "awake": 83.54591836734694,
+  "worth": 0.5102040816326507,
+  "sig": false
+ },
+ {
+  "id": 18,
+  "name": "the heart",
+  "ab": "heart",
+  "asleep": 83.6734693877551,
+  "awake": 83.6734693877551,
+  "worth": 0,
+  "sig": false
+ },
+ {
+  "id": 19,
+  "name": "the root",
+  "ab": "root",
+  "asleep": 82.52551020408163,
+  "awake": 76.53061224489795,
+  "worth": 5.994897959183675,
+  "sig": true
+ },
+ {
+  "id": 20,
+  "name": "the flock",
+  "ab": "flock",
+  "asleep": 86.35204081632654,
+  "awake": 85.96938775510205,
+  "worth": 0.38265306122448806,
+  "sig": false
+ },
+ {
+  "id": 21,
+  "name": "the empty district",
+  "ab": "district",
+  "asleep": 75.51020408163265,
+  "awake": 82.78061224489795,
+  "worth": -7.2704081632653015,
+  "sig": true
+ },
+ {
+  "id": 22,
+  "name": "the listener",
+  "ab": "listener",
+  "asleep": 83.41836734693878,
+  "awake": 65.68877551020408,
+  "worth": 17.7295918367347,
+  "sig": true
+ },
+ {
+  "id": 23,
+  "name": "the drum",
+  "ab": "drum",
+  "asleep": 84.56632653061224,
+  "awake": 85.33163265306122,
+  "worth": -0.7653061224489761,
+  "sig": false
+ },
+ {
+  "id": 24,
+  "name": "the void",
+  "ab": "void",
+  "asleep": 84.43877551020408,
+  "awake": 86.22448979591837,
+  "worth": -1.7857142857142918,
+  "sig": false
+ },
+ {
+  "id": 25,
+  "name": "the hideaway",
+  "ab": "hideaway",
+  "asleep": 81.25,
+  "awake": 82.01530612244898,
+  "worth": -0.7653061224489761,
+  "sig": false
+ },
+ {
+  "id": 26,
+  "name": "the chamber",
+  "ab": "chamber",
+  "asleep": 85.84183673469387,
+  "awake": 86.73469387755102,
+  "worth": -0.892857142857153,
+  "sig": false
+ },
+ {
+  "id": 27,
+  "name": "the guide",
+  "ab": "guide",
+  "asleep": 85.71428571428571,
+  "awake": 85.71428571428571,
+  "worth": 0,
+  "sig": false
+ },
+ {
+  "id": 28,
+  "name": "the thread",
+  "ab": "thread",
+  "asleep": 82.78061224489795,
+  "awake": 70.53571428571429,
+  "worth": 12.24489795918366,
+  "sig": true
+ }
+]

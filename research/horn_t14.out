@@ -1,0 +1,22 @@
+
+MANSION 14. 14c the horn. 896 boards a cell, two seeds.
+cfg {"hornAt":[3,5]}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      54.6%      41.0%    13.6    10.2%   31.4%    21.5%
+  deep   the law                      58.1%      40.4%    17.7    12.7%   41.3%    14.3%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      54.6%      42.7%    11.8
+  deep   the law                      58.1%      33.9%    24.2
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       38.7%
+  suzaku       32.4%
+  seiryuu      64.6%
+  genbu        31.3%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         64.1%       35.9%     24.8%    12.6%     37.6%   25.0%
+  deep          63.3%       36.7%     23.8%    11.6%     38.9%   25.7%

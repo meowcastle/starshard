@@ -1,0 +1,22 @@
+
+MANSION 3. 7a the second strike (phantom fix). 896 boards a cell, two seeds.
+cfg {"againAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      52.0%      48.2%     3.8    11.0%   31.5%    20.5%
+  deep   the law                      64.3%      37.7%    26.6    13.0%   39.0%    13.4%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      52.0%      43.3%     8.7
+  deep   the law                      64.3%      39.7%    24.6
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       59.9%
+  suzaku       44.4%
+  seiryuu      41.3%
+  genbu        47.4%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         73.2%       26.8%     47.0%    11.5%     14.1%   27.5%
+  deep          68.7%       31.3%     44.9%     8.1%      9.5%   37.4%

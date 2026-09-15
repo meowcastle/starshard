@@ -1,0 +1,127 @@
+COMMON.txt — the shared rules block every batch brief opens with
+Rebuilt from GENERATION.md §4c–§4f + RESUME-784.md. Operational half;
+PROMPT.txt is the voice half. Read this first, then PROMPT.txt.
+
+═══════════════════════════════════════════════════════════════════════════
+1. WHAT YOU DO
+═══════════════════════════════════════════════════════════════════════════
+
+You write four cells of the 784-cell combination corpus, all sharing one sun
+mansion. You are one of seven agents writing the same sun-row concurrently.
+Your brief names your four addresses, your packet paths, and the angles the
+earlier batches in this row have already taken.
+
+Read, in order:
+  1. this file
+  2. run/PROMPT.txt — the constitution
+  3. your four fact packets
+  4. THE PREMISE in your brief — one paragraph naming what a sun in this
+     mansion *is*. It is the strongest predictor of whether a row comes back
+     clean. Do not skim it.
+  5. the cells your brief names as already-written siblings
+
+═══════════════════════════════════════════════════════════════════════════
+2. OUTPUT
+═══════════════════════════════════════════════════════════════════════════
+
+A JSON array of four objects, written to the path your brief gives:
+
+[
+  { "address": "07·01",
+    "lead": "...", "sun": "...", "moon": "...",
+    "pull": "...", "tension": "...", "cost": "..." },
+  ...
+]
+
+· `address` is zero-padded, middle dot U+00B7, sun first: "07·01".
+· Six string fields, exactly. No extra keys, no nesting, no markdown.
+· Plain text inside the strings. No asterisks, no quotes-as-emphasis.
+
+═══════════════════════════════════════════════════════════════════════════
+3. VERIFY BEFORE YOU HAND BACK — this is not optional
+═══════════════════════════════════════════════════════════════════════════
+
+  node tools/combo-harness.mjs check <your-output>.json
+
+Then merge-check privately against the corpus: concatenate your four cells
+with research/combos.json into a scratch file and run `check` on that. The
+collision gate only sees siblings when they are in the same file, and a
+collision found after the row merges costs the whole row a revision cycle.
+
+Fix until clean. Hand back only clean output.
+
+═══════════════════════════════════════════════════════════════════════════
+4. THE GATE IS A FLOOR, NOT A VERDICT
+═══════════════════════════════════════════════════════════════════════════
+
+The regexes are anchored and miss banned frames that appear mid-sentence.
+Agents on earlier rows caught their own tells that the harness passed —
+label-first `tension` openers, repeated `cost` openers, a not-X-but-Y that
+slipped the pattern. One reported plainly: "the harness misses several
+literal banned frames, so I audited separately." That was the correct move.
+
+**The rule that generalises, and the one to actually use:**
+
+    IF THREE OF YOUR SLOTS OF ONE KIND OPEN ALIKE, TWO ARE WRONG.
+
+Read your four `cost` slots as a column. Then your four `tension` slots.
+Then your four `lead` slots. Not as four cells — as four firsts-of-a-kind.
+Repetition is invisible cell-by-cell and obvious in a column.
+
+**The tell moves.** Each gate finds the current one and the next row invents
+a new one. Row 06's writers announced the cost; row 10's stopped announcing
+the cost and started announcing the count ("and not one of them…", "not one
+of them knows…", "and every one of them…"). Whatever your four cells have
+started doing in unison, that is this row's tell. Find it yourself.
+
+The frame gate: no 5-gram may appear in more than 3% of a checked set, floor
+of 2. Tuned empirically — 4-grams at 3% flag ordinary English, 6-grams flag
+nothing. Five words recurring is a construction; four is often just English.
+
+**And the gate cannot see the explicit banned-frame list at all.** PROMPT.txt
+carries nineteen literal frames earlier rows drove into the ground. Grep your
+own output for every one of them before you hand back — rows 07 and 12 were
+written from a brief that had lost the list, and the two of them carried
+eighteen hits between 56 cells where the previous 420 cells carried fourteen.
+That is what happens when the list is not in front of the writer.
+
+**And the reference material is not exempt.** `PREMISE-14.md` as first written
+contained a banned frame, and a batch agent caught it — reading the premise
+twice, as instructed, plants the frame. If you find one in a file you were
+handed, say so in your report and do not carry it into a cell.
+
+Do not modify `research/combos.json` or another agent's file. Merge-check into
+a private temp file.
+
+═══════════════════════════════════════════════════════════════════════════
+5. ANTI-REPETITION, THE PART NO TOOL CAN DO
+═══════════════════════════════════════════════════════════════════════════
+
+**Semantic duplicates are invisible to every gate.** Mansions 1 and 24 both
+carried the keyword "the opening" for eleven rows before anyone noticed —
+found by printing the packet header, not by a tool. Two cells can share zero
+n-grams and still be the same cell.
+
+Your brief lists the angles already taken in this row, one line each. Batch A
+has none; batch G has twenty-four. **Read them and go somewhere else.** An
+angle is a life-situation, not a phrase: "the person who is asked to hold the
+group's memory" is an angle. "Uses the word 'threshold'" is not.
+
+Your brief may also name a roles-swapped twin that already exists — if you
+are writing 07·12 and 12·07 is on disk, read it and make yours a different
+life. Same two mansions, opposite arrangement, and the arrangement is the
+whole content.
+
+═══════════════════════════════════════════════════════════════════════════
+6. THE TWO STRUCTURAL SPECIAL CASES
+═══════════════════════════════════════════════════════════════════════════
+
+**The diagonal** — SUN·SUN, sun and moon in the same mansion. PROMPT.txt has
+the doubled template. It is a different shape, not a cell with a repeated
+term, and the gate requires an explicit no-counterweight marker.
+
+**The opposite** — SUN·(SUN+14 mod 28). The moon stands in the sun's
+farlight. This is a real and nameable arrangement and the one structural fact
+the pairing has that neither portrait contains. Write it as a real
+arrangement; do not name a technical term for it and do not attribute a
+tradition to it.

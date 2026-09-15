@@ -1,0 +1,35 @@
+#!/bin/bash
+# re-baseline runner: rb.sh <index list>
+cd /tmp/now2
+JOBS=(
+"1 {} plain_t1"
+"3 {} plain_t3"
+"4 {} plain_t4"
+"5 {} plain_t5"
+"10 {} plain_t10"
+"12 {} plain_t12"
+"15 {} plain_t15"
+"17 {} plain_t17"
+"18 {} plain_t18"
+"19 {} plain_t19"
+"21 {} plain_t21"
+"24 {} plain_t24"
+"26 {} plain_t26"
+"27 {} plain_t27"
+"1 {\"openAt\":4} law_open"
+"26 {\"tollAt\":4,\"tollBy\":1} law_toll"
+"3 {\"razorAt\":4} law_razor"
+"4 {\"crowAt\":4} law_crow"
+"5 {\"softAt\":4,\"softBy\":2,\"softShield\":true} law_price"
+"10 {\"reachAt\":0} law_reach"
+"12 {\"turnAt\":0} law_turn"
+"18 {\"beatAt\":0} law_beat"
+"15 {\"plantAt\":4,\"plantOnTake\":true} law_plant"
+"17 {\"hushAt\":4} law_hush"
+"19 {\"resonAt\":4} law_reson"
+"21 {\"shellAt\":4} law_shell"
+"26 {\"guestAt\":0,\"guestStrip\":true} law_guest"
+"27 {\"strangerAt\":4,\"strangerPlus\":1} law_stranger"
+"24 {\"ropeAt\":4} law_rope"
+)
+for i in "$@"; do set -- ${JOBS[$i]}; TONIGHT=$1 node runN.js 16 "$2" "$3" > rb_$3.out 2>/dev/null & done; wait

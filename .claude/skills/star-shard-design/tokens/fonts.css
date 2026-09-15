@@ -1,5 +1,7 @@
-/* All three families are Google Fonts. No binaries were supplied with the
-   brand materials, so they are linked rather than self-hosted. If Suyin has
-   licensed display files, drop them in assets/fonts/ and replace this import
-   with local @font-face rules. */
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Varela+Round&family=Pixelify+Sans:wght@400;600&display=swap");
+/* Both families are Google Fonts, CDN-linked (not self-hosted — see
+   readme.md's Known gaps). This is the exact <link> used by the live
+   pages (Star Shard v4.dc.html, Manzil - The Empty District.dc.html):
+   only Cormorant Garamond weights 500/600/700 are loaded, and in
+   practice everything ships at 600. Varela Round loads its one
+   default weight. */
+@import url("https://fonts.googleapis.com/css2?family=Varela+Round&family=Cormorant+Garamond:wght@500;600;700&display=swap");

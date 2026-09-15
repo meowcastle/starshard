@@ -1,0 +1,22 @@
+
+MANSION 14. 14a the unarmed. 896 boards a cell, two seeds.
+cfg {"armAt":4}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      48.5%      50.2%    -1.7    10.7%   30.0%    21.6%
+  deep   the law                      56.6%      40.0%    16.6    12.9%   40.5%    12.8%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      48.5%      40.5%     8.0
+  deep   the law                      56.6%      30.1%    26.5
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       37.5%
+  suzaku       29.5%
+  seiryuu      66.3%
+  genbu        32.6%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         71.6%       28.4%     26.2%    13.1%     35.7%   25.1%
+  deep          64.5%       35.5%     23.7%    12.0%     37.9%   26.3%

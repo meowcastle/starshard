@@ -1,0 +1,22 @@
+
+MANSION 9. the ill road, 1. 896 boards a cell, two seeds.
+cfg {"illAt":0}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      51.7%      54.9%    -3.2     8.9%   26.8%    28.9%
+  deep   the law                      56.1%      41.7%    14.4    14.5%   42.0%    11.4%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      51.7%      38.3%    13.4
+  deep   the law                      56.1%      31.7%    24.4
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       37.5%
+  suzaku       64.4%
+  seiryuu      41.9%
+  genbu        25.9%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         73.0%       27.0%     21.3%    45.5%     17.3%   15.9%
+  deep          68.2%       31.8%     28.3%    22.8%     18.4%   30.5%

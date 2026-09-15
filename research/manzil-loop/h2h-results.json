@@ -1,0 +1,182 @@
+{
+ "baseline: no Storm signature": {
+  "casual": {
+   "all": {
+    "win": 31.7,
+    "flips": 7.91,
+    "n": 448
+   },
+   "home": {
+    "win": 34.0,
+    "flips": 7.6,
+    "n": 144
+   },
+   "away": {
+    "win": 30.6,
+    "flips": 8.06,
+    "n": 304
+   }
+  },
+  "careful": {
+   "all": {
+    "win": 57.1,
+    "flips": 5.06,
+    "n": 448
+   },
+   "home": {
+    "win": 72.9,
+    "flips": 5.42,
+    "n": 144
+   },
+   "away": {
+    "win": 49.7,
+    "flips": 4.89,
+    "n": 304
+   }
+  }
+ },
+ "A. immune at home (defensive)": {
+  "casual": {
+   "all": {
+    "win": 32.4,
+    "flips": 7.7,
+    "n": 448
+   },
+   "home": {
+    "win": 36.1,
+    "flips": 6.96,
+    "n": 144
+   },
+   "away": {
+    "win": 30.6,
+    "flips": 8.06,
+    "n": 304
+   }
+  },
+  "careful": {
+   "all": {
+    "win": 58.3,
+    "flips": 5.02,
+    "n": 448
+   },
+   "home": {
+    "win": 76.4,
+    "flips": 5.28,
+    "n": 144
+   },
+   "away": {
+    "win": 49.7,
+    "flips": 4.89,
+    "n": 304
+   }
+  }
+ },
+ "A'. immune at home (both ways)": {
+  "casual": {
+   "all": {
+    "win": 32.4,
+    "flips": 7.7,
+    "n": 448
+   },
+   "home": {
+    "win": 36.1,
+    "flips": 6.95,
+    "n": 144
+   },
+   "away": {
+    "win": 30.6,
+    "flips": 8.06,
+    "n": 304
+   }
+  },
+  "careful": {
+   "all": {
+    "win": 58.5,
+    "flips": 5.0,
+    "n": 448
+   },
+   "home": {
+    "win": 77.1,
+    "flips": 5.24,
+    "n": 144
+   },
+   "away": {
+    "win": 49.7,
+    "flips": 4.89,
+    "n": 304
+   }
+  }
+ },
+ "B. strikes at +1 (always)": {
+  "casual": {
+   "all": {
+    "win": 42.6,
+    "flips": 8.07,
+    "n": 448
+   },
+   "home": {
+    "win": 43.1,
+    "flips": 8.35,
+    "n": 144
+   },
+   "away": {
+    "win": 42.4,
+    "flips": 7.93,
+    "n": 304
+   }
+  },
+  "careful": {
+   "all": {
+    "win": 62.3,
+    "flips": 5.08,
+    "n": 448
+   },
+   "home": {
+    "win": 72.9,
+    "flips": 5.46,
+    "n": 144
+   },
+   "away": {
+    "win": 57.2,
+    "flips": 4.91,
+    "n": 304
+   }
+  }
+ },
+ "as shipped: immune everywhere": {
+  "casual": {
+   "all": {
+    "win": 35.5,
+    "flips": 6.7,
+    "n": 448
+   },
+   "home": {
+    "win": 40.3,
+    "flips": 6.82,
+    "n": 144
+   },
+   "away": {
+    "win": 33.2,
+    "flips": 6.64,
+    "n": 304
+   }
+  },
+  "careful": {
+   "all": {
+    "win": 67.2,
+    "flips": 3.77,
+    "n": 448
+   },
+   "home": {
+    "win": 75.7,
+    "flips": 3.89,
+    "n": 144
+   },
+   "away": {
+    "win": 63.2,
+    "flips": 3.71,
+    "n": 304
+   }
+  }
+ }
+}

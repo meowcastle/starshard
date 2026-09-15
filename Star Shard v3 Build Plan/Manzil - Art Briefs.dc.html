@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>window.__mzRetry=function(f){if(!window.__mzD)window.__mzD={};if(window.__mzD[f])return;var t=new URL(location.href).searchParams.get("t");if(!t)return;window.__mzD[f]=1;var s=document.createElement("script");s.src="./"+f+"?t="+encodeURIComponent(t);document.head.appendChild(s)};window.__mzHeal=function(){if(!window.__dcBoot)window.__mzRetry("support.js")};</script>
+<script src="./support.js" onerror="__mzRetry('support.js')"></script>
+<script>window.addEventListener("load",function(){window.__mzHeal();setTimeout(window.__mzHeal,1200)});</script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Varela+Round&amp;family=Cormorant+Garamond:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#040302;font-family:'Varela Round',sans-serif;color:#F2EAD6}
+  a{color:#F0D89A;text-decoration:none}
+  a:hover{color:#FFFDF5}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(120% 50% at 50% 0%, #1E1706 0%, #0F0B03 45%, #080502 100%);display:flex;justify-content:center;padding:80px 32px 140px">
+<div style="width:100%;max-width:920px;display:flex;flex-direction:column">
+  <div style="font-size:12px;color:#9A8A5E">manzil · the base 28 · commissioning sheet v1</div>
+  <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:56px;line-height:1;margin:10px 0 0;color:#F2EAD6">art briefs</h1>
+  <p style="font-size:14.5px;line-height:1.8;color:#9A8A5E;margin:16px 0 0;max-width:640px;text-wrap:pretty">one artist, one hand, all twenty-eight: cohesion beats polish. each mansion is a <strong style="color:#D8C89C">seed of light</strong>: its real asterism as the constellation mark, iconic not illustrative, drawn to read at 58×78 px. names are canon from the product's naming slate; every brief starts from what the card does in play.</p>
+
+  <div style="height:48px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid rgba(240,216,154,.18)">
+    <div style="padding:20px 24px;background:rgba(240,216,154,.03)">
+      <div style="font-size:12px;color:#9A8A5E">the envelope</div>
+      <p style="font-size:12.5px;line-height:1.8;color:#D8C89C;margin:8px 0 0">parchment #F0D89A ink on the dark ground (#241B08 → #0B0703). amber #FFB000 is reserved for the sky and provenance, never in base card art. no other hues in the base set; the artist series may break this, the base 28 may not.</p>
+    </div>
+    <div style="padding:20px 24px;background:rgba(240,216,154,.03)">
+      <div style="font-size:12px;color:#9A8A5E">the frame owns the edges</div>
+      <p style="font-size:12.5px;line-height:1.8;color:#D8C89C;margin:8px 0 0">art lives in the middle window; the two numbers (top-left, bottom-right), the name band, and the level frame sit above it. compose center-weighted with quiet corners: the frame will crop nothing that matters. every card is <strong style="color:#F2EAD6">living</strong>: one slow ambient motion, the archetype's breath, never faster than weather. deliverable as a 2-layer file (still + motion layer) per card.</p>
+    </div>
+  </div>
+
+  <div style="height:56px"></div>
+  <div style="font-size:12px;color:#9A8A5E">the twenty-eight</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;margin:8px 0 0">brief per mansion</h2>
+  <p style="font-size:12.5px;line-height:1.7;color:#9A8A5E;margin:10px 0 0;max-width:640px">flags are the real concordance data. the four <span style="color:#FFB000">divergent</span> mansions are the two-faced family: their art should hold both readings at once. signature moves wake at level 2; the four marked ✦ are live in the prototype.</p>
+  <div style="display:flex;flex-direction:column;margin-top:22px">
+    <sc-for list="{{ briefs }}" as="b" hint-placeholder-count="28">
+      <div style="display:grid;grid-template-columns:30px 40px 172px 1fr;gap:14px;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(240,216,154,.08)">
+        <span style="font-size:10px;color:rgba(154,138,94,.7)">{{ b.n }}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#9A8A5E">{{ b.kanji }}</span>
+        <span style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:{{ b.nameC }}">{{ b.name }}</span>
+          <span style="font-size:9.5px;color:{{ b.flagC }}">{{ b.flag }} · {{ b.star }}</span>
+        </span>
+        <span style="display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:12px;line-height:1.55;color:#D8C89C">{{ b.art }}</span>
+          <span style="font-size:10.5px;color:#9A8A5E">source: {{ b.source }} · move: <span style="color:#F0D89A">{{ b.move }}</span>{{ b.live }}</span>
+        </span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:56px"></div>
+  <div style="border-left:2px solid #F0D89A;padding:6px 0 6px 20px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;line-height:1.5;color:#F0D89A;max-width:640px">the deliverable: 28 pieces, one hand, center-weighted, parchment on dark, plus one card back (the sky's loan). the artist series that follows may reinterpret freely; the base set is the constitution.</div>
+  <div style="font-size:11.5px;line-height:1.9;color:rgba(154,138,94,.7);margin-top:32px">values and flags from research/mansions-table.json · names from research/mansion-names.md · anatomy per <a href="Manzil - Prototype.dc.html">the prototype</a> · signatures in <a href="Manzil - Rules &amp; Cards.dc.html">the rules sheet</a></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const D = [
+      ["The Gate", "婁", "S", "β Ari, two horn-stars", "the cycle's opening station; Ashvinī leads", "two horn-stars as doorposts, first light passing through", "lodges before her lead, once"],
+      ["The Bearer", "胃", "P", "δ Ari, faint triad", "Skt. Bharaṇī, she who bears", "a small vessel cradling a dim star", "your neighbors gain +1"],
+      ["The Gathered Stars", "昴", "S", "the Pleiades", "all four skies; Jp. Subaru, the flagship quadruple", "a handful of star-seeds, spilling from an open palm of sky", "counts as two at the count"],
+      ["The Follower", "畢", "S", "Aldebaran + Hyades", "Ar. al-Dabarān, follower of the Pleiades", "one bright eye trailing the cluster, devoted", "copies its left neighbor's number"],
+      ["The Blaze", "觜", "S", "λ Ori", "Ar. al-Haqʿa, the white star-mark", "a white mark burned on a dark forehead", "its ground stays yours ✦"],
+      ["The Storm", "參", "P", "γ Gem · Betelgeuse", "Skt. Ārdrā, Rudra's storm star", "red betelgeuse at storm center, rain of falling light", "claims ties ✦"],
+      ["The Return", "井", "S", "Castor &amp; Pollux", "Skt. Punarvasu, the light that returns", "twin stars over water, one path turning home", "returns to hand once when claimed"],
+      ["The Ghost", "鬼", "S", "Praesepe (M44)", "Ch. 鬼 Guǐ, the ghost-vapor haze", "pale vapor with a light inside it: a card people fight over", "her neighbors fight at −1"],
+      ["The Glance", "柳", "P", "κ Cnc / λ Leo", "Ar. al-Ṭarf, the lion's glance", "a lion's eye, sidelong, half-lidded", "reveals one of her closed cards"],
+      ["The Throne", "星", "D", "η Leo · Regulus", "Skt. Maghā's royal throne on the little king", "a seat of stars; a serpent coiled beneath. hold both readings", "two-faced: seat or serpent ✦"],
+      ["The Mane", "張", "S", "δ/θ Leo", "Ar. al-Zubra, the lion's mane", "radiating strands of light, combed by wind", "+1 while both neighbors stand"],
+      ["The Turning", "翼", "P", "Denebola", "Ar. al-Ṣarfa, the turning of the heat", "one star at the hinge of a turning season", "swaps a neighbor's numbers on lodge"],
+      ["The Hand", "軫", "P", "β–ε Vir", "Skt. Hasta, the open hand: craft", "an open hand of five stars, palm up", "may relocate once"],
+      ["The Jewel", "角", "S", "Spica", "Skt. Chitrā, the brilliant one", "one cut gem alone in dark: hard, exact light", "cannot be softened ✦"],
+      ["The Veil", "亢", "D", "ι/κ/λ Vir · Arcturus", "Ar. al-Ghafr, the cover", "faint stars behind gauze, one burning through: two skies disagree here", "safe the turn it lands"],
+      ["The Claws", "氐", "S", "α/β Lib", "Ar. al-Zubānā, the scorpion's claws", "two claw-stars raised as an arch", "its claimer fights at −1 after"],
+      ["The Crown", "房", "S", "β/δ/π Sco", "Ar. al-Iklīl, the scorpion's crown", "three crown-stars over a dark brow", "dominion on an edge mansion ✦"],
+      ["The Heart", "心", "S", "Antares", "Ar. al-Qalb and Ch. 心: heart in both skies", "a red heart of light, veined like an ember", "fights +1 while behind ✦"],
+      ["The Root", "尾", "S", "λ/υ Sco, the tail", "Skt. Mūla, the root", "tied roots of light reaching down into the galaxy's glow", "+1 as your first lodge"],
+      ["The Flock", "箕", "S", "eight stars of Sgr", "Ar. al-Naʿāʾim, ostriches crossing to drink", "eight star-birds crossing a river of sky", "your neighbors +1 when it claims"],
+      ["The Empty District", "斗", "D", "starless (π Sgr marker)", "Ar. al-Balda, the famous starless stretch", "the art is absence: a district of no stars, edges implied", "both neighbors fight at −1"],
+      ["The Listener", "牛", "P", "α/β Cap · Altair", "Skt. Śravaṇa, the ear; Ar. gloss stays in depth layer", "an ear of light turned toward silence", "her next card plays face-up"],
+      ["The Drum", "女", "P", "ε Aqr · Delphinus", "Skt. Dhaniṣṭhā's drum", "a small drum of stars, mid-strike", "its claim strikes one further"],
+      ["The Void", "虛", "D", "β Aqr", "Ch. 虛 Xū, with the arabic luckiest-of-the-lucky as the twist", "an empty circle with the luckiest star hidden inside it", "safe while standing alone"],
+      ["The Hideaway", "危", "S", "γ Aqr group", "Ar. Saʿd al-Akhbiya, luck of the tents", "tents of stars with a warm light inside", "its mansion is silent: counts for nobody ✦"],
+      ["The Chamber", "室", "P", "α/β Peg", "Ch. 室 Shì, the room", "the great square as a room's four corners", "neighbors safe the turn they land"],
+      ["The Guide", "壁", "P", "γ Peg / α And", "Skt. Revatī / Pūṣan, guide of journeys home", "the last light before home, a path of small fish", "may swap with your other card"],
+      ["The Thread", "奎", "P", "β And", "Ar. al-Rishāʾ, the cord that ties the wheel closed", "a knotted cord of stars closing a circle", "the board wraps: edges touch"],
+    ];
+    const MOTION = ["light through the door slowly brightens", "the cradled star breathes", "the seeds twinkle out of phase", "the eye drifts after the cluster", "the mark flares, then settles", "rain falls; the red star flickers", "the path's light travels home", "the vapor drifts", "the eye blinks, rarely", "the serpent coils once", "the strands sway as in wind", "the hinge star tilts", "the star-fingers flex softly", "one hard glint", "the gauze breathes", "the arch tightens", "the crown-stars glitter in turn", "it beats, slowly", "the glow beneath pulses upward", "the star-birds cross, endlessly", "nothing moves; the dark itself shifts", "the ear leans", "struck, it rings", "the hidden star appears, rarely", "the tent-light warms", "the corners settle", "the fish shimmer along the path", "the knot draws closed, and loops"];
+    const flagName = { S: "strong", P: "partial", D: "divergent" };
+    const briefs = D.map((d, i) => ({
+      n: String(i + 1).padStart(2, "0"),
+      name: d[0], kanji: d[1],
+      flag: flagName[d[2]], flagC: d[2] === "D" ? "#FFB000" : "rgba(154,138,94,.8)",
+      nameC: d[2] === "D" ? "#F0D89A" : "#F2EAD6",
+      star: d[3], source: d[4], art: d[5] + " · motion: " + MOTION[i],
+      move: d[6].replace(" ✦", ""),
+      live: d[6].includes("✦") ? " · live" : "",
+    }));
+    return { briefs };
+  }
+}
+</script>
+</body>
+</html>

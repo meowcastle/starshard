@@ -1,0 +1,22 @@
+
+MANSION 18. 22b the release. 896 boards a cell, two seeds.
+cfg {"voidAt":4,"voidN":"left"}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      54.7%      50.6%     4.1    10.4%   29.6%    22.6%
+  deep   the law                      61.7%      37.7%    24.0    12.5%   39.0%    13.2%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      54.7%      44.4%    10.3
+  deep   the law                      61.7%      33.9%    27.8
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       42.0%
+  suzaku       37.6%
+  seiryuu      49.4%
+  genbu        39.4%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         63.5%       36.5%     19.6%    31.6%     36.7%   12.1%
+  deep          60.5%       39.5%     23.1%    23.4%     36.3%   17.2%

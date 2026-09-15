@@ -10,11 +10,27 @@ If the user invokes this skill without any other guidance, ask them what they wa
 
 ## Non-negotiables
 
-- Button labels are `teal-900`, never white. White on `pink-500` is 2.55:1 and fails AA.
-- Focus rings: `pink-700` on light, `pink-500` on dark. 3px solid, 2px offset. Never `outline:none`.
-- `butter-200` is never text. Warm text is `amber-700`.
-- Bevel dark edge is `#4E8C86` or darker.
-- Radius is 0 unless the thing is round (50%) or a card (16px). Shadows never blur.
-- 44px minimum tap target everywhere except desktop window controls.
-- Tarot faces, share images and OG images run `data-context="card"`.
-- There is no logo. Set the brand name in type; do not draw a mark.
+These describe the **current (v2.0) live product** — the amber/parchment
+dark-cosmic direction. If you see teal-900, pink-500, butter-200, bevels,
+or `data-context="card"` anywhere, that's the *retired* v1.0 direction
+(still mirrored in this skill's `components/` and `guidelines/` for
+reference only) — don't build new work to it.
+
+- `#FFB000` (amber) is reserved for "tonight" only. Never use it for
+  anything else — this is the one hard color law in the system.
+  `#F0D89A` (parchment) is the accent for everything else.
+- Fonts are Cormorant Garamond (headings, weight 600) and Varela Round
+  (everything else). No third font, ever.
+- No em dashes in product copy, headers or body. Colon, period, or comma
+  pair instead; `·` for label separators; en dash only for numeric ranges.
+- No first person. "We" appears nowhere. The product never narrates its
+  own trustworthiness or method.
+- Radius is 0 unless the thing is round (`50%`) or a small card/panel
+  softening (4–8px). No bevels, no hard-offset drop shadows — the only
+  shadow language is a soft colored glow.
+- 44×44pt tap target design goal (28×28pt absolute floor), 4.5:1 contrast
+  under 17pt text (3:1 at 18pt+/bold), never `outline:none` on focus.
+- Tab bar is exactly three destinations: shard / tonight / chart.
+- There is no logo, no favicon, no app icon. Set the brand name in type;
+  do not draw a mark. Icons are Unicode glyphs (`✦ ☾ ☽ ✧`) in the brand
+  fonts, not an imported icon set.

@@ -1,0 +1,277 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": [
+          {
+            "element": "button",
+            "message": "Use <Button> from the design system instead of <button>."
+          },
+          {
+            "element": "input",
+            "message": "Use <Input> from the design system instead of <input>."
+          }
+        ]
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/general/Button/**",
+              "components/general/Input/**",
+              "components/general/ShardCard/**",
+              "components/general/TarotCard/**",
+              "components/general/Taskbar/**",
+              "components/general/Window/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Baloo 2|Varela Round|Pixelify Sans))/i]",
+        "message": "Font not provided by the design system. Available: Baloo 2, Varela Round, Pixelify Sans."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|children|className|id|style|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, children, className, id, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|tertiary)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'tertiary'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|hint|className|id|style|children|key|ref|className|style|children)$/]",
+        "message": "<Input> doesn't accept that prop. Declared props: label, hint, className, id, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ShardCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:kind|title|body|size|revealed|onReveal|style|key|ref|className|style|children)$/]",
+        "message": "<ShardCard> doesn't accept that prop. Declared props: kind, title, body, size, revealed, onReveal, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ShardCard'] > JSXAttribute[name.name='kind'] > Literal[value!=/^(?:house|mirror|moon|hearth)$/]",
+        "message": "<ShardCard> kind must be one of 'house' | 'mirror' | 'moon' | 'hearth'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TarotCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:numeral|name|epithet|art|rare|faceDown|width|onFlip|style|key|ref|className|style|children)$/]",
+        "message": "<TarotCard> doesn't accept that prop. Declared props: numeral, name, epithet, art, rare, faceDown, width, onFlip, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Taskbar'] > JSXAttribute > JSXIdentifier[name!=/^(?:start|children|trailing|key|ref|className|style|children)$/]",
+        "message": "<Taskbar> doesn't accept that prop. Declared props: start, children, trailing."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Window'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|icon|focused|onMinimize|onClose|children|style|key|ref|className|style|children)$/]",
+        "message": "<Window> doesn't accept that prop. Declared props: title, icon, focused, onMinimize, onClose, children, style."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Button": {
+        "replaces": [
+          "button"
+        ]
+      },
+      "Input": {
+        "replaces": [
+          "input"
+        ]
+      },
+      "ShardCard": {
+        "replaces": []
+      },
+      "TarotCard": {
+        "replaces": []
+      },
+      "Taskbar": {
+        "replaces": []
+      },
+      "Window": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent",
+      "--action",
+      "--amber-700",
+      "--backdrop",
+      "--bevel",
+      "--bevel-raised",
+      "--border-inset-colors",
+      "--border-raised-colors",
+      "--butter-200",
+      "--cream",
+      "--edge-dark",
+      "--edge-light",
+      "--focus",
+      "--focus-offset",
+      "--focus-ring",
+      "--foil-edge",
+      "--foil-sunken",
+      "--foil-surface",
+      "--font-body",
+      "--font-display",
+      "--font-retro",
+      "--ink",
+      "--ink-accent",
+      "--ink-muted",
+      "--ink-warn",
+      "--leading-normal",
+      "--leading-snug",
+      "--leading-tight",
+      "--measure",
+      "--pink-200",
+      "--pink-500",
+      "--pink-700",
+      "--radius-card",
+      "--radius-card-sm",
+      "--radius-none",
+      "--radius-round",
+      "--shadow-chip",
+      "--shadow-raised",
+      "--shadow-window",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--space-9",
+      "--surface",
+      "--surface-raised",
+      "--surface-sunken",
+      "--tap-min",
+      "--teal-100",
+      "--teal-200",
+      "--teal-500",
+      "--teal-700",
+      "--teal-900",
+      "--text-2xl",
+      "--text-2xs",
+      "--text-3xl",
+      "--text-hero",
+      "--text-lg",
+      "--text-md",
+      "--text-numeral",
+      "--text-sm",
+      "--text-xl",
+      "--text-xs",
+      "--tracking-display",
+      "--tracking-eyebrow",
+      "--weight-display",
+      "--weight-heading",
+      "--white"
+    ],
+    "tokenKinds": {
+      "--cream": "color",
+      "--white": "color",
+      "--teal-100": "color",
+      "--teal-200": "color",
+      "--teal-500": "color",
+      "--teal-700": "color",
+      "--teal-900": "color",
+      "--pink-200": "color",
+      "--pink-500": "color",
+      "--pink-700": "color",
+      "--butter-200": "color",
+      "--amber-700": "color",
+      "--surface": "color",
+      "--surface-raised": "color",
+      "--surface-sunken": "color",
+      "--backdrop": "color",
+      "--ink": "color",
+      "--ink-muted": "color",
+      "--ink-accent": "color",
+      "--ink-warn": "color",
+      "--accent": "color",
+      "--action": "color",
+      "--edge-light": "color",
+      "--edge-dark": "color",
+      "--focus": "color",
+      "--foil-surface": "color",
+      "--foil-sunken": "color",
+      "--foil-edge": "color",
+      "--font-retro": "font",
+      "--font-display": "font",
+      "--font-body": "font",
+      "--text-2xs": "font",
+      "--text-xs": "font",
+      "--text-sm": "font",
+      "--text-md": "font",
+      "--text-lg": "font",
+      "--text-xl": "font",
+      "--text-2xl": "font",
+      "--text-3xl": "font",
+      "--text-hero": "font",
+      "--text-numeral": "font",
+      "--leading-tight": "font",
+      "--leading-snug": "font",
+      "--leading-normal": "font",
+      "--weight-display": "font",
+      "--weight-heading": "font",
+      "--tracking-eyebrow": "font",
+      "--tracking-display": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--space-9": "spacing",
+      "--tap-min": "spacing",
+      "--measure": "spacing",
+      "--radius-none": "radius",
+      "--radius-round": "radius",
+      "--radius-card": "radius",
+      "--radius-card-sm": "radius",
+      "--bevel": "spacing",
+      "--bevel-raised": "color",
+      "--border-raised-colors": "color",
+      "--border-inset-colors": "color",
+      "--shadow-window": "shadow",
+      "--shadow-raised": "shadow",
+      "--shadow-chip": "shadow",
+      "--focus-ring": "color",
+      "--focus-offset": "spacing"
+    },
+    "fontFamilies": [
+      "Baloo 2",
+      "Pixelify Sans",
+      "Varela Round"
+    ]
+  }
+}

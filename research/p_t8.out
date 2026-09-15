@@ -1,0 +1,22 @@
+
+MANSION 8. plain t8 (phantom fix). 896 boards a cell, two seeds.
+cfg {}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      55.8%      44.3%    11.5    10.5%   31.5%    22.6%
+  deep   the law                      56.4%      40.8%    15.5    13.7%   40.3%    13.5%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      55.8%      43.3%    12.5
+  deep   the law                      56.4%      24.9%    31.5
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       37.2%
+  suzaku       46.4%
+  seiryuu      64.5%
+  genbu        36.6%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         68.9%       31.1%     17.5%    33.0%     24.1%   25.4%
+  deep          71.7%       28.3%     16.1%    27.2%     15.2%   41.5%

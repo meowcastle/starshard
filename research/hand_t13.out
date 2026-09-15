@@ -1,0 +1,22 @@
+
+MANSION 13. 13a the steady hand. 896 boards a cell, two seeds.
+cfg {"handAt":[3,5]}
+
+1. SEAT, both sides careful.       you lead   she leads   SEAT    level   close   blowout
+  fresh  the law                      42.7%      53.7%   -10.9    10.3%   32.7%    23.4%
+  deep   the law                      49.4%      44.1%     5.4    12.9%   39.2%    13.8%
+
+2. SKILL, player careful v careless, player leads.
+  fresh  the law                      42.7%      28.5%    14.3
+  deep   the law                      49.4%      24.2%    25.2
+
+3. QUADRANTS, deep, fixed hand, player leads.
+  byakko       29.6%
+  suzaku       30.0%
+  seiryuu      50.0%
+  genbu        14.5%
+
+4. DOOR ORDER, both sides careful. Who lodges the door (index 0) first, and which quarter the card is.
+           leader first   answerer     byakko   suzaku   seiryuu   genbu   (share of first door cards)
+  fresh         67.4%       32.6%     19.9%    30.8%     19.8%   29.5%
+  deep          65.4%       34.6%     23.1%    20.8%     18.8%   37.4%

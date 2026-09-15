@@ -719,7 +719,39 @@ function resolve(g, slotsIn, cardId, i, rev, side) {
   return { slots, seq, soft, sigs, at: i };
 }
 
-function isHome(g, cardId, slotIdx) { return (g.C[cardId].homeM || cardId) === (slotIdx + 1); }
+// DOMINION IS KEYED TO THE MANSION STANDING THERE, not the slot's ordinal (corrected 15 sep 2026,
+// found by diffing this against the client's own _isHome while wiring the conformance hook).
+//
+// This read `slotIdx + 1`, which is only the same thing on m1 with no window slide. On every other
+// night the road covers a different nine houses — m5's station 0 is mansion 5, not mansion 1 — so
+// a card counted double on the wrong ground. The client has always used _boardM; this did not,
+// because boardM only arrived on 2 Sep with the stranger's law and isHome predates it.
+//
+// The fallback matters: boardM returns null when no night is set, and most vectors and sims run
+// that way deliberately. With no night there is no window, so `slotIdx + 1` remains the reading and
+// nothing measured without a night moves. Where a night IS set, the two engines now agree.
+function isHome(g, cardId, slotIdx) {
+  const bm = boardM(g, slotIdx);
+  return (g.C[cardId].homeM || cardId) === (bm == null ? slotIdx + 1 : bm);
+}
+
+// A SHELLED STATION, READ DIFFERENTIALLY (15 sep 2026 — matching Measurement's reference, whose
+// terms are read the same way). The station still counts for NOBODY, so `who` stays null and `w`
+// stays 0 and no measured number moves. But the record now says what the law COST: the station and
+// its dominion are reported as they would have been, and `law` carries the debit that cancels them.
+// Their shell case reads stations 2, dominion 1, law -2, total 1, and so does this one.
+//
+// Skipping the station outright — which is what this did before — balanced too, but it could only
+// say the station was not there. The caption stack needs to be able to say "the shell, two to
+// nobody", which means naming the law that took it.
+function shellParts(g, slots, i, s) {
+  const c = g.C[s.id];
+  const base = 1 + (c && c.ab === "jupiter" ? 1 : 0);
+  const dom = isHome(g, s.id, i) ? 1 : 0;
+  return { who: null, w: 0, shell: true,
+           owner: s.ground || s.owner,
+           parts: { base, dominion: dom, ability: 0, law: -(base + dom) } };
+}
 
 function slotW(g, slots, i, ctx) {
   const s = slots[i];
@@ -728,10 +760,10 @@ function slotW(g, slots, i, ctx) {
   const law = lawAt(g.tonight);
   const guestSt = !!(law && law.kind === "guest" && i === law.station);
   // the chamber's law strips genbu's grant at the doorway the same way it strips the tiger's
-  if (!guestSt && c0.grantOn && c0.quad === "genbu" && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true }; // black tortoise's grant
+  if (!guestSt && c0.grantOn && c0.quad === "genbu" && s.by && s.by !== s.owner) return shellParts(g, slots, i, s); // black tortoise's grant
   // the hideaway's law (mansion 25): the same "empty shell" test as the genbu grant above, just
   // keyed to the law's fixed station instead of a specific card's grant — see the LAW_AT comment.
-  if (law && law.kind === "shell" && i === law.station && s.by && s.by !== s.owner) return { who: null, w: 0, shell: true };
+  if (law && law.kind === "shell" && i === law.station && s.by && s.by !== s.owner) return shellParts(g, slots, i, s);
   if (ctx && ctx.sil && ctx.sil[i]) return { who: null, w: 0, silent: true };
   if (s.spent) return { who: null, w: 0, silent: true };
   const c = g.C[s.id];
@@ -877,13 +909,17 @@ function settleOf(g, slots, held) {
   const cardNotes = [];
   slots.forEach((sl, i) => {
     const r = slotW(g, slots, i, ctx);
-    if (!r.who) return;
+    // a shelled station counts for nobody but is still ITEMISED against whoever holds it, so the
+    // record can name the law that emptied it. Everything else with no `who` is genuinely absent.
+    const side = r.who || (r.shell ? r.owner : null);
+    if (!side) return;
     const p = r.parts || { base: r.w, dominion: 0, ability: 0, law: 0 };
-    S.stations[r.who] += 1;                       // one point for standing there
-    S.dominion[r.who] += p.dominion;
-    S.cards[r.who] += p.ability + (p.base - 1); // jupiter's own +1 is its signature, not a station
-    if (p.ability) { const c = g.C[sl.id]; cardNotes.push({ side: r.who, station: i, note: "the " + String((c && c.name) || "").replace(/^The /, "").toLowerCase() }); }
-    S.law[r.who] += p.law;
+    const r2 = { who: side };
+    S.stations[r2.who] += 1;                      // one point for standing there
+    S.dominion[r2.who] += p.dominion;
+    S.cards[r2.who] += p.ability + (p.base - 1); // jupiter's own +1 is its signature, not a station
+    if (p.ability) { const c = g.C[sl.id]; cardNotes.push({ side: r2.who, station: i, note: "the " + String((c && c.name) || "").replace(/^The /, "").toLowerCase() }); }
+    S.law[r2.who] += p.law;
   });
   const lw = lawAt(g.tonight);
   const full = slots.every(x => x);
@@ -1510,7 +1546,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards, HARDEST_ROAD,
-  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn, settleOf,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn, settleOf, shellParts,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
@@ -2115,7 +2151,10 @@ if (require.main === module) {
     // no card lands on its own dominion.
     ["the toll: a card that cannot be taken counts one less (a crowned card here)", () => {
       const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
-      const g = E.mkGame({ tonight: 2, levels: lv1 }), plain = E.mkGame({ tonight: 5, levels: lv1 });
+      // The control night matters now that dominion reads the window: card 9 is home at m5's slot 4,
+      // which would move the control rather than the law. m6's slot 4 is mansion 6, so 9 is home on
+      // neither night and the only difference between them is the toll.
+      const g = E.mkGame({ tonight: 2, levels: lv1 }), plain = E.mkGame({ tonight: 6, levels: lv1 });
       const slots = Array.from({ length: 9 }, () => null);
       slots[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1, crowned: true };
       return E.shielded(g, slots, 4) === true
@@ -2123,7 +2162,7 @@ if (require.main === module) {
     }, true],
     ["the toll: an ordinary takeable card pays nothing", () => {
       const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
-      const g = E.mkGame({ tonight: 2, levels: lv1 }), plain = E.mkGame({ tonight: 5, levels: lv1 });
+      const g = E.mkGame({ tonight: 2, levels: lv1 }), plain = E.mkGame({ tonight: 6, levels: lv1 });
       const slots = Array.from({ length: 9 }, () => null);
       slots[4] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
       return E.counts(g, slots)[0] === E.counts(plain, slots)[0];
@@ -2148,7 +2187,7 @@ if (require.main === module) {
     }, true],
     ["the toll does not charge a neighbouring station, and does not fire on another night", () => {
       const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
-      const g = E.mkGame({ tonight: 2, levels: lv1 }), off = E.mkGame({ tonight: 5, levels: lv1 });
+      const g = E.mkGame({ tonight: 2, levels: lv1 }), off = E.mkGame({ tonight: 6, levels: lv1 });
       const side = Array.from({ length: 9 }, () => null);
       side[3] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1, crowned: true };
       const at = Array.from({ length: 9 }, () => null);
@@ -2396,19 +2435,25 @@ if (require.main === module) {
       return E.slotW(g, slots, 3, {}).w === 1;
     }, true],
     ["the empty circle floors at zero rather than going negative", () => {
-      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
-      const g = E.mkGame({ tonight: 24, levels: lv1 });
+      // The hideaway's signature has to be AWAKE for this to test anything: at level 1 it does not
+      // zero the weight, so the old fixture was only ever measuring 1 + dominion - 1 and would have
+      // passed without a floor existing at all. Awake, the weight is already 0 when the void's
+      // debit arrives, which is the case the floor is for.
+      const lv = {}; for (let i = 1; i <= 28; i++) lv[i] = 3;
+      const g = E.mkGame({ tonight: 24, levels: lv });
       const slots = Array.from({ length: 9 }, () => null);
-      slots[5] = { id: 25, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // the hideaway counts 0 already
-      return E.slotW(g, slots, 5, {}).w === 0;
+      slots[5] = { id: 25, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // m24's slot 5 is mansion 25
+      const r = E.slotW(g, slots, 5, {});
+      return r.w === 0 && E.on(g, g.C[25]) === true;
     }, true],
     ["the empty circle STACKS with the void card's own signature, it does not replace it", () => {
       const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3; // card 24's signature awake
       const g = E.mkGame({ tonight: 24, levels });
       const slots = Array.from({ length: 9 }, () => null);
       slots[4] = { id: 24, l: 5, r: 5, owner: "you", by: "you", age: 1 }; // the void, on the void station
-      // 1 base + 1 signature + 1 law = 3, exactly as the delivery describes.
-      return E.slotW(g, slots, 4, {}).w === 3;
+      // 1 base + 1 DOMINION (m24's slot 4 is mansion 24, so this is its own ground) + 1 signature
+      // + 1 law = 4. It read 3 while dominion was keyed to the slot ordinal instead of the window.
+      return E.slotW(g, slots, 4, {}).w === 4;
     }, true],
     ["the empty circle does NOT fire on a different mansion's night", () => {
       const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
@@ -2502,6 +2547,23 @@ if (require.main === module) {
       const body = /function playMatchWeighted[\s\S]*?\n\}/.exec(src)[0];
       return /winner === "you"\) \{ youWins\+\+; leader = "sky"; \}/.test(body)
         && /winner === "sky"\) \{ skyWins\+\+; leader = "you"; \}/.test(body);
+    }, true],
+    ["a shelled station is read DIFFERENTIALLY, matching the reference: stations 2, dominion 1, law -2", () => {
+      // The naming decision, made once (Measurement, 15 sep): a law that empties a station takes
+      // that station's dominion with it into `law`, rather than the station vanishing from the
+      // record. The station still counts for nobody — `who` is null and `w` is 0, so no measured
+      // number moves — but the record can now say what the law cost, which is what lets a caption
+      // read "the shell, two to nobody".
+      const lv1 = {}; for (let i = 1; i <= 28; i++) lv1[i] = 1;
+      const g = E.mkGame({ tonight: 25, levels: lv1 });
+      const slots = Array.from({ length: 9 }, () => null);
+      // m25's slot 4 IS mansion 25, so card 25 is the one standing on its own ground there; slot 3
+      // is mansion 24, so card 9 beside it is not home and contributes a plain station.
+      slots[4] = { id: 25, l: 5, r: 5, owner: "you", by: "sky", age: 1 };
+      slots[3] = { id: 9, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      const st = E.settleOf(g, slots, null);
+      return st.stations.you === 2 && st.dominion.you === 1 && st.law.points.you === -2 && st.total.you === 1
+        && st.total.you === st.stations.you + st.dominion.you + st.cards.you + st.law.points.you + st.dawn.points.you;
     }, true],
     ["the settle record's five terms add to the total, on a board where a signature moves the count", () => {
       // The invariant the order was missing: a district counts two, so `cards` has to exist or the
