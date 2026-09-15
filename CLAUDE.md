@@ -627,6 +627,34 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**THE COPY TABLE IS WIRED (15 Sep 2026, Design's item 6 — FINAL).** `manzil-copy.js`
+at the repo root (Design's file, imported not reimplemented) carries `COPY`,
+`TIMING`, `PLACEHOLDERS`, `fill` and `SAMPLE`: **97 rows across six moments**
+(deal · play · settle · verdict · road · surfaces). Loaded through
+`componentDidMount`'s `await import()` like `api.js` — the dc-runtime forbids a
+top-level import here — and **added to `FRONTEND_FILES`**, which is the step that
+would otherwise 404 only in production.
+
+Exposed as `window.stage.copy` / `.timing` / `.fill`. Code's half is `_say(path,
+values)`, which does the three things a plain replace does not: **rows that carry
+other rows** (`{lights}` `{series}` `{reason}`) resolve first, **a row resolving to
+empty is dropped and the whitespace trimmed**, and **an unknown key is left
+standing** so a missing value is visible on screen rather than silent.
+
+**`stage.timing` IS the timing table now, not a constant beside it.** Design flagged
+two duplicates and both were mine, shipped hours earlier in item 7: `_exitRound`'s
+hard 900ms floor now reads `timing.verdict.buttonLive` (550), and the tooltip's hard
+300 reads `timing.hover.tooltipDelay` (350). The seeded defaults in `_installStage`
+exist only for the window before the module loads.
+
+**Two bugs found by testing it rather than by reading it:** `_say` recursed until
+the stack blew, because the nested resolution passed the ORIGINAL values down so a
+dotted path resolved to itself — the nested key is deleted from what is handed down
+now, with a depth guard as the second belt. And stripping an absent nested
+placeholder left its sentence's punctuation orphaned against the previous one
+("takes the first.."), so a repeated mark is collapsed. **All 97 rows swept: no
+doubled punctuation, no unfilled placeholders, every empty row dropped.**
+
 **THE RUNTIME FIXES ARE IN (15 Sep 2026, Measurement's work order item 7).** Six
 Code items; the seventh (menu hover states) is CSS and Design's.
 

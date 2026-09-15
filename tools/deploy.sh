@@ -31,7 +31,7 @@ NODE_BIN=/volume2/@appstore/Node.js_v20/usr/local/bin/node
 # imported them client-side since "Star Shard v2 (archived).dc.html" — the
 # live page (v4) doesn't need them shipped as static assets. Verified by
 # grep across every .dc.html before removing them from here (18 Aug).
-FRONTEND_FILES="api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil-copy.js reading-copy.js transits.js stations.js astronomy-engine.js support.js sitemap.xml combos.js findings.js rates.js ios-frame.jsx four-skies.dc.html socket-io-client.js ephemeris2.js manzil-art2.js"
+FRONTEND_FILES="manzil-copy.js api.js astro.js format.js reading.js tz.js sky.js sigil.js sigil-copy.js reading-copy.js transits.js stations.js astronomy-engine.js support.js sitemap.xml combos.js findings.js rates.js ios-frame.jsx four-skies.dc.html socket-io-client.js ephemeris2.js manzil-art2.js"
 
 # starshard-api/lib/*.js: the Manzil lobby's server-authoritative move
 # validator (manzil-lobby.js) and its synced copy of the rules engine

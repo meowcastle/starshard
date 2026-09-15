@@ -5329,6 +5329,17 @@ class Component extends DCLogic {
     // console — window.manzil._physicsAudit(). See _destinations()/_physicsAudit().
     try { window.manzil = this; } catch (e) {}
     try { this._installStage(); } catch (e) {}
+    // THE COPY TABLE (15 sep 2026, Design's item 6). Loaded the same way api.js is — the dc-runtime
+    // forbids a top-level import in this block, so it comes in through componentDidMount. It is in
+    // FRONTEND_FILES; a new dynamic import that is not would 404 in production and only there.
+    // Code substitutes; Design owns the strings and the numbers. Once it lands, stage.timing IS the
+    // timing table rather than the defaults _installStage seeded.
+    try {
+      const M = await import("./manzil-copy.js");
+      this._copy = M;
+      if (window.stage) { window.stage.copy = M.COPY; window.stage.timing = M.TIMING; window.stage.fill = M.fill; }
+      this.forceUpdate();
+    } catch (e) { /* the table is additive: without it the runtime keeps its built-in strings */ }
     // TOOLTIP DISMISSAL (15 sep 2026, menus note 2.4): the station tooltip covered a third of the
     // road and the hand-card tooltip covered the deck buttons, because nothing but mouseleave ever
     // closed them — rest the pointer and they stayed. Any pointer-down now dismisses, and cancels a
@@ -5630,7 +5641,21 @@ class Component extends DCLogic {
   _armRound() { this._roundAt = Date.now(); const d = this._roundDwell(); if (d > 0) this._roundT = setTimeout(() => this._exitRound(), d); }
   // the shortest time a round beat may be on screen before a tap can carry past it. The walker's
   // figure bows out over ~900ms; anything under that and the card is skipped before it is read.
-  _roundFloorMs() { return 900; }
+  // Reads the timing table, never a constant beside it (Design's note, 15 sep: "two duplicates
+  // already exist and should be retired"). This was a hard 900 shipped hours earlier; the table's
+  // own number is 550, and the table is the one source of truth. The fallback is only for the
+  // window before manzil-copy.js has loaded.
+  _roundFloorMs() {
+    const t = (typeof window !== "undefined" && window.stage && window.stage.timing) || null;
+    const v = t && t.verdict && t.verdict.buttonLive;
+    return typeof v === "number" ? v : 550;
+  }
+  // the tooltip's hover delay, same rule — was a hard 300, the table says 350.
+  _tooltipDelayMs() {
+    const t = (typeof window !== "undefined" && window.stage && window.stage.timing) || null;
+    const v = t && t.hover && t.hover.tooltipDelay;
+    return typeof v === "number" ? v : 350;
+  }
   _exitRound() {
     if (this.state.phase !== "round" || this.state.roundExit) return;
     // INPUT IS GATED UNTIL THE BEAT HAS LANDED (15 sep 2026, menus note 2.3): "on up the road" was
@@ -8644,6 +8669,44 @@ class Component extends DCLogic {
     const t = this._lookTargets()[l.target];
     return t ? { ...t, ms: l.ms == null ? 520 : l.ms, ease: l.ease || "cubic-bezier(.3,.7,.3,1)" } : null;
   }
+  // THE SUBSTITUTION LAYER (15 sep 2026). Design's note specifies three behaviours beyond a plain
+  // replace, and they are the reason this is Code's half rather than a one-liner:
+  //   · {lights}, {series} and {reason} are THEMSELVES rows of the table, so they resolve first;
+  //   · a row that resolves to an empty string is DROPPED and the whitespace around it trimmed
+  //     (road.lobby.standing ends in {series}, which is empty outside a series);
+  //   · an unknown key is LEFT STANDING, so a missing value is visible on screen rather than silent.
+  // `fill` itself is Design's, imported rather than reimplemented, so the regex cannot drift.
+  _say(path, values) {
+    const M = this._copy;
+    if (!M) return "";
+    const [moment, ...rest] = String(path).split(".");
+    const row = M.COPY[moment] && M.COPY[moment][rest.join(".")];
+    if (row == null) return "";
+    if (row === "") return "";                       // an empty row means the surface is removed
+    const v = Object.assign({}, values || {});
+    // Resolve the rows that carry other rows before filling the line that holds them. The nested
+    // key is REMOVED from the values handed down: passing the original through meant the dotted
+    // path resolved to itself and recursed until the stack blew. `depth` is the second belt —
+    // a row that pointed at itself would otherwise still loop.
+    const depth = (arguments.length > 2 && typeof arguments[2] === "number") ? arguments[2] : 0;
+    if (depth < 3) {
+      for (const k of ["lights", "series", "reason"]) {
+        const val = v[k];
+        if (typeof val === "string" && val.indexOf(".") > 0 && M.COPY[val.split(".")[0]]) {
+          const inner = Object.assign({}, v); delete inner[k];
+          v[k] = this._say(val, inner, depth + 1);
+        }
+      }
+    }
+    let out = M.fill(row, v);
+    // drop a placeholder that resolved to nothing, and tidy the gap it leaves
+    out = out.replace(/\s*\{(?:lights|series|reason)\}\s*/g, " ");
+    // Stripping a nested placeholder can leave its sentence's punctuation orphaned next to the
+    // previous one ("takes the first.." when {series} is absent rather than empty), so collapse a
+    // repeated mark. Cheap, and a doubled full stop is the kind of thing that ships.
+    return out.replace(/\s{2,}/g, " ").replace(/\s+([.,;:])/g, "$1")
+              .replace(/([.,;:])[\s]*\1+/g, "$1").trim();
+  }
   _installStage() {
     if (typeof window === "undefined") return;
     const api = window.stage || (window.stage = {});
@@ -8655,7 +8718,8 @@ class Component extends DCLogic {
       return !!ok;
     };
     api.looking = () => (this.state && this.state.look && this.state.look.target) || null;
-    if (!api.timing) api.timing = { settle: 2400, verdict: null, road: 900 }; // verdict: null = until tap
+    // seeded only for the window before manzil-copy.js loads; the real table replaces this wholesale.
+    if (!api.timing) api.timing = { verdict: { buttonLive: 550, hold: "until tapped" }, hover: { tooltipDelay: 350 }, road: { total: 900 } };
   }
   _go(p, extra) {
     clearTimeout(this._veilT);
@@ -10707,7 +10771,7 @@ class Component extends DCLogic {
           const pk = (this.state.slots[i] ? "s" : "e") + i;
           clearTimeout(this._holdT);
           if (this.state.peek) this.setState({ peek: pk });
-          else this._holdT = setTimeout(() => this.setState({ peek: pk }), 300); // 300ms hover delay (menus 2.4)
+          else this._holdT = setTimeout(() => this.setState({ peek: pk }), this._tooltipDelayMs()); // stage.timing.hover.tooltipDelay
         },
         onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); }, // desktop mouseleave only (see markup) — hover should close on its own
         // re-ported 30 aug 2026 (code, ca592d3 regressed by the fresh export): mobile's touch-end
@@ -10860,7 +10924,7 @@ class Component extends DCLogic {
           clearTimeout(this._holdT);
           this.setState({ hov: id });
           if (this.state.peek) this.setState({ peek: "h" + id });
-          else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), 300); // 300ms hover delay (menus 2.4)
+          else this._holdT = setTimeout(() => this.setState({ peek: "h" + id }), this._tooltipDelayMs()); // stage.timing.hover.tooltipDelay
         },
         onPeekEnd: () => { clearTimeout(this._holdT); const o = { hov: null }; if (this.state.peek) o.peek = null; this.setState(o); }, // desktop mouseleave only (see markup)
         // same mobile touch-hold fix as the board slots above, re-ported 30 aug 2026 (code)
