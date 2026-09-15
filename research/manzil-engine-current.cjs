@@ -437,7 +437,19 @@ function shielded(g, slots, ti) {
 //
 // This module's own deck stops at 107, so the wider test changes nothing here today; it is written
 // this way so a future port of the outer planets cannot silently reintroduce the bug.
-function isQuarterless(id) { return id >= 101; }
+// CORRECTED 15 sep 2026 (Measurement's FOR-CODE-THE-COPY-READ note, and they were right).
+// This read `id >= 101`, widened on 3 Sep to catch Uranus (108) and Neptune (109) past the
+// client's too-narrow 101..107 — and widened too far: **it swallowed the whole mirror deck.**
+// Walker cards are 200+id, they are mansion cards WITH quadrants, and they were being treated as
+// quarterless on every walker board. Four laws were wrong against her deck as a result: the toll
+// did not charge her sheltered cards, the crow never charged them, the stranger paid them no
+// bonus, and the open gate did not open their locks. That is 8 boards in 9, every night those
+// laws are in force.
+//
+// Her planets are 101-109 and nothing else lives in that range; the mirror starts at 200. The
+// range is the structural rule, and a vector cross-checks it against the card table's own `quad`
+// so the two cannot drift apart again.
+function isQuarterless(id) { return id >= 101 && id < 200; }
 
 function tollOn(g, slots, i) {
   const st = slots && slots[i]; if (!st) return false;
@@ -727,16 +739,24 @@ function slotW(g, slots, i, ctx) {
   let j = 0;
   if (c.ab === "jupiter") j = 1; // jupiterMode "always" — the locked base-layer default
   let w = 1 + j + (home ? 1 : 0);
+  // PARTS (15 sep 2026, for the settle record): the same arithmetic, itemised as it happens, so a
+  // surface can caption the scales instead of being handed a total. `base` is the card standing
+  // there; `dominion` is its own ground; `law` is tonight's law; `ability` is everything a card's
+  // own signature does. Nothing below changes `w` without also recording which bucket it went to.
+  const P = { base: 1 + j, dominion: home ? 1 : 0, law: 0, ability: 0 };
+  const bill = (bucket, before) => { P[bucket] += w - before; };
   // the toll (mansion 2): sheltered ground on the law station pays a point for its shelter.
-  if (law && law.kind === "toll" && i === law.station && tollOn(g, slots, i)) w -= 1;
+  if (law && law.kind === "toll" && i === law.station && tollOn(g, slots, i)) { const b = w; w -= 1; bill("law", b); }
   // the crow (mansion 4): the perch counts one more and the richest chargeable neighbour one less,
   // as ONE transaction — hence the single planet guard on the perch rather than one per clause.
   if (law && law.kind === "crow" && !(ctx && ctx.noLaw)) {
     const L = law.station, plain = Object.assign({}, ctx || {}, { noLaw: true });
     const perch = slots[L];
     if (!(perch && isQuarterless(perch.id))) {
+      const b = w;
       if (i === L) w += 1;
       else if (i === crowPays(g, slots, L, plain)) w -= 1;
+      bill("law", b);
     }
   }
   // the stranger's law (mansion 27, station 4): a card whose quarter is not this ground's quarter
@@ -747,32 +767,40 @@ function slotW(g, slots, i, ctx) {
     const cq = c.quad || quadOf(s.id), gq = gm ? quadOf(gm) : null;
     // null on either side means "no quarter to compare", so the law simply does not apply —
     // never "different, therefore pay". A default quarter here is what caused the planet bug.
-    if (cq && gq && cq !== gq) w += 1;
+    if (cq && gq && cq !== gq) { const b = w; w += 1; bill("law", b); }
   }
-  if (ctx && ctx.guide && ctx.guide[s.ground || s.owner] && home) w += 1;
+  if (ctx && ctx.guide && ctx.guide[s.ground || s.owner] && home) { const b = w; w += 1; bill("dominion", b); }
   // the empty circle (mansion 24): the law station counts one more, the station to its RIGHT one
   // less. Stacks with the void CARD's own signature below rather than replacing it.
   if (law && law.kind === "void" && !(ctx && ctx.noLaw)) {
+    const b = w;
     if (i === law.station) w += 1;
     else if (i === law.station + 1) w = Math.max(0, w - 1);
+    bill("law", b);
   }
   if (on(g, c)) {
+    const b = w;
     if (c.ab === "district") w += 1;
     if (c.ab === "void") w += 1;
     if (c.ab === "listener") for (const d of [-1, 1]) { const k = nb(g, i, d); if (k >= 0 && k !== i && slots[k]) w += 1; }
     if (c.ab === "hideaway") w = 0;
     if (c.ab === "chamber" && !(s.by && s.by !== s.owner)) w = (!s.struck && slots.every(x => x)) ? 4 : 2;
+    bill("ability", b);
   }
-  for (const d of [-1, 1]) {
-    const k = nb(g, i, d); if (k < 0 || k === i || !slots[k]) continue;
-    const n = g.C[slots[k].id]; if (!on(g, n)) continue;
-    if (n.ab === "hideaway") w += 1;
-    if (n.ab === "void" && d === -1) w = Math.max(0, w - 1);
+  {
+    const b = w;
+    for (const d of [-1, 1]) {
+      const k = nb(g, i, d); if (k < 0 || k === i || !slots[k]) continue;
+      const n = g.C[slots[k].id]; if (!on(g, n)) continue;
+      if (n.ab === "hideaway") w += 1;
+      if (n.ab === "void" && d === -1) w = Math.max(0, w - 1);
+    }
+    bill("ability", b);
   }
   let who = s.ground || s.owner;
   const dl = nb(g, i, -1);
   if (dl >= 0 && dl !== i && slots[dl]) { const n = g.C[slots[dl].id]; if (n.ab === "drum" && on(g, n)) who = slots[dl].ground || slots[dl].owner; }
-  return { who, w };
+  return { who, w, parts: P };
 }
 
 function ctxOf(g, slots) {
@@ -830,6 +858,70 @@ function counts(g, slots, held) {
 }
 
 // THE FACT THIS FILE EXISTS TO FIX: boardWinner()'s tie rule.
+// THE SETTLE RECORD (15 sep 2026, Measurement's work order item 1). One object saying how a board
+// was counted, so a surface can caption the scales instead of being handed a total.
+//
+// ONE DEVIATION FROM THE SPEC AS WRITTEN, and it is deliberate. The order asserts
+// `total = stations + dominion + dawn + law` per side. That cannot hold on any board where a card's
+// own signature moves the count — a district counts two, a listener counts one per neighbour, the
+// chamber counts four. Their worked example happens to contain none of those, which is why it
+// balances there and nowhere else. Rather than fold ability weight into a bucket it does not belong
+// in, the record carries a fifth component, `abilities`, and the invariant becomes
+// `total = stations + dominion + abilities + dawn + law`. Flagged to Measurement; the fixtures will
+// need the extra field.
+//
+// `stations` is the plain count of lodged cards a side holds, as the order specifies — the head
+// count, not the weight. Everything above one point a card is itemised into the other buckets.
+function settleOf(g, slots, held) {
+  const ctx = ctxOf(g, slots);
+  const S = { stations: { you: 0, sky: 0 }, dominion: { you: 0, sky: 0 },
+              abilities: { you: 0, sky: 0 }, law: { you: 0, sky: 0 } };
+  slots.forEach((sl, i) => {
+    const r = slotW(g, slots, i, ctx);
+    if (!r.who) return;
+    const p = r.parts || { base: r.w, dominion: 0, ability: 0, law: 0 };
+    S.stations[r.who] += 1;                       // one point for standing there
+    S.dominion[r.who] += p.dominion;
+    S.abilities[r.who] += p.ability + (p.base - 1); // jupiter's own +1 is its signature, not a station
+    S.law[r.who] += p.law;
+  });
+  const lw = lawAt(g.tonight);
+  const full = slots.every(x => x);
+  const d = (held && full) ? dawn(g, held) : null;
+  const tot = (side) => S.stations[side] + S.dominion[side] + S.abilities[side] + S.law[side] + (d ? d[side] : 0);
+  const total = { you: tot("you"), sky: tot("sky") };
+  const level = total.you === total.sky;
+  const levelTo = level ? (g.leader === "you" ? "sky" : "you") : null; // the defender, per canon
+  const winner = level ? levelTo : (total.you > total.sky ? "you" : "sky");
+
+  // `reason` is the last line that decided it: walk the components in order and find the first one
+  // after which the running lead matches the final winner and never flips again.
+  const order = ["stations", "dominion", "abilities", "law", "dawn"];
+  const step = (k) => k === "dawn" ? (d ? { you: d.you, sky: d.sky } : { you: 0, sky: 0 }) : S[k];
+  let run = { you: 0, sky: 0 }, settledAt = null;
+  const sign = (r) => r.you === r.sky ? 0 : (r.you > r.sky ? 1 : -1);
+  const want = level ? 0 : (winner === "you" ? 1 : -1);
+  const tail = [];
+  for (const k of order) { const st = step(k); run = { you: run.you + st.you, sky: run.sky + st.sky }; tail.push({ k, sign: sign(run) }); }
+  for (let i = 0; i < tail.length; i++)
+    if (tail[i].sign === want && tail.slice(i).every(x => x.sign === want)) { settledAt = tail[i].k; break; }
+  const reason = level ? "level" : (settledAt || "stations");
+
+  const card = (id) => ({ id, total: (g.C[id] ? (g.C[id].l || 0) + (g.C[id].r || 0) : 0) });
+  return {
+    stations: S.stations, dominion: S.dominion, abilities: S.abilities,
+    dawn: d ? {
+      form: "duel",
+      held: { you: (held.you || []).map(card), sky: (held.sky || []).map(card) },
+      pairs: d.pairs.map(pp => ({ you: card(pp.y), sky: card(pp.s), to: pp.win })),
+      unopposed: d.odd ? [{ side: d.odd.side, id: d.odd.id, total: card(d.odd.id).total }] : [],
+      points: { you: d.you, sky: d.sky },
+    } : { form: "none", held: { you: [], sky: [] }, pairs: [], unopposed: [], points: { you: 0, sky: 0 } },
+    law: { night: g.tonight || null, name: lw ? lw.kind : null, points: S.law, notes: [] },
+    total, level, levelTo, winner, reason,
+  };
+}
+
 function boardWinner(g, slots, held) {
   const [you, sky] = counts(g, slots, held);
   if (you !== sky) return you > sky ? "you" : "sky";
@@ -1417,7 +1509,7 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards, HARDEST_ROAD,
-  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn, settleOf,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
@@ -2410,7 +2502,31 @@ if (require.main === module) {
       return /winner === "you"\) \{ youWins\+\+; leader = "sky"; \}/.test(body)
         && /winner === "sky"\) \{ skyWins\+\+; leader = "you"; \}/.test(body);
     }, true],
-    ["quarterless is `id >= 101`, NOT the client's 101..107 — Uranus and Neptune are on her boss hand", () => {
+    ["QUARTERLESS IS 101-109: her planets only, and NEVER the mirror deck", () => {
+      // Corrected 15 sep. `id >= 101` swallowed 200+ — the walker deck — so four laws were wrong
+      // on every walker board. Cross-checked against the card table so the range cannot drift from
+      // the data: a card is quarterless iff it has no quadrant, for every id actually in play.
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const C = E.ladderOpponentCards(E.cards({ levels, grants: "all" }), levels);
+      const disagree = Object.keys(C).map(Number).filter(id => {
+        const c = C[id];
+        return E.isQuarterless(id) === !!(c.quad || E.quadOf(id));
+      });
+      return disagree.length === 0
+        && E.isQuarterless(101) && E.isQuarterless(108) && E.isQuarterless(109)
+        && !E.isQuarterless(201) && !E.isQuarterless(214) && !E.isQuarterless(228)
+        && !E.isQuarterless(9);
+    }, true],
+    ["the mirror deck pays the toll and is charged by the crow, like any card with a quarter", () => {
+      const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;
+      const C = E.ladderOpponentCards(E.cards({ levels, grants: "all" }), levels);
+      const g = E.mkGame({ tonight: 2, C, levels });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[4] = { id: 214, l: 5, r: 5, owner: "sky", by: "sky", age: 1, crowned: true };
+      // Before the fix this returned false: a mirror card read as quarterless and paid nothing.
+      return E.tollOn(g, slots, 4) === true;
+    }, true],
+    ["the OLD too-narrow guard is gone from the client too — Uranus and Neptune are on her boss hand", () => {
       // The live client's mansion-boss hand is [101,102,103,104,105,108,109]. All four of its
       // quarterless guards test `101..107`, so 108/109 fall through and quadOf()'s byakko catch-all
       // then calls them tiger cards. Reported to Design 3 sep; this module must not inherit it.

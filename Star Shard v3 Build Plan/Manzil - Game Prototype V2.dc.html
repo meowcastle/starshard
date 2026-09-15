@@ -5809,13 +5809,76 @@ class Component extends DCLogic {
     this.setState({ roundWins: (msg.roundWins || []).slice(), phase: won ? "won" : "lost" });
     this._netCleanup();
   }
+  // THE SETTLE RECORD (15 sep 2026, Measurement's work order item 1): one object saying how the
+  // board was counted, so a surface can caption the scales instead of being handed a total.
+  // Exposed on state.settle and fired as a `manzil:settle` window event with the same object.
+  //
+  // WHAT IS EXACT HERE: stations (the head count of lodged cards a side holds), dominion (a card on
+  // its own ground, plus the guide's grant), dawn (every pairing, itemised), total, level, levelTo,
+  // winner and reason. Those are the fields the scales caption needs.
+  //
+  // WHAT IS NOT SPLIT, AND WHY IT IS HONEST TO SAY SO: `extra` is one bucket holding BOTH a card's
+  // own signature weight (a district counts two, a listener one per neighbour, the chamber four)
+  // AND tonight's law's contribution to the count. Splitting those apart needs _slotW itemised the
+  // way the module's slotW now is, and _slotW is on the contested 33 — that is its own reviewed
+  // change, not something to bundle into this. The module's settleOf() DOES split them, so the
+  // conformance pack can check the split against the engine even while the client reports one
+  // bucket. `total = stations + dominion + extra + dawn` holds exactly, by construction.
+  //
+  // Note for the fixtures: the order's invariant `total = stations + dominion + dawn + law` cannot
+  // hold on any board where a signature moves the count. The module carries a fifth component for
+  // that reason and this carries `extra`; the expectations need the extra field either way.
+  _settle(slots, held) {
+    const d = this._dawn(held), full = slots.every(x => x);
+    const dp = full ? { you: d.you, sky: d.sky } : { you: 0, sky: 0 };
+    const ctx = this._ctx(slots);
+    const stations = { you: 0, sky: 0 }, dominion = { you: 0, sky: 0 };
+    slots.forEach((sl, i) => {
+      const r = this._slotW(slots, i, ctx);
+      if (!r.who) return;
+      stations[r.who] += 1;
+      if (sl && this._isHome(sl.id, i)) dominion[r.who] += 1;
+    });
+    const [ty, ts] = this._counts(slots, held);
+    const total = { you: ty, sky: ts };
+    const extra = { you: ty - stations.you - dominion.you - dp.you,
+                    sky: ts - stations.sky - dominion.sky - dp.sky };
+    const level = ty === ts;
+    const levelTo = level ? ((this.state && this.state.leader) === "you" ? "sky" : "you") : null;
+    const winner = this._boardWinner(slots, held);
+    // reason: the first component after which the running lead matches the winner and never flips.
+    const order = [["stations", stations], ["dominion", dominion], ["extra", extra], ["dawn", dp]];
+    const want = level ? 0 : (winner === "you" ? 1 : -1);
+    let run = { you: 0, sky: 0 }; const tail = [];
+    order.forEach(([k, v]) => { run = { you: run.you + v.you, sky: run.sky + v.sky };
+      tail.push({ k, sign: run.you === run.sky ? 0 : (run.you > run.sky ? 1 : -1) }); });
+    let at = null;
+    for (let i = 0; i < tail.length; i++)
+      if (tail[i].sign === want && tail.slice(i).every(x => x.sign === want)) { at = tail[i].k; break; }
+    const C = this._cards();
+    const card = (id) => ({ id, total: C[id] ? (C[id].l || 0) + (C[id].r || 0) : 0 });
+    const law = this._bossRule();
+    return {
+      stations, dominion, extra,
+      dawn: full ? { form: "duel", held: { you: (held.you || []).map(card), sky: (held.sky || []).map(card) },
+                     pairs: d.pairs.map(p => ({ you: card(p.y), sky: card(p.s), to: p.win })),
+                     unopposed: d.odd ? [{ side: d.odd.side, id: d.odd.id, total: card(d.odd.id).total }] : [],
+                     points: dp }
+                 : { form: "none", held: { you: [], sky: [] }, pairs: [], unopposed: [], points: dp },
+      law: { night: this._tonight(), name: law || null, points: null, notes: law ? ["law weight is inside `extra`; see _settle's header"] : [] },
+      total, level, levelTo, winner, reason: level ? "level" : (at || "stations"),
+    };
+  }
   _countCeremony(done) {
     const slots = this.state.slots;
     const held = this._heldNow(), dawn = this._dawn(held);
+    // the settle record goes out before the winner is announced, per the work order
+    const settle = this._settle(slots, held);
+    try { window.dispatchEvent(new CustomEvent("manzil:settle", { detail: settle })); } catch (e) {}
     const [cy, cs] = this._counts(slots, held);
     const winner = this._boardWinner(slots, held);
     const dawnOn = !!(dawn.pairs.length || dawn.odd);
-    this.setState({ countFx: { you: cy, sky: cs, winner, step: 0, sweep: -1, dawn, dawnOn, dawnStep: -1, dawnStage: -1 } });
+    this.setState({ settle, countFx: { you: cy, sky: cs, winner, step: 0, sweep: -1, dawn, dawnOn, dawnStep: -1, dawnStage: -1 } });
     this._sfx("countRun");
     this._cfA = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 1 } } : {}), 80);
     for (let i = 0; i < slots.length; i++) this._seq.push(setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, sweep: i } } : {}), 300 + i * 135));
@@ -9509,7 +9572,7 @@ class Component extends DCLogic {
     let best = -1, bw = -Infinity;
     [this._nb(L, -1), this._nb(L, 1)].forEach(k => {
       if (k < 0 || !slots[k]) return;
-      if (slots[k].id >= 101 && slots[k].id <= 107) return;
+      if (slots[k].id >= 101 && slots[k].id <= 109) return;
       const w = this._slotW(slots, k, plain).w;
       if (w > bw) { bw = w; best = k; }
     });
@@ -9517,7 +9580,7 @@ class Component extends DCLogic {
   }
   _tollOn(slots, i) {
     const s = slots && slots[i]; if (!s) return false;
-    if (s.id >= 101 && s.id <= 107) return false; // her planets are quarterless and unmeasured
+    if (s.id >= 101 && s.id <= 109) return false; // her planets are quarterless and unmeasured
     const c = this._cards()[s.id];
     const gateHold = !!(c && c.ab === "gate" && this._on(c) && !s.gateUsed);
     return gateHold || this._shielded(slots, i, -1); // _shielded ignores its attacker arg
@@ -9559,7 +9622,7 @@ class Component extends DCLogic {
     // toll's guard: saturn's lock is a planet, not a shelter the road knows). Ownership is fought for as
     // on a plain board; count and faces untouched. Measured m1 plain 50.8 → 42.6 (−8.2), byakko −8.0,
     // seat +0.4/−2.5, one-sided narrowing (the tortoise unmoved). Standard window, no _boardOff.
-    const openSt = this._bossRule() === "open" && ti === this._lawSt() && !(t.id >= 101 && t.id <= 107);
+    const openSt = this._bossRule() === "open" && ti === this._lawSt() && !(t.id >= 101 && t.id <= 109);
     // the tell: remember when the open gate let through a strike that any other ground would have held
     this._openLet = openSt && (this._shielded(slots, ti, ai) || (tC.ab === "gate" && this._on(tC) && !t.gateUsed));
     if (!openSt && this._shielded(slots, ti, ai)) return false; // one code path owns "can this ground change hands"
@@ -9867,7 +9930,7 @@ class Component extends DCLogic {
     // (2) IT IS UNSAFE FOR ANY ID OUTSIDE 1-27, so `c.quad` must stay first in the fallback —
     //     _quad(215) is "byakko" while C[215].quad is "seiryuu". Dropping `c.quad ||` would
     //     misclassify her whole mirror deck as tiger. Do not "simplify" this line.
-    if (this._bossRule() === "stranger" && i === this._lawSt() && !(s.id >= 101 && s.id <= 107)) {
+    if (this._bossRule() === "stranger" && i === this._lawSt() && !(s.id >= 101 && s.id <= 109)) {
       const q = c.quad || this._quad(s.id);
       if (q !== this._quad(this._boardM(i))) w += 1;
     }
@@ -9920,7 +9983,7 @@ class Component extends DCLogic {
     // it is never the one charged. The LEVEL is live (the grant sweep answered: grant unchanged).
     if (this._bossRule() === "crow" && !(ctx && ctx.noLaw)) {
       const L = this._lawSt(), c0 = ctx || {}, plain = Object.assign({}, c0, { noLaw: true });
-      const perch = slots[L], perchPlanet = !!(perch && perch.id >= 101 && perch.id <= 107);
+      const perch = slots[L], perchPlanet = !!(perch && perch.id >= 101 && perch.id <= 109);
       if (!perchPlanet) {
         if (i === L) w += 1;
         else if (i === this._crowPays(slots, L, plain)) w -= 1;
@@ -9969,6 +10032,10 @@ class Component extends DCLogic {
   // still holds are paired strongest against strongest by PRINTED total, down the line. each pairing is worth
   // one to the higher card; a card with no opponent scores nothing; a tied pairing scores for nobody. part of
   // the count, no night, no station: every full board in the game ends this way. held = { you:[ids], sky:[ids] }.
+  // QUARTERLESS = her planets, 101-109. Widened from 101..107 on 15 sep (Measurement's copy-read
+  // note): her hand on the MANSION BOSS BOARD is [101,102,103,104,105,108,109], so Uranus and
+  // Neptune fell through every guard and _quad's byakko catch-all then read them as tiger cards.
+  // The mirror deck starts at 200 and must NOT be caught — those are mansion cards with quarters.
   _dawn(held) {
     const C = this._cards(), tot = (id) => { const c = C[id]; return c ? (c.l || 0) + (c.r || 0) : 0; };
     const srt = (a) => (a || []).slice().sort((x, y) => tot(y) - tot(x));
@@ -10470,7 +10537,7 @@ class Component extends DCLogic {
         else if (hk) { tag = "tap it: " + hk.label; tagColor = hk.kind === "burst" ? "#E85630" : "#F0D89A"; }
         else if (s.owner === "you" && c.ab === "throne" && this._on(c) && !st.throneUsed && st.phase === "play" && st.turn === "you" && !st.busy) { tag = "tap it: it turns"; tagColor = "#F0D89A"; }
         else if (this._bossRule() === "price" && i === this._lawSt() && this._shielded(st.slots, i, -1)) { tag = "marked: strikes two lower"; tagColor = "#E8F0FF"; }
-        else if (this._bossRule() === "open" && i === this._lawSt() && !(s.id >= 101 && s.id <= 107) && (this._shielded(st.slots, i, -1) || (c.ab === "gate" && this._on(c) && !s.gateUsed))) { tag = "the gate is open: nothing held here"; tagColor = "#E8F0FF"; }
+        else if (this._bossRule() === "open" && i === this._lawSt() && !(s.id >= 101 && s.id <= 109) && (this._shielded(st.slots, i, -1) || (c.ab === "gate" && this._on(c) && !s.gateUsed))) { tag = "the gate is open: nothing held here"; tagColor = "#E8F0FF"; }
         else if (s.ground && s.owner !== s.ground) { tag = "the ground stays yours"; tagColor = "#F0D89A"; }
         else if (c.ab === "heart" && this._on(c)) { tag = "strikes when the road fills"; tagColor = "#E8A090"; }
 
@@ -11557,7 +11624,7 @@ class Component extends DCLogic {
         // reads the same _crowPays the count reads, so the picture and the arithmetic cannot disagree.
         const lawOn = this._bossRule() === "crow" && (st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb");
         const L = this._lawSt(), slots = st.slots || [], Lb = slots.length || 9, eb = 466 - (Lb * 86 + (Lb - 1) * 5) / 2, xb = eb + L * 91 + 43;
-        const perchPlanet = !!(slots[L] && slots[L].id >= 101 && slots[L].id <= 107);
+        const perchPlanet = !!(slots[L] && slots[L].id >= 101 && slots[L].id <= 109);
         const pays = lawOn && !perchPlanet ? this._crowPays(slots, L, Object.assign({}, this._ctx(slots), { noLaw: true })) : -1;
         const face = pays < 0 ? 0 : (pays < L ? -1 : 1);
         const cr = ["<path d='M40 52 V30' stroke='rgba(200,190,168,.4)' stroke-width='2.4' fill='none'/><path d='M30 30 H50' stroke='rgba(200,190,168,.4)' stroke-width='1.6' fill='none'/>"];

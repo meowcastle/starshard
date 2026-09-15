@@ -627,6 +627,46 @@ comment. The scan now strips that block first. **A mustache "failure" from this
 harness is not automatically a rendering bug — check whether it is only a comment
 in the script block before chasing it.**
 
+**A REAL RULES BUG OF CODE'S OWN, FOUND BY MEASUREMENT'S COPY-READ (15 Sep 2026).**
+`isQuarterless(id)` read `id >= 101` — widened on 3 Sep to catch Uranus (108) and
+Neptune (109) past the client's too-narrow `101..107`, and **widened too far: it
+swallowed the whole mirror deck.** Walker cards are `200 + id`, they are mansion
+cards WITH quadrants, and they were read as quarterless on every walker board. Four
+laws were wrong against her deck as a result — the toll did not charge her sheltered
+cards, the crow never charged them, the stranger paid them no bonus, and the open
+gate did not open their locks. That is **8 boards in 9**, every night those laws are
+in force. Now `id >= 101 && id < 200`, with a vector that cross-checks the range
+against the card table's own `quad` for every id in play so the two cannot drift
+apart again. **The client had the mirror right and the planets wrong — the exact
+mirror image** — so all seven of its guards went `101..107` → `101..109`. Both sides
+now agree: quarterless is her nine planets and nothing else.
+
+**THE SETTLE RECORD IS LIVE (15 Sep 2026, Measurement's work order item 1).**
+`state.settle` plus a `manzil:settle` event, emitted before the winner is announced:
+stations (the head count), dominion, dawn (every pairing itemised, with the
+unopposed card), total, level, levelTo, winner, and `reason` — the component after
+which the lead stops changing hands. `settleOf()` in the module does the same and
+additionally splits abilities from law.
+
+**ONE DEVIATION FROM THE ORDER, DELIBERATE AND REPORTED:** the spec's invariant
+`total = stations + dominion + dawn + law` **cannot hold** on any board where a
+signature moves the count (a district counts two, a listener one per neighbour, the
+chamber four); their worked example happens to contain none, which is why it
+balances there and nowhere else. The module carries a fifth component, `abilities`;
+the client carries one combined `extra` bucket, because splitting it there needs
+`_slotW` itemised and `_slotW` is on the contested 33 — its own reviewed change, not
+a rider on this one. `total = stations + dominion + extra + dawn` holds exactly, by
+construction, and is asserted live.
+
+**MEASUREMENT'S DAWN BOARD IS NOT A BUG (item 3).** Reproduced exactly: her two
+strongest held cards are 12 and 12, each beating an 11, so dawn scores 0–2 and the
+board is decided by dawn rather than by a level board. The card they could not read
+is **213, the hand, 5/7 = 12**; they also had 202 and 223 swapped (the bearer is 11,
+the drum is 12). The live settle record now says `reason: "dawn"` on that board. One
+honest caveat: the board they watched was played **before** the mirror-deck guard
+fix above, and m5's law is the price — so the station split they saw may not
+reproduce now, even though the dawn arithmetic does.
+
 **THE ACCESS RULE IS LIVE (14 Sep 2026, Justin: "only access to the levels the
 user has completed, or the mansion the moon is in by default").** A house is
 reachable iff a level stands there AND either **the moon is standing in it
