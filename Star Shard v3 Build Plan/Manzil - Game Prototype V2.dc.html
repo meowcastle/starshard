@@ -5304,6 +5304,9 @@
       <div style="text-align:center;max-width:320px">
         <div style="font-size:22px;color:{{ endMark }}">✦</div>
         <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;line-height:1.2;color:#F2EAD6;margin-top:6px">{{ endTitle }}</div>
+            <sc-if value="{{ endWhyOn }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.45;color:rgba(240,222,180,.92);margin-top:8px;text-wrap:pretty">{{ endWhy }}</div>
+            </sc-if>
         <div style="font-size:12.5px;line-height:1.8;color:#D8C89C;margin-top:8px">{{ endLine }}</div>
         <sc-if value="{{ rlOn }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;justify-content:center;align-items:center;gap:18px;margin-top:18px">
@@ -6433,7 +6436,21 @@ class Component extends DCLogic {
     const [cy, cs] = this._counts(slots, held);
     const winner = this._boardWinner(slots, held);
     const dawnOn = !!(dawn.pairs.length || dawn.odd);
-    this.setState({ settle, countFx: { you: cy, sky: cs, winner, step: 0, sweep: -1, dawn, dawnOn, dawnStep: -1, dawnStage: -1 } });
+    // THE VERDICT CARD'S RECORD (Design 15 sep, merged 17 sep). Design builds this from _countBreak's
+    // flat stY/homeY/extraY; this build declined _countBreak as a thinner parallel of _settle, so the
+    // same shape is assembled from the settle record instead. _verdictWhy is then theirs verbatim.
+    // extra bundles the cards' own work AND the law, because _countBreak predates the law's split into
+    // its own term and its `extra` meant "everything past base and dominion".
+    const lastVerdict = {
+      stY: settle.stations.you, stS: settle.stations.sky,
+      homeY: settle.dominion.you, homeS: settle.dominion.sky,
+      extraY: settle.cards.you + settle.law.points.you,
+      extraS: settle.cards.sky + settle.law.points.sky,
+      dawnY: settle.dawn.points.you, dawnS: settle.dawn.points.sky,
+      dawnOn: !!(dawn.pairs.length || dawn.odd),
+      you: cy, sky: cs, winner,
+    };
+    this.setState({ settle, lastVerdict, countFx: { you: cy, sky: cs, winner, step: 0, sweep: -1, dawn, dawnOn, dawnStep: -1, dawnStage: -1 } });
     this._sfx("countRun"); this._cine("count");
     this._cfA = setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 1 } } : {}), 80);
     for (let i = 0; i < slots.length; i++) this._seq.push(setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, sweep: i } } : {}), 300 + i * 135));
@@ -16319,8 +16336,11 @@ class Component extends DCLogic {
         };
       })()),
       roundOverOn: st.phase === "round",
-      roundWalkerOn: st.phase === "round" && !!st.road && !st.roadBoss && lastRound === "you" && !!st.roadWalker && st.roadRung < 8,
-      roundWalkerLine: ((this._walkers().find(x => x.name === st.roadWalker) || {}).defeat) || "",
+      // THE VERDICT CARD (Design, 1v): the first line says who took it, the second says WHY in the
+      // settle's own words. The walker-line slot now carries the reason; it used to carry only the
+      // walker's yielding line, and only on a rung you had won — so a board you LOST said nothing at all.
+      roundWalkerOn: st.phase === "round" && !!st.lastVerdict,
+      roundWalkerLine: this._verdictWhy(st.lastVerdict),
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
       roundTitle: st.duel ? "the board rests" : st.road && !st.roadBoss ? (st.roadRung >= 7 ? ((av => av ? "the air thins. " + av.name + " waits." : "the air thins. the " + this._mName(this._tonight()) + " waits.")(this._avatar())) : (st.roadWalker || "the walker") + " steps aside") : "round " + st.round,
       // THE MID-MATCH BEAT (1 sep 2026). Placed AFTER roundTitle on purpose: when a match is still
@@ -16504,6 +16524,10 @@ class Component extends DCLogic {
         : st.phase === "roadlost" ? (st.wiped ? "the road folds back" : "the night rests")
         : endWon ? (st.road ? ((m2 => m2 >= 4 ? "the " + this._mName(this._tonight()) + " is claimed" : m2 === 1 ? "the " + this._mName(this._tonight()) + "'s card is won" : "the road is walked")(this._mlvl(this._tonight()))) : (st.nightSky ? "you held the sky, " : "the night is yours, ") + mw + " boards to " + ms)
         : (st.nightWalker ? st.nightWalker + " takes the night, " : "the sky holds the mansion, ") + ms + " to " + mw,
+      // the verdict's reason on the end card too (Design, 1v): a LOSS produces a line, where before only
+      // a won rung said anything at all. Same sentence as the round screen, same record behind it.
+      endWhyOn: !st.practice && !!st.lastVerdict && (st.phase === "won" || st.phase === "lost" || st.phase === "roadlost"),
+      endWhy: this._verdictWhy(st.lastVerdict),
       endLine: st.duel ? "nothing staked, everything settled: a table between friends. deal again, or hand the night back to the " + this._mName(this._tonight()) + "." : st.practice ? "nothing was staked. the road above is the real thing: eight walkers, then the sky, and the district's card at the top."
         : st.phase === "roadlost" ? this._roadLostLine(st)
         : endWon ? (st.road ? ((ml2 => ml2 >= 4 ? "the card stands at level four, named and dated. the " + this._mName(this._tonight()) + " is yours: its table opens tomorrow." : ml2 === 1 ? "the " + this._mName(this._tonight()) + "'s card joins your hand at level one, numbers only. the road re-arms, and everyone on it reads deeper. three climbs to wake it fully." : ml2 === 2 ? "the card wakes at level 2: its move is live from tonight. two climbs remain." : "the card sharpens to level 3. one climb between you and the claim.")(this._mlvl(this._tonight()))) : st.freeNight ? "nothing was staked: the road's work was done tonight. the moon moves on tomorrow." : "")
