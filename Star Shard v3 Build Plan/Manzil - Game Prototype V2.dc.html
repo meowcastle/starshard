@@ -2202,7 +2202,17 @@
       <sc-for list="{{ cfLights }}" as="d" hint-placeholder-count="4">
         <div style="{{ d.style }}">{{ d.t }}</div>
       </sc-for>
-      <svg viewBox="0 0 932 430" style="{{ scWrap }}">
+      <div style="{{ cfCapsWrap }}">
+        <sc-for list="{{ cfCaps }}" as="cap" hint-placeholder-count="4">
+          <div style="{{ cap.style }}">
+            <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start">
+              <span style="{{ cap.labelStyle }}">{{ cap.label }}</span>
+              <span style="{{ cap.valueStyle }}">{{ cap.value }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+        <svg viewBox="0 0 932 430" style="{{ scWrap }}">
         <line x1="466" y1="318" x2="466" y2="352" stroke="rgba(240,216,154,.45)" stroke-width="1.5"></line>
         <path d="M444 352 h44" stroke="rgba(240,216,154,.45)" stroke-width="1.5" stroke-linecap="round"></path>
         <g style="{{ scBeam }}">
@@ -6431,6 +6441,14 @@ class Component extends DCLogic {
     // DAWN, 1a "first light" (14 sep 2026): the sky pales, both held hands rise above the road sorted strongest
     // inward, then the pairings resolve one at a time, centre outward. dawnStep: 0 = risen (the gather), k+1 =
     // pairing k resolved (the strike), pairs.length+1 = the odd card named. ~2.2s, then the merge as before.
+    // THE CAPTIONED SCALES (Design, 15 sep 2026 — merged 17 sep, two days late). The count says its
+    // arithmetic beside the beam, one beat each, held to the end. capStep 1 = stations, 2 = dominion,
+    // 3 = dawn, 4 = the total and who takes it. The caption stack renders off `f.capStep`; without
+    // these four timers the rows compute correctly and are never revealed, and the total's value is
+    // gated on capStep >= 4 so it stays empty — which is exactly what shipped until this line existed.
+    const cap = (k, t) => this._seq.push(setTimeout(() => this.setState(s2 => s2.countFx ? { countFx: { ...s2.countFx, capStep: k } } : {}), t));
+    cap(1, tRoad - 200); cap(2, tRoad + 520);
+    this._seq.push(setTimeout(() => this._sfx("scales"), tRoad - 200)); // the scales' note as the first caption lands
     let tBoom = tRoad;
     // DAWN PLAYS IN FULL ONLY WHEN DAWN DECIDES THE BOARD (Design, 17 sep 2026, from Measurement's flow
     // memo: the longest beat in the game played whether or not it changed anything). When dawn merely
@@ -6472,6 +6490,8 @@ class Component extends DCLogic {
     }
     // the settle: the beam comes to rest and the word appears. a level board holds level a full second first.
     const level = cy === cs;
+    cap(3, tBoom - 250);
+    cap(4, tBoom + (level ? 1500 : 700));
     this._cfC = setTimeout(() => { this._buzz && this._buzz([12, 40, 16]); this._sfx("countMerge"); this.setState(s => s.countFx ? { countFx: { ...s.countFx, step: 3, sweep: slots.length - 1 } } : {}); }, tBoom);
     if (level) this._seq.push(setTimeout(() => { this._sfx("lodge"); this.setState(s => s.countFx ? { countFx: { ...s.countFx, levelTip: true } } : {}); }, tBoom + 1200));
     const hold = tBoom + (level ? 3300 : 2300);
@@ -12348,7 +12368,7 @@ class Component extends DCLogic {
       elevDayStyle: "position:absolute;inset:0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : ev.day) + ";background:radial-gradient(10% 17% at 74% 71%, rgba(255,240,198,.9), rgba(255,208,120,.38) 42%, transparent 72%), linear-gradient(to top, rgba(255,206,128,.30) 0%, rgba(210,160,108,.20) 26%, rgba(134,126,162,.15) 58%, rgba(98,106,150,.12) 100%)",
       elevWorldStyle: "position:absolute;left:-14%;right:-14%;bottom:-330px;height:392px;border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;transition:opacity 1.6s ease;opacity:" + ([24, 25].indexOf(this._tonight()) >= 0 ? 0 : ev.wo) + ";background:radial-gradient(62% 92% at 50% 4%, rgba(34,25,13,.99), #050302 72%);box-shadow:0 -16px 50px rgba(148,176,255,.24), 0 -4px 18px rgba(255,198,116,.26)",
       ...((f => {
-        if (!f) return { countFxOn: false, dawnOn: false, dawnCards: [], dawnLines: [], dawnVs: "display:none", dawnVsT: "", dawnCap: "display:none", dawnCapT: "", dawnClashOn: false, dawnClash: "display:none", cfLights: [], scWrap: "display:none", scDotsYou: [], scDotsSky: [], cfYouN: "", cfSkyN: "", cfWrapStyle: "", cfBoomOn: false, cfFlash: "", cfRing: "", cfSparks: [], cfStamp: "", cfStampT: "", cfVeil: "", cfVerdictT: "", cfVerdictStyle: "", cfStampNumStyle: "" };
+        if (!f) return { countFxOn: false, cfCaps: [], cfCapsWrap: "display:none", dawnOn: false, dawnCards: [], dawnLines: [], dawnVs: "display:none", dawnVsT: "", dawnCap: "display:none", dawnCapT: "", dawnClashOn: false, dawnClash: "display:none", cfLights: [], scWrap: "display:none", scDotsYou: [], scDotsSky: [], cfYouN: "", cfSkyN: "", cfWrapStyle: "", cfBoomOn: false, cfFlash: "", cfRing: "", cfSparks: [], cfStamp: "", cfStampT: "", cfVeil: "", cfVerdictT: "", cfVerdictStyle: "", cfStampNumStyle: "" };
         const L = st.slots.length, edge = 466 - (L * 86 + (L - 1) * 5) / 2, mx = 466, my = 200;
         const sw = f.sweep == null ? -1 : f.sweep, boom = f.step >= 3;
         let cy2 = 0, cs2 = 0; const pulses = [];
@@ -12361,8 +12381,34 @@ class Component extends DCLogic {
           who === "you" ? cy2 += wt : cs2 += wt;
           const x = edge + i * 91 + 43, y = 148 + Math.pow(i - (L - 1) / 2, 2) * 3;
           const c = who === "you" ? "240,216,154" : "255,176,0";
-          pulses.push({ t: "+" + wt, style: "position:absolute;left:" + (x - 30) + "px;top:" + (y - 16) + "px;width:60px;height:32px;line-height:32px;text-align:center;font-family:'Karla',sans-serif;font-size:13px;color:rgb(" + c + ");text-shadow:0 0 12px rgba(" + c + ",.85);background:radial-gradient(circle, rgba(" + c + ",.16), transparent 70%);border-radius:50%;animation:mzCfCount 1.1s ease-out both;pointer-events:none" });
+          pulses.push({ t: "+" + wt, style: "position:absolute;left:" + (x - 30) + "px;top:" + (y - 16) + "px;width:60px;height:32px;line-height:32px;text-align:center;font-family:'Karla',sans-serif;font-size:11px;color:rgb(" + c + ");text-shadow:0 0 12px rgba(" + c + ",.85);background:radial-gradient(circle, rgba(" + c + ",.16), transparent 70%);border-radius:50%;animation:mzCfCount 1.1s ease-out both;pointer-events:none" });
         });
+        // the arithmetic, said (15 sep 2026, 1a): stations held, what counts more (dominion and the count's signatures),
+        // dawn, the total. computed from the same _station the pans use, so the words and the weights cannot disagree.
+        const capStep = f.capStep || 0;
+        let stY = 0, stS = 0, homeY = 0, homeS = 0, extraY = 0, extraS = 0; const homeGlow = [];
+        st.slots.forEach((s, i) => { if (!s) return; const w = this._station(st.slots, i); if (!w.who || !w.w) return;
+          const home = this._isHome(s.id, i);
+          if (w.who === "you") { stY++; if (home) homeY++; extraY += w.w - 1 - (home ? 1 : 0); } else { stS++; if (home) homeS++; extraS += w.w - 1 - (home ? 1 : 0); }
+          // (15 sep 2026, user: "a cluster"): the home-card glow frames are OUT — the board is zoomed under the ceremony
+          // and the frames floated above the cards as ghost rectangles. dominion is said in the caption; that is enough.
+        });
+        const NW = ["none", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"], nw = (n) => NW[n] || String(n);
+        const vs = (a, b) => a === b ? nw(a) + " each" : nw(a) + " against " + nw(b);
+        const D0 = f.dawn || { pairs: [], odd: null, you: 0, sky: 0 };
+        const dawnT = !f.dawnOn ? "nothing held" : D0.you === D0.sky ? (D0.you ? "even, " + nw(D0.you) + " each" : "even, nobody scores") : D0.you > D0.sky ? "yours outweigh hers, " + nw(D0.you - D0.sky) + " to you" : "hers outweigh yours, " + nw(D0.sky - D0.you) + " to her";
+        const extraOn = extraY + extraS > 0, homeOn = homeY + homeS > 0;
+        const rows = [
+          { k: "stations", v: vs(stY, stS), on: capStep >= 1 },
+          { k: !homeOn && extraOn ? "counting more" : extraOn ? "dominion, and more" : "dominion", v: !homeOn && !extraOn ? "none" : vs(homeY + extraY, homeS + extraS), on: capStep >= 2 },
+          // the pair lines are spoken live at the stage (dawnCap); the column keeps only the dawn's sum, so four rows
+          // always fit the clear band above the road's arc (frame y 30-140) — the verifier's worst case is four pairs
+          { k: "dawn", v: dawnT, on: capStep >= 3, lines: [] },
+        ];
+        const cfCaps = rows.map((r, i) => ({ label: r.k, value: r.v, lines: [], linesOn: false,
+          style: "display:flex;flex-direction:column;gap:1px;transition:opacity .45s ease, transform .45s ease;opacity:" + (r.on ? 1 : 0) + ";transform:translateY(" + (r.on ? 0 : 5) + "px)",
+          labelStyle: "font-family:'Karla',sans-serif;font-size:11px;letter-spacing:.02em;color:#B8A87C;flex:none;padding-top:2px",
+          valueStyle: "font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.2;color:" + (i === 2 && D0.sky > D0.you && f.dawnOn ? "#FFB000" : "#F2EAD6") + ";text-align:right;text-wrap:pretty" }));
         // DAWN, 1a first light (14 sep 2026): the sky pales, the held hands rise above the road sorted strongest
         // inward, pairings resolve centre-outward. rides f.dawn / f.dawnStep from _countCeremony.
         const D = f.dawn, ds = f.dawnStep == null ? -1 : f.dawnStep, dawnOn = !!(f.dawnOn && ds >= 0 && f.step < 3);
@@ -12373,49 +12419,64 @@ class Component extends DCLogic {
           const done = Math.min(ds, D.pairs.length), oddOn = ds > D.pairs.length && !!D.odd;
           const stage = f.dawnStage == null ? -1 : f.dawnStage; // which pairing stands at the centre right now (pairs.length = the odd card, alone)
           let seen = 0; try { seen = parseInt(localStorage.getItem("manzil-v2-dawnseen")) || 0; } catch (e) {}
-          // (14 sep 2026, user): the duel happens at the CENTRE of the board, vertically — her card comes down from
-          // her side, yours comes up from yours. resting rows: hers along the top of the frame, yours along the
-          // bottom between the two pans, each sorted strongest first, left to right.
-          const W = 50, G = 10, top = 22, bot = 360;
-          const nY = D.pairs.length + (D.odd && D.odd.side === "you" ? 1 : 0), nS = D.pairs.length + (D.odd && D.odd.side === "sky" ? 1 : 0);
-          const xOf = (side, i) => { const n = side === "you" ? nY : nS; return 466 - (n * W + (n - 1) * G) / 2 + i * (W + G); };
-          const yOf = (side) => side === "you" ? bot : top;
-          const STG = { you: 252, sky: 138 }; // staged at 1.2x (81.6px): hers 97-179, yours 211-293, a 32px gap between // the staged pair's centres: hers above, yours below, the board's middle between them
+          // THE DAWN SHELF, 1d two rows (15 sep 2026, user picked from Manzil - Settle and Verdict Directions; the centre-stage
+          // duel is OUT): the held cards come down to the shelf under the road, LEADER'S ROW OVER FOLLOWER'S ROW with a label
+          // naming each (never "hers over yours": you follow the mansion's opening board, series boards after a win, and duels),
+          // both sorted strongest first, paired left to right in place. one line lands BETWEEN each pair and STAYS; the total
+          // sits inside the card so the line has the gap to itself. the pack's 2.F as drawn.
+          const W = 46, H = 62, G = 42, ROWG = 26; // pitch 88: a pair line ("12 against 12: even" ≈ 72px) never touches its neighbour
+          const leadSide = (st.leader || "you") === "you" ? "you" : "sky", folSide = leadSide === "you" ? "sky" : "you";
+          const nY = D.pairs.length + (D.odd && D.odd.side === "you" ? 1 : 0), nS = D.pairs.length + (D.odd && D.odd.side === "sky" ? 1 : 0), nMax = Math.max(nY, nS);
+          const x0 = 466 - (nMax * W + (nMax - 1) * G) / 2;
+          const xOf = (side, i) => x0 + i * (W + G);
+          const topRow = 268, botRow = topRow + H + ROWG;
+          const yOf = (side) => side === leadSide ? topRow : botRow;
           const resolvedAt = (side, i) => i < done ? D.pairs[i] : null;
           const mk = (id, side, i, isOdd) => { const c = Cd[id] || {}, p = resolvedAt(side, i), win = p ? p.win : undefined, x = xOf(side, i), y0 = yOf(side);
             const ink = side === "you" ? "240,216,154" : "255,176,0";
             const lifted = p && win === side, lost = p && win && win !== side, tied = p && !win;
-            const onStage = stage === i; // this card's pairing is the one at the centre: it slides in to meet its opponent
-            const faceDown = side === "sky" && !onStage && !p && !(isOdd && oddOn); // she shows a held card only when it steps onto the stage
-            const resolvedHere = onStage && !!p; // the strike has landed on this stage
-            const push = resolvedHere && win ? (win === side ? (side === "you" ? -12 : 12) : (side === "you" ? 8 : -8)) : 0; // the winner steps into the gap, the loser recoils
-            const sx = onStage ? 466 - (x + W / 2) : 0, sy = onStage ? STG[side] - (y0 + 34) : 0;
-            const dim = onStage ? 1 : lost ? .55 : tied ? .42 : isOdd && oddOn ? .5 : (done > i || (isOdd && oddOn)) ? .8 : 1;
+            const onStage = stage === i; // this pairing is the one resolving now
+            const faceDown = side === "sky" && !onStage && !p && !(isOdd && oddOn); // she shows a held card only as its pair comes up
+            const resolvedHere = onStage && !!p;
+            // the pair steps together a few px as it resolves: the winner leans in, the loser gives
+            const lean = resolvedHere && win ? (win === side ? (side === leadSide ? 6 : -6) : (side === leadSide ? -3 : 3)) : 0;
+            const dim = onStage ? 1 : lost ? .5 : tied ? .6 : isOdd && oddOn ? .55 : 1;
             return { box: this._artBox(id), shapes: window.ManzilArt ? this._tintArt(id, window.ManzilArt.get(id)) : [], l: c.l == null ? "" : String(c.l), r: c.r == null ? "" : String(c.r), name: (c.name || "").toLowerCase(),
-              art: "position:absolute;left:0;right:0;margin:0 auto;top:50%;transform:translateY(-58%);width:36px;height:34px;transition:opacity .3s ease;opacity:" + (onStage && !isOdd ? .28 : .94),
-              wrap: "position:absolute;left:" + x + "px;top:" + y0 + "px;width:" + W + "px;pointer-events:none;z-index:" + (onStage ? 3 : 1) + ";animation:mzFadeUp .7s ease " + (i * .08).toFixed(2) + "s both",
-              card: "position:relative;width:" + W + "px;height:68px;border-radius:5px;background:" + this._qWash(id, .6) + "linear-gradient(160deg, #241B08, #0B0703);border:1px solid rgba(" + ink + "," + (lifted || onStage ? 1 : .7) + ");box-shadow:0 6px 16px rgba(0,0,0,.6)" + (lifted ? ", 0 0 18px rgba(" + ink + ",.55)" : onStage ? ", 0 0 14px rgba(" + ink + ",.35)" : "") + ";transition:transform .42s cubic-bezier(.3,1.2,.4,1), opacity .4s ease, box-shadow .35s ease;transform:translate(" + sx + "px," + (sy + push) + "px) scale(" + (onStage ? 1.2 : 1) + ");opacity:" + dim,
+              art: "position:absolute;left:0;right:0;margin:0 auto;top:50%;transform:translateY(-58%);width:32px;height:30px;transition:opacity .3s ease;opacity:" + (p || onStage ? .3 : .94),
+              wrap: "position:absolute;left:" + x + "px;top:" + y0 + "px;width:" + W + "px;pointer-events:none;z-index:" + (onStage ? 3 : 1) + ";animation:mzFadeUp .5s cubic-bezier(.3,1.2,.4,1) " + (i * .06).toFixed(2) + "s both",
+              card: "position:relative;width:" + W + "px;height:" + H + "px;border-radius:5px;background:" + this._qWash(id, .6) + "linear-gradient(160deg, #241B08, #0B0703);border:1px solid rgba(" + ink + "," + (lifted || onStage ? 1 : .7) + ");box-shadow:0 6px 16px rgba(0,0,0,.6)" + (lifted ? ", 0 0 16px rgba(" + ink + ",.55)" : onStage ? ", 0 0 12px rgba(" + ink + ",.35)" : "") + ";transition:transform .42s cubic-bezier(.3,1.2,.4,1), opacity .4s ease, box-shadow .35s ease;transform:translateY(" + lean + "px);opacity:" + dim,
               back: "position:absolute;inset:0;border-radius:5px;background:linear-gradient(160deg, #1A1206, #070402);border:1px solid rgba(255,176,0,.55);pointer-events:none;transform-origin:50% 50%;" + (faceDown ? "opacity:1" : "animation:mzDawnFlip .34s ease both"),
-              pip: "display:none;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + (onStage ? 24 : 13) + "px;line-height:1;color:rgb(" + ink + ");text-shadow:0 0 14px rgba(" + ink + ",.9);transition:opacity .3s ease, top .42s ease, left .42s ease;opacity:" + (lifted && onStage ? 1 : 0), pipT: "+1",
-              tot: "position:absolute;left:" + sx + "px;width:" + W + "px;top:" + (sy + 14) + "px;height:40px;line-height:40px;text-align:center;transform:scale(1.2);font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px;color:" + (p && win && win !== side ? "rgba(242,234,214,.6)" : "#FFFDF5") + ";text-shadow:0 0 12px rgba(" + ink + ",.9), 0 0 4px rgba(5,3,2,1), 0 1px 2px rgba(5,3,2,1);transition:opacity .3s ease .25s;z-index:4;opacity:" + (onStage && !isOdd ? 1 : 0), totT: String((c.l || 0) + (c.r || 0)),
-              under: "position:absolute;left:" + (sx - 40) + "px;width:" + (W + 80) + "px;top:" + (side === "you" ? -14 : 72) + "px;text-align:center;font-family:'Karla',sans-serif;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(154,138,94,.95);transition:opacity .4s ease, top .42s ease, left .42s ease;opacity:" + (!onStage && seen < 3 && ((isOdd && oddOn) || tied) ? 1 : 0),
-              underT: isOdd ? "unopposed \u00b7 nothing" : tied ? "even \u00b7 nobody" : "" }; };
+              pip: "display:none", pipT: "",
+              // the printed total INSIDE the card once its pair is up, so the gap between the rows belongs to the line
+              tot: "position:absolute;left:0;width:" + W + "px;top:" + Math.round(H / 2 - 13) + "px;height:26px;line-height:26px;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;color:" + (lost ? "rgba(242,234,214,.55)" : "#FFFDF5") + ";text-shadow:0 0 10px rgba(" + ink + ",.9), 0 0 4px rgba(5,3,2,1);transition:opacity .3s ease .2s;z-index:4;opacity:" + ((p || onStage) && !(isOdd && !oddOn) ? 1 : 0), totT: String((c.l || 0) + (c.r || 0)),
+              under: "display:none", underT: "" }; };
           const Y = D.pairs.map(p => p.y), S = D.pairs.map(p => p.s);
           if (D.odd) (D.odd.side === "you" ? Y : S).push(D.odd.id);
           Y.forEach((id, i) => dawnCards.push(mk(id, "you", i, D.odd && D.odd.side === "you" && i === D.pairs.length)));
           S.forEach((id, i) => dawnCards.push(mk(id, "sky", i, D.odd && D.odd.side === "sky" && i === D.pairs.length)));
-          dawnLines = [].map((p, i) => { if (i === stage) return null; const x1 = xOf("you", i) + W, x2 = xOf("sky", i), y = top + 30 + i * 8, sag = 14 + i * 22; const col = p.win === "you" ? "240,216,154" : p.win === "sky" ? "255,176,0" : "154,138,94";
-            return { d: "M" + x1 + " " + y + " C " + (x1 + 24) + " " + (y + sag) + ", " + (x2 - 24) + " " + (y + sag) + ", " + x2 + " " + y, stroke: "rgba(" + col + "," + (p.win ? .6 : .3) + ")", style: "stroke-dasharray:600;animation:mzDawnLine .45s ease both" }; }).filter(Boolean);
-          dawnLinesStyle = "position:absolute;left:0;top:0;width:932px;height:200px;pointer-events:none";
+          // the row labels name the seat: "you lead" / "hult follows" at the left of each row (anchored by right:, no transform — an
+          // animation fill of transform:none would clobber a positioning transform)
+          const oppNm = String(this._oppLabel() || "she").toLowerCase();
+          const lbl = (side, y) => ({ text: (side === "you" ? "you" : oppNm) + (side === leadSide ? " lead" + (side === "you" ? "" : "s") : " follow" + (side === "you" ? "" : "s")), tstyle: "position:absolute;right:" + (932 - (x0 - 14)) + "px;top:" + (y + H / 2 - 7) + "px;font-family:'Karla',sans-serif;font-size:11px;letter-spacing:.03em;color:rgba(" + (side === "you" ? "240,216,154" : "255,176,0") + ",.85);white-space:nowrap;animation:mzLobbyIn .5s ease .2s both" });
+          // the pair lines, one BETWEEN each resolved pair, and they stay; centred on the column by arithmetic
+          const LW = W + G, lineX = (i) => xOf("you", i) + W / 2 - LW / 2, lineY = topRow + H + 6;
+          const lineT = (p, i) => p.win === "you" ? p.ty + " against " + p.ts + ": yours" : p.win === "sky" ? p.ts + " against " + p.ty + ": hers" : p.ty + " against " + p.ts + ": even";
+          const lineS = (i, col) => "position:absolute;left:" + lineX(i) + "px;top:" + lineY + "px;width:" + LW + "px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:11px;line-height:1.2;color:" + col + ";text-shadow:0 1px 4px rgba(5,3,2,1);white-space:nowrap;animation:mzLobbyIn .4s ease both";
+          dawnLines = [lbl(leadSide, topRow), lbl(folSide, botRow)].concat(D.pairs.map((p, i) => i < done ? { text: lineT(p, i), tstyle: lineS(i, p.win === "you" ? "#F0D89A" : p.win === "sky" ? "#FFB000" : "rgba(216,200,156,.85)") } : null).filter(Boolean));
+          if (D.odd && oddOn) dawnLines.push({ text: "nothing to meet it", tstyle: lineS(D.pairs.length, "rgba(154,138,94,.95)") });
+          dawnLinesStyle = "position:absolute;left:0;top:0;width:932px;height:430px;pointer-events:none;z-index:4";
           const sp = stage >= 0 && stage < D.pairs.length ? D.pairs[stage] : null;
-          dawnClashOn = !!(sp && done > stage && sp.win);
-          dawnClash = dawnClashOn ? "position:absolute;left:" + (466 - 40) + "px;top:" + (195 - 40) + "px;width:80px;height:80px;border-radius:50%;border:1.5px solid rgba(" + (sp.win === "you" ? "240,216,154" : "255,176,0") + ",.85);box-shadow:0 0 14px rgba(" + (sp.win === "you" ? "240,216,154" : "255,176,0") + ",.5);pointer-events:none;z-index:4;animation:mzCfShock .6s cubic-bezier(.2,.7,.3,1) both" : "display:none";
-          dawnVs = "position:absolute;left:" + (466 - 30) + "px;width:60px;top:186px;height:18px;z-index:5;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:" + (sp && done > stage && sp.win ? 600 : 400) + ";font-style:" + (sp && done > stage ? "normal" : "italic") + ";font-size:17px;line-height:18px;color:" + (sp && done > stage && sp.win ? (sp.win === "you" ? "#F0D89A" : "#FFB000") : "rgba(240,216,154,.75)") + ";text-shadow:0 0 12px " + (sp && done > stage && sp.win === "sky" ? "rgba(255,176,0,.9)" : "rgba(240,216,154,.8)") + ", 0 1px 3px rgba(5,3,2,1);transition:opacity .25s ease;opacity:" + (sp ? 1 : 0);
-          dawnVsT = sp ? (done > stage ? (sp.win ? "+1" : "=") : "v") : "";
-          dawnCap = "position:absolute;left:" + (466 + 64) + "px;width:240px;top:104px;z-index:4;text-align:left;font-family:'Karla',sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,216,154,.6);transition:opacity .3s ease;opacity:" + (stage >= 0 ? 1 : 0);
-          dawnCapT = sp ? (done > stage ? (sp.win === "you" ? sp.ty + " against " + sp.ts + " \u00b7 yours is higher" : sp.win === "sky" ? sp.ts + " against " + sp.ty + " \u00b7 hers is higher" : sp.ty + " against " + sp.ts + " \u00b7 even, nobody scores") : (stage === 0 ? "she turns the card she kept back \u00b7 your strongest against hers" : "the next two")) : (stage === D.pairs.length && D.odd ? "unopposed \u00b7 no one left to meet it \u00b7 nothing" : "");
+          // the centre clash ring and the +1 are OUT with the stage; the pair resolves in its own column
+          dawnClashOn = false; dawnClash = "display:none";
+          dawnVs = "display:none"; dawnVsT = "";
+          // the header over the shelf: "dawn: the held cards · her strongest against yours", then the running pair
+          const dawnDone = D && ds > D.pairs.length && stage < 0; // every pairing resolved, the shelf's own verdict
+          dawnCap = "position:absolute;left:0;width:932px;top:" + (topRow - (dawnDone ? 40 : 22)) + "px;z-index:4;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:" + (dawnDone ? 600 : 400) + ";font-size:" + (dawnDone ? 30 : 13) + "px;line-height:1.15;color:" + (dawnDone ? "#F0D89A" : "rgba(240,222,180,.85)") + ";text-shadow:" + (dawnDone ? "0 0 18px rgba(240,216,154,.45), 0 2px 8px rgba(5,3,2,.9)" : "none") + ";transition:opacity .3s ease, font-size .35s ease;opacity:" + (stage >= 0 || dawnDone ? 1 : 0);
+          const dY = D ? D.pairs.filter(p => p.win === "you").length : 0, dS = D ? D.pairs.filter(p => p.win === "sky").length : 0;
+          dawnCapT = dawnDone ? (dY > dS ? "dawn is yours, " + dY + " to " + dS : dS > dY ? "dawn is hers, " + dS + " to " + dY : "dawn holds level, nobody scores")
+            : stage === 0 && !sp ? "dawn: the held cards · " + (leadSide === "sky" ? "her" : "your") + " strongest against " + (leadSide === "sky" ? "yours" : "hers") : sp && done <= stage ? "the next pair" : stage === D.pairs.length && D.odd ? "dawn: the held cards" : "dawn: the held cards";
           dawnWash = "position:absolute;left:0;right:0;top:0;height:52%;pointer-events:none;background:linear-gradient(180deg, rgba(" + tq + ",.16), rgba(240,216,154,.08) 55%, transparent);animation:mzFadeUp 1.2s ease both";
-          dawnEyebrow = "position:absolute;left:18px;top:12px;text-align:left;font-family:'Karla',sans-serif;font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:rgba(240,216,154," + (seen < 3 ? .75 : .3) + ");animation:mzFadeUp .8s ease both";
+          dawnEyebrow = "display:none;position:absolute;left:18px;top:28px;text-align:left;font-family:'Cormorant Garamond',serif;font-size:12px;color:rgba(240,216,154," + (seen < 3 ? .8 : .35) + ");animation:mzFadeUp .8s ease both";
         }
         // the dawn points fall into the running numbers as the pairings resolve, and stay through the fade
         if (f.dawnOn && ds >= 0 && D) D.pairs.slice(0, Math.min(ds, D.pairs.length)).forEach(p => { if (p.win === "you") cy2++; else if (p.win === "sky") cs2++; });
@@ -12444,29 +12505,40 @@ class Component extends DCLogic {
           return out; };
         const wc = f.winner === "sky" ? "255,176,0" : "240,216,154";
         const numS = (side, dimmed) => { const e = side === "you" ? endL : endR, ink = side === "you" ? "240,216,154" : "255,176,0";
-          return "position:absolute;left:" + ((side === "you" ? e[0] - 58 : e[0] + 58) - 40).toFixed(1) + "px;top:" + (e[1] + 18).toFixed(1) + "px;width:80px;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;line-height:1;color:rgb(" + ink + ");text-shadow:0 0 14px rgba(" + ink + "," + (dimmed ? .2 : .7) + "), 0 2px 8px rgba(5,3,2,.9);transition:left 1.1s ease-out, top 1.1s ease-out, opacity .5s ease, text-shadow .5s ease;opacity:" + (f.step < 1 ? 0 : dimmed ? .45 : 1); };
+          return "position:absolute;left:" + ((side === "you" ? e[0] - 58 : e[0] + 58) - 40).toFixed(1) + "px;top:" + (e[1] + 18).toFixed(1) + "px;width:80px;text-align:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1;color:rgb(" + ink + ");text-shadow:0 0 14px rgba(" + ink + "," + (dimmed ? .2 : .7) + "), 0 2px 8px rgba(5,3,2,.9);transition:left 1.1s ease-out, top 1.1s ease-out, opacity .5s ease, text-shadow .5s ease;opacity:" + (f.step < 1 ? 0 : dimmed ? .45 : 1); };
         // the verdict names the players (14 sep 2026, user): "bluenocturne wins by two", "kito wins by two"
         const youW = String((st.duel && st.duel.a) || this._userName() || "you");
         const oppW = st.duel ? String(st.duel.b || "she") : String(this._oppLabel() || "she");
         const margin = Math.abs(f.you - f.sky), MW = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
         const winName = f.winner === "you" ? youW : f.winner === "sky" ? oppW : "";
-        const wordT = !tipped ? (settled && level ? "level" : "") : winName ? winName + " wins" : "level";
-        const capT = !settled ? "" : level ? (tipped ? "level \u00b7 the second hand takes it" : "the count stands even") : "by " + (MW[margin] || margin);
-        return { countFxOn: true, dawnOn, dawnCards, dawnLines, dawnWash, dawnEyebrow, dawnLinesStyle, dawnVs, dawnVsT, dawnCap, dawnCapT, dawnClashOn, dawnClash, cfLights: pulses,
-          scWrap: "position:absolute;inset:0;width:932px;height:430px;pointer-events:none;z-index:7;animation:mzFadeUp .5s ease both",
+        const wordT = !tipped ? (settled && level ? "level" : "") : winName ? winName + " takes the board" : "level";
+        const capT = !settled ? "" : level ? (tipped ? "level: the answerer takes it" : "the count stands even") : "by " + (MW[margin] || margin);
+        // the total row: "six against seven. hult takes the board." held with the rest until the fade
+        const totOn = capStep >= 4 && tipped;
+        cfCaps.push({ label: "total", value: totOn ? nw(f.you) + " against " + nw(f.sky) : "", lines: [], linesOn: false,
+          style: "display:flex;flex-direction:column;gap:2px;margin-top:3px;padding-top:5px;border-top:1px solid rgba(240,216,154,.22);transition:opacity .45s ease, transform .45s ease;opacity:" + (totOn ? 1 : 0) + ";transform:translateY(" + (totOn ? 0 : 5) + "px)",
+          labelStyle: "font-family:'Karla',sans-serif;font-size:11px;letter-spacing:.02em;color:#B8A87C;flex:none;padding-top:2px", valueStyle: "font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;line-height:1.2;color:rgb(" + wc + ");text-align:right;text-wrap:pretty" });
+        return { countFxOn: true, cfCaps, cfHomeGlow: [],
+          // ONE PLAQUE, top-left (15 sep 2026, user "a cluster"): the four rows sit on a dark tablet with a hairline so they
+          // read as one ledger, not loose words over the sky; clear of the road's arc, never over a card. the verdict
+          // sentence lives under the beam (scWord) and is not repeated here.
+          cfCapsWrap: "position:absolute;left:18px;top:28px;width:250px;padding:9px 12px 10px;border-radius:5px;background:rgba(6,4,2,.82);border:1px solid rgba(240,216,154,.16);box-shadow:0 8px 24px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:4px;z-index:9;pointer-events:none;transition:opacity .4s ease;opacity:" + (capStep >= 1 ? 1 : 0),
+          dawnOn, dawnCards, dawnLines, dawnWash, dawnEyebrow, dawnLinesStyle, dawnVs, dawnVsT, dawnCap, dawnCapT, dawnClashOn, dawnClash, cfLights: pulses,
+          scWrap: "position:absolute;inset:0;width:932px;height:430px;pointer-events:none;z-index:7;animation:mzLobbyIn .5s ease backwards;transition:opacity .4s ease;opacity:" + (dawnOn ? .18 : 1),
           scBeam: "transform-origin:466px 318px;transform:rotate(" + ang.toFixed(2) + "deg);transition:transform " + (settled ? "1.1s cubic-bezier(.3,.9,.3,1)" : "1.1s ease-out"),
           scPanYou: "transition:filter .5s ease" + (tipped && f.winner === "you" ? ";filter:drop-shadow(0 0 10px rgba(240,216,154,.8))" : ""),
           scPanSky: "transition:filter .5s ease" + (tipped && f.winner === "sky" ? ";filter:drop-shadow(0 0 10px rgba(255,176,0,.8))" : ""),
           scDotsYou: dots(cy2), scDotsSky: dots(cs2), scHangYou: hang(endL), scHangSky: hang(endR),
           scNumYou: numS("you", tipped && f.winner !== "you"), scNumSky: numS("sky", tipped && f.winner !== "sky"),
           scTextWrap: "position:absolute;inset:0;width:932px;height:430px;pointer-events:none;z-index:8",
-          scWordBg: "position:absolute;left:286px;top:372px;width:360px;height:64px;border-radius:50%;background:radial-gradient(ellipse, rgba(5,3,2,.85), transparent 72%);transition:opacity .45s ease;opacity:" + (wordT || capT ? 1 : 0),
-          scWord: "position:absolute;left:266px;top:380px;width:400px;text-align:center;white-space:nowrap;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + (wordT === "level" ? 22 : wordT.length > 18 ? 24 : 30) + "px;line-height:1;color:rgb(" + (tipped ? wc : "240,216,154") + ");text-shadow:0 0 16px rgba(" + wc + ",.6), 0 2px 8px rgba(5,3,2,.9);transition:opacity .45s ease;opacity:" + (wordT ? 1 : 0),
+          scWordBg: "position:absolute;left:216px;top:372px;width:500px;height:64px;border-radius:50%;background:radial-gradient(ellipse, rgba(5,3,2,.85), transparent 72%);transition:opacity .45s ease;opacity:" + (wordT || capT ? 1 : 0),
+          scWord: "position:absolute;left:166px;top:380px;width:600px;text-align:center;white-space:nowrap;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;line-height:1;color:rgb(" + (tipped ? wc : "240,216,154") + ");text-shadow:0 0 16px rgba(" + wc + ",.6), 0 2px 8px rgba(5,3,2,.9);transition:opacity .45s ease;opacity:" + (wordT ? 1 : 0),
           scWordT: wordT,
-          scCap: "position:absolute;left:316px;top:412px;width:300px;text-align:center;font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(154,138,94,.95);text-shadow:0 1px 6px rgba(5,3,2,.9);transition:opacity .45s ease .2s;opacity:" + (capT ? 1 : 0),
+          scCap: "position:absolute;left:266px;top:414px;width:400px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:11px;color:rgba(154,138,94,.95);text-shadow:0 1px 6px rgba(5,3,2,.9);transition:opacity .45s ease .2s;opacity:" + (capT ? 1 : 0),
           scCapT: capT,
           cfWrapStyle: "position:absolute;inset:0;z-index:7;pointer-events:none;transition:opacity .6s ease;opacity:" + (f.step >= 4 ? 0 : 1),
-          cfVeil: "display:none",
+          // the board dims under the settle (15 sep 2026, the dim rule): a sentence in the middle of the screen gets a fifth of the board behind it
+          cfVeil: "position:absolute;inset:0;background:rgba(5,3,2," + (f.step >= 1 ? .5 : 0) + ");transition:background .8s ease;pointer-events:none",
           cfBoomOn: false,
           cfYouN: cy2, cfSkyN: cs2 };
       })(st.countFx)),
