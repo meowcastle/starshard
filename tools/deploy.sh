@@ -48,6 +48,19 @@ BACKEND_LIB_FILES="starshard-api/lib/manzil-engine.js starshard-api/lib/manzil-l
 cd "$(dirname "$0")/.."
 
 deploy_frontend() {
+  # The dc-runtime fetches React, ReactDOM and @babel/standalone from unpkg.com
+  # on every page load — ~3.2MB before first paint, transpiled in the browser —
+  # and support.js's own comment is blunt about the failure mode: if unpkg is
+  # slow, blocked or down, the site renders raw {{ mustaches }}. build/support.js
+  # is the pristine runtime plus a shim that points those three at /vendor/ on
+  # this origin, through the runtime's OWN window.__resources hook (cdn.ts), so
+  # nothing in the generated file is edited. Regenerated here on every deploy,
+  # which is the point: a Design delivery replacing support.js cannot silently
+  # put unpkg back in the critical path. Fails loudly if vendor/ is missing or
+  # its contents no longer match the SRI hashes support.js expects.
+  echo "==> building the self-hosted runtime"
+  node tools/selfhost-runtime.mjs
+
   echo "==> index.html"
   # Manzil is the live root page as of the 24 Aug restructure — Justin's call
   # to give the minigame the whole staging domain rather than a /manzil/
@@ -73,10 +86,34 @@ deploy_frontend() {
   # staging; see that block below. See CLAUDE.md's receipt protocol.
   ssh "$HOST" "cat > $FRONTEND_REMOTE/index.html" < "Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html"
   for f in $FRONTEND_FILES; do
+    # support.js ships from build/ below, not from the repo root: the deployed
+    # copy carries the self-hosting shim. Keep it listed in FRONTEND_FILES so
+    # the inventory stays honest about what the page loads.
+    if [ "$f" = "support.js" ]; then continue; fi
     if [ -f "$f" ]; then
       echo "==> $f"
       ssh "$HOST" "cat > $FRONTEND_REMOTE/$f" < "$f"
     fi
+  done
+  echo "==> support.js (self-hosted runtime)"
+  ssh "$HOST" "cat > $FRONTEND_REMOTE/support.js" < build/support.js
+  # vendor/ — the three runtime deps, served from this origin. Root-absolute
+  # "/vendor/..." because the runtime injects these <script> tags at boot and a
+  # relative URL would resolve against the DOCUMENT: correct at the site root,
+  # a 404 under /star-shard/ and /account/, which load the same runtime.
+  # Skipped when the remote copy already matches — babel.js alone is 3MB and
+  # this is cat-over-ssh on a home uplink, but it only changes on a version bump.
+  echo "==> vendor/"
+  ssh "$HOST" "mkdir -p $FRONTEND_REMOTE/vendor"
+  for f in react.js react-dom.js babel.js; do
+    want=$(openssl dgst -sha256 -binary "vendor/$f" | openssl base64 -A)
+    have=$(ssh "$HOST" "openssl dgst -sha256 -binary '$FRONTEND_REMOTE/vendor/$f' 2>/dev/null | openssl base64 -A" 2>/dev/null || true)
+    if [ "$want" = "$have" ]; then
+      echo "==> vendor/$f (unchanged)"
+      continue
+    fi
+    echo "==> vendor/$f"
+    ssh "$HOST" "cat > $FRONTEND_REMOTE/vendor/$f" < "vendor/$f"
   done
   # star-shard/ — Star Shard v4, relocated off the root to make room for
   # Manzil. star-shard/index.html is a generated-by-hand copy of

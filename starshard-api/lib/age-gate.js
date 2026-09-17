@@ -83,4 +83,85 @@ function minAgeForTz(tz) {
   return COUNTRY_MIN_AGE[country] || DEFAULT_MIN_AGE;
 }
 
-module.exports = { minAgeForTz, DEFAULT_MIN_AGE, COUNTRY_MIN_AGE, TZ_COUNTRY };
+/** country: a two-letter ISO code, as Cloudflare's CF-IPCountry header gives
+ * it. Same table as minAgeForTz, one step shorter because there is no time
+ * zone to translate. Cloudflare sends "XX" when it genuinely cannot tell
+ * (and "T1" for Tor); both fall through to the default, which is correct —
+ * unknown is not the same as restricted. */
+function minAgeForCountry(country) {
+  if (typeof country !== 'string' || country.length !== 2) return DEFAULT_MIN_AGE;
+  return COUNTRY_MIN_AGE[country.toUpperCase()] || DEFAULT_MIN_AGE;
+}
+
+// How the two signals combine when both are present. This is a product
+// decision, not a technical one — see the comment on minAgeFor below.
+//
+//   'country'    (default, Justin's call 17 Sep 2026) trust the edge, and fall
+//                back to the time zone only when the edge did not answer.
+//                Strictly better geolocation than the client ever gave us, and
+//                it does not over-restrict a traveller — which is the same
+//                reasoning that reversed the flat-16 decision on 30 Aug. A VPN
+//                still defeats it in one click, exactly as it defeats the time
+//                zone today; this raises the floor, it does not close the door.
+//   'strictest'  the higher of the two minimums. Harder to game (you would have
+//                to defeat the edge AND your own clock), at the cost of
+//                over-restricting real travellers and VPN users by a year or
+//                three. Set AGE_REGION_POLICY=strictest to switch.
+const COMBINE = process.env.AGE_REGION_POLICY === 'strictest' ? 'strictest' : 'country';
+
+/** The one entry point callers should use.
+ *
+ * Both inputs are optional and both are advisory. `country` comes from
+ * Cloudflare's CF-IPCountry header, which is real network-path geolocation
+ * rather than a self-reported value, so it is a genuinely better signal than
+ * the time zone the client sends. It is still not proof: a VPN moves it.
+ *
+ * NEITHER IS THE BOUNDARY. Signup re-checks the age server-side regardless,
+ * exactly as before — this only decides WHICH minimum that re-check applies.
+ * See the region-detection note at the top of this file, which this does not
+ * replace so much as finally give a second opinion.
+ */
+function minAgeFor({ country, tz } = {}) {
+  const byCountry = minAgeForCountry(country);
+  const byTz = minAgeForTz(tz);
+  // "Did the edge answer?", NOT "is this country in the elevated table?".
+  // Most of the world is absent from COUNTRY_MIN_AGE precisely because it sits
+  // at the 13 floor, so testing membership treated every US/CA/AU/JP answer as
+  // no answer and fell through to the client's time zone — which is the one
+  // signal the edge is supposed to outrank.
+  const haveCountry = typeof country === 'string' && /^[A-Za-z]{2}$/.test(country)
+    && !['XX', 'T1'].includes(country.toUpperCase());
+  if (COMBINE === 'country') return haveCountry ? byCountry : byTz;
+  return Math.max(byCountry, byTz);
+}
+
+/** Pull the edge's country out of a request, or null when there is no edge in
+ * front of us.
+ *
+ * SPOOFABLE UNLESS THE EDGE IS ACTUALLY IN FRONT. CF-IPCountry is a plain
+ * request header. If anything can reach this API without passing through
+ * Cloudflare, a caller can set it by hand — and under the 'country' policy
+ * that is a way to talk the minimum age down from 16 to 13. So server.js gates
+ * every call to this behind TRUST_EDGE_HEADERS, which stays off until the API
+ * itself is behind the tunnel and direct origin access is closed off. Off, this
+ * whole path is inert and the time zone decides, exactly as it did before.
+ */
+function countryOfRequest(req) {
+  const cc = req && req.headers && req.headers['cf-ipcountry'];
+  if (typeof cc !== 'string' || cc.length !== 2) return null;
+  const up = cc.toUpperCase();
+  // Cloudflare's own sentinels for "no answer". Treat them as no answer.
+  if (up === 'XX' || up === 'T1') return null;
+  return up;
+}
+
+module.exports = {
+  minAgeForTz,
+  minAgeForCountry,
+  minAgeFor,
+  countryOfRequest,
+  COMBINE,
+  DEFAULT_MIN_AGE,
+  COUNTRY_MIN_AGE,
+  TZ_COUNTRY,
+};

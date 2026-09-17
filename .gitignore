@@ -45,3 +45,7 @@ design-system/.design-sync/node_modules
 .env
 .env.*
 !.env.example
+
+# tools/selfhost-runtime.mjs output — the deployed copy of the dc-runtime,
+# regenerated on every deploy from the pristine support.js + vendor/.
+build/

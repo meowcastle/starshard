@@ -5,8 +5,9 @@
   "scripts": {
     "test": "node --test \"test/*.test.mjs\"",
     "bindings": "node tools/bindings.mjs",
-    "check": "npm run bindings && npm run manzil && npm test",
-    "manzil": "node tools/check-manzil.mjs"
+    "check": "npm run bindings && npm run manzil && npm run selfhost && npm test",
+    "manzil": "node tools/check-manzil.mjs",
+    "selfhost": "node tools/selfhost-runtime.mjs --check"
   },
   "devDependencies": {
     "astronomy-engine": "^2.1.19",

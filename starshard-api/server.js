@@ -11,7 +11,7 @@ const rateLimit = require('express-rate-limit');
 const { Resend } = require('resend');
 const { Server: SocketIOServer } = require('socket.io');
 const { createManzilLobby } = require('./lib/manzil-lobby');
-const { minAgeForTz } = require('./lib/age-gate');
+const { minAgeFor, countryOfRequest } = require('./lib/age-gate');
 
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -61,6 +61,29 @@ if (IS_PROD && !process.env.ALLOWED_ORIGINS) {
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://staging.starshard.net')
   .split(',').map(o => o.trim()).filter(Boolean);
+
+// Whether to believe edge-supplied headers (today: CF-IPCountry, which the age
+// gate uses to pick a region minimum). CF-IPCountry is an ordinary request
+// header — it is only trustworthy if EVERY route to this API passes through
+// Cloudflare. While the origin is still reachable directly, a caller can set it
+// by hand, and under the 'country' policy that is a way to talk a 16 minimum
+// down to 13. So this stays off until the API itself is behind the tunnel AND
+// direct origin access is closed. Off, the age gate falls back to the client's
+// time zone and behaves exactly as it did before the header existed.
+//
+// Turning it on: put the API behind the tunnel, block direct origin access,
+// then set TRUST_EDGE_HEADERS=1. Not before, and not one without the other.
+const TRUST_EDGE_HEADERS = process.env.TRUST_EDGE_HEADERS === '1';
+
+/** The region signals for this request. `country` is null unless we are behind
+ * the edge and configured to believe it; `tz` is the client's own claim, which
+ * has always been advisory. Neither is the boundary — signup re-checks age. */
+function regionOf(req) {
+  return {
+    country: TRUST_EDGE_HEADERS ? countryOfRequest(req) : null,
+    tz: req.body && req.body.tz,
+  };
+}
 
 const app = express();
 app.set('trust proxy', 1);
@@ -174,9 +197,14 @@ function computeAge(birthDate) {
 }
 
 // Replaced 30 Aug 2026 (Justin's call) with lib/age-gate.js's per-region
-// minAgeForTz() — 13 worldwide by default, 16 (or 14/15) only in the
-// GDPR member states that set a higher digital-consent age. See that
-// file's header for the region-detection method and its limits.
+// minimum — 13 worldwide by default, 16 (or 14/15) only in the GDPR member
+// states that set a higher digital-consent age.
+//
+// Updated 17 Sep 2026: the entry point is minAgeFor({country, tz}), not
+// minAgeForTz(tz). The time zone is still the fallback, but Cloudflare's
+// CF-IPCountry now outranks it WHEN the edge is in front and trusted — see
+// regionOf()/TRUST_EDGE_HEADERS above, which keeps that off by default. See
+// lib/age-gate.js's header for the region-detection method and its limits.
 
 // Star Shard's opt-in path only (PUT /api/me/birth) — Manzil signup never
 // calls this anymore, see the 24 Aug PM handoff §2. Only birthDate is
@@ -305,7 +333,7 @@ app.post('/api/auth/age-check', ageCheckLimiter, wrap(async (req, res) => {
   const { birthDate, tz } = req.body || {};
   const age = computeAge(birthDate);
   if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
-  res.json({ ok: age >= minAgeForTz(tz) });
+  res.json({ ok: age >= minAgeFor({ country: regionOf(req).country, tz }) });
 }));
 
 app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
@@ -328,7 +356,7 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   // as the birth date itself, just extended to the one new signal.
   const age = computeAge(req.body && req.body.birthDate);
   if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
-  if (age < minAgeForTz(req.body && req.body.tz)) return res.status(403).json({ error: 'too_young' });
+  if (age < minAgeFor(regionOf(req))) return res.status(403).json({ error: 'too_young' });
   const birthYear = Number(String(req.body.birthDate).slice(0, 4));
 
   const manzilPack = parseManzilPack(req.body);
