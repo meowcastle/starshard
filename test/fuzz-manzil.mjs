@@ -149,6 +149,65 @@ for (const [id, name] of [[1,'gate'],[3,'gathered stars'],[5,'blaze'],[6,'storm'
   if (r.skipped) note('note', `level ${id}`, 'could not place', r.skipped);
 }
 
+// ---- 2c. FINISH a board and ADVANCE the rung --------------------------------
+// THE GAP THIS CLOSES, and it shipped: on 15 Sep the moon road stalled after the
+// first board on every night — _advanceRound threw on a walker record with no
+// `hand`, so the count resolved and then nothing happened, with the road full and
+// no control. Every check either side runs passed it. 2b places a card but never
+// fills the road, so the seam BETWEEN boards was never exercised: the same shape
+// of hole as "opens a level but never plays one", one layer further in.
+//
+// TWO THINGS THIS FIXTURE GOT WRONG ON THE FIRST WRITING, both found by breaking
+// the build on purpose and watching the check still pass:
+//   * withPage SPREADS the evaluate payload at the top level. Reading `r.res.phase`
+//     is always undefined, so the verdict never fired and all five levels "passed".
+//   * the count ceremony runs well past 7s (countFx step 3 at ~6.5s). A 3s wait
+//     lands mid-count, when phase is legitimately still "play".
+// So: poll for the phase to leave "play" rather than sleeping a guess, and read
+// the payload off `r` directly.
+console.log('\n2c. finish a board and advance to the next (the gap that shipped the road stall)');
+for (const [id, name, rung] of [[1,'gate',0],[9,'glance',2],[18,'heart',5],[19,'root',2],[23,'drum',7]]) {
+  const r = await withPage(browser, { [K + 'moon']: String(id) }, async page => {
+    return await page.evaluate(async (rung) => {
+      const m = window.manzil, sleep = ms => new Promise(r => setTimeout(r, ms));
+      if (!m) return { skipped: 'no dev handle' };
+      const five = Array.from({ length: 28 }, (_, i) => i + 1);
+      m.setState({ ...m._deckState(), ...m._freshRoadStep(rung, five), road: true, practice: false, duel: false, phase: 'play', dealt: true });
+      await sleep(900);
+      let guard = 0;
+      while ((m.state.slots || []).some(x => !x) && guard++ < 40) {
+        const side = m.state.turn, hand = side === 'you' ? m.state.hand : m.state.sky;
+        if (!hand || !hand.length) break;
+        const slot = m.state.slots.findIndex(x => !x);
+        try { m._commitPlace(hand[0], slot, false, side); } catch (e) { return { threw: 'lodge: ' + e.message }; }
+        await sleep(130);
+      }
+      const full = (m.state.slots || []).every(Boolean);
+      // wait for the count + dawn + _finish to hand the board to its beat
+      let settled = null;
+      for (let k = 0; k < 40 && !settled; k++) { await sleep(400); if (m.state.phase !== 'play') settled = m.state.phase; }
+      if (!settled) return { full, stalledAt: 'count', phase: m.state.phase, slots: (m.state.slots || []).filter(Boolean).length };
+      // drive the beat onward the way a tap does, and watch for the next board
+      let advanced = null;
+      for (let k = 0; k < 30 && !advanced; k++) {
+        try { m._roundAt = 0; m._exitRound(); } catch (e) { return { full, settled, threw: 'exitRound: ' + e.message }; }
+        await sleep(400);
+        const n = (m.state.slots || []).filter(Boolean).length;
+        if (m.state.phase === 'climb' || n < 9) advanced = m.state.phase + '/' + n;
+        if (['won', 'roadlost', 'intro', 'bigwin'].includes(m.state.phase)) advanced = m.state.phase;
+      }
+      return { full, settled, advanced, phase: m.state.phase, slots: (m.state.slots || []).filter(Boolean).length };
+    }, rung);
+  });
+  check(`board played out and advanced on level ${id} (${name}, rung ${rung})`, r);
+  if (r.threw) note('FAIL', `level ${id}`, 'threw while finishing the board', r.threw);
+  else if (r.skipped) note('note', `level ${id}`, 'skipped', r.skipped);
+  else if (r.full === false) note('note', `level ${id}`, 'road never filled', 'placed ' + r.slots);
+  else if (r.stalledAt === 'count') note('FAIL', `level ${id}`, 'THE COUNT NEVER ENDED', 'road full, phase still "play" after 16s');
+  else if (!r.advanced) note('FAIL', `level ${id}`, 'THE ROAD STALLED', `settled to "${r.settled}" but never reached the next board — this is the 15 Sep blocker`);
+  else console.log(`      ${name}: count -> ${r.settled} -> ${r.advanced}`);
+}
+
 // ---- 3. rapid + duplicate input ---------------------------------------------
 console.log('\n3. rapid / duplicate input');
 check('escape spam (30x)', await withPage(browser, null, async page => {
