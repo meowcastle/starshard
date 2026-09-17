@@ -1394,7 +1394,10 @@ function ladderOpponentCards(baseC, opponentLevels) {
   for (let i = 1; i <= 28; i++) {
     const lvl = opponentLevels[i] || 1;
     const grantOn = !!(baseC[i].grantOn && lvl >= 2);
-    C[200 + i] = { ...baseC[i], id: 200 + i, who: "sky", lvl, ab: lvl >= 2 ? baseC[i].sig : null,
+    // the mirror carries the player's LIVE ability, not the raw signature — see the client's _cards.
+    // This file ported the fault faithfully, so every ladder sim run before 17 sep 2026 gave the sky one
+    // live signature the player did not have on a fresh collection.
+    C[200 + i] = { ...baseC[i], id: 200 + i, who: "sky", lvl, ab: lvl >= 2 ? baseC[i].ab : null,
       grantOn, twoFaced: grantOn && baseC[i].quad === "seiryuu", homeM: i };
   }
   return C;
@@ -1572,6 +1575,40 @@ if (require.main === module) {
   const E = module.exports;
   const VECTORS = [
     // ---- THE DISTRICT'S FLOOR (15 sep 2026): m21, at the table only, a level board goes to the LEADER
+    // ---- THE MIRROR IS A MIRROR (17 sep 2026, Measurement's levels check §3) ------------------
+    ["the mirror reads the player's LIVE ability, whatever gate produced it", () => {
+      // THE ASYMMETRY MEASUREMENT FOUND IS CLIENT-ONLY, and this vector says why it cannot recur here.
+      // The client has a TWO-gate signature (lvl >= 3 AND the build spent door 2 on "s") and its mirror
+      // read the raw `sig`, so a card the player had not paid to wake was awake for the sky. THIS FILE
+      // deliberately models no build system (see the header: the two-gate check is collapsed to lvl >= 2
+      // for both sides), so it was never asymmetric — which is why the published sim tables are not
+      // affected. The invariant that matters in both places is the same: the mirror takes the player's
+      // ALREADY-GATED ability, never the signature behind it.
+      const base = E.cards({ levels: { 1: 3 }, builds: {} });
+      const C = E.ladderOpponentCards(base, { 1: 3 });
+      return C[201].ab === base[1].ab;   // whatever the gate decided, both sides agree
+    }, true],
+    ["the mirror DOES carry an ability the player has woken", () => {
+      const base = E.cards({ levels: { 1: 3 }, builds: { 1: { b: "s" } } }); // door 2 spent
+      if (base[1].ab == null) return false;
+      const C = E.ladderOpponentCards(base, { 1: 3 });
+      return C[201].ab === base[1].ab;
+    }, true],
+    ["the handicap's level drop still silences a woken ability", () => {
+      const base = E.cards({ levels: { 1: 3 }, builds: { 1: { b: "s" } } });
+      const C = E.ladderOpponentCards(base, { 1: 1 });          // knocked to level 1
+      return C[201].lvl === 1 && C[201].ab == null;
+    }, true],
+    ["a fresh collection gives neither side more live abilities than the other", () => {
+      // the shape Measurement measured on staging: player 0, sky 1. Neither side may lead.
+      const base = E.cards({ levels: { 5: 3, 6: 2, 10: 2, 17: 2, 18: 2 }, builds: {} });
+      const lv = {}; for (let i = 1; i <= 28; i++) lv[i] = base[i].lvl;
+      const C = E.ladderOpponentCards(base, lv);                 // a TRUE mirror, no handicap
+      let you = 0, sky = 0;
+      for (let i = 1; i <= 28; i++) { if (base[i].ab) you++; if (C[200 + i] && C[200 + i].ab) sky++; }
+      return you === sky;
+    }, true],
+
     ["the district's floor: at the table on m21 a level board goes to the LEADER", () => {
       const mk = (cfg) => { const g = E.mkGame({ tonight: 21, leader: "you", duel: true, ...cfg });
         const slots = Array.from({ length: g.len }, () => null);
@@ -1753,7 +1790,7 @@ if (require.main === module) {
       const baseC = E.cards({ levels });
       const opp = E.handicapLevels(levels, 0); // true mirror
       const C = E.ladderOpponentCards(baseC, opp);
-      return E.on({}, C[201]) === true && C[201].ab === baseC[1].sig;
+      return E.on({}, C[201]) === true && C[201].ab === baseC[1].ab;
     }, true],
     ["ladderOpponentCards: grants mirror onto a kept card when the base deck has grants on", () => {
       const levels = {}; for (let i = 1; i <= 28; i++) levels[i] = 3;

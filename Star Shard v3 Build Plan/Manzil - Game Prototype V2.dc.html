@@ -6779,7 +6779,14 @@ class Component extends DCLogic {
       if (bossM) { C[200 + id] = { ...base, who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true }; return; }
       const lvl = dropSet.has(id) ? 1 : base.lvl;
       const grantOn = !!(base.grantOn && lvl >= 2);
-      C[200 + id] = { ...base, lvl, ab: lvl >= 2 ? base.sig : null, grantOn,
+      // THE MIRROR MIRRORS THE PLAYER'S LIVE ABILITY, NOT ITS RAW SIGNATURE (17 sep 2026, Measurement's
+      // levels check §3). This read `base.sig` — the signature the card HAS — where the player's own gate
+      // is `sigOn = lvl >= 3 && bd.b === "s"`: the player must spend door 2 to wake it. The mirror spent
+      // nothing and woke it at lvl >= 2, so on a FRESH collection the sky held one live signature and the
+      // player held none, on the player's own sun house. `base.ab` is the player's already-gated ability,
+      // so the mirror now carries exactly what the player carries, minus the handicap's level drop.
+      // `grantOn` beside it was always right — it reads base.grantOn. This was the odd one out.
+      C[200 + id] = { ...base, lvl, ab: lvl >= 2 ? base.ab : null, grantOn,
         twoFaced: grantOn && base.quad === "seiryuu", who: "sky", loan: false, walker: true, homeM: id, planet: null, mirror: true };
     });
     // her cards wear L3 quiet by default; a whole set at L4 turns the whole game L4
