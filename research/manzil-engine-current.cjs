@@ -189,6 +189,7 @@ function mkGame(cfg) {
     roundWins: [],
     roadBoss: !!cfg.roadBoss, // is this specific board the mansion match, vs. a walker board tonight
     tonight: cfg.tonight || null, // which mansion's road this is — lawAt() and moveKey()'s tiebreak both key on this
+    duel: !!cfg.duel, // both hands are players (seat / live), never the "net" AI duel — see drawTo
   };
 }
 
@@ -959,9 +960,26 @@ function settleOf(g, slots, held) {
   };
 }
 
+// THE DISTRICT'S FLOOR (Design, 15 Sep 2026, the hush-nights decision §2). At the TABLE and only there,
+// on the empty district (m21), a level board goes to the one who LED it rather than the one who answered.
+// The first rule in the game that differs between road and table.
+//
+// `g.duel` is the gate and it means BOTH HANDS ARE PLAYERS — the client's `seat` (pass and play) and
+// `live` (real PvP) duels, never its "net" duel, which is the AI wearing a duel's clothes. It is opt-in
+// on mkGame, so every existing caller and every number measured before today is untouched: the road
+// never sets it and the defender still stands on every night there, m21 included.
+//
+// IT IS THE DISTRICT'S RULE, NOT THE HUSH'S. m15 the veil carries the hush too and keeps the defender
+// everywhere, so the hush cannot be the reason. Measured: m21 +4.8 (inside the bound), m15 +9.2 (outside).
+// Do not generalise this to the other hush night.
+function drawTo(g) {
+  return (g && g.duel && g.tonight === 21) ? "leader" : null;
+}
+
 function boardWinner(g, slots, held) {
   const [you, sky] = counts(g, slots, held);
   if (you !== sky) return you > sky ? "you" : "sky";
+  if (drawTo(g) === "leader") return g.leader === "you" ? "you" : "sky";
   const tr = g.tieRule || "the defender"; // matches mkGame's default; only bites g objects built by hand
   if (tr === "a draw") return "draw";
   // "the defender": a level board goes to whichever side did NOT lead it — proposed 27 aug 2026
@@ -1546,13 +1564,53 @@ module.exports = { cards, mkGame, deal, seededRand, nb, legalSlot, on, faceOf, s
   diffFor, legalMoves, replyCost, moveKey, bestMove, playBoardWeighted, playMatchWeighted,
   searchMove, BEAM, playBoardSearch, playMatchSearch,
   awakeCount, HANDICAP_BANDS, handicapFor, CAUTION_BANDS, cautionsFor, handicapLevels, ladderOpponentCards, HARDEST_ROAD,
-  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn, settleOf, shellParts,
+  playPush, ROAD_STAGES, SHADOW_PACK, LAW_AT, lawAt, BOARD_OFF, boardM, quadOf, tollOn, crowPays, isQuarterless, dawn, settleOf, shellParts, drawTo,
   POOL, QUAD_OF, QUADRANT, DEFAULT_SKY_HAND, BOARD_LEN };
 
 // ---- self-checks ----------------------------------------------------------------------------
 if (require.main === module) {
   const E = module.exports;
   const VECTORS = [
+    // ---- THE DISTRICT'S FLOOR (15 sep 2026): m21, at the table only, a level board goes to the LEADER
+    ["the district's floor: at the table on m21 a level board goes to the LEADER", () => {
+      const mk = (cfg) => { const g = E.mkGame({ tonight: 21, leader: "you", duel: true, ...cfg });
+        const slots = Array.from({ length: g.len }, () => null);
+        slots[0] = { id: 106, l: 9, r: 6, owner: "you", by: "you", age: 0 };
+        slots[8] = { id: 107, l: 6, r: 6, owner: "sky", by: "sky", age: 0 };
+        return E.boardWinner(g, slots); };
+      // the leader takes it, from either seat — the opposite of the defender rule
+      return mk({ leader: "you" }) === "you" && mk({ leader: "sky" }) === "sky";
+    }, true],
+    ["the district's floor does NOT apply on the road (no duel flag)", () => {
+      const g = E.mkGame({ tonight: 21, leader: "you" }); // road: duel undefined
+      const slots = Array.from({ length: g.len }, () => null);
+      slots[0] = { id: 106, l: 9, r: 6, owner: "you", by: "you", age: 0 };
+      slots[8] = { id: 107, l: 6, r: 6, owner: "sky", by: "sky", age: 0 };
+      return E.drawTo(g) === null && E.boardWinner(g, slots) === "sky"; // the defender still stands
+    }, true],
+    ["the district's floor is the DISTRICT'S, not the hush's — m15 keeps the defender at the table", () => {
+      // the veil carries the hush too and was measured OUTSIDE the bound (+9.2 against m21's +4.8).
+      // if someone ever "fixes" m15 to match m21, this vector is what stops it.
+      const g = E.mkGame({ tonight: 15, leader: "you", duel: true });
+      const slots = Array.from({ length: g.len }, () => null);
+      slots[0] = { id: 106, l: 9, r: 6, owner: "you", by: "you", age: 0 };
+      slots[8] = { id: 107, l: 6, r: 6, owner: "sky", by: "sky", age: 0 };
+      return E.drawTo(g) === null && E.boardWinner(g, slots) === "sky";
+    }, true],
+    ["the district's floor touches no other night at the table", () => {
+      for (let n = 1; n <= 28; n++) {
+        const g = E.mkGame({ tonight: n, leader: "you", duel: true });
+        if ((E.drawTo(g) === "leader") !== (n === 21)) return false;
+      }
+      return true;
+    }, true],
+    ["a board that is NOT level is unaffected by the district's floor", () => {
+      const g = E.mkGame({ tonight: 21, leader: "you", duel: true });
+      const slots = Array.from({ length: g.len }, () => null);
+      slots[0] = { id: 106, l: 9, r: 6, owner: "you", by: "you", age: 0 };
+      return E.boardWinner(g, slots) === "you"; // you lead AND out-count her; nothing to resolve
+    }, true],
+
     ["a tied board defaults to the defender (28 aug 2026 lock, supersedes the 27 aug flat draw)", () => {
       const g = E.mkGame({ tieRule: undefined }); // leader defaults to "you"
       // a 9-station board where every count comes out even is contrived by hand: two cards of

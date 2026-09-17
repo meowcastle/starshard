@@ -6243,6 +6243,11 @@ class Component extends DCLogic {
                      points: dp }
                  : { form: "none", held: { you: [], sky: [] }, pairs: [], unopposed: [], points: dp },
       law: { night: this._tonight(), name: law || null, points: lawPts, notes: [] },
+      // WHICH LEVEL-BOARD RULE DECIDED IT (15 sep 2026, the hush decision §2). `levelTo` already names
+      // the side; this names the RULE, so a caption can pick settle.total.level.district over
+      // settle.total.level without re-deriving the condition. "defender" everywhere except the empty
+      // district at the table, where it is "leader". null when the board was not level.
+      drawTo: level ? (this._drawTo() === "leader" ? "leader" : "defender") : null,
       total, level, levelTo, winner, reason: level ? "level" : (at || "stations"),
     };
   }
@@ -11490,6 +11495,23 @@ class Component extends DCLogic {
     if (w === "sky") return "you";
     return st.leader === "you" ? "sky" : "you";
   }
+  // THE DISTRICT'S FLOOR (Design, 15 Sep 2026, the hush-nights decision §2). At the TABLE and only
+  // there, on the empty district (m21), a level board goes to the one who spoke FIRST rather than the
+  // one who answered. This is the first rule in the game that differs between road and table.
+  //
+  // "BOTH HANDS ARE PLAYERS" is the condition, and it excludes the "net" duel — a human against the AI
+  // wearing a duel's clothes, where one hand is not a player. `seat` (pass and play) and `live` (real
+  // PvP) qualify. NOTHING ON THE ROAD CHANGES: the defender stands on every night there, m21 included.
+  //
+  // IT IS THE DISTRICT'S RULE, NOT THE HUSH'S, and every key says so. m15 the veil carries the hush too
+  // and keeps the defender everywhere, so the hush cannot be the reason; this belongs to the district's
+  // floor — the ring's designated even ground, whose own copy a lean would contradict. Do not "fix" m15
+  // to match. Measured: m21 +4.8 (inside the bound), m15 +9.2 (outside it).
+  _drawTo() {
+    const st = this.state || {};
+    const twoPlayers = !!(st.duel && (st.duel.mode === "seat" || st.duel.mode === "live"));
+    return (twoPlayers && this._tonight() === 21) ? "leader" : null;
+  }
   _boardWinner(slots, held) {
     const [you, sky] = this._counts(slots, held || this._heldNow());
     if (you !== sky) return you > sky ? "you" : "sky";
@@ -11498,6 +11520,8 @@ class Component extends DCLogic {
     // at 29.3). distinct from EQUAL NUMBERS, where one card meets another at the same value and the
     // attacker still takes it, unchanged. the old line awarded every level board to the player, which was
     // the whole of the 13-point side asymmetry.
+    // the district's floor first: at the table on m21 a level board goes to whoever LED it
+    if (this._drawTo() === "leader") return (this.state && this.state.leader) || "you";
     const tr = this.props.tieRule || "the defender";
     if (tr === "the defender") return (this.state && this.state.leader) === "you" ? "sky" : "you";
     if (tr === "a draw") return "draw";
