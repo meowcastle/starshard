@@ -12030,7 +12030,15 @@ class Component extends DCLogic {
         mname: this._mansions()[i],
         emptyOn: empty, cardOn: !empty && !veiled, veilOn: veiled,
         cname: s ? C[s.id].name.toLowerCase() : "",
-        nameOn: !!s && (C[s.id].who !== "you" || lv < 3 || !this._firstClimbDone()), homeOn: !!home, domPrevOn: domPrev,
+        // NAMES STAY ON (17 sep 2026, user's call on two independent reviews). The familiarity law hid the
+        // name of any card you had mastered, and at a full level-four collection that meant NO card in hand
+        // had a name and four of eight on the board did, with no visible logic — the rule keys on card id, so
+        // her mirror cards (201-228) miss the "is this mine" test and keep theirs while yours lose them.
+        // Worst in pass and play, where the weaker collection sees names and the stronger does not: two people
+        // at one table reading different games. Measured before changing: 0 of 3 named in hand, 2 of 6 lodged.
+        // The mastery flourish moves to the cards page instead (see "its own move" below), where hiding a line
+        // costs nothing to read. Do not reintroduce a level test here.
+        nameOn: !!s, homeOn: !!home, domPrevOn: domPrev,
         lodgedCls: !empty ? "mzLodged" : "",
 
         gazeOn: empty && !!st.skyGaze && st.skyGaze.indexOf(i) >= 0,
@@ -12192,7 +12200,7 @@ class Component extends DCLogic {
         return { ln: el, rn: er, liftD: d, liftWhy: d === 0 ? "" : this._whyHere(pv, 0) };
       })()),
       name: c.name.toLowerCase(),
-        nameOn: c.lvl < 3 || !this._firstClimbDone(),
+        nameOn: true, // names stay on in hand — see the board slot above
         artStyle: "position:absolute;opacity:" + (sOn ? 1 : .88) + ";" + (sOn ? "filter:drop-shadow(0 0 8px rgba(255,226,160,.55));transform:scale(1.16);transform-origin:center;" : "") + "left:0;right:0;margin:0 auto;" + (c.lvl >= 4 ? "top:13px;width:66px;height:82px" : c.lvl >= 3 ? "top:16px;width:64px;height:76px" : "top:26px;width:46px;height:40px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
         lnStyle: numSty(c.lvl >= 4 ? "top:4px;left:6px" : "top:5px;left:7px"),
         rnStyle: numSty(c.lvl >= 4 ? "bottom:4px;right:6px" : "bottom:5px;right:7px"),
@@ -14872,7 +14880,7 @@ class Component extends DCLogic {
           + (cI.ab ? "filter:drop-shadow(0 0 9px rgba(255,226,160,.5));" : "")
           + "transform:translateY(" + (lvI >= 3 ? "-50%" : "-64%") + ")" + (cI.ab ? " scale(1.12)" : "") + ";"
           + (lvI >= 4 ? "width:84px;height:104px" : lvI >= 3 ? "width:80px;height:96px" : "width:62px;height:52px"),
-        introNameOn: lvI < 3 || !this._firstClimbDone(),
+        introNameOn: true, // names stay on — see the board slot
         introMoonG: this._pathG([{ d: this._moonD(lvI), f: "rgba(250,244,226,.95)" }]),
         introMoonRim: "rgba(250,244,226," + (lvI >= 4 ? .82 : .4) + ")",
         introCardStyle: "width:126px;height:170px;border-radius:10px;position:relative;overflow:hidden;background:"
@@ -15005,7 +15013,13 @@ class Component extends DCLogic {
               // corners and the level is already said beside the quadrant, so neither is repeated here.
               dsPowerOn: !!(c2.grantOn || c2.ab),
               dsPowers: [
-                c2.ab ? { label: "its own move", edge: "rgba(240,216,154,.85)", body: this._simpleMove(sid) || (c2.abText || "") } : null,
+                // THE MASTERY FLOURISH, MOVED HERE (17 sep 2026). It used to hide the card's NAME on the
+                // board and in hand, which is where a player has to read fastest. Here it costs nothing:
+                // a card you have taken to level four on a walked house no longer explains itself on its
+                // own page. COPY NOTE FOR DESIGN: "you know this one." is Code's placeholder and yours to
+                // replace — it wants a copy-table row, not a string in this file.
+                c2.ab ? { label: "its own move", edge: "rgba(240,216,154,.85)",
+                          body: (c2.lvl >= 4 && this._firstClimbDone()) ? "you know this one." : (this._simpleMove(sid) || (c2.abText || "")) } : null,
                 c2.grantOn ? { label: qn, edge: "rgba(" + (this._qTintOf(sid) || "240,216,154") + ",.95)", body: gq } : null,
               ].filter(Boolean),
               dsToolsOn: lv2 >= 4,
