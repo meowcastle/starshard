@@ -197,6 +197,9 @@
   .mzGrain{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
   .mzLodged{animation:mzSettleIn .46s cubic-bezier(.3,1.25,.4,1) both}
   .mzRungFlare{animation:mzRungFlare 1.5s cubic-bezier(.25,.9,.3,1) both}
+  /* the refusal's tell (Design, 17 sep): reuses mzShake, and lives on a helmet CLASS rather than
+     inline — their own rule, since an inline animation on a hole-fed style never leaves keyframe 0% */
+  .mzRefuse{animation:mzShake .4s ease both}
   @keyframes mzLobbyIn{from{opacity:0}to{opacity:1}}
   @keyframes mzFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   @keyframes mzDawnLine{0%{stroke-dashoffset:600}100%{stroke-dashoffset:0}}
@@ -2400,7 +2403,7 @@
     </div>
   </sc-if>
 
-  <div style="{{ handRailStyle }}">
+  <div class="{{ refuseCls }}" style="{{ handRailStyle }}">
     <sc-for list="{{ handCards }}" as="c" hint-placeholder-count="5">
       <div onPointerDown="{{ c.onDown }}" onClick="{{ c.onTap }}" onMouseEnter="{{ c.onPeek }}" onMouseLeave="{{ c.onPeekEnd }}" onTouchStart="{{ c.onHold }}" onTouchEnd="{{ c.onHoldEnd }}" onTouchCancel="{{ c.onHoldEnd }}" data-mzhand="{{ c.hid }}" style="{{ c.style }}" style-hover="{{ c.hover }}">
         <div style="position:absolute;top:2.5px;left:2.5px;right:2.5px;bottom:2.5px;border-radius:5px;background:rgba(240,216,154,.04);border:1px solid rgba(240,216,154,.08)"></div>
@@ -14816,6 +14819,9 @@ class Component extends DCLogic {
       // road, so once it begins the hand has no move left in it: keep it down until the next deal.
       // That is safe to test by presence now only because _freshRound clears countFx above; before
       // this it survived into the next board and would have hidden a live hand.
+      // the refusal's own tell (Design, 17 sep): the hand rail shakes once when a placement is
+      // refused, so "no" is felt as well as read. Pairs with _refuse's tone and log line.
+      refuseCls: this.state.refuse ? "mzRefuse" : "",
       handRailStyle: "position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;z-index:6;transition:opacity .4s ease" + (st.countFx ? ";opacity:0;pointer-events:none" : ""),
       // the planets no longer stand across from you: they are a small rail at the edge that empties as she casts
       // the pool's hub: rotating (so they turn around each other) and sliding side to side as she throws
