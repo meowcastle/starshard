@@ -186,19 +186,20 @@ for (const [label, marker] of MARKERS)
         else if (a[k][1] !== t) fails.push(`walker "${n}" (house ${h}): pronoun "${a[k][1]}", the sheet says "${t}" — the copy table's {them} reads this.`);
       });
     }
-    // WALKER HANDS SURVIVE A SHEET PORT. The 15 Sep walker-sheet bind rebuilt each roster row from
-    // the sheet's five fields instead of merging them into the row, so `hand` — which the sheet does
-    // not carry — was dropped from the two houses that author one. Every night's road then stalled
-    // after the first board. The sheet is authoritative for name/fig/them/line/react/defeat/again and
-    // for NOTHING ELSE: a field the roster carries that the sheet does not must be preserved.
+    // WALKER HANDS SURVIVE A SHEET PORT — but WHETHER they should exist is not this file's call.
+    //
+    // The 15 Sep walker-sheet bind rebuilt each roster row from the sheet's five fields instead of
+    // merging them into the row, so `hand` — which the sheet does not carry — was dropped, and every
+    // night's road stalled after board one. The regression shape is a field vanishing from SOME rows,
+    // so that is what this checks.
+    //
+    // IT DELIBERATELY NO LONGER DEMANDS THAT HOUSES 18/25 CARRY HANDS. Design's 17 Sep PM note calls
+    // those authored hands vestigial — the hybrid their staging audit ruled out — and three nights
+    // (18, 25, and 22 via the house-0 fallback) do deal her a designer-chosen five padded to seven
+    // while the other 25 pad entirely from the pool. That is a rules decision with measured numbers
+    // behind it, not a build invariant, and an earlier version of this check would have FAILED the
+    // build on the correct fix. A check must not take a side in an open design question.
     {
-      const HANDED = ["18", "25"]; // the houses whose walkers author their own hands
-      for (const h of HANDED) {
-        const rows = (rosterSrc.split(new RegExp("^\\s*" + h + ":\\s*\\[", "m"))[1] || "").split(/^\s*\d+:\s*\[/m)[0];
-        const n = (rows.match(/\bhand:\s*\[/g) || []).length;
-        if (n !== 8) fails.push(`walker house ${h} carries ${n} hands, not 8 — a sheet port that rebuilds rows instead of merging into them drops every field the sheet does not define, and the road stalls after board one.`);
-      }
-      // and a partial loss inside any house is the same bug caught earlier
       let cur = null, seen = {};
       for (const line of rosterSrc.split("\n")) {
         const hh = /^\s*(\d+):\s*\[/.exec(line); if (hh) { cur = hh[1]; continue; }
@@ -207,7 +208,8 @@ for (const [label, marker] of MARKERS)
         seen[cur].n++; if (/\bhand:\s*\[/.test(line)) seen[cur].hands++;
       }
       for (const [h, v] of Object.entries(seen))
-        if (v.hands && v.hands !== v.n) fails.push(`walker house ${h}: ${v.hands} of ${v.n} rows carry a hand — all or none.`);
+        if (v.hands && v.hands !== v.n)
+          fails.push(`walker house ${h}: ${v.hands} of ${v.n} rows carry a hand — all or none. A partial loss is the signature of a sheet port that rebuilt rows instead of merging into them, which stalls the road after board one.`);
     }
 
     // every name must resolve to art, or the walker renders faceless

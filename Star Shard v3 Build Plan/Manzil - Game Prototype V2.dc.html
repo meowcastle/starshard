@@ -6432,7 +6432,26 @@ class Component extends DCLogic {
     // inward, then the pairings resolve one at a time, centre outward. dawnStep: 0 = risen (the gather), k+1 =
     // pairing k resolved (the strike), pairs.length+1 = the odd card named. ~2.2s, then the merge as before.
     let tBoom = tRoad;
-    if (dawnOn) {
+    // DAWN PLAYS IN FULL ONLY WHEN DAWN DECIDES THE BOARD (Design, 17 sep 2026, from Measurement's flow
+    // memo: the longest beat in the game played whether or not it changed anything). When dawn merely
+    // widens a board already won, the shelf still rises and still reads, but the per-pair theatre is
+    // skipped and all pairings land resolved at once. A subtraction, not a redesign: same state, same
+    // render, fewer beats.
+    //
+    // Design's version reads _countBreak's flat stY/homeY/extraY. This build does not carry _countBreak —
+    // it was declined as a thinner parallel of _settle — so the same fact comes off the settle record
+    // instead, and more exactly: the road's lead is everything the count gave EXCEPT dawn, which is
+    // total minus dawn's points. That identity is the five-term invariant this file already asserts.
+    const rdY = settle.total.you - settle.dawn.points.you;
+    const rdS = settle.total.sky - settle.dawn.points.sky;
+    const roadLeadD = rdY > rdS ? "you" : rdS > rdY ? "sky" : null;
+    const dawnDecides = dawnOn && (roadLeadD === null || roadLeadD !== winner);
+    if (dawnOn && !dawnDecides) {
+      // the quiet form: it rises, it reads, it is over in about a second
+      this._seq.push(setTimeout(() => { this._sfx("dawnRise"); this.setState(s => s.countFx ? { countFx: { ...s.countFx, dawnStep: 0 } } : {}); }, tRoad + 260));
+      this._seq.push(setTimeout(() => this.setState(s => s.countFx ? { countFx: { ...s.countFx, dawnStep: dawn.pairs.length + 1, dawnStage: -1 } } : {}), tRoad + 900));
+      tBoom = tRoad + 1500;
+    } else if (dawnOn) {
       try { const sn = parseInt(localStorage.getItem("manzil-v2-dawnseen")) || 0; if (sn < 3) this._seq.push(setTimeout(() => { try { localStorage.setItem("manzil-v2-dawnseen", String(sn + 1)); } catch (e) {} }, tRoad + 3000)); } catch (e) {}
       this._seq.push(setTimeout(() => { this._sfx("dawnRise"); this.setState(s => s.countFx ? { countFx: { ...s.countFx, dawnStep: 0 } } : {}); }, tRoad));
       // each pairing walks to the centre (dawnStage = k), the two totals are named, then it resolves (dawnStep = k+1)
@@ -6517,6 +6536,16 @@ class Component extends DCLogic {
     const Cg = this._cards();
     if (leader === "sky" && hand.some(id => Cg[id] && Cg[id].ab === "gate" && this._on(Cg[id]))) leader = "you"; // the gate lodges before her lead
     return { mull: { n: 0 }, retUsed: false, tapUsed: false, handUsed: false, guideUsed: false, throneUsed: false, heartHold: null, holdUsed: false, burstUsed: false, poolSide: 1, glanceOn: false, pick: null, slots: Array.from({ length: len }, () => null), ascentDrop: false, ascentChosen: false, ascentWake: (asc && round > 1 && this.state ? this.state.ascentWake : 0) || 0, hand: hand.slice(), sky, sel: null, inspect: null, turn: leader, leader, face: null, busy: false, dropIdx: null, flipIdx: null, duelI: null, duelSide: null, introExit: false, roundExit: false, dealt: false, castFx: null, countFx: null, log: "" };
+  }
+  // A REFUSED PLACEMENT ALWAYS ANSWERS (17 sep 2026, Measurement: several card-then-slot pairs did nothing at
+  // all, with no feedback — the one response that makes a player doubt the game rather than themselves).
+  // One place for "no": the tone, a short buzz, and the reason on the log line the board already shows.
+  _refuse(why) {
+    this._sfx("reject");
+    this._buzz && this._buzz(6);
+    clearTimeout(this._refuseT);
+    this.setState({ refuse: (this.state.refuse || 0) + 1, log: why || "not there." });
+    this._refuseT = setTimeout(() => this.setState({ refuse: 0 }), 420);
   }
   _cards() {
     const fl = 0; // the forceLevel tweak and the level buttons are gone (27 aug 2026): true levels only
@@ -11621,6 +11650,21 @@ class Component extends DCLogic {
     this._castT = setTimeout(() => this.setState({ castFx: null, dropIdx: null }), 950);
   }
   _commitPlace(cardId, i, rev, who) {
+    // NOTHING CLICKABLE UNTIL THE VERDICT HAS ARRIVED (Design, 17 sep 2026, from Measurement: 26 clicks
+    // fired across an end-of-board transition were all accepted as moves on the NEXT board). The count owns
+    // the board while it runs; a tap during it is ANSWERED, not swallowed, so an impatient player never
+    // places a card they did not choose. The guard sits here so every route in is covered.
+    // The reason must be true in each case: the impatient player this was built for is usually tapping
+    // AFTER the ceremony clears, on "round" — telling them the count is running when it has finished is
+    // worse than saying nothing, and the law-explains-itself rule applies to refusals too.
+    {
+      const st0 = this.state, why = st0.countFx ? "the count is still running."
+        : st0.phase === "climb" ? "the road is climbing."
+        : (st0.phase === "round" || st0.phase === "over" || st0.phase === "roadlost") ? "this board is already settled."
+        : st0.phase === "intro" ? "nothing is dealt yet."
+        : st0.phase !== "play" ? "not now." : null;
+      if (why) { this._refuse(why); return; }
+    }
     if (who === "you") {
       const tf = this._tutMove();
       if (tf && (cardId !== tf.id || i !== tf.i)) { this._sfx("reject"); this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
@@ -12038,7 +12082,15 @@ class Component extends DCLogic {
         // at one table reading different games. Measured before changing: 0 of 3 named in hand, 2 of 6 lodged.
         // The mastery flourish moves to the cards page instead (see "its own move" below), where hiding a line
         // costs nothing to read. Do not reintroduce a level test here.
-        nameOn: !!s, homeOn: !!home, domPrevOn: domPrev,
+        // NAMES ON DEMAND (17 sep 2026, user's call via Design's PM drop — this SUPERSEDES the
+        // names-always-on I shipped earlier the same day). A name appears only while its card is
+        // hovered, selected or dragged, in hand and on the board alike. Because the rule is uniform it
+        // cannot reproduce the fault the staging audit found, where the weaker collection saw names and
+        // the stronger did not and two people at one table read different games. Names stay permanent in
+        // the zoom panel, the card page and the chart, where a player is asking for them.
+        // THE MASTERY FLOURISH IS THE FRAME, not the name — corners at level two, the inner rule at
+        // three, larger art and a lit rim at four. Do not put a level test back on a name.
+        nameOn: !!s && (st.peek === i || st.inspect === i || (st.hov != null && st.hov === s.id) || (st.sel != null && st.sel === s.id)), homeOn: !!home, domPrevOn: domPrev,
         lodgedCls: !empty ? "mzLodged" : "",
 
         gazeOn: empty && !!st.skyGaze && st.skyGaze.indexOf(i) >= 0,
@@ -12200,7 +12252,7 @@ class Component extends DCLogic {
         return { ln: el, rn: er, liftD: d, liftWhy: d === 0 ? "" : this._whyHere(pv, 0) };
       })()),
       name: c.name.toLowerCase(),
-        nameOn: true, // names stay on in hand — see the board slot above
+        nameOn: st.hov === id || st.sel === id || !!(st.drag && st.drag.id === id), // on demand — see the board slot above
         artStyle: "position:absolute;opacity:" + (sOn ? 1 : .88) + ";" + (sOn ? "filter:drop-shadow(0 0 8px rgba(255,226,160,.55));transform:scale(1.16);transform-origin:center;" : "") + "left:0;right:0;margin:0 auto;" + (c.lvl >= 4 ? "top:13px;width:66px;height:82px" : c.lvl >= 3 ? "top:16px;width:64px;height:76px" : "top:26px;width:46px;height:40px") + ";animation:mzEmblemBreathe " + (6.5 + (id % 5) * 0.7).toFixed(1) + "s ease-in-out " + (-(id % 7)) + "s infinite",
         lnStyle: numSty(c.lvl >= 4 ? "top:4px;left:6px" : "top:5px;left:7px"),
         rnStyle: numSty(c.lvl >= 4 ? "bottom:4px;right:6px" : "bottom:5px;right:7px"),
@@ -15018,8 +15070,7 @@ class Component extends DCLogic {
                 // a card you have taken to level four on a walked house no longer explains itself on its
                 // own page. COPY NOTE FOR DESIGN: "you know this one." is Code's placeholder and yours to
                 // replace — it wants a copy-table row, not a string in this file.
-                c2.ab ? { label: "its own move", edge: "rgba(240,216,154,.85)",
-                          body: (c2.lvl >= 4 && this._firstClimbDone()) ? "you know this one." : (this._simpleMove(sid) || (c2.abText || "")) } : null,
+                c2.ab ? { label: "its own move", edge: "rgba(240,216,154,.85)", body: this._simpleMove(sid) || (c2.abText || "") } : null,
                 c2.grantOn ? { label: qn, edge: "rgba(" + (this._qTintOf(sid) || "240,216,154") + ",.95)", body: gq } : null,
               ].filter(Boolean),
               dsToolsOn: lv2 >= 4,
