@@ -236,11 +236,19 @@ for (const [label, marker] of MARKERS)
 // not a break — but enough of it buries a real error.
 {
   const seen = new Map();
+  // `svg` WAS MISSING FROM THIS LIST and it is the biggest group by far — 15 of the 22 bound geometry
+  // attributes in the file are <svg viewBox="{{ … }}">. So this check was not merely lenient about the
+  // class, it could not SEE most of it, and a review counted 28 console errors against the 10 this
+  // file's own records describe. A warning you cannot see is worse than no warning.
   for (const m of tmpl.matchAll(
-    /<(rect|circle|line|path|text|ellipse|polygon|polyline)\b[^>]*?\s(x|y|cx|cy|r|x1|y1|x2|y2|d|rx|ry|width|height|points|viewBox)="\{\{\s*([\w$.]+)/g))
+    /<(svg|rect|circle|line|path|text|ellipse|polygon|polyline)\b[^>]*?\s(x|y|cx|cy|r|x1|y1|x2|y2|d|rx|ry|width|height|points|viewBox)="\{\{\s*([\w$.]+)/g))
     seen.set(`${m[1]}.${m[2]}`, (seen.get(`${m[1]}.${m[2]}`) || 0) + 1);
-  for (const [k, n] of seen)
+  let geomTotal = 0;
+  for (const [k, n] of seen) {
+    geomTotal += n;
     warns.push(`${k} bound to a mustache ×${n} — invalid to the pre-hydration SVG parse (console noise only)`);
+  }
+  if (geomTotal) notes.push(`${geomTotal} bound geometry attribute(s) in total. CLAUDE.md records 10 known-exempt <svg viewBox> sites (_artBox measures a real per-card getBBox at runtime and is not inlineable). Anything past that is new and is Design's to sweep. WHEN THE SWEEP LANDS: turn these into failures against a named exempt list — the reason twenty-eight went unnoticed is that this was a warning.`);
 }
 
 // ---- report ----------------------------------------------------------------------------------
