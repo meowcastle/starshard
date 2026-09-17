@@ -2121,7 +2121,16 @@
             <span style="{{ s.gazeStyle }}"></span>
           </sc-if>
         </sc-if>
-        <sc-if value="{{ s.cardOn }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ s.pvOn }}" hint-placeholder-val="{{ false }}">
+          <div style="{{ s.pvRing }}"></div>
+          <sc-if value="{{ s.pvEdgeOn }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ s.pvEdge }}"></div>
+            <sc-if value="{{ s.pvArrowOn }}" hint-placeholder-val="{{ false }}">
+              <span style="{{ s.pvArrow }}">{{ s.pvArrowT }}</span>
+            </sc-if>
+          </sc-if>
+        </sc-if>
+              <sc-if value="{{ s.cardOn }}" hint-placeholder-val="{{ false }}">
           <svg viewBox="0 0 20 20" style="position:absolute;top:4px;right:4px;width:12px;height:12px;pointer-events:none;z-index:4;overflow:visible">
             <circle cx="10" cy="10" r="8" fill="rgba(6,4,2,.5)" stroke="{{ s.moonRim }}" stroke-width="1"></circle>
             {{ s.moonG }}
@@ -6547,14 +6556,46 @@ class Component extends DCLogic {
     while (out.length < 7 && bag.length) out.push(bag.splice(Math.floor(rnd() * bag.length), 1)[0]);
     return out;
   }
+
   // the mulligan (27 aug 2026, user): ONE look. seven, then six, and you play what you have.
   // it was seven-six-five, which let a player dig twice and land on a hand too small to fill the road.
   _mullSize(n) { return n >= 1 ? 6 : 7; }
+  // THE SECOND LOOK KEEPS WHAT IT KEEPS (17 sep 2026, user: "the left over cards dont leave"). The six were
+  // dealt as a whole new hand, so a card you were about to keep flew out and flew back in — the one moment the
+  // deal's own grammar was lying. Now the cards the new hand shares with the old STAY MOUNTED, slide to the
+  // left of the rail, and the fresh ones arrive to their right, one after another, in the deal's rhythm.
+  // The slide is a FLIP done by arithmetic rather than by measuring: the rail's pitch is fixed (80 + 12), so a
+  // kept card's travel is just its index change. It renders one frame at its OLD offset with no transition,
+  // then the offset clears and the transition carries it home. handIn/handShift are session state, cleared
+  // when the arrival is over (a stale handIn would replay the arrival the next time indices shift).
   _mullAgain() {
     const st = this.state; if (!st.mull) return;
-    const hand = this._deal(st.chosen, st.round, 6, 1);
+    const old = (st.hand || []).slice();
+    const six = this._deal(st.chosen, st.round, 6, 1);
+    const kept = old.filter(id => six.indexOf(id) >= 0);
+    const hand = kept.concat(six.filter(id => kept.indexOf(id) < 0));
+    const P = 92, shift = {};
+    kept.forEach((id, j) => { const oi = old.indexOf(id);
+      shift[id] = Math.round(((oi - (old.length - 1) / 2) - (j - (hand.length - 1) / 2)) * P);
+    });
     this._buzz(8);
-    this.setState({ hand: hand, mull: null, sel: null, inspect: null, dealt: false });
+    // NEVER rAF FOR THIS (17 sep 2026, caught in review — the same trap as the stage ghost's fade): rAF starves
+    // right after a full re-render and never fires in a backgrounded tab, and a starved clear left the kept
+    // cards parked 46px left of their slots with a hole in the rail for the rest of the board. The shifted
+    // frame is flushed in setState's own callback off a forced reflow, then cleared in the same tick; a 40ms
+    // timer repeats it, and the arrival cleanup clears BOTH keys, so no path can leave the rail broken. The
+    // worst case is a slide that does not animate, never a hand that stands in the wrong place.
+    // THE DELAY IS CARRIED BY ID, never by index (17 sep 2026, caught in review): a card placed during the
+    // arrival shifts every index behind it, which rewrote the inline animation shorthand and made a
+    // still-arriving card blink out and fly in a second time. The string has to be stable per card.
+    const inMap = {};
+    hand.filter(id => kept.indexOf(id) < 0).forEach((id, j) => { inMap[id] = 300 + j * 110; });
+    this.setState({ hand, mull: null, sel: null, inspect: null, dealt: true, handIn: inMap, handShift: shift }, () => {
+      try { void document.body.offsetHeight; } catch (e) {}
+      if (this.state.handShift) this.setState({ handShift: null });
+    });
+    this._seq.push(setTimeout(() => { if (this.state.handShift) this.setState({ handShift: null }); }, 40));
+    this._seq.push(setTimeout(() => { if (this.state.handIn || this.state.handShift) this.setState({ handIn: null, handShift: null }); }, 1200));
     this._afterDeal();
     if (this.state.turn === "sky") { clearTimeout(this._aiT); this._aiT = setTimeout(() => this._skyMove(), 1200); }
   }
@@ -8014,6 +8055,7 @@ class Component extends DCLogic {
     this._syncProgress();
   }
   _mansions() { return Array.from({ length: ((this.state && this.state.slots && this.state.slots.length) || 9) }, (_, i) => "the " + this._mName(this._boardM(i))); }
+
   _zoomFor(k) {
     k = String(k);
     const C = this._cards();
@@ -8026,13 +8068,43 @@ class Component extends DCLogic {
       // a player learns it the first time a card counts two. the line is drawn from the mansion's own
       // arabic name (al-manazil, per Star Shard - Four Skies), so the astrology accrues by playing.
       return { station: true, name: "the " + this._mName(m),
-        sub: "mansion " + m + (m === t ? " · tonight's" : ""),
+        // THE VOCABULARY LEAK (17 sep 2026, the premium memo §5.1): this line said "mansion 24" while every
+        // other surface in the game says house. An internal word on a polished skin reads as a database.
+        sub: m === t ? "tonight's house" : "the moon's " + this._ord(m) + " house",
         // the law explains itself where it lives (29 aug settled memo): the law runs the whole
         // road night, so tonight's station names it on EVERY board of the push, walker one to the
         // mansion. table nights carry no law and say none. dominion needs no billing here.
-        line: ((() => { const rl = this._bossRule(); const idx9 = (m - this._boardM(0) + 28) % 28;
+        // THE FACT FIRST (17 sep 2026, the premium memo §2): while a card is held, this station leads with what
+        // would happen here, in the comparison's own numbers, and the law or the lore drops to second.
+        line: ((() => { const sel = this.state.sel; if (sel != null && this.state.turn === "you" && this.state.phase === "play" && !this.state.busy) {
+            const mk = this._preview(sel, i) || [], aft = mk.length ? this._resolve(this.state.slots, sel, i, false, "you").slots : null;
+            const near = mk.filter(x => x.dir !== 0), far = mk.filter(x => x.dir === 0);
+            const words = near.map(x => { const mine = this._faceOf(aft, i, x.dir), theirs = this._faceOf(this.state.slots, x.at, -x.dir);
+              return x.mine ? "your " + mine + " takes her " + theirs + "." : "her " + theirs + " takes your " + mine + ".";
+            });
+            if (far.length) words.push(far.length === 1 ? "the strike carries past the station beside it." : "the strike carries to " + far.length + " stations further on.");
+            return words.length ? words.join(" ") : "nothing changes hands here.";
+          }
+          const rl = this._bossRule(); const idx9 = (m - this._boardM(0) + 28) % 28;
           // the active law station explains the LAW, plainly; the poetry belongs to the quiet stations
-          const lc = this._lawCopy(rl, idx9); if (lc) return lc;
+          if (rl === "beat" && idx9 === 0) return "when the road fills, this station strikes the station beside it once more, before the count. one strike, for whoever holds it.";
+          if (rl === "reach" && idx9 === 0) return "a strike from this station carries two stations. at the far one, the card fights with its printed numbers.";
+          if (rl === "shell" && idx9 === 4) return "whatever lodges here counts as normal, but if it is ever taken it counts for nobody, both sides, to the end of the board.";
+          if (rl === "reson" && idx9 === 4) return "the resonant ground: a strike that starts here or lands here carries one station further. the hour-drum overhead rings when the beat travels on.";
+          if (rl === "void" && idx9 === 4) return "the empty circle. this ground counts two at the end, whoever holds it, and the station on its right counts one less. the empty place weighs more than what stands beside it.";
+          if (rl === "void" && idx9 === 5) return "the station beside the empty circle. what stands here counts one less at the end: the void draws the worth out of its right hand.";
+          if (rl === "hush" && idx9 === 4) return this._tonight() === 15 ? "the cover. whatever lodges here draws the veil over the station on either side of it: those two count for nobody, both sides, until the board ends. faint stars, praised for being faint." : "the quiet middle: whatever lodges here quiets the station on either side of it. those two count for nobody, both sides, until the board ends.";
+          if (rl === "turn" && idx9 === 0) return "the turning's door: whatever lodges here turns the next station to face the other way. its two numbers swap, left for right, and stay swapped until the board ends. a card that reads the same both ways cannot be turned at all.";
+          if (rl === "toll" && idx9 === 4) return "the crossing charges for shelter. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own first refusal \u2014 counts one less, either side. whatever can still be fought for counts as it always did.";
+          if (rl === "eye" && idx9 === 4) return "the eye of the storm. on this ground a tie is not a take for whoever led the board: equal numbers stand where they are. the one who answered still takes on a tie. the weather does not favour whoever moves first.";
+          if (rl === "open" && idx9 === 4) return "the open gate. nothing is held on this ground: not the tiger's hold, not a friend beside it, not a card's own first refusal. the first strike lands, and so does every one after it. the road goes through.";
+          if (rl === "razor" && idx9 === 4) return "the threshing floor. a card lodging on this ground takes both its neighbours or takes neither: the stroke goes the whole width of the road, or it does not go. the sisters cut once.";
+          if (rl === "price" && idx9 === 4) return "the branding fire. a card standing on this ground that cannot be taken at all \u2014 held by its quarter, by a friend beside it, or by its own rule \u2014 strikes two lower from here. shelter has a price on this road, and the price is the mark.";
+          if (rl === "crow" && idx9 === 4) return "the crow's perch. whatever lodges here counts one more, and the card worth most beside it counts one less. the crow takes the bright thing — both sides, all night.";
+          if (rl === "rope" && idx9 === 4) return "the rope passes closest to the wall here: whatever lodges on this ground hauls one enemy card beside it onto the rope, and it changes hands.";
+          if (rl === "plant" && idx9 === 4) return "the old grave lies open here. whatever lodges on this ground can be taken once — but the moment it changes hands it takes root, and cannot be taken back by either side before the board ends.";
+          if (rl === "stranger" && idx9 === 4) return "the middle of the crossing. a card standing here on ground that is not its own quarter's counts one more \u2014 either side. a card at home on this ground counts as it always did.";
+          if (rl === "guest" && idx9 === 0) return "the house's own door. whatever lodges here is a guest under this roof: while it stands on this ground it loses its own quarter's grant, whoever played it. the house's cloth goes over it.";
           return this._mPoem(m); })()) };
     }
     if (k[0] === "s") { i = +k.slice(1); s = this.state.slots[i]; if (!s) return null; c = C[s.id];
@@ -10881,6 +10953,57 @@ class Component extends DCLogic {
     const k = i + dir;
     return k >= 0 && k < L ? k : -1;
   }
+  // THE TAKE PREVIEW (17 sep 2026, user's pick 1a from Manzil - Take Preview Directions, with Measurement's
+  // correction memo: bigger-or-equal-takes is the whole game and was invisible until after the commit).
+  // THE RULE, as corrected: EVERY station whose ownership changes gets the mark; where the change came from a
+  // face touching the previewed station, it ALSO gets the lit edge and the arrow. The touching-face grammar
+  // alone had no word for a strike that reaches past a neighbour (2.6% of changing placements fresh, 6.2%
+  // awake, worst on the gap / the throne / the turning / the drum — the nights whose character IS reach).
+  // THE ARROW IS CREAM ONLY: the amber back-arrow is unreachable on a fresh collection (0.00% across all 28
+  // nights) and one placement in three thousand on a developed one, so it is not a language worth teaching;
+  // a station of yours turning hers is covered for free, because it is a station whose ownership changes.
+  // It ASKS THE ENGINE, so it cannot lie: the answer comes from _resolve on a copy of the standing board, so
+  // levels, turned faces, the tiger's hold, a friend beside it and tonight's law are all already inside it.
+  // Measurement owes the conformance case that keeps both directions honest (marked set === changed set).
+  // New self-contained method; nothing here mutates state or touches a rule.
+  _preview(cardId, i, rev) {
+    const st = this.state, slots = st.slots || [];
+    if (cardId == null || i == null || slots[i] || !this._legalSlot(slots, i)) return null;
+    let after = null;
+    try { after = this._resolve(slots, cardId, i, !!rev, "you").slots; } catch (e) { return null; }
+    if (!after) return null;
+    const L = slots.length, out = [];
+    for (let k = 0; k < L; k++) {
+      if (k === i) continue;
+      const b = slots[k], a = after[k];
+      if (!b || !a || a.owner === b.owner) continue;
+      out.push({ at: k, mine: a.owner === "you", dir: k === this._nb(i, -1) ? -1 : k === this._nb(i, 1) ? 1 : 0 });
+    }
+    return out.length ? out : null;
+  }
+  // the union of every legal placement's preview at half strength, or the pointed station's at full. Memoised
+  // on the board + the held card, because renderVals runs continuously and the half state is nine resolves.
+  _previewMarks() {
+    const st = this.state;
+    const card = st.phase === "play" && st.turn === "you" && !st.busy && !st.mull && !st.face
+      ? (st.drag ? st.drag.id : st.sel) : null;
+    if (card == null) return {};
+    const at = st.dragOver != null ? st.dragOver : (st.pvI != null && !(st.slots || [])[st.pvI] ? st.pvI : null);
+    const key = card + "|" + at + "|" + (st.slots || []).map(s => s ? s.id + s.owner + (s.spent ? "x" : "") + s.l + "," + s.r : "-").join("");
+    const c = this._pvC;
+    if (c && c.key === key) return c.marks;
+    const marks = {};
+    if (at != null) (this._preview(card, at) || []).forEach(m => { marks[m.at] = { ...m, full: true }; });
+    else (st.slots || []).forEach((s, k) => { if (s) return;
+      (this._preview(card, k) || []).forEach(m => { const p = marks[m.at];
+        // two candidate stations can mark the same card: keep the light, drop the edge (no single touching face)
+        marks[m.at] = p ? { at: m.at, mine: p.mine && m.mine, dir: p.dir === m.dir ? m.dir : 0, full: false } : { ...m, full: false };
+      });
+    });
+    this._pvC = { key, marks };
+    return marks;
+  }
+
   _legalSlot(slots, i) {
     if (this._shape() !== "contiguous: lodge beside the lodged") return true;
     if (slots.every(x => !x)) return true;
@@ -11705,6 +11828,11 @@ class Component extends DCLogic {
         : st0.phase !== "play" ? "not now." : null;
       if (why) { this._refuse(why); return; }
     }
+    // THE ARRIVAL BEAT ENDS ON THE FIRST PLACEMENT (Design, 17 sep, third round on the same fault).
+    // The hand sc-for is INDEX-KEYED: a DOM node belongs to a rail slot, not to a card, so playing a
+    // card during the arrival slides every card one node left and the running mzHandIn stays with the
+    // NODE and is inherited by a different card. No per-card delay survives that; the beat has to end.
+    if (this.state.handIn || this.state.handShift) this.setState({ handIn: null, handShift: null });
     if (who === "you") {
       const tf = this._tutMove();
       if (tf && (cardId !== tf.id || i !== tf.i)) { this._sfx("reject"); this.setState({ sel: null, log: "the walk calls the " + this._mName(tf.id) + " to the lit ground." }); return; }
@@ -12064,6 +12192,7 @@ class Component extends DCLogic {
     const roundWinner = st.turn === "over" && st.slots.every(x => x) ? this._boardWinner(st.slots) : null;
     const tutF = this._tutMove();
     const hushI = this._hushed(st.slots);
+    const pvMarks = this._previewMarks(); // the take preview, 1a as corrected (see _preview)
     const listenI = this._listen(), loudest = listenI >= 0 ? this._herLoudest() : 0, remedyI = this._remedy(), kilnI = this._kiln(), crossI = this._cross(), ropeI = this._bossRule() === "rope" ? this._lawSt() : -1, resonI = this._reson();
     const slots = st.slots.map((s, i) => {
       const empty = !s;
@@ -12092,7 +12221,8 @@ class Component extends DCLogic {
         else if (c.who === "you" && this._abilityOn(c) && c.lvl === 2) tag = c.abText;
       }
       const lv = !s ? 1 : C[s.id].who === "you" ? C[s.id].lvl : (C.skyLv || 3);
-      const numBase = (side) => "position:absolute;" + side + ":" + (lv >= 4 ? 4 : 5) + "px;top:50%;transform:translateY(-50%);font-size:" + (lv >= 4 ? 9 : 11) + "px;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95);color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + (st.duelI === i && st.duelSide === (side === "left" ? "l" : "r") ? ";animation:mzNumPulse .45s ease both" : "");
+      // flat 11, never 9-at-level-4: the ramp own rule, and the number the take preview is read against
+      const numBase = (side) => "position:absolute;" + side + ":" + (lv >= 4 ? 4 : 5) + "px;top:50%;transform:translateY(-50%);font-size:11px;text-shadow:0 0 4px rgba(4,3,2,.95), 0 1px 3px rgba(4,3,2,.95);color:" + (s && s.owner === "sky" ? "#FFB000" : "#F0D89A") + (st.duelI === i && st.duelSide === (side === "left" ? "l" : "r") ? ";animation:mzNumPulse .45s ease both" : "");
       const home = s && this._isHome(s.id, i);
       const domPrev = empty && ((selOn && this._boardM(i) === st.sel) || (st.phase === "play" && !st.busy && st.hov != null && this._boardM(i) === st.hov && this._legalSlot(st.slots, i)));
       // the mansion's ground (level grammar beat 3): on the boss board, the house's OWN station
@@ -12132,6 +12262,16 @@ class Component extends DCLogic {
         // three, larger art and a lit rim at four. Do not put a level test back on a name.
         nameOn: !!s && (st.peek === i || st.inspect === i || (st.hov != null && st.hov === s.id) || (st.sel != null && st.sel === s.id)), homeOn: !!home, domPrevOn: domPrev,
         lodgedCls: !empty ? "mzLodged" : "",
+        ...((m) => { if (!m) return { pvOn: false, pvRing: "display:none", pvEdgeOn: false, pvEdge: "display:none", pvArrowOn: false, pvArrow: "display:none", pvArrowT: "" };
+          const ink = m.mine ? "240,216,154" : "255,176,0", op = m.full ? 1 : .5, side = m.dir === -1 ? "right" : "left";
+          return { pvOn: true,
+            pvRing: "position:absolute;inset:-3px;border-radius:9px;pointer-events:none;z-index:5;border:1.5px solid rgba(" + ink + "," + (m.full ? .9 : .5) + ");box-shadow:0 0 14px rgba(" + ink + "," + (m.full ? .45 : .22) + ");transition:opacity .16s ease;opacity:" + op,
+            pvEdgeOn: m.dir !== 0,
+            pvEdge: "position:absolute;" + side + ":-1px;top:9px;bottom:9px;width:2px;pointer-events:none;z-index:6;background:linear-gradient(180deg, transparent, rgb(" + ink + "), transparent);box-shadow:0 0 9px rgba(" + ink + ",.9);opacity:" + op,
+            pvArrowOn: m.dir !== 0 && m.mine,
+            pvArrow: "position:absolute;" + side + ":-12px;top:50%;transform:translateY(-50%);pointer-events:none;z-index:6;font-size:11px;line-height:1;color:#F0D89A;text-shadow:0 0 8px rgba(240,216,154,.9);opacity:" + op,
+            pvArrowT: m.dir === -1 ? "\u25C0" : "\u25B6" };
+        })(pvMarks[i]),
 
         gazeOn: empty && !!st.skyGaze && st.skyGaze.indexOf(i) >= 0,
         gazeStyle: st.skyGaze && st.skyGaze[0] === i
@@ -12166,7 +12306,7 @@ class Component extends DCLogic {
           if (this.state.peek) this.setState({ peek: pk });
           else this._holdT = setTimeout(() => this.setState({ peek: pk }), this._tooltipDelayMs()); // stage.timing.hover.tooltipDelay
         },
-        onPeekEnd: () => { clearTimeout(this._holdT); if (this.state.peek) this.setState({ peek: null }); }, // desktop mouseleave only (see markup) — hover should close on its own
+        onPeekEnd: () => { clearTimeout(this._holdT); const p = {}; if (this.state.peek) p.peek = null; if (this.state.pvI === i) p.pvI = null; if (Object.keys(p).length) this.setState(p); }, // desktop mouseleave only (see markup) — hover should close on its own
         // re-ported 30 aug 2026 (code, ca592d3 regressed by the fresh export): mobile's touch-end
         // shared onPeekEnd with desktop's mouseleave, so the info panel closed the instant a finger
         // lifted — split so a touch release only cancels a hold that hadn't fired yet, panel stays
