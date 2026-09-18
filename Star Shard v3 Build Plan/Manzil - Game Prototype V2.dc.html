@@ -8464,6 +8464,10 @@ class Component extends DCLogic {
       case "won": T({ f: 131, d: 2, v: .035, a: .4 }); B({ f: 523, d: 1.5, v: .09 }, .1); B({ f: 659, d: 1.5, v: .09 }, .26); B({ f: 784, d: 2, v: .1 }, .42); break;
       case "lost": T({ f: 100, f2: 48, d: .2, v: .18 }); N({ ft: "lowpass", f: 400, d: .5, v: .055, a: .06 }, .05); break;
       case "lantern": N({ ft: "highpass", f: 3000, d: .06, v: .11 }); N({ ft: "lowpass", f: 2000, f2: 150, d: .5, v: .08, a: .02 }, .06); break;
+      // the menus' four (15 sep 2026, pack 2.6): a tick on a mark, a low camera tone on the head turn, the scales' note as the first caption lands; the light going out is "lantern" above
+      case "tick": N({ ft: "highpass", f: 4200, d: .025, v: .1 }); T({ f: 1568, d: .09, v: .03, a: .003 }, .01); break;
+      case "look": T({ f: 98, f2: 131, d: .34, v: .05, a: .12 }); N({ ft: "lowpass", f: 600, f2: 1400, d: .3, v: .04, a: .1 }); break;
+      case "scales": T({ f: 392, d: .9, v: .04, a: .05 }); T({ f: 587, d: .7, v: .025, a: .06 }, .05); N({ ft: "bandpass", f: 2400, d: .12, v: .05, q: 3 }); break;
       case "reach": T({ f: 600, f2: 1200, d: .18, v: .04, a: .16 }); N({ f: 500, f2: 3400, d: .5, v: .1 }, .2); N({ ft: "lowpass", f: 900, d: .03, v: .32 }, .74); T({ f: 150, f2: 55, d: .14, v: .18 }, .74); N({ f: 1800, d: .06, v: .14 }, .8); break;
       case "gaze": T({ f: 2093, d: .28, v: .018, a: .05 }); break;
       case "drumcarry": N({ ft: "bandpass", f: 240, d: .12, v: .28, q: 2 }); T({ f: 180, f2: 120, d: .3, v: .15 }); C({ f: 554, d: .6, v: .05 }, .04); break;
