@@ -6124,7 +6124,23 @@ class Component extends DCLogic {
     this._netCleanup();
     this.setState({ duelSeek: { stage: "seek" } });
     (window.io ? Promise.resolve() : import("./socket-io-client.js")).then(() => {
-      const sock = window.io({ path: "/socket.io", withCredentials: true, transports: ["websocket", "polling"] });
+      // THE SOCKET WAS CONNECTING TO THE WRONG HOST (21 sep 2026, user: "me and my brother are both
+      // on two hands and it isn't finding a match"). io() with NO url connects to the PAGE's origin —
+      // staging.starshard.net — and socket.io lives on the API host. Measured: the page origin answers
+      // /socket.io/ with 404, api.<host> answers 200. So the socket never connected, "find a match"
+      // sat in `seek` forever, and no queue_join was ever sent.
+      //
+      // The origin comes from api.js's own API_BASE rather than being rebuilt here, so there is one
+      // place that decides where the backend is — the same rule as "nothing outside api.js calls
+      // fetch". The fallback matches api.js exactly for the window before the module has loaded.
+      const apiBase = (this.api && this.api.API_BASE) || (typeof location !== "undefined" ? "https://api." + location.hostname : "");
+      const sock = window.io(apiBase, { path: "/socket.io", withCredentials: true, transports: ["polling", "websocket"] });
+      // POLLING FIRST, NOT WEBSOCKET (21 sep 2026). Measured against the deployed API: a websocket-only
+      // connection fails outright ("websocket error") because the reverse proxy in front of the NAS does
+      // not upgrade, while polling connects and then upgrades if it can. With websocket listed first the
+      // client leads with the transport that cannot work. This order costs nothing where websockets DO
+      // work — socket.io upgrades on its own — and is the difference between connecting and not where
+      // they do not. If the Cloudflare tunnel later terminates websockets properly, this still upgrades.
       this._netSock = sock;
       sock.on("connect", () => {
         sock.emit("queue_join", { pack: (this.state.deckSel || []).filter(id => id >= 1 && id <= 28) });
