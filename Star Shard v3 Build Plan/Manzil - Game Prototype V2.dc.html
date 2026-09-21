@@ -5465,6 +5465,12 @@
           </span>
           <span style="font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.05em;color:#D8C89C;text-shadow:0 1px 8px rgba(5,3,2,.9)">glossary</span>
         </button>
+        <button onClick="{{ pmGoTable }}" style="position:relative;background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;animation:mzPmIn .38s cubic-bezier(.3,1.2,.4,1) .2s both" style-hover="filter:brightness(1.35) drop-shadow(0 0 10px rgba(180,150,255,.5));transform:translateY(-3px)">
+          <span style="position:relative;width:44px;height:44px;border-radius:50%;border:1px dashed rgba(170,150,230,.6);background:radial-gradient(circle at 50% 42%, rgba(120,96,200,.14), rgba(12,9,5,.85) 76%);box-shadow:0 0 14px rgba(140,110,220,.16);display:flex;align-items:center;justify-content:center;overflow:hidden">
+            <svg viewBox="0 0 40 40" style="width:24px;height:24px"><g fill="rgba(20,14,7,.8)" stroke="rgba(214,190,255,.85)" stroke-width="1.4" stroke-linejoin="round"><ellipse cx="20" cy="22" rx="14" ry="4" fill="none"></ellipse><rect x="11" y="9" width="6" height="9" rx="1" transform="rotate(-12 14 13)"></rect><rect x="17" y="8" width="6" height="9" rx="1" transform="rotate(-3 20 12)"></rect><rect x="20" y="24" width="6" height="9" rx="1" transform="rotate(176 23 28)"></rect><rect x="26" y="25" width="6" height="9" rx="1" transform="rotate(190 29 29)"></rect></g></svg>
+          </span>
+          <span style="font-family:'Karla',sans-serif;font-size:12px;letter-spacing:.05em;color:#D8C89C;text-shadow:0 1px 8px rgba(5,3,2,.9)">two hands</span>
+        </button>
         <sc-if value="{{ pmLevelOn }}" hint-placeholder-val="{{ false }}">
           <button onClick="{{ pmGoMoon }}" style="position:relative;background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;animation:mzPmIn .38s cubic-bezier(.3,1.2,.4,1) .24s both" style-hover="filter:brightness(1.35) drop-shadow(0 0 10px rgba(255,176,0,.5));transform:translateY(-3px)">
             <span style="position:relative;width:44px;height:44px;border-radius:50%;border:1px dashed rgba(255,176,0,.55);background:radial-gradient(circle at 50% 42%, rgba(255,176,0,.1), rgba(12,9,5,.85) 76%);box-shadow:0 0 14px rgba(255,176,0,.14);display:flex;align-items:center;justify-content:center;overflow:hidden">
@@ -16425,10 +16431,11 @@ class Component extends DCLogic {
           // nothing renders"). This list is an ALLOW-LIST: anything not named here falls through to the
           // else below and lands on the lobby, so the two new pages were reachable from the scene mark
           // (which routes through _look) and nowhere else. A new phase needs its name here as well.
-          else if (dest === "record" || dest === "ledger" || dest === "codex" || dest === "shardapp" || dest === "howto" || dest === "gloss") this._go(dest, { ...(inMatch ? this._deckState() : {}), pmOpen: true, pauseOn: false, navFrom: null });
+          else if (dest === "record" || dest === "ledger" || dest === "codex" || dest === "shardapp" || dest === "howto" || dest === "gloss" || dest === "duel1") this._go(dest, { ...(inMatch ? this._deckState() : {}), pmOpen: true, pauseOn: false, navFrom: null });
           else this._go("menu", { ...this._deckState(), deckSel: st.deckSel, pmOpen: true, pauseOn: false, navFrom: null });
         };
         return {
+          climbStageOn: inMatch, // (Design 20 sep) the climb's stage gate — was merged as a binding with no producer
           pmOn, pmOpen: !!st.pmOpen, pmChipStyle, pmMenuStyle,
           obHintOn: !!obHintText, obHintText,
           obHintStyle: obBase + "bottom:" + Math.round(cyB + 17) + "px;color:rgba(154,138,94,.6);pointer-events:none",
@@ -16475,6 +16482,11 @@ class Component extends DCLogic {
           pmGoCodex: () => nav("codex"),
           pmGoRules: () => nav("howto"),
           pmGoGloss: () => nav("gloss"),
+          // TWO HANDS reaches its screens from the plaque (Design, 21 Sep; user reported the entry
+          // missing). The duel1/duel2 screens were already here — only the way in was not, which is
+          // the failure mode their inventory exists to catch: a dropped SCREEN throws nothing.
+          // nav() is an allow-list, so "duel1" has to be named in it as well; see below.
+          pmGoTable: () => nav("duel1"),
           // LOG OUT AT THE LOBBY (30 aug 2026, user): closes the session back to the arrive screen.
           // nothing is wiped: the shard, climbs and name keep; casting again is one tap of "sign back in".
           pmLogoutOn: !inMatch,
@@ -16608,6 +16620,7 @@ class Component extends DCLogic {
       roundWalkerOn: st.phase === "round" && !!st.lastVerdict,
       roundWalkerLine: this._verdictWhy(st.lastVerdict),
       roundMark: lastRound === "you" ? "#F0D89A" : lastRound === "draw" ? "rgba(154,138,94,.9)" : "#FFB000",
+      roundTitleStyle: "font-family:'Cormorant Garamond',serif;font-weight:600;line-height:1.15;color:#F2EAD6;text-align:center;max-width:520px;text-wrap:pretty;animation:mzFadeUp .5s ease .06s both;font-size:" + (st.road && !st.roadBoss && lastRound === "you" && st.roadWalker && st.roadRung < 8 ? 24 : 30) + "px",
       roundTitle: st.duel ? "the board rests" : st.road && !st.roadBoss ? (st.roadRung >= 7 ? ((av => av ? "the air thins. " + av.name + " waits." : "the air thins. the " + this._mName(this._tonight()) + " waits.")(this._avatar())) : (st.roadWalker || "the walker") + " steps aside") : "round " + st.round,
       // THE MID-MATCH BEAT (1 sep 2026). Placed AFTER roundTitle on purpose: when a match is still
       // running it overrides that key, because the generic title would read "<walker> steps aside"
