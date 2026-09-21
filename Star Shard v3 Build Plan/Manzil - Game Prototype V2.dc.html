@@ -16331,7 +16331,6 @@ class Component extends DCLogic {
       })())),
       menuPlayLabel: this._susp ? "return to the board ›" : (this._mlvl(this._tonight()) < 4 && !this._climbDoneTonight(this._tonight())) ? "the moon road ›" : "the table ›",
       menuNight: this._moonWord(),
-      roadState: ((t) => this._mlvl(t) >= 4 ? "claimed · its table is open" : this._climbDoneTonight(t) ? "walked tonight · nothing more staked" : "nine steps, then the mansion itself")(this._tonight()),
       fiveLabel: (st.deckSel || []).length >= 5 ? "your next five" : "choose five",
       fiveCards: (() => {
         const out = this._deal(st.deckSel || [], 1).map((id, i) => {
