@@ -442,7 +442,7 @@
     <div class="mzGrain" style="position:absolute;inset:-40%;pointer-events:none;z-index:45;opacity:.055;mix-blend-mode:overlay;animation:mzGrain 1.1s steps(3) infinite"></div>
   </sc-if>
   <div style="{{ elevAirStyle }}"></div>
-  <sc-if value="{{ climbAnyOn }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ climbStageOn }}" hint-placeholder-val="{{ false }}">
     <div style="position:absolute;right:13px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;z-index:8;pointer-events:none">
       <span style="{{ climbStarStyle }}">☽</span>
       <div style="position:relative;display:flex;flex-direction:column-reverse;align-items:center;gap:8px;margin-top:7px;padding:3px 0">
@@ -4982,7 +4982,7 @@
         </div>
       </sc-if>
       <div style="font-size:20px;color:{{ roundMark }};animation:mzPop .7s cubic-bezier(.22,1,.36,1) both">✦</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;color:#F2EAD6;animation:mzFadeUp .5s ease .06s both">{{ roundTitle }}</div>
+      <div style="{{ roundTitleStyle }}">{{ roundTitle }}</div>
       <sc-if value="{{ roundWalkerOn }}" hint-placeholder-val="{{ false }}">
         <div style="font-family:'Karla',sans-serif;font-size:11px;color:#9A8A5E;animation:mzFadeUp .6s ease .3s both">{{ roundWalkerLine }}</div>
       </sc-if>
@@ -5382,7 +5382,7 @@
     </div>
   </sc-if>
         <sc-if value="{{ lookMarksOn }}" hint-placeholder-val="{{ false }}">
-    <div style="position:absolute;inset:0;z-index:43;pointer-events:none">
+    <div style="{{ lookMarksWrap }}">
       <sc-for list="{{ lookMarks }}" as="mk" hint-placeholder-count="3">
         <button data-mzmark="1" onClick="{{ mk.tap }}" style="{{ mk.style }}" style-hover="transform:translateY(-3px);color:#F0D89A;filter:drop-shadow(0 0 10px rgba(240,216,154,.4))" style-active="transform:translateY(0)">
           <span style="{{ mk.dot }}"></span>
@@ -16451,6 +16451,16 @@ class Component extends DCLogic {
           obLinkStyle: ph9 === "birth"
             ? "position:absolute;top:14px;right:18px;z-index:44;font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)"
             : obBase + "bottom:" + Math.round(cyB + 6) + "px;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)",
+          // THE LOBBY MARKS WERE POSITIONED AGAINST THE WINDOW, NOT THE SCENE (Design, 20 sep 2026).
+          // Their container was inset:0 on the WINDOW, so each mark's percentage resolved against the
+          // whole viewport while the stage is a centred letterboxed box (932x430 * scM, with barM above
+          // and below). The two agree at exactly one aspect ratio. At 1566x1138 (barM 212.5) a 17% mark
+          // landed at 193px — entirely in the dead margin, its button crossing the horizon by 5px.
+          // Insetting the container to the stage box makes every percentage a percentage of the SCENE,
+          // which is what each mark means: the ring hangs in the sky, the fence sits low left, the
+          // gatepost low right. Nothing can land in the margin at any window size now.
+          lookMarksWrap: (() => { const sx = Math.round(Math.max((window.innerWidth - 932 * scM) / 2, 0)), sy = Math.round(barM);
+            return "position:absolute;top:" + sy + "px;bottom:" + sy + "px;left:" + sx + "px;right:" + sx + "px;z-index:43;pointer-events:none"; })(),
           marginTitleStyle: "position:absolute;left:50%;top:" + Math.round(Math.max((barM - 26) / 2, 5)) + "px;transform:translateX(-50%);z-index:42;text-align:center;pointer-events:none",
           marginTitleTextStyle: "white-space:nowrap;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + Math.round(Math.min(21, Math.max(barM * .42, 14))) + "px;line-height:1.1;color:#E8D9AC;text-shadow:0 2px 14px rgba(4,3,2,.9)",
           moonCtlStyle: "position:absolute;right:18px;top:" + Math.round(cyT) + "px;z-index:44;display:flex;align-items:center;gap:8px;pointer-events:none;animation:mzFadeUp .6s ease .5s both",
