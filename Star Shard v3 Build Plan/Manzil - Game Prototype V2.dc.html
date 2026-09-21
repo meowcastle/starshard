@@ -305,6 +305,8 @@
   @keyframes mzPigeon{0%,91%,100%{transform:translateY(0)}94%{transform:translateY(-3px)}}
   @keyframes mzWindow{0%,78%,100%{opacity:.32}84%{opacity:.05}90%{opacity:.26}}
   /* an unspent level announces itself: the card breathes amber and wears a pip (26 aug 2026, user) */
+  /* the lobby's one call: levels waiting, breathing under the house's name (21 sep 2026, user) */
+  @keyframes mzSpendCall{0%,100%{opacity:.84;text-shadow:0 1px 8px rgba(5,3,2,.9), 0 0 10px rgba(255,176,0,.35)}50%{opacity:1;text-shadow:0 1px 8px rgba(5,3,2,.9), 0 0 20px rgba(255,176,0,.8)}}
   @keyframes mzSpendGlow{0%,100%{box-shadow:0 5px 14px rgba(0,0,0,.55), 0 0 10px rgba(255,176,0,.3)}50%{box-shadow:0 5px 14px rgba(0,0,0,.55), 0 0 22px rgba(255,176,0,.85)}}
   @keyframes mzSpendPip{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.22);opacity:1}}
   @keyframes mzScrap{0%,68%{transform:translate(0,0) rotate(0deg);opacity:0}71%{opacity:.75}99%{opacity:0}100%{transform:translate(760px,-10px) rotate(300deg);opacity:0}}
@@ -4013,6 +4015,9 @@
             <span style="width:30px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,176,0,.65))"></span>
             <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;letter-spacing:.04em;color:#FFD98A;text-shadow:0 0 16px rgba(255,176,0,.5), 0 1px 6px rgba(5,3,2,.9)">{{ menuPlayLabel }}</span>
             <span style="width:30px;height:1px;background:linear-gradient(90deg,rgba(255,176,0,.65),transparent)"></span>
+            <sc-if value="{{ roadStateOn }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:5px;font-family:'Karla',sans-serif;font-size:12px;color:rgba(216,200,156,.85);text-shadow:0 1px 8px rgba(5,3,2,.9);white-space:nowrap">{{ roadState }}</div>
+            </sc-if>
           </div>
         </div>
       </button>
@@ -4033,7 +4038,9 @@
             <span style="position:absolute;left:50%;top:0;width:11px;height:11px;margin-left:-5.5px;background:#FFB000;transform:rotate(45deg);box-shadow:0 0 16px rgba(255,176,0,.7);animation:mzBreathe 2.6s ease-in-out infinite"></span>
           </div>
           <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:25px;color:#F2EAD6;text-shadow:0 2px 14px rgba(5,3,2,.9)">the moon road</span>
-          <span style="font-family:'Karla',sans-serif;font-size:10px;color:#9A8A5E;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ roadState }}</span>
+          <sc-if value="{{ roadStateOn }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:'Karla',sans-serif;font-size:12px;color:#9A8A5E;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ roadState }}</span>
+          </sc-if>
           <span style="font-family:'Karla',sans-serif;font-size:11px;line-height:1.7;color:#D8C89C;text-wrap:pretty;max-width:300px;text-shadow:0 1px 8px rgba(5,3,2,.85)">{{ menuLine }}</span>
           <span style="font-family:'Karla',sans-serif;font-size:12.5px;color:#FFB000;margin-top:6px;text-shadow:0 0 12px rgba(255,176,0,.3)">{{ menuPlayLabel }}</span>
         </button>
@@ -5418,19 +5425,12 @@
       </span>
     </div>
   </sc-if>
-        <sc-if value="{{ lookMarksOn }}" hint-placeholder-val="{{ false }}">
-    <div style="{{ lookMarksWrap }}">
-      <sc-for list="{{ lookMarks }}" as="mk" hint-placeholder-count="3">
-        <button data-mzmark="1" onClick="{{ mk.tap }}" style="{{ mk.style }}" style-hover="transform:translateY(-3px);color:#F0D89A;filter:drop-shadow(0 0 10px rgba(240,216,154,.4))" style-active="transform:translateY(0)">
-          <span style="{{ mk.dot }}"></span>
-          <span style="font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.04em;white-space:nowrap;text-shadow:0 1px 8px rgba(5,3,2,.9)">{{ mk.label }}</span>
-        </button>
-      </sc-for>
-    </div>
-  </sc-if>
   <sc-if value="{{ marginTitleOn }}" hint-placeholder-val="{{ false }}">
     <div style="{{ marginTitleStyle }}">
       <div style="{{ marginTitleTextStyle }}">{{ marginTitle }}</div>
+            <sc-if value="{{ spendCallOn }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ spendCallTap }}" style="{{ spendCallStyle }}" style-hover="color:#FFD37A;filter:drop-shadow(0 0 10px rgba(255,176,0,.55))" style-active="opacity:.7">{{ spendCallText }}</button>
+            </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{ obHintOn }}" hint-placeholder-val="{{ false }}">
@@ -9686,6 +9686,33 @@ class Component extends DCLogic {
   // screens that live in its scene there is no curtain. The lobby root stays mounted and the camera turns to the
   // place the menu lives (stage.look): cards = the hand, codex = the ring, ledger = the fence, star shard = past the
   // moon, how to play / glossary = the gatepost. 300 ms ease-out, destination laid out first (the pack's 2.1 + 2.2).
+  // ONE GATE, TWO SITES (Design, 21 sep 2026): the spend call renders in _lookVals but the margin bar's
+  // geometry is computed in renderVals, and the bar has to know it is holding TWO rows before it places
+  // the first one.
+  _spendCallOn() {
+    const st = this.state;
+    return st.phase === "menu" && !st.pmOpen && !st.veil && this._unspent() > 0;
+  }
+  // WHAT THE LOBBY CAN SAY THAT THE SCENE CANNOT (Design, 21 sep 2026). Returns "" when the scene already
+  // says it all. The walked line reads the level LIVE rather than assuming one was gained: _recordWin
+  // writes lastclimb on any road win but only bumps climbs when pickK == null, so a chosen-station replay
+  // trips this branch having woken nothing. "stands at" is true either way.
+  _roadState() {
+    const t = this._tonight();
+    if (this._mlvl(t) >= 4) return "claimed · its table is open";
+    if (this._climbDoneTonight(t)) {
+      const lv = Math.max(1, Math.min(4, this._mlvl(t)));
+      return this._moonGlyph(lv) + " " + this._lvlWord(lv) + " · the road climbs again at " + this._hourName();
+    }
+    const susp = this._susp && this._suspM === t ? this._susp : null;
+    if (!susp) return "";
+    const wins = susp.roundWins || [];
+    if (!wins.length) return "a board stands unfinished";
+    const w = wins.filter(x => x === "you").length, l = wins.filter(x => x === "sky").length, N = ["none", "one", "two", "three"];
+    return w === l ? N[w] + " board" + (w === 1 ? "" : "s") + " apiece"
+      : w > l ? "you lead, " + N[w] + " to " + N[l]
+      : String(susp.roadWalker || "she").toLowerCase() + " leads, " + N[l] + " to " + N[w];
+  }
   _lookSet() { return { menu: 1, ledger: 1, codex: 1, record: 1, shardapp: 1, howto: 1, gloss: 1 }; }
   _look(p, extra) {
     const S = this._lookSet();
@@ -9727,29 +9754,19 @@ class Component extends DCLogic {
         const on = p === "round" && !!st.road && !st.duel && !st.practice;
         if (!on) return { tbLightsOn: false, tbLights: [], tbLightsLine: "" };
         const lv = Math.max(0, Math.min(3, this._lives()));
+        // THE LOBBY IS EMPTY BUT FOR THE ONE THING TO DO (Design, 21 sep 2026, user: "remove all the busy stuff
+        // on the level like the hand the ring etc"). The four scene marks are GONE — every one already stands in
+        // the nav plaque, so the scene carried a second copy of the menu scattered across the art. What survives
+        // is the only thing the lobby knows that the nav does not: that levels are waiting.
+        const un = this._unspent();
         return { tbLightsOn: true,
           tbLights: [0, 1, 2].map(i => ({ style: "width:9px;height:9px;border-radius:50%;" + (i < lv ? "background:#F0D89A;box-shadow:0 0 7px rgba(240,216,154,.55)" : "background:#0A0603;border:1px solid rgba(240,216,154,.35)") })),
           tbLightsLine: lv >= 3 ? "three lights stand." : lv === 2 ? "two lights stand." : lv === 1 ? "one light stands." : "the last light is out." };
       })()),
       lookGoShard: go("record"),
-      lookMarksOn: p === "menu" && !st.pmOpen && !st.veil,
-      lookMarks: [
-        // THE HOVER MUST CARRY THE MARK'S OWN TRANSFORM (20 sep 2026, user: "it pushes right like 20mm").
-        // The ring centres itself with translateX(-50%), and the shared style-hover set transform to
-        // translateY(-3px) alone — which REPLACES the whole property, so hovering dropped the centering and
-        // the mark jumped right by half its own width (~62px on screen). The lift is authored per mark now,
-        // composed onto whatever transform that mark already stands on.
-        { label: "the ring · codex", tap: () => { this.setState({ codexCh: null }); this._look("codex", { navFrom: null }); }, wrap: at("left:50%;top:17%;transform:translateX(-50%)"), style: btn, dot: dot + ";width:14px;height:14px;border-style:solid;border-color:rgba(240,216,154,.35);background:none" },
-        { label: "the fence · ledger", tap: go("ledger"), wrap: at("left:8%;bottom:37%"), style: btn, dot },
-        { label: "the gatepost · how to play", tap: go("howto"), wrap: at("right:15%;bottom:37%"), style: btn, dot: dot + ";border-radius:1px" },
-        { label: un ? "the hand · your cards · " + wN + " waiting" : "the hand · your cards",
-          tap: () => this._go("deck", { navFrom: "menu" }),
-          wrap: at("left:14%;top:15%"),
-          style: btn.replace("color:rgba(184,168,120,.8)", "color:" + (un ? "#FFB000" : "rgba(184,168,120,.8)")),
-          dot: un
-            ? "width:11px;height:11px;flex:none;border-radius:50%;border:1px solid #FFB000;background:radial-gradient(circle at 40% 35%, #FFD37A, #FFB000 62%, #8A5A00);box-shadow:0 0 10px rgba(255,176,0,.7), 0 0 22px rgba(255,176,0,.35)"
-            : dot },
-      ],
+      spendCallOn: this._spendCallOn(),
+      spendCallText: un + (un === 1 ? " level unspent" : " levels unspent"),
+      spendCallTap: () => this._go("deck", { navFrom: "menu" }),
     };
   }
 
@@ -15577,6 +15594,8 @@ class Component extends DCLogic {
       recordTap: () => this._go("record"),
       modeBackTap: () => this._go("menu"),
       noteOn: st.phase === "note",
+      roadState: this._roadState(),
+      roadStateOn: !!this._roadState(),
       marginTitleOn: st.phase === "menu" || st.phase === "play" || st.phase === "round" || st.phase === "over" || st.phase === "climb" || st.phase === "moon" || st.phase === "ledger" || st.phase === "codex" || st.phase === "record" || st.phase === "shardapp" || st.phase === "howto" || st.phase === "gloss",
       marginTitle: st.phase === "moon" ? "level select" : st.phase === "howto" ? "how to play" : st.phase === "gloss" ? "the glossary" : st.phase === "ledger" ? "the ledger" : st.phase === "codex" ? "the codex" : st.phase === "record" ? "star shard" : st.phase === "shardapp" ? "the shard app" : "the " + this._mName(this._tonight()),
       noteN: this._tonight(),
@@ -16507,17 +16526,23 @@ class Component extends DCLogic {
           obLinkStyle: ph9 === "birth"
             ? "position:absolute;top:14px;right:18px;z-index:44;font-family:'Karla',sans-serif;font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)"
             : obBase + "bottom:" + Math.round(cyB + 6) + "px;background:none;border:none;padding:4px 0;cursor:pointer;color:rgba(154,138,94,.65)",
-          // THE LOBBY MARKS WERE POSITIONED AGAINST THE WINDOW, NOT THE SCENE (Design, 20 sep 2026).
-          // Their container was inset:0 on the WINDOW, so each mark's percentage resolved against the
-          // whole viewport while the stage is a centred letterboxed box (932x430 * scM, with barM above
-          // and below). The two agree at exactly one aspect ratio. At 1566x1138 (barM 212.5) a 17% mark
-          // landed at 193px — entirely in the dead margin, its button crossing the horizon by 5px.
-          // Insetting the container to the stage box makes every percentage a percentage of the SCENE,
-          // which is what each mark means: the ring hangs in the sky, the fence sits low left, the
-          // gatepost low right. Nothing can land in the margin at any window size now.
-          lookMarksWrap: (() => { const sx = Math.round(Math.max((window.innerWidth - 932 * scM) / 2, 0)), sy = Math.round(barM);
-            return "position:absolute;top:" + sy + "px;bottom:" + sy + "px;left:" + sx + "px;right:" + sx + "px;z-index:43;pointer-events:none"; })(),
-          marginTitleStyle: "position:absolute;left:50%;top:" + Math.round(Math.max((barM - 26) / 2, 5)) + "px;transform:translateX(-50%);z-index:42;text-align:center;pointer-events:none",
+          // THE BAR PLACES THE WHOLE BLOCK, NOT ITS FIRST ROW (Design, 21 sep 2026). (barM - 26) / 2 centres
+          // ONE 26px row. The spend call adds a second (7 + 20), so a two-row block was positioned as if it were
+          // one and ran off the bottom of the bar — at barM 61 the stage's top edge struck through the descenders.
+          // The block height now goes into the centring, gated on the SAME condition as the call so the title does
+          // not shift on the six other phases that show it. Under ~barM 56 no centred two-row block fits, so the
+          // second row stops fighting for the margin and drops a clean 6px BELOW the stage edge, into the scene it
+          // belongs to. Straddling the line is the one thing it must never do.
+          ...((() => {
+            const two = this._spendCallOn(), tH = 21, gap = 7, bH = 20;
+            const top = Math.round(Math.max((barM - (two ? tH + gap + bH + 5 : 26)) / 2, 5));
+            const fits = top + tH + gap + bH <= barM - 4;
+            const mt = two && !fits ? Math.max(Math.round(barM + 6 - top - tH), gap) : gap;
+            return {
+              marginTitleStyle: "position:absolute;left:50%;top:" + top + "px;transform:translateX(-50%);z-index:42;text-align:center;pointer-events:none",
+              spendCallStyle: "display:block;margin:" + mt + "px auto 0;pointer-events:auto;background:none;border:none;padding:3px 4px;cursor:pointer;font-family:'Karla',sans-serif;font-size:12px;letter-spacing:.06em;white-space:nowrap;color:#FFB000;animation:mzSpendCall 3.2s ease-in-out infinite",
+            };
+          })()),
           marginTitleTextStyle: "white-space:nowrap;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:" + Math.round(Math.min(21, Math.max(barM * .42, 14))) + "px;line-height:1.1;color:#E8D9AC;text-shadow:0 2px 14px rgba(4,3,2,.9)",
           moonCtlStyle: "position:absolute;right:18px;top:" + Math.round(cyT) + "px;z-index:44;display:flex;align-items:center;gap:8px;pointer-events:none;animation:mzFadeUp .6s ease .5s both",
           pmLevelOn: !inMatch,
