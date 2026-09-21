@@ -5934,6 +5934,7 @@ class Component extends DCLogic {
     this._afterDeal();
     if (nextLeader === "sky") { this._aiT = setTimeout(() => this._skyMove(), 1300); }
   }
+
   // EVERY BEAT WAITS FOR THE PLAYER (1 sep 2026, user: "wait for a tap always"). Returns the
   // auto-advance delay in ms, or 0 to hold until tapped — and it is 0 everywhere now. Kept as one
   // method rather than deleting the timers, so the policy is a single line to change if a beat ever
@@ -5947,6 +5948,16 @@ class Component extends DCLogic {
   // and the hud overlays), pinned on top and faded out over the climb, so every snap underneath —
   // redrawn SVG, count changes, horizon jumps — reads as a film dissolve into the new rung. Pure DOM,
   // outside React's tree, self-removing; the scenes themselves are untouched.
+  // ONE CAMERA, MANY ROOMS (20 sep 2026, user: "unify the curve, keep the drum and the well"). Every built
+  // level derived its own approach from the hideaway's camp math, so six scenes dollied on six slightly
+  // different linear ramps — the climb read as six films cut together. _ap() is the canonical curve: a
+  // smoothstep on the rung, so a scene creeps at the horizon, gathers through the middle rungs, and settles
+  // at the summit. Endpoints are unchanged (0 stays 0, 8 stays 1), so no level's first or last frame moves —
+  // only the pacing between them, and now they all share it. TWO OVERRIDES, by design: the drum keeps a
+  // linear k because its tempo rides the same number (a smoothstepped bpm would lurch), and the well keeps
+  // its pow-1.7 haul because being pulled up a shaft is that level's whole identity.
+  _ap(e) { const t = Math.max(0, Math.min(1, (e || 0) / 8)); return t * t * (3 - 2 * t); }
+
   _ghostStage() {
     try {
       const stage = document.querySelector("[data-mzstage]"); if (!stage) return;
@@ -8063,6 +8074,7 @@ class Component extends DCLogic {
   }
   _mansions() { return Array.from({ length: ((this.state && this.state.slots && this.state.slots.length) || 9) }, (_, i) => "the " + this._mName(this._boardM(i))); }
 
+
   _zoomFor(k) {
     k = String(k);
     const C = this._cards();
@@ -8117,7 +8129,12 @@ class Component extends DCLogic {
     if (k[0] === "s") { i = +k.slice(1); s = this.state.slots[i]; if (!s) return null; c = C[s.id];
     }
     else { c = C[+k.slice(1)]; if (!c) return null; }
-    const cid = s ? s.id : +k.slice(1);
+    // HER IDS LIVE AT 200+ (17 sep 2026): _cards() builds the mirror as C[200 + id], so an unnormalised cid
+    // failed the 1..28 mansion test and fell through to the five-planet map — keyed by planet name, while a
+    // mirror's `ab` is a mansion signature. The lookup returned nothing, `lines` came back empty, and the
+    // owner clause above could never fire for a walker or the boss. `shapes:` already normalised here; cid
+    // did not. Its only consumer is the ability lookup (the IIFE below shadows the name).
+    const cid = s ? (s.id >= 200 ? s.id - 200 : s.id) : +k.slice(1);
     const you = s ? s.owner === "you" : true;
     const lines = [], notes = [];
     if (!s && c.twoFaced && this._abilityOn(c)) lines.push("two-faced. you choose which number faces which way when it lodges, and the throne may turn again after it lands.");
@@ -8159,7 +8176,14 @@ class Component extends DCLogic {
     if (c.who === "you" && c.planet) who += (who ? " · " : "") + (c.planet === "the road" ? "from the road" : "your " + c.planet);
     // two panels: identity stays on the card, everything situational is a row in the side column. at level
     // three and up the card's own rule leaves the face too (the marks carry it) and becomes a row here.
-    const shed = c.who === "you" && (c.lvl || 1) >= 3 && lines.length;
+    // HER CARDS SAY WHAT THEY DO TOO (17 sep 2026, user). This was gated on c.who === "you", and only the
+    // codex's big card face prints `move` — the board and hand panels render the notes column ALONE. So an
+    // enemy card's ability had nowhere to appear: hovering her live ability showed an empty panel while
+    // hovering yours read fine. Her line sheds into the column whenever the ability is actually AWAKE
+    // (_abilityOn, so a sleeping level-one rule is never promised), which is also the road-becomes-you
+    // canon working as intended: her hand is your hand, and you are owed the chance to read it.
+    const shed = !!lines.length && (c.who === "you" ? (c.lvl || 1) >= 3
+      : String(k)[0] !== "d" && this._abilityOn(c));
     if (shed) notes.push({ p: 4, label: "its move", body: lines.join(" ") });
     // the codex glosses the marks in ONE panel, never one box per mark
     if (String(k)[0] === "d") { const g = this._marks(c).map(m => this._markName(m.k)).filter(Boolean); if (g.length) notes.push({ p: 3, label: "the marks", body: g.join(". ") }); }
@@ -9471,6 +9495,7 @@ class Component extends DCLogic {
   _glossSee() {
     return { answerer: ["leader", "dawn"], awake: ["level", "signature"], "bigger or equal takes": ["strike", "take"], climb: ["rung", "lantern"], count: ["dominion", "dawn"], crossing: ["flanks", "law"], dawn: ["held cards", "count"], dominion: ["ground", "mansion"], door: ["far end", "slide"], face: ["turn (a card)", "mark"], "far end": ["door"], flanks: ["crossing"], grant: ["quarter", "level"], ground: ["dominion", "window"], handicap: ["mirror", "walker"], "held cards": ["dawn"], "held / cannot be taken": ["grant", "strike"], lantern: ["climb", "rung"], law: ["crossing", "mansion"], leader: ["answerer"], level: ["awake", "signature", "grant"], lodge: ["station", "strike"], mansion: ["quarter", "law"], "mansion match": ["climb", "planets"], mark: ["face"], mirror: ["handicap", "walker"], planets: ["mansion match"], quarter: ["grant"], road: ["station", "crossing"], rung: ["climb", "walker"], signature: ["level", "awake"], slide: ["door", "crossing", "window"], station: ["road"], strike: ["take", "bigger or equal takes"], take: ["strike"], "the sky / she": ["walker", "mansion"], "turn (a card)": ["face", "two-faced"], "two-faced": ["turn (a card)", "grant"], walker: ["rung", "mirror"], window: ["ground", "slide"] };
   }
+
   // HOW TO PLAY, THE WALKED BOARD (14 sep 2026, user picked 1a): six chapters, one screen each, a chapter rail, the
   // road drawn under the sentence acting it out. bold words open the glossary entry in a plaque. htCh is session state.
   _howtoVals() {
@@ -9478,7 +9503,7 @@ class Component extends DCLogic {
     if (st.phase !== "howto") return {};
     const H = this._howto(), N = H.chapters.length, ci = Math.max(0, Math.min(N - 1, st.htCh || 0)), ch = H.chapters[ci];
     const G = H.glossary, gOf = (k) => G.find(g => g.term === k);
-    const rowS = "font-family:'Cormorant Garamond',serif;font-size:13.5px;line-height:1.45;color:rgba(240,222,180,.94);text-wrap:pretty";
+    const rowS = "font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.45;color:rgba(240,222,180,.94);text-wrap:pretty";
     const open = (k) => { const g = gOf(k); if (!g) return; this._sfx("gaze"); this.setState({ htWord: k }); };
     // a run is either a plain span or a link span; the template has no else, so each run carries both faces
     const runs = (p) => p.map((r, i) => typeof r === "string" ? { text: "", link: false, plain: r, plainDisplay: "inline", key: "s" + i }
@@ -9491,7 +9516,7 @@ class Component extends DCLogic {
       htEyebrow: "how to play \u00b7 " + (ci + 1) + " of " + N,
       htTitle: (ci + 1) + ". " + ch.title,
       htRail: H.chapters.map((c, i) => ({ label: (i + 1) + "\u2003" + c.short, tap: () => { this._sfx("gaze"); this.setState({ htCh: i, htWord: null }); },
-        style: "background:none;border:none;text-align:left;padding:4px 0 4px " + (i === ci ? "9px;border-left:1px solid #F0D89A;margin-left:-10px" : "0") + ";cursor:pointer;font-family:'Karla',sans-serif;font-size:10px;letter-spacing:.06em;line-height:1.3;color:" + (i === ci ? "#F0D89A" : i < ci ? "rgba(216,200,156,.55)" : "rgba(216,200,156,.38)") + ";transition:color .15s ease" })),
+        style: "background:none;border:none;text-align:left;padding:4px 0 4px " + (i === ci ? "9px;border-left:1px solid #F0D89A;margin-left:-10px" : "0") + ";cursor:pointer;font-family:'Karla',sans-serif;font-size:12px;letter-spacing:.06em;line-height:1.3;color:" + (i === ci ? "#F0D89A" : i < ci ? "rgba(216,200,156,.55)" : "rgba(216,200,156,.38)") + ";transition:color .15s ease" })),
       htParas: ch.paras.map((p, i) => ({ runs: runs(p), style: rowS, key: "p" + i })),
       htPips: H.chapters.map((_, i) => ({ tap: () => this.setState({ htCh: i, htWord: null }), style: "display:block;width:" + (i === ci ? 14 : 5) + "px;height:5px;border-radius:3px;cursor:pointer;transition:width .2s ease, background .2s ease;background:" + (i === ci ? "#F0D89A" : i < ci ? "rgba(240,216,154,.5)" : "rgba(240,216,154,.18)") })),
       htPrevOn: ci > 0, htPrevLabel: ci > 0 ? "\u2039 " + H.chapters[ci - 1].short : "",
@@ -9529,6 +9554,7 @@ class Component extends DCLogic {
           + (ch.fig === "names" && isDoor ? "border-color:rgba(255,176,0,.6);" : "") }; });
     return out;
   }
+
   // THE GLOSSARY, A TO W (14 sep 2026, user picked 1d): alphabetical, a letter rail, drop letters, term column and
   // definition, "see" links, "where you meet it" pointers, internals tagged, a find field. two reference tables from
   // the draft ride the same page as views: cards/levels/grants, the laws night by night. glossQ/glossView/glossFocus
@@ -9542,7 +9568,7 @@ class Component extends DCLogic {
     const chapterOf = {}; H.chapters.forEach((c, i) => { chapterOf[c.key] = { i, title: c.short }; });
     const QC = { byakko: "185,198,210", suzaku: "212,90,58", seiryuu: "79,168,154", genbu: "124,138,204" };
     const real = this._tonightReal();
-    const defS = "font-family:'Cormorant Garamond',serif;font-size:14px;line-height:1.5;color:rgba(240,222,180,.92);text-wrap:pretty";
+    const defS = "font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.5;color:rgba(240,222,180,.92);text-wrap:pretty";
     const sorted = H.glossary.slice().sort((a, b) => a.term.localeCompare(b.term));
     const hit = (g) => !q || g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q);
     const shown = sorted.filter(hit);
@@ -9564,12 +9590,12 @@ class Component extends DCLogic {
       glEyebrow: "the glossary \u00b7 what the words mean \u00b7 " + H.glossary.length + " words",
       glWordsOn: view === "words", glCardsOn: view === "cards", glLawsOn: view === "laws",
       glTabs: [["words", "the words"], ["cards", "cards & levels"], ["laws", "the laws, night by night"]].map(([k, l]) => ({ label: l, tap: () => { this._sfx("gaze"); this.setState({ glossView: k }); },
-        style: "background:none;border:none;padding:5px 0;cursor:pointer;font-family:'Karla',sans-serif;font-size:9.5px;border-bottom:1px solid " + (view === k ? "#F0D89A" : "transparent") + ";color:" + (view === k ? "#F0D89A" : "rgba(216,200,156,.5)") + ";transition:color .15s ease, border-color .15s ease" })),
+        style: "background:none;border:none;padding:5px 0;cursor:pointer;font-family:'Karla',sans-serif;font-size:12px;border-bottom:1px solid " + (view === k ? "#F0D89A" : "transparent") + ";color:" + (view === k ? "#F0D89A" : "rgba(216,200,156,.5)") + ";transition:color .15s ease, border-color .15s ease" })),
       glQ: st.glossQ || "",
       glQChange: (e) => this.setState({ glossQ: e.target.value, glossFocus: null }),
       glQClearOn: !!q, glQClear: () => this.setState({ glossQ: "" }),
       glLetters: letters.map(L => ({ letter: L, tap: () => { const el = document.getElementById("gl-" + L); const sc = document.getElementById("gl-scroll"); if (el && sc) sc.scrollTop = el.offsetTop - sc.offsetTop - 8; },
-        style: "background:none;border:none;padding:1px 0;cursor:pointer;font-family:'Karla',sans-serif;font-size:9px;letter-spacing:.05em;line-height:1.5;color:" + (shownLetters.includes(L) ? "rgba(216,200,156,.7)" : "rgba(216,200,156,.18)") + ";transition:color .15s ease" })),
+        style: "background:none;border:none;padding:1px 0;cursor:pointer;font-family:'Karla',sans-serif;font-size:12px;letter-spacing:.05em;line-height:1.5;color:" + (shownLetters.includes(L) ? "rgba(216,200,156,.7)" : "rgba(216,200,156,.18)") + ";transition:color .15s ease" })),
       glGroups: groups,
       glEmptyOn: view === "words" && !shown.length, glEmpty: "no word matches \u201c" + (st.glossQ || "") + "\u201d.",
       glNote: H.glossaryNote,
@@ -9601,6 +9627,7 @@ class Component extends DCLogic {
   }
 
 
+
   _lookVals() {
     const st = this.state, p = st.phase;
     // every move scales about the edge it moves AWAY from, so the overhang covers the exposed side (no frame, ever)
@@ -9610,6 +9637,16 @@ class Component extends DCLogic {
     const base = "position:absolute;pointer-events:auto;background:none;border:none;padding:4px 6px;cursor:pointer;display:flex;align-items:center;gap:7px;color:rgba(184,168,120,.8);opacity:1;";
     const dot = "width:9px;height:9px;flex:none;border-radius:50%;border:1px dashed rgba(240,216,154,.7);background:rgba(240,216,154,.1);box-shadow:0 0 8px rgba(240,216,154,.25)";
     const go = (d, x) => () => this._look(d, { navFrom: null, ...(x || {}) });
+    // THE PLACEMENT LIVES ON A WRAPPER, THE LIFT ON THE BUTTON (20 sep 2026, user: "it pushes right like
+    // 20mm"). The ring centres itself with translateX(-50%); the shared style-hover set transform to
+    // translateY(-3px), which REPLACES the whole property — so hovering dropped the centering and the mark
+    // jumped right by half its width (measured: 62.7px). Authoring the transform per mark does not work
+    // either: style-hover is read literally at parse time, so a {{ hole }} there compiles to an empty rule
+    // and the hover disappears entirely (tried, reverted, learned). Two elements is the fix: the wrapper
+    // owns position and any centering transform, the button owns only the lift, and neither can clobber
+    // the other. Any future mark gets its placement in wrap, never on the button.
+    const btn = "position:relative;pointer-events:auto;background:none;border:none;padding:4px 6px;cursor:pointer;display:flex;align-items:center;gap:7px;color:rgba(184,168,120,.8);opacity:1;";
+    const at = (place) => "position:absolute;" + place;
     // THE UNSPENT LEVEL ANNOUNCES ITSELF IN THE LOBBY (15 sep 2026, user: "when the game starts we need some
     // kind of signal that they need to go to cards and level them up"). The hand is already the place cards
     // live in the head turn's vocabulary; it now stands as its own mark and goes AMBER with a count whenever
@@ -9630,12 +9667,18 @@ class Component extends DCLogic {
       lookGoShard: go("record"),
       lookMarksOn: p === "menu" && !st.pmOpen && !st.veil,
       lookMarks: [
-        { label: "the ring · codex", tap: () => { this.setState({ codexCh: null }); this._look("codex", { navFrom: null }); }, style: base + "left:50%;top:17%;transform:translateX(-50%)", dot: dot + ";width:14px;height:14px;border-style:solid;border-color:rgba(240,216,154,.35);background:none" },
-        { label: "the fence · ledger", tap: go("ledger"), style: base + "left:8%;bottom:37%", dot },
-        { label: "the gatepost · how to play", tap: go("howto"), style: base + "right:15%;bottom:37%", dot: dot + ";border-radius:1px" },
+        // THE HOVER MUST CARRY THE MARK'S OWN TRANSFORM (20 sep 2026, user: "it pushes right like 20mm").
+        // The ring centres itself with translateX(-50%), and the shared style-hover set transform to
+        // translateY(-3px) alone — which REPLACES the whole property, so hovering dropped the centering and
+        // the mark jumped right by half its own width (~62px on screen). The lift is authored per mark now,
+        // composed onto whatever transform that mark already stands on.
+        { label: "the ring · codex", tap: () => { this.setState({ codexCh: null }); this._look("codex", { navFrom: null }); }, wrap: at("left:50%;top:17%;transform:translateX(-50%)"), style: btn, dot: dot + ";width:14px;height:14px;border-style:solid;border-color:rgba(240,216,154,.35);background:none" },
+        { label: "the fence · ledger", tap: go("ledger"), wrap: at("left:8%;bottom:37%"), style: btn, dot },
+        { label: "the gatepost · how to play", tap: go("howto"), wrap: at("right:15%;bottom:37%"), style: btn, dot: dot + ";border-radius:1px" },
         { label: un ? "the hand · your cards · " + wN + " waiting" : "the hand · your cards",
           tap: () => this._go("deck", { navFrom: "menu" }),
-          style: base.replace("color:rgba(184,168,120,.8)", "color:" + (un ? "#FFB000" : "rgba(184,168,120,.8)")) + "left:14%;top:15%",
+          wrap: at("left:14%;top:15%"),
+          style: btn.replace("color:rgba(184,168,120,.8)", "color:" + (un ? "#FFB000" : "rgba(184,168,120,.8)")),
           dot: un
             ? "width:11px;height:11px;flex:none;border-radius:50%;border:1px solid #FFB000;background:radial-gradient(circle at 40% 35%, #FFD37A, #FFB000 62%, #8A5A00);box-shadow:0 0 10px rgba(255,176,0,.7), 0 0 22px rgba(255,176,0,.35)"
             : dot },
@@ -9803,11 +9846,12 @@ class Component extends DCLogic {
       l: [[0, 1], [1, 2], [2, 3]] };                                                  // the rear spout of the bucket
     return null;
   }
+
   _introVals() {
     const st = this.state;
-    const T = (d) => "font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;color:#F2EAD6;animation:mzFadeUp .5s ease " + d + "s both";
-    const K = (d) => "font-family:'Karla',sans-serif;font-size:9.5px;color:#9A8A5E;animation:mzFadeUp .5s ease " + d + "s both";
-    const S = (d) => "font-family:'Karla',sans-serif;font-size:11.5px;color:#9A8A5E;animation:mzFadeUp .5s ease " + d + "s both";
+    const T = (d) => "font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#F2EAD6;animation:mzFadeUp .5s ease " + d + "s both";
+    const K = (d) => "font-family:'Karla',sans-serif;font-size:12px;color:#9A8A5E;animation:mzFadeUp .5s ease " + d + "s both";
+    const S = (d) => "font-family:'Karla',sans-serif;font-size:12px;color:#9A8A5E;animation:mzFadeUp .5s ease " + d + "s both";
     if (st.phase !== "intro") return { introHorizonOn: false, introStageStyle: "", introInkStyle: "display:none", introConOn: false, introConWrap: "display:none", introConStars: [], introConLines: [], introTitleStyle: T(.5), introKeeperStyle: K(.6), introSubStyle: S(.72) };
     const t = this._tonight();
     const boss = !!(st.roadBoss || (st.pickK != null ? st.pickK >= 8 : (this._mlvl(t) < 4 && !this._climbDoneTonight(t) && Math.min(this._rungs()[t] || 0, 8) >= 8)));
@@ -10272,17 +10316,27 @@ class Component extends DCLogic {
     if (!ps || !s || !s.road || s.practice || s.duel) return;
     const rw = s.roundWins || [], prw = ps.roundWins || [];
     if (rw.length > prw.length && s.slots && s.slots.length) {
-      const [you, sky] = this._counts(s.slots);
-      this._devTeleAdd({ k: "board", night: this._tonight(), rung: s.roadRung, boss: !!s.roadBoss, walker: s.roadWalker || "", win: rw[rw.length - 1], you, sky, leader: s.leader, lives: this._lives() });
+      // DAWN WAS MISSING FROM EVERY TELEMETRY ROW (Design, 20 sep 2026). This fired with a bare
+      // _counts(s.slots) — no held hands — so the board score logged was the ROAD ONLY, under-
+      // reporting both sides by their dawn points on every full board, which makes dawn look inert
+      // to anyone measuring from the log. Re-deriving it here is wrong a second way: by now the next
+      // round may have dealt, so _heldNow() is not the hand that duelled. The count ceremony already
+      // stashed the true figures in st.lastVerdict; read those, and fall back to a live count only if
+      // a board somehow resolved without one. dawnY/dawnS are logged as their own columns so the
+      // split is visible rather than buried in the total.
+      const lv = s.lastVerdict;
+      const [you, sky] = lv ? [lv.you, lv.sky] : this._counts(s.slots, this._heldNow());
+      this._devTeleAdd({ k: "board", night: this._tonight(), rung: s.roadRung, boss: !!s.roadBoss, walker: s.roadWalker || "", win: rw[rw.length - 1], you, sky, dawnY: lv ? lv.dawnY : null, dawnS: lv ? lv.dawnS : null, leader: s.leader, lives: this._lives() });
     }
     if (s.phase === "roadlost" && ps.phase !== "roadlost") this._devTeleAdd({ k: s.wiped ? "wipe" : "lantern", night: this._tonight(), rung: s.roadRung, boss: !!s.roadBoss, lives: s.lives });
     if (s.phase === "won" && ps.phase !== "won" && s.roadBoss) this._devTeleAdd({ k: "clear", night: this._tonight() });
   }
+
   _devVals() {
     const st = this.state;
     if (!st.devOn) return { devOn: false };
     const QC = { byakko: "#B9C6D2", suzaku: "#E0705A", seiryuu: "#5FBFAE", genbu: "#8C9AE0" };
-    const chip = (on, extra) => "background:" + (on ? "rgba(240,216,154,.16)" : "none") + ";border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";border-radius:4px;font-family:'Karla',sans-serif;font-size:10px;padding:3px 7px;cursor:pointer;line-height:1.2;" + (extra || "");
+    const chip = (on, extra) => "background:" + (on ? "rgba(240,216,154,.16)" : "none") + ";border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";border-radius:4px;font-family:'Karla',sans-serif;font-size:12px;padding:3px 7px;cursor:pointer;line-height:1.2;" + (extra || "");
     const sel = st.devNight || 18, depth = st.devDepth || "fresh", p = st.devPlayer || "greedy", n = st.devN || 10, names = this._mList();
     const res = st.devRes || {};
     const rows = []; for (let m = 1; m <= 28; m++) { const cells = ["fresh", "month", "full"].map(d => res[this._devKey(m, d, p)]); if (cells.some(x => x)) rows.push({ m, cells }); }
@@ -10313,10 +10367,10 @@ class Component extends DCLogic {
       devTeleClear: () => { try { localStorage.removeItem("manzil-v2-telemetry"); } catch (e) {} this.forceUpdate(); },
       devEmpty: !rows.length, devHeatOn: !!rows.length,
       devHeat: rows.map(r => ({ name: names[r.m - 1], color: QC[this._quad(r.m)], cells: ["fresh", "month", "full"].map((d, i) => { const e = r.cells[i], key = this._devKey(r.m, d, p);
-        if (!e) return { label: "·", tap: () => {}, style: "background:none;border:1px solid rgba(154,138,94,.14);color:#4A4030;border-radius:3px;font-family:'Karla',sans-serif;font-size:10px;padding:5px 0;cursor:default" };
+        if (!e) return { label: "·", tap: () => {}, style: "background:none;border:1px solid rgba(154,138,94,.14);color:#4A4030;border-radius:3px;font-family:'Karla',sans-serif;font-size:12px;padding:5px 0;cursor:default" };
         const rate = e.cleared / e.n, on = st.devSel === key;
         return { label: Math.round(rate * 100) + "%", tap: () => this.setState({ devSel: key }),
-          style: "background:rgba(240,216,154," + (0.06 + rate * 0.5).toFixed(2) + ");border:1px solid " + (on ? "#F0D89A" : "rgba(240,216,154," + (0.15 + rate * 0.4).toFixed(2) + ")") + ";color:" + (rate > 0.45 ? "#1A1206" : "#F0D89A") + ";border-radius:3px;font-family:'Karla',sans-serif;font-size:11px;font-weight:" + (on ? "700" : "400") + ";padding:5px 0;cursor:pointer" }; }) })),
+          style: "background:rgba(240,216,154," + (0.06 + rate * 0.5).toFixed(2) + ");border:1px solid " + (on ? "#F0D89A" : "rgba(240,216,154," + (0.15 + rate * 0.4).toFixed(2) + ")") + ";color:" + (rate > 0.45 ? "#1A1206" : "#F0D89A") + ";border-radius:3px;font-family:'Karla',sans-serif;font-size:12px;font-weight:" + (on ? "700" : "400") + ";padding:5px 0;cursor:pointer" }; }) })),
       devDetailOn: detOn,
       devDetTitle: detOn ? names[parseInt(selParts[0]) - 1] : "",
       devDetSub: detOn ? this._devDepthName(selParts[1]) + " · " + selParts[2] + " player · " + selE.n + " climbs" : "",
@@ -10954,9 +11008,12 @@ class Component extends DCLogic {
     const w = this._walkerFor(t);
     return { ...this._freshRound(1, "you", hand), round: 1, roundWins: [], phase: "play", chosen: hand.slice(), sky: this._seven(w.hand, t + 3), road: false, roadBoss: false, roadWalker: "", nightSky: false, nightWalker: w.name };
   }
+
   _opts() { if (!this._opt) { try { this._opt = JSON.parse(localStorage.getItem("manzil-settings")) || {}; } catch (e) { this._opt = {}; } } return this._opt; }
+
   _setOpt(k, v) { this._opt = { ...this._opts(), [k]: v }; try { localStorage.setItem("manzil-settings", JSON.stringify(this._opt)); } catch (e) {} this._C = null; this.forceUpdate(); }
-  _setBtn(on) { return "background:none;border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";border-radius:4px;transition:color .15s ease, border-color .15s ease, transform .12s ease;font-family:'Karla',sans-serif;font-size:11px;padding:8px 14px;cursor:pointer"; }
+
+  _setBtn(on) { return "background:none;border:1px solid " + (on ? "#F0D89A" : "rgba(154,138,94,.35)") + ";color:" + (on ? "#F0D89A" : "#9A8A5E") + ";border-radius:4px;transition:color .15s ease, border-color .15s ease, transform .12s ease;font-family:'Karla',sans-serif;font-size:12px;padding:8px 14px;cursor:pointer"; }
   _shape() { return "a road"; } // locked: the nine stations are a road
   _nb(i, dir) {
     const L = ((this.state && this.state.slots && this.state.slots.length) || 9);
@@ -12734,7 +12791,7 @@ class Component extends DCLogic {
       // al-qalb: a dry ridge under antares, dust swallowing it at the shoulder, and the winter rains
       // breaking at the summit. the arabs timed those rains by this star, so the climb is the almanac.
       ...(t18 => {
-        const e = ev.e, k = e / 8, sink = e * 58;
+        const e = ev.e, k = this._ap(e), sink = e * 58;
         const near = [1, .84, .54, .22, .05, 0, 0, 0, 0][e];
         // the art recedes behind ANY reading surface, not just a live board: the mode/record/road/moon/note
         // screens are transparent cards over the level, and at full strength the star washed their text out.
@@ -12860,7 +12917,7 @@ class Component extends DCLogic {
       // vermilion-dominant sky rather than the amber the other roads carry.
       ...(t12 => {
         const hide = this._inPlay() ? .46 : 1;
-        const e = ev.e, k = e / 8, R = n => +n.toFixed(1);
+        const e = ev.e, k = this._ap(e), R = n => +n.toFixed(1);
         const air = [1, .88, .74, .6, .47, .35, .24, .12, 0][e], sd = [0, .14, .3, .43, .54, .65, .76, .88, 1][e], day = [1, .68, .4, .2, .09, .03, 0, 0, 0][e];
         const w = -1 + k * 2, slack = Math.abs(w) < .14;
         const sx = Math.abs(w) < .12 ? (w < 0 ? -.12 : .12) : +w.toFixed(3);
@@ -12966,7 +13023,7 @@ class Component extends DCLogic {
       // room's cloth.
       ...(t26 => {
         const hide = this._inPlay() ? .66 : 1;
-        const e = ev.e, k = e / 8;
+        const e = ev.e, k = this._ap(e);
         const wall = side => {
           const p = ["<path d='M0 0 H236 V2600 H0 Z' fill='#0F1220'/>"];
           // the inner edge falls off instead of ending in a hard seam (2 sep 2026, verifier): the
@@ -13092,7 +13149,7 @@ class Component extends DCLogic {
       // somewhere. one driving number, `o`: how much ground is gone.
       ...(t19 => {
         const hide = this._inPlay() ? .72 : 1;
-        const e = ev.e, o = e / 8, A = a => "rgba(110,127,92," + a + ")";
+        const e = ev.e, o = this._ap(e), A = a => "rgba(110,127,92," + a + ")";
         const face = [];
         face.push("<path d='M0 0 H286 q-16 42 4 80 q18 34 -12 68 q-24 30 2 66 q22 32 -8 68 q-20 26 10 60 q16 22 -6 48 q-12 16 4 40 H0 Z' fill='#2B1F0F'/>");
         face.push("<path d='M286 0 q-16 42 4 80 q18 34 -12 68 q-24 30 2 66 q22 32 -8 68 q-20 26 10 60 q16 22 -6 48 q-12 16 4 40' fill='none' stroke='rgba(240,216,154,.3)' stroke-width='1.6'/>");
@@ -13151,7 +13208,7 @@ class Component extends DCLogic {
     // own `hide` term); these three shipped without it, so the tower beams, the shaft walls and the
     // canyon ran at full strength straight through the nine stations. Same constant, same condition.
     const hide = this._inPlay() ? .46 : 1;
-        const e = ev.e, k = e / 8;
+        const e = ev.e, k = this._ap(e);
         // THE CANYON (31 aug 2026, user): the quarter surrounds the road and falls BEHIND you
         // vertically — towers on both sides sliding DOWN past the player and growing as they pass,
         // so the climb reads as endless city until the square opens at the last station.
@@ -14748,7 +14805,7 @@ class Component extends DCLogic {
     // own `hide` term); these three shipped without it, so the tower beams, the shaft walls and the
     // canyon ran at full strength straight through the nine stations. Same constant, same condition.
     const hide = this._inPlay() ? .46 : 1;
-        const e = ev.e, k = e / 8;
+        const e = ev.e, k = this._ap(e);
         const rpMw = 74 + Math.pow(k, 1.7) * 1180, my = 92 - k * 46;
         const wall = [];
         for (let i = 0; i < 9; i++) {
@@ -14775,7 +14832,7 @@ class Component extends DCLogic {
       chamOn: false, // SUPERSEDED 2 sep 2026: the old chamber art (kiln floor) gives way to chOn, the cot and the sword
       // the guide travels instead of climbing: the mouth grows, the banks pass you
       ...(t27 => {
-        const e = ev.e, k = e / 8;
+        const e = ev.e, k = this._ap(e);
         const grow = 0.34 + k * 3.1, gdMw = 300 * grow, mh = 250 * grow;
         return {
           gdDeepStyle: "position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 60% at 50% 34%, rgba(20,44,60," + (.5 + k * .4).toFixed(2) + "), rgba(6,14,20,.98) 62%), #04080D;transition:opacity 1.6s ease;opacity:" + (t27 ? 1 : 0),
