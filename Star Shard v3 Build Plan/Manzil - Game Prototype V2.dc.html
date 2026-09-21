@@ -200,6 +200,8 @@
   /* the refusal's tell (Design, 17 sep): reuses mzShake, and lives on a helmet CLASS rather than
      inline — their own rule, since an inline animation on a hole-fed style never leaves keyframe 0% */
   .mzRefuse{animation:mzShake .4s ease both}
+  @keyframes otSpin{to{transform:rotateX(72deg) rotate(360deg)}}
+  @keyframes otSpinR{to{transform:rotateX(72deg) rotate(-360deg)}}
   @keyframes mzLobbyIn{from{opacity:0}to{opacity:1}}
   @keyframes mzFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   @keyframes mzDawnLine{0%{stroke-dashoffset:600}100%{stroke-dashoffset:0}}
@@ -5272,7 +5274,42 @@
         </div>
       </sc-if>
       <sc-if value="{{ foundOn }}" hint-placeholder-val="{{ false }}">
-        <div style="margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:5px;animation:mzFadeUp .4s ease both;min-height:44px">
+        <div style="{{ otRing1 }}"></div>
+        <div style="{{ otRing2 }}"></div>
+        <div style="{{ otRing3 }}"></div>
+        <div style="position:absolute;inset:300px;border-radius:50%;background:radial-gradient(circle, #000 0 56%, rgba(255,176,0,.5) 60%, rgba(214,190,255,.2) 68%, transparent 74%);transform:rotateX(72deg);box-shadow:0 0 60px rgba(255,176,0,.25)"></div>
+        <sc-if value="{{ otPulseOn }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:300px;border-radius:50%;border:1.5px solid rgba(255,206,132,.7);animation:otPulse 1.3s ease-out infinite"></div>
+        </sc-if>
+      </div>
+      <div style="position:absolute;left:50%;top:41%;width:280px;height:120px;margin-left:-140px;border-radius:50% 50% 0 0/100% 100% 0 0;border-top:1.5px solid rgba(255,220,170,.5);box-shadow:0 -6px 30px rgba(255,176,0,.25);pointer-events:none"></div>
+      <div style="position:absolute;left:50%;bottom:22px;margin-left:-360px;display:flex;gap:6px;transform:rotate(-6deg);pointer-events:none">
+        <span style="width:28px;height:40px;border-radius:3px;border:1px solid rgba(240,216,154,.7);background:linear-gradient(160deg,#241B08,#0B0703);box-shadow:0 6px 14px rgba(0,0,0,.6), 0 0 12px rgba(240,216,154,.2);transform:rotate(-10deg)"></span>
+        <span style="width:28px;height:40px;border-radius:3px;border:1px solid rgba(240,216,154,.7);background:linear-gradient(160deg,#241B08,#0B0703);box-shadow:0 6px 14px rgba(0,0,0,.6), 0 0 12px rgba(240,216,154,.2);transform:rotate(-3deg) translateY(-4px)"></span>
+        <span style="width:28px;height:40px;border-radius:3px;border:1px solid rgba(240,216,154,.7);background:linear-gradient(160deg,#241B08,#0B0703);box-shadow:0 6px 14px rgba(0,0,0,.6), 0 0 12px rgba(240,216,154,.2);transform:rotate(5deg)"></span>
+      </div>
+      <sc-if value="{{ otSeatOn }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;left:50%;top:47%;margin-left:-60px;width:120px;height:40px;border-radius:50%;border:1px dashed rgba(214,190,255,.35);animation:otSeat 3s ease-in-out infinite;pointer-events:none"></div>
+      </sc-if>
+      <sc-if value="{{ otHandOn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:50%;top:44%;margin-left:-58px;display:flex;gap:4px;animation:otHandUp .7s cubic-bezier(.2,.8,.2,1) both;pointer-events:none">
+          <span style="width:20px;height:28px;border-radius:2px;border:1px solid rgba(214,190,255,.7);background:linear-gradient(160deg,#1A1226,#08050C);transform:rotate(-8deg)"></span><span style="width:20px;height:28px;border-radius:2px;border:1px solid rgba(214,190,255,.7);background:linear-gradient(160deg,#1A1226,#08050C);transform:rotate(-3deg) translateY(-3px)"></span><span style="width:20px;height:28px;border-radius:2px;border:1px solid rgba(214,190,255,.7);background:linear-gradient(160deg,#1A1226,#08050C)"></span><span style="width:20px;height:28px;border-radius:2px;border:1px solid rgba(214,190,255,.7);background:linear-gradient(160deg,#1A1226,#08050C);transform:rotate(3deg) translateY(-3px)"></span><span style="width:20px;height:28px;border-radius:2px;border:1px solid rgba(214,190,255,.7);background:linear-gradient(160deg,#1A1226,#08050C);transform:rotate(8deg)"></span>
+        </div>
+        <div style="position:absolute;left:0;right:0;top:56%;display:flex;flex-direction:column;align-items:center;gap:3px;animation:mzFadeUp .4s ease .3s both;pointer-events:none">
+          <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19px;color:#D6BEFF;text-shadow:0 0 14px rgba(214,190,255,.5)">{{ foundName }}</span>
+          <span style="font-family:'Karla',sans-serif;font-size:12px;color:rgba(214,190,255,.7)">{{ foundLine }}</span>
+          <span style="font-family:'Karla',sans-serif;font-size:12px;color:rgba(154,138,94,.8);animation:mzBreathe 1.4s ease-in-out infinite">the table is dealt…</span>
+        </div>
+      </sc-if>
+      <div style="position:absolute;left:0;right:0;top:34px;display:flex;flex-direction:column;align-items:center;gap:5px;z-index:2;pointer-events:none">
+        <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#F2EAD6;text-shadow:0 2px 30px rgba(255,176,0,.25);animation:mzFadeUp .5s ease .1s both">the open tables</span>
+        <span style="font-family:'Karla',sans-serif;font-size:12px;letter-spacing:.04em;color:rgba(214,190,255,.75);animation:mzFadeUp .5s ease .2s both">{{ otNote }}</span>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:44px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2">
+        <sc-if value="{{ lobbyIdleOn }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ duelSeekTap }}" style="background:linear-gradient(180deg, rgba(240,216,154,.2), rgba(240,216,154,.07));border:1px solid #F0D89A;border-radius:5px;color:#F0D89A;font-family:'Karla',sans-serif;font-size:15px;padding:11px 30px;cursor:pointer;box-shadow:0 3px 0 rgba(38,30,12,.95), 0 8px 20px rgba(0,0,0,.45), 0 0 24px rgba(255,176,0,.22);transition:transform .12s ease, box-shadow .12s ease, background .12s ease" style-hover="transform:translateY(-1px);background:linear-gradient(180deg, rgba(240,216,154,.3), rgba(240,216,154,.12));box-shadow:0 4px 0 rgba(38,30,12,.95), 0 0 30px rgba(255,176,0,.32), 0 10px 24px rgba(0,0,0,.5)" style-active="transform:translateY(3px);box-shadow:0 0 0 rgba(38,30,12,.95), 0 0 12px rgba(255,176,0,.18)">find a match</button>
+        </sc-if>
+          <div style="margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:5px;animation:mzFadeUp .4s ease both;min-height:44px">
           <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;color:#FFB000">{{ foundName }}</span>
           <span style="font-size:11px;color:#9A8A5E">{{ foundLine }}</span>
           <span style="font-size:10.5px;color:rgba(154,138,94,.75);animation:mzBreathe 1.4s ease-in-out infinite">the table is dealt…</span>
@@ -16349,6 +16386,18 @@ class Component extends DCLogic {
       foundOn: !!(st.duelSeek && st.duelSeek.stage === "found"),
       foundName: (st.duelSeek && st.duelSeek.opp && st.duelSeek.opp.name) || "",
       foundLine: (st.duelSeek && st.duelSeek.opp && st.duelSeek.opp.line) || "",
+      // the event horizon (15 sep 2026, 1a): the disk answers the phase — idle turns slow, seeking turns fast and pulses, found brings a hand up out of the far rim
+      ...((sk => { const seek = !!(sk && sk.stage === "seek"), found = !!(sk && sk.stage === "found"), fast = seek || found;
+        const ring = (inset, col, glow, dur, rev, cone) => "position:absolute;inset:" + inset + "px;border-radius:50%;border:" + col + ";box-shadow:" + glow + ";transform:rotateX(72deg);animation:" + (rev ? "otSpinR" : "otSpin") + " " + (fast ? dur / 3 : dur) + "s linear infinite;background:" + cone + ";transition:box-shadow .6s ease";
+        return {
+          otRing1: ring(0, "1px solid rgba(214,190,255," + (fast ? .3 : .18) + ")", "0 0 40px rgba(150,110,220,.12), inset 0 0 60px rgba(150,110,220,.08)", 140, false, "repeating-conic-gradient(from 0deg, rgba(214,190,255,.05) 0 6deg, transparent 6deg 19deg)"),
+          otRing2: ring(90, "1px solid rgba(240,216,154,.22)", "none", 90, true, "repeating-conic-gradient(from 20deg, rgba(240,216,154,.06) 0 3deg, transparent 3deg 11deg)"),
+          otRing3: ring(200, "1.5px solid rgba(255,206,132," + (fast ? .85 : .55) + ")", "0 0 30px rgba(255,176,0," + (fast ? .6 : .35) + "), 0 0 90px rgba(255,140,60,.18)", 46, false, "repeating-conic-gradient(from 0deg, rgba(255,206,132,.14) 0 2deg, transparent 2deg 7deg)"),
+          otPulseOn: seek,
+          otSeatOn: !found, otHandOn: found,
+          otNote: (() => { if (found) return ""; const W = this._wrec(), n = Object.keys(W).length; let w = 0, l = 0; Object.values(W).forEach(e => { w += e.w || 0; l += e.l || 0; });
+            return "nothing staked" + (n ? " · " + w + " won, " + l + " lost on the roads" : ""); })(),
+        }; })(st.duelSeek)),
       duelSeekTap: () => this._netQueue(),
       duelSeatLink: () => this.setState({ phase: "duel2" }),
       duelGo2Tap: () => this._startDuel("seat"),
