@@ -6378,7 +6378,15 @@ class Component extends DCLogic {
   _momentNow() {
     const st = this.state || {};
     const p = st.phase;
-    if (p === "round" || p === "roadlost" || p === "won" || p === "over") return "verdict";
+    // "lost" WAS MISSING AND IT IS THE TABLE'S ONLY ENDING (21 sep 2026, Measurement §5: the table
+    // "has no verdict beat at all ... state.verdict is absent there"). The road ends in round /
+    // roadlost / won; a duel ends in `won ? "won" : "lost"`, and `lost` was not on this list — so
+    // _momentNow returned null at the table, no verdict moment arrived, and the record that
+    // componentDidUpdate builds on the moment's arrival was never built. A mode gap, not a missing
+    // feature: everything else on that path already worked, including _verdict() itself, which has
+    // always accepted st.duel. "bigwin" is the win ceremony's own phase and reaches "won" when it
+    // ends, so it is deliberately not here — it would fire the verdict twice.
+    if (p === "round" || p === "roadlost" || p === "won" || p === "lost" || p === "over") return "verdict";
     if (p === "climb") return "road";
     if (p === "play") {
       if (st.countFx) return "settle";          // the count is running
@@ -12413,7 +12421,25 @@ class Component extends DCLogic {
             // no card on the sheet fires on tap any more (27 aug 2026): the heart strikes when the
             // road fills and the throne raises what it takes, so both bespoke taps are gone.
           }
-          if (st.phase !== "play" || st.turn !== "you" || st.busy || st.mull || st.sel === null || st.slots[i] || !this._legalSlot(st.slots, i)) return;
+          // A REFUSED PLACEMENT ANSWERS HERE TOO (21 sep 2026, Measurement §6 / THE-CLUNK-17SEP:
+          // "clicking an occupied station while holding a card does nothing and says nothing").
+          // This was one bare `return` for six different reasons. _refuse already exists for the
+          // same fault in _commitPlace; this is the other way in.
+          //
+          // SILENCE IS STILL RIGHT WHEN NO CARD IS HELD: tapping the board with an empty hand is
+          // looking around, not a refused move, and nagging at it would be worse than saying nothing.
+          // So the reason is spoken only when the player is actually holding something.
+          if (st.sel === null) return;
+          {
+            const why = st.phase !== "play" ? "not now."
+              : st.turn !== "you" ? "it is not your turn."
+              : st.busy ? "wait for the board."
+              : st.mull ? "choose your hand first."
+              : st.slots[i] ? "that station is taken."
+              : !this._legalSlot(st.slots, i) ? "lodge beside a card already on the road."
+              : null;
+            if (why) { this._refuse(why); return; }
+          }
           const c = C[st.sel];
           const live = st.duel && st.duel.mode === "live";
           if (c.twoFaced) this.setState({ face: { id: st.sel, i } });
