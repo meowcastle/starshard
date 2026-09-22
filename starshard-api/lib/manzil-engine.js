@@ -454,9 +454,26 @@ function counts(g, slots, held) {
   return [you, sky];
 }
 
+// THE DISTRICT'S FLOOR (22 sep 2026). At the TABLE and only there, on the empty district (m21), a level
+// board goes to the one who LED it rather than the one who answered — Design's hush-nights decision §2,
+// already live in the client and in research/manzil-engine-current.cjs and missing here.
+//
+// A LIVE PvP MATCH IS A TABLE. The condition is "both hands are players", which is exactly what this file
+// exists for, so the rule applies to every board it scores — no flag needed. That is the difference from
+// the canonical module, where `duel` is opt-in because the road uses the same code.
+//
+// IT MATTERS BECAUSE THIS FILE DECIDES. The server broadcasts the winner and no client infers it, so
+// without this a level m21 board was awarded to the defender here while both players' screens said the
+// leader takes it — shown one way, recorded the other, which is the same class of fault as dawn missing
+// from the count until 15 Sep.
+function drawTo(g) {
+  return (g && g.tonight === 21) ? "leader" : null;
+}
+
 function boardWinner(g, slots, held) {
   const [you, sky] = counts(g, slots, held);
   if (you !== sky) return you > sky ? "you" : "sky";
+  if (drawTo(g) === "leader") return g.leader === "you" ? "you" : "sky";
   const tr = g.tieRule || "a draw";
   if (tr === "a draw") return "draw";
   // "the defender": a level board goes to whichever side did NOT lead it. Ported 3 sep 2026 from
@@ -472,7 +489,7 @@ function boardWinner(g, slots, held) {
   return "you";
 }
 
-const API = { cards, deal, mkGame, faceOf, shielded, tryFlip, lodge, resolve, isHome, boardM, cardOf, cardById, slotW, ctxOf, counts, dawn, boardWinner, on, nb, POOL, QUAD_OF };
+const API = { cards, deal, mkGame, faceOf, shielded, tryFlip, lodge, resolve, isHome, boardM, cardOf, cardById, slotW, ctxOf, counts, dawn, drawTo, boardWinner, on, nb, POOL, QUAD_OF };
 if (typeof module !== "undefined") module.exports = API;
 
 // ---- self-checks: node starshard-api/lib/manzil-engine.js -----------------------------------
@@ -676,6 +693,29 @@ if (require.main === module) {
     // and it has to be able to decide a board, which is the whole reason it is here
     const bw = boardWinner(flat, full), bwd = boardWinner(flat, full, { you: [20, 21], sky: [22] });
     ok("dawn: boardWinner accepts held and still returns a seat", (bw === "you" || bw === "sky" || bw === "draw") && (bwd === "you" || bwd === "sky" || bwd === "draw"));
+  }
+
+  // ---- THE DISTRICT'S FLOOR (22 sep 2026) -------------------------------------------------------
+  {
+    // a level board built from two ordinary mansion cards at level 1, one a side: each is worth 1 and
+    // neither has an ability awake, so the count comes out even and the tie rule is what decides.
+    const level = (tonight, leader) => {
+      const g = mkGame({ tonight, leader, tieRule: "the defender" });
+      const slots = Array.from({ length: 9 }, () => null);
+      slots[0] = { id: 3, l: 5, r: 5, owner: "you", by: "you", age: 1 };
+      slots[8] = { id: 4, l: 5, r: 5, owner: "sky", by: "sky", age: 1 };
+      const [y, k] = counts(g, slots);
+      if (y !== k) return "NOT LEVEL (" + y + "/" + k + ")";
+      return boardWinner(g, slots);
+    };
+    ok("the district's floor: on m21 a level board goes to the LEADER, from either seat",
+       level(21, "you") === "you" && level(21, "sky") === "sky");
+    ok("every other night keeps the defender",
+       level(20, "you") === "sky" && level(22, "you") === "sky");
+    ok("m15 the veil is NOT the district — the hush is not the reason",
+       level(15, "you") === "sky");
+    ok("drawTo names only m21", Array.from({ length: 28 }, (_, i) => i + 1)
+       .every(n => (drawTo({ tonight: n }) === "leader") === (n === 21)));
   }
 
   const fails = checks.filter(([, c]) => !c);

@@ -12087,7 +12087,15 @@ class Component extends DCLogic {
           this._netPendingSlots = null; this._netPendingTurn = undefined;
           if (pend) st.slots = pend.map(x => x ? { ...x } : null);
           if (turn) st.turn = turn;
-          if (turn === null && s.slots.every(x => x)) this._endT = setTimeout(() => this._countCeremony(() => {}), 900);
+          // THE COUNT NEVER RAN IN A LIVE MATCH (22 sep 2026, user: "there is no duel in PVP").
+          // This tested `s.slots` — and `s` is the PREVIOUS state inside a setState updater. On the move
+          // that fills the road the ninth card is in `pend`, which the line above has just written to
+          // st.slots; s.slots still holds eight and a null, so .every() was false on the one move it had
+          // to be true for. The board filled and nothing happened: no count, no scales, no dawn duel, and
+          // the server's own board_result arrived over a board that had never been totted up on screen.
+          // Read the slots this move produces, not the ones it replaced.
+          const filled = pend ? pend : s.slots;
+          if (turn === null && filled.every(x => x)) this._endT = setTimeout(() => this._countCeremony(() => {}), 900);
           return st;
         }
         if (this._reactPend) {
