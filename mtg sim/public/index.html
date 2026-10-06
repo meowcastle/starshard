@@ -1,102 +1,429 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Forge Sim — sim.starshard.net</title>
-<meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css">
+<script src="./support.js"></script>
 </head>
 <body>
-<div id="login" class="login hidden">
-  <form id="loginForm" class="login-card">
-    <div class="brand"><span class="logo">◆</span> Forge Sim</div>
-    <p class="muted">Sign in with your Star Shard account.</p>
-    <input id="user" type="text" placeholder="Username or email" autocomplete="username" autocapitalize="off" spellcheck="false" autofocus>
-    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
-    <button class="btn primary" type="submit">Enter</button>
-    <p id="loginErr" class="err"></p>
-    <p class="hint">No account, or forgot your password? Use <a href="https://staging.starshard.net/account/" target="_blank" rel="noopener">Star Shard</a>.</p>
-  </form>
+<x-dc>
+<helmet><title>Forge Sim</title><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/mana-font@latest/css/mana.min.css" rel="stylesheet"><style>body{margin:0;background:#0C0C0B;color:#EDEBE6;font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}a{color:#EDEBE6;text-decoration:none}a:hover{color:#C5EC7A}*{box-sizing:border-box}input,textarea{font:inherit}@keyframes fsPulse{0%,100%{opacity:1}50%{opacity:.35}}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#262626;border-radius:4px}</style></helmet>
+
+<sc-if value="{{ isSignin }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Sign in" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px">
+  <div style="width:360px;display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px">Forge Sim</div></div>
+    <sc-if value="{{ isInvite }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Justin invited you</div><div style="font-size:15px;color:#8F8D86">Pick a name and a password. Decks and results stay inside the team.</div></div>
+    <div style="display:flex;flex-direction:column;gap:16px"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#8F8D86">Display name<input value="Theo" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#8F8D86">Password<input type="password" value="••••••••••" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%"></label><a href="#" onClick="{{ goFirstrun }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px;font-weight:600;font-size:15px;text-align:center">Join</a><a href="#" onClick="{{ toggleInvite }}" style="font-size:13px;color:#8F8D86">Already a member · sign in</a></div></sc-if>
+    <sc-if value="{{ isNotInvite }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Sign in</div><div style="font-size:15px;color:#8F8D86">Members only. No public sign-up.</div></div>
+    <div style="display:flex;flex-direction:column;gap:16px"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#8F8D86">Star Shard username<input value="{{ signinName }}" onChange="{{ onSigninName }}" autocomplete="username" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#8F8D86">Password<input type="password" value="{{ signinPw }}" onChange="{{ onSigninPw }}" onKeyDown="{{ signinKey }}" autocomplete="current-password" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%"></label><a href="#" onClick="{{ doSignin }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px;font-weight:600;font-size:15px;text-align:center">{{ signinLabel }}</a><a href="#" onClick="{{ toggleInvite }}" style="font-size:13px;color:#8F8D86">Have an invite link?</a></div></sc-if>
+    <div style="font-size:13px;color:{{ signinNoteColor }};line-height:1.5">{{ signinNote }}</div>
+  </div>
 </div>
+</sc-if>
 
-<header class="top">
-  <div class="brand"><span class="logo">◆</span> Forge Sim <span class="tag" id="forgeVer"></span></div>
-  <nav class="tabs" id="mainTabs">
-    <button data-view="build" class="on">Simulate</button>
-    <button data-view="history">History</button>
-  </nav>
-  <span class="muted" id="whoami"></span>
-  <button class="btn ghost small" id="logout">Log out</button>
-</header>
+<sc-if value="{{ isFirstrun }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="First run" style="min-height:100vh;display:flex;justify-content:center;padding:40px 48px">
+  <div style="width:720px;display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px">Forge Sim</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ fsStepLabel }}</div></div>
+    <sc-if value="{{ fs1 }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Paste your deck</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">An Arena export, an Archidekt link, or plain text. On Moxfield use More → Export → Copy for MTGA; their links can't be read.</div></div>
+    <textarea rows="7" value="{{ pasteText }}" onChange="{{ onPaste }}" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;resize:vertical" placeholder="Deck
+3 Squall, SeeD Mercenary (FIN) 234
+3 Aerith Gainsborough (FIN) 2
+…"></textarea>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:13px;color:{{ fsNoteColor }}">{{ fsNote }}</div><a href="#" onClick="{{ doCheck }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">{{ checkLabel }}</a></div>
+    </sc-if>
+    <sc-if value="{{ fs2 }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ chkTitle }}</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">{{ chkSub }}</div></div>
+    <div style="display:flex;flex-direction:column"><sc-for list="{{ chkRows }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:10px;height:10px;border-radius:2px;background:{{ r.color }};display:inline-block;position:relative;top:1px"></span><div style="font-size:17px;font-weight:600">{{ r.name }} <span style="font-weight:400;color:#8F8D86;font-size:15px">· {{ r.note }}</span></div><span style="font-size:13px;color:#8F8D86">{{ r.section }}</span></div></sc-for></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86">Anything the coach should keep in mind? Optional.</div><input value="{{ noteText }}" onChange="{{ onNote }}" placeholder="RCQ on Nov 1. These four cards stay. No rare wildcards." style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><a href="#" onClick="{{ fsBack }}" style="font-size:15px;color:#8F8D86">← Fix the list</a><a href="#" onClick="{{ doCreate }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">{{ createLabel }}</a></div>
+    </sc-if>
+    <sc-if value="{{ fs3 }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Who should it play?</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">You can change this on every run.</div></div>
+    <div style="display:flex;flex-direction:column"><sc-for list="{{ oppSets }}" as="o" hint-placeholder-count="3"><a href="#" onClick="{{ o.pick }}" style="display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:14px;height:14px;border-radius:50%;border:1px solid {{ o.ring }};background:{{ o.fill }};display:inline-block"></span><div><div style="font-size:17px;font-weight:600">{{ o.title }}</div><div style="font-size:15px;color:#8F8D86">{{ o.detail }}</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;white-space:nowrap">{{ o.time }}</span></a></sc-for></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.08);padding-top:24px"><div style="font-size:15px;color:#8F8D86;line-height:1.5">{{ fsFootLine }}<br><span style="font-size:13px;color:#5C5B56">Close the tab if you like. The results fill in as the games finish.</span></div><a href="#" onClick="{{ fsQueue }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">Queue the run</a></div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
 
-<main id="view-build" class="layout">
-  <!-- Left: run setup + decks -->
-  <section class="col decks-col">
-    <div class="panel setup">
-      <div class="seg" id="mode">
-        <button data-mode="matchup" class="on">Matchup</button>
-        <button data-mode="gauntlet">Gauntlet</button>
+<sc-if value="{{ hasApp }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh;min-width:1100px">
+  <aside style="border-right:1px solid rgba(255,255,255,.08);padding:24px 16px;display:flex;flex-direction:column;gap:32px;position:sticky;top:0;height:100vh;overflow:auto;background:#0C0C0B">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 8px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px">Forge Sim</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86;padding:0 8px">Brews</div>
+      <sc-for list="{{ brewList }}" as="b" hint-placeholder-count="2"><a href="#" onClick="{{ b.pick }}" style="display:flex;align-items:center;gap:12px;padding:8px;border-radius:6px;background:{{ b.bg }}"><div style="width:44px;height:28px;border-radius:3px;overflow:hidden;background:#1a1a19;flex:none"><img src="{{ b.art }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.name }}</div><div style="font-size:12px;color:#8F8D86;font-family:'JetBrains Mono',monospace">{{ b.format }} · v{{ b.version }}</div></div></a></sc-for>
+      <a href="#" onClick="{{ goFirstrun }}" style="padding:8px;color:#8F8D86;font-size:13px">+ paste a deck</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;color:#8F8D86;padding:0 8px 8px">Notes</div>
+      <sc-for list="{{ memory }}" as="m" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) 14px;gap:8px;padding:8px;border-top:1px solid rgba(255,255,255,.06)"><div style="font-size:13px;line-height:1.5;color:#C9C7C0">{{ m.t }}</div><a href="#" onClick="{{ m.forget }}" title="forget" style="color:#3a3a38;font-size:13px">×</a></div></sc-for>
+      
+    </div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;padding:0 8px"><div style="font-size:12px;color:#5C5B56;line-height:1.5">Forge {{ forgeVer }} plays every seat. Weak at combo, control and pod politics.</div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8F8D86">{{ who }}</span><a href="#" onClick="{{ doSignout }}" style="color:#8F8D86">Sign out</a></div></div>
+  </aside>
+
+  <main style="min-width:0;padding:32px 48px 64px;display:flex;flex-direction:column;gap:32px;max-width:1180px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+      <div style="display:flex;align-items:center;gap:16px"><div style="width:96px;height:56px;border-radius:6px;overflow:hidden;background:#1a1a19"><img src="{{ deckArt }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div><div><div style="font-size:13px;color:#8F8D86">{{ deck.format }} · {{ seatsLabel }} · {{ deck.subtitle }}</div><div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:34px;font-weight:600;letter-spacing:-.01em;line-height:1.1">{{ deck.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;white-space:nowrap">v{{ deck.version }} · {{ deck.versionLabel }}</span><span style="display:flex;gap:2px;font-size:15px"><sc-for list="{{ deckPips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div></div></div>
+      <a href="#" onClick="{{ toggleRun }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:10px 16px;font-weight:600;font-size:15px;white-space:nowrap">Run v{{ deck.version }} ▾</a>
+    </div>
+    <sc-if value="{{ runOpen }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:20px 24px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#121211"><sc-for list="{{ oppSets }}" as="o" hint-placeholder-count="3"><a href="#" onClick="{{ o.pick }}" style="display:grid;grid-template-columns:18px minmax(0,1fr);gap:12px;align-items:start"><span style="width:14px;height:14px;border-radius:50%;border:1px solid {{ o.ring }};background:{{ o.fill }};display:inline-block;margin-top:3px"></span><div><div style="font-size:15px;font-weight:600">{{ o.title }}</div><div style="font-size:13px;color:#8F8D86;line-height:1.5">{{ o.detail }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56;margin-top:4px">{{ o.time }}</div></div></a></sc-for><div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.08);padding-top:16px"><span style="font-size:13px;color:{{ runLineColor }}">{{ runLine }}</span><a href="#" onClick="{{ queueRun }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:9px 16px;font-weight:600;font-size:15px">Queue the run</a></div></div></sc-if>
+    <nav style="display:flex;gap:24px;border-bottom:1px solid rgba(255,255,255,.08);font-size:15px">
+      <a href="#" onClick="{{ goCoach }}" style="padding:0 0 12px;margin-bottom:-1px;border-bottom:2px solid {{ tabCoachLine }};color:{{ tabCoachColor }};font-weight:600">Coach</a>
+      <a href="#" onClick="{{ goResults }}" style="padding:0 0 12px;margin-bottom:-1px;border-bottom:2px solid {{ tabResultsLine }};color:{{ tabResultsColor }};font-weight:600">Results</a>
+      <a href="#" onClick="{{ goDeck }}" style="padding:0 0 12px;margin-bottom:-1px;border-bottom:2px solid {{ tabDeckLine }};color:{{ tabDeckColor }};font-weight:600">Deck</a>
+    </nav>
+
+    <sc-if value="{{ isCoach }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Coach" style="display:flex;flex-direction:column;gap:48px;max-width:720px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font-size:13px;color:#8F8D86;font-family:'JetBrains Mono',monospace">{{ latest.at }} · v{{ deck.version }} · {{ snapshotLabel }}</div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">How it's doing</div><div style="font-size:28px;font-weight:600;line-height:1.2">{{ brief.status }}</div><div style="font-size:15px;color:#8F8D86">{{ brief.statusNote }}</div></div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding-top:8px"><div style="font-size:13px;color:#8F8D86">The weakness</div><div style="font-size:22px;font-weight:600;line-height:1.2">{{ brief.weakness }}</div><div style="font-size:17px;line-height:1.6;text-wrap:pretty">{{ brief.weaknessNote }}</div><a href="#" onClick="{{ goResults }}" style="font-size:15px;color:#C5EC7A">{{ linkDown }} →</a></div>
+        <div style="display:flex;flex-direction:column;padding-top:8px"><div style="font-size:13px;color:#8F8D86;padding-bottom:4px">{{ optionsLabel }}</div>
+          <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;padding-top:3px">{{ o.n }}</span><div><div style="font-size:17px;font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:15px;color:#C9C7C0;line-height:1.55;margin-top:4px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;margin-top:8px;font-family:'JetBrains Mono',monospace">38% → <span style="color:#7CC4F0">44%</span> ±9 <span style="font-family:Manrope,sans-serif;color:#8F8D86">· 120 games · better, inside the noise</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:13px;font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:4px">{{ o.label }}</a></div></sc-for>
+        </div>
+        <sc-if value="{{ hasSideboard }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;padding-top:8px"><div style="font-size:13px;color:#8F8D86;padding-bottom:4px">Sideboarding, games 2 and 3</div>
+          <sc-for list="{{ sideboard }}" as="s" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:170px minmax(0,1fr) 20px minmax(0,1fr);gap:12px;align-items:baseline;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px"><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">vs {{ s.vs }}</span><span style="color:#C9C7C0"><span style="font-family:'JetBrains Mono',monospace;color:#F0A070">−</span> {{ s.out }}</span><span style="color:#5C5B56;text-align:center">→</span><span style="color:#C9C7C0"><span style="font-family:'JetBrains Mono',monospace;color:#7CC4F0">+</span> {{ s.in }}</span></div></sc-for>
+        </div></sc-if>
       </div>
-      <p class="hint" id="modeHint">Pit 2–4 decks against each other.</p>
-      <div class="row">
-        <label>Format
-          <select id="format">
-            <option>Constructed</option><option>Commander</option><option>Brawl</option><option>Oathbreaker</option>
-          </select>
-        </label>
-        <label>Games <input id="games" type="number" min="1" max="200" value="20"></label>
-        <label>Clock (s) <input id="clock" type="number" min="30" max="900" value="180" title="A game that runs past this is called a draw"></label>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:12px;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:8px"><textarea rows="1" value="{{ askText }}" onChange="{{ onAsk }}" placeholder="Ask the coach" style="flex:1;background:none;border:0;padding:6px 0;color:#EDEBE6;font-size:17px;outline:none;resize:none;min-width:0"></textarea><a href="#" onClick="{{ sendAsk }}" style="font-size:15px;color:#C5EC7A;font-weight:600;white-space:nowrap;padding-bottom:6px">{{ sendLabel }}</a></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px"><sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3"><a href="#" onClick="{{ p.go }}" style="color:#8F8D86">{{ p.t }}</a></sc-for></div>
       </div>
-      <button class="btn primary wide" id="run">Run simulation</button>
-    </div>
-    <div id="deckList"></div>
-    <button class="btn ghost wide" id="addDeck">+ Add deck</button>
-  </section>
-
-  <!-- Middle: meta browser -->
-  <section class="col meta-col panel">
-    <div class="panel-head">
-      <h2>Metagame</h2>
-      <div class="seg small" id="metaSource">
-        <button data-src="goldfish" class="on">MTGGoldfish</button>
-        <button data-src="top8">MTGTop8</button>
-        <button data-src="edhrec">EDHREC</button>
+      <div style="display:flex;flex-direction:column">
+        <div style="font-size:22px;font-weight:600;padding-bottom:16px">Earlier</div>
+        <sc-for list="{{ earlier }}" as="m" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><div style="font-size:13px;color:#8F8D86;line-height:1.5">{{ m.who }}<br><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ m.at }}</span></div><div style="font-size:15px;line-height:1.6;white-space:pre-wrap;color:{{ m.color }};text-wrap:pretty">{{ m.text }}</div></div></sc-for>
       </div>
     </div>
-    <div class="row">
-      <select id="metaFormat"></select>
-      <input id="metaFilter" placeholder="Filter archetypes…">
-    </div>
-    <div class="row gauntlet-only">
-      <button class="btn small" id="pickTop">Add top 8 to gauntlet</button>
-      <span class="hint">Gauntlet runs Deck 1 against every other deck.</span>
-    </div>
-    <ul id="metaList" class="meta-list"><li class="muted">Loading…</li></ul>
-    <div class="import">
-      <input id="importUrl" placeholder="Paste a Moxfield, Archidekt, MTGGoldfish or MTGTop8 deck link">
-      <button class="btn small" id="importBtn">Import</button>
-    </div>
-  </section>
+    </sc-if>
 
-  <!-- Right: results -->
-  <section class="col results-col panel">
-    <div class="panel-head"><h2>Results</h2><button class="btn ghost small hidden" id="cancel">Cancel</button></div>
-    <div id="results" class="results empty">
-      <p class="muted">Load two decks and press <b>Run simulation</b>. Forge's AI plays every game out, so expect roughly 5–30 seconds a game on the NAS.</p>
+    <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Results" style="display:flex;flex-direction:column;gap:48px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px"><div style="display:flex;gap:0;border:1px solid rgba(255,255,255,.12);border-radius:6px;overflow:hidden;font-size:15px"><a href="#" onClick="{{ setViewRun }}" style="padding:8px 16px;font-weight:600;color:{{ viewRunColor }};background:{{ viewRunBg }}">This run</a><a href="#" onClick="{{ setViewVersions }}" style="padding:8px 16px;font-weight:600;color:{{ viewVersionsColor }};background:{{ viewVersionsBg }};border-left:1px solid rgba(255,255,255,.08)">Versions</a><a href="#" onClick="{{ setViewCompare }}" style="padding:8px 16px;font-weight:600;color:{{ viewCompareColor }};background:{{ viewCompareBg }};border-left:1px solid rgba(255,255,255,.08)">Compare</a></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:#8F8D86"><span>Field</span><a href="#" onClick="{{ toggleSource }}" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;color:#EDEBE6;font-weight:600">{{ sourceLabel }} ▾</a><span style="font-family:'JetBrains Mono',monospace">{{ snapshotLabel }}</span></div></div>
+      <sc-if value="{{ sourceOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:24px;background:#121211">
+        <div style="display:flex;flex-direction:column"><div style="font-size:13px;color:#8F8D86;padding-bottom:8px">Sources · blended by default</div>
+          <sc-for list="{{ sourceRows }}" as="s" hint-placeholder-count="4"><a href="#" onClick="{{ s.toggle }}" style="display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:16px;height:16px;border-radius:4px;border:1px solid {{ s.boxBorder }};background:{{ s.boxBg }};display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#0C0C0B">{{ s.mark }}</span><div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.name }} <span style="font-weight:400;color:#8F8D86;font-size:13px">{{ s.premium }}</span></div><div style="font-size:13px;color:#8F8D86">{{ s.scope }}</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56;white-space:nowrap">{{ s.updatedAt }}</span></a></sc-for>
+          <div style="font-size:13px;color:#8F8D86;line-height:1.5;padding-top:12px">Where sources disagree by 3+ points on a deck, the row is marked. Scraped nightly; every snapshot is kept.</div></div>
+        <div style="display:flex;flex-direction:column"><div style="font-size:13px;color:#8F8D86;padding-bottom:8px">Snapshots · run any version against any week</div>
+          <sc-for list="{{ snapshotRows }}" as="s" hint-placeholder-count="3"><a href="#" onClick="{{ s.pick }}" style="display:grid;grid-template-columns:18px 72px minmax(0,1fr);gap:12px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }};margin-left:4px"></span><span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ s.date }}</span><div style="min-width:0"><div style="font-size:15px;font-weight:600">{{ s.label }}</div><div style="font-size:13px;color:#8F8D86;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.top }}</div></div></a></sc-for></div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ viewRun }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px">
+        <div><div style="font-size:13px;color:#8F8D86">{{ headlineLabel }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1;color:{{ overall.numColor }}">{{ overall.pct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ overall.pm }}</span></div><div style="position:relative;height:6px;background:#1f1f1e;border-radius:3px;margin-top:12px"><div style="position:absolute;left:{{ evenLine }}%;top:-3px;bottom:-3px;width:1px;background:#4a4a48"></div><div style="position:absolute;top:2px;height:2px;left:{{ overall.lo }}%;width:{{ overall.w }}%;background:{{ overall.hatch }}"></div><div style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;left:calc({{ overall.left }}% - 5px);background:{{ overall.color }}"></div></div><div style="font-size:13px;color:#8F8D86;margin-top:8px">{{ overall.n }} games · {{ evenLabel }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">Against the last field</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1">{{ prevPct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ prevPm }}</span></div><div style="font-size:13px;color:#8F8D86;margin-top:26px">{{ prevNote }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">Status</div><div style="font-size:17px;font-weight:600;margin-top:6px;color:{{ runStatusColor }}">{{ runStatus }}</div><div style="font-size:13px;color:#8F8D86;margin-top:8px;line-height:1.5">{{ runNote }}</div></div>
+      </div>
+      <sc-if value="{{ isDuel }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">The field, by cost to you</div><div style="font-size:13px;color:#8F8D86">cost = meta share × distance below 50%</div></div>
+        <div style="display:grid;grid-template-columns:44px minmax(180px,1.2fr) 56px minmax(160px,1fr) 56px 64px;gap:16px;padding:8px 0;font-size:13px;color:#8F8D86;border-bottom:1px solid rgba(255,255,255,.12)"><span></span><span>opponent</span><span style="text-align:right">meta</span><span>win rate · 95% range</span><span style="text-align:right">games</span><span style="text-align:right">cost</span></div>
+        <sc-for list="{{ oppRows }}" as="g" hint-placeholder-count="12">
+        <div style="display:grid;grid-template-columns:44px minmax(180px,1.2fr) 56px minmax(160px,1fr) 56px 64px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);opacity:{{ g.opacity }}">
+          <div style="width:44px;height:28px;border-radius:3px;overflow:hidden;background:#1a1a19"><img src="{{ g.art }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+          <div style="min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.name }}</span><span style="display:flex;gap:1px;font-size:11px;flex:none"><sc-for list="{{ g.pips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div><div style="font-size:13px;color:{{ g.flagColor }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.flag }}</div></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#8F8D86">{{ g.metaS }}</span>
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-family:'JetBrains Mono',monospace;font-size:15px;width:76px;color:{{ g.r.numColor }}">{{ g.r.pct }} <span style="font-size:12px;color:#8F8D86">{{ g.r.pm }}</span></span><div style="flex:1;position:relative;height:6px;background:#1f1f1e;border-radius:3px"><div style="position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:#4a4a48"></div><div style="position:absolute;top:2px;height:2px;left:{{ g.r.lo }}%;width:{{ g.r.w }}%;background:{{ g.r.hatch }}"></div><div style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;left:calc({{ g.r.left }}% - 5px);background:{{ g.r.color }}"></div></div></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#8F8D86">{{ g.gamesS }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:{{ g.costColor }}">{{ g.costS }}</span>
+        </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      <sc-if value="{{ isPod }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column"><div style="font-size:22px;font-weight:600;padding-bottom:12px">The pod</div>
+        <div style="display:flex;height:24px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:16px"><sc-for list="{{ podSeats }}" as="s" hint-placeholder-count="4"><div style="width:{{ s.shareW }}%;background:{{ s.color }};display:flex;align-items:center;padding:0 10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#0C0C0B">{{ s.pct }}</div></sc-for></div>
+        <sc-for list="{{ podSeats }}" as="s" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:44px minmax(0,1fr) 72px 100px 80px;gap:16px;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><div style="width:44px;height:28px;border-radius:3px;overflow:hidden;background:#1a1a19;position:relative"><img src="{{ s.art }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"><span style="position:absolute;left:0;top:0;bottom:0;width:3px;background:{{ s.color }}"></span></div><div style="min-width:0"><div style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.name }}</div><div style="font-size:13px;color:#8F8D86">{{ s.owner }}</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right;color:{{ s.r.numColor }}">{{ s.r.pct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#8F8D86">{{ s.elimS }} out first</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#8F8D86">turn {{ s.avgElimTurn }}</span></div></sc-for></div>
+      </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ viewVersions }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">Every version, every field it faced</div><div style="font-size:13px;color:#8F8D86">a version is frozen each time it runs · same list on a newer week shows as a second result</div></div>
+        <div style="display:grid;grid-template-columns:56px 72px minmax(0,1fr) 300px;gap:16px;padding:8px 0;font-size:13px;color:#8F8D86;border-bottom:1px solid rgba(255,255,255,.12)"><span>version</span><span>date</span><span>what changed</span><span>result · field it faced</span></div>
+        <sc-for list="{{ versionRows }}" as="x" hint-placeholder-count="7">
+        <div style="display:grid;grid-template-columns:56px 72px minmax(0,1fr) 300px;gap:16px;align-items:start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div><div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ x.vColor }}">v{{ x.v }}</div><div style="font-size:12px;color:#8F8D86">{{ x.label }}</div></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;padding-top:2px">{{ x.date }}</span>
+          <div style="font-size:15px;line-height:1.5;padding-top:1px">{{ x.change }}</div>
+          <div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ x.results }}" as="r" hint-placeholder-count="1"><a href="#" onClick="{{ r.pick }}" style="display:grid;grid-template-columns:72px minmax(0,1fr) 110px;gap:12px;align-items:center"><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ r.rr.numColor }}">{{ r.rr.pct }} <span style="font-size:12px;color:#8F8D86">{{ r.rr.pm }}</span></span><div style="position:relative;height:4px;background:#1f1f1e;border-radius:2px"><div style="position:absolute;left:{{ evenLine }}%;top:-2px;bottom:-2px;width:1px;background:#4a4a48"></div><div style="position:absolute;top:1px;height:2px;left:{{ r.rr.lo }}%;width:{{ r.rr.w }}%;background:{{ r.rr.hatch }}"></div><div style="position:absolute;top:-2px;width:8px;height:8px;border-radius:50%;left:calc({{ r.rr.left }}% - 4px);background:{{ r.rr.color }}"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8F8D86;white-space:nowrap">{{ r.snapLabel }}{{ r.live }}</span></a></sc-for><a href="#" onClick="{{ x.rerun }}" style="font-size:13px;color:#8F8D86">{{ x.rerunLabel }}</a></div>
+        </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ viewCompare }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:32px">
+        <sc-if value="{{ noCompare }}" hint-placeholder-val="{{ false }}"><div style="font-size:17px;color:#8F8D86;line-height:1.5;max-width:720px">{{ noCompareNote }}</div></sc-if>
+        <sc-if value="{{ hasCompare }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:12px;font-size:15px"><a href="#" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">v6 · Goal B ▾</a><span style="color:#8F8D86">against</span><a href="#" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">v7 · Goal C ▾</a><span style="color:#8F8D86">on the</span><a href="#" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">Oct 6 field ▾</a></div>
+        <div style="display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.6fr);gap:40px;align-items:start">
+          <div style="display:flex;flex-direction:column"><div style="font-size:22px;font-weight:600;padding-bottom:12px">What changed</div>
+            <div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:#F0A070">−</span> 1 Shoot the Sheriff</div><div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.06);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:#F0A070">−</span> 1 Haliya, Guided by Light</div><div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.06);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:#7CC4F0">+</span> 2 Koth of the Homestead</div>
+            <div style="font-size:13px;color:#8F8D86;padding-top:16px;line-height:1.5">58 of 60 cards shared. Both run on the Oct 6 field, so the difference is the cards, not the week.</div></div>
+          <div style="display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">What it did</div><div style="font-family:'JetBrains Mono',monospace;font-size:15px">{{ cmpA }} → <span style="color:#7CC4F0">{{ cmpB }}</span> <span style="font-size:13px;color:#8F8D86">weighted</span></div></div>
+            <div style="display:grid;grid-template-columns:minmax(160px,1fr) 48px 64px 64px 56px;gap:16px;padding:8px 0;font-size:13px;color:#8F8D86;border-bottom:1px solid rgba(255,255,255,.12)"><span>matchup</span><span style="text-align:right">meta</span><span style="text-align:right">v6</span><span style="text-align:right">v7</span><span style="text-align:right">change</span></div>
+            <sc-for list="{{ compareRows }}" as="c" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(160px,1fr) 48px 64px 64px 56px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#8F8D86">{{ c.metaS }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right">{{ c.aS }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right">{{ c.bS }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right;color:{{ c.dColor }}">{{ c.dS }}</span></div></sc-for>
+            <div style="font-size:13px;color:#8F8D86;padding-top:16px;line-height:1.5">20 games a side; a 2-game swing is noise. Dimir moved 4 games, which is the only change outside the range.</div></div>
+        </div></sc-if>
+      </div>
+      </sc-if>
     </div>
-    <details class="log"><summary>Forge log</summary><pre id="log"></pre></details>
-  </section>
-</main>
+    </sc-if>
 
-<main id="view-history" class="history hidden">
-  <div class="panel"><h2>Past runs</h2><div id="historyList"></div></div>
-</main>
+    <sc-if value="{{ isDeck }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Deck" style="display:flex;flex-direction:column;gap:40px">
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:48px">
+        <div><div style="font-size:13px;color:#8F8D86">Cards</div><div style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1.1;margin-top:4px">{{ deckSize }}</div><div style="font-size:13px;color:#8F8D86;margin-top:6px">{{ deckLegal }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">Forge</div><div style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1.1;margin-top:4px;color:{{ forgeColor }}">{{ forgeCount }}</div><div style="font-size:13px;color:#8F8D86;margin-top:6px">{{ forgeNote }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">Where you play it</div><div style="font-size:17px;font-weight:600;margin-top:10px">{{ playsOn }}</div><div style="font-size:13px;color:#8F8D86;margin-top:6px">{{ playsNote }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">Goal</div><div style="font-size:17px;font-weight:600;margin-top:10px">{{ deck.goal.label }}</div><div style="font-size:13px;color:#C5EC7A;margin-top:6px;font-family:'JetBrains Mono',monospace">{{ goalCountdown }}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:start">
+        <div style="display:flex;flex-direction:column"><div style="font-size:22px;font-weight:600;padding-bottom:12px">{{ mainLabel }}</div>
+          <sc-for list="{{ mainRows }}" as="c" hint-placeholder-count="14"><div onMouseEnter="{{ c.enter }}" onMouseMove="{{ c.move }}" onMouseLeave="{{ leaveCard }}" style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ c.qty }}</span><span style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default">{{ c.name }} <span style="font-size:13px;color:{{ c.statusColor }}">{{ c.statusNote }}</span></span><span style="display:flex;gap:1px;font-size:13px"><sc-for list="{{ c.pips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div></sc-for></div>
+        <div style="display:flex;flex-direction:column;gap:40px">
+          <div style="display:flex;flex-direction:column"><div style="font-size:22px;font-weight:600;padding-bottom:12px">{{ sideLabel }}</div>
+            <sc-for list="{{ sideRows }}" as="c" hint-placeholder-count="6"><div onMouseEnter="{{ c.enter }}" onMouseMove="{{ c.move }}" onMouseLeave="{{ leaveCard }}" style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ c.qty }}</span><span style="font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="display:flex;gap:1px;font-size:13px"><sc-for list="{{ c.pips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div></sc-for></div>
+          <div style="display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">Considering</div><div style="font-size:13px;color:#8F8D86">the coach's suggestions land here first</div></div>
+            <sc-for list="{{ considering }}" as="c" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ c.qty }}</span><span style="font-size:15px">{{ c.name }} <span style="font-size:13px;color:#8F8D86">· {{ c.note }}</span></span><a href="#" onClick="{{ c.add }}" style="font-size:13px;color:#C5EC7A">add → next version</a></div></sc-for></div>
+          <sc-if value="{{ hasPlans }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">Sideboard plans</div><div style="font-size:13px;color:#8F8D86">used in games 2 and 3 of a Bo3</div></div>
+            <sc-for list="{{ plans }}" as="p" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:150px minmax(0,1fr) 20px minmax(0,1fr) 84px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">vs {{ p.vs }}</span><input value="{{ p.out }}" onChange="{{ p.setOut }}" style="background:none;border:0;border-bottom:1px solid rgba(255,255,255,.12);padding:6px 0;color:#C9C7C0;font-size:15px;outline:none;min-width:0"><span style="color:#5C5B56;text-align:center">→</span><input value="{{ p.in }}" onChange="{{ p.setIn }}" style="background:none;border:0;border-bottom:1px solid rgba(255,255,255,.12);padding:6px 0;color:#C9C7C0;font-size:15px;outline:none;min-width:0"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ p.balColor }};text-align:right;white-space:nowrap">{{ p.balance }}</span></div></sc-for>
+            <div style="font-size:13px;color:#8F8D86;padding-top:12px">Drafted by the coach from the last run. Edit in place; counts turn amber when out ≠ in.</div></div></sc-if>
+          <div style="font-size:13px;color:#8F8D86;line-height:1.6">Paste a new list or add from Considering and the next run freezes it as the next version. Older versions stay runnable against any week's field.</div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+  </main>
+</div>
+</sc-if>
+<sc-if value="{{ hoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;left:{{ hoverX }}px;top:{{ hoverY }}px;width:244px;height:340px;border-radius:12px;overflow:hidden;pointer-events:none;z-index:50;background:#1a1a19"><img src="{{ hoverSrc }}" alt="" style="width:100%;height:100%;display:block"></div></sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;stage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;signin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;signin&quot;,&quot;firstrun&quot;,&quot;waiting&quot;,&quot;app&quot;],&quot;section&quot;:&quot;View&quot;},&quot;deck&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;squall&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;squall&quot;,&quot;kinnan&quot;],&quot;section&quot;:&quot;View&quot;},&quot;tab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;coach&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;coach&quot;,&quot;results&quot;,&quot;deck&quot;],&quot;section&quot;:&quot;View&quot;}}">
+class Component extends DCLogic {
+  // Real wiring for Design's brewer v3. The server owns every number; this block only
+  // turns /api/brews into the bindings the markup reads. The coach is not connected
+  // yet, so its brief is computed straight from the games rather than written by a model.
+  state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
+    fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, oppSet: 'meta20', runOpen: false, runErr: '',
+    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '' };
+  async componentDidMount() {
+    try { const me = await this.api('/api/me'); this.setState({ me }); await this.load(true); } catch (e) { this.setState({ stage: 'signin' }); }
+    this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(b => b.runs.some(r => this.active(r)))) this.load().catch(() => {}); }, 5000);
+  }
+  componentWillUnmount() { clearInterval(this._poll); }
+  async api(path, opts = {}) {
+    const r = await fetch(path, { credentials: 'same-origin', method: opts.method || 'GET', headers: { 'Content-Type': 'application/json' }, body: opts.body && JSON.stringify(opts.body) });
+    const data = (r.headers.get('content-type') || '').includes('json') ? await r.json() : { error: await r.text() };
+    if (r.status === 401 && path !== '/api/login') { this.setState({ stage: 'signin' }); }
+    if (!r.ok) throw new Error(data.error || r.statusText);
+    return data;
+  }
+  async load(first) {
+    const { brews, queueLength } = await this.api('/api/brews');
+    this.setState(s => ({ brews, queueLength, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
+  }
+  active(r) { return r.status === 'preparing' || r.status === 'queued' || r.status === 'running'; }
+  async signin() {
+    const S = this.state; if (S.busy) return;
+    this.setState({ busy: true, signinErr: '' });
+    try { await this.api('/api/login', { method: 'POST', body: { username: S.signinName, password: S.signinPw } }); const me = await this.api('/api/me'); this.setState({ me, signinPw: '' }); await this.load(true); }
+    catch (e) { this.setState({ signinErr: e.message }); }
+    this.setState({ busy: false });
+  }
+  async check() {
+    const S = this.state; if (S.busy || !S.pasteText.trim()) return;
+    this.setState({ busy: true, fsErr: '' });
+    try { const check = await this.api('/api/check', { method: 'POST', body: { text: S.pasteText } }); this.setState({ check, fsStep: 2 }); }
+    catch (e) { this.setState({ fsErr: e.message }); }
+    this.setState({ busy: false });
+  }
+  async create() {
+    const S = this.state; if (S.busy || !S.check) return;
+    this.setState({ busy: true, fsErr: '' });
+    try {
+      const b = await this.api('/api/brews', { method: 'POST', body: { list: S.check.list, name: S.check.importedName || undefined, note: S.noteText } });
+      const first = b.oppSets.find(o => o.available);
+      this.setState(s => ({ brews: [b, ...(s.brews || [])], newBrewId: b.id, oppSet: first ? first.id : 'meta20', fsStep: 3 }));
+    } catch (e) { this.setState({ fsErr: e.message }); }
+    this.setState({ busy: false });
+  }
+  async queue(brewId, oppSet, v) {
+    if (this.state.busy) return;
+    this.setState({ busy: true, runErr: '' });
+    try {
+      const b = await this.api('/api/brews/' + brewId + '/run', { method: 'POST', body: { oppSet, v } });
+      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), stage: 'app', deckId: b.id, runId: null, runOpen: false, tab: 'coach', view: 'run', fsStep: 1, pasteText: '', check: null, noteText: '', newBrewId: null }));
+    } catch (e) { this.setState({ runErr: e.message }); }
+    this.setState({ busy: false });
+  }
+  async forget(brewId, k) { try { const b = await this.api('/api/brews/' + brewId + '/notes/' + k, { method: 'DELETE' }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); } catch (e) {} }
+  async signout() { try { await this.api('/api/logout'); } catch (e) {} this.setState({ stage: 'signin', me: null, brews: null, deckId: null }); }
+  deck() { const B = this.state.brews || []; return B.find(b => b.id === this.state.deckId) || B[0] || null; }
+  renderVals() {
+    const S = this.state, d = this.deck();
+    const MANA = { W: '#F8F6D8', U: '#6AA3DC', B: '#A89DB0', R: '#E06A58', G: '#5BB07A' }; const SEAT = ['#C5EC7A', '#E9A0F2', '#7FDCEA', '#F3CB6B']; const WIN = '#7CC4F0', LOSS = '#F0A070', MUTED = '#8F8D86', ACC = '#C5EC7A', AMBER = '#F3CB6B';
+    const art = (n) => n ? 'https://api.scryfall.com/cards/named?exact=' + encodeURIComponent(n) + '&format=image&version=art_crop' : '';
+    const cardImg = (n) => 'https://api.scryfall.com/cards/named?exact=' + encodeURIComponent(n) + '&format=image&version=normal';
+    const pips = (c) => (c || []).map(x => ({ cls: 'ms-' + x.toLowerCase(), color: MANA[x] }));
+    const costPips = (cost) => ((cost || '').match(/\{([^}]+)\}/g) || []).map(t => { const s = t.slice(1, -1); return { cls: 'ms-' + s.toLowerCase().replace('/', ''), color: MANA[s] || '#B5B5B5' }; });
+    const rng = (w, n, center = 0.5) => { if (!n) return { p: 0, pct: '—', pm: '', lo: 50, w: 0, left: 50, n: 0, color: '#3a3a38', numColor: '#5C5B56', hatch: 'transparent' }; const p = w / n, se = 1.96 * Math.sqrt(p * (1 - p) / n), lo = Math.max(0, p - se), hi = Math.min(1, p + se), prov = n < 30; const color = prov ? MUTED : (p >= center ? WIN : LOSS); return { p, pct: Math.round(p * 100) + '%', pm: '±' + Math.round(se * 100), lo: (lo * 100).toFixed(1), w: ((hi - lo) * 100).toFixed(1), left: (p * 100).toFixed(1), n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = (t) => { const x = new Date(t); return MON[x.getMonth()] + ' ' + x.getDate(); };
+    const hm = (t) => { const x = new Date(t); return String(x.getHours()).padStart(2, '0') + ':' + String(x.getMinutes()).padStart(2, '0'); };
+    const at = (t) => t ? (new Date(t).toDateString() === new Date().toDateString() ? 'today ' : day(t) + ' ') + hm(t) : '';
+    const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+    const cap = (s) => s ? s[0].toUpperCase() + s.slice(1) : '';
+    const fieldLabel = (r) => r && r.field ? (r.field.source === 'team' ? 'team decks' : day(r.field.date) + ' field') : 'field';
+    const pe = (fn) => (e) => { e && e.preventDefault && e.preventDefault(); fn(e); };
 
-<div id="cardPreview" class="card-preview hidden"><img alt=""></div>
-<div id="toast" class="toast hidden"></div>
-<script src="app.js"></script>
+    const stage = S.stage || 'loading';
+    const tab = S.tab || 'coach'; const tabS = (t) => ({ line: tab === t ? ACC : 'transparent', color: tab === t ? '#EDEBE6' : '#8F8D86' });
+    const goTab = (t) => pe(() => this.setState({ tab: t, hover: null }));
+    const view = S.view; const vS = (x) => ({ color: view === x ? '#0C0C0B' : '#8F8D86', bg: view === x ? ACC : 'transparent' });
+    const setsOf = (b) => (b ? b.oppSets : []).map(o => ({ ...o, ring: S.oppSet === o.id ? ACC : 'rgba(255,255,255,.25)', fill: S.oppSet === o.id ? ACC : 'transparent', pick: pe(() => o.available && this.setState({ oppSet: o.id, runErr: '' })) }));
+    const ahead = S.queueLength ? 'Queued behind ' + plural(S.queueLength, 'run') + '.' : 'Queued behind nothing.';
+    const chk = S.check, unknown = chk ? chk.rows.filter(r => r.status === 'unknown') : [];
+    const count = (rows, sec) => rows.filter(r => r.section === sec).reduce((a, r) => a + r.qty, 0);
+    const newBrew = (S.brews || []).find(b => b.id === S.newBrewId);
+
+    const v = { isSignin: stage === 'signin', isFirstrun: stage === 'firstrun', hasApp: stage === 'app', isInvite: false, isNotInvite: true,
+      toggleInvite: pe(() => this.setState({ signinErr: '', invite: !S.invite })),
+      signinName: S.signinName, signinPw: S.signinPw, onSigninName: (e) => this.setState({ signinName: e.target.value }), onSigninPw: (e) => this.setState({ signinPw: e.target.value }),
+      signinKey: (e) => { if (e.key === 'Enter') this.signin(); }, doSignin: pe(() => this.signin()), signinLabel: S.busy ? '…' : 'Sign in',
+      signinNote: S.signinErr || (S.invite ? 'There are no invite links. Make a Star Shard account at starshard.net, then ask Justin to add your username.' : 'Sign in with your Star Shard account. Forge plays every game; results read as "when the AI plays both lists."'),
+      signinNoteColor: S.signinErr ? LOSS : '#5C5B56',
+      goFirstrun: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '' })), goApp: pe(() => this.setState({ stage: 'app' })), goSignin: pe(() => this.signout()), doSignout: pe(() => this.signout()),
+      fs1: S.fsStep === 1, fs2: S.fsStep === 2, fs3: S.fsStep === 3, fsStepLabel: 'step ' + S.fsStep + ' of 3',
+      fsNext: pe(() => this.setState({ fsStep: Math.min(3, S.fsStep + 1) })), fsBack: pe(() => this.setState({ fsStep: 1, fsErr: '' })),
+      pasteText: S.pasteText, onPaste: (e) => this.setState({ pasteText: e.target.value }), doCheck: pe(() => this.check()), checkLabel: S.busy ? 'Checking…' : 'Check it',
+      fsNote: S.fsErr || 'Format is read from the list. Commander decks need a commander line.', fsNoteColor: S.fsErr ? LOSS : '#8F8D86',
+      chkTitle: chk ? (S.check.importedName || chk.coverCard.split(',')[0]) + ' · ' + (chk.format === 'commander' ? count(chk.rows, 'main') + ' + ' + count(chk.rows, 'commander') : count(chk.rows, 'main') + (count(chk.rows, 'side') ? ' + ' + count(chk.rows, 'side') : '')) + ' · ' + (chk.format === 'casual' ? 'no constructed format fits' : cap(chk.format) + (chk.format === 'commander' ? '' : ' legal')) : '',
+      chkSub: !chk ? '' : unknown.length ? 'Scryfall doesn\'t know ' + plural(unknown.length, 'card') + '. Forge will skip ' + (unknown.length === 1 ? 'it' : 'them') + ' unless the spelling is fixed.' : 'Every card found. Names are already in Forge\'s spelling.',
+      chkRows: unknown.map(r => ({ name: r.name, note: 'not found, skipped in games', section: r.section, color: LOSS })),
+      noteText: S.noteText, onNote: (e) => this.setState({ noteText: e.target.value }), doCreate: pe(() => this.create()), createLabel: S.busy ? '…' : 'Choose opponents',
+      oppSets: setsOf(stage === 'firstrun' ? newBrew : d), fsQueue: pe(() => newBrew && this.queue(newBrew.id, S.oppSet)),
+      fsFootLine: S.runErr || (newBrew && newBrew.seats === 4 ? '20 pods, four seats.' : '20 games each, best of one.') + ' ' + ahead,
+      runOpen: S.runOpen, toggleRun: pe(() => this.setState({ runOpen: !S.runOpen, runErr: '', oppSet: d && d.oppSets.some(o => o.id === S.oppSet && o.available) ? S.oppSet : ((d && d.oppSets.find(o => o.available)) || {}).id })),
+      runLine: S.runErr || (d && d.seats === 4 ? '20 pods' : '20 games each · best of one') + ' · ' + ahead, runLineColor: S.runErr ? LOSS : '#8F8D86',
+      queueRun: pe(() => d && this.queue(d.id, S.oppSet)), runBo: 1, runBoToggle: '', toggleBo: pe(() => {}),
+      who: S.me ? '@' + S.me.user.name : '', forgeVer: S.me ? S.me.forge : '',
+      plans: [], hasPlans: false, brewList: [], memory: [], memoryCount: 0, deck: { name: '', version: '', versionLabel: '', subtitle: '', format: '', goal: { label: '' } }, deckArt: '', deckPips: [], seatsLabel: '',
+      isCoach: tab === 'coach', isResults: tab === 'results', isDeck: tab === 'deck', goCoach: goTab('coach'), goResults: goTab('results'), goDeck: goTab('deck'),
+      tabCoachLine: tabS('coach').line, tabCoachColor: tabS('coach').color, tabResultsLine: tabS('results').line, tabResultsColor: tabS('results').color, tabDeckLine: tabS('deck').line, tabDeckColor: tabS('deck').color,
+      viewRun: view === 'run', viewVersions: view === 'versions', viewCompare: view === 'compare', setViewRun: pe(() => this.setState({ view: 'run' })), setViewVersions: pe(() => this.setState({ view: 'versions' })), setViewCompare: pe(() => this.setState({ view: 'compare' })),
+      viewRunColor: vS('run').color, viewRunBg: vS('run').bg, viewVersionsColor: vS('versions').color, viewVersionsBg: vS('versions').bg, viewCompareColor: vS('compare').color, viewCompareBg: vS('compare').bg,
+      sourceOpen: false, toggleSource: pe(() => {}), sourceLabel: '', snapshotLabel: '', sourceRows: [], snapshotRows: [],
+      latest: { at: '' }, brief: { status: '', statusNote: '', weakness: '', weaknessNote: '' }, optionsLabel: '', options: [], hasSideboard: false, sideboard: [], linkDown: '', earlier: [],
+      askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [],
+      headlineLabel: '', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
+      noCompare: true, hasCompare: false, noCompareNote: 'Compare needs two versions of this deck. Paste the changed list as a new deck for now; versions inside one brew come next.', compareRows: [], cmpA: '', cmpB: '',
+      deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
+      leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
+    if (!d) return v;
+
+    const ver = d.versions[d.versions.length - 1];
+    v.brewList = S.brews.map(b => ({ ...b, version: b.versions.length, art: art(b.coverCard), bg: b.id === d.id ? '#161615' : 'transparent', pick: pe(() => this.setState({ deckId: b.id, runId: null, askText: '', view: 'run', runOpen: false })) }));
+    v.memory = d.notes.map(m => ({ ...m, forget: pe(() => this.forget(d.id, m.k)) })); v.memoryCount = v.memory.length;
+    v.deck = { name: d.name, version: ver.v, versionLabel: 'pasted ' + day(ver.created), subtitle: plural(d.runs.length, 'run'), format: cap(d.format), goal: { label: 'No goal set' } };
+    v.deckArt = art(d.coverCard); v.deckPips = pips(d.colors); v.seatsLabel = d.seats === 2 ? '1v1' : '4-seat pods';
+    v.isDuel = d.seats === 2; v.isPod = !v.isDuel;
+
+    // the run on screen: the one picked from Versions, else the newest
+    const run = d.runs.find(r => r.id === S.runId) || d.runs[0] || null;
+    const waiting = !!run && this.active(run);
+    const setTitle = run ? ((d.oppSets.find(o => o.id === run.oppSet) || {}).title || '') : '';
+    v.snapshotLabel = run ? fieldLabel(run) : '';
+    v.sourceLabel = run && run.field ? run.field.label : (d.seats === 4 ? 'EDHREC' : 'MTGGoldfish');
+
+    // results, computed once and read by both Coach and Results
+    let played = [], overall = rng(0, 0), worst = null, next = null, weighted = false;
+    if (run && v.isDuel) {
+      played = run.opponents.filter(o => o.wins[0] + o.wins[1] > 0);
+      weighted = played.length > 0 && played.every(o => o.metaPct != null);
+      let num = 0, den = 0, n = 0;
+      played.forEach(o => { const g = o.wins[0] + o.wins[1], wt = weighted ? o.metaPct : 1; num += (o.wins[0] / g) * wt; den += wt; n += g; });
+      overall = rng(den ? Math.round(num / den * n) : 0, n);
+      const costed = played.map(o => { const g = o.wins[0] + o.wins[1]; return { o, g, cost: Math.max(0, 0.5 - o.wins[0] / g) * (weighted ? o.metaPct : 1) }; }).sort((a, b) => b.cost - a.cost || a.o.wins[0] / a.g - b.o.wins[0] / b.g);
+      worst = costed[0] || null; next = costed[1] || null;
+    } else if (run && v.isPod) {
+      overall = rng(run.seats[0].wins, run.played, 0.25);
+    }
+    v.overall = overall;
+
+    // coach: no model yet, so the brief states what the games say and nothing more
+    if (!run) {
+      v.brief = { status: 'Not run yet', statusNote: 'Run v' + ver.v + ' ▾ picks who it plays.', weakness: '', weaknessNote: '' };
+    } else if (run.status === 'failed' || run.status === 'lost' || run.status === 'cancelled') {
+      v.brief = { status: run.status === 'cancelled' ? 'The run was cancelled' : 'The run didn\'t finish', statusNote: run.error || (run.status === 'lost' ? 'The simulator restarted while it was queued.' : 'Forge stopped before any games finished.'), weakness: '', weaknessNote: '' };
+      v.latest = { at: at(run.created) };
+    } else if (waiting) {
+      const left = run.total - run.played, rate = run.started && run.played ? (Date.now() - run.started) / run.played : null;
+      const status = run.status === 'preparing' ? 'Reading the field' : run.status === 'queued' ? 'Queued' + (run.queuePos > 0 ? ' · ' + plural(run.queuePos, 'run') + ' ahead' : ' · next up') : 'Running · ' + run.played + ' of ' + run.total + ' games';
+      v.brief = { status, statusNote: 'queued ' + hm(run.created) + (rate ? ' · about ' + Math.max(1, Math.round(left * rate / 60000)) + ' minutes left' : '') + ' · ' + setTitle,
+        weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' : run.played + ' of ' + run.total + ' pods played.') + ' Numbers under 30 games show hatched. You can close this; the run carries on.' };
+      v.latest = { at: 'now' }; v.linkDown = 'Results so far';
+    } else if (v.isDuel) {
+      v.brief = { status: overall.pct + ' against the ' + fieldLabel(run), statusNote: plural(overall.n, 'game') + ' · ' + overall.pm + ' · ' + (weighted ? 'weighted by meta share' : 'every deck counted once'),
+        weakness: worst && worst.cost > 0 ? worst.o.name + ', ' + worst.o.wins[0] + '–' + worst.o.wins[1] : 'Nothing below even', weaknessNote: '' };
+      if (worst && worst.cost > 0) v.brief.weaknessNote = (weighted ? 'It is ' + worst.o.metaPct.toFixed(1) + '% of the field and the matchup costing you the most.' : 'The matchup costing you the most.') + (next && next.cost > 0 ? ' Next is ' + next.o.name + ', ' + next.o.wins[0] + '–' + next.o.wins[1] + '.' : ' Everything else is at or above even.');
+      else if (worst) v.brief.weaknessNote = 'Every matchup is at or above 50%. The closest is ' + worst.o.name + ', ' + worst.o.wins[0] + '–' + worst.o.wins[1] + '.';
+      v.latest = { at: at(run.finished || run.created) }; v.linkDown = worst ? 'The whole field' : '';
+    } else {
+      const rivals = run.seats.slice(1).slice().sort((a, b) => b.wins - a.wins);
+      v.brief = { status: overall.pct + ' of pods won', statusNote: run.played + ' pods · ' + overall.pm + ' · 25% is even', weakness: rivals[0] ? rivals[0].name + ' won ' + rivals[0].wins + ' of ' + run.played : '', weaknessNote: rivals[0] ? 'The seat that beat you most often.' : '' };
+      v.latest = { at: at(run.finished || run.created) }; v.linkDown = 'The pod';
+    }
+    v.earlier = [{ who: 'Coach', at: '', text: 'The coach isn\'t connected yet. Everything above is computed straight from the games.', color: '#8F8D86' }];
+
+    // results: this run
+    const prev = run ? d.runs.filter(r => r.v === run.v && r.id !== run.id && r.created < run.created && !this.active(r))[0] : null;
+    if (run) {
+      v.runStatus = waiting ? cap(run.status === 'preparing' ? 'reading the field' : run.status) : run.status === 'done' ? 'Done · ' + at(run.finished) : cap(run.status);
+      v.runStatusColor = waiting ? ACC : run.status === 'done' ? '#EDEBE6' : LOSS;
+    }
+    if (run && v.isDuel) {
+      v.headlineLabel = weighted ? 'Weighted, ' + fieldLabel(run) : 'Your win rate, ' + fieldLabel(run); v.evenLabel = '50% is even'; v.evenLine = 50;
+      v.runNote = '20 games each · best of one · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '');
+      v.oppRows = run.opponents.map(o => { const g = o.wins[0] + o.wins[1]; const cost = g ? Math.max(0, 0.5 - o.wins[0] / g) * (o.metaPct != null ? o.metaPct : 1) : 0; return { name: o.name, art: art(o.coverCard), pips: pips(o.colors), metaS: o.metaPct != null ? o.metaPct.toFixed(1) : '—', r: rng(o.wins[0], g), cost, costS: cost > 0 ? '−' + cost.toFixed(1) : '·', costColor: cost > 0 ? LOSS : '#3a3a38', gamesS: g ? g + '/' + run.games : '—', flag: o.pairing === 'failed' ? 'Forge stopped early' : o.draws ? plural(o.draws, 'draw') : (o.owner || ''), flagColor: o.pairing === 'failed' ? AMBER : '#5C5B56', opacity: g ? 1 : 0.5 }; }).sort((a, b) => b.cost - a.cost || b.r.n - a.r.n);
+    } else if (run && v.isPod) {
+      const tot = run.seats.reduce((a, s) => a + s.wins, 0) || 1;
+      v.headlineLabel = 'Your seat · pods won'; v.evenLabel = '25% is even'; v.evenLine = 25; v.runNote = run.played + ' of ' + run.total + ' pods · Forge is weakest at combo and politics';
+      v.podSeats = run.seats.map((s, i) => ({ ...s, owner: s.owner || '', color: SEAT[i], art: art(s.commander), shareW: (s.wins / tot * 100).toFixed(1), pct: Math.round(s.wins / tot * 100) + '%', r: rng(s.wins, run.played, 0.25), elimS: '—', avgElimTurn: '—' }));
+    }
+    if (prev) {
+      const pr = v.isDuel ? (() => { let w = 0, n = 0; prev.opponents.forEach(o => { w += o.wins[0]; n += o.wins[0] + o.wins[1]; }); return rng(w, n); })() : rng(prev.seats[0].wins, prev.played, 0.25);
+      v.prevPct = pr.pct; v.prevPm = pr.pm; v.prevNote = 'Same list on the ' + fieldLabel(prev) + (v.isDuel ? ', unweighted.' : '.');
+    } else { v.prevPct = '—'; v.prevPm = ''; v.prevNote = run ? 'No earlier run of this version.' : ''; }
+
+    // results: versions
+    v.versionRows = d.versions.slice().reverse().map(x => ({ v: x.v, label: '', date: day(x.created), change: x.v === 1 ? 'first paste' : '', vColor: x.v === ver.v ? ACC : '#EDEBE6',
+      results: d.runs.filter(r => r.v === x.v && r.status !== 'failed' && r.status !== 'lost').map(r => { const rr = v.isDuel ? (() => { let w = 0, n = 0; r.opponents.forEach(o => { w += o.wins[0]; n += o.wins[0] + o.wins[1]; }); return rng(w, n); })() : rng(r.seats[0].wins, r.played, 0.25); return { rr, snapLabel: fieldLabel(r), live: this.active(r) ? ' · live' : '', pick: pe(() => this.setState({ view: 'run', runId: r.id })) }; }),
+      rerunLabel: 'run v' + x.v + ' on today\'s field', rerun: pe(() => this.queue(d.id, 'meta20', x.v)) }));
+
+    // deck
+    const hover = (name) => ({ enter: (e) => this.setState({ hover: { name, x: e.clientX, y: e.clientY } }), move: (e) => this.setState({ hover: { name, x: e.clientX, y: e.clientY } }) });
+    const rowOf = (c) => Object.assign({ ...c, pips: costPips(c.cost), statusColor: c.status === 'unknown' ? LOSS : '#3a3a38', statusNote: c.status === 'unknown' ? 'unknown, skipped' : '' }, hover(c.name));
+    const rows = ver.rows, main = rows.filter(r => r.section === 'main'), side = rows.filter(r => r.section === 'side'), cmd = rows.filter(r => r.section === 'commander');
+    v.mainRows = [...cmd, ...main].map(rowOf); v.sideRows = side.map(rowOf);
+    const nMain = count(rows, 'main'), nSide = count(rows, 'side'), lands = main.filter(r => r.land).reduce((a, r) => a + r.qty, 0);
+    v.mainLabel = v.isDuel ? 'Main · ' + nMain : 'The ' + nMain; v.sideLabel = nSide ? 'Sideboard · ' + nSide : 'No sideboard';
+    v.deckSize = v.isDuel ? nMain + (nSide ? ' + ' + nSide : '') : nMain + ' + ' + count(rows, 'commander');
+    v.deckLegal = (d.format === 'casual' ? 'no constructed format fits' : cap(d.format) + ' legal') + ' · ' + plural(lands, 'land');
+    const unk = rows.filter(r => r.status === 'unknown').reduce((a, r) => a + r.qty, 0);
+    v.forgeCount = String(unk); v.forgeColor = unk ? LOSS : '#EDEBE6'; v.forgeNote = unk ? 'not found · Forge skips ' + (unk === 1 ? 'it' : 'them') : 'every card found';
+    const notArena = rows.filter(r => !r.arena && r.status === 'ok');
+    v.playsOn = notArena.length ? 'Paper' : 'Arena · paper'; v.playsNote = notArena.length ? plural(notArena.length, 'card') + ' not on Arena' : 'every card is on Arena';
+    v.goalCountdown = '';
+    return v;
+  }
+}
+</script>
 </body>
 </html>

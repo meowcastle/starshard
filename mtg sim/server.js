@@ -88,6 +88,95 @@ async function pump() {
   pump();
 }
 
+// ---------- brews ----------
+// A brew is one deck someone is working on. Each pasted list is a version; every
+// run is filed under the version it played, with the field it faced frozen beside
+// it. Results themselves live on the job (live) or in history (finished).
+const BREWS = path.join(DATA, 'brews.json');
+let brews = []; try { brews = JSON.parse(fs.readFileSync(BREWS, 'utf8')); } catch {}
+const saveBrews = () => fs.writeFileSync(BREWS, JSON.stringify(brews));
+// A run that was still reading decklists when the process stopped will never finish.
+brews.forEach(b => b.runs.forEach(r => { if (r.status === 'preparing') { r.status = 'failed'; r.error = 'the server restarted before this run was queued'; } }));
+const GAMES = 20;            // per pairing; the UI says "20 games each"
+const LOAD_SECONDS = 30;     // Forge reads its card database once per pairing
+const latest = b => b.versions[b.versions.length - 1];
+
+function secondsPerGame(pod) {
+  const ms = history.filter(h => (h.format === 'Commander') === pod).flatMap(h => h.pairings || []).filter(p => p.avgMs).slice(0, 50).map(p => p.avgMs);
+  return ms.length ? ms.reduce((a, b) => a + b, 0) / ms.length / 1000 : pod ? 41 : 14;
+}
+const fmtTime = s => s < 3600 ? `~${Math.max(1, Math.round(s / 60))} min` : `~${(s / 3600).toFixed(1)} h`;
+const teamFor = b => brews.filter(o => o.owner !== b.owner && o.format === b.format).slice(0, b.seats === 4 ? 3 : 12);
+
+// The opponent sets the run picker offers for this brew.
+function oppSets(b) {
+  const pod = b.seats === 4, per = LOAD_SECONDS + GAMES * secondsPerGame(pod), team = teamFor(b);
+  const teamSet = { id: 'team', title: `My pod · ${team.length} team deck${team.length === 1 ? '' : 's'}`, detail: team.length ? team.map(o => `${o.owner}'s ${o.name}`).join(', ') + '.' : `No other member has a ${b.format} brew yet.`, time: team.length ? fmtTime(per) : '', available: team.length > 0, n: team.length };
+  if (pod) return [{ id: 'meta20', title: 'The field · top 3 commanders', detail: 'EDHREC, this week. Average decks, one pod.', time: fmtTime(per), available: true, n: 3 }, teamSet];
+  if (!meta.GOLDFISH_FORMATS.includes(b.format)) return [{ id: 'meta20', title: 'The field', detail: `No metagame source for ${b.format}.`, time: '', available: false, n: 0 }, teamSet];
+  return [
+    { id: 'meta20', title: 'The field · top 20', detail: `MTGGoldfish ${b.format}, read when you queue. Weighted by meta share.`, time: fmtTime(20 * per), available: true, n: 20 },
+    { id: 'meta10', title: 'The field · top 10', detail: 'Same source, the decks you will actually face.', time: fmtTime(10 * per), available: true, n: 10 },
+    teamSet,
+  ];
+}
+
+async function mapLimit(items, n, fn) {
+  const out = new Array(items.length); let i = 0;
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (i < items.length) { const k = i++; try { out[k] = await fn(items[k]); } catch (e) { out[k] = { error: e.message }; } } }));
+  return out;
+}
+// Resolve an opponent set to real decklists, then queue the job. Runs after the
+// request has answered, because 20 decklists from MTGGoldfish can take a while.
+async function prepareRun(b, run, user) {
+  try {
+    let field;
+    if (run.oppSet === 'team') {
+      field = teamFor(b).map(o => ({ name: `${o.owner}'s ${o.name}`, owner: o.owner, metaPct: null, list: latest(o).list }));
+      run.field = { source: 'team', label: 'team', date: run.created };
+    } else if (b.seats === 4) {
+      const top = (await meta.edhrecMeta()).slice(0, 3);
+      field = (await mapLimit(top, 3, async d => ({ name: d.name, owner: 'EDHREC average', metaPct: null, list: await meta.edhrecDeck(d.id) })));
+      run.field = { source: 'edhrec', label: 'EDHREC', date: run.created };
+    } else {
+      const n = run.oppSet === 'meta10' ? 10 : 20;
+      const top = (await meta.goldfishMeta(b.format)).slice(0, n);
+      field = await mapLimit(top, 4, async d => ({ name: d.name, owner: null, metaPct: d.pct, list: await meta.goldfishDeck(d.id) }));
+      field.forEach((f, i) => { if (f.error) f.name = top[i].name; });
+      run.field = { source: 'goldfish', label: 'MTGGoldfish', date: run.created };
+    }
+    run.skipped = field.filter(f => f.error || !f.list?.main?.length).map(f => f.name);
+    field = field.filter(f => !f.error && f.list?.main?.length);
+    if (!field.length) throw new Error('no opponent decklists could be read');
+    run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list)) }));
+    const v = b.versions.find(x => x.v === run.v);
+    const decks = [{ name: b.name, ...v.list }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
+    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
+    run.jobId = job.id; run.status = 'queued';
+  } catch (e) { run.status = 'failed'; run.error = e.message; }
+  saveBrews();
+}
+
+// A run as the UI reads it: the frozen field plus whatever the job knows now.
+function runView(b, run) {
+  const j = run.jobId && (jobs.get(run.jobId) || history.find(h => h.id === run.jobId));
+  const status = run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
+  const prs = j?.pairings || [];
+  const played = p => p.games ? p.games.length : p.played || 0;
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [] };
+  if (b.seats === 4) {
+    const p = prs[0];
+    out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));
+    out.played = p ? played(p) : 0; out.total = GAMES;
+  } else {
+    out.opponents = (run.opponents || []).map((o, i) => { const p = prs[i]; return { ...o, wins: p ? [p.wins[0] || 0, p.wins[1] || 0] : [0, 0], draws: p?.draws || 0, played: p ? played(p) : 0, pairing: p?.status || 'queued' }; });
+    out.played = out.opponents.reduce((s, o) => s + o.played, 0); out.total = GAMES * out.opponents.length;
+  }
+  out.warnings = [...new Set(prs.flatMap(p => p.warnings || []))].slice(0, 20);
+  return out;
+}
+const brewView = b => ({ ...b, runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b) });
+
 // ---------- http ----------
 const send = (res, code, body, headers = {}) => {
   const isStr = typeof body === 'string' || Buffer.isBuffer(body);
@@ -155,6 +244,46 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/import') return send(res, 200, await meta.importUrl(u.searchParams.get('url')));
     if (p === '/api/parse' && req.method === 'POST') { const { text } = await readBody(req); return send(res, 200, meta.parseList(String(text || ''))); }
 
+    // brews
+    let m;
+    if (p === '/api/check' && req.method === 'POST') {
+      const text = String((await readBody(req)).text || '').trim();
+      const deck = /^https?:\/\/\S+$/.test(text) ? await meta.importUrl(text) : meta.parseList(text);
+      if (!deck.main?.length && !deck.commander?.length) return send(res, 400, { error: "That doesn't read as a decklist. One card per line, like \"4 Lightning Bolt\"." });
+      return send(res, 200, { ...(await meta.describeDeck({ main: deck.main || [], side: deck.side || [], commander: deck.commander || [] })), importedName: deck.name || null });
+    }
+    if (p === '/api/brews' && req.method === 'GET') {
+      return send(res, 200, { brews: brews.filter(b => b.owner === user.name).map(brewView), queueLength: queue.length + (running ? 1 : 0) });
+    }
+    if (p === '/api/brews' && req.method === 'POST') {
+      const { list, name, note } = await readBody(req);
+      const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
+      if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
+      const d = await meta.describeDeck(deck);
+      const now = Date.now();
+      const b = { id: crypto.randomBytes(5).toString('hex'), owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').slice(0, 60), format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
+        coverCard: d.coverCard, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
+        versions: [{ v: 1, created: now, list: d.list, rows: d.rows }], runs: [] };
+      brews.unshift(b); saveBrews();
+      return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/run$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const body = await readBody(req);
+      const set = oppSets(b).find(s => s.id === body.oppSet);
+      if (!set || !set.available) return send(res, 400, { error: set ? set.detail : 'pick who it should play' });
+      const v = b.versions.some(x => x.v === body.v) ? body.v : latest(b).v;
+      const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
+      b.runs.unshift(run); saveBrews();
+      prepareRun(b, run, user);
+      return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/notes\/(\w+)$/)) && req.method === 'DELETE') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      b.notes = b.notes.filter(n => n.k !== m[2]); saveBrews();
+      return send(res, 200, brewView(b));
+    }
+
     // jobs
     if (p === '/api/sim' && req.method === 'POST') {
       const b = await readBody(req);
@@ -168,7 +297,6 @@ const server = http.createServer(async (req, res) => {
       const job = enqueue({ mode, decks, games, format, clock, owner: user.name });
       return send(res, 200, { id: job.id });
     }
-    let m;
     if ((m = p.match(/^\/api\/jobs\/(\w+)$/))) {
       const j = jobs.get(m[1]);
       if (req.method === 'DELETE') {

@@ -18,11 +18,12 @@ shares the domain and the NAS.
 | file | what |
 |---|---|
 | `Dockerfile` | node 20 + Java 17 + xvfb, downloads Forge (`FORGE_URL` build arg) |
-| `docker-compose.yml` | binds `127.0.0.1:8088`, caps at 2 CPUs / 4 GB so staging stays responsive |
-| `server.js` | API + static files + one-at-a-time job queue, history in `data/history.json` |
+| `docker-compose.yml` | binds `127.0.0.1:8088`, low CPU priority + 4 GB cap so staging stays responsive |
+| `server.js` | API + static files + one-at-a-time job queue, history in `data/history.json`, brews (deck + versions + runs) in `data/brews.json` |
 | `forge.js` | writes `.dck` files, spawns `java -jar forge-gui-desktop…jar sim`, parses `Game N ended…` lines |
 | `meta.js` | MTGGoldfish / MTGTop8 / EDHREC / Moxfield / Archidekt readers (6h in-memory cache) |
-| `public/` | the UI |
+| `public/` | the UI: Design's brewer v3 (`index.html` + its `support.js` runtime), wired to the API in the page's `x-dc` script block |
+| `package.json` | only marks the sim as CommonJS, so it runs locally under the repo root's `"type": "module"`; not copied into the image |
 
 ## Deploy
 

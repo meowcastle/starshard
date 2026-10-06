@@ -16,5 +16,5 @@ services:
       - MAX_GAMES=200
     volumes:
       - ./data:/data
-    cpus: 2.0                   # keep the NAS responsive for staging.starshard.net
+    cpu_shares: 512             # half the default priority, so staging.starshard.net stays responsive (this NAS kernel cannot do hard cpu limits)
     mem_limit: 4g

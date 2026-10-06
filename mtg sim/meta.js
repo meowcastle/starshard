@@ -22,7 +22,8 @@ function parseList(text) {
   let cur = main;
   for (let raw of text.split(/\r?\n/)) {
     const line = raw.trim();
-    if (!line) { if (main.length) cur = side; continue; }
+    // A blank line ends the commander block, or (once there is a main deck) starts the sideboard.
+    if (!line) { if (cur === commander && commander.length) cur = main; else if (main.length) cur = side; continue; }
     if (/^(\/\/\s*)?side\s*board:?$/i.test(line) || /^SB:?$/i.test(line)) { cur = side; continue; }
     if (/^(\/\/\s*)?commander:?$/i.test(line)) { cur = commander; continue; }
     if (/^(\/\/\s*)?(main\s*deck|deck|companion):?$/i.test(line)) { cur = main; continue; }
@@ -133,4 +134,64 @@ async function importUrl(url) {
   throw new Error('supported: Moxfield, Archidekt, MTGGoldfish, MTGTop8 links');
 }
 
-module.exports = { parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
+// ---------- Scryfall: names -> card data (kept for the life of the process) ----------
+const scry = new Map(); // lowercased name -> card | null
+const FRONT_ONLY = new Set(['transform', 'modal_dfc', 'flip', 'adventure', 'meld', 'reversible_card', 'prepare']);
+const forgeName = c => (FRONT_ONLY.has(c.layout) && c.card_faces ? c.card_faces[0].name : c.name);
+const findCard = n => scry.get(n.toLowerCase()) ?? scry.get(n.split(' // ')[0].toLowerCase());
+async function scryfall(names) {
+  const need = [...new Set(names.map(n => n.toLowerCase()))].filter(n => !scry.has(n));
+  for (let i = 0; i < need.length; i += 75) {
+    const r = await fetch('https://api.scryfall.com/cards/collection', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'User-Agent': 'sim.starshard.net' },
+      body: JSON.stringify({ identifiers: need.slice(i, i + 75).map(n => ({ name: n.split(' // ')[0] })) }),
+    });
+    if (!r.ok) throw new Error(`Scryfall answered ${r.status}`);
+    const j = await r.json();
+    for (const c of j.data || []) [c.name, c.card_faces?.[0]?.name, forgeName(c)].filter(Boolean).forEach(k => scry.set(k.toLowerCase(), c));
+    for (const nf of j.not_found || []) scry.set(String(nf.name).toLowerCase(), null);
+    await new Promise(ok => setTimeout(ok, 100)); // Scryfall asks for ~10 requests a second at most
+  }
+  return findCard;
+}
+const COLORS = ['W', 'U', 'B', 'R', 'G'];
+const isLand = c => /\bLand\b/.test((c?.type_line || '').split('//')[0]);
+const costOf = c => c ? (c.mana_cost ?? c.card_faces?.[0]?.mana_cost ?? '') : '';
+// The card a deck is "about": the commander, else the most-played nonland, heaviest first.
+function coverOf(deck, find) {
+  if (deck.commander?.length) return deck.commander[0].name;
+  const spells = deck.main.filter(c => !isLand(find(c.name)));
+  spells.sort((a, b) => b.qty - a.qty || (find(b.name)?.cmc || 0) - (find(a.name)?.cmc || 0));
+  return (spells[0] || deck.main[0])?.name || '';
+}
+function colorsOf(deck, find) {
+  const set = new Set();
+  for (const c of [...deck.main, ...(deck.commander || [])]) { const k = find(c.name); if (k && !isLand(k)) (k.colors || k.card_faces?.[0]?.colors || []).forEach(x => set.add(x)); }
+  return COLORS.filter(x => set.has(x));
+}
+// Narrowest constructed format every card is legal in; commander decks are commander.
+function formatOf(deck, find) {
+  if (deck.commander?.length) return 'commander';
+  const all = [...deck.main, ...(deck.side || [])].map(c => find(c.name)).filter(Boolean);
+  return ['standard', 'pioneer', 'modern', 'legacy', 'vintage'].find(f => all.every(k => ['legal', 'restricted'].includes(k.legalities?.[f]))) || 'casual';
+}
+// Validate a list against Scryfall, convert names to Forge's front-face spelling,
+// and return the rows the Deck tab shows. Unknown names stay in the list, flagged.
+async function describeDeck(deck) {
+  const all = [...deck.main, ...(deck.side || []), ...(deck.commander || [])];
+  const find = await scryfall(all.map(c => c.name));
+  const row = (c, section) => {
+    const k = find(c.name);
+    return { qty: c.qty, name: k ? forgeName(k) : c.name, section, cost: costOf(k), land: isLand(k), cmc: k?.cmc || 0, arena: k ? (k.games || []).includes('arena') : false, status: k ? 'ok' : 'unknown' };
+  };
+  const rows = [...deck.main.map(c => row(c, 'main')), ...(deck.side || []).map(c => row(c, 'side')), ...(deck.commander || []).map(c => row(c, 'commander'))];
+  const list = { main: rows.filter(r => r.section === 'main').map(({ qty, name }) => ({ qty, name })), side: rows.filter(r => r.section === 'side').map(({ qty, name }) => ({ qty, name })), commander: rows.filter(r => r.section === 'commander').map(({ qty, name }) => ({ qty, name })) };
+  return { list, rows, format: formatOf(deck, find), coverCard: coverOf(list, find), colors: colorsOf(list, find) };
+}
+// Cover card + colours for an opponent's list, best effort.
+async function faceOf(deck) {
+  try { const find = await scryfall([...deck.main, ...(deck.commander || [])].map(c => c.name)); return { coverCard: coverOf(deck, find), colors: colorsOf(deck, find) }; }
+  catch { return { coverCard: deck.commander?.[0]?.name || deck.main[0]?.name || '', colors: [] }; }
+}
+
+module.exports = { describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
