@@ -175,6 +175,15 @@ function runView(b, run) {
   out.warnings = [...new Set(prs.flatMap(p => p.warnings || []))].slice(0, 20);
   return out;
 }
+// Card-level change from one list to the next: [{ name, section, qty: +n | -n }],
+// removals first. Sections are compared separately, so a card moved from the
+// sideboard into the main shows as one out and one in.
+function diffLists(a, b) {
+  const count = l => { const m = new Map(); for (const s of ['main', 'side', 'commander']) for (const c of l[s] || []) { const k = s + '\u0000' + c.name; m.set(k, (m.get(k) || 0) + c.qty); } return m; };
+  const A = count(a), B = count(b), out = [];
+  for (const k of new Set([...A.keys(), ...B.keys()])) { const q = (B.get(k) || 0) - (A.get(k) || 0); if (q) { const [section, name] = k.split('\u0000'); out.push({ name, section, qty: q }); } }
+  return out.sort((x, y) => (x.qty > 0) - (y.qty > 0) || x.section.localeCompare(y.section) || x.name.localeCompare(y.name));
+}
 const brewView = b => ({ ...b, runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b) });
 
 // ---------- http ----------
@@ -265,6 +274,20 @@ const server = http.createServer(async (req, res) => {
         coverCard: d.coverCard, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
         versions: [{ v: 1, created: now, list: d.list, rows: d.rows }], runs: [] };
       brews.unshift(b); saveBrews();
+      return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/versions$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const { list, note } = await readBody(req);
+      const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
+      if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
+      const d = await meta.describeDeck(deck);
+      if ((d.format === 'commander') !== (b.seats === 4)) return send(res, 400, { error: b.seats === 4 ? 'This brew is a Commander deck; that list has no commander.' : "That's a Commander list. Paste it as a new deck instead." });
+      const prev = latest(b), diff = diffLists(prev.list, d.list);
+      if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
+      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, diff });
+      if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
+      saveBrews();
       return send(res, 200, brewView(b));
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/run$/)) && req.method === 'POST') {

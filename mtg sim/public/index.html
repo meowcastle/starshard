@@ -25,9 +25,9 @@
 <sc-if value="{{ isFirstrun }}" hint-placeholder-val="{{ false }}">
 <div data-screen-label="First run" style="min-height:100vh;display:flex;justify-content:center;padding:40px 48px">
   <div style="width:720px;display:flex;flex-direction:column;gap:40px">
-    <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px">Forge Sim</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ fsStepLabel }}</div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px">Forge Sim</div></div><div style="display:flex;gap:16px;align-items:baseline"><a href="#" onClick="{{ fsCancel }}" style="font-size:13px;color:#8F8D86">{{ fsCancelLabel }}</a><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ fsStepLabel }}</div></div></div>
     <sc-if value="{{ fs1 }}" hint-placeholder-val="{{ true }}">
-    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Paste your deck</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">An Arena export, an Archidekt link, or plain text. On Moxfield use More → Export → Copy for MTGA; their links can't be read.</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ fsTitle }}</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">An Arena export, an Archidekt link, or plain text. On Moxfield use More → Export → Copy for MTGA; their links can't be read.</div></div>
     <textarea rows="7" value="{{ pasteText }}" onChange="{{ onPaste }}" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;resize:vertical" placeholder="Deck
 3 Squall, SeeD Mercenary (FIN) 234
 3 Aerith Gainsborough (FIN) 2
@@ -161,15 +161,15 @@
       <sc-if value="{{ viewCompare }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:32px">
         <sc-if value="{{ noCompare }}" hint-placeholder-val="{{ false }}"><div style="font-size:17px;color:#8F8D86;line-height:1.5;max-width:720px">{{ noCompareNote }}</div></sc-if>
-        <sc-if value="{{ hasCompare }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:12px;font-size:15px"><a href="#" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">v6 · Goal B ▾</a><span style="color:#8F8D86">against</span><a href="#" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">v7 · Goal C ▾</a><span style="color:#8F8D86">on the</span><a href="#" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">Oct 6 field ▾</a></div>
+        <sc-if value="{{ hasCompare }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:12px;font-size:15px"><a href="#" onClick="{{ cmpCycleA }}" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">{{ cmpALabel }} ▾</a><span style="color:#8F8D86">against</span><a href="#" onClick="{{ cmpCycleB }}" style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">{{ cmpBLabel }} ▾</a><span style="color:#8F8D86">on the</span><span style="border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:7px 12px;font-weight:600">{{ cmpFieldLabel }}</span></div>
         <div style="display:grid;grid-template-columns:minmax(0,0.8fr) minmax(0,1.6fr);gap:40px;align-items:start">
           <div style="display:flex;flex-direction:column"><div style="font-size:22px;font-weight:600;padding-bottom:12px">What changed</div>
-            <div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:#F0A070">−</span> 1 Shoot the Sheriff</div><div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.06);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:#F0A070">−</span> 1 Haliya, Guided by Light</div><div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.06);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:#7CC4F0">+</span> 2 Koth of the Homestead</div>
-            <div style="font-size:13px;color:#8F8D86;padding-top:16px;line-height:1.5">58 of 60 cards shared. Both run on the Oct 6 field, so the difference is the cards, not the week.</div></div>
+            <sc-for list="{{ cmpChanges }}" as="c" hint-placeholder-count="3"><div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px"><span style="font-family:'JetBrains Mono',monospace;color:{{ c.color }}">{{ c.sign }}</span> {{ c.text }}</div></sc-for>
+            <div style="font-size:13px;color:#8F8D86;padding-top:16px;line-height:1.5">{{ cmpSharedNote }}</div></div>
           <div style="display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">What it did</div><div style="font-family:'JetBrains Mono',monospace;font-size:15px">{{ cmpA }} → <span style="color:#7CC4F0">{{ cmpB }}</span> <span style="font-size:13px;color:#8F8D86">weighted</span></div></div>
-            <div style="display:grid;grid-template-columns:minmax(160px,1fr) 48px 64px 64px 56px;gap:16px;padding:8px 0;font-size:13px;color:#8F8D86;border-bottom:1px solid rgba(255,255,255,.12)"><span>matchup</span><span style="text-align:right">meta</span><span style="text-align:right">v6</span><span style="text-align:right">v7</span><span style="text-align:right">change</span></div>
+            <div style="display:grid;grid-template-columns:minmax(160px,1fr) 48px 64px 64px 56px;gap:16px;padding:8px 0;font-size:13px;color:#8F8D86;border-bottom:1px solid rgba(255,255,255,.12)"><span>matchup</span><span style="text-align:right">meta</span><span style="text-align:right">{{ cmpAShort }}</span><span style="text-align:right">{{ cmpBShort }}</span><span style="text-align:right">change</span></div>
             <sc-for list="{{ compareRows }}" as="c" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:minmax(160px,1fr) 48px 64px 64px 56px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#8F8D86">{{ c.metaS }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right">{{ c.aS }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right">{{ c.bS }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;text-align:right;color:{{ c.dColor }}">{{ c.dS }}</span></div></sc-for>
-            <div style="font-size:13px;color:#8F8D86;padding-top:16px;line-height:1.5">20 games a side; a 2-game swing is noise. Dimir moved 4 games, which is the only change outside the range.</div></div>
+            <div style="font-size:13px;color:#8F8D86;padding-top:16px;line-height:1.5">{{ cmpFootNote }}</div></div>
         </div></sc-if>
       </div>
       </sc-if>
@@ -195,7 +195,7 @@
           <sc-if value="{{ hasPlans }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column"><div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px"><div style="font-size:22px;font-weight:600">Sideboard plans</div><div style="font-size:13px;color:#8F8D86">used in games 2 and 3 of a Bo3</div></div>
             <sc-for list="{{ plans }}" as="p" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:150px minmax(0,1fr) 20px minmax(0,1fr) 84px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">vs {{ p.vs }}</span><input value="{{ p.out }}" onChange="{{ p.setOut }}" style="background:none;border:0;border-bottom:1px solid rgba(255,255,255,.12);padding:6px 0;color:#C9C7C0;font-size:15px;outline:none;min-width:0"><span style="color:#5C5B56;text-align:center">→</span><input value="{{ p.in }}" onChange="{{ p.setIn }}" style="background:none;border:0;border-bottom:1px solid rgba(255,255,255,.12);padding:6px 0;color:#C9C7C0;font-size:15px;outline:none;min-width:0"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ p.balColor }};text-align:right;white-space:nowrap">{{ p.balance }}</span></div></sc-for>
             <div style="font-size:13px;color:#8F8D86;padding-top:12px">Drafted by the coach from the last run. Edit in place; counts turn amber when out ≠ in.</div></div></sc-if>
-          <div style="font-size:13px;color:#8F8D86;line-height:1.6">Paste a new list or add from Considering and the next run freezes it as the next version. Older versions stay runnable against any week's field.</div>
+          <div style="font-size:13px;color:#8F8D86;line-height:1.6"><a href="#" onClick="{{ goNewVersion }}" style="color:#C5EC7A;font-weight:600">Paste a new list →</a><br>It becomes the next version. Older versions stay runnable against any week's field.</div>
         </div>
       </div>
     </div>
@@ -211,7 +211,7 @@ class Component extends DCLogic {
   // turns /api/brews into the bindings the markup reads. The coach is not connected
   // yet, so its brief is computed straight from the games rather than written by a model.
   state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
-    fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, oppSet: 'meta20', runOpen: false, runErr: '',
+    fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
     deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '' };
   async componentDidMount() {
     try { const me = await this.api('/api/me'); this.setState({ me }); await this.load(true); } catch (e) { this.setState({ stage: 'signin' }); }
@@ -248,9 +248,11 @@ class Component extends DCLogic {
     const S = this.state; if (S.busy || !S.check) return;
     this.setState({ busy: true, fsErr: '' });
     try {
-      const b = await this.api('/api/brews', { method: 'POST', body: { list: S.check.list, name: S.check.importedName || undefined, note: S.noteText } });
+      const b = S.versionOf
+        ? await this.api('/api/brews/' + S.versionOf + '/versions', { method: 'POST', body: { list: S.check.list, note: S.noteText } })
+        : await this.api('/api/brews', { method: 'POST', body: { list: S.check.list, name: S.check.importedName || undefined, note: S.noteText } });
       const first = b.oppSets.find(o => o.available);
-      this.setState(s => ({ brews: [b, ...(s.brews || [])], newBrewId: b.id, oppSet: first ? first.id : 'meta20', fsStep: 3 }));
+      this.setState(s => ({ brews: S.versionOf ? s.brews.map(x => x.id === b.id ? b : x) : [b, ...(s.brews || [])], newBrewId: b.id, oppSet: first ? first.id : 'meta20', fsStep: 3, cmpA: null, cmpB: null }));
     } catch (e) { this.setState({ fsErr: e.message }); }
     this.setState({ busy: false });
   }
@@ -259,7 +261,7 @@ class Component extends DCLogic {
     this.setState({ busy: true, runErr: '' });
     try {
       const b = await this.api('/api/brews/' + brewId + '/run', { method: 'POST', body: { oppSet, v } });
-      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), stage: 'app', deckId: b.id, runId: null, runOpen: false, tab: 'coach', view: 'run', fsStep: 1, pasteText: '', check: null, noteText: '', newBrewId: null }));
+      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), stage: 'app', deckId: b.id, runId: null, runOpen: false, tab: 'coach', view: 'run', fsStep: 1, pasteText: '', check: null, noteText: '', newBrewId: null, versionOf: null }));
     } catch (e) { this.setState({ runErr: e.message }); }
     this.setState({ busy: false });
   }
@@ -292,6 +294,7 @@ class Component extends DCLogic {
     const chk = S.check, unknown = chk ? chk.rows.filter(r => r.status === 'unknown') : [];
     const count = (rows, sec) => rows.filter(r => r.section === sec).reduce((a, r) => a + r.qty, 0);
     const newBrew = (S.brews || []).find(b => b.id === S.newBrewId);
+    const vOf = (S.brews || []).find(b => b.id === S.versionOf);
 
     const v = { isSignin: stage === 'signin', isFirstrun: stage === 'firstrun', hasApp: stage === 'app', isInvite: false, isNotInvite: true,
       toggleInvite: pe(() => this.setState({ signinErr: '', invite: !S.invite })),
@@ -299,7 +302,11 @@ class Component extends DCLogic {
       signinKey: (e) => { if (e.key === 'Enter') this.signin(); }, doSignin: pe(() => this.signin()), signinLabel: S.busy ? '…' : 'Sign in',
       signinNote: S.signinErr || (S.invite ? 'There are no invite links. Make a Star Shard account at starshard.net, then ask Justin to add your username.' : 'Sign in with your Star Shard account. Forge plays every game; results read as "when the AI plays both lists."'),
       signinNoteColor: S.signinErr ? LOSS : '#5C5B56',
-      goFirstrun: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '' })), goApp: pe(() => this.setState({ stage: 'app' })), goSignin: pe(() => this.signout()), doSignout: pe(() => this.signout()),
+      goFirstrun: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: null, pasteText: '', check: null, noteText: '' })),
+      goNewVersion: pe(() => d && this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: d.id, pasteText: '', check: null, noteText: '' })),
+      fsCancel: pe(() => (S.brews || []).length && this.setState({ stage: 'app', fsStep: 1, fsErr: '', versionOf: null, newBrewId: null, deckId: S.newBrewId || S.versionOf || S.deckId })),
+      fsCancelLabel: (S.brews || []).length ? (S.fsStep === 3 ? 'later' : 'cancel') : '',
+      fsTitle: vOf ? 'Paste v' + (vOf.versions.length + 1) + ' of ' + vOf.name : 'Paste your deck', goApp: pe(() => this.setState({ stage: 'app' })), goSignin: pe(() => this.signout()), doSignout: pe(() => this.signout()),
       fs1: S.fsStep === 1, fs2: S.fsStep === 2, fs3: S.fsStep === 3, fsStepLabel: 'step ' + S.fsStep + ' of 3',
       fsNext: pe(() => this.setState({ fsStep: Math.min(3, S.fsStep + 1) })), fsBack: pe(() => this.setState({ fsStep: 1, fsErr: '' })),
       pasteText: S.pasteText, onPaste: (e) => this.setState({ pasteText: e.target.value }), doCheck: pe(() => this.check()), checkLabel: S.busy ? 'Checking…' : 'Check it',
@@ -307,7 +314,7 @@ class Component extends DCLogic {
       chkTitle: chk ? (S.check.importedName || chk.coverCard.split(',')[0]) + ' · ' + (chk.format === 'commander' ? count(chk.rows, 'main') + ' + ' + count(chk.rows, 'commander') : count(chk.rows, 'main') + (count(chk.rows, 'side') ? ' + ' + count(chk.rows, 'side') : '')) + ' · ' + (chk.format === 'casual' ? 'no constructed format fits' : cap(chk.format) + (chk.format === 'commander' ? '' : ' legal')) : '',
       chkSub: !chk ? '' : unknown.length ? 'Scryfall doesn\'t know ' + plural(unknown.length, 'card') + '. Forge will skip ' + (unknown.length === 1 ? 'it' : 'them') + ' unless the spelling is fixed.' : 'Every card found. Names are already in Forge\'s spelling.',
       chkRows: unknown.map(r => ({ name: r.name, note: 'not found, skipped in games', section: r.section, color: LOSS })),
-      noteText: S.noteText, onNote: (e) => this.setState({ noteText: e.target.value }), doCreate: pe(() => this.create()), createLabel: S.busy ? '…' : 'Choose opponents',
+      noteText: S.noteText, onNote: (e) => this.setState({ noteText: e.target.value }), doCreate: pe(() => this.create()), createLabel: S.busy ? '…' : vOf ? 'Save as v' + (vOf.versions.length + 1) : 'Choose opponents',
       oppSets: setsOf(stage === 'firstrun' ? newBrew : d), fsQueue: pe(() => newBrew && this.queue(newBrew.id, S.oppSet)),
       fsFootLine: S.runErr || (newBrew && newBrew.seats === 4 ? '20 pods, four seats.' : '20 games each, best of one.') + ' ' + ahead,
       runOpen: S.runOpen, toggleRun: pe(() => this.setState({ runOpen: !S.runOpen, runErr: '', oppSet: d && d.oppSets.some(o => o.id === S.oppSet && o.available) ? S.oppSet : ((d && d.oppSets.find(o => o.available)) || {}).id })),
@@ -323,7 +330,7 @@ class Component extends DCLogic {
       latest: { at: '' }, brief: { status: '', statusNote: '', weakness: '', weaknessNote: '' }, optionsLabel: '', options: [], hasSideboard: false, sideboard: [], linkDown: '', earlier: [],
       askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [],
       headlineLabel: '', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
-      noCompare: true, hasCompare: false, noCompareNote: 'Compare needs two versions of this deck. Paste the changed list as a new deck for now; versions inside one brew come next.', compareRows: [], cmpA: '', cmpB: '',
+      noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
       leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
     if (!d) return v;
@@ -342,6 +349,8 @@ class Component extends DCLogic {
     v.snapshotLabel = run ? fieldLabel(run) : '';
     v.sourceLabel = run && run.field ? run.field.label : (d.seats === 4 ? 'EDHREC' : 'MTGGoldfish');
 
+    // a run as one number: weighted by meta share when every played opponent has one
+    const scoreOf = (r) => { if (v.isPod) return rng(r.seats[0].wins, r.played, 0.25); const pl = r.opponents.filter(o => o.wins[0] + o.wins[1] > 0); const wtd = pl.length > 0 && pl.every(o => o.metaPct != null); let num = 0, den = 0, n = 0; pl.forEach(o => { const g = o.wins[0] + o.wins[1], wt = wtd ? o.metaPct : 1; num += (o.wins[0] / g) * wt; den += wt; n += g; }); return rng(den ? Math.round(num / den * n) : 0, n); };
     // results, computed once and read by both Coach and Results
     let played = [], overall = rng(0, 0), worst = null, next = null, weighted = false;
     if (run && v.isDuel) {
@@ -398,14 +407,44 @@ class Component extends DCLogic {
       v.podSeats = run.seats.map((s, i) => ({ ...s, owner: s.owner || '', color: SEAT[i], art: art(s.commander), shareW: (s.wins / tot * 100).toFixed(1), pct: Math.round(s.wins / tot * 100) + '%', r: rng(s.wins, run.played, 0.25), elimS: '—', avgElimTurn: '—' }));
     }
     if (prev) {
-      const pr = v.isDuel ? (() => { let w = 0, n = 0; prev.opponents.forEach(o => { w += o.wins[0]; n += o.wins[0] + o.wins[1]; }); return rng(w, n); })() : rng(prev.seats[0].wins, prev.played, 0.25);
-      v.prevPct = pr.pct; v.prevPm = pr.pm; v.prevNote = 'Same list on the ' + fieldLabel(prev) + (v.isDuel ? ', unweighted.' : '.');
+      const pr = scoreOf(prev);
+      v.prevPct = pr.pct; v.prevPm = pr.pm; v.prevNote = 'Same list on the ' + fieldLabel(prev) + '.';
     } else { v.prevPct = '—'; v.prevPm = ''; v.prevNote = run ? 'No earlier run of this version.' : ''; }
 
     // results: versions
-    v.versionRows = d.versions.slice().reverse().map(x => ({ v: x.v, label: '', date: day(x.created), change: x.v === 1 ? 'first paste' : '', vColor: x.v === ver.v ? ACC : '#EDEBE6',
-      results: d.runs.filter(r => r.v === x.v && r.status !== 'failed' && r.status !== 'lost').map(r => { const rr = v.isDuel ? (() => { let w = 0, n = 0; r.opponents.forEach(o => { w += o.wins[0]; n += o.wins[0] + o.wins[1]; }); return rng(w, n); })() : rng(r.seats[0].wins, r.played, 0.25); return { rr, snapLabel: fieldLabel(r), live: this.active(r) ? ' · live' : '', pick: pe(() => this.setState({ view: 'run', runId: r.id })) }; }),
+    const diffText = (df) => df.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name + (c.section === 'side' ? ' (side)' : c.section === 'commander' ? ' (commander)' : '')).join(', ');
+    v.versionRows = d.versions.slice().reverse().map(x => ({ v: x.v, label: x.v === ver.v ? 'latest' : '', date: day(x.created), change: x.diff ? diffText(x.diff) : 'first paste', vColor: x.v === ver.v ? ACC : '#EDEBE6',
+      results: d.runs.filter(r => r.v === x.v && r.status !== 'failed' && r.status !== 'lost').map(r => { const rr = scoreOf(r); return { rr, snapLabel: fieldLabel(r), live: this.active(r) ? ' · live' : '', pick: pe(() => this.setState({ view: 'run', runId: r.id })) }; }),
       rerunLabel: 'run v' + x.v + ' on today\'s field', rerun: pe(() => this.queue(d.id, 'meta20', x.v)) }));
+
+    // compare: two versions, on the opponents both of their latest finished runs faced
+    if (v.isDuel && d.versions.length >= 2) {
+      const vs = d.versions.map(x => x.v), B = vs.includes(S.cmpB) ? S.cmpB : ver.v; const A = vs.includes(S.cmpA) && S.cmpA !== B ? S.cmpA : (vs.filter(n => n !== B).pop());
+      const cyc = (cur, other) => { const opts = vs.filter(n => n !== other); return opts[(opts.indexOf(cur) + opts.length - 1) % opts.length]; };
+      const listOf = (n) => d.versions.find(x => x.v === n).list;
+      const tally = (l) => { const m = new Map(); ['main', 'side', 'commander'].forEach(s => (l[s] || []).forEach(c => { const k = s + '|' + c.name; m.set(k, (m.get(k) || 0) + c.qty); })); return m; };
+      const ta = tally(listOf(A)), tb = tally(listOf(B)), changes = [];
+      new Set([...ta.keys(), ...tb.keys()]).forEach(k => { const q = (tb.get(k) || 0) - (ta.get(k) || 0); if (q) { const [sec, name] = k.split('|'); changes.push({ q, text: Math.abs(q) + ' ' + name + (sec === 'side' ? ' (side)' : '') }); } });
+      changes.sort((x, y) => (x.q > 0) - (y.q > 0) || x.text.localeCompare(y.text));
+      const mainA = listOf(A).main, mainB = listOf(B).main, size = mainB.reduce((a, c) => a + c.qty, 0);
+      const shared = mainB.reduce((a, c) => a + Math.min(c.qty, (mainA.find(o => o.name === c.name) || { qty: 0 }).qty), 0);
+      const done = (n) => d.runs.find(r => r.v === n && r.status === 'done');
+      const ra = done(A), rb = done(B);
+      v.noCompare = false; v.hasCompare = true; v.cmpALabel = 'v' + A; v.cmpBLabel = 'v' + B; v.cmpAShort = 'v' + A; v.cmpBShort = 'v' + B;
+      v.cmpCycleA = pe(() => this.setState({ cmpA: cyc(A, B), cmpB: B })); v.cmpCycleB = pe(() => this.setState({ cmpB: cyc(B, A), cmpA: A }));
+      v.cmpChanges = changes.map(c => ({ sign: c.q > 0 ? '+' : '−', color: c.q > 0 ? WIN : LOSS, text: c.text }));
+      v.cmpFieldLabel = rb ? fieldLabel(rb) : '—';
+      const sameWeek = ra && rb && ra.field && rb.field && ra.field.source === rb.field.source && day(ra.field.date) === day(rb.field.date);
+      v.cmpSharedNote = shared + ' of ' + size + ' main-deck cards shared. ' + (!ra || !rb ? 'v' + (!ra ? A : B) + ' hasn\'t finished a run yet.' : sameWeek ? 'Both ran on the ' + fieldLabel(rb) + ', so the difference is the cards, not the week.' : 'v' + A + ' ran on the ' + fieldLabel(ra) + ' and v' + B + ' on the ' + fieldLabel(rb) + ', so some of the difference is the week.');
+      const rows = ra && rb ? rb.opponents.map(ob => { const oa = ra.opponents.find(o => o.name === ob.name); if (!oa) return null; const ga = oa.wins[0] + oa.wins[1], gb = ob.wins[0] + ob.wins[1]; if (!ga || !gb) return null; return { ob, oa, ga, gb, dd: Math.round((ob.wins[0] / gb - oa.wins[0] / ga) * 20) }; }).filter(Boolean) : [];
+      const wsum = (side) => { let num = 0, den = 0; rows.forEach(r => { const wt = r.ob.metaPct != null ? r.ob.metaPct : 1; num += (side === 'a' ? r.oa.wins[0] / r.ga : r.ob.wins[0] / r.gb) * wt; den += wt; }); return den ? Math.round(num / den * 100) + '%' : '—'; };
+      v.cmpA = wsum('a'); v.cmpB = wsum('b');
+      v.compareRows = rows.map(r => ({ name: r.ob.name, metaS: r.ob.metaPct != null ? r.ob.metaPct.toFixed(1) : '—', aS: r.oa.wins[0] + '–' + r.oa.wins[1], bS: r.ob.wins[0] + '–' + r.ob.wins[1], dS: r.dd === 0 ? '·' : (r.dd > 0 ? '+' : '−') + Math.abs(r.dd), dColor: Math.abs(r.dd) >= 6 ? (r.dd > 0 ? WIN : LOSS) : '#8F8D86', m: r.ob.metaPct || 0 })).sort((a, b) => b.m - a.m);
+      const big = rows.filter(r => Math.abs(r.dd) >= 6);
+      v.cmpFootNote = !rows.length ? '' : '20 games a side, so only a swing of 6 games or more is outside the noise. ' + (big.length ? big.map(r => r.ob.name + ' moved ' + Math.abs(r.dd)).join(', ') + '.' : 'Nothing moved that far.');
+    } else {
+      v.noCompareNote = v.isDuel ? 'Compare needs two versions. Paste a new list from the Deck tab and run it.' : 'Compare is for 1v1 decks for now.';
+    }
 
     // deck
     const hover = (name) => ({ enter: (e) => this.setState({ hover: { name, x: e.clientX, y: e.clientY } }), move: (e) => this.setState({ hover: { name, x: e.clientX, y: e.clientY } }) });
