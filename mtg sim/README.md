@@ -1,0 +1,70 @@
+# sim.starshard.net — Forge MTG simulator
+
+Private web UI, signed in with **Star Shard accounts**, around [Forge](https://github.com/Card-Forge/forge)'s
+headless AI-vs-AI simulator (`forge sim`). Separate from Star Shard; it only
+shares the domain and the NAS.
+
+- **Matchup**: 2–4 decks, N games (3–4 decks = free-for-all).
+- **Gauntlet**: deck 1 plays N games against each other deck in turn
+  ("Add top 8" pulls the current top of the meta).
+- **Decks from**: MTGGoldfish & MTGTop8 metagame pages, EDHREC average decks,
+  Moxfield / Archidekt / Goldfish / Top8 deck links, or pasted lists.
+- **Scryfall** (called from the browser) validates every name, converts
+  DFC/adventure names to Forge's front-face spelling, and draws the curve,
+  colours and hover previews.
+
+## Layout
+
+| file | what |
+|---|---|
+| `Dockerfile` | node 20 + Java 17 + xvfb, downloads Forge (`FORGE_URL` build arg) |
+| `docker-compose.yml` | binds `127.0.0.1:8088`, caps at 2 CPUs / 4 GB so staging stays responsive |
+| `server.js` | API + static files + one-at-a-time job queue, history in `data/history.json` |
+| `forge.js` | writes `.dck` files, spawns `java -jar forge-gui-desktop…jar sim`, parses `Game N ended…` lines |
+| `meta.js` | MTGGoldfish / MTGTop8 / EDHREC / Moxfield / Archidekt readers (6h in-memory cache) |
+| `public/` | the UI |
+
+## Deploy
+
+`mtg sim/deploy.sh` (tar-over-ssh, then `docker compose up -d --build` on the NAS
+at `/volume2/docker/starshard-sim`). The first run asks for your Star Shard
+username and your friends' usernames and writes them to `.env` on the NAS.
+
+### Accounts
+
+Sign-in uses the same accounts as Star Shard/Manzil. The sim passes the
+username and password to the Star Shard API on the NAS (loopback only, port
+4001), keeps the session token it gets back, and re-checks it every minute, so
+logging out of Star Shard or resetting a password ends the sim session too.
+Nothing about Star Shard itself changed.
+
+Only usernames in `SIM_USERS` get in (anyone else with a Star Shard account sees
+"ask Justin to add you"). `SIM_ADMINS` can cancel other people's runs. To add a
+friend: they make a Star Shard account, then edit `.env` on the NAS and
+`sudo docker compose up -d`. The container uses host networking because the
+Star Shard API only listens on the NAS's own loopback.
+
+DSM → Control Panel → Login Portal → Advanced → Reverse Proxy:
+`https://sim.starshard.net:443 → http://localhost:8088`, with WebSocket headers
+off (not needed), and a Let's Encrypt certificate for `sim.starshard.net`
+assigned to it under Security → Certificate.
+
+DNS: GoDaddy, `CNAME sim → wreckroom.nyc` (same as `staging`).
+
+## Newer cards
+
+The default build pins Forge 2.0.15. For the newest sets, rebuild from the
+daily snapshot:
+
+```
+docker compose build --build-arg FORGE_URL=https://github.com/Card-Forge/forge/releases/download/daily-snapshots/forge-installer-<version>.tar.bz2
+```
+
+(The exact file name is in that release's asset list; it changes daily.)
+
+## Caveats
+
+- Forge's AI is decent at aggro/midrange and weak at combo and complex control,
+  so treat results as "how the AI pilots these lists", not ground truth.
+- Scraping MTGGoldfish / MTGTop8 depends on their HTML; if a list stops
+  loading, `meta.js` is the place to fix it.

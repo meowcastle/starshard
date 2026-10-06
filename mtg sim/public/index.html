@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forge Sim — sim.starshard.net</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="login" class="login hidden">
+  <form id="loginForm" class="login-card">
+    <div class="brand"><span class="logo">◆</span> Forge Sim</div>
+    <p class="muted">Sign in with your Star Shard account.</p>
+    <input id="user" type="text" placeholder="Username or email" autocomplete="username" autocapitalize="off" spellcheck="false" autofocus>
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="btn primary" type="submit">Enter</button>
+    <p id="loginErr" class="err"></p>
+    <p class="hint">No account, or forgot your password? Use <a href="https://staging.starshard.net/account/" target="_blank" rel="noopener">Star Shard</a>.</p>
+  </form>
+</div>
+
+<header class="top">
+  <div class="brand"><span class="logo">◆</span> Forge Sim <span class="tag" id="forgeVer"></span></div>
+  <nav class="tabs" id="mainTabs">
+    <button data-view="build" class="on">Simulate</button>
+    <button data-view="history">History</button>
+  </nav>
+  <span class="muted" id="whoami"></span>
+  <button class="btn ghost small" id="logout">Log out</button>
+</header>
+
+<main id="view-build" class="layout">
+  <!-- Left: run setup + decks -->
+  <section class="col decks-col">
+    <div class="panel setup">
+      <div class="seg" id="mode">
+        <button data-mode="matchup" class="on">Matchup</button>
+        <button data-mode="gauntlet">Gauntlet</button>
+      </div>
+      <p class="hint" id="modeHint">Pit 2–4 decks against each other.</p>
+      <div class="row">
+        <label>Format
+          <select id="format">
+            <option>Constructed</option><option>Commander</option><option>Brawl</option><option>Oathbreaker</option>
+          </select>
+        </label>
+        <label>Games <input id="games" type="number" min="1" max="200" value="20"></label>
+        <label>Clock (s) <input id="clock" type="number" min="30" max="900" value="180" title="A game that runs past this is called a draw"></label>
+      </div>
+      <button class="btn primary wide" id="run">Run simulation</button>
+    </div>
+    <div id="deckList"></div>
+    <button class="btn ghost wide" id="addDeck">+ Add deck</button>
+  </section>
+
+  <!-- Middle: meta browser -->
+  <section class="col meta-col panel">
+    <div class="panel-head">
+      <h2>Metagame</h2>
+      <div class="seg small" id="metaSource">
+        <button data-src="goldfish" class="on">MTGGoldfish</button>
+        <button data-src="top8">MTGTop8</button>
+        <button data-src="edhrec">EDHREC</button>
+      </div>
+    </div>
+    <div class="row">
+      <select id="metaFormat"></select>
+      <input id="metaFilter" placeholder="Filter archetypes…">
+    </div>
+    <div class="row gauntlet-only">
+      <button class="btn small" id="pickTop">Add top 8 to gauntlet</button>
+      <span class="hint">Gauntlet runs Deck 1 against every other deck.</span>
+    </div>
+    <ul id="metaList" class="meta-list"><li class="muted">Loading…</li></ul>
+    <div class="import">
+      <input id="importUrl" placeholder="Paste a Moxfield, Archidekt, MTGGoldfish or MTGTop8 deck link">
+      <button class="btn small" id="importBtn">Import</button>
+    </div>
+  </section>
+
+  <!-- Right: results -->
+  <section class="col results-col panel">
+    <div class="panel-head"><h2>Results</h2><button class="btn ghost small hidden" id="cancel">Cancel</button></div>
+    <div id="results" class="results empty">
+      <p class="muted">Load two decks and press <b>Run simulation</b>. Forge's AI plays every game out, so expect roughly 5–30 seconds a game on the NAS.</p>
+    </div>
+    <details class="log"><summary>Forge log</summary><pre id="log"></pre></details>
+  </section>
+</main>
+
+<main id="view-history" class="history hidden">
+  <div class="panel"><h2>Past runs</h2><div id="historyList"></div></div>
+</main>
+
+<div id="cardPreview" class="card-preview hidden"><img alt=""></div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>

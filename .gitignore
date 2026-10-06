@@ -49,3 +49,8 @@ design-system/.design-sync/node_modules
 # tools/selfhost-runtime.mjs output — the deployed copy of the dc-runtime,
 # regenerated on every deploy from the pristine support.js + vendor/.
 build/
+
+# mtg sim: local env (credentials) and runtime job history
+mtg sim/env.txt
+mtg sim/.env
+mtg sim/data/
