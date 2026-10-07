@@ -55,3 +55,10 @@ Merged onto the live page: the four-step wizard, the Codex, the Coach thread lay
 - **Coach**: the weakness paragraph sits in `{{ hasWeak }}`, and "What is that?" in `{{ hasWeakLink }}` (Standard only, since the Codex is). Composer placeholder is `{{ askPlaceholder }}`: the coach is not connected yet, so the thread is empty.
 - **Live indicator**: sparks only, built from real per-game results. spindown and phases need life totals / phase events Forge's quiet mode does not print.
 - Not built yet: per-card sim stats on card entries (need Forge game logs), editing name/cover from the Deck tab (not drawn), the coach itself.
+
+## 7 Oct, late — the coach is connected
+
+- Options under the readout come from the coach. A swap gets "Test it" → "Testing as vN…" → "Tested · vN", and the result line under it is bound: `{{ o.resA }} → {{ o.resB }} {{ o.resPm }} · {{ o.resNote }}` (the mock "38% → 44% ±9 · 120 games" was hard-coded). Advice that isn't a swap has no action.
+- Composer: Enter sends, Shift+Enter is a new line (`onKeyDown="{{ askKey }}"` on the textarea). While the coach writes, a "Thinking…" message sits at the end of the thread.
+- The three chips are generated from the run: the worst matchup, the field's top deck, and the first note.
+- Worth designing: a tested fix's result shows on the run it was suggested for, but the Coach shows the newest run, which is the test itself. Today the comparison is on Compare.

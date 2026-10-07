@@ -10,6 +10,8 @@ const sideboard = require('./sideboard');
 const realdata = require('./realdata');
 const calib = require('./calib');
 const codex = require('./codex');
+const coach = require('./coach');
+const claude = require('./claude');
 
 const PORT = +process.env.PORT || 8088;
 const DATA = process.env.DATA_DIR || '/data';
@@ -117,6 +119,8 @@ let brews = []; try { brews = JSON.parse(fs.readFileSync(BREWS, 'utf8')); } catc
 const saveBrews = () => fs.writeFileSync(BREWS, JSON.stringify(brews));
 // A run that was still reading decklists when the process stopped will never finish.
 brews.forEach(b => b.runs.forEach(r => { if (r.status === 'preparing') { r.status = 'failed'; r.error = 'the server restarted before this run was queued'; } }));
+// an answer that was being written when the process stopped will not arrive
+brews.forEach(b => { if (b.thinking) { b.thinking = false; (b.thread = b.thread || []).push({ role: 'coach', text: 'I lost that question when the simulator restarted. Ask again?', at: Date.now(), kind: 'error' }); } });
 const GAMES = 20;            // per pairing; the UI says "20 games each"
 const LOAD_SECONDS = 30;     // Forge reads its card database once per pairing
 const latest = b => b.versions[b.versions.length - 1];
@@ -405,6 +409,7 @@ function runView(b, run) {
   if (j && jobs.has(j.id) && j.pairings) out.pulse = j.pairings.flatMap(p => Array.from({ length: GAMES }, (_, g) => p.games[g] ? (p.games[g].winner === 0 ? 1 : 0) : null));
   out.benchmark = benchView(run.benchmarkId);
   out.style = (b.versions.find(x => x.v === run.v) || {}).style || null;
+  out.coach = run.coach || null;
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
   return out;
 }
@@ -417,7 +422,44 @@ function diffLists(a, b) {
   for (const k of new Set([...A.keys(), ...B.keys()])) { const q = (B.get(k) || 0) - (A.get(k) || 0); if (q) { const [section, name] = k.split('\u0000'); out.push({ name, section, qty: q }); } }
   return out.sort((x, y) => (x.qty > 0) - (y.qty > 0) || x.section.localeCompare(y.section) || x.name.localeCompare(y.name));
 }
-const brewView = b => ({ ...b, runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b) });
+const brewView = b => ({ ...b, runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b), coachOn: claude.available() });
+
+// ---------- the coach ----------
+// A finished field run gets its readout written once (lazily, when its brew is
+// next read). Swaps the model suggests are checked: cards out must be in the main
+// deck, cards in must exist and be legal in the format, and the counts must match;
+// a swap that fails the check becomes advice instead of a test button.
+const coachBusy = new Set();
+async function cleanSwap(b, ver, o) {
+  if (o.kind !== 'swap') return { title: o.title, detail: o.detail, kind: 'note' };
+  const main = new Map(ver.list.main.map(c => [c.name.toLowerCase(), c]));
+  const outs = (o.out || []).map(c => { const m2 = main.get(String(c.name).toLowerCase()); return m2 && c.qty > 0 ? { qty: Math.min(c.qty, m2.qty), name: m2.name } : null; }).filter(Boolean);
+  const find = await meta.cards((o.in || []).map(c => c.name));
+  const ins = (o.in || []).map(c => { const k = find(c.name); return k && c.qty > 0 && k.legalities?.[b.format] === 'legal' ? { qty: Math.min(4, c.qty), name: meta.forgeName(k) } : null; }).filter(Boolean);
+  const n = Math.min(ins.reduce((t, c) => t + c.qty, 0), outs.reduce((t, c) => t + c.qty, 0));
+  const trim = l => { let k = n; return l.map(c => { const q = Math.min(c.qty, k); k -= q; return q ? { qty: q, name: c.name } : null; }).filter(Boolean); };
+  return n ? { title: o.title, detail: o.detail, kind: 'swap', in: trim(ins), out: trim(outs) } : { title: o.title, detail: o.detail, kind: 'note' };
+}
+function coachWriteups(b) {
+  if (!claude.available() || b.seats !== 2) return;
+  // the newest finished run only; a failed writeup is tried again after ten minutes
+  const run = b.runs.find(r => runView(b, r).status === 'done');
+  if (!run || !run.field?.source || coachBusy.has(run.id) || (run.coach && !(run.coach.error && Date.now() - run.coach.at > 600e3))) return;
+  coachBusy.add(run.id);
+  (async () => {
+    const rv = runView(b, run), ver = b.versions.find(x => x.v === run.v);
+    const w = await coach.writeup(b, rv);
+    const options = await Promise.all((w.options || []).slice(0, 3).map(o => cleanSwap(b, ver, o)));
+    run.coach = { weakness: String(w.weakness || '').slice(0, 120), weaknessNote: String(w.weaknessNote || '').slice(0, 600), options, at: Date.now() };
+    (b.thread = b.thread || []).push({ role: 'coach', text: String(w.summary || '').slice(0, 2000), at: Date.now(), run: run.id, kind: 'writeup' });
+    saveBrews();
+  })().catch(e => { run.coach = { error: e.message, at: Date.now() }; saveBrews(); console.error('coach writeup:', e.message); }).finally(() => coachBusy.delete(run.id));
+}
+// The run the coach talks about: the newest one with games, else a stand-in with none.
+function talkRun(b) {
+  const r = b.runs.find(x => runView(b, x).played > 0);
+  return r ? runView(b, r) : { v: latest(b).v, opponents: [], status: 'not run yet', played: 0, total: 0, field: null };
+}
 
 // ---------- http ----------
 const send = (res, code, body, headers = {}) => {
@@ -504,7 +546,8 @@ const server = http.createServer(async (req, res) => {
     if ((m = p.match(/^\/api\/codex\/([\w%:-]+)$/)) && req.method === 'GET') { const e = await codex.entry(decodeURIComponent(m[1]), await codexCtx(user)); return e ? send(res, 200, e) : send(res, 404, { error: 'no such entry' }); }
     if ((m = p.match(/^\/api\/codex\/([\w%:-]+)\/notes$/)) && req.method === 'POST') { const { t } = await readBody(req); const n = codex.addNote(decodeURIComponent(m[1]), user.name, t); return n ? send(res, 200, { notes: n }) : send(res, 400, { error: 'empty note' }); }
     if (p === '/api/brews' && req.method === 'GET') {
-      return send(res, 200, { brews: brews.filter(b => b.owner === user.name).map(brewView), queueLength: queue.length + (running ? 1 : 0), bo3: sideboard.available() });
+      const mine = brews.filter(b => b.owner === user.name); mine.forEach(coachWriteups);
+      return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length + (running ? 1 : 0), bo3: sideboard.available() });
     }
     if (p === '/api/brews' && req.method === 'POST') {
       const { list, name, note, cover } = await readBody(req);
@@ -546,6 +589,37 @@ const server = http.createServer(async (req, res) => {
       const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
       b.runs.unshift(run); saveBrews();
       prepareRun(b, run, user);
+      return send(res, 200, brewView(b));
+    }
+    // ask the coach: the question goes in the thread now, the answer when it is written
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/ask$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (!claude.available()) return send(res, 400, { error: 'the coach needs an API key on the server' });
+      if (b.thinking) return send(res, 409, { error: 'the coach is still answering' });
+      const text = String((await readBody(req)).text || '').trim().slice(0, 2000); if (!text) return send(res, 400, { error: 'ask something' });
+      (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
+      coach.reply(b, talkRun(b), b.thread)
+        .then(t => b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }))
+        .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }))
+        .finally(() => { b.thinking = false; saveBrews(); });
+      return send(res, 200, brewView(b));
+    }
+    // "Test it": the coach's swap becomes the next version and runs against the same kind of field
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/runs\/(\w+)\/test$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const run = b.runs.find(r => r.id === m[2]); const i = (await readBody(req)).i | 0, o = run?.coach?.options?.[i];
+      if (!o || o.kind !== 'swap') return send(res, 400, { error: 'nothing to test' });
+      if (o.test) return send(res, 400, { error: 'already tested as v' + o.test.v });
+      const base = b.versions.find(x => x.v === run.v), main = new Map(base.list.main.map(c => [c.name, c.qty]));
+      o.out.forEach(c => main.set(c.name, (main.get(c.name) || 0) - c.qty)); o.in.forEach(c => main.set(c.name, (main.get(c.name) || 0) + c.qty));
+      const list = { ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) };
+      const d = await meta.describeDeck(list), prev = latest(b), diff = diffLists(prev.list, d.list);
+      if (!diff.length) return send(res, 400, { error: 'that is the current list already' });
+      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i } });
+      const nr = { id: crypto.randomBytes(4).toString('hex'), v: prev.v + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
+      o.test = { v: nr.v, run: nr.id };
+      b.runs.unshift(nr); saveBrews();
+      prepareRun(b, nr, user);
       return send(res, 200, brewView(b));
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/notes\/(\w+)$/)) && req.method === 'DELETE') {

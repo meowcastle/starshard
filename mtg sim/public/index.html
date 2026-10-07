@@ -189,7 +189,7 @@ Deck
           </div>
           <sc-if value="{{ hasWeak }}" hint-placeholder-val="{{ true }}"><div style="font-size:17px;line-height:1.6;text-wrap:pretty"><span style="font-weight:600">{{ brief.weakness }}.</span> {{ brief.weaknessNote }} <sc-if value="{{ hasWeakLink }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ cxOpenWeak }}" style="color:#8F8D86;text-decoration:underline">What is that?</a></sc-if></div></sc-if>
           <div style="display:flex;flex-direction:column">
-            <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><div><div style="font-size:15px;font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:15px;color:#8F8D86;line-height:1.55;margin-top:2px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;margin-top:8px;font-family:'JetBrains Mono',monospace">38% → <span style="color:#7CC4F0">44%</span> ±9 <span style="font-family:Manrope,sans-serif;color:#8F8D86">· 120 games</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:13px;font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:3px">{{ o.label }}</a></div></sc-for>
+            <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><div><div style="font-size:15px;font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:15px;color:#8F8D86;line-height:1.55;margin-top:2px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;margin-top:8px;font-family:'JetBrains Mono',monospace">{{ o.resA }} → <span style="color:{{ o.resColor }}">{{ o.resB }}</span> {{ o.resPm }} <span style="font-family:Manrope,sans-serif;color:#8F8D86">· {{ o.resNote }}</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:13px;font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:3px">{{ o.label }}</a></div></sc-for>
           </div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ runAt }} · {{ snapshotLabel }}</div>
         </div>
@@ -201,7 +201,7 @@ Deck
       </sc-for>
 
       <div style="display:flex;flex-direction:column;gap:12px;position:sticky;bottom:0;padding:24px 0 8px;background:linear-gradient(to bottom,rgba(12,12,11,0),#0C0C0B 32%)">
-        <div style="display:flex;gap:12px;align-items:flex-end;background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 16px"><textarea rows="1" value="{{ askText }}" onChange="{{ onAsk }}" placeholder="{{ askPlaceholder }}" style="flex:1;background:none;border:0;padding:2px 0;color:#EDEBE6;font-size:15px;outline:none;resize:none;min-width:0;line-height:1.5"></textarea><a href="#" onClick="{{ sendAsk }}" style="width:28px;height:28px;border-radius:8px;background:#C5EC7A;color:#0C0C0B;display:grid;place-items:center;font-size:15px;font-weight:600;flex:none">↑</a></div>
+        <div style="display:flex;gap:12px;align-items:flex-end;background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 16px"><textarea rows="1" value="{{ askText }}" onChange="{{ onAsk }}" onKeyDown="{{ askKey }}" placeholder="{{ askPlaceholder }}" style="flex:1;background:none;border:0;padding:2px 0;color:#EDEBE6;font-size:15px;outline:none;resize:none;min-width:0;line-height:1.5"></textarea><a href="#" onClick="{{ sendAsk }}" style="width:28px;height:28px;border-radius:8px;background:#C5EC7A;color:#0C0C0B;display:grid;place-items:center;font-size:15px;font-weight:600;flex:none">↑</a></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3"><a href="#" onClick="{{ p.go }}" style="font-size:13px;color:#8F8D86;padding:5px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px">{{ p.t }}</a></sc-for></div>
       </div>
     </div>
@@ -325,7 +325,9 @@ class Component extends DCLogic {
     codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
   async componentDidMount() {
     try { const me = await this.api('/api/me'); this.setState({ me }); await this.load(true); } catch (e) { this.setState({ stage: 'signin' }); }
-    this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(b => b.runs.some(r => this.active(r)))) this.load().catch(() => {}); }, 2500);
+    // poll while games are playing or the coach is writing
+    const busy = (b) => b.runs.some(r => this.active(r)) || b.thinking || (b.coachOn && b.runs[0] && b.runs[0].status === 'done' && !b.runs[0].coach);
+    this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(busy)) this.load().catch(() => {}); }, 2500);
   }
   componentWillUnmount() { clearInterval(this._poll); }
   async api(path, opts = {}) {
@@ -412,6 +414,18 @@ class Component extends DCLogic {
     const S = this.state, id = S.codex && S.codex.id; if (!id || !S.cxNoteText.trim()) return;
     try { const { notes } = await this.api('/api/codex/' + encodeURIComponent(id) + '/notes', { method: 'POST', body: { t: S.cxNoteText } }); this.setState(s => ({ cxNoteText: '', cxEntry: s.cxEntry && s.cxEntry.id === id ? { ...s.cxEntry, notes } : s.cxEntry })); } catch (e) {}
   }
+  async ask(text) {
+    const S = this.state, d = this.deck(), t = String(text || '').trim(); if (!d || !t || d.thinking) return;
+    this.setState({ askText: '', askErr: '' });
+    try { const b = await this.api('/api/brews/' + d.id + '/ask', { method: 'POST', body: { text: t } }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); }
+    catch (e) { this.setState({ askText: t, askErr: e.message }); }
+  }
+  async test(brewId, runId, i) {
+    if (this.state.busy) return; this.setState({ busy: true, runErr: '' });
+    try { const b = await this.api('/api/brews/' + brewId + '/runs/' + runId + '/test', { method: 'POST', body: { i } }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); }
+    catch (e) { this.setState({ runErr: e.message }); }
+    this.setState({ busy: false });
+  }
   async forget(brewId, k) { try { const b = await this.api('/api/brews/' + brewId + '/notes/' + k, { method: 'DELETE' }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); } catch (e) {} }
   async signout() { try { await this.api('/api/logout'); } catch (e) {} this.setState({ stage: 'signin', me: null, brews: null, deckId: null }); }
   deck() { const B = this.state.brews || []; return B.find(b => b.id === this.state.deckId) || B[0] || null; }
@@ -484,7 +498,7 @@ class Component extends DCLogic {
       sourceOpen: false, toggleSource: pe(() => {}), sourceLabel: '', snapshotLabel: '', sourceRows: [], snapshotRows: [],
       latest: { at: '' }, brief: { status: '', statusNote: '', weakness: '', weaknessNote: '' }, optionsLabel: '', options: [], hasSideboard: false, sideboard: [], linkDown: '', earlier: [],
       askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [], askPlaceholder: 'The coach isn\'t connected yet',
-      change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}),
+      change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}), askKey: () => {},
       headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
@@ -608,7 +622,25 @@ class Component extends DCLogic {
     v.runAt = run ? at(run.finished || run.created) : '';
     v.hasWeak = !!(v.brief && v.brief.weakness); v.hasWeakLink = !!(worst && v.isDuel && !waiting && d.format === 'standard'); // the Codex is Standard only
     v.cxOpenWeak = pe(() => worst && this.codexOpen('arch:' + slug(worst.o.name)));
-    v.thread = [];
+    // the coach's own words when it has written them; the computed brief otherwise
+    const C = run && run.coach && !run.coach.error ? run.coach : null;
+    if (C && !waiting && v.isDuel) { v.brief = { ...v.brief, weakness: C.weakness, weaknessNote: C.weaknessNote }; v.hasWeak = !!C.weakness; }
+    else if (run && !waiting && v.isDuel && d.coachOn && !run.coach) v.brief = { ...v.brief, weaknessNote: v.brief.weaknessNote + ' The coach is writing this up.' };
+    v.options = C ? C.options.map((o, i) => {
+      const tr = o.test && d.runs.find(r => r.id === o.test.run), done = tr && tr.status === 'done', before = scoreOf(run), after = tr ? scoreOf(tr) : null;
+      const swapS = o.kind === 'swap' ? ' (' + o.out.map(c => '−' + c.qty + ' ' + c.name).concat(o.in.map(c => '+' + c.qty + ' ' + c.name)).join(', ') + ')' : '';
+      return { title: o.title, detail: o.detail + swapS, label: o.kind !== 'swap' ? '' : !o.test ? 'Test it' : done ? 'Tested · v' + o.test.v : 'Testing as v' + o.test.v + '…',
+        color: o.test ? MUTED : ACC, go: pe(() => o.kind === 'swap' && !o.test && this.test(d.id, run.id, i)),
+        hasResult: !!done, resA: before.pct, resB: after ? after.pct : '', resPm: after ? after.pm : '', resColor: after && after.p > before.p ? WIN : LOSS,
+        resNote: after ? plural(after.n, 'game') + (Math.abs(after.p - before.p) * 100 < 7 ? ' · inside the noise' : '') : '' };
+    }) : [];
+    // the thread: everything except the summary the readout above stands in for
+    v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.text, at: at(m.at) }));
+    if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: 'Thinking…', at: '' });
+    v.askPlaceholder = !d.coachOn ? 'The coach isn\'t connected yet' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run';
+    v.sendAsk = pe(() => this.ask(S.askText)); v.askKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.ask(S.askText); } };
+    const topOpp = v.isDuel && run && run.opponents && run.opponents[0];
+    v.prompts = !d.coachOn ? [] : [worst && 'Why do I lose to ' + worst.o.name + '?', topOpp && 'What should I board against ' + topOpp.name + '?', d.notes.length ? 'Is it ready for ' + d.notes[0].t.slice(0, 40) + '?' : 'Which card is my weakest?'].filter(Boolean).map(t => ({ t, go: pe(() => this.ask(t)) }));
     v.waiting = waiting;
     if (waiting && run && run.pulse) {
       // one square per game in play order; green yours, grey theirs, the newest glows

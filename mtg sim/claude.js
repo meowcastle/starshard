@@ -25,4 +25,19 @@ async function ask({ system, prompt, tool, maxTokens = 8000 }) {
   try { return JSON.parse(m[0]); } catch { throw new Error('no answer in the expected shape'); }
 }
 
-module.exports = { ask, available, MODEL };
+// A plain-text answer to a conversation: [{ role: 'user'|'assistant', content }].
+async function chat({ system, messages, maxTokens = 8000 }) {
+  if (!available()) throw new Error('no ANTHROPIC_API_KEY');
+  const r = await fetch((process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com') + '/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
+  });
+  if (!r.ok) throw new Error(`Anthropic answered ${r.status}: ${(await r.text()).slice(0, 200)}`);
+  const j = await r.json();
+  const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n').trim();
+  if (!text) throw new Error('empty answer');
+  return text;
+}
+
+module.exports = { ask, chat, available, MODEL };
