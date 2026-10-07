@@ -6,6 +6,9 @@ const path = require('path');
 const crypto = require('crypto');
 const { runSim, forgeVersion } = require('./forge');
 const meta = require('./meta');
+const sideboard = require('./sideboard');
+const realdata = require('./realdata');
+const calib = require('./calib');
 
 const PORT = +process.env.PORT || 8088;
 const DATA = process.env.DATA_DIR || '/data';
@@ -47,7 +50,7 @@ const saveHist = () => fs.writeFileSync(HIST, JSON.stringify(history.slice(0, 20
 const jobs = new Map(); const queue = []; let running = null;
 
 function publicJob(j) {
-  const { child, log, ...rest } = j;
+  const { child, log, plan, post, onDone, ...rest } = j;
   return { ...rest, logTail: (log || []).slice(-40) };
 }
 function enqueue(spec) {
@@ -56,17 +59,32 @@ function enqueue(spec) {
   jobs.set(id, job); queue.push(job); pump();
   return job;
 }
+// What a job plays, in order. A gauntlet is deck 0 against each of the others; a
+// round robin is every deck against every other; a matchup is one pod. When the
+// job carries post-board lists (job.post, keyed like the pairing), each pairing is
+// followed by its games 2 and 3: the same two decks, boarded.
+function pairingsOf(job) {
+  const base = job.mode === 'gauntlet' ? job.decks.slice(1).map((o, i) => ({ decks: [job.decks[0], o], opp: i, a: 0, b: i + 1 }))
+    : job.mode === 'roundrobin' ? job.decks.flatMap((x, i) => job.decks.slice(i + 1).map((y, k) => ({ decks: [x, y], a: i, b: i + 1 + k })))
+    : [{ decks: job.decks, opp: 0 }];
+  return base.flatMap(p => { const post = job.post && job.post[p.a + ':' + p.b]; return post ? [{ ...p, phase: 'pre' }, { ...p, decks: post, phase: 'post' }] : [{ ...p, phase: 'pre' }]; });
+}
+// Low-priority jobs (calibration) give way between pairings to anything else queued.
+const nextJob = () => { const i = queue.findIndex(j => !j.low); return queue.splice(i < 0 ? 0 : i, 1)[0]; };
 async function pump() {
   if (running || !queue.length) return;
-  const job = running = queue.shift();
-  job.status = 'running'; job.started = Date.now();
-  // A gauntlet is a series of pairings; a matchup is one.
-  const pairings = job.mode === 'gauntlet' ? job.decks.slice(1).map(o => [job.decks[0], o]) : [job.decks];
-  job.pairings = pairings.map(p => ({ names: p.map(d => d.name), wins: p.map(() => 0), draws: 0, games: [], status: 'queued' }));
-  for (let i = 0; i < pairings.length && job.status !== 'cancelled'; i++) {
-    const pr = job.pairings[i]; pr.status = 'running';
+  const job = running = nextJob();
+  job.status = 'running'; job.started = job.started || Date.now();
+  if (!job.pairings) {
+    job.plan = pairingsOf(job);
+    job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
+    job.next = 0;
+  }
+  for (; job.next < job.plan.length && job.status !== 'cancelled'; job.next++) {
+    if (job.low && queue.some(j => !j.low)) { job.status = 'queued'; queue.push(job); running = null; return pump(); }
+    const i = job.next, pr = job.pairings[i]; pr.status = 'running';
     const run = runSim({
-      decks: pairings[i], games: job.games, format: job.format, clock: job.clock,
+      decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock,
       workDir: path.join(DATA, 'jobs', job.id, String(i)),
       onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
     });
@@ -80,11 +98,12 @@ async function pump() {
   if (job.status !== 'cancelled') job.status = job.pairings.every(p => p.status === 'failed') ? 'failed' : 'done';
   job.finished = Date.now();
   history.unshift({ id: job.id, owner: job.owner, mode: job.mode, format: job.format, games: job.games, created: job.created, finished: job.finished, status: job.status,
-    pairings: job.pairings.map(({ names, wins, draws, games }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0 })),
-    decks: job.decks });
+    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b })),
+    decks: job.decks, meta: job.meta || null });
   saveHist();
   running = null;
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
+  if (job.onDone) try { job.onDone(job); } catch (e) { console.error('onDone:', e.message); }
   pump();
 }
 
@@ -110,7 +129,8 @@ const teamFor = b => brews.filter(o => o.owner !== b.owner && o.format === b.for
 
 // The opponent sets the run picker offers for this brew.
 function oppSets(b) {
-  const pod = b.seats === 4, per = LOAD_SECONDS + GAMES * secondsPerGame(pod), team = teamFor(b);
+  // a best-of-three run plays game 1 and the boarded games as separate pairings
+  const pod = b.seats === 4, per = (LOAD_SECONDS + GAMES * secondsPerGame(pod)) * (!pod && sideboard.available() ? 2 : 1), team = teamFor(b);
   const teamSet = { id: 'team', title: `My pod · ${team.length} team deck${team.length === 1 ? '' : 's'}`, detail: team.length ? team.map(o => `${o.owner}'s ${o.name}`).join(', ') + '.' : `No other member has a ${b.format} brew yet.`, time: team.length ? fmtTime(per) : '', available: team.length > 0, n: team.length };
   if (pod) return [{ id: 'meta20', title: 'The field · top 3 commanders', detail: 'EDHREC, this week. Average decks, one pod.', time: fmtTime(per), available: true, n: 3 }, teamSet];
   if (!meta.GOLDFISH_FORMATS.includes(b.format)) return [{ id: 'meta20', title: 'The field', detail: `No metagame source for ${b.format}.`, time: '', available: false, n: 0 }, teamSet];
@@ -126,6 +146,24 @@ async function mapLimit(items, n, fn) {
   await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => { while (i < items.length) { const k = i++; try { out[k] = await fn(items[k]); } catch (e) { out[k] = { error: e.message }; } } }));
   return out;
 }
+// Both sides' sideboard plans for a set of pairings, and the boarded lists Forge
+// plays for games 2 and 3. `pairs` is [[i, j], ...] into `decks`. A pairing whose
+// plans board nothing on either side gets no post-board games: its games 2-3 are
+// game 1's lists, so game 1's rate stands for them.
+async function boardAll(decks, pairs, format) {
+  if (!sideboard.available()) return { post: null, plans: {}, note: 'no-model' };
+  const post = {}, plans = {};
+  await mapLimit(pairs, 4, async ([i, j]) => {
+    const k = i + ':' + j;
+    try {
+      const p = await sideboard.planFor(decks[i], decks[j], format);
+      plans[k] = { a: p.a, b: p.b };
+      if (p.a.in.length || p.b.in.length) post[k] = [sideboard.apply(decks[i], p.a), sideboard.apply(decks[j], p.b)];
+    } catch (e) { plans[k] = { error: e.message }; }
+  });
+  return { post, plans };
+}
+
 // Resolve an opponent set to real decklists, then queue the job. Runs after the
 // request has answered, because 20 decklists from MTGGoldfish can take a while.
 async function prepareRun(b, run, user) {
@@ -151,43 +189,143 @@ async function prepareRun(b, run, user) {
     run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list, f.name)) }));
     const v = b.versions.find(x => x.v === run.v);
     const decks = [{ name: b.name, ...v.list }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
-    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
+    let post = null;
+    if (b.seats !== 4) {
+      // best of three: game 1 as listed, games 2 and 3 boarded
+      const bd = await boardAll(decks, decks.slice(1).map((_, i) => [0, i + 1]), b.format);
+      post = bd.post; run.bo3 = bd.note === 'no-model' ? 'unboarded' : 'boarded';
+      run.opponents.forEach((o, i) => { const p = bd.plans['0:' + (i + 1)]; o.plan = p ? (p.error ? { error: p.error } : { me: p.a, opp: p.b }) : null; });
+    }
+    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
     run.jobId = job.id; run.status = 'queued';
-    if (run.field.source === 'goldfish') run.benchmarkId = benchmarkFor(decks.slice(1), b.format).id;
+    if (run.field.source === 'goldfish') run.benchmarkId = (await benchmarkFor(decks.slice(1), b.format)).id;
   } catch (e) { run.status = 'failed'; run.error = e.message; }
   saveBrews();
 }
 
+// A pairing's game-1 and post-board results for opponent i. History from before
+// best-of-three has no phase or opponent index: there, pairing i is opponent i.
+function phasesOf(prs, i) {
+  if (prs.length && prs[0].opp == null && prs[0].a == null) return { pre: prs[i] || null, post: null };
+  return { pre: prs.find(p => p.opp === i && p.phase !== 'post') || null, post: prs.find(p => p.opp === i && p.phase === 'post') || null };
+}
+const played = p => p ? (p.games ? p.games.length : p.played || 0) : 0;
+const tally = p => p ? { wins: [p.wins[0] || 0, p.wins[1] || 0], draws: p.draws || 0, played: played(p), status: p.status || 'done' } : null;
+
 // ---------- the benchmark ----------
 // Forge's AI is a stronger pilot of some decks than others, so a raw win rate
 // partly measures the AI. The benchmark takes the field's #1 deck through the
-// same opponents under the same AI; the gap between it and a brew is what the
-// brew itself is worth. One benchmark serves every run against the same field
-// for a week, and it queues behind the run that asked for it.
+// same opponents under the same AI, best of three like the run; the gap between
+// it and a brew is what the brew itself is worth. One benchmark serves every run
+// against the same field for a week, and it queues behind the run that asked.
 const BENCH = path.join(DATA, 'benchmarks.json');
 let benches = []; try { benches = JSON.parse(fs.readFileSync(BENCH, 'utf8')); } catch {}
 const saveBench = () => fs.writeFileSync(BENCH, JSON.stringify(benches.slice(-100)));
 const BENCH_DAYS = 7;
 // A queued job does not survive a restart, so a benchmark is only as alive as its job.
-const benchJob = bm => jobs.get(bm.jobId) || history.find(h => h.id === bm.jobId) || null;
-const benchAlive = bm => { const j = benchJob(bm); return !!j && !['failed', 'cancelled'].includes(j.status); };
-function benchmarkFor(field, format) {
-  const names = field.map(f => f.name);
+const jobOf = id => jobs.get(id) || history.find(h => h.id === id) || null;
+const benchAlive = bm => { const j = jobOf(bm.jobId); return !!j && !['failed', 'cancelled'].includes(j.status); };
+const benchPending = new Map(); // field key -> promise, so two runs at once share one benchmark
+async function benchmarkFor(field, format) {
+  const names = field.map(f => f.name), key = format + '|' + names.join('|');
   const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
-  const hit = benches.find(same);
-  if (hit) return hit;
-  const job = enqueue({ mode: 'gauntlet', decks: field, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark' });
-  const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id };
-  benches.push(bm); saveBench();
-  return bm;
+  const hit = benches.find(same); if (hit) return hit;
+  if (benchPending.has(key)) return benchPending.get(key);
+  const p = (async () => {
+    const bd = await boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format);
+    const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
+    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, bo3: bd.note === 'no-model' ? 'unboarded' : 'boarded' };
+    benches.push(bm); saveBench();
+    return bm;
+  })().finally(() => benchPending.delete(key));
+  benchPending.set(key, p);
+  return p;
 }
 function benchView(id) {
   const bm = id && benches.find(x => x.id === id); if (!bm) return null;
-  const j = benchJob(bm), status = j ? j.status : 'lost';
-  const prs = j?.pairings || [];
-  return { name: bm.names[0], status, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1,
-    opponents: bm.names.slice(1).map((n, i) => { const p = prs[i]; return { name: n, wins: p ? [p.wins[0] || 0, p.wins[1] || 0] : [0, 0] }; }) };
+  const j = jobOf(bm.jobId), status = j ? j.status : 'lost', prs = j?.pairings || [];
+  return { name: bm.names[0], status, bo3: bm.bo3 || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1,
+    opponents: bm.names.slice(1).map((n, i) => { const ph = phasesOf(prs, i); return { name: n, ...(tally(ph.pre) || { wins: [0, 0], played: 0 }), post: tally(ph.post) }; }) };
 }
+
+// ---------- calibration against real tournaments ----------
+// Once a week per format, the field's top decks play each other (best of three,
+// low priority, giving way to any run). Together with the benchmarks, that gives
+// Forge's rate for meta-vs-meta pairings; real tournament results give people's.
+// calib.fit turns the two into one "how much does Forge overrate this deck"
+// number per archetype, which the page uses to correct every matchup.
+const CAL = path.join(DATA, 'calibration.json');
+let calibs = {}; try { calibs = JSON.parse(fs.readFileSync(CAL, 'utf8')); } catch {}
+const saveCal = () => fs.writeFileSync(CAL, JSON.stringify(calibs));
+const CAL_TOP = +process.env.CALIBRATE_TOP || 10;
+const CAL_DAYS = 7, FORGE_DAYS = 21, REAL_DAYS = +process.env.REAL_DAYS || 42;
+
+// Forge's meta-vs-meta results, pooled over game 1 and boarded games, keyed by pair.
+function forgePairs(format) {
+  const out = {}, since = Date.now() - FORGE_DAYS * 864e5;
+  for (const h of history) {
+    if (h.meta !== format || h.finished < since || !['benchmark', 'calibration'].includes(h.owner)) continue;
+    for (const p of h.pairings || []) {
+      if (!p.played || p.names.length !== 2 || p.names[0] === p.names[1]) continue;
+      const k = calib.pairKey(p.names[0], p.names[1]), first = p.names[0] < p.names[1] ? 0 : 1;
+      const c = out[k] = out[k] || [0, 0]; c[0] += p.wins[first]; c[1] += p.wins[1 - first];
+    }
+  }
+  return out;
+}
+// The newest field lists Forge played for a format: the decks real results are sorted into.
+// Every list from this format's recent benchmarks and round robins, newest first per
+// name, so real decks are sorted against the whole top 20 and not just the top 10.
+function fieldLists(format) {
+  const since = Date.now() - FORGE_DAYS * 864e5, seen = new Map();
+  for (const h of history) if (h.meta === format && h.finished >= since && ['benchmark', 'calibration'].includes(h.owner) && h.status === 'done') for (const d of h.decks) if (!seen.has(d.name)) seen.set(d.name, d);
+  return seen.size ? [...seen.values()] : null;
+}
+async function refit(format) {
+  const field = fieldLists(format); if (!field) return null;
+  const real = await realdata.matrix(field, format, { days: REAL_DAYS });
+  const realPairs = {};
+  for (const [a, row] of Object.entries(real.pairs)) for (const [b, p] of Object.entries(row)) if (a < b) realPairs[calib.pairKey(a, b)] = p.games;
+  const forge = forgePairs(format), f = calib.fit(forge, realPairs);
+  const realField = Object.fromEntries(Object.entries(real.pairs).map(([a, row]) => { let w = 0, l = 0; for (const [b, p] of Object.entries(row)) if (b !== a) { w += p.games[0]; l += p.games[1]; } return [a, { w, l }]; }));
+  calibs[format] = { at: Date.now(), beta: f.beta, evidence: f.evidence, pairs: f.pairs, realGames: f.realGames, forgePairs: Object.keys(forge).length,
+    events: real.events, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
+    lists: field.map(d => ({ name: d.name, main: d.main })) };
+  saveCal();
+  return calibs[format];
+}
+// Queue this week's round robin for every format someone has a brew in.
+async function calibrateDue() {
+  for (const format of [...new Set(brews.filter(b => b.seats === 2 && meta.GOLDFISH_FORMATS.includes(b.format)).map(b => b.format))]) {
+    const recent = history.find(h => h.meta === format && h.owner === 'calibration' && h.status === 'done' && Date.now() - h.finished < CAL_DAYS * 864e5);
+    const inFlight = [...jobs.values()].some(j => j.meta === format && j.owner === 'calibration' && !['done', 'failed', 'cancelled'].includes(j.status));
+    if (recent || inFlight) continue;
+    try {
+      const top = (await meta.goldfishMeta(format)).slice(0, CAL_TOP);
+      const lists = await mapLimit(top, 4, async d => ({ name: d.name, ...(await meta.goldfishDeck(d.id)) }));
+      const decks = lists.filter(d => !d.error && d.main?.length).map(d => ({ name: d.name, main: d.main, side: d.side || [], commander: [] }));
+      if (decks.length < 4) continue;
+      const pairs = decks.flatMap((_, i) => decks.slice(i + 1).map((__, k) => [i, i + 1 + k]));
+      const bd = await boardAll(decks, pairs, format);
+      enqueue({ mode: 'roundrobin', decks, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'calibration', meta: format, low: true, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
+    } catch (e) { console.error('calibrate', format, e.message); }
+  }
+}
+// The calibration a run's page reads: each opponent's beta, the brew's own (from
+// the archetype it is closest to), and how much real data stands behind it.
+const MIN_EVIDENCE = 2;
+function calibView(b, run) {
+  const c = calibs[b.format]; if (!c || !run.opponents) return null;
+  const v = b.versions.find(x => x.v === run.v); if (!v) return null;
+  const me = realdata.vec(v.list.main); let best = 0, near = null;
+  for (const l of c.lists) { const s = realdata.overlap(me, realdata.vec(l.main)); if (s > best) { best = s; near = l.name; } }
+  const known = n => c.beta[n] != null && (c.evidence[n] || 0) >= MIN_EVIDENCE;
+  const mine = best >= realdata.MATCH_AT && known(near) ? near : null;
+  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs,
+    me: { near: mine, overlap: Math.round(best * 100), beta: mine ? c.beta[mine] : 0 },
+    opp: Object.fromEntries(run.opponents.map(o => [o.name, known(o.name) ? { beta: c.beta[o.name], evidence: Math.round(c.evidence[o.name] * 10) / 10, real: c.realField[o.name] || null, decks: c.seen[o.name] || 0 } : null])) };
+}
+
 // Runs and brews from before the benchmark existed: give finished field runs a
 // benchmark from the very decks they faced, and read each list's style once.
 async function backfill() {
@@ -199,7 +337,7 @@ async function backfill() {
       const decks = j.decks.slice(1);
       for (const o of run.opponents || []) if (!('style' in o)) { const d = decks.find(x => x.name === o.name); if (d) { o.style = (await meta.faceOf(d, d.name)).style; dirty = true; } }
       const bm = run.benchmarkId && benches.find(x => x.id === run.benchmarkId);
-      if (j.status === 'done' && !(bm && benchAlive(bm))) { run.benchmarkId = benchmarkFor(decks, b.format).id; dirty = true; }
+      if (j.status === 'done' && !(bm && benchAlive(bm))) { run.benchmarkId = (await benchmarkFor(decks, b.format)).id; dirty = true; }
     }
   }
   if (dirty) saveBrews();
@@ -207,22 +345,22 @@ async function backfill() {
 
 // A run as the UI reads it: the frozen field plus whatever the job knows now.
 function runView(b, run) {
-  const j = run.jobId && (jobs.get(run.jobId) || history.find(h => h.id === run.jobId));
+  const j = run.jobId && jobOf(run.jobId);
   const status = run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
   const prs = j?.pairings || [];
-  const played = p => p.games ? p.games.length : p.played || 0;
-  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [] };
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null };
   if (b.seats === 4) {
     const p = prs[0];
     out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));
-    out.played = p ? played(p) : 0; out.total = GAMES;
+    out.played = played(p); out.total = GAMES;
   } else {
-    out.opponents = (run.opponents || []).map((o, i) => { const p = prs[i]; return { ...o, wins: p ? [p.wins[0] || 0, p.wins[1] || 0] : [0, 0], draws: p?.draws || 0, played: p ? played(p) : 0, pairing: p?.status || 'queued' }; });
-    out.played = out.opponents.reduce((s, o) => s + o.played, 0); out.total = GAMES * out.opponents.length;
+    out.opponents = (run.opponents || []).map((o, i) => { const ph = phasesOf(prs, i), pre = tally(ph.pre); return { ...o, wins: pre ? pre.wins : [0, 0], draws: pre?.draws || 0, played: pre?.played || 0, pairing: pre?.status || 'queued', post: tally(ph.post) }; });
+    out.played = prs.reduce((s, p) => s + played(p), 0); out.total = j?.pairings ? GAMES * j.pairings.length : GAMES * out.opponents.length;
   }
   out.warnings = [...new Set(prs.flatMap(p => p.warnings || []))].slice(0, 20);
   out.benchmark = benchView(run.benchmarkId);
   out.style = (b.versions.find(x => x.v === run.v) || {}).style || null;
+  out.calibration = b.seats === 2 ? calibView(b, run) : null;
   return out;
 }
 // Card-level change from one list to the next: [{ name, section, qty: +n | -n }],
@@ -391,3 +529,6 @@ const server = http.createServer(async (req, res) => {
 });
 server.listen(PORT, HOST, () => console.log(`sim listening on ${HOST}:${PORT} (forge ${forgeVersion()}), accounts via ${STARSHARD_API}`));
 backfill().catch(e => console.error('backfill:', e.message));
+// calibration: refit from what is on disk, then queue anything due, then check every six hours
+for (const f of new Set(history.filter(h => h.meta).map(h => h.meta))) refit(f).catch(e => console.error('refit:', e.message));
+setTimeout(() => calibrateDue(), 60e3); setInterval(() => calibrateDue(), 6 * 3600e3);

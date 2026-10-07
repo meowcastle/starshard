@@ -17,7 +17,7 @@ RUN mkdir -p /opt/forge \
  && ls /opt/forge/*.jar
 
 WORKDIR /app
-COPY server.js forge.js meta.js ./
+COPY server.js forge.js meta.js sideboard.js realdata.js calib.js ./
 COPY public ./public
 
 ENV PORT=8088 \

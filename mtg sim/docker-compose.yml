@@ -7,7 +7,7 @@ services:
     # listens on the NAS's own loopback (127.0.0.1:4001). The sim itself also
     # binds to loopback only; the DSM reverse proxy is the only way in.
     network_mode: host
-    env_file: .env              # SIM_USERS, SIM_ADMINS (never committed)
+    env_file: .env              # SIM_USERS, SIM_ADMINS, ANTHROPIC_API_KEY (never committed)
     environment:
       - HOST=127.0.0.1
       - PORT=8088

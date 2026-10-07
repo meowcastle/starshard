@@ -36,3 +36,9 @@ injected element avoids it.
 - Results → This run, second column: the label "Against the last field" is now `{{ col2Label }}`. When a run has a benchmark it reads "The #1 deck, same opponents" and the number is the field's top deck run through the same opponents under the same AI; otherwise it falls back to the previous run as before.
 - Opponent rows whose decklist reads as control or combo show an amber flag line ("Not counted · …") at 0.6 opacity and are left out of the headline. Other rows' flag line now carries "the #1 deck went W–L" for that opponent.
 - No other markup changed. A designed treatment for both (a proper benchmark column, a legend for "not counted") is welcome.
+
+## 7 Oct, later — best of three and calibration
+
+- The opponent table's rate column header is now `{{ rateHead }}` ("match win rate · 95% range"); the number in each row is the best-of-three match win rate, calibrated against real tournament results when there are any. The row's grey line carries game 1 and boarded records and how far real results moved it.
+- The run's headline is matches won, calibrated. Everything else is unchanged markup.
+- Worth designing properly: game 1 / boarded / match as three columns, each opponent's sideboard plan (both sides' ins and outs and the one-line why are in the run data as `opponents[i].plan`), and a "calibrated against N real games" badge.

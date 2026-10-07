@@ -22,6 +22,9 @@ shares the domain and the NAS.
 | `server.js` | API + static files + one-at-a-time job queue, history in `data/history.json`, brews (deck + versions + runs) in `data/brews.json` |
 | `forge.js` | writes `.dck` files, spawns `java -jar forge-gui-desktop…jar sim`, parses `Game N ended…` lines |
 | `meta.js` | MTGGoldfish / MTGTop8 / EDHREC / Moxfield / Archidekt readers (6h in-memory cache) |
+| `sideboard.js` | best-of-three: one Claude call (Opus 5.5, `ANTHROPIC_API_KEY` in `.env`) writes both sides' plans per pairing, clamped to what the lists allow, cached in `data/plans.json`. Without a key, games 2–3 play game 1's lists |
+| `realdata.js` | real tournament results from the open Jiliac/MTGODecklistCache archive (Melee + topdeck.gg paper events), each deck filed under its nearest meta archetype; cached in `data/realdata/` |
+| `calib.js` | the calibration model: one "how much Forge overrates this deck" number per archetype, fit across every pairing with both Forge and real results. Fed weekly by a low-priority top-10 round robin plus the benchmarks; stored in `data/calibration.json` |
 | `public/` | the UI: Design's brewer v3 (`index.html` + its `support.js` runtime), wired to the API in the page's `x-dc` script block |
 | `package.json` | only marks the sim as CommonJS, so it runs locally under the repo root's `"type": "module"`; not copied into the image |
 
