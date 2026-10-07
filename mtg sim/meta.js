@@ -134,22 +134,50 @@ async function importUrl(url) {
   throw new Error('supported: Moxfield, Archidekt, MTGGoldfish, MTGTop8 links');
 }
 
-// ---------- Scryfall: names -> card data (kept for the life of the process) ----------
+// ---------- Scryfall: names -> card data ----------
+// Kept on disk (data/scryfall.json) as well as in memory: the Codex looks up every
+// card in the field, and a restart should not ask Scryfall for hundreds again.
+// Unknown names are not persisted, so a card printed after the miss is found later.
+const fs = require('fs'), path = require('path');
+const SCRY_FILE = () => path.join(process.env.DATA_DIR || '/data', 'scryfall.json');
 const scry = new Map(); // lowercased name -> card | null
+const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_cost', 'cmc', 'colors', 'legalities', 'games', 'set', 'set_name', 'image_uris', 'power', 'toughness', 'loyalty'];
+// misses are remembered for a day, so a restart does not ask about them again straight away
+const missed = new Map(); // key -> when
+try { const d = JSON.parse(fs.readFileSync(SCRY_FILE(), 'utf8')); for (const [k, c] of Object.entries(d.cards || d)) if (k !== 'missed') scry.set(nk(k), c); for (const [k, at] of Object.entries(d.missed || {})) if (Date.now() - at < 864e5) { missed.set(k, at); scry.set(k, null); } } catch {}
+let scrySave = null;
+const persist = () => { clearTimeout(scrySave); scrySave = setTimeout(() => { try { fs.writeFileSync(SCRY_FILE(), JSON.stringify({ cards: Object.fromEntries([...scry].filter(([, c]) => c)), missed: Object.fromEntries(missed) })); } catch {} }, 2000); };
+const slim = c => Object.fromEntries(KEEP.filter(k => c[k] != null).map(k => [k, c[k]]));
 const FRONT_ONLY = new Set(['transform', 'modal_dfc', 'flip', 'adventure', 'meld', 'reversible_card', 'prepare']);
 const forgeName = c => (FRONT_ONLY.has(c.layout) && c.card_faces ? c.card_faces[0].name : c.name);
-const findCard = n => scry.get(n.toLowerCase()) ?? scry.get(n.split(' // ')[0].toLowerCase());
+// Names are keyed without case or accents: decklists write "Dain's Company" for Dáin's Company.
+const nk = n => String(n).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const findCard = n => scry.get(nk(n)) ?? scry.get(nk(n.split(' // ')[0]));
 async function scryfall(names) {
-  const need = [...new Set(names.map(n => n.toLowerCase()))].filter(n => !scry.has(n));
+  const need = [...new Set(names.map(nk))].filter(n => !scry.has(n));
   for (let i = 0; i < need.length; i += 75) {
-    const r = await fetch('https://api.scryfall.com/cards/collection', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'User-Agent': 'sim.starshard.net' },
-      body: JSON.stringify({ identifiers: need.slice(i, i + 75).map(n => ({ name: n.split(' // ')[0] })) }),
-    });
+    let r;
+    // 429 means slow down: wait (Scryfall's Retry-After if it gives one) and try again, four times at most
+    for (let t = 0; t < 5; t++) {
+      r = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'User-Agent': 'sim.starshard.net' },
+        body: JSON.stringify({ identifiers: need.slice(i, i + 75).map(n => ({ name: n.split(' // ')[0] })) }),
+      });
+      if (r.status !== 429) break;
+      await new Promise(ok => setTimeout(ok, (+r.headers.get('retry-after') || 2 ** t) * 1000));
+    }
     if (!r.ok) throw new Error(`Scryfall answered ${r.status}`);
     const j = await r.json();
-    for (const c of j.data || []) [c.name, c.card_faces?.[0]?.name, forgeName(c)].filter(Boolean).forEach(k => scry.set(k.toLowerCase(), c));
-    for (const nf of j.not_found || []) scry.set(String(nf.name).toLowerCase(), null);
+    const keep = c0 => { const c = slim(c0); [c.name, c.card_faces?.[0]?.name, forgeName(c)].filter(Boolean).forEach(k => scry.set(nk(k), c)); return c; };
+    (j.data || []).forEach(keep);
+    // an exact miss is often a spelling variant (accents, punctuation): one fuzzy try each
+    for (const nf of j.not_found || []) {
+      const want = nk(nf.name);
+      await new Promise(ok => setTimeout(ok, 100));
+      const f = await fetch('https://api.scryfall.com/cards/named?fuzzy=' + encodeURIComponent(nf.name), { headers: { Accept: 'application/json', 'User-Agent': 'sim.starshard.net' } }).catch(() => null);
+      if (f && f.ok) { const c = keep(await f.json()); scry.set(want, c); } else { scry.set(want, null); missed.set(want, Date.now()); }
+    }
+    persist();
     await new Promise(ok => setTimeout(ok, 100)); // Scryfall asks for ~10 requests a second at most
   }
   return findCard;
@@ -182,7 +210,8 @@ async function describeDeck(deck) {
   const find = await scryfall(all.map(c => c.name));
   const row = (c, section) => {
     const k = find(c.name);
-    return { qty: c.qty, name: k ? forgeName(k) : c.name, section, cost: costOf(k), land: isLand(k), cmc: k?.cmc || 0, arena: k ? (k.games || []).includes('arena') : false, status: k ? 'ok' : 'unknown' };
+    const type = (k?.card_faces?.[0]?.type_line || k?.type_line || '');
+    return { qty: c.qty, name: k ? forgeName(k) : c.name, section, cost: costOf(k), land: isLand(k), cmc: k?.cmc || 0, arena: k ? (k.games || []).includes('arena') : false, status: k ? 'ok' : 'unknown', legend: /\bLegendary\b/.test(type) && /\b(Creature|Planeswalker)\b/.test(type) };
   };
   const rows = [...deck.main.map(c => row(c, 'main')), ...(deck.side || []).map(c => row(c, 'side')), ...(deck.commander || []).map(c => row(c, 'commander'))];
   const list = { main: rows.filter(r => r.section === 'main').map(({ qty, name }) => ({ qty, name })), side: rows.filter(r => r.section === 'side').map(({ qty, name }) => ({ qty, name })), commander: rows.filter(r => r.section === 'commander').map(({ qty, name }) => ({ qty, name })) };
@@ -219,4 +248,7 @@ async function faceOf(deck, name) {
   catch { return { coverCard: deck.commander?.[0]?.name || deck.main[0]?.name || '', colors: [] }; }
 }
 
-module.exports = { describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
+// Raw Scryfall cards for a set of names (for the Codex): a lookup function, or null per unknown name.
+async function cards(names) { await scryfall(names); return findCard; }
+
+module.exports = { cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };

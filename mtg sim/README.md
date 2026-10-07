@@ -25,6 +25,7 @@ shares the domain and the NAS.
 | `sideboard.js` | best-of-three: one Claude call (Opus 5.5, `ANTHROPIC_API_KEY` in `.env`) writes both sides' plans per pairing, clamped to what the lists allow, cached in `data/plans.json`. Without a key, games 2–3 play game 1's lists |
 | `realdata.js` | real tournament results from the open Jiliac/MTGODecklistCache archive (Melee + topdeck.gg paper events), each deck filed under its nearest meta archetype; cached in `data/realdata/` |
 | `calib.js` | the calibration model: one "how much Forge overrates this deck" number per archetype, fit across every pairing with both Forge and real results. Fed weekly by a low-priority top-10 round robin plus the benchmarks; stored in `data/calibration.json` |
+| `codex.js` · `terms.js` · `claude.js` | the Codex: cards (Scryfall), archetypes (the field's lists, paper results, your runs), hand-written terms, characters (MTG Wiki / franchise wikis, summarised). Model-written parts and members' notes kept in `data/codex.json`; Scryfall lookups cached in `data/scryfall.json` |
 | `public/` | the UI: Design's brewer v3 (`index.html` + its `support.js` runtime), wired to the API in the page's `x-dc` script block |
 | `package.json` | only marks the sim as CommonJS, so it runs locally under the repo root's `"type": "module"`; not copied into the image |
 

@@ -9,6 +9,7 @@ const meta = require('./meta');
 const sideboard = require('./sideboard');
 const realdata = require('./realdata');
 const calib = require('./calib');
+const codex = require('./codex');
 
 const PORT = +process.env.PORT || 8088;
 const DATA = process.env.DATA_DIR || '/data';
@@ -331,6 +332,43 @@ function calibView(b, run) {
     opp: Object.fromEntries(run.opponents.map(o => [o.name, known(o.name) ? { beta: c.beta[o.name], evidence: Math.round(c.evidence[o.name] * 10) / 10, real: c.realField[o.name] || null, decks: c.seen[o.name] || 0 } : null])) };
 }
 
+// An uploaded cover arrives as a data URL; keep the bytes, and only images.
+const COVER_TYPES = { 'image/jpeg': 1, 'image/png': 1, 'image/webp': 1 };
+function saveCover(id, dataUrl) {
+  const m = String(dataUrl).match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/);
+  if (!m || !COVER_TYPES[m[1]]) throw new Error('the cover has to be a JPEG, PNG or WebP image');
+  const buf = Buffer.from(m[2], 'base64'); if (buf.length > 4 * 1024 * 1024) throw new Error('the cover image is over 4 MB');
+  fs.mkdirSync(path.join(DATA, 'covers'), { recursive: true }); fs.writeFileSync(path.join(DATA, 'covers', id + '.img'), buf);
+  coverTypes[id] = m[1];
+  return '/api/brews/' + id + '/cover';
+}
+const coverTypes = {};
+
+// ---------- the Codex's view of the world ----------
+// Standard only for now: members' Standard brews, and the field the sim has been
+// playing against (the newest benchmark/round-robin lists, else the newest run's).
+async function codexCtx(user) {
+  const format = 'standard';
+  let field = fieldLists(format);
+  // before the first benchmark finishes: the opponents of the newest Standard field run
+  if (!field) { const ids = new Set(brews.filter(b => b.format === format).flatMap(b => b.runs.filter(r => r.field?.source === 'goldfish').map(r => r.jobId))); const h = history.find(x => ids.has(x.id)); field = h ? h.decks.slice(1) : []; }
+  const shares = {}; try { (await meta.goldfishMeta(format)).forEach(d => { shares[d.name] = d.pct; }); } catch {}
+  const at = history.find(h => h.meta === format && h.status === 'done')?.finished || Date.now();
+  const mine = brews.filter(b => b.owner === user.name && b.format === format && b.seats === 2);
+  // this member's record against an archetype: each brew's newest finished run that faced it, game 1 and boarded games together
+  const records = name => mine.flatMap(b => {
+    for (const r of b.runs) {
+      const v = runView(b, r); if (v.status !== 'done') continue;
+      const o = (v.opponents || []).find(x => x.name === name); if (!o || !o.played) continue;
+      const w = o.wins[0] + (o.post ? o.post.wins[0] : 0), l = o.wins[1] + (o.post ? o.post.wins[1] : 0);
+      return [{ brew: b.name + ' v' + r.v, note: new Date(r.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' · ' + (w + l) + ' games', rec: w + '–' + l, bad: w < l }];
+    }
+    return [];
+  });
+  return { brews: brews.filter(b => b.format === format), field: field.map(d => ({ name: d.name, main: d.main, side: d.side || [] })), shares, me: user.name,
+    snapshot: new Date(at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' field', real: n => calibs[format]?.realField?.[n] || null, records };
+}
+
 // Runs and brews from before the benchmark existed: give finished field runs a
 // benchmark from the very decks they faced, and read each list's style once.
 async function backfill() {
@@ -363,6 +401,8 @@ function runView(b, run) {
     out.played = prs.reduce((s, p) => s + played(p), 0); out.total = j?.pairings ? GAMES * j.pairings.length : GAMES * out.opponents.length;
   }
   out.warnings = [...new Set(prs.flatMap(p => p.warnings || []))].slice(0, 20);
+  // one entry per game in play order while the run is live: 1 won, 0 lost or drawn, null not played yet
+  if (j && jobs.has(j.id) && j.pairings) out.pulse = j.pairings.flatMap(p => Array.from({ length: GAMES }, (_, g) => p.games[g] ? (p.games[g].winner === 0 ? 1 : 0) : null));
   out.benchmark = benchView(run.benchmarkId);
   out.style = (b.versions.find(x => x.v === run.v) || {}).style || null;
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
@@ -454,18 +494,32 @@ const server = http.createServer(async (req, res) => {
       if (!deck.main?.length && !deck.commander?.length) return send(res, 400, { error: "That doesn't read as a decklist. One card per line, like \"4 Lightning Bolt\"." });
       return send(res, 200, { ...(await meta.describeDeck({ main: deck.main || [], side: deck.side || [], commander: deck.commander || [] })), importedName: deck.name || null });
     }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/cover$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1]); const f = b && b.coverUrl && path.join(DATA, 'covers', b.id + '.img');
+      if (!f || !fs.existsSync(f)) return send(res, 404, 'no cover');
+      return send(res, 200, fs.readFileSync(f), { 'Content-Type': b.coverType || 'image/jpeg', 'Cache-Control': 'private, max-age=86400' });
+    }
+    if (p === '/api/codex' && req.method === 'GET') return send(res, 200, await codex.index(await codexCtx(user)));
+    // entry ids look like "card:sunderflock"; the page escapes the colon
+    if ((m = p.match(/^\/api\/codex\/([\w%:-]+)$/)) && req.method === 'GET') { const e = await codex.entry(decodeURIComponent(m[1]), await codexCtx(user)); return e ? send(res, 200, e) : send(res, 404, { error: 'no such entry' }); }
+    if ((m = p.match(/^\/api\/codex\/([\w%:-]+)\/notes$/)) && req.method === 'POST') { const { t } = await readBody(req); const n = codex.addNote(decodeURIComponent(m[1]), user.name, t); return n ? send(res, 200, { notes: n }) : send(res, 400, { error: 'empty note' }); }
     if (p === '/api/brews' && req.method === 'GET') {
-      return send(res, 200, { brews: brews.filter(b => b.owner === user.name).map(brewView), queueLength: queue.length + (running ? 1 : 0) });
+      return send(res, 200, { brews: brews.filter(b => b.owner === user.name).map(brewView), queueLength: queue.length + (running ? 1 : 0), bo3: sideboard.available() });
     }
     if (p === '/api/brews' && req.method === 'POST') {
-      const { list, name, note } = await readBody(req);
+      const { list, name, note, cover } = await readBody(req);
       const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
       if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
       const d = await meta.describeDeck(deck);
-      const now = Date.now();
-      const b = { id: crypto.randomBytes(5).toString('hex'), owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').slice(0, 60), format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
-        coverCard: d.coverCard, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
+      const now = Date.now(), id = crypto.randomBytes(5).toString('hex');
+      // the cover: a card from the list (by name), or an uploaded image kept beside the data
+      const pickCard = cover?.card && d.rows.some(r => r.name === cover.card && !r.land) ? cover.card : d.coverCard;
+      let coverUrl = null;
+      if (cover?.upload) { try { coverUrl = saveCover(id, cover.upload); } catch (e) { return send(res, 400, { error: e.message }); } }
+      const b = { id, owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').trim().slice(0, 60) || 'Untitled', format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
+        coverCard: pickCard, coverUrl, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
         versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [] };
+      if (coverTypes[id]) b.coverType = coverTypes[id];
       brews.unshift(b); saveBrews();
       return send(res, 200, brewView(b));
     }

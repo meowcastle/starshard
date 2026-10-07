@@ -25,7 +25,7 @@
 <sc-if value="{{ isFirstrun }}" hint-placeholder-val="{{ false }}">
 <div data-screen-label="First run" style="min-height:100vh;display:flex;justify-content:center;padding:40px 48px">
   <div style="width:720px;display:flex;flex-direction:column;gap:40px">
-    <div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px">Forge Sim</div></div><div style="display:flex;gap:16px;align-items:baseline"><a href="#" onClick="{{ fsCancel }}" style="font-size:13px;color:#8F8D86">{{ fsCancelLabel }}</a><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ fsStepLabel }}</div></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><a href="#" onClick="{{ fsHome }}" title="Back to your brews" style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:15px;color:#EDEBE6">Forge Sim</div></a><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ fsStepLabel }}</div></div>
     <sc-if value="{{ fs1 }}" hint-placeholder-val="{{ true }}">
     <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ fsTitle }}</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">An Arena export, an Archidekt link, or plain text. On Moxfield use More → Export → Copy for MTGA; their links can't be read.</div></div>
     <textarea rows="7" value="{{ pasteText }}" onChange="{{ onPaste }}" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;resize:vertical" placeholder="Deck
@@ -33,14 +33,51 @@
 3 Aerith Gainsborough (FIN) 2
 …"></textarea>
     <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:13px;color:{{ fsNoteColor }}">{{ fsNote }}</div><a href="#" onClick="{{ doCheck }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">{{ checkLabel }}</a></div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="font-size:17px;font-weight:600;color:#EDEBE6">Paper deck? Type it in.</div>
+      <div style="font-size:14px;color:#8F8D86;line-height:1.5">One card per line: the number, a space, the card name. Spelling matters; set codes don't. Headings go on their own line.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#C5EC7A;font-weight:600">Standard</div><pre style="margin:0;background:#121211;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#EDEBE6;white-space:pre-wrap">Deck
+4 Llanowar Elves
+4 Heartfire Hero
+20 Forest
+…
+
+Sideboard
+2 Tranquil Frillback
+…</pre><div style="font-size:13px;color:#8F8D86;line-height:1.5">60 cards under Deck. Sideboard is optional; Bo3 runs use it.</div></div>
+        <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#C5EC7A;font-weight:600">Commander</div><pre style="margin:0;background:#121211;border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#EDEBE6;white-space:pre-wrap">Commander
+1 Atraxa, Praetors' Voice
+
+Deck
+1 Sol Ring
+1 Arcane Signet
+…</pre><div style="font-size:13px;color:#8F8D86;line-height:1.5">Commander first, then 99 under Deck. Partners: two lines under Commander.</div></div>
+      </div>
+      <div style="font-size:13px;color:#8F8D86;line-height:1.5">Faster: take a photo of each pile and use a scanner app (Delver Lens, Manabox) → export as text → paste here.</div>
+    </div>
     </sc-if>
     <sc-if value="{{ fs2 }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Name it</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">{{ nameSub }}</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86">Deck name</div><input value="{{ deckName }}" onChange="{{ setDeckName }}" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:17px;outline:none;width:100%"></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:13px;color:#8F8D86">Cover · art from cards in your list</div><a href="#" onClick="{{ pickUpload }}" style="font-size:13px;color:#C5EC7A">Upload your own</a></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px">
+        <sc-for list="{{ covers }}" as="c" hint-placeholder-count="8">
+          <a href="#" onClick="{{ c.pick }}" style="display:flex;flex-direction:column;gap:6px"><div style="aspect-ratio:16/10;border-radius:6px;background:{{ c.bg }};border:2px solid {{ c.ring }};overflow:hidden;position:relative"><div style="position:absolute;inset:0;background:{{ c.art }}"></div></div><div style="font-size:12px;color:{{ c.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div></a>
+        </sc-for>
+      </div>
+      <sc-if value="{{ coverIsUpload }}" hint-placeholder-val="{{ false }}"><label onDragOver="{{ onCoverDrag }}" onDrop="{{ onCoverDrop }}" style="display:flex;align-items:center;gap:14px;padding:14px;border:1px dashed rgba(255,255,255,.2);border-radius:6px;cursor:pointer"><input type="file" accept="image/jpeg,image/png,image/webp" onChange="{{ onCoverFile }}" style="display:none"><div style="width:72px;height:45px;border-radius:4px;background:{{ uploadArt }};border:2px solid #C5EC7A;flex:none"></div><div style="font-size:14px;color:{{ uploadNoteColor }};line-height:1.5">{{ uploadNote }}</div></label></sc-if>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><a href="#" onClick="{{ fsBack }}" style="font-size:15px;color:#8F8D86">← Back to the list</a><a href="#" onClick="{{ fsNext }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">Check it in Forge</a></div>
+    </sc-if>
+    <sc-if value="{{ fs3 }}" hint-placeholder-val="{{ false }}">
     <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ chkTitle }}</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">{{ chkSub }}</div></div>
     <div style="display:flex;flex-direction:column"><sc-for list="{{ chkRows }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:10px;height:10px;border-radius:2px;background:{{ r.color }};display:inline-block;position:relative;top:1px"></span><div style="font-size:17px;font-weight:600">{{ r.name }} <span style="font-weight:400;color:#8F8D86;font-size:15px">· {{ r.note }}</span></div><span style="font-size:13px;color:#8F8D86">{{ r.section }}</span></div></sc-for></div>
     <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86">Anything the coach should keep in mind? Optional.</div><input value="{{ noteText }}" onChange="{{ onNote }}" placeholder="RCQ on Nov 1. These four cards stay. No rare wildcards." style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center"><a href="#" onClick="{{ fsBack }}" style="font-size:15px;color:#8F8D86">← Fix the list</a><a href="#" onClick="{{ doCreate }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">{{ createLabel }}</a></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><a href="#" onClick="{{ fsToList }}" style="font-size:15px;color:#8F8D86">← Fix the list</a><a href="#" onClick="{{ doCreate }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">{{ createLabel }}</a></div>
     </sc-if>
-    <sc-if value="{{ fs3 }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ fs4 }}" hint-placeholder-val="{{ false }}">
     <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Who should it play?</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">You can change this on every run.</div></div>
     <div style="display:flex;flex-direction:column"><sc-for list="{{ oppSets }}" as="o" hint-placeholder-count="3"><a href="#" onClick="{{ o.pick }}" style="display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:14px;height:14px;border-radius:50%;border:1px solid {{ o.ring }};background:{{ o.fill }};display:inline-block"></span><div><div style="font-size:17px;font-weight:600">{{ o.title }}</div><div style="font-size:15px;color:#8F8D86">{{ o.detail }}</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;white-space:nowrap">{{ o.time }}</span></a></sc-for></div>
     <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.08);padding-top:24px"><div style="font-size:15px;color:#8F8D86;line-height:1.5">{{ fsFootLine }}<br><span style="font-size:13px;color:#5C5B56">Close the tab if you like. The results fill in as the games finish.</span></div><a href="#" onClick="{{ fsQueue }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:12px 20px;font-weight:600;font-size:15px">Queue the run</a></div>
@@ -57,6 +94,7 @@
       <sc-for list="{{ brewList }}" as="b" hint-placeholder-count="2"><a href="#" onClick="{{ b.pick }}" style="display:flex;align-items:center;gap:12px;padding:8px;border-radius:6px;background:{{ b.bg }}"><div style="width:44px;height:28px;border-radius:3px;overflow:hidden;background:#1a1a19;flex:none"><img src="{{ b.art }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div><div style="min-width:0;flex:1"><div style="font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.name }}</div><div style="font-size:12px;color:#8F8D86;font-family:'JetBrains Mono',monospace">{{ b.format }} · v{{ b.version }}</div></div></a></sc-for>
       <a href="#" onClick="{{ goFirstrun }}" style="padding:8px;color:#8F8D86;font-size:13px">+ paste a deck</a>
     </div>
+    <a href="#" onClick="{{ cxBrowse }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px;border-radius:6px;background:{{ cxNavBg }}"><span style="font-weight:600;font-size:15px;color:{{ cxNavColor }}">Codex</span><span style="font-size:12px;color:#5C5B56;font-family:'JetBrains Mono',monospace;white-space:nowrap">cards · lore</span></a>
     <div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;color:#8F8D86;padding:0 8px 8px">Notes</div>
       <sc-for list="{{ memory }}" as="m" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) 14px;gap:8px;padding:8px;border-top:1px solid rgba(255,255,255,.06)"><div style="font-size:13px;line-height:1.5;color:#C9C7C0">{{ m.t }}</div><a href="#" onClick="{{ m.forget }}" title="forget" style="color:#3a3a38;font-size:13px">×</a></div></sc-for>
       
@@ -65,6 +103,67 @@
   </aside>
 
   <main style="min-width:0;padding:32px 48px 64px;display:flex;flex-direction:column;gap:32px;max-width:1180px">
+    <sc-if value="{{ isCodex }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Codex" style="display:flex;flex-direction:column;gap:32px;max-width:860px">
+      <div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#8F8D86"><a href="#" onClick="{{ cxBrowse }}" style="color:{{ cxCrumbColor }}">Codex</a><sc-if value="{{ cxHasEntry }}" hint-placeholder-val="{{ false }}"><span>›</span><span style="color:#EDEBE6">{{ cx.title }}</span></sc-if></div>
+
+      <sc-if value="{{ cxIsBrowse }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">Codex</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">Every card and deck the sim knows about, with where it's played this week and how it did in your runs. Standard only for now.</div></div>
+      <input value="{{ cxQuery }}" onChange="{{ cxSetQuery }}" placeholder="Search a card, deck, term or character" style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:12px 14px;color:#EDEBE6;font-size:17px;outline:none;width:100%">
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ cxFilters }}" as="f" hint-placeholder-count="5"><a href="#" onClick="{{ f.pick }}" style="font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid {{ f.ring }};color:{{ f.color }};background:{{ f.bg }}">{{ f.label }}</a></sc-for></div>
+      <div style="display:flex;flex-direction:column"><sc-for list="{{ cxList }}" as="e" hint-placeholder-count="8"><a href="#" onClick="{{ e.open }}" style="display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)"><div style="width:72px;height:44px;border-radius:4px;background:{{ e.art }};flex:none"></div><div style="min-width:0"><div style="font-size:17px;font-weight:600">{{ e.title }}</div><div style="font-size:14px;color:#8F8D86;line-height:1.5">{{ e.blurb }}</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56;white-space:nowrap">{{ e.kind }}</div></a></sc-for></div>
+      </sc-if>
+
+      <sc-if value="{{ cxIsCard }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start">
+        <div style="aspect-ratio:5/7;border-radius:10px;background:{{ cx.art }};border:1px solid rgba(255,255,255,.08)"></div>
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">{{ cx.kind }} · {{ cx.set }}</div><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ cx.title }}</span><span style="display:flex;gap:2px;font-size:17px"><sc-for list="{{ cx.pips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div><div style="font-size:15px;color:#8F8D86">{{ cx.type_line }}</div></div>
+          <div style="font-size:17px;line-height:1.6;text-wrap:pretty;white-space:pre-line">{{ cx.oracle }}</div>
+          <div style="font-size:15px;color:#C9C7C0;line-height:1.6;text-wrap:pretty"><span style="color:#8F8D86">In plain terms · </span>{{ cx.plainS }}</div>
+          <sc-if value="{{ cx.hasLore }}" hint-placeholder-val="{{ false }}"><a href="#" onClick="{{ cx.openLore }}" style="font-size:15px;color:#C5EC7A">Who is {{ cx.loreName }}? →</a></sc-if>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">Where it's played · {{ cxSnapshot }}</div><div style="font-size:22px;font-weight:600;line-height:1.2">{{ cx.usageHead }}</div>
+        <div style="display:flex;flex-direction:column;margin-top:8px"><sc-for list="{{ cx.usage }}" as="u" hint-placeholder-count="3"><a href="#" onClick="{{ u.open }}" style="display:grid;grid-template-columns:minmax(0,1fr) 110px 90px;gap:16px;align-items:baseline;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)"><div style="font-size:17px;font-weight:600">{{ u.deck }} <span style="font-weight:400;color:#8F8D86;font-size:14px">· {{ u.share }} of field</span></div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#C9C7C0">{{ u.copies }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;text-align:right">{{ u.where }}</div></a></sc-for></div></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">In your sims</div><div style="font-size:22px;font-weight:600;line-height:1.2">{{ cx.simHead }}</div><div style="font-size:17px;line-height:1.6;color:#C9C7C0;text-wrap:pretty">{{ cx.simNote }}</div></div>
+      </sc-if>
+
+      <sc-if value="{{ cxIsArch }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86">Archetype · Standard · {{ cxSnapshot }}</div><div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ cx.title }}</span><span style="display:flex;gap:2px;font-size:17px"><sc-for list="{{ cx.pips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div><div style="font-size:17px;color:#8F8D86;line-height:1.5">{{ cx.blurb }}</div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px"><sc-for list="{{ cx.stats }}" as="s" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:4px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)"><div style="font-size:13px;color:#8F8D86">{{ s.k }}</div><div style="font-size:22px;font-weight:600;font-family:'JetBrains Mono',monospace">{{ s.v }}</div><div style="font-size:13px;color:#8F8D86">{{ s.n }}</div></div></sc-for></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">How it wins</div><div style="font-size:17px;line-height:1.6;text-wrap:pretty">{{ cx.plan }}</div></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">How it loses</div><div style="font-size:17px;line-height:1.6;text-wrap:pretty">{{ cx.weak }}</div></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">Cards that define it</div><div style="display:flex;flex-direction:column"><sc-for list="{{ cx.cards }}" as="c" hint-placeholder-count="5"><a href="#" onClick="{{ c.open }}" style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">{{ c.qty }}</span><span style="font-size:17px">{{ c.name }} <span style="font-size:14px;color:#8F8D86">· {{ c.role }}</span></span><span style="font-size:13px;color:#C5EC7A">→</span></a></sc-for></div></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">Your brews against it</div><div style="display:flex;flex-direction:column"><sc-for list="{{ cx.vs }}" as="r" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="font-size:17px;font-weight:600">{{ r.brew }} <span style="font-weight:400;font-size:14px;color:#8F8D86">· {{ r.note }}</span></span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ r.color }}">{{ r.rec }}</span></div></sc-for></div></div>
+      </sc-if>
+
+      <sc-if value="{{ cxIsTerm }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86">Term</div><div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ cx.title }}</span><span style="display:flex;gap:2px;font-size:17px"><sc-for list="{{ cx.pips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div><div style="font-size:17px;color:#8F8D86;line-height:1.5">{{ cx.say }}</div></div>
+      <div style="font-size:17px;line-height:1.6;text-wrap:pretty;white-space:pre-line">{{ cx.body }}</div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">In Standard right now</div><div style="display:flex;flex-direction:column"><sc-for list="{{ cx.related }}" as="r" hint-placeholder-count="2"><a href="#" onClick="{{ r.open }}" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="font-size:17px;font-weight:600">{{ r.title }} <span style="font-weight:400;font-size:14px;color:#8F8D86">· {{ r.note }}</span></span><span style="font-size:13px;color:#C5EC7A">→</span></a></sc-for></div></div>
+      </sc-if>
+
+      <sc-if value="{{ cxIsChar }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:32px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:13px;color:#8F8D86">Character · {{ cx.world }}</div><div style="font-size:34px;font-weight:600;line-height:1.1;letter-spacing:-.01em">{{ cx.title }}</div><div style="font-size:17px;color:#8F8D86;line-height:1.5">{{ cx.blurb }}</div></div>
+          <sc-for list="{{ cx.sections }}" as="s" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">{{ s.h }}</div><div style="font-size:17px;line-height:1.6;text-wrap:pretty">{{ s.p }}</div></div></sc-for>
+          <div style="font-size:13px;color:#5C5B56;line-height:1.5">Summarized from <a href="{{ cx.srcUrl }}" style="color:#8F8D86;text-decoration:underline">{{ cx.src }}</a> (CC BY-SA). Read the full story there.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px"><div style="aspect-ratio:5/7;border-radius:10px;background:{{ cx.art }};border:1px solid rgba(255,255,255,.08)"></div><div style="display:flex;flex-direction:column;gap:4px"><div style="font-size:13px;color:#8F8D86">Cards</div><sc-for list="{{ cx.cards }}" as="c" hint-placeholder-count="2"><a href="#" onClick="{{ c.open }}" style="font-size:15px;color:#EDEBE6;padding:8px 0;border-top:1px solid rgba(255,255,255,.08)">{{ c.name }} <span style="font-size:13px;color:#8F8D86">· {{ c.role }}</span></a></sc-for></div></div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ cxHasEntry }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)"><div style="font-size:13px;color:#8F8D86;padding-top:16px">Members' notes</div>
+        <sc-for list="{{ cx.notes }}" as="n" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-size:13px;color:#8F8D86">{{ n.who }}</span><span style="font-size:15px;line-height:1.55;color:#C9C7C0">{{ n.t }}</span></div></sc-for>
+        <input value="{{ cxNoteText }}" onChange="{{ cxOnNote }}" onKeyDown="{{ cxNoteKey }}" placeholder="Add a note. Everyone on the list sees it. Enter to save." style="background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:11px 12px;color:#EDEBE6;font-size:15px;outline:none;width:100%;margin-top:8px">
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+    <sc-if value="{{ notCodex }}" hint-placeholder-val="{{ true }}">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
       <div style="display:flex;align-items:center;gap:16px"><div style="width:96px;height:56px;border-radius:6px;overflow:hidden;background:#1a1a19"><img src="{{ deckArt }}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div><div><div style="font-size:13px;color:#8F8D86">{{ deck.format }} · {{ seatsLabel }} · {{ deck.subtitle }}</div><div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:34px;font-weight:600;letter-spacing:-.01em;line-height:1.1">{{ deck.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;white-space:nowrap">v{{ deck.version }} · {{ deck.versionLabel }}</span><span style="display:flex;gap:2px;font-size:15px"><sc-for list="{{ deckPips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" style="color:{{ p.color }}"></i></sc-for></span></div></div></div>
       <a href="#" onClick="{{ toggleRun }}" style="background:#C5EC7A;color:#0C0C0B;border-radius:6px;padding:10px 16px;font-weight:600;font-size:15px;white-space:nowrap">Run v{{ deck.version }} ▾</a>
@@ -77,25 +176,33 @@
     </nav>
 
     <sc-if value="{{ isCoach }}" hint-placeholder-val="{{ true }}">
-    <div data-screen-label="Coach" style="display:flex;flex-direction:column;gap:48px;max-width:720px">
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div style="font-size:13px;color:#8F8D86;font-family:'JetBrains Mono',monospace">{{ latest.at }} · v{{ deck.version }} · {{ snapshotLabel }}</div>
-        <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;color:#8F8D86">How it's doing</div><div style="font-size:28px;font-weight:600;line-height:1.2">{{ brief.status }}</div><div style="font-size:15px;color:#8F8D86">{{ brief.statusNote }}</div></div>
-        <div style="display:flex;flex-direction:column;gap:6px;padding-top:8px"><div style="font-size:13px;color:#8F8D86">The weakness</div><div style="font-size:22px;font-weight:600;line-height:1.2">{{ brief.weakness }}</div><div style="font-size:17px;line-height:1.6;text-wrap:pretty">{{ brief.weaknessNote }}</div><a href="#" onClick="{{ goResults }}" style="font-size:15px;color:#C5EC7A">{{ linkDown }} →</a></div>
-        <div style="display:flex;flex-direction:column;padding-top:8px"><div style="font-size:13px;color:#8F8D86;padding-bottom:4px">{{ optionsLabel }}</div>
-          <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86;padding-top:3px">{{ o.n }}</span><div><div style="font-size:17px;font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:15px;color:#C9C7C0;line-height:1.55;margin-top:4px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;margin-top:8px;font-family:'JetBrains Mono',monospace">38% → <span style="color:#7CC4F0">44%</span> ±9 <span style="font-family:Manrope,sans-serif;color:#8F8D86">· 120 games · better, inside the noise</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:13px;font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:4px">{{ o.label }}</a></div></sc-for>
+    <div data-screen-label="Coach" style="display:flex;flex-direction:column;gap:40px;max-width:680px">
+
+      <div style="display:grid;grid-template-columns:20px minmax(0,1fr);gap:16px;align-items:start">
+        <div style="width:10px;height:10px;margin-top:9px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div>
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#8F8D86">v{{ deck.version }} · {{ change }}</div>
+            <div style="font-size:28px;font-weight:600;line-height:1.2;letter-spacing:-.01em">{{ brief.status }}</div>
+            <div style="font-size:15px;color:#8F8D86;line-height:1.5">{{ brief.statusNote }}</div>
+            <sc-if value="{{ waiting }}" hint-placeholder-val="{{ false }}">{{ pulse }}</sc-if>
+          </div>
+          <sc-if value="{{ hasWeak }}" hint-placeholder-val="{{ true }}"><div style="font-size:17px;line-height:1.6;text-wrap:pretty"><span style="font-weight:600">{{ brief.weakness }}.</span> {{ brief.weaknessNote }} <sc-if value="{{ hasWeakLink }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ cxOpenWeak }}" style="color:#8F8D86;text-decoration:underline">What is that?</a></sc-if></div></sc-if>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><div><div style="font-size:15px;font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:15px;color:#8F8D86;line-height:1.55;margin-top:2px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;margin-top:8px;font-family:'JetBrains Mono',monospace">38% → <span style="color:#7CC4F0">44%</span> ±9 <span style="font-family:Manrope,sans-serif;color:#8F8D86">· 120 games</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:13px;font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:3px">{{ o.label }}</a></div></sc-for>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ runAt }} · {{ snapshotLabel }}</div>
         </div>
-        <sc-if value="{{ hasSideboard }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;padding-top:8px"><div style="font-size:13px;color:#8F8D86;padding-bottom:4px">Sideboarding, games 2 and 3</div>
-          <sc-for list="{{ sideboard }}" as="s" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:170px minmax(0,1fr) 20px minmax(0,1fr);gap:12px;align-items:baseline;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:15px"><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">vs {{ s.vs }}</span><span style="color:#C9C7C0"><span style="font-family:'JetBrains Mono',monospace;color:#F0A070">−</span> {{ s.out }}</span><span style="color:#5C5B56;text-align:center">→</span><span style="color:#C9C7C0"><span style="font-family:'JetBrains Mono',monospace;color:#7CC4F0">+</span> {{ s.in }}</span></div></sc-for>
-        </div></sc-if>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="display:flex;gap:12px;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:8px"><textarea rows="1" value="{{ askText }}" onChange="{{ onAsk }}" placeholder="Ask the coach" style="flex:1;background:none;border:0;padding:6px 0;color:#EDEBE6;font-size:17px;outline:none;resize:none;min-width:0"></textarea><a href="#" onClick="{{ sendAsk }}" style="font-size:15px;color:#C5EC7A;font-weight:600;white-space:nowrap;padding-bottom:6px">{{ sendLabel }}</a></div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px"><sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3"><a href="#" onClick="{{ p.go }}" style="color:#8F8D86">{{ p.t }}</a></sc-for></div>
-      </div>
-      <div style="display:flex;flex-direction:column">
-        <div style="font-size:22px;font-weight:600;padding-bottom:16px">Earlier</div>
-        <sc-for list="{{ earlier }}" as="m" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:72px minmax(0,1fr);gap:16px;padding:16px 0;border-top:1px solid rgba(255,255,255,.08)"><div style="font-size:13px;color:#8F8D86;line-height:1.5">{{ m.who }}<br><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ m.at }}</span></div><div style="font-size:15px;line-height:1.6;white-space:pre-wrap;color:{{ m.color }};text-wrap:pretty">{{ m.text }}</div></div></sc-for>
+
+      <sc-for list="{{ thread }}" as="m" hint-placeholder-count="3">
+        <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:flex-end"><div style="max-width:78%;background:#1A1A19;border-radius:14px 14px 4px 14px;padding:12px 16px;font-size:15px;line-height:1.55;color:#EDEBE6;text-wrap:pretty">{{ m.text }}</div></div></sc-if>
+        <sc-if value="{{ m.isCoach }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:20px minmax(0,1fr);gap:16px;align-items:start"><div style="width:10px;height:10px;margin-top:7px;background:#C5EC7A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:15px;line-height:1.6;color:#C9C7C0;text-wrap:pretty;white-space:pre-wrap">{{ m.text }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ m.at }}</div></div></div></sc-if>
+      </sc-for>
+
+      <div style="display:flex;flex-direction:column;gap:12px;position:sticky;bottom:0;padding:24px 0 8px;background:linear-gradient(to bottom,rgba(12,12,11,0),#0C0C0B 32%)">
+        <div style="display:flex;gap:12px;align-items:flex-end;background:#121211;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 16px"><textarea rows="1" value="{{ askText }}" onChange="{{ onAsk }}" placeholder="{{ askPlaceholder }}" style="flex:1;background:none;border:0;padding:2px 0;color:#EDEBE6;font-size:15px;outline:none;resize:none;min-width:0;line-height:1.5"></textarea><a href="#" onClick="{{ sendAsk }}" style="width:28px;height:28px;border-radius:8px;background:#C5EC7A;color:#0C0C0B;display:grid;place-items:center;font-size:15px;font-weight:600;flex:none">↑</a></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3"><a href="#" onClick="{{ p.go }}" style="font-size:13px;color:#8F8D86;padding:5px 10px;border:1px solid rgba(255,255,255,.1);border-radius:999px">{{ p.t }}</a></sc-for></div>
       </div>
     </div>
     </sc-if>
@@ -200,6 +307,7 @@
       </div>
     </div>
     </sc-if>
+    </sc-if>
   </main>
 </div>
 </sc-if>
@@ -212,10 +320,12 @@ class Component extends DCLogic {
   // yet, so its brief is computed straight from the games rather than written by a model.
   state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
     fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
-    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '' };
+    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '', bo3: false,
+    deckName: '', cover: 0, upload: null, uploadErr: '',
+    codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
   async componentDidMount() {
     try { const me = await this.api('/api/me'); this.setState({ me }); await this.load(true); } catch (e) { this.setState({ stage: 'signin' }); }
-    this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(b => b.runs.some(r => this.active(r)))) this.load().catch(() => {}); }, 5000);
+    this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(b => b.runs.some(r => this.active(r)))) this.load().catch(() => {}); }, 2500);
   }
   componentWillUnmount() { clearInterval(this._poll); }
   async api(path, opts = {}) {
@@ -226,8 +336,8 @@ class Component extends DCLogic {
     return data;
   }
   async load(first) {
-    const { brews, queueLength } = await this.api('/api/brews');
-    this.setState(s => ({ brews, queueLength, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
+    const { brews, queueLength, bo3 } = await this.api('/api/brews');
+    this.setState(s => ({ brews, queueLength, bo3: !!bo3, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
   }
   active(r) { return r.status === 'preparing' || r.status === 'queued' || r.status === 'running'; }
   async signin() {
@@ -240,7 +350,12 @@ class Component extends DCLogic {
   async check() {
     const S = this.state; if (S.busy || !S.pasteText.trim()) return;
     this.setState({ busy: true, fsErr: '' });
-    try { const check = await this.api('/api/check', { method: 'POST', body: { text: S.pasteText } }); this.setState({ check, fsStep: 2 }); }
+    try {
+      const check = await this.api('/api/check', { method: 'POST', body: { text: S.pasteText } });
+      const spells = this.covers(check), legend = check.rows.find(r => r.legend && r.section !== 'side') || null;
+      const from = legend || spells[0] || null;
+      this.setState({ check, fsStep: S.versionOf ? 3 : 2, deckName: check.importedName || (from ? from.name.split(',')[0] : 'Untitled'), cover: Math.max(0, spells.findIndex(r => from && r.name === from.name)), upload: null, uploadPreview: null, uploadErr: '' });
+    }
     catch (e) { this.setState({ fsErr: e.message }); }
     this.setState({ busy: false });
   }
@@ -250,9 +365,9 @@ class Component extends DCLogic {
     try {
       const b = S.versionOf
         ? await this.api('/api/brews/' + S.versionOf + '/versions', { method: 'POST', body: { list: S.check.list, note: S.noteText } })
-        : await this.api('/api/brews', { method: 'POST', body: { list: S.check.list, name: S.check.importedName || undefined, note: S.noteText } });
+        : await this.api('/api/brews', { method: 'POST', body: { list: S.check.list, name: S.deckName, note: S.noteText, cover: S.cover === 'upload' ? (S.upload ? { upload: S.upload } : null) : { card: (this.covers(S.check)[S.cover] || {}).name } } });
       const first = b.oppSets.find(o => o.available);
-      this.setState(s => ({ brews: S.versionOf ? s.brews.map(x => x.id === b.id ? b : x) : [b, ...(s.brews || [])], newBrewId: b.id, oppSet: first ? first.id : 'meta20', fsStep: 3, cmpA: null, cmpB: null }));
+      this.setState(s => ({ brews: S.versionOf ? s.brews.map(x => x.id === b.id ? b : x) : [b, ...(s.brews || [])], newBrewId: b.id, oppSet: first ? first.id : 'meta20', fsStep: 4, cmpA: null, cmpB: null }));
     } catch (e) { this.setState({ fsErr: e.message }); }
     this.setState({ busy: false });
   }
@@ -261,9 +376,41 @@ class Component extends DCLogic {
     this.setState({ busy: true, runErr: '' });
     try {
       const b = await this.api('/api/brews/' + brewId + '/run', { method: 'POST', body: { oppSet, v } });
-      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), stage: 'app', deckId: b.id, runId: null, runOpen: false, tab: 'coach', view: 'run', fsStep: 1, pasteText: '', check: null, noteText: '', newBrewId: null, versionOf: null }));
+      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), stage: 'app', deckId: b.id, runId: null, runOpen: false, tab: 'coach', view: 'run', codex: null, fsStep: 1, pasteText: '', check: null, noteText: '', newBrewId: null, versionOf: null }));
     } catch (e) { this.setState({ runErr: e.message }); }
     this.setState({ busy: false });
+  }
+  // one cover tile per distinct nonland card, main deck and commander first
+  covers(check) { const seen = new Set(); return (check ? check.rows : []).filter(r => !r.land && r.status === 'ok' && !seen.has(r.name) && seen.add(r.name)).sort((a, b) => (a.section === 'side') - (b.section === 'side')); }
+  // An uploaded cover is cropped to 16:10 and re-encoded here, so it arrives small.
+  takeCover(file) {
+    if (!file) return;
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return this.setState({ uploadErr: 'That isn\'t a JPEG, PNG or WebP image.' });
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const W = 1280, H = 800, c = document.createElement('canvas'); c.width = W; c.height = H;
+      const r = Math.max(W / img.width, H / img.height), w = img.width * r, h = img.height * r;
+      c.getContext('2d').drawImage(img, (W - w) / 2, (H - h) / 2, w, h); URL.revokeObjectURL(url);
+      // the data URL is what gets sent; the preview uses a blob URL, because a data URL's ";base64," breaks an inline style
+      c.toBlob(b => { if (this._coverUrl) URL.revokeObjectURL(this._coverUrl); this._coverUrl = URL.createObjectURL(b); this.setState({ upload: c.toDataURL('image/jpeg', 0.85), uploadPreview: this._coverUrl, uploadErr: '', cover: 'upload' }); }, 'image/jpeg', 0.85);
+    };
+    img.onerror = () => this.setState({ uploadErr: 'That image couldn\'t be read.' });
+    img.src = url;
+  }
+  async codexOpen(id) {
+    this.setState({ codex: { id }, cxEntry: id && this.state.cxEntry && this.state.cxEntry.id === id ? this.state.cxEntry : null, cxNoteText: '' });
+    try {
+      if (!this.state.cxIndex) this.setState({ cxIndex: await this.api('/api/codex'), cxErr: '' });
+      if (!id) return;
+      const e = await this.api('/api/codex/' + encodeURIComponent(id));
+      if (this.state.codex && this.state.codex.id === id) this.setState({ cxEntry: e });
+      // model-written parts come back pending; ask again until they land
+      clearTimeout(this._cx); if (e.pending) this._cx = setTimeout(() => this.state.codex && this.state.codex.id === id && this.codexOpen(id), 3000);
+    } catch (err) { if (!this.state.cxIndex) this.setState({ cxErr: err.message }); else this.setState({ cxEntry: { id, type: 'missing', error: err.message } }); }
+  }
+  async codexNote() {
+    const S = this.state, id = S.codex && S.codex.id; if (!id || !S.cxNoteText.trim()) return;
+    try { const { notes } = await this.api('/api/codex/' + encodeURIComponent(id) + '/notes', { method: 'POST', body: { t: S.cxNoteText } }); this.setState(s => ({ cxNoteText: '', cxEntry: s.cxEntry && s.cxEntry.id === id ? { ...s.cxEntry, notes } : s.cxEntry })); } catch (e) {}
   }
   async forget(brewId, k) { try { const b = await this.api('/api/brews/' + brewId + '/notes/' + k, { method: 'DELETE' }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); } catch (e) {} }
   async signout() { try { await this.api('/api/logout'); } catch (e) {} this.setState({ stage: 'signin', me: null, brews: null, deckId: null }); }
@@ -287,12 +434,15 @@ class Component extends DCLogic {
 
     const stage = S.stage || 'loading';
     const tab = S.tab || 'coach'; const tabS = (t) => ({ line: tab === t ? ACC : 'transparent', color: tab === t ? '#EDEBE6' : '#8F8D86' });
-    const goTab = (t) => pe(() => this.setState({ tab: t, hover: null }));
+    const goTab = (t) => pe(() => this.setState({ tab: t, hover: null, codex: null }));
     const view = S.view; const vS = (x) => ({ color: view === x ? '#0C0C0B' : '#8F8D86', bg: view === x ? ACC : 'transparent' });
     const setsOf = (b) => (b ? b.oppSets : []).map(o => ({ ...o, ring: S.oppSet === o.id ? ACC : 'rgba(255,255,255,.25)', fill: S.oppSet === o.id ? ACC : 'transparent', pick: pe(() => o.available && this.setState({ oppSet: o.id, runErr: '' })) }));
     const ahead = S.queueLength ? 'Queued behind ' + plural(S.queueLength, 'run') + '.' : 'Queued behind nothing.';
     const chk = S.check, unknown = chk ? chk.rows.filter(r => r.status === 'unknown') : [];
     const count = (rows, sec) => rows.filter(r => r.section === sec).reduce((a, r) => a + r.qty, 0);
+    const sizeS = chk ? (chk.format === 'commander' ? count(chk.rows, 'main') + ' + ' + count(chk.rows, 'commander') : count(chk.rows, 'main') + (count(chk.rows, 'side') ? ' + ' + count(chk.rows, 'side') : '')) : '';
+    const fmtS = chk ? (chk.format === 'casual' ? 'no constructed format' : cap(chk.format)) : '';
+    const boS = S.bo3 ? 'best of three' : 'best of one';
     const newBrew = (S.brews || []).find(b => b.id === S.newBrewId);
     const vOf = (S.brews || []).find(b => b.id === S.versionOf);
 
@@ -304,21 +454,26 @@ class Component extends DCLogic {
       signinNoteColor: S.signinErr ? LOSS : '#5C5B56',
       goFirstrun: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: null, pasteText: '', check: null, noteText: '' })),
       goNewVersion: pe(() => d && this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: d.id, pasteText: '', check: null, noteText: '' })),
-      fsCancel: pe(() => (S.brews || []).length && this.setState({ stage: 'app', fsStep: 1, fsErr: '', versionOf: null, newBrewId: null, deckId: S.newBrewId || S.versionOf || S.deckId })),
-      fsCancelLabel: (S.brews || []).length ? (S.fsStep === 3 ? 'later' : 'cancel') : '',
+      fsHome: pe(() => (S.brews || []).length && this.setState({ stage: 'app', fsStep: 1, fsErr: '', versionOf: null, newBrewId: null, deckId: S.newBrewId || S.versionOf || S.deckId })),
       fsTitle: vOf ? 'Paste v' + (vOf.versions.length + 1) + ' of ' + vOf.name : 'Paste your deck', goApp: pe(() => this.setState({ stage: 'app' })), goSignin: pe(() => this.signout()), doSignout: pe(() => this.signout()),
-      fs1: S.fsStep === 1, fs2: S.fsStep === 2, fs3: S.fsStep === 3, fsStepLabel: 'step ' + S.fsStep + ' of 3',
-      fsNext: pe(() => this.setState({ fsStep: Math.min(3, S.fsStep + 1) })), fsBack: pe(() => this.setState({ fsStep: 1, fsErr: '' })),
+      fs1: S.fsStep === 1, fs2: S.fsStep === 2, fs3: S.fsStep === 3, fs4: S.fsStep === 4, fsStepLabel: 'step ' + S.fsStep + ' of 4',
+      fsNext: pe(() => this.setState({ fsStep: Math.min(3, S.fsStep + 1) })), fsBack: pe(() => this.setState({ fsStep: 1, fsErr: '' })), fsToList: pe(() => this.setState({ fsStep: 1, fsErr: '' })),
+      deckName: S.deckName, setDeckName: (e) => this.setState({ deckName: e.target.value.slice(0, 60) }),
+      nameSub: chk ? sizeS + ' cards read as ' + fmtS + '. The name and cover show in your brew list.' : '',
+      covers: this.covers(chk).map((r, i) => ({ name: r.name, bg: '#1C1C1A', art: 'url("' + art(r.name) + '") center/cover', ring: S.cover === i ? ACC : 'transparent', color: S.cover === i ? '#EDEBE6' : '#8F8D86', pick: pe(() => this.setState({ cover: i })) })),
+      coverIsUpload: S.cover === 'upload', pickUpload: pe(() => this.setState({ cover: S.cover === 'upload' ? 0 : 'upload' })),
+      uploadArt: S.uploadPreview ? 'url("' + S.uploadPreview + '") center/cover' : '#1C1C1A', uploadNote: S.uploadErr || (S.upload ? 'This one. Click to choose another.' : 'Drop an image or click to choose. Landscape works best; it\'s cropped to 16:10.'), uploadNoteColor: S.uploadErr ? LOSS : '#8F8D86',
+      onCoverFile: (e) => this.takeCover(e.target.files && e.target.files[0]), onCoverDrag: (e) => e.preventDefault(), onCoverDrop: (e) => { e.preventDefault(); this.takeCover(e.dataTransfer.files && e.dataTransfer.files[0]); },
       pasteText: S.pasteText, onPaste: (e) => this.setState({ pasteText: e.target.value }), doCheck: pe(() => this.check()), checkLabel: S.busy ? 'Checking…' : 'Check it',
       fsNote: S.fsErr || 'Format is read from the list. Commander decks need a commander line.', fsNoteColor: S.fsErr ? LOSS : '#8F8D86',
-      chkTitle: chk ? (S.check.importedName || chk.coverCard.split(',')[0]) + ' · ' + (chk.format === 'commander' ? count(chk.rows, 'main') + ' + ' + count(chk.rows, 'commander') : count(chk.rows, 'main') + (count(chk.rows, 'side') ? ' + ' + count(chk.rows, 'side') : '')) + ' · ' + (chk.format === 'casual' ? 'no constructed format fits' : cap(chk.format) + (chk.format === 'commander' ? '' : ' legal')) : '',
+      chkTitle: chk ? (vOf ? vOf.name : S.deckName || 'Untitled') + ' · ' + sizeS + ' · ' + (chk.format === 'casual' ? 'no constructed format fits' : cap(chk.format) + (chk.format === 'commander' ? '' : ' legal')) : '',
       chkSub: !chk ? '' : unknown.length ? 'Scryfall doesn\'t know ' + plural(unknown.length, 'card') + '. Forge will skip ' + (unknown.length === 1 ? 'it' : 'them') + ' unless the spelling is fixed.' : 'Every card found. Names are already in Forge\'s spelling.',
       chkRows: unknown.map(r => ({ name: r.name, note: 'not found, skipped in games', section: r.section, color: LOSS })),
       noteText: S.noteText, onNote: (e) => this.setState({ noteText: e.target.value }), doCreate: pe(() => this.create()), createLabel: S.busy ? '…' : vOf ? 'Save as v' + (vOf.versions.length + 1) : 'Choose opponents',
       oppSets: setsOf(stage === 'firstrun' ? newBrew : d), fsQueue: pe(() => newBrew && this.queue(newBrew.id, S.oppSet)),
-      fsFootLine: S.runErr || (newBrew && newBrew.seats === 4 ? '20 pods, four seats.' : '20 games each, best of one.') + ' ' + ahead,
+      fsFootLine: S.runErr || (newBrew && newBrew.seats === 4 ? '20 pods, four seats.' : '20 games each, ' + boS + '.') + ' ' + ahead,
       runOpen: S.runOpen, toggleRun: pe(() => this.setState({ runOpen: !S.runOpen, runErr: '', oppSet: d && d.oppSets.some(o => o.id === S.oppSet && o.available) ? S.oppSet : ((d && d.oppSets.find(o => o.available)) || {}).id })),
-      runLine: S.runErr || (d && d.seats === 4 ? '20 pods' : '20 games each · best of one') + ' · ' + ahead, runLineColor: S.runErr ? LOSS : '#8F8D86',
+      runLine: S.runErr || (d && d.seats === 4 ? '20 pods' : '20 games each · ' + boS + (S.bo3 ? ', game 1 and boarded games' : '')) + ' · ' + ahead, runLineColor: S.runErr ? LOSS : '#8F8D86',
       queueRun: pe(() => d && this.queue(d.id, S.oppSet)), runBo: 1, runBoToggle: '', toggleBo: pe(() => {}),
       who: S.me ? '@' + S.me.user.name : '', forgeVer: S.me ? S.me.forge : '',
       plans: [], hasPlans: false, brewList: [], memory: [], memoryCount: 0, deck: { name: '', version: '', versionLabel: '', subtitle: '', format: '', goal: { label: '' } }, deckArt: '', deckPips: [], seatsLabel: '',
@@ -328,18 +483,43 @@ class Component extends DCLogic {
       viewRunColor: vS('run').color, viewRunBg: vS('run').bg, viewVersionsColor: vS('versions').color, viewVersionsBg: vS('versions').bg, viewCompareColor: vS('compare').color, viewCompareBg: vS('compare').bg,
       sourceOpen: false, toggleSource: pe(() => {}), sourceLabel: '', snapshotLabel: '', sourceRows: [], snapshotRows: [],
       latest: { at: '' }, brief: { status: '', statusNote: '', weakness: '', weaknessNote: '' }, optionsLabel: '', options: [], hasSideboard: false, sideboard: [], linkDown: '', earlier: [],
-      askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [],
+      askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [], askPlaceholder: 'The coach isn\'t connected yet',
+      change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}),
       headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
       leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
+    // ---- the Codex ----
+    const slug = (x) => String(x).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-');
+    const cxOpen = (id) => pe(() => id && this.codexOpen(id));
+    const tile = (url, colors) => url ? 'url("' + url + '") center/cover' : 'linear-gradient(135deg,' + ((colors || []).map(c => MANA[c]).concat(['#2a2a28', '#1a1a19']).slice(0, 2).join(',')) + ')';
+    const CXK = { all: 'All', card: 'Cards', deck: 'Decks', term: 'Terms', character: 'Characters' };
+    const ix = S.cxIndex, cxId = S.codex ? S.codex.id : null, E = S.cxEntry && S.cxEntry.id === cxId ? S.cxEntry : null;
+    const wrote = (x) => x || (E && E.pending ? 'Writing…' : '—');
+    Object.assign(v, {
+      isCodex: !!S.codex, notCodex: !S.codex, cxBrowse: pe(() => this.codexOpen(null)),
+      cxNavBg: S.codex ? '#161615' : 'transparent', cxNavColor: S.codex ? '#EDEBE6' : '#C9C7C0', cxCrumbColor: cxId ? '#8F8D86' : '#EDEBE6',
+      cxIsBrowse: !!S.codex && !cxId, cxHasEntry: !!E && E.type !== 'missing', cxIsCard: !!E && E.type === 'card', cxIsArch: !!E && E.type === 'arch', cxIsTerm: !!E && E.type === 'term', cxIsChar: !!E && E.type === 'char',
+      cxSnapshot: ix ? ix.snapshot : '', cxQuery: S.cxQuery, cxSetQuery: (e) => this.setState({ cxQuery: e.target.value }),
+      cxFilters: Object.keys(CXK).map(k => ({ label: CXK[k], ring: S.cxFilter === k ? ACC : 'rgba(255,255,255,.12)', color: S.cxFilter === k ? '#0C0C0B' : '#8F8D86', bg: S.cxFilter === k ? ACC : 'transparent', pick: pe(() => this.setState({ cxFilter: k })) })),
+      cxList: !ix ? (S.cxErr ? [{ title: 'The Codex couldn\'t load', blurb: S.cxErr + '. Open it again in a minute.', kind: '', art: tile('', []), open: pe(() => this.codexOpen(null)) }] : []) : ix.entries.filter(e => (S.cxFilter === 'all' || e.kind === S.cxFilter) && (!S.cxQuery.trim() || (e.title + ' ' + e.blurb).toLowerCase().includes(S.cxQuery.trim().toLowerCase())))
+        .slice(0, 120).map(e => ({ title: e.title, blurb: e.blurb, kind: e.kind, art: tile(e.art, e.colors), open: cxOpen(e.id) })),
+      cxNoteText: S.cxNoteText, cxOnNote: (e) => this.setState({ cxNoteText: e.target.value }), cxNoteKey: (e) => { if (e.key === 'Enter') this.codexNote(); },
+      cx: !E || E.type === 'missing' ? { title: '', notes: [], pips: [], usage: [], stats: [], cards: [], vs: [], related: [], sections: [] } : {
+        ...E, pips: pips(E.colors), art: tile(E.art, E.colors), plainS: wrote(E.plain), plan: wrote(E.plan), weak: wrote(E.weak),
+        blurb: E.blurb || (E.pending ? 'Writing…' : ''), hasLore: !!E.lore, openLore: cxOpen(E.lore),
+        usage: (E.usage || []).map(u => ({ ...u, open: cxOpen(u.id) })), cards: (E.cards || []).map(c => ({ ...c, role: c.role || '', open: cxOpen(c.id) })),
+        vs: (E.vs || []).map(r => ({ ...r, color: r.bad ? LOSS : '#EDEBE6' })), related: (E.related || []).map(r => ({ ...r, open: cxOpen(r.id) })),
+        sections: E.sections || [], stats: E.stats || [], notes: (E.notes || []).map(n => ({ who: n.who, t: n.t })) },
+    });
     if (!d) return v;
 
     const ver = d.versions[d.versions.length - 1];
-    v.brewList = S.brews.map(b => ({ ...b, version: b.versions.length, art: art(b.coverCard), bg: b.id === d.id ? '#161615' : 'transparent', pick: pe(() => this.setState({ deckId: b.id, runId: null, askText: '', view: 'run', runOpen: false })) }));
+    const coverOf = (b) => b.coverUrl || art(b.coverCard);
+    v.brewList = S.brews.map(b => ({ ...b, version: b.versions.length, art: coverOf(b), bg: b.id === d.id ? '#161615' : 'transparent', pick: pe(() => this.setState({ deckId: b.id, runId: null, askText: '', view: 'run', runOpen: false, codex: null })) }));
     v.memory = d.notes.map(m => ({ ...m, forget: pe(() => this.forget(d.id, m.k)) })); v.memoryCount = v.memory.length;
     v.deck = { name: d.name, version: ver.v, versionLabel: 'pasted ' + day(ver.created), subtitle: plural(d.runs.length, 'run'), format: cap(d.format), goal: { label: 'No goal set' } };
-    v.deckArt = art(d.coverCard); v.deckPips = pips(d.colors); v.seatsLabel = d.seats === 2 ? '1v1' : '4-seat pods';
+    v.deckArt = coverOf(d); v.deckPips = pips(d.colors); v.seatsLabel = d.seats === 2 ? '1v1' : '4-seat pods';
     v.isDuel = d.seats === 2; v.isPod = !v.isDuel;
 
     // the run on screen: the one picked from Versions, else the newest
@@ -404,7 +584,7 @@ class Component extends DCLogic {
     } else if (waiting) {
       const left = run.total - run.played, rate = run.started && run.played ? (Date.now() - run.started) / run.played : null;
       const status = run.status === 'preparing' ? 'Reading the field' : run.status === 'queued' ? 'Queued' + (run.queuePos > 0 ? ' · ' + plural(run.queuePos, 'run') + ' ahead' : ' · next up') : 'Running · ' + run.played + ' of ' + run.total + ' games';
-      v.brief = { status, statusNote: 'queued ' + hm(run.created) + (rate ? ' · about ' + Math.max(1, Math.round(left * rate / 60000)) + ' minutes left' : '') + ' · ' + setTitle,
+      v.brief = { status, statusNote: 'queued ' + hm(run.created) + (rate ? ' · about ' + plural(Math.max(1, Math.round(left * rate / 60000)), 'minute') + ' left' : '') + ' · ' + setTitle,
         weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist and writing both sides\' sideboard plans. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' : run.played + ' of ' + run.total + ' pods played.') + ' Numbers under 30 games show hatched. You can close this; the run carries on.' };
       v.latest = { at: 'now' }; v.linkDown = 'Results so far';
     } else if (v.isDuel) {
@@ -420,7 +600,24 @@ class Component extends DCLogic {
       v.brief = { status: overall.pct + ' of pods won', statusNote: run.played + ' pods · ' + overall.pm + ' · 25% is even', weakness: rivals[0] ? rivals[0].name + ' won ' + rivals[0].wins + ' of ' + run.played : '', weaknessNote: rivals[0] ? 'The seat that beat you most often.' : '' };
       v.latest = { at: at(run.finished || run.created) }; v.linkDown = 'The pod';
     }
-    v.earlier = [{ who: 'Coach', at: '', text: 'The coach isn\'t connected yet. Everything above is computed straight from the games.', color: '#8F8D86' }];
+    v.earlier = [];
+    // Coach readout: the version line, the weakness with a way into the Codex, the live grid
+    const diffS = (df) => df.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name).join(', ');
+    const runVer = run ? d.versions.find(x => x.v === run.v) || ver : ver;
+    v.change = runVer.diff ? diffS(runVer.diff) : 'first paste';
+    v.runAt = run ? at(run.finished || run.created) : '';
+    v.hasWeak = !!(v.brief && v.brief.weakness); v.hasWeakLink = !!(worst && v.isDuel && !waiting && d.format === 'standard'); // the Codex is Standard only
+    v.cxOpenWeak = pe(() => worst && this.codexOpen('arch:' + slug(worst.o.name)));
+    v.thread = [];
+    v.waiting = waiting;
+    if (waiting && run && run.pulse) {
+      // one square per game in play order; green yours, grey theirs, the newest glows
+      const h = React.createElement, G = ACC, L = '#5C5B56', DIM = 'rgba(255,255,255,.07)', P = run.pulse, last = P.reduce((k, x, i) => x != null ? i : k, -1);
+      const dots = P.map((x, i) => h('span', { key: i, style: { width: 5, height: 5, borderRadius: 1, background: x == null ? DIM : x ? G : L, boxShadow: i === last ? '0 0 8px 2px ' + (x ? G : L) : 'none', transition: 'background .4s, box-shadow .4s' } }));
+      v.pulse = h('div', { style: { display: 'flex', flexDirection: 'column', gap: 14, padding: '18px 0 6px' } },
+        h('div', { key: 'g', style: { display: 'flex', flexWrap: 'wrap', gap: 5 } }, dots),
+        h('div', { key: 'c', style: { fontSize: 13, color: MUTED } }, 'One square per game, in the order Forge plays them. Green ones are yours; the glowing one just finished.'));
+    }
 
     // results: this run
     const prev = run ? d.runs.filter(r => r.v === run.v && r.id !== run.id && r.created < run.created && !this.active(r))[0] : null;
