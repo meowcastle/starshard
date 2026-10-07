@@ -117,7 +117,7 @@
       <sc-if value="{{ viewRun }}" hint-placeholder-val="{{ true }}">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px">
         <div><div style="font-size:13px;color:#8F8D86">{{ headlineLabel }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1;color:{{ overall.numColor }}">{{ overall.pct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ overall.pm }}</span></div><div style="position:relative;height:6px;background:#1f1f1e;border-radius:3px;margin-top:12px"><div style="position:absolute;left:{{ evenLine }}%;top:-3px;bottom:-3px;width:1px;background:#4a4a48"></div><div style="position:absolute;top:2px;height:2px;left:{{ overall.lo }}%;width:{{ overall.w }}%;background:{{ overall.hatch }}"></div><div style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;left:calc({{ overall.left }}% - 5px);background:{{ overall.color }}"></div></div><div style="font-size:13px;color:#8F8D86;margin-top:8px">{{ overall.n }} games · {{ evenLabel }}</div></div>
-        <div><div style="font-size:13px;color:#8F8D86">Against the last field</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1">{{ prevPct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ prevPm }}</span></div><div style="font-size:13px;color:#8F8D86;margin-top:26px">{{ prevNote }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">{{ col2Label }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1">{{ prevPct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ prevPm }}</span></div><div style="font-size:13px;color:#8F8D86;margin-top:26px">{{ prevNote }}</div></div>
         <div><div style="font-size:13px;color:#8F8D86">Status</div><div style="font-size:17px;font-weight:600;margin-top:6px;color:{{ runStatusColor }}">{{ runStatus }}</div><div style="font-size:13px;color:#8F8D86;margin-top:8px;line-height:1.5">{{ runNote }}</div></div>
       </div>
       <sc-if value="{{ isDuel }}" hint-placeholder-val="{{ true }}">
@@ -329,7 +329,7 @@ class Component extends DCLogic {
       sourceOpen: false, toggleSource: pe(() => {}), sourceLabel: '', snapshotLabel: '', sourceRows: [], snapshotRows: [],
       latest: { at: '' }, brief: { status: '', statusNote: '', weakness: '', weaknessNote: '' }, optionsLabel: '', options: [], hasSideboard: false, sideboard: [], linkDown: '', earlier: [],
       askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [],
-      headlineLabel: '', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
+      headlineLabel: '', col2Label: '', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
       leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
@@ -349,17 +349,30 @@ class Component extends DCLogic {
     v.snapshotLabel = run ? fieldLabel(run) : '';
     v.sourceLabel = run && run.field ? run.field.label : (d.seats === 4 ? 'EDHREC' : 'MTGGoldfish');
 
-    // a run as one number: weighted by meta share when every played opponent has one
-    const scoreOf = (r) => { if (v.isPod) return rng(r.seats[0].wins, r.played, 0.25); const pl = r.opponents.filter(o => o.wins[0] + o.wins[1] > 0); const wtd = pl.length > 0 && pl.every(o => o.metaPct != null); let num = 0, den = 0, n = 0; pl.forEach(o => { const g = o.wins[0] + o.wins[1], wt = wtd ? o.metaPct : 1; num += (o.wins[0] / g) * wt; den += wt; n += g; }); return rng(den ? Math.round(num / den * n) : 0, n); };
+    // A run as one number: weighted by meta share when every counted opponent has
+    // one, and leaving out decks Forge's AI pilots badly (their losses say more
+    // about the AI than about you). `only` limits it to a set of opponent names.
+    const counts = (o) => o.wins[0] + o.wins[1] > 0 && !o.style;
+    const fieldScore = (opps, only) => { const pl = opps.filter(o => counts(o) && (!only || only.has(o.name))); const wtd = pl.length > 0 && pl.every(o => o.metaPct != null); let num = 0, den = 0, n = 0; pl.forEach(o => { const g = o.wins[0] + o.wins[1], wt = wtd ? o.metaPct : 1; num += (o.wins[0] / g) * wt; den += wt; n += g; }); return { r: rng(den ? Math.round(num / den * n) : 0, n), wtd, k: pl.length }; };
+    const scoreOf = (r) => v.isPod ? rng(r.seats[0].wins, r.played, 0.25) : fieldScore(r.opponents).r;
     // results, computed once and read by both Coach and Results
-    let played = [], overall = rng(0, 0), worst = null, next = null, weighted = false;
+    let played = [], overall = rng(0, 0), worst = null, next = null, weighted = false, excluded = [], bench = null;
     if (run && v.isDuel) {
       played = run.opponents.filter(o => o.wins[0] + o.wins[1] > 0);
-      weighted = played.length > 0 && played.every(o => o.metaPct != null);
-      let num = 0, den = 0, n = 0;
-      played.forEach(o => { const g = o.wins[0] + o.wins[1], wt = weighted ? o.metaPct : 1; num += (o.wins[0] / g) * wt; den += wt; n += g; });
-      overall = rng(den ? Math.round(num / den * n) : 0, n);
-      const costed = played.map(o => { const g = o.wins[0] + o.wins[1]; return { o, g, cost: Math.max(0, 0.5 - o.wins[0] / g) * (weighted ? o.metaPct : 1) }; }).sort((a, b) => b.cost - a.cost || a.o.wins[0] / a.g - b.o.wins[0] / b.g);
+      excluded = run.opponents.filter(o => o.style);
+      const fs = fieldScore(run.opponents); overall = fs.r; weighted = fs.wtd;
+      // The benchmark: the field's #1 deck against the same opponents, same AI. Both
+      // scores are taken over exactly the opponents both have finished, weighted the
+      // same way, so the gap between them is the deck and not the AI or the sample.
+      const bm = run.benchmark;
+      if (bm) {
+        const bo = new Map(bm.opponents.filter(o => o.wins[0] + o.wins[1] > 0).map(o => [o.name, o]));
+        const meta = new Map(run.opponents.map(o => [o.name, o]));
+        const shared = new Set([...bo.keys()].filter(n => meta.has(n) && counts(meta.get(n))));
+        const mine = fieldScore(run.opponents, shared), theirs = fieldScore([...shared].map(n => ({ ...bo.get(n), metaPct: meta.get(n).metaPct, style: null })));
+        bench = { name: bm.name, status: bm.status, queuePos: bm.queuePos, mine: mine.r, theirs: theirs.r, k: shared.size, edge: shared.size ? Math.round((mine.r.p - theirs.r.p) * 100) : null, vs: (n) => bo.get(n) || null };
+      }
+      const costed = played.filter(o => !o.style).map(o => { const g = o.wins[0] + o.wins[1]; return { o, g, cost: Math.max(0, 0.5 - o.wins[0] / g) * (weighted ? o.metaPct : 1) }; }).sort((a, b) => b.cost - a.cost || a.o.wins[0] / a.g - b.o.wins[0] / b.g);
       worst = costed[0] || null; next = costed[1] || null;
     } else if (run && v.isPod) {
       overall = rng(run.seats[0].wins, run.played, 0.25);
@@ -379,7 +392,8 @@ class Component extends DCLogic {
         weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' : run.played + ' of ' + run.total + ' pods played.') + ' Numbers under 30 games show hatched. You can close this; the run carries on.' };
       v.latest = { at: 'now' }; v.linkDown = 'Results so far';
     } else if (v.isDuel) {
-      v.brief = { status: overall.pct + ' against the ' + fieldLabel(run), statusNote: plural(overall.n, 'game') + ' · ' + overall.pm + ' · ' + (weighted ? 'weighted by meta share' : 'every deck counted once'),
+      const edgeS = bench && bench.edge != null && bench.status === 'done' ? ' · ' + (bench.edge >= 0 ? '+' : '−') + Math.abs(bench.edge) + ' on the #1 deck' : '';
+      v.brief = { status: overall.pct + ' against the ' + fieldLabel(run), statusNote: plural(overall.n, 'game') + ' · ' + overall.pm + ' · ' + (weighted ? 'weighted by meta share' : 'every deck counted once') + (excluded.length ? ' · ' + plural(excluded.length, 'deck') + ' Forge pilots badly left out' : '') + edgeS,
         weakness: worst && worst.cost > 0 ? worst.o.name + ', ' + worst.o.wins[0] + '–' + worst.o.wins[1] : 'Nothing below even', weaknessNote: '' };
       if (worst && worst.cost > 0) v.brief.weaknessNote = (weighted ? 'It is ' + worst.o.metaPct.toFixed(1) + '% of the field and the matchup costing you the most.' : 'The matchup costing you the most.') + (next && next.cost > 0 ? ' Next is ' + next.o.name + ', ' + next.o.wins[0] + '–' + next.o.wins[1] + '.' : ' Everything else is at or above even.');
       else if (worst) v.brief.weaknessNote = 'Every matchup is at or above 50%. The closest is ' + worst.o.name + ', ' + worst.o.wins[0] + '–' + worst.o.wins[1] + '.';
@@ -398,15 +412,28 @@ class Component extends DCLogic {
       v.runStatusColor = waiting ? ACC : run.status === 'done' ? '#EDEBE6' : LOSS;
     }
     if (run && v.isDuel) {
-      v.headlineLabel = weighted ? 'Weighted, ' + fieldLabel(run) : 'Your win rate, ' + fieldLabel(run); v.evenLabel = '50% is even'; v.evenLine = 50;
-      v.runNote = '20 games each · best of one · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '');
-      v.oppRows = run.opponents.map(o => { const g = o.wins[0] + o.wins[1]; const cost = g ? Math.max(0, 0.5 - o.wins[0] / g) * (o.metaPct != null ? o.metaPct : 1) : 0; return { name: o.name, art: art(o.coverCard), pips: pips(o.colors), metaS: o.metaPct != null ? o.metaPct.toFixed(1) : '—', r: rng(o.wins[0], g), cost, costS: cost > 0 ? '−' + cost.toFixed(1) : '·', costColor: cost > 0 ? LOSS : '#3a3a38', gamesS: g ? g + '/' + run.games : '—', flag: o.pairing === 'failed' ? 'Forge stopped early' : o.draws ? plural(o.draws, 'draw') : (o.owner || ''), flagColor: o.pairing === 'failed' ? AMBER : '#5C5B56', opacity: g ? 1 : 0.5 }; }).sort((a, b) => b.cost - a.cost || b.r.n - a.r.n);
+      v.headlineLabel = (weighted ? 'Weighted, ' : 'Your win rate, ') + fieldLabel(run) + (excluded.length ? ', less ' + excluded.length : ''); v.evenLabel = '50% is even'; v.evenLine = 50;
+      v.runNote = '20 games each · best of one · Forge AI pilots both sides · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '');
+      v.oppRows = run.opponents.map(o => { const g = o.wins[0] + o.wins[1]; const cost = g && !o.style ? Math.max(0, 0.5 - o.wins[0] / g) * (o.metaPct != null ? o.metaPct : 1) : 0; const bv = bench && bench.vs(o.name);
+        const flag = o.pairing === 'failed' ? 'Forge stopped early' : o.style ? 'Not counted · ' + o.style.why + ', which Forge pilots badly' : [o.draws ? plural(o.draws, 'draw') : '', bv ? 'the #1 deck went ' + bv.wins[0] + '–' + bv.wins[1] : '', o.owner || ''].filter(Boolean).join(' · ');
+        return { name: o.name, art: art(o.coverCard), pips: pips(o.colors), metaS: o.metaPct != null ? o.metaPct.toFixed(1) : '—', r: rng(o.wins[0], g), cost, costS: cost > 0 ? '−' + cost.toFixed(1) : '·', costColor: cost > 0 ? LOSS : '#3a3a38', gamesS: g ? g + '/' + run.games : '—', flag, flagColor: o.pairing === 'failed' || o.style ? AMBER : '#5C5B56', opacity: !g ? 0.5 : o.style ? 0.6 : 1 }; }).sort((a, b) => b.cost - a.cost || b.r.n - a.r.n);
     } else if (run && v.isPod) {
       const tot = run.seats.reduce((a, s) => a + s.wins, 0) || 1;
       v.headlineLabel = 'Your seat · pods won'; v.evenLabel = '25% is even'; v.evenLine = 25; v.runNote = run.played + ' of ' + run.total + ' pods · Forge is weakest at combo and politics';
       v.podSeats = run.seats.map((s, i) => ({ ...s, owner: s.owner || '', color: SEAT[i], art: art(s.commander), shareW: (s.wins / tot * 100).toFixed(1), pct: Math.round(s.wins / tot * 100) + '%', r: rng(s.wins, run.played, 0.25), elimS: '—', avgElimTurn: '—' }));
     }
-    if (prev) {
+    v.col2Label = 'Against the last field';
+    if (bench) {
+      // the second number is the benchmark whenever the run has one
+      v.col2Label = 'The #1 deck, same opponents';
+      if (bench.status === 'done' && bench.k) {
+        v.prevPct = bench.theirs.pct; v.prevPm = bench.theirs.pm;
+        v.prevNote = bench.name + ' under the same AI. On those ' + bench.k + ' opponents you are ' + bench.mine.pct + ', ' + (bench.edge === 0 ? 'level with it' : Math.abs(bench.edge) + ' points ' + (bench.edge > 0 ? 'ahead' : 'behind')) + '.' + (Math.abs(bench.edge) < 7 ? ' Inside the noise.' : '');
+      } else if (bench.status === 'queued' || bench.status === 'running') {
+        v.prevPct = '…'; v.prevPm = '';
+        v.prevNote = 'Measuring ' + bench.name + ' against the same decks, so the AI\'s bias cancels out. ' + (bench.status === 'running' ? 'Running now.' : bench.queuePos > 0 ? plural(bench.queuePos, 'run') + ' ahead of it.' : 'Starts after your run.');
+      } else { v.prevPct = '—'; v.prevPm = ''; v.prevNote = 'The benchmark run ' + (bench.status === 'lost' ? 'was lost to a restart' : 'didn\'t finish') + '. The next run will queue another.'; }
+    } else if (prev) {
       const pr = scoreOf(prev);
       v.prevPct = pr.pct; v.prevPm = pr.pm; v.prevNote = 'Same list on the ' + fieldLabel(prev) + '.';
     } else { v.prevPct = '—'; v.prevPm = ''; v.prevNote = run ? 'No earlier run of this version.' : ''; }

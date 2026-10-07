@@ -186,11 +186,36 @@ async function describeDeck(deck) {
   };
   const rows = [...deck.main.map(c => row(c, 'main')), ...(deck.side || []).map(c => row(c, 'side')), ...(deck.commander || []).map(c => row(c, 'commander'))];
   const list = { main: rows.filter(r => r.section === 'main').map(({ qty, name }) => ({ qty, name })), side: rows.filter(r => r.section === 'side').map(({ qty, name }) => ({ qty, name })), commander: rows.filter(r => r.section === 'commander').map(({ qty, name }) => ({ qty, name })) };
-  return { list, rows, format: formatOf(deck, find), coverCard: coverOf(list, find), colors: colorsOf(list, find) };
+  return { list, rows, format: formatOf(deck, find), coverCard: coverOf(list, find), colors: colorsOf(list, find), style: styleOf('', list, find) };
+}
+// What a list is built to do, as far as Forge's AI is concerned. The AI plays
+// creatures on curve and attacks well; it holds counterspells, plays at instant
+// speed and assembles combos badly, so a matchup against a deck built that way
+// says more about the AI than about the deck. Counted from the main deck only.
+function statsOf(deck, find) {
+  let spells = 0, creatures = 0, counters = 0, instants = 0;
+  for (const c of deck.main) {
+    const k = find(c.name); if (!k || isLand(k)) continue;
+    const face = k.card_faces?.[0] || k, type = face.type_line || k.type_line || '';
+    const text = [k.oracle_text, ...(k.card_faces || []).map(f => f.oracle_text)].filter(Boolean).join('\n');
+    spells += c.qty;
+    if (/\bCreature\b/.test(type)) creatures += c.qty;
+    if (/counter target (?:\w+ )*spell/i.test(text)) counters += c.qty;
+    if (/\bInstant\b/.test(type) || /\bFlash\b/.test(text)) instants += c.qty;
+  }
+  return { spells, creatures, counters, instants };
+}
+function styleOf(name, deck, find) {
+  const s = statsOf(deck, find);
+  if (/\bcombo\b/i.test(name)) return { kind: 'combo', why: 'a combo deck' };
+  if (/\bcontrol\b/i.test(name)) return { kind: 'control', why: 'a control deck' };
+  if (s.spells && s.counters >= 6) return { kind: 'control', why: s.counters + ' counterspells' };
+  if (s.spells && s.creatures <= 8 && s.instants >= s.spells / 2) return { kind: 'control', why: 'mostly instants, ' + s.creatures + ' creatures' };
+  return null;
 }
 // Cover card + colours for an opponent's list, best effort.
-async function faceOf(deck) {
-  try { const find = await scryfall([...deck.main, ...(deck.commander || [])].map(c => c.name)); return { coverCard: coverOf(deck, find), colors: colorsOf(deck, find) }; }
+async function faceOf(deck, name) {
+  try { const find = await scryfall([...deck.main, ...(deck.commander || [])].map(c => c.name)); return { coverCard: coverOf(deck, find), colors: colorsOf(deck, find), style: styleOf(name || '', deck, find) }; }
   catch { return { coverCard: deck.commander?.[0]?.name || deck.main[0]?.name || '', colors: [] }; }
 }
 

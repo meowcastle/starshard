@@ -148,13 +148,61 @@ async function prepareRun(b, run, user) {
     run.skipped = field.filter(f => f.error || !f.list?.main?.length).map(f => f.name);
     field = field.filter(f => !f.error && f.list?.main?.length);
     if (!field.length) throw new Error('no opponent decklists could be read');
-    run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list)) }));
+    run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list, f.name)) }));
     const v = b.versions.find(x => x.v === run.v);
     const decks = [{ name: b.name, ...v.list }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
     const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
     run.jobId = job.id; run.status = 'queued';
+    if (run.field.source === 'goldfish') run.benchmarkId = benchmarkFor(decks.slice(1), b.format).id;
   } catch (e) { run.status = 'failed'; run.error = e.message; }
   saveBrews();
+}
+
+// ---------- the benchmark ----------
+// Forge's AI is a stronger pilot of some decks than others, so a raw win rate
+// partly measures the AI. The benchmark takes the field's #1 deck through the
+// same opponents under the same AI; the gap between it and a brew is what the
+// brew itself is worth. One benchmark serves every run against the same field
+// for a week, and it queues behind the run that asked for it.
+const BENCH = path.join(DATA, 'benchmarks.json');
+let benches = []; try { benches = JSON.parse(fs.readFileSync(BENCH, 'utf8')); } catch {}
+const saveBench = () => fs.writeFileSync(BENCH, JSON.stringify(benches.slice(-100)));
+const BENCH_DAYS = 7;
+// A queued job does not survive a restart, so a benchmark is only as alive as its job.
+const benchJob = bm => jobs.get(bm.jobId) || history.find(h => h.id === bm.jobId) || null;
+const benchAlive = bm => { const j = benchJob(bm); return !!j && !['failed', 'cancelled'].includes(j.status); };
+function benchmarkFor(field, format) {
+  const names = field.map(f => f.name);
+  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
+  const hit = benches.find(same);
+  if (hit) return hit;
+  const job = enqueue({ mode: 'gauntlet', decks: field, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark' });
+  const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id };
+  benches.push(bm); saveBench();
+  return bm;
+}
+function benchView(id) {
+  const bm = id && benches.find(x => x.id === id); if (!bm) return null;
+  const j = benchJob(bm), status = j ? j.status : 'lost';
+  const prs = j?.pairings || [];
+  return { name: bm.names[0], status, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1,
+    opponents: bm.names.slice(1).map((n, i) => { const p = prs[i]; return { name: n, wins: p ? [p.wins[0] || 0, p.wins[1] || 0] : [0, 0] }; }) };
+}
+// Runs and brews from before the benchmark existed: give finished field runs a
+// benchmark from the very decks they faced, and read each list's style once.
+async function backfill() {
+  let dirty = false;
+  for (const b of brews) {
+    for (const v of b.versions) if (!('style' in v)) { try { v.style = (await meta.describeDeck(v.list)).style; dirty = true; } catch {} }
+    for (const run of b.runs) {
+      const j = history.find(h => h.id === run.jobId); if (!j || run.field?.source !== 'goldfish') continue;
+      const decks = j.decks.slice(1);
+      for (const o of run.opponents || []) if (!('style' in o)) { const d = decks.find(x => x.name === o.name); if (d) { o.style = (await meta.faceOf(d, d.name)).style; dirty = true; } }
+      const bm = run.benchmarkId && benches.find(x => x.id === run.benchmarkId);
+      if (j.status === 'done' && !(bm && benchAlive(bm))) { run.benchmarkId = benchmarkFor(decks, b.format).id; dirty = true; }
+    }
+  }
+  if (dirty) saveBrews();
 }
 
 // A run as the UI reads it: the frozen field plus whatever the job knows now.
@@ -173,6 +221,8 @@ function runView(b, run) {
     out.played = out.opponents.reduce((s, o) => s + o.played, 0); out.total = GAMES * out.opponents.length;
   }
   out.warnings = [...new Set(prs.flatMap(p => p.warnings || []))].slice(0, 20);
+  out.benchmark = benchView(run.benchmarkId);
+  out.style = (b.versions.find(x => x.v === run.v) || {}).style || null;
   return out;
 }
 // Card-level change from one list to the next: [{ name, section, qty: +n | -n }],
@@ -272,7 +322,7 @@ const server = http.createServer(async (req, res) => {
       const now = Date.now();
       const b = { id: crypto.randomBytes(5).toString('hex'), owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').slice(0, 60), format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
         coverCard: d.coverCard, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
-        versions: [{ v: 1, created: now, list: d.list, rows: d.rows }], runs: [] };
+        versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [] };
       brews.unshift(b); saveBrews();
       return send(res, 200, brewView(b));
     }
@@ -285,7 +335,7 @@ const server = http.createServer(async (req, res) => {
       if ((d.format === 'commander') !== (b.seats === 4)) return send(res, 400, { error: b.seats === 4 ? 'This brew is a Commander deck; that list has no commander.' : "That's a Commander list. Paste it as a new deck instead." });
       const prev = latest(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
-      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, diff });
+      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff });
       if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
       saveBrews();
       return send(res, 200, brewView(b));
@@ -340,3 +390,4 @@ const server = http.createServer(async (req, res) => {
   }
 });
 server.listen(PORT, HOST, () => console.log(`sim listening on ${HOST}:${PORT} (forge ${forgeVersion()}), accounts via ${STARSHARD_API}`));
+backfill().catch(e => console.error('backfill:', e.message));

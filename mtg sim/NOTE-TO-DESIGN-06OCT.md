@@ -30,3 +30,9 @@ One thing for your side: `<img src="{{ … }}">` makes the browser request the l
 mustache before hydration (10 harmless 404s a load: `b.art`, `deckArt`, `g.art`, `s.art`,
 `hoverSrc`). Same class as the Star Shard SVG sweep; a style background or a `_pathG`-like
 injected element avoids it.
+
+## 7 Oct — the benchmark and "not counted" rows
+
+- Results → This run, second column: the label "Against the last field" is now `{{ col2Label }}`. When a run has a benchmark it reads "The #1 deck, same opponents" and the number is the field's top deck run through the same opponents under the same AI; otherwise it falls back to the previous run as before.
+- Opponent rows whose decklist reads as control or combo show an amber flag line ("Not counted · …") at 0.6 opacity and are left out of the headline. Other rows' flag line now carries "the #1 deck went W–L" for that opponent.
+- No other markup changed. A designed treatment for both (a proper benchmark column, a legend for "not counted") is welcome.
