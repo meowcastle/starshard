@@ -231,13 +231,15 @@ const benchAlive = bm => { const j = jobOf(bm.jobId); return !!j && !['failed', 
 const benchPending = new Map(); // field key -> promise, so two runs at once share one benchmark
 async function benchmarkFor(field, format) {
   const names = field.map(f => f.name), key = format + '|' + names.join('|');
-  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
+  // an unboarded benchmark is not reused once plans can be written
+  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && (x.bo3 === 'boarded' || !sideboard.available()) && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
   const hit = benches.find(same); if (hit) return hit;
   if (benchPending.has(key)) return benchPending.get(key);
   const p = (async () => {
     const bd = await boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format);
     const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
-    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, bo3: bd.note === 'no-model' ? 'unboarded' : 'boarded' };
+    const failed = bd.note !== 'no-model' && Object.values(bd.plans).every(p => p.error);
+    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
     benches.push(bm); saveBench();
     return bm;
   })().finally(() => benchPending.delete(key));
@@ -340,7 +342,7 @@ async function backfill() {
       const decks = j.decks.slice(1);
       for (const o of run.opponents || []) if (!('style' in o)) { const d = decks.find(x => x.name === o.name); if (d) { o.style = (await meta.faceOf(d, d.name)).style; dirty = true; } }
       const bm = run.benchmarkId && benches.find(x => x.id === run.benchmarkId);
-      if (j.status === 'done' && !(bm && benchAlive(bm))) { run.benchmarkId = (await benchmarkFor(decks, b.format)).id; dirty = true; }
+      if (j.status === 'done' && !(bm && benchAlive(bm) && (bm.bo3 === 'boarded' || !sideboard.available()))) { run.benchmarkId = (await benchmarkFor(decks, b.format)).id; dirty = true; }
     }
   }
   if (dirty) saveBrews();

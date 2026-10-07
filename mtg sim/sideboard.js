@@ -30,18 +30,20 @@ async function ask(a, b, format) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
-      model: MODEL, max_tokens: 2000,
+      model: MODEL, max_tokens: 8000, // the model thinks first (~1.3k tokens on a test pairing); leave room for the plan after it
       system: 'You are a strong competitive Magic: The Gathering player. You write the sideboard plan a skilled player would actually use for games 2 and 3 of a best-of-three match. Board only what improves the matchup; boarding nothing is a valid plan. Swap card for card so each main deck keeps its size, bring cards in only from that deck\'s own sideboard, and take cards out only from that deck\'s own main deck. Use exact card names from the lists.',
-      messages: [{ role: 'user', content: `Format: ${format}.\n\nDeck A, "${a.name}":\n${listText(a)}\n\nDeck B, "${b.name}":\n${listText(b)}\n\nWrite both decks' plans for this matchup.` }],
+      messages: [{ role: 'user', content: `Format: ${format}.\n\nDeck A, "${a.name}":\n${listText(a)}\n\nDeck B, "${b.name}":\n${listText(b)}\n\nWrite both decks' plans for this matchup by calling sideboard_plans.` }],
       tools: [{ name: 'sideboard_plans', description: 'Both decks\' sideboard plans for games 2 and 3.', input_schema: { type: 'object', properties: { a: SIDE_SCHEMA, b: SIDE_SCHEMA }, required: ['a', 'b'] } }],
-      tool_choice: { type: 'tool', name: 'sideboard_plans' },
+      tool_choice: { type: 'auto' }, // this model refuses a forced tool ("tool"/"any"), so the prompt asks for it
     }),
   });
   if (!r.ok) throw new Error(`Anthropic answered ${r.status}: ${(await r.text()).slice(0, 200)}`);
   const j = await r.json();
   const use = (j.content || []).find(c => c.type === 'tool_use');
-  if (!use) throw new Error('no plan in the answer');
-  return use.input;
+  if (use) return use.input;
+  const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n'), m = text.match(/\{[\s\S]*\}/);
+  try { const o = JSON.parse(m[0]); if (o.a && o.b) return o; } catch {}
+  throw new Error('no plan in the answer');
 }
 
 // Clamp a plan to what the lists allow, then even out the swap so the deck keeps its size.
