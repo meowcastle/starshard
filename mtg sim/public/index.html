@@ -303,6 +303,7 @@ Deck
             <sc-for list="{{ plans }}" as="p" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:150px minmax(0,1fr) 20px minmax(0,1fr) 84px;gap:12px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">vs {{ p.vs }}</span><input value="{{ p.out }}" onChange="{{ p.setOut }}" style="background:none;border:0;border-bottom:1px solid rgba(255,255,255,.12);padding:6px 0;color:#C9C7C0;font-size:15px;outline:none;min-width:0"><span style="color:#5C5B56;text-align:center">→</span><input value="{{ p.in }}" onChange="{{ p.setIn }}" style="background:none;border:0;border-bottom:1px solid rgba(255,255,255,.12);padding:6px 0;color:#C9C7C0;font-size:15px;outline:none;min-width:0"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ p.balColor }};text-align:right;white-space:nowrap">{{ p.balance }}</span></div></sc-for>
             <div style="font-size:13px;color:#8F8D86;padding-top:12px">Drafted by the coach from the last run. Edit in place; counts turn amber when out ≠ in.</div></div></sc-if>
           <div style="font-size:13px;color:#8F8D86;line-height:1.6"><a href="#" onClick="{{ goNewVersion }}" style="color:#C5EC7A;font-weight:600">Paste a new list →</a><br>It becomes the next version. Older versions stay runnable against any week's field.</div>
+          <div style="font-size:13px;line-height:1.6"><a href="#" onClick="{{ goDelete }}" style="color:{{ deleteColor }}">{{ deleteLabel }}</a><sc-if value="{{ delAsking }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ cancelDelete }}" style="color:#8F8D86">keep it</a></sc-if></div>
         </div>
       </div>
     </div>
@@ -320,7 +321,7 @@ class Component extends DCLogic {
   // yet, so its brief is computed straight from the games rather than written by a model.
   state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
     fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
-    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '', bo3: false,
+    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '', bo3: false, delAsk: null,
     deckName: '', cover: 0, upload: null, uploadErr: '',
     codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
   async componentDidMount() {
@@ -426,6 +427,11 @@ class Component extends DCLogic {
     catch (e) { this.setState({ runErr: e.message }); }
     this.setState({ busy: false });
   }
+  async remove(brewId) {
+    if (this.state.delAsk !== brewId) return this.setState({ delAsk: brewId });
+    try { await this.api('/api/brews/' + brewId, { method: 'DELETE' }); } catch (e) { return this.setState({ delAsk: null }); }
+    this.setState(s => { const brews = s.brews.filter(x => x.id !== brewId); return { brews, delAsk: null, deckId: null, runId: null, runOpen: false, tab: 'coach', view: 'run', codex: null, stage: brews.length ? 'app' : 'firstrun', fsStep: 1, versionOf: null }; });
+  }
   async forget(brewId, k) { try { const b = await this.api('/api/brews/' + brewId + '/notes/' + k, { method: 'DELETE' }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); } catch (e) {} }
   async signout() { try { await this.api('/api/logout'); } catch (e) {} this.setState({ stage: 'signin', me: null, brews: null, deckId: null }); }
   deck() { const B = this.state.brews || []; return B.find(b => b.id === this.state.deckId) || B[0] || null; }
@@ -467,6 +473,8 @@ class Component extends DCLogic {
       signinNote: S.signinErr || 'Forge plays every game; results read as "when the AI plays both lists."',
       signinNoteColor: S.signinErr ? LOSS : '#5C5B56',
       goFirstrun: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: null, pasteText: '', check: null, noteText: '' })),
+      goDelete: pe(() => d && this.remove(d.id)), deleteLabel: d && S.delAsk === d.id ? 'Click again to delete ' + d.name + ' and all its runs' : 'Delete this deck',
+      deleteColor: d && S.delAsk === d.id ? LOSS : '#8F8D86', cancelDelete: pe(() => this.setState({ delAsk: null })), delAsking: !!(d && S.delAsk === d.id),
       goNewVersion: pe(() => d && this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: d.id, pasteText: '', check: null, noteText: '' })),
       fsHome: pe(() => (S.brews || []).length && this.setState({ stage: 'app', fsStep: 1, fsErr: '', versionOf: null, newBrewId: null, deckId: S.newBrewId || S.versionOf || S.deckId })),
       fsTitle: vOf ? 'Paste v' + (vOf.versions.length + 1) + ' of ' + vOf.name : 'Paste your deck', goApp: pe(() => this.setState({ stage: 'app' })), goSignin: pe(() => this.signout()), doSignout: pe(() => this.signout()),

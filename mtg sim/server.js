@@ -622,6 +622,14 @@ const server = http.createServer(async (req, res) => {
       prepareRun(b, nr, user);
       return send(res, 200, brewView(b));
     }
+    // delete a brew: stop its runs, drop its cover, forget it
+    if ((m = p.match(/^\/api\/brews\/(\w+)$/)) && req.method === 'DELETE') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      for (const j of jobs.values()) if (j.brew === b.id && !['done', 'failed', 'cancelled'].includes(j.status)) { j.status = 'cancelled'; const qi = queue.indexOf(j); if (qi >= 0) queue.splice(qi, 1); j.child?.kill('SIGKILL'); }
+      try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {}
+      brews = brews.filter(x => x !== b); saveBrews();
+      return send(res, 200, { ok: true });
+    }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/notes\/(\w+)$/)) && req.method === 'DELETE') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       b.notes = b.notes.filter(n => n.k !== m[2]); saveBrews();
