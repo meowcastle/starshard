@@ -194,6 +194,9 @@ async function prepareRun(b, run, user) {
       // best of three: game 1 as listed, games 2 and 3 boarded
       const bd = await boardAll(decks, decks.slice(1).map((_, i) => [0, i + 1]), b.format);
       post = bd.post; run.bo3 = bd.note === 'no-model' ? 'unboarded' : 'boarded';
+      // a key that expired or ran out of credit fails every call: say so instead of quietly playing unboarded
+      const errs = Object.values(bd.plans).filter(p => p.error);
+      if (errs.length) { run.planErrors = errs.length; run.planError = errs[0].error.slice(0, 200); if (errs.length === Object.keys(bd.plans).length) run.bo3 = 'plan-failed'; }
       run.opponents.forEach((o, i) => { const p = bd.plans['0:' + (i + 1)]; o.plan = p ? (p.error ? { error: p.error } : { me: p.a, opp: p.b }) : null; });
     }
     const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
@@ -348,7 +351,7 @@ function runView(b, run) {
   const j = run.jobId && jobOf(run.jobId);
   const status = run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
   const prs = j?.pairings || [];
-  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null };
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
   if (b.seats === 4) {
     const p = prs[0];
     out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));
