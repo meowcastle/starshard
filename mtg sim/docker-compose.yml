@@ -1,6 +1,9 @@
 services:
   sim:
-    build: .
+    build:
+      context: .
+      args:
+        FORGE_VERSION: ${FORGE_VERSION:-2.0.15}   # set FORGE_VERSION=x.y.z in .env and rebuild to update Forge
     container_name: starshard-sim
     restart: unless-stopped
     # Host networking so the sim can reach the Star Shard API, which only

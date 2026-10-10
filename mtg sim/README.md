@@ -75,3 +75,7 @@ docker compose build --build-arg FORGE_URL=https://github.com/Card-Forge/forge/r
   so treat results as "how the AI pilots these lists", not ground truth.
 - Scraping MTGGoldfish / MTGTop8 depends on their HTML; if a list stops
   loading, `meta.js` is the place to fix it.
+
+## Updating Forge
+
+The page tells admins when a newer stable Forge is out (checked daily against GitHub). To update, set `FORGE_VERSION=x.y.z` in the sim's `.env` and rebuild; `docker-compose.yml` passes it to the Dockerfile as a build arg (default 2.0.15).

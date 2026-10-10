@@ -26,6 +26,22 @@ const list = v => (v || '').split(',').map(s => s.trim().toLowerCase()).filter(B
 const ALLOWED = list(process.env.SIM_USERS);   // Star Shard usernames allowed in; "*" = any account
 const ADMINS = list(process.env.SIM_ADMINS);
 const MAX_GAMES = +process.env.MAX_GAMES || 200;
+
+// Forge's newest stable release, checked daily (daily snapshots are prereleases, so
+// /releases/latest skips them). Admins see a notice when it is newer than ours.
+let forgeLatest = null;
+const verNum = v => (String(v).match(/\d+(\.\d+)*/) || ['0'])[0].split('.').map(Number);
+const newer = (a, b) => { const x = verNum(a), y = verNum(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; };
+async function checkForge() {
+  try {
+    const r = await fetch('https://api.github.com/repos/Card-Forge/forge/releases/latest', { headers: { 'User-Agent': 'forge-sim', Accept: 'application/vnd.github+json' } });
+    if (!r.ok) throw new Error('GitHub answered ' + r.status);
+    const j = await r.json(), version = String(j.tag_name || '').replace(/^forge-/, '');
+    if (version) forgeLatest = { version, published: j.published_at, url: j.html_url, checked: Date.now() };
+  } catch (e) { console.error('forge release check:', e.message); }
+}
+setTimeout(checkForge, 30e3); setInterval(checkForge, 24 * 3600e3);
+const forgeUpdate = () => forgeLatest && newer(forgeLatest.version, forgeVersion()) ? forgeLatest : null;
 fs.mkdirSync(path.join(DATA, 'jobs'), { recursive: true });
 if (!ALLOWED.length) console.warn('SIM_USERS is empty, so nobody can sign in. Add Star Shard usernames to .env.');
 
@@ -548,7 +564,7 @@ const server = http.createServer(async (req, res) => {
     const user = await currentUser(req);
     if (!user) return send(res, 401, { error: 'login required' });
 
-    if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
+    if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
 
     // meta
     if (p === '/api/meta') {
@@ -656,6 +672,21 @@ const server = http.createServer(async (req, res) => {
       o.test = { v: nr.v, run: nr.id };
       b.runs.unshift(nr); saveBrews();
       prepareRun(b, nr, user);
+      return send(res, 200, brewView(b));
+    }
+    // rename a brew and/or change its cover: a card from its newest list, or a new upload
+    if ((m = p.match(/^\/api\/brews\/(\w+)$/)) && req.method === 'PATCH') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const { name, cover } = await readBody(req);
+      if (name != null) { const n = String(name).trim().slice(0, 60); if (!n) return send(res, 400, { error: 'give it a name' }); b.name = n; }
+      if (cover?.upload) {
+        try { b.coverUrl = saveCover(b.id, cover.upload) + '?v=' + Date.now(); b.coverType = coverTypes[b.id]; } catch (e) { return send(res, 400, { error: e.message }); }
+      } else if (cover?.card) {
+        if (!(latest(b).rows || []).some(r => r.name === cover.card && !r.land)) return send(res, 400, { error: 'that card isn\'t in the list' });
+        b.coverCard = cover.card;
+        if (b.coverUrl) { b.coverUrl = null; delete b.coverType; try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
+      }
+      saveBrews();
       return send(res, 200, brewView(b));
     }
     // delete a brew: stop its runs, drop its cover, forget it
