@@ -91,7 +91,7 @@ A pairing (one opponent, game 1 or boarded) is the unit of work. The server play
 
 `worker.js` is a remote player. It checks pairings out over `/api/worker/claim`, plays them with its own Forge, and reports as games finish (`/api/worker/report`). A pairing whose worker goes quiet for two minutes goes back in line. Workers are off until `SIM_WORKER_TOKEN` is set in the server's `.env`, and a worker on a different Forge version is turned away, so every game in a run is played by the same AI.
 
-On Justin's Mac it lives in `~/forge-worker` (its own copy of `worker.js`/`forge.js`/`cardstats.js`, Forge in `forge/`, the token in `token`, mode 600) and starts with `~/forge-worker/run.sh`. When the server's Forge is updated (`FORGE_VERSION`), install the same version into `~/forge-worker/forge`.
+On Justin's Mac it lives in `~/forge-worker` (its own copy of `worker.js`/`forge.js`/`cardstats.js`, Forge in `forge/`, the token in `token`, mode 600) and starts with `~/forge-worker/run.sh`. When the server's Forge is updated (`FORGE_VERSION`), install the same version into `~/forge-worker/forge`. It starts at login as the launch agent `~/Library/LaunchAgents/net.starshard.forge-worker.plist` (restarted if it dies, output in `~/forge-worker/worker.log`; stop with `launchctl bootout gui/$(id -u)/net.starshard.forge-worker`), and on a laptop it only takes games while plugged in (`WORKER_AC_ONLY=0` to change that).
 
 Early stopping (ending a pairing once its result is clear) was measured against 148 real pairings and not built: only 13% were lopsided, safe rules saved 2-5% of games, and the rule that saved 15% raised the average error from 7.5 to 8.6 points.
 

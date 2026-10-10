@@ -23,6 +23,10 @@ const SLOTS = Math.max(1, +process.env.WORKER_SLOTS || Math.max(1, Math.floor(os
 const NAME = process.env.WORKER_NAME || os.hostname().split('.')[0];
 const DATA = process.env.DATA_DIR;
 const IDLE_MS = 15e3, REPORT_MS = 10e3;
+// On a laptop, play only when plugged in (WORKER_AC_ONLY=0 to play on battery too).
+const AC_ONLY = process.platform === 'darwin' && process.env.WORKER_AC_ONLY !== '0';
+const onAC = () => { if (!AC_ONLY) return true; try { return /AC Power/.test(require('child_process').execFileSync('pmset', ['-g', 'batt'], { encoding: 'utf8' })); } catch { return true; } };
+let saidBattery = false;
 if (!TOKEN) { console.error('Set SIM_WORKER_TOKEN (the same value as in the sim server\'s .env).'); process.exit(1); }
 fs.mkdirSync(DATA, { recursive: true });
 
@@ -37,6 +41,8 @@ const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 
 async function slot(n) {
   for (;;) {
+    if (!onAC()) { if (!saidBattery) { log('on battery: waiting for power before taking games'); saidBattery = true; } await sleep(60e3); continue; }
+    if (saidBattery) { log('plugged in: taking games again'); saidBattery = false; }
     let c;
     try { c = await call('/api/worker/claim'); } catch (e) { log(`slot ${n}: can't reach ${URL_} (${e.message}); retrying`); await sleep(IDLE_MS * 2); continue; }
     if (c.status === 204) { await sleep(IDLE_MS); continue; }
