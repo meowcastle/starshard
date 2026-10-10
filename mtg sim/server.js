@@ -86,15 +86,18 @@ async function currentUser(req) {
 const HIST = path.join(DATA, 'history.json');
 let history = []; try { history = JSON.parse(fs.readFileSync(HIST, 'utf8')); } catch {}
 const saveHist = () => fs.writeFileSync(HIST, JSON.stringify(history.slice(0, 200)));
-const jobs = new Map(); const queue = []; let running = null;
+const jobs = new Map(); const queue = []; // queue: every job not yet finished, in the order it was queued
 
 function publicJob(j) {
-  const { child, log, plan, post, onDone, ...rest } = j;
+  const { children, log, plan, post, onDone, ...rest } = j;
   return { ...rest, logTail: (log || []).slice(-40) };
 }
 function enqueue(spec) {
   const id = crypto.randomBytes(5).toString('hex');
   const job = { id, status: 'queued', created: Date.now(), ...spec, log: [], results: null };
+  job.plan = pairingsOf(job);
+  job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
+  job.pending = job.plan.map((_, i) => i); job.inflight = 0; job.children = new Set();
   jobs.set(id, job); queue.push(job); pump();
   return job;
 }
@@ -108,55 +111,102 @@ function pairingsOf(job) {
     : [{ decks: job.decks, opp: 0 }];
   return base.flatMap(p => { const post = job.post && job.post[p.a + ':' + p.b]; return post ? [{ ...p, phase: 'pre' }, { ...p, decks: post, phase: 'post' }] : [{ ...p, phase: 'pre' }]; });
 }
-// Who plays next. Low-priority jobs (calibration) give way between pairings to
-// anything else queued. Among the rest, people take turns: the next job is the one
-// whose owner was served longest ago, so one person's three runs can't hold everyone
-// else up for two hours; their own jobs still play in the order they started.
+
+// ---------- players ----------
+// A pairing (one opponent, game 1 or boarded) is the unit of work, and several play
+// at once: SIM_PARALLEL Forge processes here, plus any remote workers (worker.js on
+// another machine) that check pairings out over /api/worker. Every free player takes
+// the next pairing by the same rule: people take turns (the job whose owner was
+// served longest ago goes next, a person's own jobs in the order they started), and
+// calibration only plays when nobody is waiting and never takes the last local
+// player, so a person's run always starts at once.
+const SLOTS = Math.max(1, +process.env.SIM_PARALLEL || 3);
+let localBusy = 0;
 const lastServed = new Map();
-function nextJob() {
-  const pool = queue.filter(j => !j.low), from = pool.length ? pool : queue;
-  const pick = from.reduce((best, j) => !best || (lastServed.get(j.owner) || 0) < (lastServed.get(best.owner) || 0) ? j : best, null);
-  return queue.splice(queue.indexOf(pick), 1)[0];
+function claim(where) {
+  const open = queue.filter(j => j.status !== 'cancelled' && j.pending.length);
+  let from = open.filter(j => !j.low);
+  if (!from.length) {
+    if (where === 'local' && SLOTS > 1 && localBusy >= SLOTS - 1) return null;
+    from = open;
+  }
+  if (!from.length) return null;
+  const job = from.reduce((best, j) => !best || (lastServed.get(j.owner) || 0) < (lastServed.get(best.owner) || 0) ? j : best, null);
+  const i = job.pending.shift(), pr = job.pairings[i];
+  job.inflight++; lastServed.set(job.owner, Date.now());
+  if (job.status === 'queued') { job.status = 'running'; job.started = job.started || Date.now(); }
+  Object.assign(pr, { status: 'running', where, wins: pr.names.map(() => 0), draws: 0, games: [], warnings: [], cards: null });
+  return { job, i, pr };
 }
-// between pairings: give way to calibration's betters, or to someone else's turn
-const shouldYield = job => job.low ? queue.some(j => !j.low) : queue.some(j => !j.low && j.owner !== job.owner);
-async function pump() {
-  if (running || !queue.length) return;
-  const job = running = nextJob();
-  job.status = 'running'; job.started = job.started || Date.now(); job.turn = 0;
-  if (!job.pairings) {
-    job.plan = pairingsOf(job);
-    job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
-    job.next = 0;
+// a pairing a player gave up on (a remote worker that went quiet) goes back to the front
+function unclaim(job, i) {
+  const pr = job.pairings[i];
+  Object.assign(pr, { status: 'queued', where: null, wins: pr.names.map(() => 0), draws: 0, games: [], warnings: [], cards: null });
+  job.inflight--; if (job.status !== 'cancelled') job.pending.unshift(i);
+  settle(job); pump();
+}
+function pump() {
+  while (localBusy < SLOTS) {
+    const t = claim('local'); if (!t) break;
+    localBusy++;
+    playLocal(t).catch(e => { t.pr.status = 'failed'; t.pr.error = e.message; })
+      .finally(() => { localBusy--; t.job.inflight--; settle(t.job); pump(); });
   }
-  for (; job.next < job.plan.length && job.status !== 'cancelled'; job.next++) {
-    // a job just given its turn always plays one pairing first, or two people's jobs would hand the turn back and forth forever
-    if (job.turn > 0 && shouldYield(job)) { job.status = 'queued'; queue.push(job); running = null; return pump(); }
-    lastServed.set(job.owner, Date.now()); job.turn++;
-    const i = job.next, pr = job.pairings[i]; pr.status = 'running';
-    const run = runSim({
-      decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock,
-      workDir: path.join(DATA, 'jobs', job.id, String(i)),
-      onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
-    });
-    job.child = run.child;
-    // live view: share the parser's arrays
-    pr.wins = run.results.wins; pr.games = run.results.games; pr.names = run.results.names; pr.warnings = run.results.warnings; pr.cards = run.results.cards;
-    const { code, results } = await run.done;
-    pr.draws = results.draws; pr.status = code === 0 || results.games.length ? 'done' : 'failed'; pr.exit = code;
-  }
-  delete job.child;
+}
+async function playLocal({ job, i, pr }) {
+  const run = runSim({
+    decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock,
+    workDir: path.join(DATA, 'jobs', job.id, String(i)),
+    onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
+  });
+  job.children.add(run.child);
+  // live view: share the parser's arrays
+  pr.wins = run.results.wins; pr.games = run.results.games; pr.names = run.results.names; pr.warnings = run.results.warnings; pr.cards = run.results.cards;
+  const { code, results } = await run.done;
+  job.children.delete(run.child);
+  pr.draws = results.draws; pr.status = code === 0 || results.games.length ? 'done' : 'failed'; pr.exit = code;
+}
+function cancelJob(j) {
+  if (!j || ['done', 'failed', 'cancelled'].includes(j.status)) return;
+  j.status = 'cancelled'; j.pending = [];
+  for (const c of j.children) c.kill('SIGKILL');
+  settle(j);
+}
+// a job is finished once nothing of it is waiting or playing
+function settle(job) {
+  if (job.inflight > 0 || (job.pending.length && job.status !== 'cancelled') || job.finished) return;
+  const qi = queue.indexOf(job); if (qi >= 0) queue.splice(qi, 1);
   if (job.status !== 'cancelled') job.status = job.pairings.every(p => p.status === 'failed') ? 'failed' : 'done';
   job.finished = Date.now();
   history.unshift({ id: job.id, owner: job.owner, mode: job.mode, format: job.format, games: job.games, created: job.created, finished: job.finished, status: job.status,
     pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, ...(job.brew && cards ? { cards } : {}) })),
     decks: job.decks, meta: job.meta || null });
   saveHist();
-  running = null;
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
   if (job.onDone) try { job.onDone(job); } catch (e) { console.error('onDone:', e.message); }
-  pump();
 }
+
+// Remote workers. A worker checks out one pairing at a time (a lease), plays it with
+// its own Forge, and reports as it goes; a lease with no report for two minutes goes
+// back in line. Off unless SIM_WORKER_TOKEN is set, and a worker running a different
+// Forge version than ours is turned away, so every game in a run plays the same AI.
+// where a job stands in line: -1 once it has started playing
+const waitPos = j => j && jobs.has(j.id) && j.status === 'queued' ? queue.filter(x => x.status === 'queued').indexOf(j) : -1;
+const WORKER_TOKEN = process.env.SIM_WORKER_TOKEN || '';
+const LEASE_MS = +process.env.SIM_LEASE_MS || 120e3;
+const leases = new Map(); // id -> { job, i, pr, worker, until }
+const workersSeen = new Map(); // name -> { at, forge, playing }
+const workerOk = req => {
+  if (!WORKER_TOKEN) return false;
+  const got = Buffer.from(String(req.headers.authorization || '').replace(/^Bearer /, '')), want = Buffer.from(WORKER_TOKEN);
+  return got.length === want.length && crypto.timingSafeEqual(got, want);
+};
+setInterval(() => { for (const [id, l] of leases) if (Date.now() > l.until) { leases.delete(id); console.warn(`worker ${l.worker} went quiet; pairing ${l.job.id}/${l.i} back in line`); unclaim(l.job, l.i); } }, Math.min(15e3, LEASE_MS / 2));
+const clean = r => ({
+  wins: Array.isArray(r?.wins) ? r.wins.slice(0, 4).map(x => +x || 0) : null, draws: +r?.draws || 0,
+  games: Array.isArray(r?.games) ? r.games.slice(0, MAX_GAMES).map(g => ({ n: +g.n || 0, winner: Number.isInteger(g.winner) ? g.winner : -1, ms: +g.ms || 0, ...(g.turn ? { turn: +g.turn } : {}) })) : [],
+  warnings: Array.isArray(r?.warnings) ? r.warnings.slice(0, 50).map(String) : [], cards: Array.isArray(r?.cards) ? r.cards.slice(0, 4) : null,
+});
 
 // ---------- brews ----------
 // A brew is one deck someone is working on. Each pasted list is a version; every
@@ -303,7 +353,7 @@ async function benchmarkFor(field, format) {
 function benchView(id) {
   const bm = id && benches.find(x => x.id === id); if (!bm) return null;
   const j = jobOf(bm.jobId), status = j ? j.status : 'lost', prs = j?.pairings || [];
-  return { name: bm.names[0], status, bo3: bm.bo3 || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1,
+  return { name: bm.names[0], status, bo3: bm.bo3 || null, queuePos: waitPos(j),
     opponents: bm.names.slice(1).map((n, i) => { const ph = phasesOf(prs, i); return { name: n, ...(tally(ph.pre) || { wins: [0, 0], played: 0 }), post: tally(ph.post) }; }) };
 }
 
@@ -443,10 +493,9 @@ async function backfill() {
 function runView(b, run) {
   const j = run.jobId && jobOf(run.jobId);
   const status = run.cancelled && !(j && j.status === 'done') ? 'cancelled' : run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
-  // a job taking turns with someone else's waits in the queue between pairings; to its owner it is still running
-  const status2 = status === 'queued' && j && j.next > 0 ? 'running' : status;
+  const status2 = status;
   const prs = j?.pairings || [];
-  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: waitPos(j), games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
   if (b.seats === 4) {
     const p = prs[0];
     out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));
@@ -595,6 +644,35 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/logout') { seen.delete(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
     if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion() });
     if (!p.startsWith('/api/')) return serveStatic(req, res, p);
+    // remote workers authenticate with SIM_WORKER_TOKEN, not a person's session
+    if (p.startsWith('/api/worker/')) {
+      if (!workerOk(req)) return send(res, 401, { error: WORKER_TOKEN ? 'bad worker token' : 'workers are off: set SIM_WORKER_TOKEN in .env' });
+      const body = req.method === 'POST' ? await readBody(req) : {};
+      const name = String(body.worker || 'worker').slice(0, 40);
+      if (p === '/api/worker/claim' && req.method === 'POST') {
+        workersSeen.set(name, { at: Date.now(), forge: body.forge || '?', playing: [...leases.values()].filter(l => l.worker === name).length });
+        if (body.forge !== forgeVersion()) return send(res, 409, { error: `this server runs Forge ${forgeVersion()} and the worker runs ${body.forge}; install the same version on the worker` });
+        const t = claim('remote:' + name); if (!t) return send(res, 204, '');
+        const id = crypto.randomBytes(6).toString('hex');
+        leases.set(id, { ...t, worker: name, until: Date.now() + LEASE_MS });
+        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock });
+      }
+      if (p === '/api/worker/report' && req.method === 'POST') {
+        const l = leases.get(String(body.lease || ''));
+        if (!l) return send(res, 410, { cancel: true, error: 'that lease is gone' });
+        const { job, pr } = l;
+        if (job.status === 'cancelled') { leases.delete(body.lease); pr.status = 'cancelled'; job.inflight--; settle(job); return send(res, 200, { cancel: true }); }
+        const r = clean(body.results);
+        if (r.wins) pr.wins = r.wins; pr.games = r.games; pr.draws = r.draws; pr.warnings = r.warnings; if (r.cards) pr.cards = r.cards;
+        l.until = Date.now() + LEASE_MS;
+        if (body.done) {
+          leases.delete(body.lease); pr.status = body.code === 0 || r.games.length ? 'done' : 'failed'; pr.exit = body.code;
+          job.inflight--; settle(job); pump();
+        }
+        return send(res, 200, { ok: true });
+      }
+      return send(res, 404, { error: 'not found' });
+    }
     const user = await currentUser(req);
     if (!user) return send(res, 401, { error: 'login required' });
 
@@ -637,7 +715,7 @@ const server = http.createServer(async (req, res) => {
     if ((m = p.match(/^\/api\/codex\/([\w%:-]+)\/notes$/)) && req.method === 'POST') { const { t } = await readBody(req); const n = codex.addNote(decodeURIComponent(m[1]), user.name, t); return n ? send(res, 200, { notes: n }) : send(res, 400, { error: 'empty note' }); }
     if (p === '/api/brews' && req.method === 'GET') {
       const mine = brews.filter(b => b.owner === user.name); mine.forEach(coachWriteups);
-      return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length + (running ? 1 : 0), bo3: sideboard.available(), limits: limitsFor(user) });
+      return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length, bo3: sideboard.available(), limits: limitsFor(user) });
     }
     if (p === '/api/brews' && req.method === 'POST') {
       const { list, name, note, cover } = await readBody(req);
@@ -739,7 +817,7 @@ const server = http.createServer(async (req, res) => {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const run = b.runs.find(r => r.id === m[2]); if (!run) return send(res, 404, { error: 'no such run' });
       const j = run.jobId && jobs.get(run.jobId);
-      if (j && !['done', 'failed', 'cancelled'].includes(j.status)) { j.status = 'cancelled'; const qi = queue.indexOf(j); if (qi >= 0) queue.splice(qi, 1); j.child?.kill('SIGKILL'); }
+      if (j) cancelJob(j);
       if (run.status === 'preparing') run.status = 'cancelled';
       run.cancelled = true; saveBrews();
       return send(res, 200, brewView(b));
@@ -747,7 +825,7 @@ const server = http.createServer(async (req, res) => {
     // delete a brew: stop its runs, drop its cover, forget it
     if ((m = p.match(/^\/api\/brews\/(\w+)$/)) && req.method === 'DELETE') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      for (const j of jobs.values()) if (j.brew === b.id && !['done', 'failed', 'cancelled'].includes(j.status)) { j.status = 'cancelled'; const qi = queue.indexOf(j); if (qi >= 0) queue.splice(qi, 1); j.child?.kill('SIGKILL'); }
+      for (const j of jobs.values()) if (j.brew === b.id) cancelJob(j);
       try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {}
       brews = brews.filter(x => x !== b); saveBrews();
       return send(res, 200, { ok: true });
@@ -775,15 +853,15 @@ const server = http.createServer(async (req, res) => {
       const j = jobs.get(m[1]);
       if (req.method === 'DELETE') {
         if (j && j.owner !== user.name && !user.isAdmin) return send(res, 403, { error: 'only the owner can cancel this run' });
-        if (j) { j.status = 'cancelled'; const qi = queue.indexOf(j); if (qi >= 0) queue.splice(qi, 1); j.child?.kill('SIGKILL'); }
+        if (j) cancelJob(j);
         return send(res, 200, { ok: true });
       }
-      if (j) return send(res, 200, { ...publicJob(j), queuePos: queue.indexOf(j) });
+      if (j) return send(res, 200, { ...publicJob(j), queuePos: waitPos(j) });
       const h = history.find(x => x.id === m[1]);
       return h ? send(res, 200, { ...h, fromHistory: true }) : send(res, 404, { error: 'no such job' });
     }
     if ((m = p.match(/^\/api\/jobs\/(\w+)\/log$/))) { const j = jobs.get(m[1]); return send(res, 200, (j?.log || []).join('\n')); }
-    if (p === '/api/jobs') return send(res, 200, { running: running && publicJob(running), queued: queue.map(publicJob), history: history.slice(0, 50).map(({ decks, ...h }) => h) });
+    if (p === '/api/jobs') return send(res, 200, { running: queue.filter(j => j.status === 'running').map(publicJob), queued: queue.filter(j => j.status === 'queued').map(publicJob), players: { local: SLOTS, busy: localBusy, workers: [...workersSeen].map(([name, w]) => ({ name, ...w })) }, history: history.slice(0, 50).map(({ decks, ...h }) => h) });
     return send(res, 404, { error: 'not found' });
   } catch (e) {
     console.error(p, e.message);

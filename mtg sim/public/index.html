@@ -541,7 +541,7 @@ class Component extends DCLogic {
     const goTab = (t) => pe(() => this.setState({ tab: t, hover: null, codex: null }));
     const view = S.view; const vS = (x) => ({ color: view === x ? '#0C0C0B' : '#8F8D86', bg: view === x ? ACC : 'transparent' });
     const setsOf = (b) => (b ? b.oppSets : []).map(o => ({ ...o, ring: S.oppSet === o.id ? ACC : 'rgba(255,255,255,.25)', fill: S.oppSet === o.id ? ACC : 'transparent', pick: pe(() => o.available && this.setState({ oppSet: o.id, runErr: '' })) }));
-    const ahead = (S.queueLength ? 'Queued behind ' + plural(S.queueLength, 'run') + '.' : 'Queued behind nothing.') + (S.limits ? ' ' + S.limits.runs.left + ' of ' + S.limits.runs.cap + ' runs left today.' : '');
+    const ahead = (S.queueLength ? 'Takes turns with ' + plural(S.queueLength, 'other run') + '.' : 'Nothing else is running.') + (S.limits ? ' ' + S.limits.runs.left + ' of ' + S.limits.runs.cap + ' runs left today.' : '');
     const chk = S.check, unknown = chk ? chk.rows.filter(r => r.status === 'unknown') : [];
     const count = (rows, sec) => rows.filter(r => r.section === sec).reduce((a, r) => a + r.qty, 0);
     const sizeS = chk ? (chk.format === 'commander' ? count(chk.rows, 'main') + ' + ' + count(chk.rows, 'commander') : count(chk.rows, 'main') + (count(chk.rows, 'side') ? ' + ' + count(chk.rows, 'side') : '')) : '';

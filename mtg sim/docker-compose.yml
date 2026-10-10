@@ -15,9 +15,10 @@ services:
       - HOST=127.0.0.1
       - PORT=8088
       - STARSHARD_API=http://127.0.0.1:4001
-      - FORGE_XMX=3g
+      - FORGE_XMX=1536m         # per Forge process; a game uses ~700 MB
+      - SIM_PARALLEL=3          # Forge processes at once (the NAS has 8 threads; a game mostly uses one)
       - MAX_GAMES=200
     volumes:
       - ./data:/data
     cpu_shares: 512             # half the default priority, so staging.starshard.net stays responsive (this NAS kernel cannot do hard cpu limits)
-    mem_limit: 4g
+    mem_limit: 7g               # three Forge processes at 1.5 GB plus Node

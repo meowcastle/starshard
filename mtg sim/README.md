@@ -84,3 +84,14 @@ The page tells admins when a newer stable Forge is out (checked daily against Gi
 ## Limits
 
 Per person over the last 24 hours, admins exempt: `SIM_RUNS_PER_DAY` (default 4, "Test it" counts), `SIM_ASKS_PER_DAY` (default 25), and `SIM_DAILY_BUDGET` (default $10; once the whole sim has spent that on the model in a day, members can't start runs or ask). Prices default to $4 / $20 per million tokens in/out; override with `PRICE_IN` / `PRICE_OUT` / `PRICE_CACHE_WRITE` / `PRICE_CACHE_READ`.
+
+## Players: parallel games and the Mac worker
+
+A pairing (one opponent, game 1 or boarded) is the unit of work. The server plays `SIM_PARALLEL` (default 3) at once, and remote workers can play more. Every free player takes the next pairing by the same rule: people take turns, and calibration only plays when nobody is waiting (and never takes the last local player). Measured on an M1 Max, six pairings took 121 s three at a time against 207 s one at a time.
+
+`worker.js` is a remote player. It checks pairings out over `/api/worker/claim`, plays them with its own Forge, and reports as games finish (`/api/worker/report`). A pairing whose worker goes quiet for two minutes goes back in line. Workers are off until `SIM_WORKER_TOKEN` is set in the server's `.env`, and a worker on a different Forge version is turned away, so every game in a run is played by the same AI.
+
+On Justin's Mac it lives in `~/forge-worker` (its own copy of `worker.js`/`forge.js`/`cardstats.js`, Forge in `forge/`, the token in `token`, mode 600) and starts with `~/forge-worker/run.sh`. When the server's Forge is updated (`FORGE_VERSION`), install the same version into `~/forge-worker/forge`.
+
+Early stopping (ending a pairing once its result is clear) was measured against 148 real pairings and not built: only 13% were lopsided, safe rules saved 2-5% of games, and the rule that saved 15% raised the average error from 7.5 to 8.6 points.
+
