@@ -108,19 +108,31 @@ function pairingsOf(job) {
     : [{ decks: job.decks, opp: 0 }];
   return base.flatMap(p => { const post = job.post && job.post[p.a + ':' + p.b]; return post ? [{ ...p, phase: 'pre' }, { ...p, decks: post, phase: 'post' }] : [{ ...p, phase: 'pre' }]; });
 }
-// Low-priority jobs (calibration) give way between pairings to anything else queued.
-const nextJob = () => { const i = queue.findIndex(j => !j.low); return queue.splice(i < 0 ? 0 : i, 1)[0]; };
+// Who plays next. Low-priority jobs (calibration) give way between pairings to
+// anything else queued. Among the rest, people take turns: the next job is the one
+// whose owner was served longest ago, so one person's three runs can't hold everyone
+// else up for two hours; their own jobs still play in the order they started.
+const lastServed = new Map();
+function nextJob() {
+  const pool = queue.filter(j => !j.low), from = pool.length ? pool : queue;
+  const pick = from.reduce((best, j) => !best || (lastServed.get(j.owner) || 0) < (lastServed.get(best.owner) || 0) ? j : best, null);
+  return queue.splice(queue.indexOf(pick), 1)[0];
+}
+// between pairings: give way to calibration's betters, or to someone else's turn
+const shouldYield = job => job.low ? queue.some(j => !j.low) : queue.some(j => !j.low && j.owner !== job.owner);
 async function pump() {
   if (running || !queue.length) return;
   const job = running = nextJob();
-  job.status = 'running'; job.started = job.started || Date.now();
+  job.status = 'running'; job.started = job.started || Date.now(); job.turn = 0;
   if (!job.pairings) {
     job.plan = pairingsOf(job);
     job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
     job.next = 0;
   }
   for (; job.next < job.plan.length && job.status !== 'cancelled'; job.next++) {
-    if (job.low && queue.some(j => !j.low)) { job.status = 'queued'; queue.push(job); running = null; return pump(); }
+    // a job just given its turn always plays one pairing first, or two people's jobs would hand the turn back and forth forever
+    if (job.turn > 0 && shouldYield(job)) { job.status = 'queued'; queue.push(job); running = null; return pump(); }
+    lastServed.set(job.owner, Date.now()); job.turn++;
     const i = job.next, pr = job.pairings[i]; pr.status = 'running';
     const run = runSim({
       decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock,
@@ -431,8 +443,10 @@ async function backfill() {
 function runView(b, run) {
   const j = run.jobId && jobOf(run.jobId);
   const status = run.cancelled && !(j && j.status === 'done') ? 'cancelled' : run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
+  // a job taking turns with someone else's waits in the queue between pairings; to its owner it is still running
+  const status2 = status === 'queued' && j && j.next > 0 ? 'running' : status;
   const prs = j?.pairings || [];
-  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
   if (b.seats === 4) {
     const p = prs[0];
     out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));

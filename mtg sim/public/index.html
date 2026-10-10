@@ -365,8 +365,35 @@ class Component extends DCLogic {
     // poll while games are playing or the coach is writing
     const busy = (b) => b.runs.some(r => this.active(r)) || b.thinking || (b.coachOn && b.runs[0] && b.runs[0].status === 'done' && !b.runs[0].coach);
     this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(busy)) this.load().catch(() => {}); }, 2500);
+    // "✓ Squall done" stays in the tab until you come back to it
+    this._vis = () => { if (!document.hidden && this._doneTitle) setTimeout(() => { if (!document.hidden && this._doneTitle) { this._doneTitle = null; this.setTitle('Forge Sim'); } }, 4000); };
+    document.addEventListener('visibilitychange', this._vis);
   }
-  componentWillUnmount() { clearInterval(this._poll); }
+  componentWillUnmount() { clearInterval(this._poll); document.removeEventListener('visibilitychange', this._vis); this._titleObs && this._titleObs.disconnect(); }
+  // A run takes most of an hour, so the tab says how far along it is, and a run that
+  // finishes says so: in the title, and as a browser notification if allowed.
+  notice(before, after) {
+    const live = (after || []).flatMap(b => b.runs.filter(r => this.active(r)).map(r => ({ b, r })));
+    const done = [];
+    for (const b of after || []) {
+      const old = (before || []).find(x => x.id === b.id); if (!old) continue;
+      for (const r of b.runs) { const o = old.runs.find(x => x.id === r.id); if (o && this.active(o) && !this.active(r)) done.push({ b, r }); }
+    }
+    for (const { b, r } of done) {
+      const ok = r.status === 'done', msg = ok ? b.name + ' finished: ' + r.played + ' games' : b.name + ': the run ' + (r.status === 'cancelled' ? 'was cancelled' : 'stopped');
+      this._doneTitle = (ok ? '✓ ' : '') + b.name + (ok ? ' done' : ' stopped');
+      try { if (ok && window.Notification && Notification.permission === 'granted' && document.hidden) new Notification('Forge Sim', { body: msg + (b.coachOn ? '. The coach is reading it now.' : '.'), tag: 'run-' + r.id }); } catch (e) {}
+    }
+    if (live.length) { const { b, r } = live[0]; this._doneTitle = null; this.setTitle((r.status === 'running' ? '(' + Math.round(r.played / Math.max(1, r.total) * 100) + '%) ' : '(' + (r.status === 'preparing' ? 'reading' : 'queued') + ') ') + b.name + ' · Forge Sim'); }
+    else this.setTitle(this._doneTitle ? this._doneTitle + ' · Forge Sim' : 'Forge Sim');
+  }
+  // the page's <helmet> writes its own <title> back on every render, so hold ours in place
+  setTitle(t) {
+    this._title = t; document.title = t;
+    if (!this._titleObs && window.MutationObserver) { this._titleObs = new MutationObserver(() => { if (this._title && document.title !== this._title) document.title = this._title; }); this._titleObs.observe(document.head, { subtree: true, childList: true, characterData: true }); }
+  }
+  // asked once, on the click that starts a run (browsers only allow asking from a click)
+  askNotify() { try { if (window.Notification && Notification.permission === 'default') Notification.requestPermission(); } catch (e) {} }
   async api(path, opts = {}) {
     const r = await fetch(path, { credentials: 'same-origin', method: opts.method || 'GET', headers: { 'Content-Type': 'application/json' }, body: opts.body && JSON.stringify(opts.body) });
     const data = (r.headers.get('content-type') || '').includes('json') ? await r.json() : { error: await r.text() };
@@ -376,6 +403,7 @@ class Component extends DCLogic {
   }
   async load(first) {
     const { brews, queueLength, bo3, limits } = await this.api('/api/brews');
+    this.notice(this.state.brews, brews);
     this.setState(s => ({ brews, queueLength, bo3: !!bo3, limits: limits || null, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
   }
   active(r) { return r.status === 'preparing' || r.status === 'queued' || r.status === 'running'; }
@@ -412,6 +440,7 @@ class Component extends DCLogic {
   }
   async queue(brewId, oppSet, v) {
     if (this.state.busy) return;
+    this.askNotify();
     this.setState({ busy: true, runErr: '' });
     try {
       const b = await this.api('/api/brews/' + brewId + '/run', { method: 'POST', body: { oppSet, v } });

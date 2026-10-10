@@ -108,7 +108,15 @@ async function reply(b, rv, thread) {
     if (!msgs.length && role === 'assistant') { said.push(m.text); continue; }
     if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\n\n' + m.text; else msgs.push({ role, content: m.text });
   }
-  return claude.chat({ system: SYSTEM + '\n\nThe current state of this brew:\n\n' + context(b, rv) + (said.length ? '\n\nWhat you already told the player:\n' + said.join('\n\n') : ''), messages: msgs });
+  // Cached in two places, so a follow-up question within a few minutes pays a fraction
+  // for everything it repeats: the brew's context (the same for every question about
+  // this run) and the conversation so far. Anthropic skips caching below its minimum
+  // length rather than failing, so a short context just goes uncached.
+  const system = [{ type: 'text', text: SYSTEM + '\n\nThe current state of this brew:\n\n' + context(b, rv), cache_control: { type: 'ephemeral' } }];
+  if (said.length) system.push({ type: 'text', text: 'What you already told the player:\n' + said.join('\n\n') });
+  const last = msgs[msgs.length - 1];
+  if (last) msgs[msgs.length - 1] = { role: last.role, content: [{ type: 'text', text: last.content, cache_control: { type: 'ephemeral' } }] };
+  return claude.chat({ system, messages: msgs });
 }
 
 module.exports = { writeup, reply, context, headline };
