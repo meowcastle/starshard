@@ -243,6 +243,29 @@ Deck
         </sc-for>
       </div>
       </sc-if>
+      <sc-if value="{{ hasCards }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding-bottom:12px"><div style="font-size:22px;font-weight:600">How each card played</div><div style="font-size:13px;color:#8F8D86;text-align:right">{{ cardsNote }}</div></div>
+        <div style="display:grid;grid-template-columns:32px minmax(160px,1fr) 64px 64px 72px 64px 80px 56px;gap:16px;padding:8px 0;font-size:13px;color:#8F8D86;border-bottom:1px solid rgba(255,255,255,.12)"><span></span><span>card</span><span style="text-align:right">cast</span><span style="text-align:right">first</span><span style="text-align:right">won cast</span><span style="text-align:right">not</span><span style="text-align:right">difference</span><span style="text-align:right">dmg/g</span></div>
+        <sc-for list="{{ cardRows }}" as="c" hint-placeholder-count="14">
+        <div style="display:grid;grid-template-columns:32px minmax(160px,1fr) 64px 64px 72px 64px 80px 56px;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-family:'JetBrains Mono',monospace;font-size:13px">
+          <span style="color:#8F8D86">{{ c.qty }}</span><span style="font-family:Manrope,system-ui,sans-serif;font-size:15px;color:{{ c.nameColor }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="text-align:right">{{ c.castS }}</span><span style="text-align:right;color:#8F8D86">{{ c.turnS }}</span><span style="text-align:right">{{ c.wonS }}</span><span style="text-align:right;color:#8F8D86">{{ c.notS }}</span><span style="text-align:right;color:{{ c.liftColor }}">{{ c.liftS }}</span><span style="text-align:right;color:#8F8D86">{{ c.dmgS }}</span>
+        </div>
+        </sc-for>
+        <div style="font-size:13px;color:#8F8D86;line-height:1.5;padding-top:12px;max-width:720px">Read from Forge's game logs. Cast counts each game once. Forge doesn't log draws, so a low cast rate can mean not drawn or stuck in hand. Lands are left out.</div>
+      </div>
+      <sc-if value="{{ hasThreats }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:24px;padding-bottom:12px"><div style="font-size:22px;font-weight:600">What beat you</div><div style="font-size:13px;color:#8F8D86;text-align:right">{{ threatsNote }}</div></div>
+        <sc-for list="{{ threatRows }}" as="t" hint-placeholder-count="6">
+        <div style="display:grid;grid-template-columns:minmax(160px,1fr) minmax(140px,1fr) 80px 120px 56px 72px;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px">
+          <span style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.name }}</span><span style="color:#8F8D86;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.opp }}</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#8F8D86">{{ t.castS }}</span><span style="font-family:'JetBrains Mono',monospace;text-align:right">{{ t.youS }} vs {{ t.baseS }}</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#F0A070">{{ t.dropS }}</span><span style="font-family:'JetBrains Mono',monospace;text-align:right;color:#8F8D86">{{ t.dmgS }}</span>
+        </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      </sc-if>
+      <sc-if value="{{ noCards }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#8F8D86">{{ noCardsNote }}</div></sc-if>
       <sc-if value="{{ isPod }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column"><div style="font-size:22px;font-weight:600;padding-bottom:12px">The pod</div>
         <div style="display:flex;height:24px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:16px"><sc-for list="{{ podSeats }}" as="s" hint-placeholder-count="4"><div style="width:{{ s.shareW }}%;background:{{ s.color }};display:flex;align-items:center;padding:0 10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#0C0C0B">{{ s.pct }}</div></sc-for></div>
@@ -507,6 +530,7 @@ class Component extends DCLogic {
       latest: { at: '' }, brief: { status: '', statusNote: '', weakness: '', weaknessNote: '' }, optionsLabel: '', options: [], hasSideboard: false, sideboard: [], linkDown: '', earlier: [],
       askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [], askPlaceholder: 'The coach isn\'t connected yet',
       change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}), askKey: () => {},
+      hasCards: false, noCards: false, noCardsNote: '', cardsNote: '', cardRows: [], hasThreats: false, threatRows: [], threatsNote: '',
       headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
@@ -683,6 +707,22 @@ class Component extends DCLogic {
       const tot = run.seats.reduce((a, s) => a + s.wins, 0) || 1;
       v.headlineLabel = 'Your seat · pods won'; v.evenLabel = '25% is even'; v.evenLine = 25; v.runNote = run.played + ' of ' + run.total + ' pods · Forge is weakest at combo and politics';
       v.podSeats = run.seats.map((s, i) => ({ ...s, owner: s.owner || '', color: SEAT[i], art: art(s.commander), shareW: (s.wins / tot * 100).toFixed(1), pct: Math.round(s.wins / tot * 100) + '%', r: rng(s.wins, run.played, 0.25), elimS: '—', avgElimTurn: '—' }));
+    }
+    // how each card played, from Forge's game logs
+    if (run) {
+      const cs = run.cards, pc = (x) => x == null ? '—' : Math.round(x * 100) + '%';
+      if (cs && cs.rows.length) {
+        v.hasCards = true;
+        v.cardsNote = cs.games + ' games · won when cast vs not has selection bias (cheap cards read low, top end high); under ±10 is noise';
+        v.cardRows = cs.rows.map(r => ({ name: r.name, qty: r.side ? 'sb' : r.qty, castS: pc(r.castPct), turnS: r.turn ? 'T' + r.turn.toFixed(1) : '—', wonS: r.cast >= cs.minCast ? pc(r.won) : '—', notS: r.lift == null ? '—' : pc(r.wonNot),
+          liftS: r.lift == null ? (r.cast ? 'few games' : 'never cast') : (r.lift >= 0 ? '+' : '−') + Math.abs(Math.round(r.lift * 100)), liftColor: r.lift == null ? MUTED : r.lift >= 0.1 ? WIN : r.lift <= -0.1 ? LOSS : '#C9C7C0',
+          dmgS: r.dmg >= 0.1 ? r.dmg.toFixed(1) : '·', nameColor: r.side ? MUTED : '#EDEBE6' }));
+        v.hasThreats = cs.threats.length > 0;
+        v.threatsNote = 'your win rate in games they cast it, against your overall rate in that matchup';
+        v.threatRows = cs.threats.map(t => ({ name: t.name, opp: t.opp, castS: t.cast + ' of ' + t.games, youS: pc(t.you), baseS: pc(t.base), dropS: '−' + Math.round((t.base - t.you) * 100), dmgS: t.dmg >= 1 ? t.dmg.toFixed(1) + ' dmg' : '' }));
+      } else if (run.status === 'done' || this.active(run)) {
+        v.noCards = true; v.noCardsNote = this.active(run) ? 'Card stats fill in as games finish.' : 'This run finished before the sim read game logs. Card stats start with the next run.';
+      }
     }
     v.col2Label = 'Against the last field';
     if (bench) {

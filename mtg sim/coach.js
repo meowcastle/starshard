@@ -56,7 +56,23 @@ Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
 
 Matchups:
-${matchups(rv)}`;
+${matchups(rv)}${cardsText(rv.cards)}`;
+}
+
+// The card table from the game logs, as text. Drawn-but-never-cast is not in Forge's
+// log, so a card's cast rate mixes "not drawn" with "drawn and stuck".
+function cardsText(cs) {
+  if (!cs) return '';
+  const r1 = x => x == null ? '-' : x.toFixed(1), p = x => x == null ? '-' : pct(x);
+  const mine = cs.rows.map(r => `- ${r.side ? '(sideboard) ' : r.qty + ' '}${r.name}: cast in ${p(r.castPct)} of games${r.turn ? ', first on turn ' + r1(r.turn) : ''}; won ${p(r.won)} when cast vs ${p(r.wonNot)} when not${r.lift == null ? ' (too few games to compare)' : ''}${r.dmg >= 0.5 ? '; ' + r1(r.dmg) + ' damage a game' : ''}${r.discards ? '; discarded ' + r.discards + ' times' : ''}`).join('\n');
+  const th = cs.threats.map(t => `- ${t.name} (${t.opp}): cast in ${t.cast} of ${t.games} games; you won ${pct(t.you)} of those vs ${pct(t.base)} overall in that matchup${t.dmg >= 1 ? '; ' + r1(t.dmg) + ' damage a game it was cast' : ''}`).join('\n');
+  return `
+
+How each card played, read from the game logs (${cs.games} games, ${cs.mull.toFixed(2)} mulligans a game). "Won when cast" has selection bias: cards get cast in longer games and in games already going well, so a cheap card's number reads lower and a top-end card's higher. Treat differences under 10 points as noise, and lean on the comparison only where both sides have ${cs.minCast}+ games. A low cast rate mixes "not drawn" with "drawn and stuck in hand"; Forge's log does not show draws.
+${mine}${th ? `
+
+The opposing cards that cost you most:
+${th}` : ''}`;
 }
 
 const SWAP = { type: 'array', items: { type: 'object', properties: { qty: { type: 'integer' }, name: { type: 'string' } }, required: ['qty', 'name'] } };

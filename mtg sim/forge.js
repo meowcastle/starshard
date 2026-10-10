@@ -1,8 +1,10 @@
 // Runs Forge's headless simulator and parses its output into structured results.
-// Forge CLI: sim -d <a.dck> <b.dck> ... -D <dir> -n <games> [-f Commander] -c <clock> -q
+// Forge CLI: sim -d <a.dck> <b.dck> ... -D <dir> -n <games> [-f Commander] -c <clock>
+// Not quiet: each game's full log is read for card-level stats (cardstats.js).
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const cardstats = require('./cardstats');
 
 const FORGE_DIR = process.env.FORGE_DIR || '/opt/forge';
 const XMX = process.env.FORGE_XMX || '3g';
@@ -51,7 +53,7 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
     '--add-opens', 'java.desktop/java.awt=ALL-UNNAMED',
     '-jar', findJar(), 'sim',
     '-d', ...files, '-D', workDir,
-    '-n', String(games), '-c', String(clock || 120), '-q',
+    '-n', String(games), '-c', String(clock || 120),
   ];
   if (format && format !== 'Constructed') args.push('-f', format);
   const useXvfb = process.env.USE_XVFB !== '0';
@@ -59,8 +61,12 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
   const argv = useXvfb ? ['-a', 'java', ...args] : args;
   const child = spawn(cmd, argv, { cwd: FORGE_DIR, env: { ...process.env, HOME: process.env.DATA_DIR || '/data' } });
 
-  const results = { names, wins: names.map(() => 0), draws: 0, games: [], warnings: [] };
+  const results = { names, wins: names.map(() => 0), draws: 0, games: [], warnings: [], cards: cardstats.empty(names.length) };
+  const maps = decks.map(cardstats.nameMap);
+  let gameLines = [];
   const handle = line => {
+    // the game log is parsed per game, not kept: a 20-game pairing prints ~15,000 lines
+    if (cardstats.isLogLine(line)) { gameLines.push(line); return; }
     onLine && onLine(line);
     // "Game Result: Game 3 ended in 8123 ms. Ai(2)-Mono Red has won!"
     // "Game Result: Game 4 ended in a Draw! Took 120000 ms."
@@ -76,7 +82,11 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
         g.winner = idx;
         if (idx >= 0) results.wins[idx]++;
       }
-      if (!results.games.some(x => x.n === g.n)) results.games.push(g);
+      if (!results.games.some(x => x.n === g.n)) {
+        results.games.push(g);
+        try { cardstats.add(results.cards, cardstats.parseGame(gameLines, names, maps), g.winner); } catch (e) { results.warnings.length < 50 && results.warnings.push('card stats: ' + e.message); }
+      }
+      gameLines = [];
     }
     if (/not found|unknown card|could not|cannot find/i.test(line) && results.warnings.length < 50) results.warnings.push(line.trim());
   };

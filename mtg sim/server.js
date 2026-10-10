@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const { runSim, forgeVersion } = require('./forge');
 const meta = require('./meta');
 const sideboard = require('./sideboard');
+const cardstats = require('./cardstats');
 const realdata = require('./realdata');
 const calib = require('./calib');
 const codex = require('./codex');
@@ -93,7 +94,7 @@ async function pump() {
     });
     job.child = run.child;
     // live view: share the parser's arrays
-    pr.wins = run.results.wins; pr.games = run.results.games; pr.names = run.results.names; pr.warnings = run.results.warnings;
+    pr.wins = run.results.wins; pr.games = run.results.games; pr.names = run.results.names; pr.warnings = run.results.warnings; pr.cards = run.results.cards;
     const { code, results } = await run.done;
     pr.draws = results.draws; pr.status = code === 0 || results.games.length ? 'done' : 'failed'; pr.exit = code;
   }
@@ -101,7 +102,7 @@ async function pump() {
   if (job.status !== 'cancelled') job.status = job.pairings.every(p => p.status === 'failed') ? 'failed' : 'done';
   job.finished = Date.now();
   history.unshift({ id: job.id, owner: job.owner, mode: job.mode, format: job.format, games: job.games, created: job.created, finished: job.finished, status: job.status,
-    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b })),
+    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, ...(job.brew && cards ? { cards } : {}) })),
     decks: job.decks, meta: job.meta || null });
   saveHist();
   running = null;
@@ -410,8 +411,43 @@ function runView(b, run) {
   out.benchmark = benchView(run.benchmarkId);
   out.style = (b.versions.find(x => x.v === run.v) || {}).style || null;
   out.coach = run.coach || null;
+  out.cards = cardsView(b, run, prs);
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
   return out;
+}
+// How each card played, read from the game logs (cardstats.js). Yours: how often it
+// was cast, on which turn, your win rate in games it was cast against games it
+// wasn't, and the damage it dealt. Theirs: the opposing cards you lost to most.
+// "Won when cast" carries selection bias (cards get cast in longer games, and in
+// games already going well), the same caveat 17lands' numbers carry.
+const MIN_CAST = 8;
+function cardsView(b, run, prs) {
+  const mine = cardstats.merge(prs.map(p => p.cards && p.cards[0]));
+  if (!mine.games) return null;
+  const ver = b.versions.find(x => x.v === run.v) || latest(b), land = new Map((ver.rows || []).map(r => [r.name, !!r.land]));
+  const qty = new Map((ver.list.main || []).concat(ver.list.commander || []).map(c => [c.name, c.qty])), side = new Set((ver.list.side || []).map(c => c.name));
+  const rate = (w, n) => n ? w / n : null;
+  const rows = [...new Set([...qty.keys(), ...Object.keys(mine.cards)])].filter(n => !land.get(n) && !(mine.cards[n] && mine.cards[n].l) && (qty.has(n) || side.has(n))).map(n => {
+    const c = mine.cards[n] || { c: 0, w: 0, t: 0, d: 0, x: 0 }, notN = mine.games - c.c;
+    const won = rate(c.w, c.c), wonNot = rate(mine.wins - c.w, notN);
+    return { name: n, qty: qty.get(n) || 0, side: !qty.has(n), cast: c.c, castPct: rate(c.c, mine.games), turn: c.c ? c.t / c.c : null, won, wonNot,
+      lift: c.c >= MIN_CAST && notN >= MIN_CAST ? won - wonNot : null, dmg: c.d / mine.games, discards: c.x };
+  }).sort((x, y) => (x.side - y.side) || (y.castPct || 0) - (x.castPct || 0));
+  // the cards that beat you: per opponent, your win rate in games they cast the card
+  // against your overall rate in that matchup, weighted by how often they cast it
+  const threats = [];
+  if (b.seats === 2) (run.opponents || []).forEach((o, i) => {
+    const ph = phasesOf(prs, i), th = cardstats.merge([ph.pre, ph.post].map(p => p && p.cards && p.cards[1]));
+    if (!th.games) return;
+    const base = (th.games - th.wins) / th.games;
+    for (const [n, c] of Object.entries(th.cards)) {
+      if (c.c < 5 || c.l) continue;
+      const you = (c.c - c.w) / c.c;
+      if (you < base) threats.push({ name: n, opp: o.name, cast: c.c, games: th.games, you, base, dmg: c.d / Math.max(1, c.c), cost: (base - you) * c.c / th.games * (o.metaPct || 1) });
+    }
+  });
+  threats.sort((x, y) => y.cost - x.cost);
+  return { games: mine.games, wins: mine.wins, mull: mine.mull / mine.games, minCast: MIN_CAST, rows, threats: threats.slice(0, 10) };
 }
 // Card-level change from one list to the next: [{ name, section, qty: +n | -n }],
 // removals first. Sections are compared separately, so a card moved from the
