@@ -8,6 +8,7 @@ const { runSim, forgeVersion } = require('./forge');
 const meta = require('./meta');
 const sideboard = require('./sideboard');
 const cardstats = require('./cardstats');
+const usage = require('./usage');
 const realdata = require('./realdata');
 const calib = require('./calib');
 const codex = require('./codex');
@@ -41,6 +42,24 @@ async function checkForge() {
   } catch (e) { console.error('forge release check:', e.message); }
 }
 setTimeout(checkForge, 30e3); setInterval(checkForge, 24 * 3600e3);
+// Daily limits, per person over the last 24 hours (admins are exempt): runs started,
+// questions asked, and a ceiling on what the whole sim spends on the model in a day.
+const D24 = 864e5;
+const RUNS_PER_DAY = +process.env.SIM_RUNS_PER_DAY || 4, ASKS_PER_DAY = +process.env.SIM_ASKS_PER_DAY || 25;
+const DAILY_BUDGET = process.env.SIM_DAILY_BUDGET != null && process.env.SIM_DAILY_BUDGET !== '' ? +process.env.SIM_DAILY_BUDGET : 10;
+const inTime = ms => { const m = Math.max(1, Math.ceil(ms / 60e3)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : ''); };
+function limitsFor(user) {
+  if (user.isAdmin) return null;
+  const left = (kind, cap) => { const t = usage.events(user.name, kind, D24).sort((a, b) => a - b); return { cap, left: Math.max(0, cap - t.length), freeIn: t.length >= cap ? t[t.length - cap] + D24 - Date.now() : 0 }; };
+  return { runs: left('run', RUNS_PER_DAY), asks: left('ask', ASKS_PER_DAY), budget: DAILY_BUDGET > 0 && usage.spent(D24) >= DAILY_BUDGET };
+}
+// null if allowed, else the sentence to show
+function refusal(user, kind) {
+  const l = limitsFor(user); if (!l) return null;
+  if (l.budget) return 'The sim has spent its model budget for today. Try again tomorrow, or ask Justin.';
+  const x = kind === 'run' ? l.runs : l.asks;
+  return x.left ? null : `That's your ${x.cap} ${kind === 'run' ? 'runs' : 'questions'} for today. The next one frees up in ${inTime(x.freeIn)}.`;
+}
 const forgeUpdate = () => forgeLatest && newer(forgeLatest.version, forgeVersion()) ? forgeLatest : null;
 fs.mkdirSync(path.join(DATA, 'jobs'), { recursive: true });
 if (!ALLOWED.length) console.warn('SIM_USERS is empty, so nobody can sign in. Add Star Shard usernames to .env.');
@@ -214,7 +233,7 @@ async function prepareRun(b, run, user) {
     let post = null;
     if (b.seats !== 4) {
       // best of three: game 1 as listed, games 2 and 3 boarded
-      const bd = await boardAll(decks, decks.slice(1).map((_, i) => [0, i + 1]), b.format);
+      const bd = await usage.as({ who: b.owner, kind: 'plans', brew: b.id }, () => boardAll(decks, decks.slice(1).map((_, i) => [0, i + 1]), b.format));
       post = bd.post; run.bo3 = bd.note === 'no-model' ? 'unboarded' : 'boarded';
       // a key that expired or ran out of credit fails every call: say so instead of quietly playing unboarded
       const errs = Object.values(bd.plans).filter(p => p.error);
@@ -259,7 +278,7 @@ async function benchmarkFor(field, format) {
   const hit = benches.find(same); if (hit) return hit;
   if (benchPending.has(key)) return benchPending.get(key);
   const p = (async () => {
-    const bd = await boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format);
+    const bd = await usage.as({ who: 'benchmark', kind: 'plans' }, () => boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format));
     const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
     const failed = bd.note !== 'no-model' && Object.values(bd.plans).every(p => p.error);
     const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
@@ -334,7 +353,7 @@ async function calibrateDue() {
       const decks = lists.filter(d => !d.error && d.main?.length).map(d => ({ name: d.name, main: d.main, side: d.side || [], commander: [] }));
       if (decks.length < 4) continue;
       const pairs = decks.flatMap((_, i) => decks.slice(i + 1).map((__, k) => [i, i + 1 + k]));
-      const bd = await boardAll(decks, pairs, format);
+      const bd = await usage.as({ who: 'calibration', kind: 'plans' }, () => boardAll(decks, pairs, format));
       enqueue({ mode: 'roundrobin', decks, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'calibration', meta: format, low: true, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
     } catch (e) { console.error('calibrate', format, e.message); }
   }
@@ -501,7 +520,7 @@ function coachWriteups(b) {
   coachBusy.add(run.id);
   (async () => {
     const rv = runView(b, run), ver = b.versions.find(x => x.v === run.v);
-    const w = await coach.writeup(b, rv);
+    const w = await usage.as({ who: b.owner, kind: 'readout', brew: b.id }, () => coach.writeup(b, rv));
     const options = await Promise.all((w.options || []).slice(0, 3).map(o => cleanSwap(b, ver, o)));
     run.coach = { weakness: String(w.weakness || '').slice(0, 120), weaknessNote: String(w.weaknessNote || '').slice(0, 600), options, at: Date.now() };
     (b.thread = b.thread || []).push({ role: 'coach', text: String(w.summary || '').slice(0, 2000), at: Date.now(), run: run.id, kind: 'writeup' });
@@ -565,7 +584,7 @@ const server = http.createServer(async (req, res) => {
     const user = await currentUser(req);
     if (!user) return send(res, 401, { error: 'login required' });
 
-    if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
+    if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, spentToday: user.isAdmin ? usage.spent(D24) : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
 
     // meta
     if (p === '/api/meta') {
@@ -594,13 +613,17 @@ const server = http.createServer(async (req, res) => {
       if (!f || !fs.existsSync(f)) return send(res, 404, 'no cover');
       return send(res, 200, fs.readFileSync(f), { 'Content-Type': b.coverType || 'image/jpeg', 'Cache-Control': 'private, max-age=86400' });
     }
+    if (p === '/api/usage' && req.method === 'GET') {
+      if (!user.isAdmin) return send(res, 403, { error: 'admins only' });
+      return send(res, 200, { ...usage.summary(), limits: { runsPerDay: RUNS_PER_DAY, asksPerDay: ASKS_PER_DAY, dailyBudget: DAILY_BUDGET, spentToday: usage.spent(D24) } });
+    }
     if (p === '/api/codex' && req.method === 'GET') return send(res, 200, await codex.index(await codexCtx(user)));
     // entry ids look like "card:sunderflock"; the page escapes the colon
-    if ((m = p.match(/^\/api\/codex\/([\w%:-]+)$/)) && req.method === 'GET') { const e = await codex.entry(decodeURIComponent(m[1]), await codexCtx(user)); return e ? send(res, 200, e) : send(res, 404, { error: 'no such entry' }); }
+    if ((m = p.match(/^\/api\/codex\/([\w%:-]+)$/)) && req.method === 'GET') { const e = await usage.as({ who: user.name, kind: 'codex' }, async () => codex.entry(decodeURIComponent(m[1]), await codexCtx(user))); return e ? send(res, 200, e) : send(res, 404, { error: 'no such entry' }); }
     if ((m = p.match(/^\/api\/codex\/([\w%:-]+)\/notes$/)) && req.method === 'POST') { const { t } = await readBody(req); const n = codex.addNote(decodeURIComponent(m[1]), user.name, t); return n ? send(res, 200, { notes: n }) : send(res, 400, { error: 'empty note' }); }
     if (p === '/api/brews' && req.method === 'GET') {
       const mine = brews.filter(b => b.owner === user.name); mine.forEach(coachWriteups);
-      return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length + (running ? 1 : 0), bo3: sideboard.available() });
+      return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length + (running ? 1 : 0), bo3: sideboard.available(), limits: limitsFor(user) });
     }
     if (p === '/api/brews' && req.method === 'POST') {
       const { list, name, note, cover } = await readBody(req);
@@ -642,8 +665,9 @@ const server = http.createServer(async (req, res) => {
       // a run is quiet while it reads the field, so a second click would start an identical one
       const dup = b.runs.find(r => r.v === v && r.oppSet === set.id && ['preparing', 'queued', 'running'].includes(runView(b, r).status));
       if (dup) return send(res, 409, { error: `v${v} is already running against that field. Cancel it first if you want to start over.` });
+      const no = refusal(user, 'run'); if (no) return send(res, 429, { error: no });
       const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
-      b.runs.unshift(run); saveBrews();
+      b.runs.unshift(run); saveBrews(); usage.mark(user.name, 'run');
       prepareRun(b, run, user);
       return send(res, 200, brewView(b));
     }
@@ -653,8 +677,10 @@ const server = http.createServer(async (req, res) => {
       if (!claude.available()) return send(res, 400, { error: 'the coach needs an API key on the server' });
       if (b.thinking) return send(res, 409, { error: 'the coach is still answering' });
       const text = String((await readBody(req)).text || '').trim().slice(0, 2000); if (!text) return send(res, 400, { error: 'ask something' });
+      const no = refusal(user, 'ask'); if (no) return send(res, 429, { error: no });
+      usage.mark(user.name, 'ask');
       (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
-      coach.reply(b, talkRun(b), b.thread)
+      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, talkRun(b), b.thread))
         .then(t => b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }))
         .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }))
         .finally(() => { b.thinking = false; saveBrews(); });
@@ -666,6 +692,7 @@ const server = http.createServer(async (req, res) => {
       const run = b.runs.find(r => r.id === m[2]); const i = (await readBody(req)).i | 0, o = run?.coach?.options?.[i];
       if (!o || o.kind !== 'swap') return send(res, 400, { error: 'nothing to test' });
       if (o.test) return send(res, 400, { error: 'already tested as v' + o.test.v });
+      const no = refusal(user, 'run'); if (no) return send(res, 429, { error: no });
       const base = b.versions.find(x => x.v === run.v), main = new Map(base.list.main.map(c => [c.name, c.qty]));
       o.out.forEach(c => main.set(c.name, (main.get(c.name) || 0) - c.qty)); o.in.forEach(c => main.set(c.name, (main.get(c.name) || 0) + c.qty));
       const list = { ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) };
@@ -674,7 +701,7 @@ const server = http.createServer(async (req, res) => {
       b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i } });
       const nr = { id: crypto.randomBytes(4).toString('hex'), v: prev.v + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
       o.test = { v: nr.v, run: nr.id };
-      b.runs.unshift(nr); saveBrews();
+      b.runs.unshift(nr); saveBrews(); usage.mark(user.name, 'run');
       prepareRun(b, nr, user);
       return send(res, 200, brewView(b));
     }

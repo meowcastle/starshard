@@ -99,7 +99,7 @@ Deck
       <sc-for list="{{ memory }}" as="m" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) 14px;gap:8px;padding:8px;border-top:1px solid rgba(255,255,255,.06)"><div style="font-size:13px;line-height:1.5;color:#C9C7C0">{{ m.t }}</div><a href="#" onClick="{{ m.forget }}" title="forget" style="color:#3a3a38;font-size:13px">×</a></div></sc-for>
       
     </div>
-    <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;padding:0 8px"><sc-if value="{{ hasForgeUpdate }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;line-height:1.5;color:#F3CB6B;border:1px solid rgba(243,203,107,.3);border-radius:6px;padding:10px 12px">{{ forgeUpdateNote }}<div style="font-family:'JetBrains Mono',monospace;color:#EDEBE6;margin-top:6px;user-select:all">FORGE_VERSION={{ forgeUpdateVer }}</div><div style="color:#8F8D86;margin-top:6px">in the sim's .env, then rebuild.</div></div></sc-if><div style="font-size:12px;color:#5C5B56;line-height:1.5">Forge {{ forgeVer }} plays every seat. Weak at combo, control and pod politics.</div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8F8D86">{{ who }}</span><a href="#" onClick="{{ doSignout }}" style="color:#8F8D86">Sign out</a></div></div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;padding:0 8px"><sc-if value="{{ hasForgeUpdate }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;line-height:1.5;color:#F3CB6B;border:1px solid rgba(243,203,107,.3);border-radius:6px;padding:10px 12px">{{ forgeUpdateNote }}<div style="font-family:'JetBrains Mono',monospace;color:#EDEBE6;margin-top:6px;user-select:all">FORGE_VERSION={{ forgeUpdateVer }}</div><div style="color:#8F8D86;margin-top:6px">in the sim's .env, then rebuild.</div></div></sc-if><sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}"><a href="/usage.html" style="font-size:13px;color:#8F8D86">Model usage <span style="font-family:'JetBrains Mono',monospace;color:#C5EC7A">{{ spentToday }}</span></a></sc-if><div style="font-size:12px;color:#5C5B56;line-height:1.5">Forge {{ forgeVer }} plays every seat. Weak at combo, control and pod politics.</div><div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#8F8D86">{{ who }}</span><a href="#" onClick="{{ doSignout }}" style="color:#8F8D86">Sign out</a></div></div>
   </aside>
 
   <main style="min-width:0;padding:32px 48px 64px;display:flex;flex-direction:column;gap:32px;max-width:1180px">
@@ -375,8 +375,8 @@ class Component extends DCLogic {
     return data;
   }
   async load(first) {
-    const { brews, queueLength, bo3 } = await this.api('/api/brews');
-    this.setState(s => ({ brews, queueLength, bo3: !!bo3, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
+    const { brews, queueLength, bo3, limits } = await this.api('/api/brews');
+    this.setState(s => ({ brews, queueLength, bo3: !!bo3, limits: limits || null, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
   }
   active(r) { return r.status === 'preparing' || r.status === 'queued' || r.status === 'running'; }
   async signin() {
@@ -512,7 +512,7 @@ class Component extends DCLogic {
     const goTab = (t) => pe(() => this.setState({ tab: t, hover: null, codex: null }));
     const view = S.view; const vS = (x) => ({ color: view === x ? '#0C0C0B' : '#8F8D86', bg: view === x ? ACC : 'transparent' });
     const setsOf = (b) => (b ? b.oppSets : []).map(o => ({ ...o, ring: S.oppSet === o.id ? ACC : 'rgba(255,255,255,.25)', fill: S.oppSet === o.id ? ACC : 'transparent', pick: pe(() => o.available && this.setState({ oppSet: o.id, runErr: '' })) }));
-    const ahead = S.queueLength ? 'Queued behind ' + plural(S.queueLength, 'run') + '.' : 'Queued behind nothing.';
+    const ahead = (S.queueLength ? 'Queued behind ' + plural(S.queueLength, 'run') + '.' : 'Queued behind nothing.') + (S.limits ? ' ' + S.limits.runs.left + ' of ' + S.limits.runs.cap + ' runs left today.' : '');
     const chk = S.check, unknown = chk ? chk.rows.filter(r => r.status === 'unknown') : [];
     const count = (rows, sec) => rows.filter(r => r.section === sec).reduce((a, r) => a + r.qty, 0);
     const sizeS = chk ? (chk.format === 'commander' ? count(chk.rows, 'main') + ' + ' + count(chk.rows, 'commander') : count(chk.rows, 'main') + (count(chk.rows, 'side') ? ' + ' + count(chk.rows, 'side') : '')) : '';
@@ -555,7 +555,7 @@ class Component extends DCLogic {
       runOpen: S.runOpen, toggleRun: pe(() => this.setState({ runOpen: !S.runOpen, runErr: '', oppSet: d && d.oppSets.some(o => o.id === S.oppSet && o.available) ? S.oppSet : ((d && d.oppSets.find(o => o.available)) || {}).id })),
       runLine: S.runErr || (d && d.seats === 4 ? '20 pods' : '20 games each · ' + boS + (S.bo3 ? ', game 1 and boarded games' : '')) + ' · ' + ahead, runLineColor: S.runErr ? LOSS : '#8F8D86',
       queueRun: pe(() => d && this.queue(d.id, S.oppSet)), runBo: 1, runBoToggle: '', toggleBo: pe(() => {}),
-      who: S.me ? '@' + S.me.user.name : '', forgeVer: S.me ? S.me.forge : '', hasForgeUpdate: !!(S.me && S.me.forgeUpdate), forgeUpdateVer: S.me && S.me.forgeUpdate ? S.me.forgeUpdate.version : '',
+      who: S.me ? '@' + S.me.user.name : '', forgeVer: S.me ? S.me.forge : '', isAdmin: !!(S.me && S.me.user && S.me.user.isAdmin), spentToday: S.me && S.me.spentToday != null ? '$' + S.me.spentToday.toFixed(2) + ' today' : '', hasForgeUpdate: !!(S.me && S.me.forgeUpdate), forgeUpdateVer: S.me && S.me.forgeUpdate ? S.me.forgeUpdate.version : '',
       forgeUpdateNote: S.me && S.me.forgeUpdate ? 'Forge ' + S.me.forgeUpdate.version + ' is out (' + new Date(S.me.forgeUpdate.published).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + '). New sets and AI fixes land with it. To update, set' : '',
       plans: [], hasPlans: false, brewList: [], memory: [], memoryCount: 0, deck: { name: '', version: '', versionLabel: '', subtitle: '', format: '', goal: { label: '' } }, deckArt: '', deckPips: [], seatsLabel: '',
       isCoach: tab === 'coach', isResults: tab === 'results', isDeck: tab === 'deck', goCoach: goTab('coach'), goResults: goTab('results'), goDeck: goTab('deck'),
@@ -710,7 +710,7 @@ class Component extends DCLogic {
     // the thread: everything except the summary the readout above stands in for
     v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.text, at: at(m.at) }));
     if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: 'Thinking…', at: '' });
-    v.askPlaceholder = !d.coachOn ? 'The coach isn\'t connected yet' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run';
+    v.askPlaceholder = !d.coachOn ? 'The coach isn\'t connected yet' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run' + (S.limits && S.limits.asks.left <= 5 ? ' · ' + plural(S.limits.asks.left, 'question') + ' left today' : '');
     v.sendAsk = pe(() => this.ask(S.askText)); v.askKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.ask(S.askText); } };
     const topOpp = v.isDuel && run && run.opponents && run.opponents[0];
     v.prompts = !d.coachOn ? [] : [worst && 'Why do I lose to ' + worst.o.name + '?', topOpp && 'What should I board against ' + topOpp.name + '?', d.notes.length ? 'Is it ready for ' + d.notes[0].t.slice(0, 40) + '?' : 'Which card is my weakest?'].filter(Boolean).map(t => ({ t, go: pe(() => this.ask(t)) }));

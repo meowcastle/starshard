@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const usage = require('./usage');
 
 const MODEL = process.env.COACH_MODEL || 'claude-opus-5-5';
 const FILE = () => path.join(process.env.DATA_DIR || '/data', 'plans.json');
@@ -39,6 +40,7 @@ async function ask(a, b, format) {
   });
   if (!r.ok) throw new Error(`Anthropic answered ${r.status}: ${(await r.text()).slice(0, 200)}`);
   const j = await r.json();
+  usage.record(j.model || MODEL, j.usage);
   const use = (j.content || []).find(c => c.type === 'tool_use');
   if (use) return use.input;
   const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n'), m = text.match(/\{[\s\S]*\}/);

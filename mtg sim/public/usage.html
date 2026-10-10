@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Model Usage</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0C0B;--panel:#121211;--ink:#EDEBE6;--mute:#8F8D86;--dim:#5C5B56;--line:rgba(255,255,255,.08);--acc:#C5EC7A;--warn:#F3CB6B;--loss:#F0A070}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:34px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600;margin:48px 0 12px}
+.sub{color:var(--mute)}
+.mono{font-family:'JetBrains Mono',monospace}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:32px}
+.stat .k{font-size:13px;color:var(--mute)}.stat .v{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:500;margin-top:4px}
+.stat .n{font-size:13px;color:var(--mute);margin-top:4px}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:400;color:var(--mute);font-size:13px;padding:8px 12px 8px 0;border-bottom:1px solid rgba(255,255,255,.12);white-space:nowrap}
+td{padding:9px 12px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+td.r,th.r{text-align:right}
+.kinds{color:var(--mute);font-size:13px;white-space:normal}
+.bar{height:4px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.bar.hot i{background:var(--warn)}
+.note{font-size:13px;color:var(--mute);margin-top:12px;max-width:760px}
+.err{color:var(--loss);margin-top:24px}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style></head>
+<body><main>
+<a href="/" style="font-size:13px">← Forge Sim</a>
+<h1 style="margin-top:16px">Model usage</h1>
+<div class="sub">What Opus costs, per person. Every call's real token counts from Anthropic, priced at the rates below.</div>
+<div id="out"></div>
+</main>
+<script>
+const $ = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content; };
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const usd = (x) => x < 0.01 && x > 0 ? '<$0.01' : '$' + x.toFixed(2);
+const tok = (n) => n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'k' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(n);
+const KIND = { plans: 'sideboard plans', readout: 'run readouts', chat: 'chat', codex: 'Codex', other: 'other' };
+const WHO = { benchmark: 'benchmark (shared)', calibration: 'calibration (shared)', unattributed: 'unattributed' };
+const ago = (t) => { const m = Math.round((Date.now() - t) / 60e3); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; };
+fetch('/api/usage', { credentials: 'same-origin' }).then(async r => {
+  const d = await r.json(); const out = document.getElementById('out');
+  if (!r.ok) { out.append($(`<div class="err">${esc(d.error || r.statusText)}${r.status === 401 ? ' · <a href="/">sign in</a>' : ''}</div>`)); return; }
+  const L = d.limits, pct = L.dailyBudget > 0 ? Math.min(100, L.spentToday / L.dailyBudget * 100) : 0;
+  out.append($(`<div class="stats">
+    <div class="stat"><div class="k">Last 24 hours</div><div class="v">${usd(d.total.d1)}</div>${L.dailyBudget > 0 ? `<div class="n">of the ${usd(L.dailyBudget)} daily budget</div><div class="bar ${pct >= 80 ? 'hot' : ''}"><i style="width:${pct}%"></i></div>` : '<div class="n">no daily budget set</div>'}</div>
+    <div class="stat"><div class="k">Last 7 days</div><div class="v">${usd(d.total.d7)}</div></div>
+    <div class="stat"><div class="k">Last 30 days</div><div class="v">${usd(d.total.d30)}</div></div>
+    <div class="stat"><div class="k">Since tracking began</div><div class="v">${usd(d.total.all)}</div><div class="n">${d.total.calls} model calls</div></div>
+  </div>`));
+  out.append($(`<h2>Per person</h2><div class="wrap"><table><thead><tr><th>who</th><th class="r">24 h</th><th class="r">7 days</th><th class="r">30 days</th><th class="r">runs · 7d</th><th class="r">questions · 7d</th><th>where it went</th></tr></thead><tbody>${
+    d.people.map(p => `<tr><td>${esc(WHO[p.who] || '@' + p.who)}</td><td class="r mono">${usd(p.d1)}</td><td class="r mono">${usd(p.d7)}</td><td class="r mono">${usd(p.d30)}</td><td class="r mono">${p.runs7}</td><td class="r mono">${p.asks7}</td><td class="kinds">${
+      Object.entries(p.kinds).sort((a, b) => b[1].cost - a[1].cost).map(([k, v]) => `${esc(KIND[k] || k)} ${usd(v.cost)} · ${v.calls} call${v.calls === 1 ? '' : 's'}`).join('<br>') || '—'}</td></tr>`).join('') || '<tr><td colspan="7" class="kinds">Nothing recorded yet. The first sideboard plan, readout or question will show up here.</td></tr>'
+  }</tbody></table></div>
+  <div class="note">Sideboard plans are saved and reused, so a list only pays for its plans the first time it meets an opponent. Benchmark and calibration plans are shared by everyone.</div>`));
+  out.append($(`<h2>Limits</h2><div class="note" style="margin-top:0">Per person, over the last 24 hours: <span class="mono" style="color:var(--ink)">${L.runsPerDay}</span> runs and <span class="mono" style="color:var(--ink)">${L.asksPerDay}</span> questions. Once the whole sim has spent <span class="mono" style="color:var(--ink)">${L.dailyBudget > 0 ? usd(L.dailyBudget) : 'no limit'}</span> in a day, members can't start runs or ask until it drops. Admins are exempt. Change them in the sim's .env with <span class="mono" style="color:var(--ink)">SIM_RUNS_PER_DAY</span>, <span class="mono" style="color:var(--ink)">SIM_ASKS_PER_DAY</span> and <span class="mono" style="color:var(--ink)">SIM_DAILY_BUDGET</span>, then rebuild.</div>`));
+  out.append($(`<h2>Recent calls</h2><div class="wrap"><table><thead><tr><th>when</th><th>who</th><th>what</th><th class="r">in</th><th class="r">out</th><th class="r">cost</th></tr></thead><tbody>${
+    d.recent.map(r => `<tr><td class="kinds">${ago(r.at)}</td><td>${esc(WHO[r.who] || '@' + r.who)}</td><td class="kinds">${esc(KIND[r.kind] || r.kind)}</td><td class="r mono">${tok(r.in + r.cw + r.cr)}</td><td class="r mono">${tok(r.out)}</td><td class="r mono">${usd(r.cost)}</td></tr>`).join('') || '<tr><td colspan="6" class="kinds">None yet.</td></tr>'
+  }</tbody></table></div>
+  <div class="note">Priced at $${d.prices.in} in / $${d.prices.out} out per million tokens (cache write $${d.prices.cw}, cache read $${d.prices.cr}). If Anthropic's pricing page says otherwise, set PRICE_IN and PRICE_OUT in .env. Check the Anthropic console for the actual bill.</div>`));
+}).catch(e => document.getElementById('out').append($(`<div class="err">${esc(e.message)}</div>`)));
+</script>
+</body></html>
