@@ -191,7 +191,7 @@ Deck
           <div style="display:flex;flex-direction:column">
             <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid rgba(255,255,255,.08)"><div><div style="font-size:15px;font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:15px;color:#8F8D86;line-height:1.55;margin-top:2px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:15px;margin-top:8px;font-family:'JetBrains Mono',monospace">{{ o.resA }} → <span style="color:{{ o.resColor }}">{{ o.resB }}</span> {{ o.resPm }} <span style="font-family:Manrope,sans-serif;color:#8F8D86">· {{ o.resNote }}</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:13px;font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:3px">{{ o.label }}</a></div></sc-for>
           </div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ runAt }} · {{ snapshotLabel }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ runAt }} · {{ snapshotLabel }}<sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ doCancelRun }}" style="color:#8F8D86">{{ cancelLabel }}</a></sc-if></div>
         </div>
       </div>
 
@@ -225,7 +225,7 @@ Deck
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px">
         <div><div style="font-size:13px;color:#8F8D86">{{ headlineLabel }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1;color:{{ overall.numColor }}">{{ overall.pct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ overall.pm }}</span></div><div style="position:relative;height:6px;background:#1f1f1e;border-radius:3px;margin-top:12px"><div style="position:absolute;left:{{ evenLine }}%;top:-3px;bottom:-3px;width:1px;background:#4a4a48"></div><div style="position:absolute;top:2px;height:2px;left:{{ overall.lo }}%;width:{{ overall.w }}%;background:{{ overall.hatch }}"></div><div style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;left:calc({{ overall.left }}% - 5px);background:{{ overall.color }}"></div></div><div style="font-size:13px;color:#8F8D86;margin-top:8px">{{ overall.n }} games · {{ evenLabel }}</div></div>
         <div><div style="font-size:13px;color:#8F8D86">{{ col2Label }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1">{{ prevPct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ prevPm }}</span></div><div style="font-size:13px;color:#8F8D86;margin-top:26px">{{ prevNote }}</div></div>
-        <div><div style="font-size:13px;color:#8F8D86">Status</div><div style="font-size:17px;font-weight:600;margin-top:6px;color:{{ runStatusColor }}">{{ runStatus }}</div><div style="font-size:13px;color:#8F8D86;margin-top:8px;line-height:1.5">{{ runNote }}</div></div>
+        <div><div style="font-size:13px;color:#8F8D86">Status</div><div style="font-size:17px;font-weight:600;margin-top:6px;color:{{ runStatusColor }}">{{ runStatus }}</div><div style="font-size:13px;color:#8F8D86;margin-top:8px;line-height:1.5">{{ runNote }}</div><sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"><a href="#" onClick="{{ doCancelRun }}" style="display:inline-block;margin-top:8px;font-size:13px;color:#8F8D86">{{ cancelLabel }}</a></sc-if></div>
       </div>
       <sc-if value="{{ isDuel }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column">
@@ -357,7 +357,7 @@ class Component extends DCLogic {
   // yet, so its brief is computed straight from the games rather than written by a model.
   state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
     fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
-    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '', bo3: false, delAsk: null, look: null, lookErr: '',
+    deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '', bo3: false, delAsk: null, cancelAsk: null, look: null, lookErr: '',
     deckName: '', cover: 0, upload: null, uploadErr: '',
     codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
   async componentDidMount() {
@@ -479,6 +479,9 @@ class Component extends DCLogic {
     try { const b = await this.api('/api/brews/' + d.id, { method: 'PATCH', body }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), look: null, upload: null, uploadPreview: null, busy: false })); }
     catch (e) { this.setState({ lookErr: e.message, busy: false }); }
   }
+  async cancelRun(brewId, runId) {
+    try { const b = await this.api('/api/brews/' + brewId + '/runs/' + runId + '/cancel', { method: 'POST' }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); } catch (e) { this.setState({ runErr: e.message }); }
+  }
   async remove(brewId) {
     if (this.state.delAsk !== brewId) return this.setState({ delAsk: brewId });
     try { await this.api('/api/brews/' + brewId, { method: 'DELETE' }); } catch (e) { return this.setState({ delAsk: null }); }
@@ -564,7 +567,7 @@ class Component extends DCLogic {
       askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [], askPlaceholder: 'The coach isn\'t connected yet',
       change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}), askKey: () => {},
       hasCards: false, noCards: false, noCardsNote: '', cardsNote: '', cardRows: [], hasThreats: false, threatRows: [], threatsNote: '',
-      headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
+      headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', canCancel: false, cancelLabel: '', doCancelRun: pe(() => {}), runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
       leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
@@ -604,6 +607,11 @@ class Component extends DCLogic {
     // the run on screen: the one picked from Versions, else the newest
     const run = d.runs.find(r => r.id === S.runId) || d.runs[0] || null;
     const waiting = !!run && this.active(run);
+    if (waiting) {
+      const asking = S.cancelAsk === run.id;
+      v.canCancel = true; v.cancelLabel = asking ? 'Click again to cancel this run' : 'Cancel this run';
+      v.doCancelRun = pe(() => asking ? (this.setState({ cancelAsk: null }), this.cancelRun(d.id, run.id)) : this.setState({ cancelAsk: run.id }));
+    }
     const setTitle = run ? ((d.oppSets.find(o => o.id === run.oppSet) || {}).title || '') : '';
     v.snapshotLabel = run ? fieldLabel(run) : '';
     v.sourceLabel = run && run.field ? run.field.label : (d.seats === 4 ? 'EDHREC' : 'MTGGoldfish');
@@ -725,7 +733,7 @@ class Component extends DCLogic {
     if (run && v.isDuel) {
       v.headlineLabel = 'Matches won' + (cal ? ', calibrated' : '') + (weighted ? ', weighted' : '') + ' · ' + fieldLabel(run) + (excluded.length ? ', less ' + excluded.length : ''); v.evenLabel = '50% is even'; v.evenLine = 50;
       v.rateHead = run.bo3 ? 'match win rate · 95% range' : 'match win rate, from game 1 · 95% range';
-      const boS = run.bo3 === 'boarded' ? 'best of three · game 1 and boarded games 20 each, sideboard plans by ' + 'Claude' : run.bo3 === 'unboarded' ? 'best of three, unboarded (no model key on the server, so games 2–3 play game 1\'s lists)' : run.bo3 === 'plan-failed' ? 'best of three, unboarded: every sideboard plan failed (' + (run.planError || 'model error') + '). Check the API key and credit' : 'best of one';
+      const boS = run.status === 'preparing' ? (S.bo3 ? 'best of three · sideboard plans being written' : 'best of one') : run.bo3 === 'boarded' ? 'best of three · game 1 and boarded games 20 each, sideboard plans by ' + 'Claude' : run.bo3 === 'unboarded' ? 'best of three, unboarded (no model key on the server, so games 2–3 play game 1\'s lists)' : run.bo3 === 'plan-failed' ? 'best of three, unboarded: every sideboard plan failed (' + (run.planError || 'model error') + '). Check the API key and credit' : 'best of one';
       const planS = run.bo3 === 'boarded' && run.planErrors ? ' · ' + plural(run.planErrors, 'sideboard plan') + ' failed, those matchups play games 2–3 unboarded' : '';
       const calS = cal ? ' · calibrated against ' + plural(cal.realGames, 'game') + ' from ' + plural(cal.events, 'paper tournament') + ' in the last ' + cal.days + ' days' + (cal.me.near ? ', your list read as closest to ' + cal.me.near : ', your list treated as an average pilot (close to no meta deck)') : ' · not calibrated yet: the weekly meta round robin hasn\'t finished';
       v.runNote = boS + planS + ' · Forge AI pilots both sides' + calS + ' · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '');

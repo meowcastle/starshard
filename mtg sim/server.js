@@ -221,6 +221,7 @@ async function prepareRun(b, run, user) {
       if (errs.length) { run.planErrors = errs.length; run.planError = errs[0].error.slice(0, 200); if (errs.length === Object.keys(bd.plans).length) run.bo3 = 'plan-failed'; }
       run.opponents.forEach((o, i) => { const p = bd.plans['0:' + (i + 1)]; o.plan = p ? (p.error ? { error: p.error } : { me: p.a, opp: p.b }) : null; });
     }
+    if (run.cancelled) { saveBrews(); return; }
     const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
     run.jobId = job.id; run.status = 'queued';
     if (run.field.source === 'goldfish') run.benchmarkId = (await benchmarkFor(decks.slice(1), b.format)).id;
@@ -410,7 +411,7 @@ async function backfill() {
 // A run as the UI reads it: the frozen field plus whatever the job knows now.
 function runView(b, run) {
   const j = run.jobId && jobOf(run.jobId);
-  const status = run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
+  const status = run.cancelled && !(j && j.status === 'done') ? 'cancelled' : run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
   const prs = j?.pairings || [];
   const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status, error: run.error || null, queuePos: j && jobs.has(j.id) ? queue.indexOf(j) : -1, games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
   if (b.seats === 4) {
@@ -638,6 +639,9 @@ const server = http.createServer(async (req, res) => {
       const set = oppSets(b).find(s => s.id === body.oppSet);
       if (!set || !set.available) return send(res, 400, { error: set ? set.detail : 'pick who it should play' });
       const v = b.versions.some(x => x.v === body.v) ? body.v : latest(b).v;
+      // a run is quiet while it reads the field, so a second click would start an identical one
+      const dup = b.runs.find(r => r.v === v && r.oppSet === set.id && ['preparing', 'queued', 'running'].includes(runView(b, r).status));
+      if (dup) return send(res, 409, { error: `v${v} is already running against that field. Cancel it first if you want to start over.` });
       const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
       b.runs.unshift(run); saveBrews();
       prepareRun(b, run, user);
@@ -687,6 +691,16 @@ const server = http.createServer(async (req, res) => {
         if (b.coverUrl) { b.coverUrl = null; delete b.coverType; try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
       }
       saveBrews();
+      return send(res, 200, brewView(b));
+    }
+    // cancel one run: its job stops (or leaves the queue); a run still reading the field is marked so it never queues
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/runs\/(\w+)\/cancel$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const run = b.runs.find(r => r.id === m[2]); if (!run) return send(res, 404, { error: 'no such run' });
+      const j = run.jobId && jobs.get(run.jobId);
+      if (j && !['done', 'failed', 'cancelled'].includes(j.status)) { j.status = 'cancelled'; const qi = queue.indexOf(j); if (qi >= 0) queue.splice(qi, 1); j.child?.kill('SIGKILL'); }
+      if (run.status === 'preparing') run.status = 'cancelled';
+      run.cancelled = true; saveBrews();
       return send(res, 200, brewView(b));
     }
     // delete a brew: stop its runs, drop its cover, forget it
