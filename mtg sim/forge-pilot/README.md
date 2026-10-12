@@ -61,3 +61,24 @@ Self-play, the pilot's mulligans against Forge's, mirror decks, seats swapped, f
 only a few opening hands in a hundred (7-card keeps 79% vs ~81%), and Forge always choosing
 to play is already right for Standard. A first run read 34%; that was a bug (our card cache
 keeps no `produced_mana`, so every hand looked uncastable and went to five).
+
+## The reactive probe (12 Oct 2026)
+
+Forge underrates the decks built on instants (Azorius Control 19% under `forge sim` vs 38%
+real; Dimir Excruciator 29% vs 49%) and overrates the proactive ones (Lifegain 70% vs 45%,
+Boros Dragons 72% vs 47%). `pilot.js`'s `reactive` policy owns a control seat's priority:
+counter their creature, planeswalker or 2+ mana spell; kill an attacker with instant
+removal; play the land, and don't spend below a held counter's cost. Forge decides the rest.
+`tools/probe-reactive.js`, every real-data pairing, ~37 games a variant, through the bridge:
+
+| | real | Forge decides | reactive | mirror, pilot vs stock |
+|---|---|---|---|---|
+| Azorius Control | 38% | 9% | 17% | 69% of 71 |
+| 4c Control | 50% | 41% | 39% | 57% of 70 |
+
+k over the 36 pairings: 0.02 → 0.04, inside noise. The pilot makes Azorius Control much
+stronger and closer to real; 4c Control (fewer counters, wants to tap out) doesn't move.
+Two decks can't move k, and the other half of the gap is the aggro decks Forge overrates.
+The bridge baseline (9%) sits below the calibration's 19% because the calibration's boarded
+games used sideboard plans and the probe's lists carry no sideboards; compare pilot to stock
+on the bridge only.

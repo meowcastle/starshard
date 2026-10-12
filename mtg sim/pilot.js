@@ -59,6 +59,59 @@ function keep(hand, size, find) {
   return castable.length > 0 || ks.some(k => !k); // an unknown card: give the hand the benefit of the doubt
 }
 
+// ---------------------------------------------------------------- reactive play (the probe)
+
+// Forge underrates exactly the decks built on instants (Azorius Control 19% under Forge,
+// 38% in real play; the proactive decks the other way), so the probe gives such a deck a
+// pilot for the moments a reactive deck lives on, and leaves every other decision to Forge:
+//   1. their spell on top of the stack: counter it if it's a creature, planeswalker, or 2+ mana;
+//   2. their attack: kill an attacker with instant-speed removal (Forge picks the target);
+//   3. our main phase: play the land; while holding a counter, don't spend below its cost:
+//      cast the biggest spell that keeps it open, or pass.
+const textOf = k => faces(k).map(f => f.oracle_text || '').join('\n') || k?.oracle_text || '';
+const roleOf = k => {
+  if (!k) return {};
+  const t = textOf(k), type = (faces(k)[0] || k).type_line || k.type_line || '';
+  return {
+    counter: /counter target (?:[\w-]+ )*spell/i.test(t),
+    removal: /(?:destroy|exile) target (?:[\w-]+ )*(?:creature|permanent)|deals? (?:\d+|X) damage to (?:any target|target creature)/i.test(t),
+    instant: /\bInstant\b/.test(type) || /\bFlash\b/.test(t),
+  };
+};
+
+function reactive(m, find) {
+  const s = m.state || {}, opts = m.options || [], you = s.you || {}, opp = s.opponent || {};
+  const role = o => roleOf(find(o.card || ''));
+  const top = (s.stack || [])[0];
+  if (top) {
+    if (top.controller !== 'opponent') return null;
+    const k = find(top.source), onField = (opp.battlefield || []).some(c => c.name === top.source);
+    const spell = k && !onField && !landish(k);
+    const matters = spell && ((k.cmc || 0) >= 2 || /Creature|Planeswalker/.test((faces(k)[0] || k).type_line || k.type_line || ''));
+    const c = matters && opts.find(o => o.meta && o.meta.type === 'spell' && role(o).counter);
+    return c ? { choice: [c.id] } : null;
+  }
+  const mine = s.activePlayer === 'you';
+  if (!mine && s.phase === 'COMBAT_DECLARE_ATTACKERS' && (s.combat || []).length) {
+    const r = opts.find(o => o.meta && o.meta.type === 'spell' && role(o).removal);
+    return r ? { choice: [r.id] } : null;
+  }
+  if (mine && /MAIN/.test(s.phase || '')) {
+    const land = opts.find(o => o.meta && o.meta.type === 'land');
+    if (land) return { choice: [land.id] };
+    const held = (you.hand || []).map(c => find(c.name)).filter(k => k && roleOf(k).counter);
+    if (!held.length) return null;
+    const need = Math.min(...held.map(k => k.cmc || 0));
+    const open = (you.battlefield || []).filter(c => !c.tapped && landish(find(c.name))).length;
+    const spells = opts.filter(o => o.meta && o.meta.type === 'spell' && !role(o).counter);
+    const dips = o => (o.meta.cmc || 0) > open - need;
+    if (!spells.some(dips)) return null; // every play Forge might make keeps the counter up
+    const safe = spells.filter(o => !dips(o)).sort((a, b) => (b.meta.cmc || 0) - (a.meta.cmc || 0))[0];
+    return { choice: [safe ? safe.id : 'pass'] };
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------- sideboarding
 
 // a plan { in: [{qty,name}], out: [{qty,name}] } applied to the bridge's main deck { name: qty }
@@ -72,7 +125,7 @@ function boarded(main, plan) {
 
 // ---------------------------------------------------------------- matches
 
-function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], workDir, maxTurns = 60, keepLogs = false, onGame }) {
+function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], workDir, maxTurns = 60, keepLogs = false, onGame }) {
   fs.mkdirSync(workDir, { recursive: true });
   const files = decks.map((d, i) => { const f = path.join(workDir, `seat${i}.dck`); fs.writeFileSync(f, toDck(d.name, d)); return f; });
   const names = [...new Set(decks.flatMap(d => [...d.main, ...(d.side || [])].map(c => c.name)))];
@@ -91,6 +144,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
         if (!k) mulls[m.seat]++;
         return { choice: [k ? 'keep' : 'mulligan'] };
       }
+      if (m.kind === 'priority' && policy[m.seat] === 'reactive') { res.decisions++; const a = reactive(m, find); if (a) { res.acted = (res.acted || 0) + 1; return a; } }
       return { delegate: true };
     };
     const srv = net.createServer(sock => {
@@ -125,7 +179,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   }));
 }
 
-module.exports = { runMatches, keep, boarded, produced };
+module.exports = { runMatches, keep, boarded, produced, reactive, roleOf };
 
 // ---------------------------------------------------------------- self-play
 
