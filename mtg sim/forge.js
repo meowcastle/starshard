@@ -51,7 +51,7 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
     return f;
   });
   const args = [
-    `-Xmx${XMX}`, '-Djava.awt.headless=true',
+    `-Xmx${XMX}`, '-Djava.awt.headless=true', ...(process.env.FORGE_JAVA_OPTS || '').split(' ').filter(Boolean),
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
     '--add-opens', 'java.desktop/java.awt=ALL-UNNAMED',

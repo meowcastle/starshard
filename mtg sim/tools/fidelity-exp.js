@@ -45,7 +45,9 @@ async function styles() {
   }
   return out;
 }
-const PROFILE = { base: () => null, profiles: s => ({ control: 'Control', aggro: 'Reckless', midrange: 'Default' })[s] };
+// hybrid and full: the base setup played by a Forge whose simulator is patched to turn on
+// the AI's look-ahead (FORGE_JAVA_OPTS=-Dsim.ai=hybrid|full; see the README)
+const PROFILE = { base: () => null, profiles: s => ({ control: 'Control', aggro: 'Reckless', midrange: 'Default' })[s], hybrid: () => null, full: () => null };
 
 (async () => {
   const st = await styles();
