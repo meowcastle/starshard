@@ -91,7 +91,22 @@ function fidelity(forge, real, { minForge = 10, minReal = 6 } = {}) {
   return { k, lo: k - 1.96 * se, hi: k + 1.96 * se, pairs: rows.length, realGames: rows.reduce((s, r) => s + r.n, 0) };
 }
 
+// The same question for a deck's overall strength: across decks, does Forge's win rate over
+// its Forge pairings track the deck's real match record? Pearson correlation with a 95% range
+// (Fisher z), over decks with 40+ Forge games and 30+ real matches. Measured 12 Oct 2026:
+// r = -0.09 on 17 decks (paper results only).
+function deckFidelity(forge, realField, { minForge = 40, minReal = 30 } = {}) {
+  const F = {};
+  for (const [k, f] of Object.entries(forge)) { const [a, b] = k.split('\u0000'); (F[a] = F[a] || [0, 0]); (F[b] = F[b] || [0, 0]); F[a][0] += f[0]; F[a][1] += f[1]; F[b][0] += f[1]; F[b][1] += f[0]; }
+  const rows = Object.keys(F).filter(n => F[n][0] + F[n][1] >= minForge && realField[n] && realField[n].w + realField[n].l >= minReal).map(n => [F[n][0] / (F[n][0] + F[n][1]), realField[n].w / (realField[n].w + realField[n].l)]);
+  if (rows.length < 5) return null;
+  const m = i => rows.reduce((s, r) => s + r[i], 0) / rows.length, mx = m(0), my = m(1);
+  const sxy = rows.reduce((s, r) => s + (r[0] - mx) * (r[1] - my), 0), sxx = rows.reduce((s, r) => s + (r[0] - mx) ** 2, 0), syy = rows.reduce((s, r) => s + (r[1] - my) ** 2, 0);
+  const r = sxy / Math.sqrt(sxx * syy), z = Math.atanh(Math.max(-0.999, Math.min(0.999, r))), se = 1 / Math.sqrt(Math.max(1, rows.length - 3));
+  return { r, lo: Math.tanh(z - 1.96 * se), hi: Math.tanh(z + 1.96 * se), decks: rows.length };
+}
+
 // Best-of-three from game rates: p1 for game 1, p2 for each boarded game.
 const match = (p1, p2) => p1 * (p2 + (1 - p2) * p2) + (1 - p1) * p2 * p2;
 
-module.exports = { fit, fidelity, logit, inv, pairKey, match };
+module.exports = { fit, fidelity, deckFidelity, logit, inv, pairKey, match };

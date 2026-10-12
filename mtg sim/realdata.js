@@ -61,6 +61,60 @@ async function event(p) {
   return out;
 }
 
+// MTGO's own results (www.mtgo.com/decklist/<event>): each Challenge page embeds its data as
+// window.MTGO.decklists.data, with the published decklists, each published player's Swiss
+// match record (winloss) and the top-8 bracket as real head-to-head matches. Only the top 32
+// are published, so a record is a fair sample of an archetype only when every player in the
+// event was published (complete); otherwise the published players are the ones who did well
+// (a 61-player event's top 32 went 63% together). Brackets count from every event: whoever
+// reached the top 8, the matches between them are real results. Leagues publish only 5-0
+// decks and are left out. Fetched one page at a time with a pause; each event cached forever.
+const MTGO = 'https://www.mtgo.com';
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function mtgoMonth(y, m) {
+  const f = path.join(cacheDir(), `mtgo-${y}-${String(m).padStart(2, '0')}.json`);
+  const c = readJson(f, null), old = y * 12 + m < new Date().getUTCFullYear() * 12 + new Date().getUTCMonth() + 1;
+  if (c && (old || Date.now() - c.at < 6 * 3600e3)) return c.urls;
+  const r = await fetch(`${MTGO}/decklists/${y}/${String(m).padStart(2, '0')}`, { headers: { 'User-Agent': UA['User-Agent'] } });
+  if (!r.ok) { if (c) return c.urls; throw new Error(`mtgo.com answered ${r.status}`); }
+  const urls = [...new Set([...(await r.text()).matchAll(/href="(\/decklist\/[^"]+)"/g)].map(x => x[1]))];
+  fs.mkdirSync(cacheDir(), { recursive: true }); fs.writeFileSync(f, JSON.stringify({ at: Date.now(), urls }));
+  return urls;
+}
+async function mtgoEvent(u) {
+  const f = path.join(cacheDir(), 'mtgo', u.replace(/[^\w.-]+/g, '_') + '.json');
+  const c = readJson(f, null); if (c) return c;
+  await sleep(1500);
+  const r = await fetch(MTGO + u, { headers: { 'User-Agent': UA['User-Agent'] } });
+  if (!r.ok) throw new Error(`mtgo.com answered ${r.status}`);
+  const m = (await r.text()).match(/window\.MTGO\.decklists\.data\s*=\s*(\{[\s\S]*?\});\s*\n/);
+  if (!m) throw new Error('no data on ' + u);
+  const d = JSON.parse(m[1]);
+  const cards = l => (l || []).map(x => ({ qty: +x.qty, name: x.card_attributes?.card_name || '' })).filter(x => x.name);
+  const byId = new Map((d.decklists || []).map(x => [String(x.loginid), x.player]));
+  const players = +(d.player_count?.players || d.player_count || 0);
+  const out = { v: 2, source: 'mtgo.com', name: d.description, date: String(d.starttime || '').slice(0, 10), uri: MTGO + u, format: d.format || '',
+    complete: !!players && (d.decklists || []).length >= players,
+    decks: (d.decklists || []).map(x => ({ player: x.player, main: cards(x.main_deck), side: cards(x.sideboard_deck) })),
+    records: (d.winloss || []).map(x => ({ player: byId.get(String(x.loginid)), w: +x.wins, l: +x.losses })).filter(x => x.player),
+    matches: (d.brackets || []).flatMap(b => (b.matches || []).map(mm => { const [a, bb] = mm.players || []; return a && bb ? { a: a.player, b: bb.player, r: `${a.wins}-${a.losses}-0` } : null; }).filter(Boolean)) };
+  fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(out));
+  return out;
+}
+async function mtgoEvents(format, days) {
+  const since = Date.now() - days * DAY, out = [], months = [];
+  for (let t = new Date(since); t <= new Date(); t = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 1))) months.push([t.getUTCFullYear(), t.getUTCMonth() + 1]);
+  const want = new RegExp(`^/decklist/${format.toLowerCase()}-(?!league)`);
+  for (const [y, m] of months) {
+    let urls; try { urls = await mtgoMonth(y, m); } catch { continue; }
+    for (const u of urls.filter(u => want.test(u))) {
+      const dm = u.match(/(\d{4})-(\d{2})-(\d{2})/); if (dm && Date.UTC(+dm[1], dm[2] - 1, +dm[3]) < since) continue;
+      try { out.push(await mtgoEvent(u)); } catch {}
+    }
+  }
+  return out;
+}
+
 // Every event in a format over the last `days`, newest first.
 async function events(format, days = 42) {
   const since = Date.now() - days * DAY, out = [];
@@ -71,9 +125,11 @@ async function events(format, days = 42) {
     // the file name carries the event name, so most of the filtering is free
     paths = paths.filter(p => dateOf(p) >= since && want.test(p.toLowerCase()));
     for (const p of paths) {
-      try { const e = await event(p); if (e.format.toLowerCase().includes(format.toLowerCase()) && e.matches.length) out.push(e); } catch {}
+      // MTGO events come from mtgo.com itself (below); Jiliac's copies of them would count twice
+      try { const e = await event(p); if (e.format.toLowerCase().includes(format.toLowerCase()) && e.matches.length && !/mtgo\.com/i.test(e.uri || '')) out.push(e); } catch {}
     }
   }
+  try { out.push(...await mtgoEvents(format, days)); } catch {}
   return out.sort((a, b) => String(b.date).localeCompare(String(a.date)));
 }
 
@@ -98,7 +154,7 @@ const MATCH_AT = 0.3; // below this a real deck is "other". Checked by hand on s
 async function matrix(field, format, { days = 42, isLand } = {}) {
   const fv = field.map(d => vec(d.main, isLand));
   const evs = await events(format, days);
-  const pairs = {}, seen = Object.fromEntries(field.map(d => [d.name, 0]));
+  const pairs = {}, seen = Object.fromEntries(field.map(d => [d.name, 0])), vsField = {};
   let decks = 0, other = 0, matches = 0;
   const add = (a, b, gw, gl, mw, ml, md) => {
     const p = (pairs[a] = pairs[a] || {})[b] = pairs[a][b] || { games: [0, 0], matches: [0, 0, 0] };
@@ -112,6 +168,8 @@ async function matrix(field, format, { days = 42, isLand } = {}) {
       fv.forEach((f, i) => { const s = overlap(v, f); if (s > best) { best = s; bi = i; } });
       if (best >= MATCH_AT) { arch.set(d.player, field[bi].name); seen[field[bi].name]++; } else other++;
     }
+    // MTGO events with every player published: each archetype's match record against the whole field
+    if (e.complete) for (const r of e.records || []) { const A = arch.get(r.player); if (!A) continue; const x = vsField[A] = vsField[A] || { w: 0, l: 0, events: new Set() }; x.w += r.w; x.l += r.l; x.events.add(e.uri); }
     for (const m of e.matches) {
       const A = arch.get(m.a), B = arch.get(m.b); if (!A || !B || !m.b) continue;
       const [w, l, dr] = String(m.r).split('-').map(Number); if (!(w + l)) continue;
@@ -120,7 +178,9 @@ async function matrix(field, format, { days = 42, isLand } = {}) {
       add(A, B, w, l, mw, ml, md); add(B, A, l, w, ml, mw, md); // a mirror lands on both sides of its own cell, so it reads 50%
     }
   }
-  return { pairs, seen, decks, other, matches, events: evs.length, days, sources: SOURCES, newest: evs[0]?.date || null };
+  const complete = evs.filter(e => e.complete).length, mtgo = evs.filter(e => e.source === 'mtgo.com').length;
+  return { pairs, seen, decks, other, matches, events: evs.length, mtgoEvents: mtgo, completeEvents: complete, days, sources: [...SOURCES, 'mtgo.com'], newest: evs[0]?.date || null,
+    vsField: Object.fromEntries(Object.entries(vsField).map(([a, x]) => [a, { w: x.w, l: x.l, events: x.events.size }])) };
 }
 
 // What real pilots of each archetype carry in their sideboards: per archetype, how many

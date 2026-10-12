@@ -35,7 +35,7 @@ function matchups(rv) {
     const pool = o.pooled ? `; with ${o.pooled.runs} earlier run${o.pooled.runs === 1 ? '' : 's'} of this list counted, game 1 ${o.pooled.pre[0]}-${o.pooled.pre[1]}${o.pooled.post[0] + o.pooled.post[1] ? ', sideboarded ' + o.pooled.post[0] + '-' + o.pooled.post[1] : ''} in all` : '';
     const pd = s.n1 >= 20 ? `; game 1 ${pct(s.onPlay)} on the play, ${pct(s.onDraw)} on the draw` : '';
     const plan = o.plan && !o.plan.error ? `; your plan: in ${o.plan.me.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}, out ${o.plan.me.out.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}; their plan: in ${o.plan.opp.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}` : '';
-    const real = c && c.real ? `; this archetype wins ${pct(c.real.w / Math.max(1, c.real.w + c.real.l))} of ${c.real.w + c.real.l} paper games` : '';
+    const real = c && c.real ? `; in real tournaments (paper and MTGO) this archetype wins ${pct(c.real.w / Math.max(1, c.real.w + c.real.l))} of ${c.real.w + c.real.l} matches against ${c.real.vs || 'the other field decks'}` : '';
     const loss = rv.event && o.metaPct != null && s.counted ? `; costs you ${(o.metaPct * (1 - s.p)).toFixed(1)} losses in 100 field matches` : '';
     const ai = rv.aiCards && rv.aiCards.opp[i], aiT = ai ? [ai.missing.length ? '; Forge doesn\'t have ' + ai.missing.map(x => x.qty + ' ' + x.name).join(', ') + ' (played without them)' : '', ai.unplayable.length ? '; Forge\'s AI won\'t cast ' + ai.unplayable.map(x => x.qty + ' ' + x.name).join(', ') : '', ai.limited.length ? '; Forge\'s AI casts ' + ai.limited.map(x => x.qty + ' ' + x.name).join(', ') + ' only situationally' : ''].join('') : '';
     return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): this run game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}${pool}${pd}; match ${c ? pct(s.raw) + ' raw, ' + span(s) + ' calibrated' : span(s)}${loss}${real}${aiT}${plan}`;
@@ -60,7 +60,7 @@ ${list(v.list.side || [])}
 
 Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.date).toDateString() : 'field'}, status ${rv.status}, ${rv.played} of ${rv.total} games played. ${rv.bo3 === 'boarded' ? 'Best of three with sideboard plans.' : 'Game 1 only.'}
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
-Fidelity: ${fidelityText(cal && cal.fidelity)}
+Fidelity: ${fidelityText(cal && cal.fidelity)}${deckFidelityText(cal && cal.deckFidelity)}
 
 Headline: ${headline(rv)}.${rv.aiCards && rv.aiCards.mine ? `
 The brew as Forge played it: ${[rv.aiCards.mine.missing.length ? 'Forge does not have ' + rv.aiCards.mine.missing.map(x => x.qty + ' ' + x.name).join(', ') + ', so the deck played without them' : '', rv.aiCards.mine.unplayable.length ? 'Forge\'s AI will not cast ' + rv.aiCards.mine.unplayable.map(x => x.qty + ' ' + x.name).join(', ') : '', rv.aiCards.mine.limited.length ? 'it casts ' + rv.aiCards.mine.limited.map(x => x.qty + ' ' + x.name).join(', ') + ' only situationally' : ''].filter(Boolean).join('; ')}. Discount anything the numbers say about those cards.` : ''}
@@ -70,6 +70,7 @@ ${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}`;
 }
 
 // How well Forge's matchups have carried over to real tournaments (calib.js fidelity), in words.
+function deckFidelityText(d) { return d ? ` Overall deck strength: Forge's per-deck win rates against real match records correlate r = ${d.r.toFixed(2)} (likely ${d.lo.toFixed(2)} to ${d.hi.toFixed(2)}) over ${d.decks} decks.` : ''; }
 function fidelityText(f) {
   if (!f) return 'not yet checked against real tournaments.';
   const k = `k = ${f.k.toFixed(2)}, likely ${f.lo.toFixed(2)} to ${f.hi.toFixed(2)}, from ${f.realGames} real games across ${f.pairs} meta matchups (1 means Forge's matchups carry over to real play as they are, 0 that they carry no information)`;

@@ -453,12 +453,15 @@ async function refit(format) {
   let sbs = null; try { sbs = await realdata.sideboards(field, format, { days: REAL_DAYS }); } catch (e) { console.error('sideboards:', e.message); }
   const sideboards = sbs && Object.fromEntries(Object.entries(sbs).filter(([, a]) => a.pilots >= 5).map(([n, a]) => [n, { pilots: a.pilots,
     cards: Object.entries(a.cards).map(([name, x]) => ({ name, share: x.decks / a.pilots, copies: x.copies / x.decks })).filter(x => x.share >= 0.15).sort((x, y) => y.share - x.share).slice(0, 20) }]));
-  const realField = Object.fromEntries(Object.entries(real.pairs).map(([a, row]) => { let w = 0, l = 0; for (const [b, p] of Object.entries(row)) if (b !== a) { w += p.games[0]; l += p.games[1]; } return [a, { w, l }]; }));
+  // each archetype's real match record: against the whole field from fully published MTGO events
+  // where there are 20+ such matches, else its head-to-head matches against the other field decks
+  const h2h = Object.fromEntries(Object.entries(real.pairs).map(([a, row]) => { let w = 0, l = 0; for (const [b, p] of Object.entries(row)) if (b !== a) { w += p.matches[0]; l += p.matches[1]; } return [a, { w, l, vs: 'field decks' }]; }));
+  const realField = { ...h2h, ...Object.fromEntries(Object.entries(real.vsField || {}).filter(([, x]) => x.w + x.l >= 20).map(([a, x]) => [a, { w: x.w, l: x.l, vs: 'whole field', events: x.events }])) };
   calibs[format] = { at: Date.now(), beta: f.beta, evidence: f.evidence, lambda: f.lambda, pairs: f.pairs, realGames: f.realGames, forgePairs: Object.keys(forge).length,
-    events: real.events, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
+    events: real.events, mtgoEvents: real.mtgoEvents || 0, completeEvents: real.completeEvents || 0, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
     lists: field.map(d => ({ name: d.name, main: d.main })),
     // the fit's inputs, kept so it can be audited and tested offline
-    inputs: { forge, real: realPairs }, fidelity: calib.fidelity(forge, realPairs), sideboards: sideboards || calibs[format]?.sideboards || null };
+    inputs: { forge, real: realPairs }, fidelity: calib.fidelity(forge, realPairs), deckFidelity: calib.deckFidelity(forge, realField), sideboards: sideboards || calibs[format]?.sideboards || null };
   saveCal();
   return calibs[format];
 }
@@ -489,7 +492,7 @@ function calibView(b, run) {
   for (const l of c.lists) { const s = realdata.overlap(me, realdata.vec(l.main)); if (s > best) { best = s; near = l.name; } }
   const known = n => c.beta[n] != null && (c.evidence[n] || 0) >= MIN_EVIDENCE;
   const mine = best >= realdata.MATCH_AT && known(near) ? near : null;
-  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs, lambda: c.lambda || 2, fidelity: c.fidelity || null,
+  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs, lambda: c.lambda || 2, fidelity: c.fidelity || null, deckFidelity: c.deckFidelity || null,
     me: { near: mine, overlap: Math.round(best * 100), beta: mine ? c.beta[mine] : 0, evidence: mine ? c.evidence[mine] : 0 },
     opp: Object.fromEntries(run.opponents.map(o => [o.name, known(o.name) ? { beta: c.beta[o.name], evidence: Math.round(c.evidence[o.name] * 10) / 10, real: c.realField[o.name] || null, decks: c.seen[o.name] || 0 } : null])) };
 }
