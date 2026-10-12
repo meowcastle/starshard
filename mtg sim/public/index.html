@@ -222,6 +222,16 @@ Deck
       </sc-if>
 
       <sc-if value="{{ viewRun }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ duelRunning }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:820px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8F8D86">{{ evLabel }}</div>
+        <div style="font-size:34px;line-height:1.22;font-weight:500;letter-spacing:-.01em">{{ brief.status }}</div>
+        <div style="font-size:15px;color:#8F8D86">{{ brief.statusNote }}</div>
+        {{ pulse }}
+        <div style="font-size:17px;line-height:1.55;max-width:640px">Results show here when the run finishes. The first games can swing a matchup either way, so nothing is a verdict until then. You can close this; the run carries on.</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ runAt }} · {{ snapshotLabel }}<sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ doCancelRun }}" style="color:#8F8D86">{{ cancelLabel }}</a></sc-if></div>
+      </div>
+      </sc-if>
       <sc-if value="{{ isPod }}" hint-placeholder-val="{{ false }}">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px">
         <div><div style="font-size:13px;color:#8F8D86">{{ headlineLabel }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:500;line-height:1;color:{{ overall.numColor }}">{{ overall.pct }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#8F8D86">{{ overall.pm }}</span></div><div style="position:relative;height:6px;background:#1f1f1e;border-radius:3px;margin-top:12px"><div style="position:absolute;left:{{ evenLine }}%;top:-3px;bottom:-3px;width:1px;background:#4a4a48"></div><div style="position:absolute;top:2px;height:2px;left:{{ overall.lo }}%;width:{{ overall.w }}%;background:{{ overall.hatch }}"></div><div style="position:absolute;top:-2px;width:10px;height:10px;border-radius:50%;left:calc({{ overall.left }}% - 5px);background:{{ overall.color }}"></div></div><div style="font-size:13px;color:#8F8D86;margin-top:8px">{{ overall.n }} games · {{ evenLabel }}</div></div>
@@ -229,7 +239,7 @@ Deck
         <div><div style="font-size:13px;color:#8F8D86">Status</div><div style="font-size:17px;font-weight:600;margin-top:6px;color:{{ runStatusColor }}">{{ runStatus }}</div><div style="font-size:13px;color:#8F8D86;margin-top:8px;line-height:1.5">{{ runNote }}</div><sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"><a href="#" onClick="{{ doCancelRun }}" style="display:inline-block;margin-top:8px;font-size:13px;color:#8F8D86">{{ cancelLabel }}</a></sc-if></div>
       </div>
       </sc-if>
-      <sc-if value="{{ isDuel }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ duelDone }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column;gap:14px;max-width:820px">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8F8D86">{{ evLabel }}</div>
         <div style="font-size:34px;line-height:1.22;font-weight:500;letter-spacing:-.01em;text-wrap:balance">{{ deck.name }} wins about <span style="color:#C5EC7A;font-weight:700">{{ evField }}</span> matches{{ evAgainst }}.</div>
@@ -637,7 +647,7 @@ class Component extends DCLogic {
       change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}), askKey: () => {},
       hasCards: false, noCards: false, noCardsNote: '', cardsNote: '', cardRows: [], hasThreats: false, threatRows: [], threatsNote: '',
       fidColor: '#5C5B56', fidTitle: '', fidNote: '', evUnder: '', leversNote: '', evLabel: '', evField: '', evAgainst: '', hasEvBench: false, evVs: '', evSure: '', evSureNote: '', evSureBg: 'transparent', evSureColor: MUTED, hasEvent: false, evRounds: 7, evNeed: '', evOdds: [], evRecord: '', evOddsLo: '', evOddsHi: '', evScale: 20, evLosses: '', evStrip: [], evTableNote: '', evLossHead: '', hasLevers: false, levers: [],
-      headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', canCancel: false, cancelLabel: '', doCancelRun: pe(() => {}), runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
+      headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', canCancel: false, cancelLabel: '', doCancelRun: pe(() => {}), runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, duelRunning: false, duelDone: true, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
       leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
@@ -777,6 +787,8 @@ class Component extends DCLogic {
     const topOpp = v.isDuel && run && run.opponents && run.opponents[0];
     v.prompts = !d.coachOn ? [] : [worst && 'Why do I lose to ' + worst.o.name + '?', topOpp && 'What should I board against ' + topOpp.name + '?', d.notes.length ? 'Is it ready for ' + d.notes[0].t.slice(0, 40) + '?' : 'Which card is my weakest?'].filter(Boolean).map(t => ({ t, go: pe(() => this.ask(t)) }));
     v.waiting = waiting;
+    // a 1v1 run's results stay off the Results tab until it finishes: a handful of games read as a verdict
+    v.duelRunning = v.isDuel && waiting; v.duelDone = v.isDuel && !waiting;
     if (waiting && run && run.pulse) {
       // one square per game in play order; green yours, grey theirs, the newest glows
       const h = React.createElement, G = ACC, L = '#5C5B56', DIM = 'rgba(255,255,255,.07)', P = run.pulse, last = P.reduce((k, x, i) => x != null ? i : k, -1);
@@ -874,7 +886,8 @@ class Component extends DCLogic {
     // how each card played, from Forge's game logs
     if (run) {
       const cs = run.cards, pc = (x) => x == null ? '—' : Math.round(x * 100) + '%';
-      if (cs && cs.rows.length) {
+      const settled = !(v.isDuel && this.active(run)); // a 1v1 run's card stats wait for the finish, like its verdict
+      if (cs && cs.rows.length && settled) {
         v.hasCards = true;
         v.cardsNote = cs.games + ' games · won when cast vs not has selection bias (cheap cards read low, top end high); under ±10 is noise';
         v.cardRows = cs.rows.map(r => ({ name: r.name, qty: r.side ? 'sb' : r.qty, castS: pc(r.castPct), turnS: r.turn ? 'T' + r.turn.toFixed(1) : '—', wonS: r.cast >= cs.minCast ? pc(r.won) : '—', notS: r.lift == null ? '—' : pc(r.wonNot),
@@ -883,7 +896,7 @@ class Component extends DCLogic {
         v.hasThreats = cs.threats.length > 0;
         v.threatsNote = 'your win rate in games they cast it, against your overall rate in that matchup';
         v.threatRows = cs.threats.map(t => ({ name: t.name, opp: t.opp, castS: t.cast + ' of ' + t.games, youS: pc(t.you), baseS: pc(t.base), dropS: '−' + Math.round((t.base - t.you) * 100), dmgS: t.dmg >= 1 ? t.dmg.toFixed(1) + ' dmg' : '' }));
-      } else if (run.status === 'done' || this.active(run)) {
+      } else if (run.status === 'done' || (this.active(run) && settled)) {
         v.noCards = true; v.noCardsNote = this.active(run) ? 'Card stats fill in as games finish.' : 'This run finished before the sim read game logs. Card stats start with the next run.';
       }
     }
