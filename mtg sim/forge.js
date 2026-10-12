@@ -36,9 +36,13 @@ const safe = s => String(s).replace(/[^A-Za-z0-9 _'.,-]/g, '').trim().slice(0, 6
 // Run one Forge process. onLine gets every stdout/stderr line; returns {child, done}.
 function runSim({ decks, games, format, clock, workDir, onLine }) {
   fs.mkdirSync(workDir, { recursive: true });
+  // Forge's AI plays a deck defensively only when its name contains "Control" (or
+  // its average mana value is over 3), so a control brew called "Squall" would get
+  // attack logic meant for aggro. A deck marked ai: 'control' carries the word.
+  const forgeName = d => { const n = safe(d.name); return d.ai === 'control' && !/control/i.test(n) ? n.slice(0, 52) + ' Control' : n; };
   const names = decks.map((d, i) => {
-    let n = safe(d.name);
-    if (decks.slice(0, i).some(o => safe(o.name) === n)) n += ` (${i + 1})`;
+    let n = forgeName(d);
+    if (decks.slice(0, i).some(o => forgeName(o) === n)) n += ` (${i + 1})`;
     return n;
   });
   const files = decks.map((d, i) => {
@@ -74,6 +78,8 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
     if (m && /Game Result|has won|Draw/i.test(line)) {
       const g = { n: +m[1], ms: +(line.match(/(\d+) ms/) || [0, 0])[1] };
       const t = line.match(/turn (\d+)/i); if (t) g.turn = +t[1];
+      // who went first: the first turn line of this game's log
+      const t1 = gameLines.find(l => l.startsWith('Turn: ')), f = t1 && t1.match(/Ai\((\d+)\)/); if (f && +f[1] <= names.length) g.first = +f[1] - 1;
       if (/draw/i.test(m[2])) { g.winner = -1; results.draws++; }
       else {
         const ai = line.match(/Ai\((\d+)\)/);

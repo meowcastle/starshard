@@ -9,6 +9,7 @@ const meta = require('./meta');
 const sideboard = require('./sideboard');
 const cardstats = require('./cardstats');
 const usage = require('./usage');
+const score = require('./score');
 const realdata = require('./realdata');
 const calib = require('./calib');
 const codex = require('./codex');
@@ -97,7 +98,7 @@ function enqueue(spec) {
   const job = { id, status: 'queued', created: Date.now(), ...spec, log: [], results: null };
   job.plan = pairingsOf(job);
   job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
-  job.pending = job.plan.map((_, i) => i); job.inflight = 0; job.children = new Set();
+  job.pending = job.plan.map((_, i) => i); job.inflight = 0; job.children = new Set(); job.base = job.plan.length;
   jobs.set(id, job); queue.push(job); pump();
   return job;
 }
@@ -174,16 +175,44 @@ function cancelJob(j) {
 }
 // a job is finished once nothing of it is waiting or playing
 function settle(job) {
+  if (!job.pending.length && job.status !== 'cancelled' && !job.finished) { try { extend(job); } catch (e) { console.error('extend:', e.message); } }
   if (job.inflight > 0 || (job.pending.length && job.status !== 'cancelled') || job.finished) return;
   const qi = queue.indexOf(job); if (qi >= 0) queue.splice(qi, 1);
   if (job.status !== 'cancelled') job.status = job.pairings.every(p => p.status === 'failed') ? 'failed' : 'done';
   job.finished = Date.now();
   history.unshift({ id: job.id, owner: job.owner, mode: job.mode, format: job.format, games: job.games, created: job.created, finished: job.finished, status: job.status,
-    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, ...(job.brew && cards ? { cards } : {}) })),
+    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards, where, ext }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, pd: score.tallyGames(games), where: where || null, ...(ext ? { ext: true } : {}), ...(job.brew && cards ? { cards } : {}) })),
     decks: job.decks, meta: job.meta || null });
   saveHist();
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
   if (job.onDone) try { job.onDone(job); } catch (e) { console.error('onDone:', e.message); }
+}
+
+// More games where they change the answer. A brew's field run plays 20 games of each
+// phase per opponent first; after that, while its headline's 95% range is wider than
+// SIM_TARGET points either side, each finished pairing tops the queue up with another
+// 20 games for the matchups whose uncertainty moves the headline most (meta share
+// squared times the matchup's variance, discounted by the games it already has),
+// until the extra games reach SIM_EXTRA times the first pass. Games already played by
+// earlier runs of the same list count, so a rerun often needs none.
+const TARGET = (+process.env.SIM_TARGET || 5) / 100, EXTRA = process.env.SIM_EXTRA != null && process.env.SIM_EXTRA !== '' ? +process.env.SIM_EXTRA : 1;
+function extend(job) {
+  if (!job.brew || job.mode !== 'gauntlet' || !job.base || !EXTRA) return;
+  const room = Math.min(Math.max(4, SLOTS + leases.size) - job.inflight, Math.round(job.base * EXTRA) - (job.plan.length - job.base)); if (room <= 0) return;
+  const b = brews.find(x => x.id === job.brew), run = b && b.runs.find(r => r.jobId === job.id); if (!run || run.cancelled) return;
+  const rv = runView(b, run); if (!rv.score || (rv.score.hi - rv.score.lo) / 2 <= TARGET) return;
+  const busy = new Set(job.pairings.filter(p => p.status === 'running' || p.status === 'queued').map(p => p.opp));
+  const pick = rv.opponents.map((o, i) => ({ i, s: rv.scores[i] })).filter(x => x.s && x.s.counted && !busy.has(x.i))
+    .map(x => ({ ...x, gain: x.s.wt * x.s.wt * x.s.v * GAMES / (x.s.n + GAMES) })).sort((x, y) => y.gain - x.gain).slice(0, room);
+  for (const { i, s } of pick) {
+    const base = job.plan.filter(p => p.opp === i), post = base.find(p => p.phase === 'post');
+    // the boarded games when they are the thinner half, else game 1
+    const from = post && s.n2 < s.n1 ? post : base.find(p => p.phase !== 'post'); if (!from) continue;
+    job.plan.push({ ...from, ext: true });
+    job.pairings.push({ names: from.decks.map(d => d.name), wins: from.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: from.phase, opp: from.opp, a: from.a, b: from.b, ext: true });
+    job.pending.push(job.plan.length - 1);
+  }
+  if (pick.length) pump();
 }
 
 // Remote workers. A worker checks out one pairing at a time (a lease), plays it with
@@ -204,7 +233,7 @@ const workerOk = req => {
 setInterval(() => { for (const [id, l] of leases) if (Date.now() > l.until) { leases.delete(id); console.warn(`worker ${l.worker} went quiet; pairing ${l.job.id}/${l.i} back in line`); unclaim(l.job, l.i); } }, Math.min(15e3, LEASE_MS / 2));
 const clean = r => ({
   wins: Array.isArray(r?.wins) ? r.wins.slice(0, 4).map(x => +x || 0) : null, draws: +r?.draws || 0,
-  games: Array.isArray(r?.games) ? r.games.slice(0, MAX_GAMES).map(g => ({ n: +g.n || 0, winner: Number.isInteger(g.winner) ? g.winner : -1, ms: +g.ms || 0, ...(g.turn ? { turn: +g.turn } : {}) })) : [],
+  games: Array.isArray(r?.games) ? r.games.slice(0, MAX_GAMES).map(g => ({ n: +g.n || 0, winner: Number.isInteger(g.winner) ? g.winner : -1, ms: +g.ms || 0, ...(g.turn ? { turn: +g.turn } : {}), ...(g.first === 0 || g.first === 1 ? { first: g.first } : {}) })) : [],
   warnings: Array.isArray(r?.warnings) ? r.warnings.slice(0, 50).map(String) : [], cards: Array.isArray(r?.cards) ? r.cards.slice(0, 4) : null,
 });
 
@@ -291,7 +320,7 @@ async function prepareRun(b, run, user) {
     if (!field.length) throw new Error('no opponent decklists could be read');
     run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list, f.name)) }));
     const v = b.versions.find(x => x.v === run.v);
-    const decks = [{ name: b.name, ...v.list }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
+    const decks = [{ name: b.name, ...v.list, ...(v.style?.kind === 'control' ? { ai: 'control' } : {}) }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
     let post = null;
     if (b.seats !== 4) {
       // best of three: game 1 as listed, games 2 and 3 boarded
@@ -312,11 +341,23 @@ async function prepareRun(b, run, user) {
 
 // A pairing's game-1 and post-board results for opponent i. History from before
 // best-of-three has no phase or opponent index: there, pairing i is opponent i.
+// A matchup can have several pairings per phase (the first pass and any games added
+// where the result was still uncertain); they are merged into one.
 function phasesOf(prs, i) {
-  if (prs.length && prs[0].opp == null && prs[0].a == null) return { pre: prs[i] || null, post: null };
-  return { pre: prs.find(p => p.opp === i && p.phase !== 'post') || null, post: prs.find(p => p.opp === i && p.phase === 'post') || null };
+  if (prs.length && prs[0].opp == null && prs[0].a == null) return { pre: mergePr(prs[i] ? [prs[i]] : []), post: null };
+  return { pre: mergePr(prs.filter(p => p.opp === i && p.phase !== 'post')), post: mergePr(prs.filter(p => p.opp === i && p.phase === 'post')) };
 }
 const played = p => p ? (p.games ? p.games.length : p.played || 0) : 0;
+// who went first in each game, from the brew's side: live pairings carry their games, finished ones a tally
+const pdOf = p => p.games ? score.tallyGames(p.games) : p.pd || { P: [0, 0], D: [0, 0], U: [p.wins[0] || 0, (p.wins[0] || 0) + (p.wins[1] || 0)] };
+function mergePr(list) {
+  if (!list.length) return null;
+  const has = k => list.some(p => p.status === k);
+  const st = list.every(p => p.status === 'queued') ? 'queued' : list.every(p => p.status === 'failed') ? 'failed' : has('running') || has('queued') ? 'running' : 'done';
+  const cards = list.some(p => p.cards) ? [0, 1].map(s => cardstats.merge(list.map(p => p.cards && p.cards[s]))) : null;
+  return { wins: [0, 1].map(s => list.reduce((t, p) => t + (p.wins[s] || 0), 0)), draws: list.reduce((t, p) => t + (p.draws || 0), 0), played: list.reduce((t, p) => t + played(p), 0),
+    status: list.length === 1 ? list[0].status || 'done' : st, cards, pd: list.reduce((t, p) => score.addT(t, pdOf(p)), score.T0()), parts: list.length };
+}
 const tally = p => p ? { wins: [p.wins[0] || 0, p.wins[1] || 0], draws: p.draws || 0, played: played(p), status: p.status || 'done' } : null;
 
 // ---------- the benchmark ----------
@@ -377,7 +418,11 @@ function forgePairs(format) {
     for (const p of h.pairings || []) {
       if (!p.played || p.names.length !== 2 || p.names[0] === p.names[1]) continue;
       const k = calib.pairKey(p.names[0], p.names[1]), first = p.names[0] < p.names[1] ? 0 : 1;
-      const c = out[k] = out[k] || [0, 0]; c[0] += p.wins[first]; c[1] += p.wins[1 - first];
+      // the loser of each game plays first in the next, so the raw count leans toward 50%:
+      // balance it as half the games on the play and half on the draw when both were seen
+      const t = pdOf(p), n = p.wins[0] + p.wins[1], r = (w, m) => (w + 0.5) / (m + 1);
+      const w0 = t.P[1] >= 3 && t.D[1] >= 3 ? n * (r(t.P[0], t.P[1]) + r(t.D[0], t.D[1])) / 2 : p.wins[0];
+      const c = out[k] = out[k] || [0, 0]; c[first] += w0; c[1 - first] += n - w0;
     }
   }
   return out;
@@ -431,7 +476,7 @@ function calibView(b, run) {
   const known = n => c.beta[n] != null && (c.evidence[n] || 0) >= MIN_EVIDENCE;
   const mine = best >= realdata.MATCH_AT && known(near) ? near : null;
   return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs,
-    me: { near: mine, overlap: Math.round(best * 100), beta: mine ? c.beta[mine] : 0 },
+    me: { near: mine, overlap: Math.round(best * 100), beta: mine ? c.beta[mine] : 0, evidence: mine ? c.evidence[mine] : 0 },
     opp: Object.fromEntries(run.opponents.map(o => [o.name, known(o.name) ? { beta: c.beta[o.name], evidence: Math.round(c.evidence[o.name] * 10) / 10, real: c.realField[o.name] || null, decks: c.seen[o.name] || 0 } : null])) };
 }
 
@@ -512,7 +557,63 @@ function runView(b, run) {
   out.coach = run.coach || null;
   out.cards = cardsView(b, run, prs);
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
+  if (b.seats === 2 && out.opponents) scoreView(b, run, j, out);
+  out.extended = j?.pairings ? j.pairings.filter(p => p.ext).length * GAMES : 0;
   return out;
+}
+
+// ---------- the numbers (score.js) ----------
+// Every matchup counts this run's games plus those of earlier runs of the same version
+// against the same opponent list (90% of the nonland cards the same), so a rerun adds
+// evidence instead of replacing it. A run is never pooled with runs after it.
+const SAME_LIST = 0.9;
+const vecs = new WeakMap();
+const vecOf = d => { let v = vecs.get(d); if (!v) { v = realdata.vec(d.main || []); vecs.set(d, v); } return v; };
+const scored = new Map();
+function scoreView(b, run, j, out) {
+  const cal = out.calibration && Object.values(out.calibration.opp || {}).some(Boolean) ? out.calibration : null;
+  const meBeta = cal ? cal.me.beta : 0, meVar = cal && cal.me.near ? 1 / ((cal.me.evidence || 0) + 2) : 0;
+  const shiftOf = (name, base, baseVar) => { const c = cal && cal.opp[name]; return c ? { d: c.beta - base, sd: Math.sqrt(1 / (c.evidence + 2) + baseVar) } : null; };
+  const prs = j?.pairings || [];
+  const earlier = !j || !j.decks ? [] : b.runs.filter(r => r !== run && r.v === run.v && r.created < run.created && r.jobId && r.opponents)
+    .map(r => ({ r, rj: jobOf(r.jobId) })).filter(({ rj }) => rj && rj.decks && rj.pairings && (rj.decks[0].ai || null) === (j.decks[0].ai || null));
+  let sig = run.id + '|' + (cal ? cal.at : 0);
+  const opps = out.opponents.map((o, i) => {
+    const ph = phasesOf(prs, i), pre = ph.pre ? { ...ph.pre.pd } : score.T0(), post = ph.post ? { ...ph.post.pd } : score.T0();
+    const mine = j && j.decks && j.decks[i + 1];
+    let runs = 0, boarded = !!ph.post;
+    for (const { r, rj } of earlier) {
+      const k = r.opponents.findIndex(x => x.name === o.name); if (k < 0 || !mine || !rj.decks[k + 1]) continue;
+      if (realdata.overlap(vecOf(mine), vecOf(rj.decks[k + 1])) < SAME_LIST) continue;
+      const eph = phasesOf(rj.pairings, k); if (!eph.pre || !eph.pre.played) continue;
+      runs++; score.addT(pre, eph.pre.pd); if (eph.post) { score.addT(post, eph.post.pd); boarded = true; }
+    }
+    sig += '|' + score.nOf(pre) + ':' + score.wOf(pre) + ':' + score.nOf(post) + ':' + score.wOf(post);
+    const shift = shiftOf(o.name, meBeta, meVar);
+    o.pooled = runs ? { runs, pre: [score.wOf(pre), score.nOf(pre) - score.wOf(pre)], post: [score.wOf(post), score.nOf(post) - score.wOf(post)] } : null;
+    return { name: o.name, w: o.metaPct != null ? o.metaPct : null, counted: !!shift || !o.style, pre, post: boarded ? post : null, boarded, shift };
+  });
+  // the field's #1 deck through the same opponents, over the ones both have played
+  const bm = run.benchmarkId && benches.find(x => x.id === run.benchmarkId), bj = bm && jobOf(bm.jobId);
+  if (bj && bj.pairings) sig += '|b' + bj.pairings.reduce((t, p) => t + played(p), 0);
+  const apply = res => { Object.assign(out, res); out.opponents.forEach((o, i) => { o.score = res.scores[i] || null; }); return out; };
+  if (scored.has(sig)) return apply(scored.get(sig));
+  const sc = score.run(opps);
+  const res = { score: sc && sc.overall ? { p: sc.overall.p, lo: sc.overall.lo, hi: sc.overall.hi, n: sc.overall.n, k: sc.overall.k, wtd: sc.overall.wtd, eta: sc.eta } : null,
+    scores: sc ? sc.opp.map(x => x && { p: x.p, lo: x.lo, hi: x.hi, v: x.v, raw: x.raw, g1: x.g1, onPlay: x.onPlay, onDraw: x.onDraw, n: x.n, n1: x.n1, n2: x.n2, wt: x.wt, cal: x.cal, counted: x.counted }) : [], benchScore: null };
+  if (sc && bj && bj.pairings) {
+    const bBeta = cal && cal.opp[bm.name] ? cal.opp[bm.name].beta : 0, bVar = cal && cal.opp[bm.name] ? 1 / (cal.opp[bm.name].evidence + 2) : 0;
+    const theirs = bm.names.slice(1).map((n, k) => { const ph = phasesOf(bj.pairings, k); return { name: n, ph }; }).filter(x => x.ph.pre && x.ph.pre.played);
+    const shared = new Set(theirs.map(x => x.name).filter(n => { const i = out.opponents.findIndex(o => o.name === n); return i >= 0 && res.scores[i] && res.scores[i].counted; }));
+    if (shared.size) {
+      const a = score.run(opps.map(o => ({ ...o, counted: o.counted && shared.has(o.name) })));
+      const t = score.run(theirs.filter(x => shared.has(x.name)).map(x => { const o = opps.find(y => y.name === x.name); return { name: x.name, w: o.w, counted: true, pre: x.ph.pre.pd, post: x.ph.post ? x.ph.post.pd : null, boarded: !!x.ph.post, shift: shiftOf(x.name, bBeta, bVar) }; }), { seed: 11 });
+      const d = score.diff(a, t);
+      if (d) res.benchScore = { k: shared.size, mine: { p: a.overall.p, lo: a.overall.lo, hi: a.overall.hi, n: a.overall.n }, theirs: { p: t.overall.p, lo: t.overall.lo, hi: t.overall.hi, n: t.overall.n }, edge: d };
+    }
+  }
+  scored.set(sig, res); if (scored.size > 500) scored.delete(scored.keys().next().value);
+  return apply(res);
 }
 // How each card played, read from the game logs (cardstats.js). Yours: how often it
 // was cast, on which turn, your win rate in games it was cast against games it

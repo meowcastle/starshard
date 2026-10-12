@@ -9,30 +9,30 @@
 // reply(): the conversation. Each turn sends the brew's context plus the recent
 // thread, so the coach always answers from the current results.
 const claude = require('./claude');
-const calib = require('./calib');
 
 const SYSTEM = `You are the coach in Forge Sim, a deck-testing tool for a small group of Magic: The Gathering players. You are a strong competitive player and a plain-spoken teacher.
 
-How the numbers you see were made: Forge's AI plays both decks, 20 games of game 1 and (when sideboard plans exist) 20 games with both decks sideboarded per opponent. The match win rate combines them as a best of three. Forge's AI pilots aggressive creature decks well and control and combo decks badly, so every matchup is corrected ("calibrated") against real paper tournament results where enough exist. Always reason from the calibrated number when there is one, and say so when a matchup was not counted or not calibrated. 20 games per side means about plus or minus 11 points per matchup; do not treat small differences as real.
+How the numbers you see were made: Forge's AI plays both decks, at least 20 games of game 1 and (when sideboard plans exist) 20 with both decks sideboarded per opponent, with more games added to the matchups that matter most and are closest, and games from earlier runs of the same list counted too. Who went first is recorded: game 1 is scored as a coin flip for the play, and the loser of each game plays first in the next, as in a real match. The match win rate combines them as a best of three. Forge's AI pilots aggressive creature decks well and control and combo decks badly, so every matchup is corrected ("calibrated") against real paper tournament results where enough exist. Always reason from the calibrated number when there is one, and say so when a matchup was not counted or not calibrated.
+
+Every number comes with a 95% range. Read it: with 40 games a single matchup's range is typically 30 to 40 points wide, so one matchup at 35% and another at 45% are not meaningfully different. Only call something a weakness or a strength when its range sits clearly on one side of 50%, and say plainly when the games can't tell yet (and that a rerun adds games rather than replacing them).
 
 Rules: use only the numbers and lists you are given; never invent a statistic. Name cards exactly as printed. Be concrete: which card, how many, against which deck, why. No hype, no filler, short paragraphs. If the player has written notes (an event date, cards that must stay, a wildcard budget), respect them.`;
 
 const pct = x => Math.round(x * 100) + '%';
-const sm = (w, n) => (w + 0.5) / (n + 1);
+const span = s => `${pct(s.p)} (likely ${Math.round(s.lo * 100)}-${Math.round(s.hi * 100)}%)`;
 
 // Every matchup as the page shows it, as text.
 function matchups(rv) {
   const cal = rv.calibration && Object.values(rv.calibration.opp || {}).some(Boolean) ? rv.calibration : null;
-  const meBeta = cal ? cal.me.beta : 0;
   return (rv.opponents || []).map(o => {
-    const n1 = o.wins[0] + o.wins[1]; if (!n1) return `- ${o.name}: not played yet`;
+    const s = o.score; if (!s) return `- ${o.name}: not played yet`;
     const n2 = o.post ? o.post.wins[0] + o.post.wins[1] : 0;
-    const p1 = sm(o.wins[0], n1), p2 = n2 ? sm(o.post.wins[0], n2) : p1;
-    const c = cal && cal.opp[o.name], d = c ? c.beta - meBeta : 0;
-    const raw = calib.match(p1, p2), fixed = calib.match(calib.inv(calib.logit(p1) + d), calib.inv(calib.logit(p2) + d));
+    const c = cal && cal.opp[o.name];
+    const pool = o.pooled ? `; with ${o.pooled.runs} earlier run${o.pooled.runs === 1 ? '' : 's'} of this list counted, game 1 ${o.pooled.pre[0]}-${o.pooled.pre[1]}${o.pooled.post[0] + o.pooled.post[1] ? ', sideboarded ' + o.pooled.post[0] + '-' + o.pooled.post[1] : ''} in all` : '';
+    const pd = s.n1 >= 20 ? `; game 1 ${pct(s.onPlay)} on the play, ${pct(s.onDraw)} on the draw` : '';
     const plan = o.plan && !o.plan.error ? `; your plan: in ${o.plan.me.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}, out ${o.plan.me.out.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}; their plan: in ${o.plan.opp.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}` : '';
     const real = c && c.real ? `; this archetype wins ${pct(c.real.w / Math.max(1, c.real.w + c.real.l))} of ${c.real.w + c.real.l} paper games` : '';
-    return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}; match ${pct(raw)} raw${c ? ', ' + pct(fixed) + ' calibrated' : ''}${real}${plan}`;
+    return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): this run game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}${pool}${pd}; match ${c ? pct(s.raw) + ' raw, ' + span(s) + ' calibrated' : span(s)}${real}${plan}`;
   }).join('\n');
 }
 
@@ -54,6 +54,8 @@ ${list(v.list.side || [])}
 
 Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.date).toDateString() : 'field'}, status ${rv.status}, ${rv.played} of ${rv.total} games played. ${rv.bo3 === 'boarded' ? 'Best of three with sideboard plans.' : 'Game 1 only.'}
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
+
+Headline: ${headline(rv)}.
 
 Matchups:
 ${matchups(rv)}${cardsText(rv.cards)}`;
@@ -79,15 +81,9 @@ const SWAP = { type: 'array', items: { type: 'object', properties: { qty: { type
 // The headline the page shows: match win rate, weighted by meta share, counting a
 // deck Forge pilots badly only once calibration has corrected it.
 function headline(rv) {
-  const cal = rv.calibration && Object.values(rv.calibration.opp || {}).some(Boolean) ? rv.calibration : null, meBeta = cal ? cal.me.beta : 0;
-  let num = 0, den = 0;
-  for (const o of rv.opponents || []) {
-    const n1 = o.wins[0] + o.wins[1]; if (!n1) continue;
-    const c = cal && cal.opp[o.name]; if (o.style && !c) continue;
-    const n2 = o.post ? o.post.wins[0] + o.post.wins[1] : 0, p1 = sm(o.wins[0], n1), p2 = n2 ? sm(o.post.wins[0], n2) : p1, d = c ? c.beta - meBeta : 0;
-    const wt = o.metaPct != null ? o.metaPct : 1; num += calib.match(calib.inv(calib.logit(p1) + d), calib.inv(calib.logit(p2) + d)) * wt; den += wt;
-  }
-  return den ? pct(num / den) + ' of matches' + (cal ? ', calibrated' : '') : 'no matches yet';
+  const cal = rv.calibration && Object.values(rv.calibration.opp || {}).some(Boolean);
+  const bs = rv.benchScore ? `; the field's #1 deck scores ${span(rv.benchScore.theirs)} on the same ${rv.benchScore.k} opponents, a gap of ${Math.round(rv.benchScore.edge.p * 100)} points (likely ${Math.round(rv.benchScore.edge.lo * 100)} to ${Math.round(rv.benchScore.edge.hi * 100)})` : '';
+  return rv.score ? span(rv.score) + ' of matches' + (cal ? ', calibrated' : '') + bs : 'no matches yet';
 }
 
 async function writeup(b, rv) {

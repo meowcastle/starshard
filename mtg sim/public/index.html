@@ -527,6 +527,8 @@ class Component extends DCLogic {
     const pips = (c) => (c || []).map(x => ({ cls: 'ms-' + x.toLowerCase(), color: MANA[x] }));
     const costPips = (cost) => ((cost || '').match(/\{([^}]+)\}/g) || []).map(t => { const s = t.slice(1, -1); return { cls: 'ms-' + s.toLowerCase().replace('/', ''), color: MANA[s] || '#B5B5B5' }; });
     const rng = (w, n, center = 0.5) => { if (!n) return { p: 0, pct: '—', pm: '', lo: 50, w: 0, left: 50, n: 0, color: '#3a3a38', numColor: '#5C5B56', hatch: 'transparent' }; const p = w / n, se = 1.96 * Math.sqrt(p * (1 - p) / n), lo = Math.max(0, p - se), hi = Math.min(1, p + se), prov = n < 30; const color = prov ? MUTED : (p >= center ? WIN : LOSS); return { p, pct: Math.round(p * 100) + '%', pm: '±' + Math.round(se * 100), lo: (lo * 100).toFixed(1), w: ((hi - lo) * 100).toFixed(1), left: (p * 100).toFixed(1), n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
+    // the same, from the server's numbers (score.js): a 95% range that needn't be symmetric
+    const rngS = (x, center = 0.5) => { if (!x || !x.n) return rng(0, 0); const prov = x.n < 30, color = prov ? MUTED : (x.p >= center ? WIN : LOSS); return { p: x.p, pct: Math.round(x.p * 100) + '%', pm: '±' + Math.round((x.hi - x.lo) * 50), span: Math.round(x.lo * 100) + '–' + Math.round(x.hi * 100) + '%', lo: (x.lo * 100).toFixed(1), w: ((x.hi - x.lo) * 100).toFixed(1), left: (x.p * 100).toFixed(1), n: x.n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
     const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const day = (t) => { const x = new Date(t); return MON[x.getMonth()] + ' ' + x.getDate(); };
     const hm = (t) => { const x = new Date(t); return String(x.getHours()).padStart(2, '0') + ':' + String(x.getMinutes()).padStart(2, '0'); };
@@ -580,9 +582,9 @@ class Component extends DCLogic {
       chkRows: unknown.map(r => ({ name: r.name, note: 'not found, skipped in games', section: r.section, color: LOSS })),
       noteText: S.noteText, onNote: (e) => this.setState({ noteText: e.target.value }), doCreate: pe(() => this.create()), createLabel: S.busy ? '…' : vOf ? 'Save as v' + (vOf.versions.length + 1) : 'Choose opponents',
       oppSets: setsOf(stage === 'firstrun' ? newBrew : d), fsQueue: pe(() => newBrew && this.queue(newBrew.id, S.oppSet)),
-      fsFootLine: S.runErr || (newBrew && newBrew.seats === 4 ? '20 pods, four seats.' : '20 games each, ' + boS + '.') + ' ' + ahead,
+      fsFootLine: S.runErr || (newBrew && newBrew.seats === 4 ? '20 pods, four seats.' : '20 games each, more where the result is close, ' + boS + '.') + ' ' + ahead,
       runOpen: S.runOpen, toggleRun: pe(() => this.setState({ runOpen: !S.runOpen, runErr: '', oppSet: d && d.oppSets.some(o => o.id === S.oppSet && o.available) ? S.oppSet : ((d && d.oppSets.find(o => o.available)) || {}).id })),
-      runLine: S.runErr || (d && d.seats === 4 ? '20 pods' : '20 games each · ' + boS + (S.bo3 ? ', game 1 and boarded games' : '')) + ' · ' + ahead, runLineColor: S.runErr ? LOSS : '#8F8D86',
+      runLine: S.runErr || (d && d.seats === 4 ? '20 pods' : '20+ games each · ' + boS + (S.bo3 ? ', game 1 and boarded games' : '')) + ' · ' + ahead, runLineColor: S.runErr ? LOSS : '#8F8D86',
       queueRun: pe(() => d && this.queue(d.id, S.oppSet)), runBo: 1, runBoToggle: '', toggleBo: pe(() => {}),
       who: S.me ? '@' + S.me.user.name : '', forgeVer: S.me ? S.me.forge : '', isAdmin: !!(S.me && S.me.user && S.me.user.isAdmin), spentToday: S.me && S.me.spentToday != null ? '$' + S.me.spentToday.toFixed(2) + ' today' : '', hasForgeUpdate: !!(S.me && S.me.forgeUpdate), forgeUpdateVer: S.me && S.me.forgeUpdate ? S.me.forgeUpdate.version : '',
       forgeUpdateNote: S.me && S.me.forgeUpdate ? 'Forge ' + S.me.forgeUpdate.version + ' is out (' + new Date(S.me.forgeUpdate.published).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + '). New sets and AI fixes land with it. To update, set' : '',
@@ -645,44 +647,31 @@ class Component extends DCLogic {
     v.snapshotLabel = run ? fieldLabel(run) : '';
     v.sourceLabel = run && run.field ? run.field.label : (d.seats === 4 ? 'EDHREC' : 'MTGGoldfish');
 
-    // A run as one number: weighted by meta share when every counted opponent has
-    // one, and leaving out decks Forge's AI pilots badly (their losses say more
-    // about the AI than about you). `only` limits it to a set of opponent names.
-    // One opponent as one number: the best-of-three match win rate, from game 1 and
-    // the boarded games (game 1's rate stands in for games 2-3 when nothing was
-    // boarded), shifted by the calibration when real results exist for both decks.
-    // Opponents Forge pilots badly count only once calibration has corrected them.
-    const lg = (p) => Math.log(p / (1 - p)), ilg = (x) => 1 / (1 + Math.exp(-x)), sm = (w, n) => (w + 0.5) / (n + 1);
-    const bo3 = (p1, p2) => p1 * (p2 + (1 - p2) * p2) + (1 - p1) * p2 * p2;
-    const valOf = (o, cal, meBeta) => {
-      const n1 = o.wins[0] + o.wins[1]; if (!n1) return null;
-      const n2 = o.post ? o.post.wins[0] + o.post.wins[1] : 0;
-      const p1 = sm(o.wins[0], n1), p2 = n2 ? sm(o.post.wins[0], n2) : p1;
-      const c = cal && cal.opp[o.name], d = c ? c.beta - meBeta : 0;
-      const g1 = o.wins[0] / n1, post = n2 ? o.post.wins[0] / n2 : null;
-      return { g1, post, raw: bo3(p1, p2), p: bo3(ilg(lg(p1) + d), ilg(lg(p2) + d)), n: n1 + n2, cal: !!c, shift: d, counted: !!c || !o.style };
-    };
-    const fieldScore = (opps, only, cal, meBeta) => { const pl = opps.map(o => ({ o, x: valOf(o, cal, meBeta) })).filter(({ o, x }) => x && x.counted && (!only || only.has(o.name))); const wtd = pl.length > 0 && pl.every(({ o }) => o.metaPct != null); let num = 0, den = 0, n = 0; pl.forEach(({ o, x }) => { const wt = wtd ? o.metaPct : 1; num += x.p * wt; den += wt; n += x.n; }); const p = den ? num / den : 0; return { r: rng(Math.round(p * n), n), p, wtd, k: pl.length }; };
+    // The numbers come from the server (score.js), the same ones the coach reads. One
+    // opponent: the best-of-three match win rate with game 1 a coin flip for who plays
+    // first and the loser of each game on the play next, from this version's games
+    // against that list (earlier runs included), shifted by calibration where real
+    // results exist. The run: weighted by meta share, leaving out decks Forge pilots
+    // badly until calibration has corrected them. Every number carries a 95% range.
+    const valOf = (o) => { const s = o.score; if (!s) return null; const n2 = o.post ? o.post.wins[0] + o.post.wins[1] : 0;
+      return { ...s, post: n2 ? o.post.wins[0] / n2 : null, shift: s.p - s.raw }; };
     const calOf = (r) => r.calibration && Object.values(r.calibration.opp).some(Boolean) ? r.calibration : null;
-    const scoreOf = (r) => v.isPod ? rng(r.seats[0].wins, r.played, 0.25) : fieldScore(r.opponents, null, calOf(r), calOf(r) ? r.calibration.me.beta : 0).r;
+    const scoreOf = (r) => v.isPod ? rng(r.seats[0].wins, r.played, 0.25) : rngS(r.score);
     // results, computed once and read by both Coach and Results
     let played = [], overall = rng(0, 0), worst = null, next = null, weighted = false, excluded = [], bench = null, cal = null;
     if (run && v.isDuel) {
       cal = calOf(run); const meBeta = cal ? cal.me.beta : 0;
       played = run.opponents.filter(o => o.wins[0] + o.wins[1] > 0);
       excluded = run.opponents.filter(o => o.style && !(cal && cal.opp[o.name]));
-      const fs = fieldScore(run.opponents, null, cal, meBeta); overall = fs.r; weighted = fs.wtd;
+      overall = rngS(run.score); weighted = !!(run.score && run.score.wtd);
       // The benchmark: the field's #1 deck against the same opponents, same AI, same
-      // best of three. Both scores are taken over exactly the opponents both have
-      // finished, weighted and calibrated the same way, so the gap is the deck.
-      const bm = run.benchmark;
+      // best of three, over exactly the opponents both have played (server-side), so
+      // the gap is the deck. The gap carries its own range.
+      const bm = run.benchmark, bs = run.benchScore;
       if (bm) {
         const bo = new Map(bm.opponents.filter(o => o.wins[0] + o.wins[1] > 0).map(o => [o.name, o]));
-        const byName = new Map(run.opponents.map(o => [o.name, o]));
-        const bBeta = cal && cal.opp[bm.name] ? cal.opp[bm.name].beta : 0;
-        const shared = new Set([...bo.keys()].filter(n => { const o = byName.get(n), x = o && valOf(o, cal, meBeta); return x && x.counted; }));
-        const mine = fieldScore(run.opponents, shared, cal, meBeta), theirs = fieldScore([...shared].map(n => ({ ...bo.get(n), metaPct: byName.get(n).metaPct, style: null })), null, cal, bBeta);
-        bench = { name: bm.name, status: bm.status, queuePos: bm.queuePos, mine: mine.r, theirs: theirs.r, k: shared.size, edge: shared.size ? Math.round((mine.p - theirs.p) * 100) : null, vs: (n) => bo.get(n) || null };
+        bench = { name: bm.name, status: bm.status, queuePos: bm.queuePos, mine: rngS(bs && bs.mine), theirs: rngS(bs && bs.theirs), k: bs ? bs.k : 0, edge: bs ? Math.round(bs.edge.p * 100) : null,
+          edgeLo: bs ? Math.round(bs.edge.lo * 100) : 0, edgeHi: bs ? Math.round(bs.edge.hi * 100) : 0, sure: bs ? bs.edge.above : 0.5, vs: (n) => bo.get(n) || null };
       }
       const costed = played.map(o => ({ o, x: valOf(o, cal, meBeta) })).filter(({ x }) => x && x.counted).map(({ o, x }) => ({ o, x, cost: Math.max(0, 0.5 - x.p) * (weighted ? o.metaPct : 1) })).sort((a, b) => b.cost - a.cost || a.x.p - b.x.p);
       worst = costed[0] || null; next = costed[1] || null;
@@ -701,12 +690,12 @@ class Component extends DCLogic {
       const left = run.total - run.played, rate = run.started && run.played ? (Date.now() - run.started) / run.played : null;
       const status = run.status === 'preparing' ? 'Reading the field' : run.status === 'queued' ? 'Queued' + (run.queuePos > 0 ? ' · ' + plural(run.queuePos, 'run') + ' ahead' : ' · next up') : 'Running · ' + run.played + ' of ' + run.total + ' games';
       v.brief = { status, statusNote: 'queued ' + hm(run.created) + (rate ? ' · about ' + plural(Math.max(1, Math.round(left * rate / 60000)), 'minute') + ' left' : '') + ' · ' + setTitle,
-        weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist and writing both sides\' sideboard plans. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' : run.played + ' of ' + run.total + ' pods played.') + ' Numbers under 30 games show hatched. You can close this; the run carries on.' };
+        weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist and writing both sides\' sideboard plans. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' + (run.extended ? ' Adding ' + run.extended + ' games to the matchups that are still too close to call.' : '') : run.played + ' of ' + run.total + ' pods played.') + ' Numbers under 30 games show hatched. You can close this; the run carries on.' };
       v.latest = { at: 'now' }; v.linkDown = 'Results so far';
     } else if (v.isDuel) {
       const edgeS = bench && bench.edge != null && bench.status === 'done' ? ' · ' + (bench.edge >= 0 ? '+' : '−') + Math.abs(bench.edge) + ' on the #1 deck' : '';
       const mS = (x) => Math.round(x.x.p * 100) + '% to win the match';
-      v.brief = { status: overall.pct + ' of matches against the ' + fieldLabel(run), statusNote: plural(overall.n, 'game') + ' · ' + overall.pm + ' · ' + (weighted ? 'weighted by meta share' : 'every deck counted once') + (cal ? ' · calibrated to ' + plural(cal.realGames, 'real game') : '') + (excluded.length ? ' · ' + plural(excluded.length, 'deck') + ' Forge pilots badly left out' : '') + edgeS,
+      v.brief = { status: overall.pct + ' of matches against the ' + fieldLabel(run), statusNote: plural(overall.n, 'game') + ' · likely ' + overall.span + ' · ' + (weighted ? 'weighted by meta share' : 'every deck counted once') + (cal ? ' · calibrated to ' + plural(cal.realGames, 'real game') : '') + (excluded.length ? ' · ' + plural(excluded.length, 'deck') + ' Forge pilots badly left out' : '') + edgeS,
         weakness: worst && worst.cost > 0 ? worst.o.name + ', ' + mS(worst) : 'Nothing below even', weaknessNote: '' };
       if (worst && worst.cost > 0) v.brief.weaknessNote = (weighted ? 'It is ' + worst.o.metaPct.toFixed(1) + '% of the field and the matchup costing you the most.' : 'The matchup costing you the most.') + (next && next.cost > 0 ? ' Next is ' + next.o.name + ', ' + mS(next) + '.' : ' Everything else is at or above even.');
       else if (worst) v.brief.weaknessNote = 'Every matchup is at or above 50%. The closest is ' + worst.o.name + ', ' + mS(worst) + '.';
@@ -762,16 +751,19 @@ class Component extends DCLogic {
     if (run && v.isDuel) {
       v.headlineLabel = 'Matches won' + (cal ? ', calibrated' : '') + (weighted ? ', weighted' : '') + ' · ' + fieldLabel(run) + (excluded.length ? ', less ' + excluded.length : ''); v.evenLabel = '50% is even'; v.evenLine = 50;
       v.rateHead = run.bo3 ? 'match win rate · 95% range' : 'match win rate, from game 1 · 95% range';
-      const boS = run.status === 'preparing' ? (S.bo3 ? 'best of three · sideboard plans being written' : 'best of one') : run.bo3 === 'boarded' ? 'best of three · game 1 and boarded games 20 each, sideboard plans by ' + 'Claude' : run.bo3 === 'unboarded' ? 'best of three, unboarded (no model key on the server, so games 2–3 play game 1\'s lists)' : run.bo3 === 'plan-failed' ? 'best of three, unboarded: every sideboard plan failed (' + (run.planError || 'model error') + '). Check the API key and credit' : 'best of one';
+      const boS = run.status === 'preparing' ? (S.bo3 ? 'best of three · sideboard plans being written' : 'best of one') : run.bo3 === 'boarded' ? 'best of three · game 1 and boarded games 20 each' + (run.extended ? ' plus ' + run.extended + ' where it was close' : '') + ', sideboard plans by Claude · game 1 counted as a coin flip for who plays first' : run.bo3 === 'unboarded' ? 'best of three, unboarded (no model key on the server, so games 2–3 play game 1\'s lists)' : run.bo3 === 'plan-failed' ? 'best of three, unboarded: every sideboard plan failed (' + (run.planError || 'model error') + '). Check the API key and credit' : 'best of one';
       const planS = run.bo3 === 'boarded' && run.planErrors ? ' · ' + plural(run.planErrors, 'sideboard plan') + ' failed, those matchups play games 2–3 unboarded' : '';
       const calS = cal ? ' · calibrated against ' + plural(cal.realGames, 'game') + ' from ' + plural(cal.events, 'paper tournament') + ' in the last ' + cal.days + ' days' + (cal.me.near ? ', your list read as closest to ' + cal.me.near : ', your list treated as an average pilot (close to no meta deck)') : ' · not calibrated yet: the weekly meta round robin hasn\'t finished';
       v.runNote = boS + planS + ' · Forge AI pilots both sides' + calS + ' · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '');
       const meBeta = cal ? cal.me.beta : 0, rec = (w) => w[0] + '–' + w[1];
       v.oppRows = run.opponents.map(o => { const x = valOf(o, cal, meBeta), g = x ? x.n : 0; const cost = x && x.counted ? Math.max(0, 0.5 - x.p) * (o.metaPct != null ? o.metaPct : 1) : 0; const bv = bench && bench.vs(o.name);
         const games = x ? ['game 1 ' + rec(o.wins), o.post && o.post.played ? 'boarded ' + rec(o.post.wins) : run.bo3 === 'boarded' && o.plan && !o.plan.error ? 'nothing to board' : ''].filter(Boolean).join(' · ') : '';
-        const calNote = x && x.cal && Math.abs(x.shift) >= 0.05 ? 'real results move it ' + (x.p >= x.raw ? '+' : '−') + Math.abs(Math.round((x.p - x.raw) * 100)) : '';
-        const flag = o.pairing === 'failed' ? 'Forge stopped early' : o.style && !(x && x.cal) ? 'Not counted · ' + o.style.why + ', which Forge pilots badly · ' + games : [games, calNote, o.draws ? plural(o.draws, 'draw') : '', bv ? 'the #1 deck went ' + rec(bv.wins) : '', o.owner || ''].filter(Boolean).join(' · ');
-        const r = x ? rng(Math.round(x.p * g), g) : rng(0, 0);
+        const calNote = x && x.cal && Math.abs(x.shift) >= 0.01 ? 'real results move it ' + (x.p >= x.raw ? '+' : '−') + Math.abs(Math.round((x.p - x.raw) * 100)) : '';
+        // game 1 on the play and on the draw; and the earlier runs' games counted in
+        const pdNote = x && x.n1 >= 20 && Math.abs(x.onPlay - x.onDraw) >= 0.08 ? 'game 1 ' + Math.round(x.onPlay * 100) + '% on the play, ' + Math.round(x.onDraw * 100) + '% on the draw' : '';
+        const poolNote = o.pooled ? 'counting ' + plural(o.pooled.runs, 'earlier run') + ', ' + rec(o.pooled.pre) + (o.pooled.post[0] + o.pooled.post[1] ? ' and ' + rec(o.pooled.post) + ' boarded' : '') + ' in all' : '';
+        const flag = o.pairing === 'failed' ? 'Forge stopped early' : o.style && !(x && x.cal) ? 'Not counted · ' + o.style.why + ', which Forge pilots badly · ' + games : [games, poolNote, pdNote, calNote, o.draws ? plural(o.draws, 'draw') : '', bv ? 'the #1 deck went ' + rec(bv.wins) : '', o.owner || ''].filter(Boolean).join(' · ');
+        const r = rngS(x);
         return { name: o.name, art: art(o.coverCard), pips: pips(o.colors), metaS: o.metaPct != null ? o.metaPct.toFixed(1) : '—', r, cost, costS: cost > 0 ? '−' + cost.toFixed(1) : '·', costColor: cost > 0 ? LOSS : '#3a3a38', gamesS: g ? String(g) : '—', flag, flagColor: o.pairing === 'failed' || (x && !x.counted) ? AMBER : '#5C5B56', opacity: !g ? 0.5 : x && !x.counted ? 0.6 : 1 }; }).sort((a, b) => b.cost - a.cost || b.r.n - a.r.n);
     } else if (run && v.isPod) {
       const tot = run.seats.reduce((a, s) => a + s.wins, 0) || 1;
@@ -800,7 +792,7 @@ class Component extends DCLogic {
       v.col2Label = 'The #1 deck, same opponents';
       if (bench.status === 'done' && bench.k) {
         v.prevPct = bench.theirs.pct; v.prevPm = bench.theirs.pm;
-        v.prevNote = bench.name + ' under the same AI. On those ' + bench.k + ' opponents you are ' + bench.mine.pct + ', ' + (bench.edge === 0 ? 'level with it' : Math.abs(bench.edge) + ' points ' + (bench.edge > 0 ? 'ahead' : 'behind')) + '.' + (Math.abs(bench.edge) < 7 ? ' Inside the noise.' : '');
+        v.prevNote = bench.name + ' under the same AI. On those ' + bench.k + ' opponents you are ' + bench.mine.pct + ', ' + (bench.edge === 0 ? 'level with it' : Math.abs(bench.edge) + ' points ' + (bench.edge > 0 ? 'ahead' : 'behind')) + ' (likely ' + bench.edgeLo + ' to ' + bench.edgeHi + ').' + (bench.edgeLo <= 0 && bench.edgeHi >= 0 ? ' ' + Math.round(Math.max(bench.sure, 1 - bench.sure) * 100) + '% sure which deck is ahead, so not settled yet.' : ' Outside the noise.');
       } else if (bench.status === 'queued' || bench.status === 'running') {
         v.prevPct = '…'; v.prevPm = '';
         v.prevNote = 'Measuring ' + bench.name + ' against the same decks, so the AI\'s bias cancels out. ' + (bench.status === 'running' ? 'Running now.' : bench.queuePos > 0 ? plural(bench.queuePos, 'run') + ' ahead of it.' : 'Starts after your run.');
