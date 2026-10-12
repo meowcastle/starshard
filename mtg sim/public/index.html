@@ -553,8 +553,9 @@ class Component extends DCLogic {
   renderVals() {
     const S = this.state, d = this.deck();
     const MANA = { W: '#F8F6D8', U: '#6AA3DC', B: '#A89DB0', R: '#E06A58', G: '#5BB07A' }; const SEAT = ['#C5EC7A', '#E9A0F2', '#7FDCEA', '#F3CB6B']; const WIN = '#7CC4F0', LOSS = '#F0A070', MUTED = '#8F8D86', ACC = '#C5EC7A', AMBER = '#F3CB6B';
-    const art = (n) => n ? 'https://api.scryfall.com/cards/named?exact=' + encodeURIComponent(n) + '&format=image&version=art_crop' : '';
-    const cardImg = (n) => 'https://api.scryfall.com/cards/named?exact=' + encodeURIComponent(n) + '&format=image&version=normal';
+    // pictures come through the server, which knows each card's CDN address (Scryfall's own lookup is rate-limited)
+    const art = (n) => n ? '/api/img?v=art_crop&name=' + encodeURIComponent(n) : '';
+    const cardImg = (n) => '/api/img?v=normal&name=' + encodeURIComponent(n);
     const pips = (c) => (c || []).map(x => ({ cls: 'ms-' + x.toLowerCase(), color: MANA[x] }));
     const costPips = (cost) => ((cost || '').match(/\{([^}]+)\}/g) || []).map(t => { const s = t.slice(1, -1); return { cls: 'ms-' + s.toLowerCase().replace('/', ''), color: MANA[s] || '#B5B5B5' }; });
     const rng = (w, n, center = 0.5) => { if (!n) return { p: 0, pct: '—', pm: '', lo: 50, w: 0, left: 50, n: 0, color: '#3a3a38', numColor: '#5C5B56', hatch: 'transparent' }; const p = w / n, se = 1.96 * Math.sqrt(p * (1 - p) / n), lo = Math.max(0, p - se), hi = Math.min(1, p + se), prov = n < 30; const color = prov ? MUTED : (p >= center ? WIN : LOSS); return { p, pct: Math.round(p * 100) + '%', pm: '±' + Math.round(se * 100), lo: (lo * 100).toFixed(1), w: ((hi - lo) * 100).toFixed(1), left: (p * 100).toFixed(1), n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };

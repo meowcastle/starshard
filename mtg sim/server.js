@@ -824,6 +824,19 @@ const server = http.createServer(async (req, res) => {
     const user = await currentUser(req);
     if (!user) return send(res, 401, { error: 'login required' });
 
+    // A card's picture: Scryfall's image CDN address from the card data the server already
+    // fetched in one batch when the deck was made. The page used to ask Scryfall's exact-name
+    // lookup for every picture, which is rate-limited hard: a deck page broke half its images.
+    if (p === '/api/img') {
+      const name = u.searchParams.get('name') || '', v = u.searchParams.get('v') === 'art_crop' ? 'art_crop' : 'normal';
+      if (!name || name.length > 150) return send(res, 400, { error: 'name required' });
+      const c = (await meta.cards([name]).catch(() => () => null))(name);
+      const src = c && (c.image_uris?.[v] || c.card_faces?.[0]?.image_uris?.[v]);
+      if (!src) return send(res, 404, { error: 'no image' });
+      res.writeHead(302, { Location: src, 'Cache-Control': 'private, max-age=86400' });
+      return res.end();
+    }
+
     if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, spentToday: user.isAdmin ? usage.spent(D24) : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
 
     // meta
