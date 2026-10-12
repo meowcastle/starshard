@@ -444,7 +444,9 @@ async function refit(format) {
   const realField = Object.fromEntries(Object.entries(real.pairs).map(([a, row]) => { let w = 0, l = 0; for (const [b, p] of Object.entries(row)) if (b !== a) { w += p.games[0]; l += p.games[1]; } return [a, { w, l }]; }));
   calibs[format] = { at: Date.now(), beta: f.beta, evidence: f.evidence, lambda: f.lambda, pairs: f.pairs, realGames: f.realGames, forgePairs: Object.keys(forge).length,
     events: real.events, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
-    lists: field.map(d => ({ name: d.name, main: d.main })) };
+    lists: field.map(d => ({ name: d.name, main: d.main })),
+    // the fit's inputs, kept so it can be audited and tested offline
+    inputs: { forge, real: realPairs } };
   saveCal();
   return calibs[format];
 }
