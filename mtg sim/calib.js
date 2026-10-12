@@ -67,7 +67,31 @@ function solve(rows, names, beta, lambda) {
   }
 }
 
+// How well Forge predicts people: on every pairing with both kinds of data, real results
+// fitted as logit R = k * logit F (maximum likelihood on the real games). k = 1 means
+// Forge's matchups carry over as they are; 0 means they carry no information about real
+// results. Forge's own noise biases k toward 0 a little (about 20% at 40 games a pair),
+// which is left in: it is the fidelity the page actually gets. Measured 12 Oct 2026 on
+// 32 pairings and 584 real games: k = 0.00, 95% range -0.22 to 0.22.
+function fidelity(forge, real, { minForge = 10, minReal = 6 } = {}) {
+  const rows = [];
+  for (const [k, f] of Object.entries(forge)) {
+    const r = real[k]; if (!r) continue; const nf = f[0] + f[1], nr = r[0] + r[1];
+    if (nf < minForge || nr < minReal) continue;
+    rows.push({ x: logit((f[0] + 0.5) / (nf + 1)), w: r[0], n: nr });
+  }
+  if (rows.length < 5) return null;
+  let k = 1, h = 0;
+  for (let it = 0; it < 50; it++) {
+    let g = 0; h = 0;
+    for (const r of rows) { const p = inv(k * r.x); g += (r.w - r.n * p) * r.x; h += r.n * p * (1 - p) * r.x * r.x; }
+    const step = g / h; k += step; if (Math.abs(step) < 1e-9) break;
+  }
+  const se = 1 / Math.sqrt(h);
+  return { k, lo: k - 1.96 * se, hi: k + 1.96 * se, pairs: rows.length, realGames: rows.reduce((s, r) => s + r.n, 0) };
+}
+
 // Best-of-three from game rates: p1 for game 1, p2 for each boarded game.
 const match = (p1, p2) => p1 * (p2 + (1 - p2) * p2) + (1 - p1) * p2 * p2;
 
-module.exports = { fit, logit, inv, pairKey, match };
+module.exports = { fit, fidelity, logit, inv, pairKey, match };

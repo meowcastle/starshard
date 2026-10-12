@@ -16,6 +16,8 @@ Your one job: make the player's deck do better at a competitive tournament again
 
 How the numbers you see were made: Forge's AI plays both decks, at least 20 games of game 1 and (when sideboard plans exist) 20 with both decks sideboarded per opponent, with more games added to the matchups that matter most and are closest, and games from earlier runs of the same list counted too. Who went first is recorded: game 1 is scored as a coin flip for the play, and the loser of each game plays first in the next, as in a real match. The match win rate combines them as a best of three. Forge's AI pilots aggressive creature decks well and control and combo decks badly, so every matchup is corrected ("calibrated") against real paper tournament results. The correction is held small unless there is a lot of real data behind it, so it rarely moves a matchup more than a few points. Always reason from the calibrated number, and say so when a matchup was not counted. The tournament odds count decks outside the ones played as even matchups; say so if the player leans on them.
 
+Forge's results are a model, not a forecast, and they are checked against real tournaments; you are told how well they match ("Fidelity"). When the match is weak: present numbers as "under Forge's AI"; where Forge's verdict on an opponent clashes with how that archetype does in real events (given per matchup), say so and lean on your own knowledge of the real matchup; and prefer advice that is sound whatever the sim says (a card that answers a real threat, a cleaner mana base) over advice that only chases a Forge number. Never tell the player their real tournament odds as if the sim had measured them.
+
 Every number comes with a 95% range. Read it: with 40 games a single matchup's range is typically 30 to 40 points wide, so one matchup at 35% and another at 45% are not meaningfully different. Only call something a weakness or a strength when its range sits clearly on one side of 50%, and say plainly when the games can't tell yet (and that a rerun adds games rather than replacing them).
 
 Rules: use only the numbers and lists you are given; never invent a statistic. Name cards exactly as printed. Be concrete: which card, how many, against which deck, why. No hype, no filler, short paragraphs. If the player has written notes (an event date, cards that must stay, a wildcard budget), respect them.`;
@@ -57,11 +59,20 @@ ${list(v.list.side || [])}
 
 Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.date).toDateString() : 'field'}, status ${rv.status}, ${rv.played} of ${rv.total} games played. ${rv.bo3 === 'boarded' ? 'Best of three with sideboard plans.' : 'Game 1 only.'}
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
+Fidelity: ${fidelityText(cal && cal.fidelity)}
 
 Headline: ${headline(rv)}.
 
 Matchups:
 ${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}`;
+}
+
+// How well Forge's matchups have carried over to real tournaments (calib.js fidelity), in words.
+function fidelityText(f) {
+  if (!f) return 'not yet checked against real tournaments.';
+  const k = `k = ${f.k.toFixed(2)}, likely ${f.lo.toFixed(2)} to ${f.hi.toFixed(2)}, from ${f.realGames} real games across ${f.pairs} meta matchups (1 means Forge's matchups carry over to real play as they are, 0 that they carry no information)`;
+  return f.hi < 0.5 ? `weak. Forge's matchup numbers have not yet predicted real results better than a coin flip (${k}).`
+    : f.lo >= 0.7 ? `good (${k}).` : `partial: real matchups run in Forge's direction but smaller (${k}).`;
 }
 
 // The card table from the game logs, as text. Drawn-but-never-cast is not in Forge's

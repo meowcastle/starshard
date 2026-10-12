@@ -446,7 +446,7 @@ async function refit(format) {
     events: real.events, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
     lists: field.map(d => ({ name: d.name, main: d.main })),
     // the fit's inputs, kept so it can be audited and tested offline
-    inputs: { forge, real: realPairs } };
+    inputs: { forge, real: realPairs }, fidelity: calib.fidelity(forge, realPairs) };
   saveCal();
   return calibs[format];
 }
@@ -477,7 +477,7 @@ function calibView(b, run) {
   for (const l of c.lists) { const s = realdata.overlap(me, realdata.vec(l.main)); if (s > best) { best = s; near = l.name; } }
   const known = n => c.beta[n] != null && (c.evidence[n] || 0) >= MIN_EVIDENCE;
   const mine = best >= realdata.MATCH_AT && known(near) ? near : null;
-  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs, lambda: c.lambda || 2,
+  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs, lambda: c.lambda || 2, fidelity: c.fidelity || null,
     me: { near: mine, overlap: Math.round(best * 100), beta: mine ? c.beta[mine] : 0, evidence: mine ? c.evidence[mine] : 0 },
     opp: Object.fromEntries(run.opponents.map(o => [o.name, known(o.name) ? { beta: c.beta[o.name], evidence: Math.round(c.evidence[o.name] * 10) / 10, real: c.realField[o.name] || null, decks: c.seen[o.name] || 0 } : null])) };
 }

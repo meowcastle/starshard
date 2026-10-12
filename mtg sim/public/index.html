@@ -235,11 +235,12 @@ Deck
         <div style="font-size:34px;line-height:1.22;font-weight:500;letter-spacing:-.01em;text-wrap:balance">{{ deck.name }} wins about <span style="color:#C5EC7A;font-weight:700">{{ evField }}</span> matches{{ evAgainst }}.</div>
         <sc-if value="{{ hasEvBench }}" hint-placeholder-val="{{ true }}"><div style="font-size:17px;line-height:1.55;max-width:640px">{{ evVs }}</div>
         <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:15px"><span style="font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ evSureBg }};color:{{ evSureColor }}">{{ evSure }}</span><span style="color:#8F8D86">{{ evSureNote }}</span></div></sc-if>
+        <div style="display:grid;grid-template-columns:10px minmax(0,1fr);gap:12px;align-items:start;font-size:14px;line-height:1.55;color:#C9C7C0;background:#121211;border:1px solid rgba(243,203,107,.25);border-radius:8px;padding:12px 14px;max-width:700px"><span style="width:8px;height:8px;border-radius:50%;margin-top:7px;background:{{ fidColor }}"></span><div><b style="font-weight:600;color:#EDEBE6">{{ fidTitle }}</b> {{ fidNote }}</div></div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56">{{ runStatus }} · {{ overall.n }} games<sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ doCancelRun }}" style="color:#8F8D86">{{ cancelLabel }}</a></sc-if></div>
       </div>
       <sc-if value="{{ hasEvent }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column;gap:18px;background:#121211;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:22px;max-width:820px">
-        <div><div style="font-size:19px;font-weight:600">At a {{ evRounds }}-round tournament</div><div style="font-size:14px;color:#8F8D86;margin-top:2px">Swiss rounds against opponents drawn from this field. Top 8 means {{ evNeed }} or better.</div></div>
+        <div><div style="font-size:19px;font-weight:600">At a {{ evRounds }}-round tournament{{ evUnder }}</div><div style="font-size:14px;color:#8F8D86;margin-top:2px">Swiss rounds against opponents drawn from this field. Top 8 means {{ evNeed }} or better.</div></div>
         <sc-for list="{{ evOdds }}" as="o" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:minmax(120px,200px) minmax(0,1fr) auto;gap:14px;align-items:center"><span style="color:{{ o.labelColor }}">{{ o.label }}</span><div style="position:relative;height:12px;background:#1f1f1e;border-radius:6px;overflow:hidden"><div style="position:absolute;top:0;bottom:0;left:{{ o.lo }}%;width:{{ o.w }}%;background:rgba(197,236,122,.18)"></div><div style="position:absolute;top:0;bottom:0;left:0;width:{{ o.p }}%;border-radius:6px;background:{{ o.color }}"></div></div><span style="font-weight:600;white-space:nowrap;color:{{ o.labelColor }}">{{ o.odds }}</span></div></sc-for>
         <div style="display:flex;flex-wrap:wrap;gap:8px 28px;font-size:14px;color:#8F8D86"><span>Most likely record <b style="color:#EDEBE6;font-weight:600">{{ evRecord }}</b></span><span>Top-8 odds likely between <b style="color:#EDEBE6;font-weight:600">{{ evOddsLo }}</b> and <b style="color:#EDEBE6;font-weight:600">{{ evOddsHi }}</b></span><span>Bars run from 0 to {{ evScale }}%</span></div>
       </div>
@@ -267,7 +268,7 @@ Deck
       </div>
       <sc-if value="{{ hasLevers }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column;gap:10px;max-width:820px">
-        <div style="padding-bottom:2px"><div style="font-size:22px;font-weight:600">What would raise your top-8 odds most</div><div style="font-size:14px;color:#8F8D86;margin-top:2px">Each change, measured by what it's worth at the tournament.</div></div>
+        <div style="padding-bottom:2px"><div style="font-size:22px;font-weight:600">What would raise your top-8 odds most</div><div style="font-size:14px;color:#8F8D86;margin-top:2px">{{ leversNote }}</div></div>
         <sc-for list="{{ levers }}" as="l" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 18px;align-items:center;padding:14px 16px;border:1px solid rgba(255,255,255,.08);border-radius:8px"><div><div style="font-size:15px;font-weight:600">{{ l.title }}</div><div style="font-size:14px;color:#8F8D86;margin-top:2px;text-wrap:pretty">{{ l.detail }}</div></div><div style="text-align:right;font-weight:600;color:#C5EC7A;white-space:nowrap">{{ l.gain }}<div style="font-size:12px;font-weight:400;color:#8F8D86">{{ l.gainNote }}</div></div></div></sc-for>
       </div>
       </sc-if>
@@ -634,7 +635,7 @@ class Component extends DCLogic {
       askText: S.askText, onAsk: (e) => this.setState({ askText: e.target.value }), sendAsk: pe(() => {}), sendLabel: 'not connected yet', prompts: [], askPlaceholder: 'The coach isn\'t connected yet',
       change: '', runAt: '', thread: [], waiting: false, pulse: null, hasWeak: false, hasWeakLink: false, cxOpenWeak: pe(() => {}), askKey: () => {},
       hasCards: false, noCards: false, noCardsNote: '', cardsNote: '', cardRows: [], hasThreats: false, threatRows: [], threatsNote: '',
-      evLabel: '', evField: '', evAgainst: '', hasEvBench: false, evVs: '', evSure: '', evSureNote: '', evSureBg: 'transparent', evSureColor: MUTED, hasEvent: false, evRounds: 7, evNeed: '', evOdds: [], evRecord: '', evOddsLo: '', evOddsHi: '', evScale: 20, evLosses: '', evStrip: [], evTableNote: '', evLossHead: '', hasLevers: false, levers: [],
+      fidColor: '#5C5B56', fidTitle: '', fidNote: '', evUnder: '', leversNote: '', evLabel: '', evField: '', evAgainst: '', hasEvBench: false, evVs: '', evSure: '', evSureNote: '', evSureBg: 'transparent', evSureColor: MUTED, hasEvent: false, evRounds: 7, evNeed: '', evOdds: [], evRecord: '', evOddsLo: '', evOddsHi: '', evScale: 20, evLosses: '', evStrip: [], evTableNote: '', evLossHead: '', hasLevers: false, levers: [],
       headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', canCancel: false, cancelLabel: '', doCancelRun: pe(() => {}), runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
       deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], mainLabel: '', sideLabel: '',
@@ -733,7 +734,7 @@ class Component extends DCLogic {
       const edgeS = bench && bench.edge != null && bench.status === 'done' ? ' · ' + (bench.edge >= 0 ? '+' : '−') + Math.abs(bench.edge) + ' on the #1 deck' : '';
       const mS = (x) => 'you win ' + tens(x.x.p);
       const E = run.event, B = E && E.bench;
-      v.brief = E ? { status: 'Wins about ' + Math.round(E.field.p * 100) + ' of 100 matches against the field', statusNote: 'Top 8 at a ' + E.rounds + '-round tournament: ' + oneIn(E.top8.p, true) + (B ? ' (' + B.name + ': ' + oneIn(B.top8.p, false) + ')' : '') + ' · ' + plural(overall.n, 'game') + ' · ' + fieldLabel(run),
+      v.brief = E ? { status: 'Wins about ' + Math.round(E.field.p * 100) + ' of 100 matches against the field' + (run.calibration && run.calibration.fidelity && run.calibration.fidelity.lo >= 0.7 ? '' : ' under Forge\'s AI'), statusNote: 'Top 8 at a ' + E.rounds + '-round tournament: ' + oneIn(E.top8.p, true) + (B ? ' (' + B.name + ': ' + oneIn(B.top8.p, false) + ')' : '') + ' · ' + plural(overall.n, 'game') + ' · ' + fieldLabel(run),
         weakness: worst && worst.cost > 0 ? worst.o.name + ', ' + mS(worst) : 'Nothing below even', weaknessNote: '' } :
       { status: overall.pct + ' of matches against the ' + fieldLabel(run), statusNote: plural(overall.n, 'game') + ' · likely ' + overall.span + ' · ' + (weighted ? 'weighted by meta share' : 'every deck counted once') + (cal ? ' · calibrated to ' + plural(cal.realGames, 'real game') : '') + (excluded.length ? ' · ' + plural(excluded.length, 'deck') + ' Forge pilots badly left out' : '') + edgeS,
         weakness: worst && worst.cost > 0 ? worst.o.name + ', ' + mS(worst) : 'Nothing below even', weaknessNote: '' };
@@ -798,9 +799,22 @@ class Component extends DCLogic {
       const calS = cal ? ' · calibrated against ' + plural(cal.realGames, 'game') + ' from ' + plural(cal.events, 'paper tournament') + ' in the last ' + cal.days + ' days' + (cal.me.near ? ', your list read as closest to ' + cal.me.near : ', your list treated as an average pilot (close to no meta deck)') : ' · not calibrated yet: the weekly meta round robin hasn\'t finished';
       v.runNote = boS + planS + ' · Forge AI pilots both sides' + calS + ' · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '');
       const rec = (w) => w[0] + '–' + w[1], E = run.event, ws = E ? E.field.p : null;
-      v.evLabel = (d.format === 'standard' ? 'Competitive Standard tournament' : cap(d.format) + ' 1v1') + ' · best of three · ' + fieldLabel(run);
+      // how the archetype does in real tournaments, overall, for a reader to set Forge's verdict against
+      const realS = (n) => { const c = run.calibration && run.calibration.opp[n], r = c && c.real; return r && r.w + r.l >= 30 ? 'wins ' + Math.round(r.w / (r.w + r.l) * 100) + '% in real events' : ''; };
+      // How well Forge's numbers have matched real tournaments (calib.js fidelity): k = 1 means
+      // its matchups carry over as they are, 0 that they carry no information. The page's claims follow it.
+      const fid = run.calibration && run.calibration.fidelity, fidLevel = !fid ? 'unknown' : fid.hi < 0.5 ? 'low' : fid.lo >= 0.7 ? 'good' : 'some';
+      const under = fidLevel === 'good' ? '' : ', under Forge\'s AI';
+      v.fidColor = { unknown: '#5C5B56', low: AMBER, some: AMBER, good: WIN }[fidLevel];
+      v.fidTitle = { unknown: 'Not yet checked against real tournaments.', low: 'These are Forge\'s results, not a forecast.', some: 'Forge\'s results partly match real tournaments.', good: 'Forge\'s results match real tournaments well.' }[fidLevel];
+      v.fidNote = !fid ? 'Forge\'s AI plays both decks. Use these numbers to compare versions of your deck and to find big problems.'
+        : fidLevel === 'low' ? 'Forge\'s AI plays both decks, and it plays some decks much better than people do. Checked against ' + fid.realGames + ' real tournament games across ' + fid.pairs + ' meta matchups, its matchup numbers haven\'t yet predicted real results better than a coin flip. Use them to compare versions of your deck under the same AI and to spot big problems. Where a matchup looks surprising, trust your own testing.'
+        : fidLevel === 'some' ? 'Checked against ' + fid.realGames + ' real tournament games, about ' + Math.round(Math.max(0, fid.k) * 100) + '% of the edge Forge finds in a matchup shows up in real play. Treat big matchup numbers as pointing the right way but overstated.'
+        : 'Checked against ' + fid.realGames + ' real tournament games across ' + fid.pairs + ' meta matchups.';
+      v.evUnder = under; v.leversNote = 'Each change, measured by what it\'s worth at the tournament' + (under ? ' under Forge\'s AI. Check the big ones in your own testing.' : '.');
+      v.evLabel = (d.format === 'standard' ? 'Competitive Standard tournament' : cap(d.format) + ' 1v1') + ' · best of three' + (under ? ' · Forge\'s AI' : '') + ' · ' + fieldLabel(run);
       v.evField = ws != null ? Math.round(ws * 100) + ' of every 100' : overall.n ? Math.round(overall.p * 100) + ' of every 100' : '—';
-      v.evAgainst = E ? ' against the field' : ' against these decks';
+      v.evAgainst = (E ? ' against the field' : ' against these decks') + under;
       v.hasEvent = !!E; v.hasEvBench = !!(E && E.bench);
       v.evTableNote = E ? 'Sorted by how many matches each one costs you in a field of 100. Hover a row for its games.' : 'Hover a row for its games.';
       v.evLossHead = E ? 'losses in 100' : '';
@@ -819,7 +833,7 @@ class Component extends DCLogic {
           const n10 = (x) => Math.min(9, Math.round(x * 10)), more = ' More games would settle it.';
           const sure = au >= 0.975 ? ['Ahead', d.name + ' is almost certainly ahead of ' + B.name + ' here.'] : au >= 0.8 ? ['Likely ahead', 'We\'re about ' + n10(au) + ' in 10 sure ' + d.name + ' is ahead of ' + B.name + ' here.' + more]
             : au > 0.2 ? ['Too close to call', 'Too close to call against ' + B.name + ' so far.' + more] : au > 0.025 ? ['Likely behind', 'We\'re about ' + n10(1 - au) + ' in 10 sure ' + d.name + ' is behind ' + B.name + ' here.' + more] : ['Behind', d.name + ' is almost certainly behind ' + B.name + ' here.'];
-          v.evSure = sure[0]; v.evSureNote = sure[1];
+          v.evSure = sure[0]; v.evSureNote = under ? sure[1].replace(/ here\./, ' under Forge\'s AI.') : sure[1];
           const good = au > 0.5; v.evSureBg = au > 0.2 && au < 0.8 ? 'rgba(237,235,230,.08)' : good ? 'rgba(197,236,122,.14)' : 'rgba(240,160,112,.14)'; v.evSureColor = au > 0.2 && au < 0.8 ? '#EDEBE6' : good ? ACC : LOSS;
         }
         // where the losses come from: every counted deck by share, then the rest of the field
@@ -840,7 +854,7 @@ class Component extends DCLogic {
         const vd = !g ? ['Not played yet', 'untested'] : notCounted ? ['Not counted', 'untested'] : verdict(x);
         const r = rngS(x);
         return { name: o.name, art: art(o.coverCard), artBg: '#1a1a19', artVis: 'visible', pips: pips(o.colors), r, dotVis: g ? 'visible' : 'hidden', loss: loss != null ? loss : -1,
-          sub: [o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : '', g ? plural(g, 'game') : '', o.pairing === 'failed' ? 'Forge stopped early' : ''].filter(Boolean).join(' · '),
+          sub: [o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : '', g ? plural(g, 'game') : '', realS(o.name), o.pairing === 'failed' ? 'Forge stopped early' : ''].filter(Boolean).join(' · '),
           flag, flagColor: o.pairing === 'failed' ? AMBER : MUTED, verdict: vd[0], ...CHIP[vd[1]], tens: x && g ? tens(x.p) : '—', unsure: x && g && x.hi - x.lo > 0.35 ? 'few games, unsure' : '',
           lossS: loss != null ? loss.toFixed(1) : E ? '—' : '', lossColor: loss != null && x.p < 0.5 ? LOSS : MUTED, opacity: !g ? 0.5 : notCounted ? 0.6 : 1 }; })
         .sort((a, b) => b.loss - a.loss || a.r.p - b.r.p);
