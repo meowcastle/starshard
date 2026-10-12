@@ -12,7 +12,9 @@ const claude = require('./claude');
 
 const SYSTEM = `You are the coach in Forge Sim, a deck-testing tool for a small group of Magic: The Gathering players. You are a strong competitive player and a plain-spoken teacher.
 
-How the numbers you see were made: Forge's AI plays both decks, at least 20 games of game 1 and (when sideboard plans exist) 20 with both decks sideboarded per opponent, with more games added to the matchups that matter most and are closest, and games from earlier runs of the same list counted too. Who went first is recorded: game 1 is scored as a coin flip for the play, and the loser of each game plays first in the next, as in a real match. The match win rate combines them as a best of three. Forge's AI pilots aggressive creature decks well and control and combo decks badly, so every matchup is corrected ("calibrated") against real paper tournament results where enough exist. Always reason from the calibrated number when there is one, and say so when a matchup was not counted or not calibrated.
+Your one job: make the player's deck do better at a competitive tournament against the current meta. Judge every suggestion by what it is worth there, in top-8 odds, not by how much it improves one matchup in isolation. A small gain against a deck that is 14% of the field can beat a big gain against one that is 3%. You are given what bringing each losing matchup to even is worth; use it to rank. Talk the way the page does: "wins about 56 of 100 matches", "about 7 in 10 against Jund", "top 8 about 1 in 9". Percentages and ranges are fine when the player asks for them.
+
+How the numbers you see were made: Forge's AI plays both decks, at least 20 games of game 1 and (when sideboard plans exist) 20 with both decks sideboarded per opponent, with more games added to the matchups that matter most and are closest, and games from earlier runs of the same list counted too. Who went first is recorded: game 1 is scored as a coin flip for the play, and the loser of each game plays first in the next, as in a real match. The match win rate combines them as a best of three. Forge's AI pilots aggressive creature decks well and control and combo decks badly, so every matchup is corrected ("calibrated") against real paper tournament results. The correction is held small unless there is a lot of real data behind it, so it rarely moves a matchup more than a few points. Always reason from the calibrated number, and say so when a matchup was not counted. The tournament odds count decks outside the ones played as even matchups; say so if the player leans on them.
 
 Every number comes with a 95% range. Read it: with 40 games a single matchup's range is typically 30 to 40 points wide, so one matchup at 35% and another at 45% are not meaningfully different. Only call something a weakness or a strength when its range sits clearly on one side of 50%, and say plainly when the games can't tell yet (and that a rerun adds games rather than replacing them).
 
@@ -32,7 +34,8 @@ function matchups(rv) {
     const pd = s.n1 >= 20 ? `; game 1 ${pct(s.onPlay)} on the play, ${pct(s.onDraw)} on the draw` : '';
     const plan = o.plan && !o.plan.error ? `; your plan: in ${o.plan.me.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}, out ${o.plan.me.out.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}; their plan: in ${o.plan.opp.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}` : '';
     const real = c && c.real ? `; this archetype wins ${pct(c.real.w / Math.max(1, c.real.w + c.real.l))} of ${c.real.w + c.real.l} paper games` : '';
-    return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): this run game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}${pool}${pd}; match ${c ? pct(s.raw) + ' raw, ' + span(s) + ' calibrated' : span(s)}${real}${plan}`;
+    const loss = rv.event && o.metaPct != null && s.counted ? `; costs you ${(o.metaPct * (1 - s.p)).toFixed(1)} losses in 100 field matches` : '';
+    return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): this run game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}${pool}${pd}; match ${c ? pct(s.raw) + ' raw, ' + span(s) + ' calibrated' : span(s)}${loss}${real}${plan}`;
   }).join('\n');
 }
 
@@ -58,7 +61,7 @@ ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tour
 Headline: ${headline(rv)}.
 
 Matchups:
-${matchups(rv)}${cardsText(rv.cards)}`;
+${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}`;
 }
 
 // The card table from the game logs, as text. Drawn-but-never-cast is not in Forge's
@@ -83,12 +86,20 @@ const SWAP = { type: 'array', items: { type: 'object', properties: { qty: { type
 function headline(rv) {
   const cal = rv.calibration && Object.values(rv.calibration.opp || {}).some(Boolean);
   const bs = rv.benchScore ? `; the field's #1 deck scores ${span(rv.benchScore.theirs)} on the same ${rv.benchScore.k} opponents, a gap of ${Math.round(rv.benchScore.edge.p * 100)} points (likely ${Math.round(rv.benchScore.edge.lo * 100)} to ${Math.round(rv.benchScore.edge.hi * 100)})` : '';
-  return rv.score ? span(rv.score) + ' of matches' + (cal ? ', calibrated' : '') + bs : 'no matches yet';
+  const E = rv.event, oneIn = p => p < 0.01 ? 'under 1 in 100' : '1 in ' + Math.round(1 / p);
+  const ev = E ? `. Against the whole field (the ${Math.round(E.rest)}% not played counted as even) it wins ${pct(E.field.p)} of matches (likely ${Math.round(E.field.lo * 100)}-${Math.round(E.field.hi * 100)}%); at a ${E.rounds}-round Swiss tournament it makes top 8 (${E.rounds - 1}-1 or better) about ${oneIn(E.top8.p)} (likely ${oneIn(E.top8.lo)} to ${oneIn(E.top8.hi)})`
+    + (E.bench ? `; ${E.bench.name}, the field's #1 deck, wins ${pct(E.bench.field.p)} and makes top 8 about ${oneIn(E.bench.top8.p)}, and the chance this brew is ahead of it is ${pct(E.bench.edge.above)}` : '') : '';
+  return rv.score ? span(rv.score) + ' of matches against the decks played' + (cal ? ', calibrated' : '') + bs + ev : 'no matches yet';
+}
+// what each losing matchup is worth at the tournament, brought to even
+function levers(rv) {
+  const E = rv.event; if (!E || !E.levers.length) return '';
+  return '\n\nWhat bringing each losing matchup to even is worth at the tournament:\n' + E.levers.map(l => `- ${l.name}: top-8 odds +${(l.gain * 100).toFixed(1)} points (wins ${pct(l.p)} now)`).join('\n');
 }
 
 async function writeup(b, rv) {
   return claude.ask({ system: SYSTEM,
-    prompt: context(b, rv) + `\n\nThe page shows the headline: ${headline(rv)}.\n\nWrite the readout for this run: the single matchup or problem costing the most (weakness, a few words) and why in one or two sentences (weaknessNote); two or three fixes the player could test, each a concrete main-deck swap (cards out of the main deck, cards in from anywhere legal in ${b.format}, equal numbers) with a title and one or two sentences of why, or kind "note" for advice that isn't a swap; and a summary of two to four sentences that opens the conversation.`,
+    prompt: context(b, rv) + `\n\nThe page shows the headline: ${headline(rv)}.\n\nWrite the readout for this run: the single matchup or problem costing the most top-8 odds (weakness, a few words) and why in one or two sentences (weaknessNote); two or three fixes the player could test, ranked by what they should be worth at the tournament, each a concrete main-deck swap (cards out of the main deck, cards in from anywhere legal in ${b.format}, equal numbers) with a title and one or two sentences of why, or kind "note" for advice that isn't a swap; and a summary of two to four sentences that opens the conversation.`,
     tool: { name: 'coach_readout', description: 'The coach readout for one run.', schema: { type: 'object', properties: {
       weakness: { type: 'string' }, weaknessNote: { type: 'string' }, summary: { type: 'string' },
       options: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, detail: { type: 'string' }, kind: { type: 'string', enum: ['swap', 'note'] }, in: SWAP, out: SWAP }, required: ['title', 'detail', 'kind'] } },

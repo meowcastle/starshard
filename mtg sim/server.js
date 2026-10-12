@@ -601,9 +601,10 @@ function scoreView(b, run, j, out) {
   if (scored.has(sig)) return apply(scored.get(sig));
   const sc = score.run(opps);
   const res = { score: sc && sc.overall ? { p: sc.overall.p, lo: sc.overall.lo, hi: sc.overall.hi, n: sc.overall.n, k: sc.overall.k, wtd: sc.overall.wtd, eta: sc.eta } : null,
-    scores: sc ? sc.opp.map(x => x && { p: x.p, lo: x.lo, hi: x.hi, v: x.v, raw: x.raw, g1: x.g1, onPlay: x.onPlay, onDraw: x.onDraw, n: x.n, n1: x.n1, n2: x.n2, wt: x.wt, cal: x.cal, counted: x.counted }) : [], benchScore: null };
+    scores: sc ? sc.opp.map(x => x && { p: x.p, lo: x.lo, hi: x.hi, v: x.v, raw: x.raw, g1: x.g1, onPlay: x.onPlay, onDraw: x.onDraw, n: x.n, n1: x.n1, n2: x.n2, wt: x.wt, cal: x.cal, counted: x.counted }) : [], benchScore: null, event: null };
+  let bt = null;
   if (sc && bj && bj.pairings) {
-    const bBeta = cal && cal.opp[bm.name] ? cal.opp[bm.name].beta : 0, bVar = cal && cal.opp[bm.name] ? 1 / (cal.opp[bm.name].evidence + lam) : 0;
+    const bBeta = cal && cal.opp[bm.names[0]] ? cal.opp[bm.names[0]].beta : 0, bVar = cal && cal.opp[bm.names[0]] ? 1 / (cal.opp[bm.names[0]].evidence + lam) : 0;
     const theirs = bm.names.slice(1).map((n, k) => { const ph = phasesOf(bj.pairings, k); return { name: n, ph }; }).filter(x => x.ph.pre && x.ph.pre.played);
     const shared = new Set(theirs.map(x => x.name).filter(n => { const i = out.opponents.findIndex(o => o.name === n); return i >= 0 && res.scores[i] && res.scores[i].counted; }));
     if (shared.size) {
@@ -611,6 +612,19 @@ function scoreView(b, run, j, out) {
       const t = score.run(theirs.filter(x => shared.has(x.name)).map(x => { const o = opps.find(y => y.name === x.name); return { name: x.name, w: o.w, counted: true, pre: x.ph.pre.pd, post: x.ph.post ? x.ph.post.pd : null, boarded: !!x.ph.post, shift: shiftOf(x.name, bBeta, bVar) }; }), { seed: 11 });
       const d = score.diff(a, t);
       if (d) res.benchScore = { k: shared.size, mine: { p: a.overall.p, lo: a.overall.lo, hi: a.overall.hi, n: a.overall.n }, theirs: { p: t.overall.p, lo: t.overall.lo, hi: t.overall.hi, n: t.overall.n }, edge: d };
+      bt = score.tournament(t);
+    }
+  }
+  // the tournament: the whole field (decks not played counted as even), top-8 odds, and
+  // what bringing each losing matchup to even is worth. The #1 deck on the same footing:
+  // its shared opponents as played, everything else even (its own mirror is even exactly).
+  const ev = sc && score.tournament(sc);
+  if (ev) {
+    const levers = sc.opp.map((o, i) => o && o.counted && o.p < 0.5 ? { name: opps[i].name, p: o.p, ...score.lever(sc, ev, i) } : null).filter(Boolean).sort((a, b) => b.gain - a.gain);
+    res.event = { rounds: ev.rounds, rest: ev.rest, field: ev.field, top8: ev.top8, levers, bench: null };
+    if (bt) {
+      const dd = Float64Array.from(ev.samples, (x, s) => x - bt.samples[s]);
+      res.event.bench = { name: bm.names[0], field: bt.field, top8: bt.top8, edge: { p: dd.reduce((s, x) => s + x, 0) / dd.length, above: dd.filter(x => x > 0).length / dd.length } };
     }
   }
   scored.set(sig, res); if (scored.size > 500) scored.delete(scored.keys().next().value);

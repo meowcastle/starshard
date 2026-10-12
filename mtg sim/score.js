@@ -159,8 +159,28 @@ function run(opps, { seed = 7 } = {}) {
     const s = sum(per[k]);
     opp[o.i] = { ...s, raw: mean(raw[k]), g1: mean(g1[k]), onPlay: mean(pp[k]), onDraw: mean(pd[k]), n: nOf(o.pre) + nOf(o.post), n1: nOf(o.pre), n2: nOf(o.post), wt: o.counted ? (wtd ? o.w : 1) / W : 0, cal: !!o.shift, counted: o.counted };
   });
-  const overall = W ? { ...sum(all), n: counted.reduce((s, o) => s + nOf(o.pre) + nOf(o.post), 0), k: counted.length, wtd } : null;
+  const overall = W ? { ...sum(all), n: counted.reduce((s, o) => s + nOf(o.pre) + nOf(o.post), 0), k: counted.length, wtd, W } : null;
   return { overall, opp, eta: eta.eta, prior, samples: all };
+}
+
+// A competitive tournament: Swiss rounds against opponents drawn from the field by meta
+// share, each round an independent match (Swiss pairs by record, which this leaves out),
+// top 8 needing at most one loss. The decks we haven't played (100 less the counted
+// shares) are counted as even matchups. Per Monte Carlo draw, so the odds carry the range.
+const top8 = (p, rounds) => { const need = rounds - 1; let s = 0; for (let k = need; k <= rounds; k++) { let c = 1; for (let i = 0; i < k; i++) c = c * (rounds - i) / (i + 1); s += c * p ** k * (1 - p) ** (rounds - k); } return s; };
+const fieldRate = (rate, W, rest) => (W * rate + rest * 0.5) / (W + rest);
+function tournament(res, { rounds = 7 } = {}) {
+  if (!res || !res.overall || !res.overall.wtd) return null;
+  const W = res.overall.W, rest = Math.max(0, 100 - W);
+  const f = Float64Array.from(res.samples, x => fieldRate(x, W, rest)), t = Float64Array.from(f, p => top8(p, rounds));
+  const r = a => ({ p: mean(a), lo: q(a, 0.025), hi: q(a, 0.975) });
+  return { rounds, rest, field: r(f), top8: r(t), samples: f };
+}
+// what raising one matchup to a given rate is worth at the tournament, at the point estimates
+function lever(res, ev, i, to = 0.5) {
+  const o = res.opp[i]; if (!o || !o.counted || !ev) return null;
+  const W = res.overall.W, p0 = ev.field.p, p1 = p0 + (o.wt * W) * (to - o.p) / 100;
+  return { field: p1, top8: top8(p1, ev.rounds), gain: top8(p1, ev.rounds) - top8(p0, ev.rounds) };
 }
 
 // two independent results' headline difference, as a range
@@ -171,4 +191,4 @@ function diff(a, b) {
   return { p: mean(d), lo: q(d, 0.025), hi: q(d, 0.975), above: more / S };
 }
 
-module.exports = { run, diff, tallyGames, T0, addT, nOf, wOf, bo3 };
+module.exports = { run, diff, tournament, lever, top8, tallyGames, T0, addT, nOf, wOf, bo3 };
