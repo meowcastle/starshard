@@ -36,7 +36,7 @@ import forge.util.MyRandom;
  *   java -cp forge-gui-desktop-...-jar-with-dependencies.jar:mtg-bench-bridge.jar forge.bridge.AgentBridge \
  *     --port P --token T --deck0 a.dck --deck1 b.dck --external0 true --external1 false \
  *     --games 3 --seed 42 --max-turns 40 [--stops smart|all] [--mana smart|always]
- *     [--own mulligan,play_draw,...] [--type Constructed|Draft]   (starshard additions)
+ *     [--own mulligan,play_draw,...] [--type Constructed|Draft] [--matches N]   (starshard additions)
  * Must run with the Forge install (the directory containing res/) as working directory.
  */
 public final class AgentBridge {
@@ -66,6 +66,13 @@ public final class AgentBridge {
             rules.setAppliedVariants(EnumSet.of(type));
             rules.setGamesPerMatch(games);
 
+            // starshard: --matches N plays N matches in this one process (Forge's start-up is ~6 s, a game ~2-3 s);
+            // match i is seeded with seed + i, so any one of them replays on its own
+            int matches = Integer.parseInt(a.getOrDefault("matches", "1"));
+            for (int mi = 0; mi < matches; mi++) {
+            MyRandom.setRandom(new Random(seed + mi));
+            ctx.wins[0] = 0;
+            ctx.wins[1] = 0;
             List<RegisteredPlayer> players = new ArrayList<>();
             LobbyPlayer[] lobby = new LobbyPlayer[2];
             for (int s = 0; s < 2; s++) {
@@ -95,6 +102,7 @@ public final class AgentBridge {
                 JsonObject start = new JsonObject();
                 start.addProperty("type", "game_start");
                 start.addProperty("game", g);
+                start.addProperty("match", mi);
                 client.send(start);
                 String error = null;
                 try {
@@ -108,6 +116,7 @@ public final class AgentBridge {
                 JsonObject end = new JsonObject();
                 end.addProperty("type", "game_end");
                 end.addProperty("game", g);
+                end.addProperty("match", mi);
                 if (out != null && !out.isDraw() && out.getWinningLobbyPlayer() != null) {
                     end.addProperty("winner", out.getWinningLobbyPlayer().equals(lobby[0]) ? 0 : 1);
                 }
@@ -148,7 +157,9 @@ public final class AgentBridge {
             }
             JsonObject done = new JsonObject();
             done.addProperty("type", "match_end");
+            done.addProperty("match", mi);
             client.send(done);
+            }
         } catch (Throwable t) {
             t.printStackTrace();
             try { client.error(t.toString()); } catch (RuntimeException ignored) { }
