@@ -21,8 +21,15 @@ const logit = p => Math.log(p / (1 - p));
 const inv = x => 1 / (1 + Math.exp(-x));
 const pairKey = (a, b) => a < b ? a + '\u0000' + b : b + '\u0000' + a;
 
+// How far betas really spread decides how hard each one is pulled toward zero. The
+// pull (lambda, a prior N(0, 1/lambda) on every beta) is estimated from the data,
+// empirical Bayes: the betas' spread less the noise in them. Measured 12 Oct 2026
+// (584 real games, 32 pairings) the spread was no bigger than the noise, so the pull
+// sits at its maximum (25, a prior sd of 0.2): a deck needs a lot of real data before
+// it moves a matchup more than a few points. Under the old fixed pull of 2, Lifegain
+// (8 units of evidence) had a beta of 1.07 and moved one matchup from 14% to 46%.
 // forge, real: Map-like objects of pairKey -> [wins of the alphabetically-first deck, wins of the other]
-function fit(forge, real, { lambda = 2, minForge = 10, minReal = 6 } = {}) {
+function fit(forge, real, { minForge = 10, minReal = 6, lambdaMin = 4, lambdaMax = 25 } = {}) {
   const rows = [];
   for (const [k, f] of Object.entries(forge)) {
     const r = real[k]; if (!r) continue;
@@ -35,6 +42,17 @@ function fit(forge, real, { lambda = 2, minForge = 10, minReal = 6 } = {}) {
   const names = [...new Set(rows.flatMap(r => [r.a, r.b]))];
   const beta = Object.fromEntries(names.map(n => [n, 0])), ev = Object.fromEntries(names.map(n => [n, 0]));
   rows.forEach(r => { ev[r.a] += r.w; ev[r.b] += r.w; });
+  let lambda = lambdaMin;
+  for (let outer = 0; outer < 8; outer++) {
+    solve(rows, names, beta, lambda);
+    const tau2 = names.length < 4 ? 1 / lambdaMin : names.reduce((s, n) => s + beta[n] ** 2 - 1 / (ev[n] + lambda), 0) / names.length;
+    const next = Math.min(lambdaMax, Math.max(lambdaMin, 1 / Math.max(1e-6, tau2)));
+    if (Math.abs(next - lambda) < 0.01) break; lambda = next;
+  }
+  solve(rows, names, beta, lambda);
+  return { beta, evidence: ev, lambda, pairs: rows.length, realGames: rows.reduce((s, r) => s + r.nr, 0) };
+}
+function solve(rows, names, beta, lambda) {
   for (let it = 0; it < 400; it++) {
     let moved = 0;
     for (const n of names) {
@@ -47,7 +65,6 @@ function fit(forge, real, { lambda = 2, minForge = 10, minReal = 6 } = {}) {
     }
     if (moved < 1e-6) break;
   }
-  return { beta, evidence: ev, pairs: rows.length, realGames: rows.reduce((s, r) => s + r.nr, 0) };
 }
 
 // Best-of-three from game rates: p1 for game 1, p2 for each boarded game.

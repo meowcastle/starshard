@@ -442,7 +442,7 @@ async function refit(format) {
   for (const [a, row] of Object.entries(real.pairs)) for (const [b, p] of Object.entries(row)) if (a < b) realPairs[calib.pairKey(a, b)] = p.games;
   const forge = forgePairs(format), f = calib.fit(forge, realPairs);
   const realField = Object.fromEntries(Object.entries(real.pairs).map(([a, row]) => { let w = 0, l = 0; for (const [b, p] of Object.entries(row)) if (b !== a) { w += p.games[0]; l += p.games[1]; } return [a, { w, l }]; }));
-  calibs[format] = { at: Date.now(), beta: f.beta, evidence: f.evidence, pairs: f.pairs, realGames: f.realGames, forgePairs: Object.keys(forge).length,
+  calibs[format] = { at: Date.now(), beta: f.beta, evidence: f.evidence, lambda: f.lambda, pairs: f.pairs, realGames: f.realGames, forgePairs: Object.keys(forge).length,
     events: real.events, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
     lists: field.map(d => ({ name: d.name, main: d.main })) };
   saveCal();
@@ -475,7 +475,7 @@ function calibView(b, run) {
   for (const l of c.lists) { const s = realdata.overlap(me, realdata.vec(l.main)); if (s > best) { best = s; near = l.name; } }
   const known = n => c.beta[n] != null && (c.evidence[n] || 0) >= MIN_EVIDENCE;
   const mine = best >= realdata.MATCH_AT && known(near) ? near : null;
-  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs,
+  return { at: c.at, events: c.events, matches: c.matches, realGames: c.realGames, days: c.days, newest: c.newest, pairs: c.pairs, lambda: c.lambda || 2,
     me: { near: mine, overlap: Math.round(best * 100), beta: mine ? c.beta[mine] : 0, evidence: mine ? c.evidence[mine] : 0 },
     opp: Object.fromEntries(run.opponents.map(o => [o.name, known(o.name) ? { beta: c.beta[o.name], evidence: Math.round(c.evidence[o.name] * 10) / 10, real: c.realField[o.name] || null, decks: c.seen[o.name] || 0 } : null])) };
 }
@@ -572,8 +572,9 @@ const vecOf = d => { let v = vecs.get(d); if (!v) { v = realdata.vec(d.main || [
 const scored = new Map();
 function scoreView(b, run, j, out) {
   const cal = out.calibration && Object.values(out.calibration.opp || {}).some(Boolean) ? out.calibration : null;
-  const meBeta = cal ? cal.me.beta : 0, meVar = cal && cal.me.near ? 1 / ((cal.me.evidence || 0) + 2) : 0;
-  const shiftOf = (name, base, baseVar) => { const c = cal && cal.opp[name]; return c ? { d: c.beta - base, sd: Math.sqrt(1 / (c.evidence + 2) + baseVar) } : null; };
+  // a beta's uncertainty: its evidence plus the pull toward zero it was fitted under
+  const lam = cal ? cal.lambda : 2, meBeta = cal ? cal.me.beta : 0, meVar = cal && cal.me.near ? 1 / ((cal.me.evidence || 0) + lam) : 0;
+  const shiftOf = (name, base, baseVar) => { const c = cal && cal.opp[name]; return c ? { d: c.beta - base, sd: Math.sqrt(1 / (c.evidence + lam) + baseVar) } : null; };
   const prs = j?.pairings || [];
   const earlier = !j || !j.decks ? [] : b.runs.filter(r => r !== run && r.v === run.v && r.created < run.created && r.jobId && r.opponents)
     .map(r => ({ r, rj: jobOf(r.jobId) })).filter(({ rj }) => rj && rj.decks && rj.pairings && (rj.decks[0].ai || null) === (j.decks[0].ai || null));
@@ -602,7 +603,7 @@ function scoreView(b, run, j, out) {
   const res = { score: sc && sc.overall ? { p: sc.overall.p, lo: sc.overall.lo, hi: sc.overall.hi, n: sc.overall.n, k: sc.overall.k, wtd: sc.overall.wtd, eta: sc.eta } : null,
     scores: sc ? sc.opp.map(x => x && { p: x.p, lo: x.lo, hi: x.hi, v: x.v, raw: x.raw, g1: x.g1, onPlay: x.onPlay, onDraw: x.onDraw, n: x.n, n1: x.n1, n2: x.n2, wt: x.wt, cal: x.cal, counted: x.counted }) : [], benchScore: null };
   if (sc && bj && bj.pairings) {
-    const bBeta = cal && cal.opp[bm.name] ? cal.opp[bm.name].beta : 0, bVar = cal && cal.opp[bm.name] ? 1 / (cal.opp[bm.name].evidence + 2) : 0;
+    const bBeta = cal && cal.opp[bm.name] ? cal.opp[bm.name].beta : 0, bVar = cal && cal.opp[bm.name] ? 1 / (cal.opp[bm.name].evidence + lam) : 0;
     const theirs = bm.names.slice(1).map((n, k) => { const ph = phasesOf(bj.pairings, k); return { name: n, ph }; }).filter(x => x.ph.pre && x.ph.pre.played);
     const shared = new Set(theirs.map(x => x.name).filter(n => { const i = out.opponents.findIndex(o => o.name === n); return i >= 0 && res.scores[i] && res.scores[i].counted; }));
     if (shared.size) {
