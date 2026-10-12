@@ -46,3 +46,18 @@ Speed: Forge's start-up is ~6 s and a game ~2-3 s, so one best-of-three per proc
 half its time starting. `--matches N` plays N matches in one process (match i seeded
 seed + i): 14 matches ran at 1.66 s a game against `forge sim`'s 1.53 for the same pairing,
 one process each, start-up included.
+
+## Phase 1 (12 Oct 2026)
+
+`../pilot.js` runs matches through the bridge and owns, per seat, mulligans (`pilot.keep`:
+2-5 lands, 2-4 at six cards, only with a spell those lands can cast early) and real
+between-game sideboarding: Forge calls `PlayerController.sideboard` before games 2 and 3, and
+the bridge asks the pilot for the new main deck (`sideboard` → `answer { main: {name: qty} }`).
+Checked in the game logs: a boarded-in card appears only in games 2-3, the card it replaced
+only in game 1. `--own0`/`--own1` set the owned kinds per seat.
+
+Self-play, the pilot's mulligans against Forge's, mirror decks, seats swapped, fixed seeds,
+12 decks: 50% of 489 games (likely 49-51%). No stronger, as expected: the two rules disagree on
+only a few opening hands in a hundred (7-card keeps 79% vs ~81%), and Forge always choosing
+to play is already right for Standard. A first run read 34%; that was a bug (our card cache
+keeps no `produced_mana`, so every hand looked uncastable and went to five).

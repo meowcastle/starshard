@@ -44,10 +44,11 @@ public final class MatchContext {
      * starshard: the decision kinds the pilot owns (null = every kind, as upstream). Any other kind goes straight to
      * Forge's AI without a round trip, so a pilot that owns mulligans plays everything else exactly as `forge sim` does.
      */
-    public java.util.Set<String> own = null;
+    @SuppressWarnings("unchecked")
+    public final java.util.Set<String>[] own = new java.util.Set[2];
 
-    public boolean owns(String kind) {
-        return own == null || own.contains(kind);
+    public boolean owns(int seat, String kind) {
+        return own[seat] == null || own[seat].contains(kind);
     }
 
     public MatchContext(int maxTurns, boolean smartStops, boolean alwaysAskMana, int maxRetries) {

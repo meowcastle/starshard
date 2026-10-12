@@ -130,7 +130,7 @@ public class PlayerControllerExternal extends PlayerControllerAi {
 
     /** Report a decision that Forge's AI made on the agent's behalf. */
     void delegated(String what, String reason) {
-        if (ctx.own != null && !ctx.owns(what)) return; // starshard: a kind the pilot doesn't own is Forge's by design
+        if (ctx.own[seat] != null && !ctx.owns(seat, what)) return; // starshard: a kind the pilot doesn't own is Forge's by design
         JsonObject o = new JsonObject();
         o.addProperty("type", "delegated");
         o.addProperty("seat", seat);
@@ -164,7 +164,7 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         int att = nextAttempt;
         nextAttempt = 0;
         lastAnswerForfeit = false;
-        lastAnswerDelegate = !ctx.owns(kind);
+        lastAnswerDelegate = !ctx.owns(seat, kind);
         if (lastAnswerDelegate) return null;
         max = Math.min(max, options.size());
         if (options.isEmpty() || min > max) return null;
@@ -356,6 +356,44 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         return r;
     }
 
+    /**
+     * starshard: real between-game sideboarding. Forge calls this before games 2 and 3 with the registered deck; the
+     * pilot answers {"main": {name: qty}}, drawn from the main deck and sideboard together, and that becomes the main
+     * deck (the rest goes to the sideboard). No answer, or one the pool can't make: the deck stays as it is.
+     */
+    @Override
+    public List<forge.item.PaperCard> sideboard(forge.deck.Deck deck, forge.game.GameType gameType, String message) {
+        if (!ctx.owns(seat, "sideboard")) return super.sideboard(deck, gameType, message);
+        JsonObject req = new JsonObject();
+        req.addProperty("seat", seat);
+        req.addProperty("game", ctx.game);
+        JsonArray wins = new JsonArray();
+        wins.add(ctx.wins[seat]);
+        wins.add(ctx.wins[1 - seat]);
+        req.add("wins", wins); // yours, then the opponent's
+        req.add("main", poolJson(deck.getMain()));
+        req.add("side", poolJson(deck.getOrCreate(forge.deck.DeckSection.Sideboard)));
+        JsonObject ans = client.exchange("sideboard", req);
+        if (ans == null || !ans.has("main")) return null;
+        Map<String, List<forge.item.PaperCard>> avail = new HashMap<>();
+        for (forge.item.PaperCard c : deck.getMain().toFlatList()) avail.computeIfAbsent(c.getName(), k -> new ArrayList<>()).add(c);
+        for (forge.item.PaperCard c : deck.getOrCreate(forge.deck.DeckSection.Sideboard).toFlatList()) avail.computeIfAbsent(c.getName(), k -> new ArrayList<>()).add(c);
+        List<forge.item.PaperCard> out = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> e : ans.getAsJsonObject("main").entrySet()) {
+            List<forge.item.PaperCard> have = avail.getOrDefault(e.getKey(), new ArrayList<>());
+            int qty = e.getValue().getAsInt();
+            if (qty > have.size()) { client.warn("sideboard: " + qty + " " + e.getKey() + " asked, " + have.size() + " in the pool; deck unchanged"); return null; }
+            for (int i = 0; i < qty; i++) out.add(have.remove(have.size() - 1));
+        }
+        return out.isEmpty() ? null : out;
+    }
+
+    private static JsonObject poolJson(forge.deck.CardPool pool) {
+        JsonObject o = new JsonObject();
+        for (Map.Entry<forge.item.PaperCard, Integer> e : pool) o.addProperty(e.getKey().getName(), o.has(e.getKey().getName()) ? o.get(e.getKey().getName()).getAsInt() + e.getValue() : e.getValue());
+        return o;
+    }
+
     // ====================================================================== priority
 
     private boolean shouldStop() {
@@ -379,7 +417,7 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         agentChosen = null;
         if (turnCapReached()) return null;
         if (ai()) return super.chooseSpellAbilityToPlay();
-        if (!ctx.owns("priority")) return asAi(() -> super.chooseSpellAbilityToPlay());
+        if (!ctx.owns(seat, "priority")) return asAi(() -> super.chooseSpellAbilityToPlay());
         if (!shouldStop()) { ctx.auto(seat, "policy", "priority", "not a meaningful stop"); return null; }
         Game g = getGame();
         String stateKey = priorityStateKey(g);

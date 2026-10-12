@@ -36,7 +36,7 @@ import forge.util.MyRandom;
  *   java -cp forge-gui-desktop-...-jar-with-dependencies.jar:mtg-bench-bridge.jar forge.bridge.AgentBridge \
  *     --port P --token T --deck0 a.dck --deck1 b.dck --external0 true --external1 false \
  *     --games 3 --seed 42 --max-turns 40 [--stops smart|all] [--mana smart|always]
- *     [--own mulligan,play_draw,...] [--type Constructed|Draft] [--matches N]   (starshard additions)
+ *     [--own|--own0|--own1 mulligan,sideboard,...] [--type Constructed|Draft] [--matches N]   (starshard additions)
  * Must run with the Forge install (the directory containing res/) as working directory.
  */
 public final class AgentBridge {
@@ -59,7 +59,10 @@ public final class AgentBridge {
             MatchContext ctx = new MatchContext(Integer.parseInt(a.getOrDefault("max-turns", "40")), !"all".equals(a.get("stops")), "always".equals(a.get("mana")),
                     Integer.parseInt(a.getOrDefault("max-retries", "3")));
 
-            if (a.containsKey("own")) ctx.own = new java.util.HashSet<>(java.util.Arrays.asList(a.get("own").split(",")));
+            for (int s = 0; s < 2; s++) {
+                String own = a.getOrDefault("own" + s, a.get("own"));
+                if (own != null) ctx.own[s] = new java.util.HashSet<>(java.util.Arrays.asList(own.split(",")));
+            }
             // starshard: Constructed by default, as `forge sim` plays (upstream always used Draft)
             GameType type = GameType.valueOf(a.getOrDefault("type", "Constructed"));
             GameRules rules = new GameRules(type);
