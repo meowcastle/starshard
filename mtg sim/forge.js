@@ -60,6 +60,8 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
     '-n', String(games), '-c', String(clock || 120),
   ];
   if (format && format !== 'Constructed') args.push('-f', format);
+  // an AI profile per seat (res/ai/<name>.ai), only when one is asked for; Forge's own default otherwise
+  if (decks.some(d => d.profile)) args.push('-a', ...decks.map(d => d.profile || 'Default'));
   const useXvfb = process.env.USE_XVFB !== '0';
   const cmd = useXvfb ? 'xvfb-run' : 'java';
   const argv = useXvfb ? ['-a', 'java', ...args] : args;
