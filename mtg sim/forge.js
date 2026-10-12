@@ -21,12 +21,15 @@ function forgeVersion() {
 
 // Deck text ("4 Opt" lines, blank line or "Sideboard" header before sideboard)
 // -> Forge .dck
+// Forge spells two-part cards "Fire // Ice"; some sources write "Unholy Annex/Ritual Chamber",
+// which Forge can't find, and the deck then plays a card short (4c Control did, until 12 Oct 2026).
+const forgeCard = n => /[^/]\/[^/]/.test(n) ? n.split(/\s*\/\s*/).join(' // ') : n;
 function toDck(name, deck) {
   const sec = { Main: deck.main || [], Sideboard: deck.side || [], Commander: deck.commander || [] };
   let out = `[metadata]\nName=${name}\n`;
   for (const [k, cards] of Object.entries(sec)) {
     if (!cards.length) continue;
-    out += `[${k}]\n` + cards.map(c => `${c.qty} ${c.name}`).join('\n') + '\n';
+    out += `[${k}]\n` + cards.map(c => `${c.qty} ${forgeCard(c.name)}`).join('\n') + '\n';
   }
   return out;
 }
@@ -34,7 +37,7 @@ function toDck(name, deck) {
 const safe = s => String(s).replace(/[^A-Za-z0-9 _'.,-]/g, '').trim().slice(0, 60) || 'Deck';
 
 // Run one Forge process. onLine gets every stdout/stderr line; returns {child, done}.
-function runSim({ decks, games, format, clock, workDir, onLine }) {
+function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
   fs.mkdirSync(workDir, { recursive: true });
   // Forge's AI plays a deck defensively only when its name contains "Control" (or
   // its average mana value is over 3), so a control brew called "Squall" would get
@@ -60,6 +63,7 @@ function runSim({ decks, games, format, clock, workDir, onLine }) {
     '-n', String(games), '-c', String(clock || 120),
   ];
   if (format && format !== 'Constructed') args.push('-f', format);
+  if (seed != null) args.push('-s', String(seed));
   // an AI profile per seat (res/ai/<name>.ai), only when one is asked for; Forge's own default otherwise
   if (decks.some(d => d.profile)) args.push('-a', ...decks.map(d => d.profile || 'Default'));
   const useXvfb = process.env.USE_XVFB !== '0';

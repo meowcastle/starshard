@@ -26,14 +26,15 @@ const SIDE_SCHEMA = { type: 'object', properties: {
   why: { type: 'string', description: 'One sentence, plain words.' },
 }, required: ['in', 'out', 'why'] };
 
-async function ask(a, b, format) {
+async function ask(a, b, format, hints = {}) {
+  const hint = [hints.a && 'Deck A: ' + hints.a, hints.b && 'Deck B: ' + hints.b].filter(Boolean).join('\n');
   const r = await fetch((process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com') + '/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model: MODEL, max_tokens: 8000, // the model thinks first (~1.3k tokens on a test pairing); leave room for the plan after it
       system: 'You are a strong competitive Magic: The Gathering player. You write the sideboard plan a skilled player would actually use for games 2 and 3 of a best-of-three match. Board only what improves the matchup; boarding nothing is a valid plan. Swap card for card so each main deck keeps its size, bring cards in only from that deck\'s own sideboard, and take cards out only from that deck\'s own main deck. Use exact card names from the lists.',
-      messages: [{ role: 'user', content: `Format: ${format}.\n\nDeck A, "${a.name}":\n${listText(a)}\n\nDeck B, "${b.name}":\n${listText(b)}\n\nWrite both decks' plans for this matchup by calling sideboard_plans.` }],
+      messages: [{ role: 'user', content: `Format: ${format}.\n\nDeck A, "${a.name}":\n${listText(a)}\n\nDeck B, "${b.name}":\n${listText(b)}${hint ? `\n\nWhat real players of these archetypes bring (whole sideboards, not per matchup; use it to judge which of each list's own sideboard cards real pilots value, not as cards to add):\n${hint}` : ''}\n\nWrite both decks' plans for this matchup by calling sideboard_plans.` }],
       tools: [{ name: 'sideboard_plans', description: 'Both decks\' sideboard plans for games 2 and 3.', input_schema: { type: 'object', properties: { a: SIDE_SCHEMA, b: SIDE_SCHEMA }, required: ['a', 'b'] } }],
       tool_choice: { type: 'auto' }, // this model refuses a forced tool ("tool"/"any"), so the prompt asks for it
     }),
@@ -69,16 +70,19 @@ function apply(deck, plan) {
 }
 
 // Both sides' plans for one pairing; cached. Throws when no model is configured.
-async function planFor(a, b, format) {
+async function planFor(a, b, format, hints) {
   load();
   const k = keyOf(a, b), rk = keyOf(b, a);
   if (plans[k]) return plans[k];
   if (plans[rk]) return { a: plans[rk].b, b: plans[rk].a, by: plans[rk].by };
   if (!available()) throw new Error('no ANTHROPIC_API_KEY');
-  const raw = await ask(a, b, format);
-  const p = { a: legal(a, raw.a), b: legal(b, raw.b), by: MODEL, at: Date.now() };
+  const raw = await ask(a, b, format, hints);
+  const p = { a: legal(a, raw.a), b: legal(b, raw.b), by: MODEL, at: Date.now(), hinted: !!(hints && (hints.a || hints.b)) };
   plans[k] = p; save();
   return p;
 }
 
-module.exports = { planFor, apply, legal, available, MODEL };
+// a cached plan for a pairing, without asking for one (the audit reads these)
+function peek(a, b) { load(); const k = keyOf(a, b), rk = keyOf(b, a); return plans[k] ? plans[k] : plans[rk] ? { a: plans[rk].b, b: plans[rk].a, by: plans[rk].by, hinted: plans[rk].hinted } : null; }
+
+module.exports = { planFor, peek, apply, legal, available, MODEL };

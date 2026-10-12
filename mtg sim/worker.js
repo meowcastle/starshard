@@ -47,9 +47,9 @@ async function slot(n) {
     try { c = await call('/api/worker/claim'); } catch (e) { log(`slot ${n}: can't reach ${URL_} (${e.message}); retrying`); await sleep(IDLE_MS * 2); continue; }
     if (c.status === 204) { await sleep(IDLE_MS); continue; }
     if (c.status !== 200) { log(`slot ${n}: ${c.data?.error || 'status ' + c.status}`); await sleep(c.status === 409 || c.status === 401 ? 5 * 60e3 : IDLE_MS); continue; }
-    const { lease, job, pairing, decks, games, format, clock } = c.data;
+    const { lease, job, pairing, decks, games, format, clock, seed } = c.data;
     log(`slot ${n}: ${decks.map(d => d.name).join(' vs ')} (${games} games)`);
-    const run = runSim({ decks, games, format, clock, workDir: path.join(DATA, 'jobs', job, String(pairing)) });
+    const run = runSim({ decks, games, format, clock, seed, workDir: path.join(DATA, 'jobs', job, String(pairing)) });
     let cancelled = false;
     const report = async done => {
       const res = run.results;

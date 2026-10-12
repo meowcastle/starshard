@@ -28,7 +28,7 @@ const span = s => `${pct(s.p)} (likely ${Math.round(s.lo * 100)}-${Math.round(s.
 // Every matchup as the page shows it, as text.
 function matchups(rv) {
   const cal = rv.calibration && Object.values(rv.calibration.opp || {}).some(Boolean) ? rv.calibration : null;
-  return (rv.opponents || []).map(o => {
+  return (rv.opponents || []).map((o, i) => {
     const s = o.score; if (!s) return `- ${o.name}: not played yet`;
     const n2 = o.post ? o.post.wins[0] + o.post.wins[1] : 0;
     const c = cal && cal.opp[o.name];
@@ -37,7 +37,8 @@ function matchups(rv) {
     const plan = o.plan && !o.plan.error ? `; your plan: in ${o.plan.me.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}, out ${o.plan.me.out.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}; their plan: in ${o.plan.opp.in.map(x => x.qty + ' ' + x.name).join(', ') || 'nothing'}` : '';
     const real = c && c.real ? `; this archetype wins ${pct(c.real.w / Math.max(1, c.real.w + c.real.l))} of ${c.real.w + c.real.l} paper games` : '';
     const loss = rv.event && o.metaPct != null && s.counted ? `; costs you ${(o.metaPct * (1 - s.p)).toFixed(1)} losses in 100 field matches` : '';
-    return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): this run game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}${pool}${pd}; match ${c ? pct(s.raw) + ' raw, ' + span(s) + ' calibrated' : span(s)}${loss}${real}${plan}`;
+    const ai = rv.aiCards && rv.aiCards.opp[i], aiT = ai ? [ai.missing.length ? '; Forge doesn\'t have ' + ai.missing.map(x => x.qty + ' ' + x.name).join(', ') + ' (played without them)' : '', ai.unplayable.length ? '; Forge\'s AI won\'t cast ' + ai.unplayable.map(x => x.qty + ' ' + x.name).join(', ') : '', ai.limited.length ? '; Forge\'s AI casts ' + ai.limited.map(x => x.qty + ' ' + x.name).join(', ') + ' only situationally' : ''].join('') : '';
+    return `- ${o.name} (${o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : 'team deck'}${o.style ? ', ' + o.style.why + ' that Forge pilots badly' + (c ? '' : ', not counted') : ''}): this run game 1 ${o.wins[0]}-${o.wins[1]}${n2 ? ', sideboarded ' + o.post.wins[0] + '-' + o.post.wins[1] : ''}${pool}${pd}; match ${c ? pct(s.raw) + ' raw, ' + span(s) + ' calibrated' : span(s)}${loss}${real}${aiT}${plan}`;
   }).join('\n');
 }
 
@@ -61,7 +62,8 @@ Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
 Fidelity: ${fidelityText(cal && cal.fidelity)}
 
-Headline: ${headline(rv)}.
+Headline: ${headline(rv)}.${rv.aiCards && rv.aiCards.mine ? `
+The brew as Forge played it: ${[rv.aiCards.mine.missing.length ? 'Forge does not have ' + rv.aiCards.mine.missing.map(x => x.qty + ' ' + x.name).join(', ') + ', so the deck played without them' : '', rv.aiCards.mine.unplayable.length ? 'Forge\'s AI will not cast ' + rv.aiCards.mine.unplayable.map(x => x.qty + ' ' + x.name).join(', ') : '', rv.aiCards.mine.limited.length ? 'it casts ' + rv.aiCards.mine.limited.map(x => x.qty + ' ' + x.name).join(', ') + ' only situationally' : ''].filter(Boolean).join('; ')}. Discount anything the numbers say about those cards.` : ''}
 
 Matchups:
 ${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}`;
@@ -80,7 +82,7 @@ function fidelityText(f) {
 function cardsText(cs) {
   if (!cs) return '';
   const r1 = x => x == null ? '-' : x.toFixed(1), p = x => x == null ? '-' : pct(x);
-  const mine = cs.rows.map(r => `- ${r.side ? '(sideboard) ' : r.qty + ' '}${r.name}: cast in ${p(r.castPct)} of games${r.turn ? ', first on turn ' + r1(r.turn) : ''}; won ${p(r.won)} when cast vs ${p(r.wonNot)} when not${r.lift == null ? ' (too few games to compare)' : ''}${r.dmg >= 0.5 ? '; ' + r1(r.dmg) + ' damage a game' : ''}${r.discards ? '; discarded ' + r.discards + ' times' : ''}`).join('\n');
+  const mine = cs.rows.map(r => `- ${r.side ? '(sideboard) ' : r.qty + ' '}${r.name}: cast in ${p(r.castPct)} of games${r.turn ? ', first on turn ' + r1(r.turn) : ''}; won ${p(r.won)} when cast vs ${p(r.wonNot)} when not${r.lift == null ? ' (too few games to compare)' : ''}${r.dmg >= 0.5 ? '; ' + r1(r.dmg) + ' damage a game' : ''}${r.discards ? '; discarded ' + r.discards + ' times' : ''}${r.ai === 'unplayable' ? '; Forge\'s AI won\'t cast this card, so its numbers say nothing about it' : r.ai === 'limited' ? '; Forge\'s AI casts this only situationally, so its numbers understate it' : ''}`).join('\n');
   const th = cs.threats.map(t => `- ${t.name} (${t.opp}): cast in ${t.cast} of ${t.games} games; you won ${pct(t.you)} of those vs ${pct(t.base)} overall in that matchup${t.dmg >= 1 ? '; ' + r1(t.dmg) + ' damage a game it was cast' : ''}`).join('\n');
   return `
 

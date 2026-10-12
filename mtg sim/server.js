@@ -12,6 +12,7 @@ const usage = require('./usage');
 const score = require('./score');
 const realdata = require('./realdata');
 const calib = require('./calib');
+const aihints = require('./aihints');
 const codex = require('./codex');
 const coach = require('./coach');
 const claude = require('./claude');
@@ -146,6 +147,10 @@ function unclaim(job, i) {
   job.inflight--; if (job.status !== 'cancelled') job.pending.unshift(i);
   settle(job); pump();
 }
+// Every pairing gets a fixed Forge seed from its job and index, kept on the pairing, so
+// it can be replayed. Forge isn't fully deterministic (its AI has a wall-clock limit per
+// decision), but the same seed and lists give the same shuffles and the same AI rolls.
+const seedOf = (jobId, i) => { let h = 2166136261; for (const ch of jobId + ':' + i) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };
 function pump() {
   while (localBusy < SLOTS) {
     const t = claim('local'); if (!t) break;
@@ -155,8 +160,9 @@ function pump() {
   }
 }
 async function playLocal({ job, i, pr }) {
+  pr.seed = seedOf(job.id, i);
   const run = runSim({
-    decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock,
+    decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock, seed: pr.seed,
     workDir: path.join(DATA, 'jobs', job.id, String(i)),
     onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
   });
@@ -181,7 +187,7 @@ function settle(job) {
   if (job.status !== 'cancelled') job.status = job.pairings.every(p => p.status === 'failed') ? 'failed' : 'done';
   job.finished = Date.now();
   history.unshift({ id: job.id, owner: job.owner, mode: job.mode, format: job.format, games: job.games, created: job.created, finished: job.finished, status: job.status,
-    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards, where, ext }) => ({ names, wins, draws, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, pd: score.tallyGames(games), where: where || null, ...(ext ? { ext: true } : {}), ...(job.brew && cards ? { cards } : {}) })),
+    pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards, where, ext, seed }) => ({ names, wins, draws, seed: seed ?? null, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, pd: score.tallyGames(games), where: where || null, ...(ext ? { ext: true } : {}), ...(job.brew && cards ? { cards } : {}) })),
     decks: job.decks, meta: job.meta || null });
   saveHist();
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
@@ -282,13 +288,15 @@ async function mapLimit(items, n, fn) {
 // plays for games 2 and 3. `pairs` is [[i, j], ...] into `decks`. A pairing whose
 // plans board nothing on either side gets no post-board games: its games 2-3 are
 // game 1's lists, so game 1's rate stands for them.
+// "real pilots carry ..." for an archetype the calibration has seen, as a line for the plan writer
+const realSideOf = (format, name) => { const a = calibs[String(format).toLowerCase()]?.sideboards?.[name]; return a ? `Real tournament pilots of ${name} (${a.pilots} decks, last ${REAL_DAYS} days) most often carry in their sideboards: ` + a.cards.slice(0, 12).map(c => `${c.name} (${Math.round(c.share * 100)}% of decks, ${c.copies.toFixed(1)} copies)`).join(', ') + '.' : null; };
 async function boardAll(decks, pairs, format) {
   if (!sideboard.available()) return { post: null, plans: {}, note: 'no-model' };
   const post = {}, plans = {};
   await mapLimit(pairs, 4, async ([i, j]) => {
     const k = i + ':' + j;
     try {
-      const p = await sideboard.planFor(decks[i], decks[j], format);
+      const p = await sideboard.planFor(decks[i], decks[j], format, { a: realSideOf(format, decks[i].name), b: realSideOf(format, decks[j].name) });
       plans[k] = { a: p.a, b: p.b };
       if (p.a.in.length || p.b.in.length) post[k] = [sideboard.apply(decks[i], p.a), sideboard.apply(decks[j], p.b)];
     } catch (e) { plans[k] = { error: e.message }; }
@@ -441,12 +449,16 @@ async function refit(format) {
   const realPairs = {};
   for (const [a, row] of Object.entries(real.pairs)) for (const [b, p] of Object.entries(row)) if (a < b) realPairs[calib.pairKey(a, b)] = p.games;
   const forge = forgePairs(format), f = calib.fit(forge, realPairs);
+  // what real pilots of each archetype carry in their sideboards, for the plan writer's hint and the audit
+  let sbs = null; try { sbs = await realdata.sideboards(field, format, { days: REAL_DAYS }); } catch (e) { console.error('sideboards:', e.message); }
+  const sideboards = sbs && Object.fromEntries(Object.entries(sbs).filter(([, a]) => a.pilots >= 5).map(([n, a]) => [n, { pilots: a.pilots,
+    cards: Object.entries(a.cards).map(([name, x]) => ({ name, share: x.decks / a.pilots, copies: x.copies / x.decks })).filter(x => x.share >= 0.15).sort((x, y) => y.share - x.share).slice(0, 20) }]));
   const realField = Object.fromEntries(Object.entries(real.pairs).map(([a, row]) => { let w = 0, l = 0; for (const [b, p] of Object.entries(row)) if (b !== a) { w += p.games[0]; l += p.games[1]; } return [a, { w, l }]; }));
   calibs[format] = { at: Date.now(), beta: f.beta, evidence: f.evidence, lambda: f.lambda, pairs: f.pairs, realGames: f.realGames, forgePairs: Object.keys(forge).length,
     events: real.events, decks: real.decks, other: real.other, matches: real.matches, newest: real.newest, days: real.days, seen: real.seen, realField,
     lists: field.map(d => ({ name: d.name, main: d.main })),
     // the fit's inputs, kept so it can be audited and tested offline
-    inputs: { forge, real: realPairs }, fidelity: calib.fidelity(forge, realPairs) };
+    inputs: { forge, real: realPairs }, fidelity: calib.fidelity(forge, realPairs), sideboards: sideboards || calibs[format]?.sideboards || null };
   saveCal();
   return calibs[format];
 }
@@ -558,10 +570,24 @@ function runView(b, run) {
   out.style = (b.versions.find(x => x.v === run.v) || {}).style || null;
   out.coach = run.coach || null;
   out.cards = cardsView(b, run, prs);
+  out.aiCards = aiView(b, j);
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
   if (b.seats === 2 && out.opponents) scoreView(b, run, j, out);
   out.extended = j?.pairings ? j.pairings.filter(p => p.ext).length * GAMES : 0;
   return out;
+}
+
+// Cards Forge's AI won't play (or plays only now and then), and cards Forge doesn't
+// have at all, for the brew and each opponent as this run played them (aihints.js).
+// Shown beside the matchup and handed to the coach; nothing is left out of the numbers.
+const aiSeen = new Map();
+function aiView(b, j) {
+  if (!j || !j.decks) return null;
+  if (aiSeen.has(j.id)) return aiSeen.get(j.id);
+  const opt = { version: forgeVersion(), commander: b.format === 'commander' }, slim = r => (r.unplayable.length || r.limited.length || r.missing.length) ? r : null;
+  const v = { mine: slim(aihints.scan(j.decks[0], opt)), opp: j.decks.slice(1).map(d => slim(aihints.scan(d, opt))) };
+  aiSeen.set(j.id, v); if (aiSeen.size > 500) aiSeen.delete(aiSeen.keys().next().value);
+  return v;
 }
 
 // ---------- the numbers (score.js) ----------
@@ -648,7 +674,7 @@ function cardsView(b, run, prs) {
     const c = mine.cards[n] || { c: 0, w: 0, t: 0, d: 0, x: 0 }, notN = mine.games - c.c;
     const won = rate(c.w, c.c), wonNot = rate(mine.wins - c.w, notN);
     return { name: n, qty: qty.get(n) || 0, side: !qty.has(n), cast: c.c, castPct: rate(c.c, mine.games), turn: c.c ? c.t / c.c : null, won, wonNot,
-      lift: c.c >= MIN_CAST && notN >= MIN_CAST ? won - wonNot : null, dmg: c.d / mine.games, discards: c.x };
+      lift: c.c >= MIN_CAST && notN >= MIN_CAST ? won - wonNot : null, dmg: c.d / mine.games, discards: c.x, ai: aihints.hintOf(n, forgeVersion()) };
   }).sort((x, y) => (x.side - y.side) || (y.castPct || 0) - (x.castPct || 0));
   // the cards that beat you: per opponent, your win rate in games they cast the card
   // against your overall rate in that matchup, weighted by how often they cast it
@@ -773,7 +799,8 @@ const server = http.createServer(async (req, res) => {
         const t = claim('remote:' + name); if (!t) return send(res, 204, '');
         const id = crypto.randomBytes(6).toString('hex');
         leases.set(id, { ...t, worker: name, until: Date.now() + LEASE_MS });
-        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock });
+        t.pr.seed = seedOf(t.job.id, t.i);
+        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock, seed: t.pr.seed });
       }
       if (p === '/api/worker/report' && req.method === 'POST') {
         const l = leases.get(String(body.lease || ''));
@@ -822,6 +849,27 @@ const server = http.createServer(async (req, res) => {
       const b = brews.find(x => x.id === m[1]); const f = b && b.coverUrl && path.join(DATA, 'covers', b.id + '.img');
       if (!f || !fs.existsSync(f)) return send(res, 404, 'no cover');
       return send(res, 200, fs.readFileSync(f), { 'Content-Type': b.coverType || 'image/jpeg', 'Cache-Control': 'private, max-age=86400' });
+    }
+    // Claude's sideboard plans against what real pilots of each archetype carry (realdata.sideboards).
+    // Per deck: how much of the list's own sideboard is cards real pilots carry. Per pairing: the
+    // share of each side's "in" copies that 15%+ of real pilots carry. The real files hold whole
+    // sideboards, not per-matchup boarding, so this checks the plan's card choice, not its timing.
+    if (p === '/api/plans/audit' && req.method === 'GET') {
+      if (!user.isAdmin) return send(res, 403, { error: 'admins only' });
+      const format = String(u.searchParams.get('format') || 'standard').toLowerCase(), real = calibs[format]?.sideboards;
+      const rr = history.find(h => h.meta === format && h.owner === 'calibration' && h.status === 'done' && h.decks?.length);
+      if (!real || !rr) return send(res, 404, { error: 'needs a finished calibration round robin and a refit with real sideboards' });
+      const shareOf = (deck, n) => { const c = real[deck]?.cards.find(x => x.name.toLowerCase() === n.toLowerCase()); return c ? c.share : 0; };
+      const side = (deck, list) => { const ins = list.map(c => ({ ...c, real: Math.round(shareOf(deck, c.name) * 100) / 100 })), n = ins.reduce((t, c) => t + c.qty, 0); return { cards: ins, agree: n ? ins.reduce((t, c) => t + (c.real >= 0.15 ? c.qty : 0), 0) / n : null }; };
+      const decks = rr.decks.map(d => ({ name: d.name, pilots: real[d.name]?.pilots || 0, sideboard: side(d.name, d.side || []), realTop: (real[d.name]?.cards || []).slice(0, 8) }));
+      const pairings = []; let agreeN = 0, agreeW = 0;
+      for (let i = 0; i < rr.decks.length; i++) for (let j = i + 1; j < rr.decks.length; j++) {
+        const pl = sideboard.peek(rr.decks[i], rr.decks[j]); if (!pl) continue;
+        const a = side(rr.decks[i].name, pl.a.in), b = side(rr.decks[j].name, pl.b.in);
+        for (const x of [[a, pl.a.in], [b, pl.b.in]]) if (x[0].agree != null && real[x[1] === pl.a.in ? rr.decks[i].name : rr.decks[j].name]) { const q = x[1].reduce((t, c) => t + c.qty, 0); agreeW += x[0].agree * q; agreeN += q; }
+        pairings.push({ a: rr.decks[i].name, b: rr.decks[j].name, hinted: !!pl.hinted, aIn: a, bIn: b });
+      }
+      return send(res, 200, { format, roundRobin: rr.id, finished: rr.finished, realDays: REAL_DAYS, agreement: agreeN ? agreeW / agreeN : null, plannedCopies: agreeN, decks, pairings });
     }
     if (p === '/api/usage' && req.method === 'GET') {
       if (!user.isAdmin) return send(res, 403, { error: 'admins only' });

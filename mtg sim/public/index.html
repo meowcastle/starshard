@@ -800,6 +800,8 @@ class Component extends DCLogic {
       v.runNote = boS + planS + ' · Forge AI pilots both sides' + calS + ' · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '');
       const rec = (w) => w[0] + '–' + w[1], E = run.event, ws = E ? E.field.p : null;
       // how the archetype does in real tournaments, overall, for a reader to set Forge's verdict against
+      const AI = run.aiCards || { mine: null, opp: [] }, cardsS = (xs) => xs.map(x => x.qty + ' ' + x.name).join(', ');
+      const aiS = (r) => !r ? '' : [r.missing.length ? 'Forge doesn\'t have ' + cardsS(r.missing) : '', r.unplayable.length ? 'Forge\'s AI won\'t cast ' + cardsS(r.unplayable) : '', r.limited.length ? 'casts ' + cardsS(r.limited) + ' only now and then' : ''].filter(Boolean).join(' · ');
       const realS = (n) => { const c = run.calibration && run.calibration.opp[n], r = c && c.real; return r && r.w + r.l >= 30 ? 'wins ' + Math.round(r.w / (r.w + r.l) * 100) + '% in real events' : ''; };
       // How well Forge's numbers have matched real tournaments (calib.js fidelity): k = 1 means
       // its matchups carry over as they are, 0 that they carry no information. The page's claims follow it.
@@ -811,6 +813,8 @@ class Component extends DCLogic {
         : fidLevel === 'low' ? 'Forge\'s AI plays both decks, and it plays some decks much better than people do. Checked against ' + fid.realGames + ' real tournament games across ' + fid.pairs + ' meta matchups, its matchup numbers haven\'t yet predicted real results better than a coin flip. Use them to compare versions of your deck under the same AI and to spot big problems. Where a matchup looks surprising, trust your own testing.'
         : fidLevel === 'some' ? 'Checked against ' + fid.realGames + ' real tournament games, about ' + Math.round(Math.max(0, fid.k) * 100) + '% of the edge Forge finds in a matchup shows up in real play. Treat big matchup numbers as pointing the right way but overstated.'
         : 'Checked against ' + fid.realGames + ' real tournament games across ' + fid.pairs + ' meta matchups.';
+      const mine = AI.mine;
+      if (mine && (mine.missing.length || mine.unplayable.length)) v.fidNote += ' Your list as Forge played it: ' + [mine.missing.length ? 'Forge doesn\'t have ' + cardsS(mine.missing) + ', so they weren\'t in the deck' : '', mine.unplayable.length ? 'its AI won\'t cast ' + cardsS(mine.unplayable) : ''].filter(Boolean).join('; ') + '.';
       v.evUnder = under; v.leversNote = 'Each change, measured by what it\'s worth at the tournament' + (under ? ' under Forge\'s AI. Check the big ones in your own testing.' : '.');
       v.evLabel = (d.format === 'standard' ? 'Competitive Standard tournament' : cap(d.format) + ' 1v1') + ' · best of three' + (under ? ' · Forge\'s AI' : '') + ' · ' + fieldLabel(run);
       v.evField = ws != null ? Math.round(ws * 100) + ' of every 100' : overall.n ? Math.round(overall.p * 100) + ' of every 100' : '—';
@@ -844,7 +848,7 @@ class Component extends DCLogic {
         if (E.rest >= 5) v.levers.push({ title: 'The other ' + Math.round(E.rest) + '% of the field', detail: 'Decks outside the ones played here. They are counted as even, which is the biggest unknown in these numbers.', gain: 'Unknown', gainNote: 'not played yet' });
         v.hasLevers = v.levers.length > 0;
       }
-      v.oppRows = run.opponents.map(o => { const x = valOf(o), g = x ? x.n : 0; const loss = E && x && x.counted && o.metaPct != null ? o.metaPct * (1 - x.p) : null; const bv = bench && bench.vs(o.name);
+      v.oppRows = run.opponents.map((o, oi) => { const x = valOf(o), g = x ? x.n : 0, aiO = AI.opp[oi], aiBad = !!(aiO && (aiO.missing.length || aiO.unplayable.length)); const loss = E && x && x.counted && o.metaPct != null ? o.metaPct * (1 - x.p) : null; const bv = bench && bench.vs(o.name);
         const games = x ? ['game 1 ' + rec(o.wins), o.post && o.post.played ? 'boarded ' + rec(o.post.wins) : run.bo3 === 'boarded' && o.plan && !o.plan.error ? 'nothing to board' : ''].filter(Boolean).join(' · ') : '';
         const calNote = x && x.cal && Math.abs(x.shift) >= 0.01 ? 'real tournament results move it ' + (x.p >= x.raw ? '+' : '−') + Math.abs(Math.round((x.p - x.raw) * 100)) : '';
         const pdNote = x && x.n1 >= 20 && Math.abs(x.onPlay - x.onDraw) >= 0.08 ? 'game 1 ' + Math.round(x.onPlay * 100) + '% on the play, ' + Math.round(x.onDraw * 100) + '% on the draw' : '';
@@ -854,8 +858,8 @@ class Component extends DCLogic {
         const vd = !g ? ['Not played yet', 'untested'] : notCounted ? ['Not counted', 'untested'] : verdict(x);
         const r = rngS(x);
         return { name: o.name, art: art(o.coverCard), artBg: '#1a1a19', artVis: 'visible', pips: pips(o.colors), r, dotVis: g ? 'visible' : 'hidden', loss: loss != null ? loss : -1,
-          sub: [o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : '', g ? plural(g, 'game') : '', realS(o.name), o.pairing === 'failed' ? 'Forge stopped early' : ''].filter(Boolean).join(' · '),
-          flag, flagColor: o.pairing === 'failed' ? AMBER : MUTED, verdict: vd[0], ...CHIP[vd[1]], tens: x && g ? tens(x.p) : '—', unsure: x && g && x.hi - x.lo > 0.35 ? 'few games, unsure' : '',
+          sub: [o.metaPct != null ? o.metaPct.toFixed(1) + '% of the field' : '', g ? plural(g, 'game') : '', realS(o.name), aiS(aiO), o.pairing === 'failed' ? 'Forge stopped early' : ''].filter(Boolean).join(' · '),
+          flag, flagColor: o.pairing === 'failed' || aiBad ? AMBER : MUTED, verdict: vd[0], ...CHIP[vd[1]], tens: x && g ? tens(x.p) : '—', unsure: x && g && x.hi - x.lo > 0.35 ? 'few games, unsure' : '',
           lossS: loss != null ? loss.toFixed(1) : E ? '—' : '', lossColor: loss != null && x.p < 0.5 ? LOSS : MUTED, opacity: !g ? 0.5 : notCounted ? 0.6 : 1 }; })
         .sort((a, b) => b.loss - a.loss || a.r.p - b.r.p);
       if (E && E.rest > 0.5) v.oppRows.push({ name: 'Everything else', art: '', artBg: 'repeating-linear-gradient(135deg,#3a3a38 0 4px,#2b2b29 4px 8px)', artVis: 'hidden', pips: [], r: rng(0, 0), dotVis: 'hidden', sub: E.rest.toFixed(1) + '% of the field · decks not played here', flag: 'Counted as even until they are played', flagColor: MUTED,
@@ -873,7 +877,7 @@ class Component extends DCLogic {
         v.hasCards = true;
         v.cardsNote = cs.games + ' games · won when cast vs not has selection bias (cheap cards read low, top end high); under ±10 is noise';
         v.cardRows = cs.rows.map(r => ({ name: r.name, qty: r.side ? 'sb' : r.qty, castS: pc(r.castPct), turnS: r.turn ? 'T' + r.turn.toFixed(1) : '—', wonS: r.cast >= cs.minCast ? pc(r.won) : '—', notS: r.lift == null ? '—' : pc(r.wonNot),
-          liftS: r.lift == null ? (r.cast ? 'few games' : 'never cast') : (r.lift >= 0 ? '+' : '−') + Math.abs(Math.round(r.lift * 100)), liftColor: r.lift == null ? MUTED : r.lift >= 0.1 ? WIN : r.lift <= -0.1 ? LOSS : '#C9C7C0',
+          liftS: r.ai === 'unplayable' ? 'AI won\'t cast' : r.ai === 'limited' ? 'AI: now and then' : r.lift == null ? (r.cast ? 'few games' : 'never cast') : (r.lift >= 0 ? '+' : '−') + Math.abs(Math.round(r.lift * 100)), liftColor: r.ai ? AMBER : r.lift == null ? MUTED : r.lift >= 0.1 ? WIN : r.lift <= -0.1 ? LOSS : '#C9C7C0',
           dmgS: r.dmg >= 0.1 ? r.dmg.toFixed(1) : '·', nameColor: r.side ? MUTED : '#EDEBE6' }));
         v.hasThreats = cs.threats.length > 0;
         v.threatsNote = 'your win rate in games they cast it, against your overall rate in that matchup';

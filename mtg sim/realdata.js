@@ -44,16 +44,17 @@ async function listYear(source, year) {
 
 const dateOf = p => { const m = p.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//); return m ? Date.UTC(+m[1], m[2] - 1, +m[3]) : 0; };
 
-// One tournament, reduced to what calibration needs, cached forever (they don't change).
+// One tournament, reduced to what calibration and the sideboard audit need, cached
+// forever (they don't change). v2 keeps sideboards; an older cache entry is fetched again.
 async function event(p) {
   const f = path.join(cacheDir(), 'events', p.replace(/[^\w.-]+/g, '_'));
-  const c = readJson(f, null); if (c) return c;
+  const c = readJson(f, null); if (c && c.v === 2) return c;
   const r = await fetch(`https://raw.githubusercontent.com/${REPO}/master/${p.split('/').map(encodeURIComponent).join('/')}`, { headers: { 'User-Agent': UA['User-Agent'] } });
   if (!r.ok) throw new Error(`raw ${r.status}`);
   const e = await r.json();
-  const out = {
+  const out = { v: 2,
     name: e.Tournament?.Name, date: e.Tournament?.Date, uri: e.Tournament?.Uri, format: e.Tournament?.Formats || '',
-    decks: (e.Decks || []).map(d => ({ player: d.Player, main: (d.Mainboard || []).map(c => ({ qty: c.Count, name: c.CardName })) })),
+    decks: (e.Decks || []).map(d => ({ player: d.Player, main: (d.Mainboard || []).map(c => ({ qty: c.Count, name: c.CardName })), side: (d.Sideboard || []).map(c => ({ qty: c.Count, name: c.CardName })) })),
     matches: (e.Rounds || []).flatMap(r => (r.Matches || []).map(m => ({ a: m.Player1, b: m.Player2, r: m.Result }))),
   };
   fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(out));
@@ -76,11 +77,13 @@ async function events(format, days = 42) {
   return out.sort((a, b) => String(b.date).localeCompare(String(a.date)));
 }
 
-// Weighted overlap of two main decks, nonland cards only: sum of min / sum of max.
+// Weighted overlap of two main decks, nonland cards only: sum of min / sum of max. Names are
+// compared front face only and without accents, since sources spell two-part cards and
+// accented names differently ("Unholy Annex/Ritual Chamber", "Dain's Company").
 const BASICS = /^(plains|island|swamp|mountain|forest|wastes)$/i;
 function vec(main, isLand) {
   const m = new Map();
-  for (const c of main) { const k = c.name.split(' // ')[0].toLowerCase(); if (BASICS.test(k) || (isLand && isLand(k))) continue; m.set(k, (m.get(k) || 0) + c.qty); }
+  for (const c of main) { const k = c.name.split(/\s*\/\/?\s*/)[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); if (BASICS.test(k) || (isLand && isLand(k))) continue; m.set(k, (m.get(k) || 0) + c.qty); }
   return m;
 }
 function overlap(a, b) {
@@ -120,4 +123,21 @@ async function matrix(field, format, { days = 42, isLand } = {}) {
   return { pairs, seen, decks, other, matches, events: evs.length, days, sources: SOURCES, newest: evs[0]?.date || null };
 }
 
-module.exports = { matrix, events, overlap, vec, MATCH_AT };
+// What real pilots of each archetype carry in their sideboards: per archetype, how many
+// real decks were filed under it and, per card, how many of them carry it and how many
+// copies in all. The files hold each player's 75, not what came in for a given match, so
+// this says what an archetype's pilots bring to the event, not what they board per matchup.
+async function sideboards(field, format, { days = 42, isLand } = {}) {
+  const fv = field.map(d => vec(d.main, isLand)), out = Object.fromEntries(field.map(d => [d.name, { pilots: 0, cards: {} }]));
+  for (const e of await events(format, days)) for (const d of e.decks) {
+    const v = vec(d.main, isLand); let best = -1, bi = -1;
+    fv.forEach((f, i) => { const s = overlap(v, f); if (s > best) { best = s; bi = i; } });
+    if (best < MATCH_AT || !d.side) continue;
+    const a = out[field[bi].name]; a.pilots++;
+    const here = new Map(); for (const c of d.side) here.set(c.name, (here.get(c.name) || 0) + c.qty);
+    for (const [n, q] of here) { const x = a.cards[n] = a.cards[n] || { decks: 0, copies: 0 }; x.decks++; x.copies += q; }
+  }
+  return out;
+}
+
+module.exports = { matrix, events, sideboards, overlap, vec, MATCH_AT };
