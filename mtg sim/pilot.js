@@ -5,6 +5,7 @@
 // sideboarding (a plan per seat, the same { in, out } sideboard.js writes).
 //
 //   runMatches({ decks: [a, b], matches, seed, own: [['mulligan'], []], plans: [planA, planB] })
+//   gameLog: a directory for the per-turn game logs (one m<match>-g<game>.jsonl.gz per game; GameLog.java)
 //     -> { games: [{ match, game, winner, onThePlay, turns, reason }], decisions, errors, ms }
 //
 // Self-play, the strength check (the pilot's seat against stock Forge, mirror decks, seats
@@ -162,7 +163,7 @@ function boarded(main, plan) {
 
 // ---------------------------------------------------------------- matches
 
-function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, search = null, workDir, maxTurns = 60, keepLogs = false, onGame, onChild }) {
+function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, search = null, workDir, maxTurns = 60, keepLogs = false, gameLog = null, onGame, onChild }) {
   fs.mkdirSync(workDir, { recursive: true });
   const files = decks.map((d, i) => { const f = path.join(workDir, `seat${i}.dck`); fs.writeFileSync(f, toDck(d.name, d)); return f; });
   const names = [...new Set(decks.flatMap(d => [...d.main, ...(d.side || [])].map(c => c.name)))];
@@ -214,7 +215,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       const args = [`-Xmx${XMX}`, '-Djava.awt.headless=true', '--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.desktop/java.awt=ALL-UNNAMED',
         '-cp', forgeJar() + path.delimiter + BRIDGE, 'forge.bridge.AgentBridge', '--port', String(srv.address().port), '--token', token,
         '--deck0', files[0], '--deck1', files[1], '--external0', 'true', '--external1', 'true', '--games', String(games), '--seed', String(seed), '--sim-log', String(simLog), '--clock', String(clock || 0),
-        '--max-turns', String(maxTurns), '--stops', 'all', '--own0', ownArg(0), '--own1', ownArg(1), '--matches', String(matches),
+        '--max-turns', String(maxTurns), '--stops', 'all', '--own0', ownArg(0), '--own1', ownArg(1), '--matches', String(matches), ...(gameLog ? ['--log', gameLog] : []),
         ...(search ? ['--search-rollouts', String(search.rollouts || 4), '--search-turns', String(search.turns || 8), '--search-max', String(search.max || 6), '--search-margin', String(search.margin ?? 2), '--search-screen', String(search.screen || 0)] : [])];
       const ch = spawn('java', args, { cwd: FORGE_DIR, env: config.childEnv({ HOME: config.DATA_DIR }), stdio: ['ignore', 'ignore', 'pipe'] });
       onChild && onChild(ch);

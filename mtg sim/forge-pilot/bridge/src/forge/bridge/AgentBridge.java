@@ -59,11 +59,11 @@ public final class AgentBridge {
             MatchContext ctx = new MatchContext(Integer.parseInt(a.getOrDefault("max-turns", "40")), !"all".equals(a.get("stops")), "always".equals(a.get("mana")),
                     Integer.parseInt(a.getOrDefault("max-retries", "3")));
 
-            ctx.searchRollouts = Integer.parseInt(a.getOrDefault("search-rollouts", "4"));
-            ctx.searchTurns = Integer.parseInt(a.getOrDefault("search-turns", "8"));
-            ctx.searchMax = Integer.parseInt(a.getOrDefault("search-max", "6"));
-            ctx.searchMargin = Double.parseDouble(a.getOrDefault("search-margin", "2.0"));
-            ctx.searchScreen = Integer.parseInt(a.getOrDefault("search-screen", "0"));
+            ctx.searchRollouts = Integer.parseInt(a.getOrDefault("search-rollouts", String.valueOf(ctx.searchRollouts)));
+            ctx.searchTurns = Integer.parseInt(a.getOrDefault("search-turns", String.valueOf(ctx.searchTurns)));
+            ctx.searchMax = Integer.parseInt(a.getOrDefault("search-max", String.valueOf(ctx.searchMax)));
+            ctx.searchMargin = Double.parseDouble(a.getOrDefault("search-margin", String.valueOf(ctx.searchMargin)));
+            ctx.searchScreen = Integer.parseInt(a.getOrDefault("search-screen", String.valueOf(ctx.searchScreen)));
             for (int s = 0; s < 2; s++) {
                 String own = a.getOrDefault("own" + s, a.get("own"));
                 if (own != null) ctx.own[s] = new java.util.HashSet<>(java.util.Arrays.asList(own.split(",")));
@@ -79,15 +79,19 @@ public final class AgentBridge {
             int matches = Integer.parseInt(a.getOrDefault("matches", "1"));
             final boolean simLog = Boolean.parseBoolean(a.getOrDefault("sim-log", "false"));
             final long clock = Long.parseLong(a.getOrDefault("clock", "0")); // starshard: seconds a game may take, 0 = no limit
+            // starshard: --log <dir> writes a per-turn game log for each game (GameLog.java)
+            final java.nio.file.Path logDir = a.get("log") != null ? java.nio.file.Paths.get(a.get("log")) : null;
             for (int mi = 0; mi < matches; mi++) {
             MyRandom.setRandom(new Random(seed + mi));
             ctx.wins[0] = 0;
             ctx.wins[1] = 0;
             List<RegisteredPlayer> players = new ArrayList<>();
             LobbyPlayer[] lobby = new LobbyPlayer[2];
+            String[] deckNames = new String[2];
             for (int s = 0; s < 2; s++) {
                 Deck deck = DeckSerializer.fromFile(new File(a.get("deck" + s)));
                 if (deck == null) throw new IllegalArgumentException("could not load deck " + a.get("deck" + s));
+                deckNames[s] = deck.getName();
                 // neutral names: agents never learn who they are playing. starshard: --sim-log names players as
                 // `forge sim` does (Ai(1)-<deck name>), so the same log parser reads both
                 String name = simLog ? "Ai(" + (s + 1) + ")-" + deck.getName() : "P" + (s + 1);
@@ -111,6 +115,7 @@ public final class AgentBridge {
                 game.subscribeToEvents(cap);
                 LoopGuard loop = new LoopGuard(game, ctx);
                 game.subscribeToEvents(loop);
+                GameLog glog = GameLog.open(logDir, game, lobby, mi, g, deckNames);
                 JsonObject start = new JsonObject();
                 start.addProperty("type", "game_start");
                 start.addProperty("game", g);
@@ -146,6 +151,7 @@ public final class AgentBridge {
                 end.addProperty("reason", error != null ? "error: " + error : cap.reached ? "Draw (turn cap of " + ctx.maxTurns + " turns)"
                         : loop.reached ? "Draw (unbreakable loop)" : out != null ? String.valueOf(out.getWinCondition()) : "unknown");
                 // Full Forge game log, chronological, for offline review. The harness writes it to a file; it never reaches agents.
+                if (glog != null) glog.close(out, lobby, end.get("reason").getAsString(), slow, starter != null ? (starter.getLobbyPlayer().equals(lobby[0]) ? 0 : 1) : null);
                 JsonArray log = new JsonArray();
                 for (GameLogEntry e : game.getGameLog().getAllEntries()) log.add((simLog ? e.type().getCaption() : e.type().toString()) + ": " + e.message());
                 end.add("log", log);
