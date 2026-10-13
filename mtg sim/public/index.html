@@ -216,7 +216,7 @@ Deck
       <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:24px;background:#121211">
         <div style="display:flex;flex-direction:column"><div style="font-size:13px;color:#8F8D86;padding-bottom:8px">Sources · blended by default</div>
           <sc-for list="{{ sourceRows }}" as="s" hint-placeholder-count="4"><a href="#" onClick="{{ s.toggle }}" style="display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:16px;height:16px;border-radius:4px;border:1px solid {{ s.boxBorder }};background:{{ s.boxBg }};display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#0C0C0B">{{ s.mark }}</span><div style="min-width:0"><div style="font-weight:600;font-size:15px">{{ s.name }} <span style="font-weight:400;color:#8F8D86;font-size:13px">{{ s.premium }}</span></div><div style="font-size:13px;color:#8F8D86">{{ s.scope }}</div></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5C5B56;white-space:nowrap">{{ s.updatedAt }}</span></a></sc-for>
-          <div style="font-size:13px;color:#8F8D86;line-height:1.5;padding-top:12px">Where sources disagree by 3+ points on a deck, the row is marked. Scraped nightly; every snapshot is kept.</div></div>
+          <div style="font-size:13px;color:#8F8D86;line-height:1.5;padding-top:12px">Where sources disagree by 3+ points on a deck, the row is marked.</div></div>
         <div style="display:flex;flex-direction:column"><div style="font-size:13px;color:#8F8D86;padding-bottom:8px">Snapshots · run any version against any week</div>
           <sc-for list="{{ snapshotRows }}" as="s" hint-placeholder-count="3"><a href="#" onClick="{{ s.pick }}" style="display:grid;grid-template-columns:18px 72px minmax(0,1fr);gap:12px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)"><span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }};margin-left:4px"></span><span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ s.date }}</span><div style="min-width:0"><div style="font-size:15px;font-weight:600">{{ s.label }}</div><div style="font-size:13px;color:#8F8D86;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.top }}</div></div></a></sc-for></div>
       </div>
@@ -294,7 +294,7 @@ Deck
           <span style="color:#8F8D86">{{ c.qty }}</span><span style="font-family:Manrope,system-ui,sans-serif;font-size:15px;color:{{ c.nameColor }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="text-align:right">{{ c.castS }}</span><span style="text-align:right;color:#8F8D86">{{ c.turnS }}</span><span style="text-align:right">{{ c.wonS }}</span><span style="text-align:right;color:#8F8D86">{{ c.notS }}</span><span style="text-align:right;color:{{ c.liftColor }}">{{ c.liftS }}</span><span style="text-align:right;color:#8F8D86">{{ c.dmgS }}</span>
         </div>
         </sc-for>
-        <div style="font-size:13px;color:#8F8D86;line-height:1.5;padding-top:12px;max-width:720px">Read from Forge's game logs. Cast counts each game once. Forge doesn't log draws, so a low cast rate can mean not drawn or stuck in hand. Lands are left out.</div>
+        
       </div>
       <sc-if value="{{ hasThreats }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column">
@@ -569,9 +569,10 @@ class Component extends DCLogic {
     const cardImg = (n) => '/api/img?v=normal&name=' + encodeURIComponent(n);
     const pips = (c) => (c || []).map(x => ({ cls: 'ms-' + x.toLowerCase(), color: MANA[x] }));
     const costPips = (cost) => ((cost || '').match(/\{([^}]+)\}/g) || []).map(t => { const s = t.slice(1, -1); return { cls: 'ms-' + s.toLowerCase().replace('/', ''), color: MANA[s] || '#B5B5B5' }; });
-    const rng = (w, n, center = 0.5) => { if (!n) return { p: 0, pct: '—', pm: '', lo: 50, w: 0, left: 50, n: 0, color: '#3a3a38', numColor: '#5C5B56', hatch: 'transparent' }; const p = w / n, se = 1.96 * Math.sqrt(p * (1 - p) / n), lo = Math.max(0, p - se), hi = Math.min(1, p + se), prov = n < 30; const color = prov ? MUTED : (p >= center ? WIN : LOSS); return { p, pct: Math.round(p * 100) + '%', pm: '±' + Math.round(se * 100), lo: (lo * 100).toFixed(1), w: ((hi - lo) * 100).toFixed(1), left: (p * 100).toFixed(1), n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
+    const HATCH = ((d && d.runs || []).find(r => r.method) || { method: {} }).method.hatchUnder || 30;
+    const rng = (w, n, center = 0.5) => { if (!n) return { p: 0, pct: '—', pm: '', lo: 50, w: 0, left: 50, n: 0, color: '#3a3a38', numColor: '#5C5B56', hatch: 'transparent' }; const p = w / n, se = 1.96 * Math.sqrt(p * (1 - p) / n), lo = Math.max(0, p - se), hi = Math.min(1, p + se), prov = n < HATCH; const color = prov ? MUTED : (p >= center ? WIN : LOSS); return { p, pct: Math.round(p * 100) + '%', pm: '±' + Math.round(se * 100), lo: (lo * 100).toFixed(1), w: ((hi - lo) * 100).toFixed(1), left: (p * 100).toFixed(1), n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
     // the same, from the server's numbers (score.js): a 95% range that needn't be symmetric
-    const rngS = (x, center = 0.5) => { if (!x || !x.n) return rng(0, 0); const prov = x.n < 30, color = prov ? MUTED : (x.p >= center ? WIN : LOSS); return { p: x.p, pct: Math.round(x.p * 100) + '%', pm: '±' + Math.round((x.hi - x.lo) * 50), span: Math.round(x.lo * 100) + '–' + Math.round(x.hi * 100) + '%', lo: (x.lo * 100).toFixed(1), w: ((x.hi - x.lo) * 100).toFixed(1), left: (x.p * 100).toFixed(1), n: x.n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
+    const rngS = (x, center = 0.5) => { if (!x || !x.n) return rng(0, 0); const prov = x.n < HATCH, color = prov ? MUTED : (x.p >= center ? WIN : LOSS); return { p: x.p, pct: Math.round(x.p * 100) + '%', pm: '±' + Math.round((x.hi - x.lo) * 50), span: Math.round(x.lo * 100) + '–' + Math.round(x.hi * 100) + '%', lo: (x.lo * 100).toFixed(1), w: ((x.hi - x.lo) * 100).toFixed(1), left: (x.p * 100).toFixed(1), n: x.n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
     const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const day = (t) => { const x = new Date(t); return MON[x.getMonth()] + ' ' + x.getDate(); };
     const hm = (t) => { const x = new Date(t); return String(x.getHours()).padStart(2, '0') + ':' + String(x.getMinutes()).padStart(2, '0'); };
@@ -687,6 +688,7 @@ class Component extends DCLogic {
 
     // the run on screen: the one picked from Versions, else the newest
     const run = d.runs.find(r => r.id === S.runId) || d.runs[0] || null;
+    v.method = (run && run.method) || null;
     const waiting = !!run && this.active(run);
     if (waiting) {
       const asking = S.cancelAsk === run.id;
@@ -740,7 +742,7 @@ class Component extends DCLogic {
       const left = run.total - run.played, rate = run.started && run.played ? (Date.now() - run.started) / run.played : null;
       const status = run.status === 'preparing' ? 'Reading the field' : run.status === 'queued' ? 'Queued' + (run.queuePos > 0 ? ' · ' + plural(run.queuePos, 'run') + ' ahead' : ' · next up') : 'Running · ' + run.played + ' of ' + run.total + ' games';
       v.brief = { status, statusNote: 'queued ' + hm(run.created) + (rate ? ' · about ' + plural(Math.max(1, Math.round(left * rate / 60000)), 'minute') + ' left' : '') + ' · ' + setTitle,
-        weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist and writing both sides\' sideboard plans. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' + (run.extended ? ' Adding ' + run.extended + ' games to the matchups that are still too close to call.' : '') : run.played + ' of ' + run.total + ' pods played.') + ' Numbers under 30 games show hatched. You can close this; the run carries on.' };
+        weakness: 'Too early to say', weaknessNote: run.status === 'preparing' ? 'Fetching every opponent\'s decklist and writing both sides\' sideboard plans. Games start as soon as they are in.' : (v.isDuel ? played.length + ' of ' + run.opponents.length + ' matchups have games in.' + (run.extended ? ' Adding ' + run.extended + ' games to the matchups that are still too close to call.' : '') : run.played + ' of ' + run.total + ' pods played.') + ' You can close this; the run carries on.' };
       v.latest = { at: 'now' }; v.linkDown = 'Results so far';
     } else if (v.isDuel) {
       const edgeS = bench && bench.edge != null && bench.status === 'done' ? ' · ' + (bench.edge >= 0 ? '+' : '−') + Math.abs(bench.edge) + ' on the #1 deck' : '';
@@ -762,6 +764,16 @@ class Component extends DCLogic {
     }
     v.earlier = [];
     // Coach readout: the version line, the weakness with a way into the Codex, the live grid
+    // how the numbers are made, from the run's method object (the one place the page says so)
+    const methodS = (r) => {
+      const M = r && r.method; if (!M) return '';
+      const kinds = { reactive: 'answers with its instants the way a person would', deadcards: 'casts the cards Forge never casts' };
+      const pil = M.pilot && M.pilot.decks.length ? ' Our own pilot plays part of ' + M.pilot.decks.map(x => x.name + ' (' + (kinds[x.pilot] || x.pilot) + ')').join(', ') + '; Forge does the rest.' : '';
+      const fld = !M.field ? '' : M.field.source === 'team' ? ' Opponents: your team\'s decks.' : ' Opponents and their shares: ' + M.field.label + ', read ' + day(M.field.date) + ' and kept with this run.';
+      const cal = M.calibration ? ' Matchups are corrected against ' + M.calibration.realGames.toLocaleString() + ' real tournament games from ' + M.calibration.events + ' events over the last ' + M.calibration.days + ' days.' : '';
+      const ext = M.extraGames ? ', with more added to the matchups too close to call' : '';
+      return ' Forge' + (/^\d/.test(M.forge || '') ? ' ' + M.forge : '') + ' plays every game for both decks.' + pil + ' ' + M.gamesPerPairing + ' games per opponent' + (M.bo3 === 'boarded' ? ' per phase' : '') + ext + '; a game still going after ' + Math.round(M.clockSeconds / 60) + ' minutes counts as a draw.' + fld + cal + (M.notCounted ? ' ' + M.notCounted : '') + ' Numbers from fewer than ' + M.hatchUnder + ' games show hatched. ' + M.cardStats;
+    };
     const diffS = (df) => df.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name).join(', ');
     const runVer = run ? d.versions.find(x => x.v === run.v) || ver : ver;
     v.change = runVer.diff ? diffS(runVer.diff) : 'first paste';
@@ -810,8 +822,8 @@ class Component extends DCLogic {
       v.rateHead = run.bo3 ? 'match win rate · 95% range' : 'match win rate, from game 1 · 95% range';
       const boS = run.status === 'preparing' ? (S.bo3 ? 'best of three · sideboard plans being written' : 'best of one') : run.bo3 === 'boarded' ? 'best of three · game 1 and boarded games 20 each' + (run.extended ? ' plus ' + run.extended + ' where it was close' : '') + ', sideboard plans by Claude · game 1 counted as a coin flip for who plays first' : run.bo3 === 'unboarded' ? 'best of three, unboarded (no model key on the server, so games 2–3 play game 1\'s lists)' : run.bo3 === 'plan-failed' ? 'best of three, unboarded: every sideboard plan failed (' + (run.planError || 'model error') + '). Check the API key and credit' : 'best of one';
       const planS = run.bo3 === 'boarded' && run.planErrors ? ' · ' + plural(run.planErrors, 'sideboard plan') + ' failed, those matchups play games 2–3 unboarded' : '';
-      const calS = cal ? ' · calibrated against ' + plural(cal.realGames, 'game') + ' from ' + plural(cal.events, 'paper tournament') + ' in the last ' + cal.days + ' days' + (cal.me.near ? ', your list read as closest to ' + cal.me.near : ', your list treated as an average pilot (close to no meta deck)') : ' · not calibrated yet: the weekly meta round robin hasn\'t finished';
-      v.runNote = boS + planS + ' · Forge AI pilots both sides' + calS + ' · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '');
+      const calS = cal ? (cal.me.near ? ' · your list read as closest to ' + cal.me.near : ' · your list treated as an average pilot (close to no meta deck)') : ' · uncalibrated until the weekly meta round robin finishes';
+      v.runNote = boS + planS + calS + ' · ' + played.length + ' of ' + run.opponents.length + ' opponents played' + (run.skipped.length ? ' · ' + plural(run.skipped.length, 'list') + ' couldn\'t be read: ' + run.skipped.join(', ') : '') + (run.style ? ' · your list reads as ' + run.style.why + ', which Forge plays worse than a person would, so expect these numbers to run low' : '') + '.' + methodS(run);
       const rec = (w) => w[0] + '–' + w[1], E = run.event, ws = E ? E.field.p : null;
       // how the archetype does in real tournaments, overall, for a reader to set Forge's verdict against
       const AI = run.aiCards || { mine: null, opp: [] }, cardsS = (xs) => xs.map(x => x.qty + ' ' + x.name).join(', ');
@@ -881,7 +893,7 @@ class Component extends DCLogic {
       if (E) v.oppRows.sort((a, b) => (b.name === 'Everything else' ? E.rest / 2 : b.loss) - (a.name === 'Everything else' ? E.rest / 2 : a.loss));
     } else if (run && v.isPod) {
       const tot = run.seats.reduce((a, s) => a + s.wins, 0) || 1;
-      v.headlineLabel = 'Your seat · pods won'; v.evenLabel = '25% is even'; v.evenLine = 25; v.runNote = run.played + ' of ' + run.total + ' pods · Forge is weakest at combo and politics';
+      v.headlineLabel = 'Your seat · pods won'; v.evenLabel = '25% is even'; v.evenLine = 25; v.runNote = run.played + ' of ' + run.total + ' pods · Forge is weakest at combo and politics' + '.' + methodS(run);
       v.podSeats = run.seats.map((s, i) => ({ ...s, owner: s.owner || '', color: SEAT[i], art: art(s.commander), shareW: (s.wins / tot * 100).toFixed(1), pct: Math.round(s.wins / tot * 100) + '%', r: rng(s.wins, run.played, 0.25), elimS: '—', avgElimTurn: '—' })); v.podCount = v.podSeats.length; v.hasPod = v.podCount > 0;
     }
     // how each card played, from Forge's game logs

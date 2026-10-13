@@ -4,7 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { runSim, forgeVersion, pilotTag } = require('./forge');
+const { runSim, forgeVersion, pilotTag, pilotFor } = require('./forge');
 const meta = require('./meta');
 const sideboard = require('./sideboard');
 const cardstats = require('./cardstats');
@@ -340,7 +340,7 @@ async function prepareRun(b, run, user) {
       run.opponents.forEach((o, i) => { const p = bd.plans['0:' + (i + 1)]; o.plan = p ? (p.error ? { error: p.error } : { me: p.a, opp: p.b }) : null; });
     }
     if (run.cancelled) { saveBrews(); return; }
-    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: 180, owner: user.name, brew: b.id });
+    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id });
     run.jobId = job.id; run.status = 'queued';
     if (run.field.source === 'goldfish') run.benchmarkId = (await benchmarkFor(decks.slice(1), b.format)).id;
   } catch (e) { run.status = 'failed'; run.error = e.message; }
@@ -390,7 +390,7 @@ async function benchmarkFor(field, format) {
   if (benchPending.has(key)) return benchPending.get(key);
   const p = (async () => {
     const bd = await usage.as({ who: 'benchmark', kind: 'plans' }, () => boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format));
-    const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
+    const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: CLOCK_S, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
     const failed = bd.note !== 'no-model' && Object.values(bd.plans).every(p => p.error);
     const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, pilot: pilotTag(), bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
     benches.push(bm); saveBench();
@@ -479,7 +479,7 @@ async function calibrateDue() {
       if (decks.length < 4) continue;
       const pairs = decks.flatMap((_, i) => decks.slice(i + 1).map((__, k) => [i, i + 1 + k]));
       const bd = await usage.as({ who: 'calibration', kind: 'plans' }, () => boardAll(decks, pairs, format));
-      enqueue({ mode: 'roundrobin', decks, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'calibration', meta: format, low: true, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
+      enqueue({ mode: 'roundrobin', decks, post: bd.post, games: GAMES, format: 'Constructed', clock: CLOCK_S, owner: 'calibration', meta: format, low: true, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
     } catch (e) { console.error('calibrate', format, e.message); }
   }
 }
@@ -576,9 +576,29 @@ function runView(b, run) {
   out.cards = cardsView(b, run, prs);
   out.aiCards = aiView(b, j);
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
+  out.method = methodOf(b, run, j);
   if (b.seats === 2 && out.opponents) scoreView(b, run, j, out);
   out.extended = j?.pairings ? j.pairings.filter(p => p.ext).length * GAMES : 0;
   return out;
+}
+
+// How the run's numbers are made, in one object (WORKORDER-DESIGN-CODE-13OCT.md item 3): the
+// page shows it in one place instead of method sentences scattered across its screens.
+const HATCH_UNDER = 30, CLOCK_S = 180;
+function methodOf(b, run, j) {
+  const c = b.seats === 2 ? calibs[b.format] : null;
+  const piloted = j && j.decks ? j.decks.map(d => ({ name: d.name, pilot: pilotFor(d) })).filter(x => x.pilot) : [];
+  return {
+    forge: forgeVersion(),
+    pilot: { tag: pilotTag(), decks: piloted },
+    gamesPerPairing: GAMES, extraGames: b.seats === 2 ? { target: TARGET, upTo: EXTRA } : null,
+    clockSeconds: CLOCK_S, bo3: run.bo3 || null,
+    calibration: c ? { realGames: c.realGames, events: c.events, mtgoEvents: c.mtgoEvents || 0, days: c.days, pairs: c.pairs, at: c.at } : null,
+    hatchUnder: HATCH_UNDER,
+    notCounted: b.seats === 2 ? 'A matchup against a deck Forge pilots badly (control or combo) is left out of the headline until real tournament results have calibrated it.' : null,
+    cardStats: 'Read from Forge\'s game logs. Cast counts each game once. Forge doesn\'t log draws, so a low cast rate can mean not drawn or stuck in hand. Lands are left out.',
+    field: run.field && run.field.source ? { source: run.field.source, label: run.field.label || null, date: run.field.date || null } : null,
+  };
 }
 
 // Cards Forge's AI won't play (or plays only now and then), and cards Forge doesn't
