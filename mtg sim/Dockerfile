@@ -21,7 +21,7 @@ RUN mkdir -p /opt/forge \
  && ls /opt/forge/*.jar
 
 WORKDIR /app
-COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js functional.js store.js config.js ./
+COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js functional.js store.js config.js tags.js plan.js ./
 COPY public ./public
 # our pilot on Forge's rules engine (forge-pilot/README.md): built against this image's own
 # Forge jar; SIM_PILOT=0 in .env turns it off

@@ -59,4 +59,62 @@ function nearest(me, field) {
   return ranked[0] || null;
 }
 
-module.exports = { planOf, nearest, STRATEGY, AXES };
+// What each plan expects (RESEARCH-ARCHETYPES-PROFILES-13OCT.md, "What is missing for that plan?"),
+// as ranges over the tag counts. [lo, hi]; null = no expectation.
+const SHAPE = {
+  'go-wide aggro': { lands: [20, 22], threat: [24, 30], answer: [0, 4] },
+  'evasive aggro': { lands: [21, 23], threat: [16, 22], answer: [4, 8], evasive: [12, 60] },
+  'spells-matter': { lands: [20, 22], threat: [8, 14], spell: [16, 60] },
+  'disrupt-and-clock': { lands: [24, 26], threat: [10, 16], answer: [8, 12], 'card-advantage': [2, 60] },
+  'landfall engine': { lands: [26, 28], threat: [12, 20], answer: [4, 8], landfall: [8, 60] },
+  'sacrifice engine': { lands: [22, 26], threat: [12, 20], answer: [4, 8], sacrifice: [4, 60] },
+  'lifegain engine': { lands: [22, 26], threat: [12, 20], answer: [4, 8], lifegain: [8, 60] },
+  'engine midrange': { lands: [22, 26], threat: [12, 20], answer: [4, 8], engine: [6, 60] },
+  'draw-go control': { lands: [26, 27], 'answer.instant': [10, 14], sweeper: [2, 4], 'card-advantage': [4, 60], finisher: [4, 8] },
+  'tap-out control': { lands: [25, 27], answer: [8, 12], sweeper: [3, 4], finisher: [4, 10] },
+  'fast combo': { lands: [20, 24] },
+  'discard-as-value': { lands: [20, 23], threat: [20, 30], 'discard-payoff': [6, 60] },
+};
+const WORDS = { lands: 'lands', threat: 'threats', answer: 'answers', 'answer.instant': 'instant-speed answers', sweeper: 'sweepers', 'card-advantage': 'card-advantage cards', finisher: 'finishers', evasive: 'evasive threats', spell: 'instants and sorceries', landfall: 'landfall cards', sacrifice: 'sacrifice outlets', lifegain: 'lifegain cards', engine: 'engine permanents', 'discard-payoff': 'discard payoffs' };
+
+/**
+ * What the list is short or long of for its plan, as sentences a player would say. Research's ranges
+ * are a first draft and most tuned meta lists fall outside some of them (13 Oct 2026: 14 of the top
+ * 20), so the yardstick is the nearest meta deck on the same plan, usually the stock list a brew was
+ * built from: a count is flagged when it is outside the plan's range AND at least 2 lands or 4 cards
+ * further out than that list. With no same-plan meta deck, nothing is flagged.
+ */
+function missing(me, near) {
+  const shape = SHAPE[me.plan]; if (!shape || !near || near.plan !== me.plan) return [];
+  const val = (x, k) => k === 'lands' ? x.lands : (x.counts[k] || 0);
+  const out = [];
+  for (const [k, [lo, hi]] of Object.entries(shape)) {
+    const v = val(me, k), nv = val(near, k); if (v == null || nv == null) continue;
+    const thr = k === 'lands' ? 2 : 4;
+    const short = v < lo && nv - v >= thr, long = v > hi && v - nv >= thr;
+    if (!short && !long) continue;
+    out.push(`${Math.round(v)} ${WORDS[k]} against ${Math.round(nv)} in ${near.name}${short ? ', short' : ', long'} for ${me.plan} (${lo}${hi >= 60 ? '+' : '-' + hi} is typical)`);
+  }
+  return out;
+}
+
+// The plans of a field's lists, once per field (an array identity), for nearest().
+const fieldPlans = new WeakMap();
+async function fieldOf(lists) {
+  if (!lists || !lists.length) return [];
+  if (fieldPlans.has(lists)) return fieldPlans.get(lists);
+  const out = [];
+  for (const l of lists) { try { out.push({ name: l.name, ...(await planOf(l, l.name)) }); } catch { /* left out */ } }
+  fieldPlans.set(lists, out);
+  return out;
+}
+
+/** A brew's reading: plan, nearest meta deck, what is missing. */
+async function readList(list, field, name = '') {
+  const me = await planOf(list, name);
+  const f = await fieldOf(field);
+  const nearFull = f.find(x => x.name === (nearest(me, f) || {}).name) || null;
+  return { plan: me.plan, strategy: me.strategy, why: me.why, nearest: nearFull ? nearFull.name : null, nearestPlan: nearFull ? nearFull.plan : null, missing: missing(me, nearFull), counts: me.counts };
+}
+
+module.exports = { planOf, nearest, missing, readList, STRATEGY, AXES, SHAPE };

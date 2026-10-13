@@ -113,14 +113,15 @@ const CURATED = (() => {
 })();
 const curatedCards = e => [...(e.finisher || []), ...(e['finisher-enabler'] || []), ...(e.engine || []), ...(e['combo-enabler'] || []), ...((e['combo-piece'] || []).map(x => x.card))];
 function curatedFor(name, list) {
-  if (!name) return null;
-  if (CURATED[name]) return CURATED[name];
+  if (name && CURATED[name]) return CURATED[name];
   const have = new Set([...(list.main || []), ...(list.side || [])].map(c => nk(c.name)));
-  for (const e of Object.values(CURATED)) {
-    if (!(e.aliases || []).some(a => a.toLowerCase() === String(name).toLowerCase())) continue;
-    const cs = curatedCards(e); if (cs.length && cs.filter(c => have.has(nk(c))).length * 2 >= cs.length) return e;
-  }
-  return null;
+  const share = e => { const cs = curatedCards(e); return cs.length ? cs.filter(c => have.has(nk(c))).length / cs.length : 0; };
+  // by alias, when the list holds half the entry's cards
+  if (name) for (const e of Object.values(CURATED)) if ((e.aliases || []).some(a => a.toLowerCase() === String(name).toLowerCase()) && share(e) >= 0.5) return e;
+  // a brew has no meta name: the entry whose cards it holds most of, if that is half or more
+  let best = null, bs = 0.5;
+  for (const e of Object.values(CURATED)) { const x = share(e); if (x >= bs) { best = e; bs = x; } }
+  return best;
 }
 function curatedTags(e, card) {
   const out = [], k = nk(card);

@@ -17,6 +17,7 @@ const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
 const coach = require('./coach');
+const planner = require('./plan');
 const claude = require('./claude');
 
 const PORT = config.PORT;
@@ -548,10 +549,21 @@ async function codexCtx(user) {
 
 // Runs and brews from before the benchmark existed: give finished field runs a
 // benchmark from the very decks they faced, and read each list's style once.
+// A version's reading (plan.js): its plan, the nearest meta deck on the calibration field, and
+// what it is short or long of for the plan. Stored on the version; redone when the field changes.
+async function readVersion(b, v) {
+  const c = calibs[b.format];
+  if (b.seats !== 2 || !c || !c.lists || (v.reading && v.reading.at === c.at)) return false;
+  try { v.reading = { ...(await planner.readList(v.list, c.lists)), at: c.at }; delete v.reading.counts; return true; }
+  catch (e) { console.warn('reading:', e.message); return false; }
+}
+const readSoon = (b, v) => { readVersion(b, v).then(ch => { if (ch) saveBrews(); }); };
+
 async function backfill() {
   let dirty = false;
   for (const b of brews) {
     for (const v of b.versions) if (!('style' in v)) { try { v.style = (await meta.describeDeck(v.list)).style; dirty = true; } catch {} }
+    for (const v of b.versions) if (await readVersion(b, v)) dirty = true;
     for (const run of b.runs) {
       const j = history.find(h => h.id === run.jobId); if (!j || run.field?.source !== 'goldfish') continue;
       const decks = j.decks.slice(1);
@@ -589,6 +601,7 @@ function runView(b, run) {
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
   out.method = methodOf(b, run, j);
   out.engine = j?.engine || null;
+  out.reading = (b.versions.find(x => x.v === run.v) || {}).reading || null;
   if (b.seats === 2 && out.opponents) scoreView(b, run, j, out);
   out.extended = j?.pairings ? j.pairings.filter(p => p.ext).length * GAMES : 0;
   return out;
@@ -948,6 +961,7 @@ const server = http.createServer(async (req, res) => {
       const b = { id, owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').trim().slice(0, 60) || 'Untitled', format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
         coverCard: pickCard, coverUrl, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
         versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [] };
+      setImmediate(() => readSoon(b, b.versions[0]));
       if (coverTypes[id]) b.coverType = coverTypes[id];
       brews.unshift(b); saveBrews();
       return send(res, 200, brewView(b));
@@ -962,6 +976,7 @@ const server = http.createServer(async (req, res) => {
       const prev = latest(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
       b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff });
+      readSoon(b, b.versions[b.versions.length - 1]);
       if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
       saveBrews();
       return send(res, 200, brewView(b));
@@ -1009,6 +1024,7 @@ const server = http.createServer(async (req, res) => {
       const d = await meta.describeDeck(list), prev = latest(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: 'that is the current list already' });
       b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i } });
+      readSoon(b, b.versions[b.versions.length - 1]);
       const nr = { id: crypto.randomBytes(4).toString('hex'), v: prev.v + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
       o.test = { v: nr.v, run: nr.id };
       b.runs.unshift(nr); saveBrews(); usage.mark(user.name, 'run');

@@ -54,7 +54,7 @@ Player's notes: ${b.notes.map(n => n.t).join(' | ') || 'none'}.
 Version history:
 ${hist}
 
-Main deck (v${v.v}):
+${v.reading ? `How the list reads (rules on its cards' functions, research's plan table): ${v.reading.plan} (${v.reading.why})${v.reading.nearest ? `, closest to the meta deck ${v.reading.nearest}${v.reading.nearestPlan && v.reading.nearestPlan !== v.reading.plan ? ` (which plays as ${v.reading.nearestPlan})` : ''}` : ''}.${v.reading.missing.length ? ' Against that deck and the plan: ' + v.reading.missing.join('; ') + '.' : ' Nothing stands out against that deck and the plan.'} Use the plan to frame advice (what this kind of deck needs, how it should be piloted), and say "reads as" rather than asserting it.\n\n` : ''}Main deck (v${v.v}):
 ${list(v.list.main)}
 Sideboard:
 ${list(v.list.side || [])}
