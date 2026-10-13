@@ -1,6 +1,7 @@
 // A batch of logged games for the learned-evaluator work (RESEARCH-LEARNED-EVAL-13OCT.md): every
-// pairing among the top N meta decks of a calibration file, stock Forge on both seats (or our
-// production pilot with PILOT=1), each game's per-turn log written by the bridge.
+// pairing among the top N meta decks of a calibration file, stock Forge on both seats, or with
+// POLICY=reactive our reactive pilot on both seats (and the dead-card list), each game's per-turn log
+// written by the bridge.
 //
 //   FORGE_DIR=... DATA_DIR=... node tools/log-batch.js <calibration.json> <out dir> [top=12] [matches=10] [at once=4]
 //
@@ -9,6 +10,8 @@
 const fs = require('fs');
 const path = require('path');
 const { runMatches } = require('../pilot');
+const POLICY = process.env.POLICY || null;
+const DEAD = (() => { try { return Object.values(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'forge-pilot', 'dead-cards.json'), 'utf8'))).flat(); } catch { return []; } })();
 
 const [CAL, OUT, TOP = '12', M = '10', PAR = '4'] = process.argv.slice(2);
 const c = JSON.parse(fs.readFileSync(CAL, 'utf8')).standard;
@@ -23,7 +26,7 @@ const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ 
 const jobs = [];
 for (let i = 0; i < decks.length; i++) for (let j = i + 1; j < decks.length; j++) jobs.push([decks[i], decks[j]]);
 const todo = jobs.filter(([a, b]) => !done[a.name + '|' + b.name]);
-log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each`);
+log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}`);
 
 (async () => {
   let i = 0;
@@ -32,7 +35,7 @@ log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to pl
     for (;;) {
       const p = todo[i++]; if (!p) return;
       const [a, b] = p, key = a.name + '|' + b.name, dir = slug(a.name) + '__' + slug(b.name);
-      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: [[], []], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir) });
+      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: POLICY ? [['priority'], ['priority']] : [[], []], policy: [POLICY, POLICY], deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir) });
       const won = r.games.filter(g => g.winner === 0).length, lost = r.games.filter(g => g.winner === 1).length;
       done[key] = { dir, won, lost, games: r.games.length, errors: r.errors.slice(0, 2) };
       fs.writeFileSync(file, JSON.stringify(done));

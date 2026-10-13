@@ -231,7 +231,12 @@ final class GameLog {
             o.addProperty("spell", e.sa().isSpell());
             o.addProperty("stack", game.getStack().size());
             Card c = game.findById(host.getId());
-            if (c != null) o.addProperty("mv", mv(c));
+            if (c != null) {
+                o.addProperty("mv", mv(c));
+                // what kind of card: the instant-speed statistics ask whether the opponent cast a threat
+                o.addProperty("kind", c.isCreature() ? "creature" : c.isPlaneswalker() ? "planeswalker" : c.isInstant() ? "instant" : c.isSorcery() ? "sorcery" : c.isLand() ? "land" : "other");
+                if (c.isInstant() || c.hasKeyword(Keyword.FLASH)) o.addProperty("instant", true);
+            }
             write(o);
         } catch (RuntimeException ex) { /* a missed cast line */ }
     }
@@ -252,6 +257,9 @@ final class GameLog {
         write(o);
     }
 
+    private static final Keyword[] COMBAT_KW = { Keyword.FIRST_STRIKE, Keyword.DOUBLE_STRIKE, Keyword.DEATHTOUCH, Keyword.INDESTRUCTIBLE, Keyword.TRAMPLE };
+    private static JsonArray combatKw(Card c) { JsonArray a = new JsonArray(); for (Keyword k : COMBAT_KW) if (c.hasKeyword(k)) a.add(k.toString().toLowerCase()); return a; }
+
     @Subscribe
     public void blockers(GameEventBlockersDeclared e) { quietly(() -> blockers0(e)); }
     private void blockers0(GameEventBlockersDeclared e) {
@@ -262,6 +270,10 @@ final class GameLog {
                 JsonObject x = new JsonObject();
                 x.addProperty("blocker", b.getName()); x.addProperty("bp", b.getNetPower()); x.addProperty("bt", b.getNetToughness());
                 x.addProperty("attacker", a.getName()); x.addProperty("ap", a.getNetPower()); x.addProperty("at", a.getNetToughness());
+                // the keywords that decide who dies in a block
+                JsonArray bk = combatKw(b), ak = combatKw(a);
+                if (bk.size() > 0) x.add("bkw", bk);
+                if (ak.size() > 0) x.add("akw", ak);
                 blocks.add(x);
             }
         JsonObject o = base("block");

@@ -37,7 +37,7 @@ const binName = i => `${BINS[i] === -Infinity ? '' : Math.max(0, BINS[i])}..${BI
 const calib = { all: BINS.slice(1).map(() => [0, 0]), control: BINS.slice(1).map(() => [0, 0]) }, curve = {}; // curve['aggro ahead of control'][bin] = [leader won, n]
 let games = 0, decided = 0, flips = 0, loserAhead = [0, 0];
 const deck = {}; // per deck: unspent mana, passes with answers
-const D = n => deck[n] = deck[n] || { turns: 0, unspent: 0, unspentHolding: 0, holdingTurns: 0, oppTurns: 0, unspentOpp: 0, passWithAnswer: 0, answered: 0 };
+const D = n => deck[n] = deck[n] || { turns: 0, unspent: 0, unspentHolding: 0, holdingTurns: 0, oppTurns: 0, unspentOpp: 0, passWithAnswer: 0, answered: 0, threatTurns: 0, threatAnswered: 0 };
 const blocks = { trade: 0, chump: 0, safe: 0, bounce: 0 }, blocksBy = {}, games2 = {}; // blocksBy[defender class], games2[pairing class] = [games, flips, loser ahead, of]
 const ctrlBlocks = { trade: 0, chump: 0, safe: 0, bounce: 0 };
 
@@ -50,7 +50,8 @@ for (const f of files) {
   if (end.winner == null) continue;
   decided++;
   const names = head.decks, isCtrl = names.some(n => control.has(n)), W = end.winner;
-  const turns = recs.filter(r => r.t === 'turn' && r.static && r.static[0] != null && r.static[1] != null);
+  // a decided position scores +-2^31 in Forge: left out, it says nothing about judgement
+  const turns = recs.filter(r => r.t === 'turn' && r.static && r.static[0] != null && r.static[1] != null && Math.abs(r.static[0]) < 1e5 && Math.abs(r.static[1]) < 1e5);
   // 1, 2: the lead from seat 0's side; a turn counts once per side, as the ahead side
   let prev = 0, myFlips = 0;
   const pc = [classOf(names[0]), classOf(names[1])].sort().join(' v '), g2 = games2[pc] = games2[pc] || [0, 0, 0, 0]; g2[0]++;
@@ -79,13 +80,26 @@ for (const f of files) {
           d.passWithAnswer++;
           const next = te.turn + 1;
           if (recs.some(r => r.t === 'cast' && r.turn === next && r.seat === s && r.spell)) d.answered++;
+          // research's target: the opponent cast a creature or planeswalker on that turn; did this seat
+          // answer with an instant after it? (needs the cast record's kind, logs from 13 Oct 12:45 on)
+          const casts = recs.map((r, i) => [r, i]).filter(([r]) => r.t === 'cast' && r.turn === next && r.spell);
+          const threat = casts.find(([r]) => r.seat === 1 - s && (r.kind === 'creature' || r.kind === 'planeswalker'));
+          if (threat) { d.threatTurns++; if (casts.some(([r, i]) => r.seat === s && i > threat[1] && r.instant)) d.threatAnswered++; }
         }
       } else { d.oppTurns++; d.unspentOpp += x.manaAvailable; }
     }
   }
   // 6
   for (const b of recs.filter(r => r.t === 'block')) for (const x of b.blocks) {
-    const blockerDies = x.ap >= x.bt, attackerDies = x.bp >= x.at;
+    // who dies, with first strike, double strike, deathtouch and indestructible (logs from 13 Oct
+    // 12:45 on carry them; older logs fall back to power against toughness)
+    const has = (kw, re) => (kw || []).some(k => re.test(k));
+    const kills = (p, kw, t, vkw) => p > 0 && !has(vkw, /indestructible/) && (has(kw, /deathtouch/) || p >= t);
+    const aFirst = has(x.akw, /first|double/), bFirst = has(x.bkw, /first|double/);
+    let blockerDies, attackerDies;
+    if (aFirst && !bFirst) { blockerDies = kills(x.ap, x.akw, x.bt, x.bkw); attackerDies = !blockerDies && kills(x.bp, x.bkw, x.at, x.akw); if (has(x.akw, /double/) && !blockerDies) blockerDies = kills(x.ap * 2, x.akw, x.bt, x.bkw); }
+    else if (bFirst && !aFirst) { attackerDies = kills(x.bp, x.bkw, x.at, x.akw); blockerDies = !attackerDies && kills(x.ap, x.akw, x.bt, x.bkw); }
+    else { blockerDies = kills(x.ap, x.akw, x.bt, x.bkw); attackerDies = kills(x.bp, x.bkw, x.at, x.akw); }
     const k = blockerDies && attackerDies ? 'trade' : blockerDies ? 'chump' : attackerDies ? 'safe' : 'bounce';
     blocks[k]++; if (isCtrl) ctrlBlocks[k]++;
     const dc = classOf(names[b.seat]), bb = blocksBy[dc] = blocksBy[dc] || { trade: 0, chump: 0, safe: 0, bounce: 0 }; bb[k]++;
@@ -101,7 +115,7 @@ console.log(`3. The eventual loser was ahead at the start of the last turn with 
 console.log('\n4-5. Per deck: mana left at the end of its own turn (all turns / turns holding a castable card), at the end of the opponent\'s,');
 console.log('     and of its turns ending with a castable instant in hand, how often it cast something on the opponent\'s next turn');
 const rows = Object.entries(deck).sort((a, b) => (control.has(b[0]) - control.has(a[0])) || a[0].localeCompare(b[0]));
-for (const [n, d] of rows) console.log(`   ${(control.has(n) ? '* ' : '  ') + n.padEnd(24)} ${(d.unspent / Math.max(1, d.turns)).toFixed(1)} / ${(d.unspentHolding / Math.max(1, d.holdingTurns)).toFixed(1)} (${pct(d.holdingTurns, d.turns)} of turns)   opp turn ${(d.unspentOpp / Math.max(1, d.oppTurns)).toFixed(1)}   held an instant ${pct(d.passWithAnswer, d.turns)} of turns, used ${pct(d.answered, d.passWithAnswer)}`);
+for (const [n, d] of rows) console.log(`   ${(control.has(n) ? '* ' : '  ') + n.padEnd(24)} ${(d.unspent / Math.max(1, d.turns)).toFixed(1)} / ${(d.unspentHolding / Math.max(1, d.holdingTurns)).toFixed(1)} (${pct(d.holdingTurns, d.turns)} of turns)   opp turn ${(d.unspentOpp / Math.max(1, d.oppTurns)).toFixed(1)}   held an instant ${pct(d.passWithAnswer, d.turns)} of turns, used ${pct(d.answered, d.passWithAnswer)}${d.threatTurns ? `; answered a creature/planeswalker ${pct(d.threatAnswered, d.threatTurns)} of ${d.threatTurns}` : ''}`);
 const bl = o => { const n = o.trade + o.chump + o.safe + o.bounce; return `${n} blocks: ${pct(o.trade, n)} trades, ${pct(o.chump, n)} chumps, ${pct(o.safe, n)} safe, ${pct(o.bounce, n)} neither dies`; };
 console.log(`\n6. Blocks, all games: ${bl(blocks)}`);
 for (const [c, o] of Object.entries(blocksBy).sort()) console.log(`   ${c} defending: ${bl(o)}`);
