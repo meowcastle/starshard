@@ -57,6 +57,21 @@ const readJson = f => { try { return JSON.parse(fs.readFileSync(path.join(PILOT_
 const pilotOn = () => process.env.SIM_PILOT !== '0' && fs.existsSync(PILOT_JAR);
 // changes whenever who gets piloted changes, so results from before and after are never mixed
 const pilotTag = () => pilotOn() ? require('crypto').createHash('md5').update(JSON.stringify([readJson('policies.json'), readJson('dead-cards.json')])).digest('hex').slice(0, 8) : 'off';
+// The engine a game was played with: the Forge version and, when the pilot is on, who it pilots
+// (pilotTag) and a hash of its code (pilot.js and the bridge's Java source; the source, not the
+// jar, since a jar built on the Mac never matches one built on the NAS byte for byte). A worker
+// sends it with every claim and report, and the server refuses one that differs: every game in
+// a run is played by the same engine.
+let codeHash = null;
+function pilotCode() {
+  if (codeHash) return codeHash;
+  const h = require('crypto').createHash('md5');
+  const walk = d => { for (const e of fs.readdirSync(d, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) { const f = path.join(d, e.name); if (e.isDirectory()) walk(f); else if (e.name.endsWith('.java') && !e.name.startsWith('._')) h.update(e.name).update(fs.readFileSync(f)); } };
+  try { h.update(fs.readFileSync(path.join(__dirname, 'pilot.js'))); walk(path.join(PILOT_DIR, 'bridge', 'src')); } catch {}
+  return (codeHash = h.digest('hex').slice(0, 8));
+}
+const engine = () => ({ forge: forgeVersion(), pilot: pilotOn() ? { rules: pilotTag(), code: pilotCode() } : null });
+const engineKey = e => !e ? '?' : e.forge + '|' + (e.pilot ? e.pilot.rules + '/' + e.pilot.code : 'off');
 const deadKey = n => String(n).split(' // ')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 function pilotFor(deck, version = forgeVersion()) {
   if (!pilotOn()) return null;
@@ -160,4 +175,4 @@ function runPiloted({ decks, names, pilots, games, clock, seed, workDir, onLine 
   return { child: handle, done, results };
 }
 
-module.exports = { runSim, forgeVersion, toDck, pilotFor, pilotTag };
+module.exports = { runSim, forgeVersion, toDck, pilotFor, pilotTag, engine, engineKey };

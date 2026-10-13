@@ -6,8 +6,8 @@
 //   SIM_URL=https://sim.starshard.net SIM_WORKER_TOKEN=... FORGE_DIR=~/forge-worker/forge \
 //   WORKER_SLOTS=4 DATA_DIR=~/forge-worker/data node worker.js
 //
-// Same Forge version as the server, or the server turns it away (every game in a
-// run should be played by the same AI). Needs Java 17 on PATH.
+// Same engine as the server (Forge version, pilot rules and pilot code), or the server turns
+// it away: every game in a run is played by the same AI. Needs Java 17 on PATH.
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
@@ -15,7 +15,7 @@ process.env.USE_XVFB = process.env.USE_XVFB || '0';
 // forge.js gives Forge this as HOME (its settings live there)
 process.env.DATA_DIR = process.env.DATA_DIR || path.join(os.homedir(), 'forge-worker', 'data');
 process.env.FORGE_XMX = process.env.FORGE_XMX || '1536m';
-const { runSim, forgeVersion } = require('./forge');
+const { runSim, forgeVersion, engine, engineKey } = require('./forge');
 
 const URL_ = (process.env.SIM_URL || 'https://sim.starshard.net').replace(/\/$/, '');
 const TOKEN = process.env.SIM_WORKER_TOKEN || '';
@@ -30,9 +30,9 @@ let saidBattery = false;
 if (!TOKEN) { console.error('Set SIM_WORKER_TOKEN (the same value as in the sim server\'s .env).'); process.exit(1); }
 fs.mkdirSync(DATA, { recursive: true });
 
-const forge = forgeVersion();
+const forge = forgeVersion(), eng = engine();
 const call = async (p, body) => {
-  const r = await fetch(URL_ + p, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN }, body: JSON.stringify({ worker: NAME, forge, ...body }) });
+  const r = await fetch(URL_ + p, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN }, body: JSON.stringify({ worker: NAME, forge, engine: eng, ...body }) });
   const text = await r.text();
   return { status: r.status, data: text ? JSON.parse(text) : null };
 };
@@ -67,5 +67,5 @@ async function slot(n) {
   }
 }
 
-log(`worker ${NAME}: Forge ${forge}, ${SLOTS} at once, serving ${URL_}`);
+log(`worker ${NAME}: engine ${engineKey(eng)}, ${SLOTS} at once, serving ${URL_}`);
 for (let i = 1; i <= SLOTS; i++) slot(i);

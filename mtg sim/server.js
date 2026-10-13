@@ -4,7 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { runSim, forgeVersion, pilotTag, pilotFor } = require('./forge');
+const { runSim, forgeVersion, pilotTag, pilotFor, engine, engineKey } = require('./forge');
 const meta = require('./meta');
 const sideboard = require('./sideboard');
 const cardstats = require('./cardstats');
@@ -96,7 +96,7 @@ function publicJob(j) {
 }
 function enqueue(spec) {
   const id = crypto.randomBytes(5).toString('hex');
-  const job = { id, status: 'queued', created: Date.now(), ...spec, log: [], results: null };
+  const job = { id, status: 'queued', created: Date.now(), engine: engine(), ...spec, log: [], results: null };
   job.plan = pairingsOf(job);
   job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
   job.pending = job.plan.map((_, i) => i); job.inflight = 0; job.children = new Set(); job.base = job.plan.length;
@@ -188,7 +188,7 @@ function settle(job) {
   job.finished = Date.now();
   history.unshift({ id: job.id, owner: job.owner, mode: job.mode, format: job.format, games: job.games, created: job.created, finished: job.finished, status: job.status,
     pairings: job.pairings.map(({ names, wins, draws, games, phase, opp, a, b, cards, where, ext, seed }) => ({ names, wins, draws, seed: seed ?? null, played: games.length, avgMs: games.length ? Math.round(games.reduce((s, g) => s + g.ms, 0) / games.length) : 0, phase, opp, a, b, pd: score.tallyGames(games), where: where || null, ...(ext ? { ext: true } : {}), ...(job.brew && cards ? { cards } : {}) })),
-    decks: job.decks, meta: job.meta || null });
+    decks: job.decks, meta: job.meta || null, engine: job.engine || null });
   saveHist();
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
   if (job.onDone) try { job.onDone(job); } catch (e) { console.error('onDone:', e.message); }
@@ -385,14 +385,14 @@ const benchPending = new Map(); // field key -> promise, so two runs at once sha
 async function benchmarkFor(field, format) {
   const names = field.map(f => f.name), key = format + '|' + names.join('|');
   // an unboarded benchmark is not reused once plans can be written
-  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && (x.bo3 === 'boarded' || !sideboard.available()) && (x.pilot || 'off') === pilotTag() && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
+  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && (x.bo3 === 'boarded' || !sideboard.available()) && (x.engine ? engineKey(x.engine) === engineKey(engine()) : (x.pilot || 'off') === pilotTag()) && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
   const hit = benches.find(same); if (hit) return hit;
   if (benchPending.has(key)) return benchPending.get(key);
   const p = (async () => {
     const bd = await usage.as({ who: 'benchmark', kind: 'plans' }, () => boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format));
     const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: CLOCK_S, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
     const failed = bd.note !== 'no-model' && Object.values(bd.plans).every(p => p.error);
-    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, pilot: pilotTag(), bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
+    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, pilot: pilotTag(), engine: engine(), bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
     benches.push(bm); saveBench();
     return bm;
   })().finally(() => benchPending.delete(key));
@@ -577,6 +577,7 @@ function runView(b, run) {
   out.aiCards = aiView(b, j);
   out.calibration = b.seats === 2 ? calibView(b, run) : null;
   out.method = methodOf(b, run, j);
+  out.engine = j?.engine || null;
   if (b.seats === 2 && out.opponents) scoreView(b, run, j, out);
   out.extended = j?.pairings ? j.pairings.filter(p => p.ext).length * GAMES : 0;
   return out;
@@ -820,9 +821,11 @@ const server = http.createServer(async (req, res) => {
       if (p === '/api/worker/claim' && req.method === 'POST') {
         workersSeen.set(name, { at: Date.now(), forge: body.forge || '?', playing: [...leases.values()].filter(l => l.worker === name).length });
         if (body.forge !== forgeVersion()) return send(res, 409, { error: `this server runs Forge ${forgeVersion()} and the worker runs ${body.forge}; install the same version on the worker` });
+        if (engineKey(body.engine) !== engineKey(engine())) return send(res, 409, { error: `this server plays with engine ${engineKey(engine())} and the worker with ${engineKey(body.engine)}: copy the server's pilot.js and forge-pilot/ to the worker (and the same SIM_PILOT), rebuild the bridge, restart it` });
         const t = claim('remote:' + name); if (!t) return send(res, 204, '');
+        if (t.job.engine && engineKey(t.job.engine) !== engineKey(body.engine)) { t.job.pending.unshift(t.i); t.job.inflight--; t.job.pairings[t.i].status = 'queued'; return send(res, 409, { error: `this run was started with engine ${engineKey(t.job.engine)}; the worker runs ${engineKey(body.engine)}` }); }
         const id = crypto.randomBytes(6).toString('hex');
-        leases.set(id, { ...t, worker: name, until: Date.now() + LEASE_MS });
+        leases.set(id, { ...t, worker: name, engine: engineKey(body.engine), until: Date.now() + LEASE_MS });
         t.pr.seed = seedOf(t.job.id, t.i);
         return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock, seed: t.pr.seed });
       }
@@ -830,6 +833,7 @@ const server = http.createServer(async (req, res) => {
         const l = leases.get(String(body.lease || ''));
         if (!l) return send(res, 410, { cancel: true, error: 'that lease is gone' });
         const { job, pr } = l;
+        if (l.engine && engineKey(body.engine) !== l.engine) { console.warn(`worker ${name} reported with engine ${engineKey(body.engine)}, claimed with ${l.engine}: refused`); return send(res, 409, { cancel: true, error: 'engine changed since the claim; results refused' }); }
         if (job.status === 'cancelled') { leases.delete(body.lease); pr.status = 'cancelled'; job.inflight--; settle(job); return send(res, 200, { cancel: true }); }
         const r = clean(body.results);
         if (r.wins) pr.wins = r.wins; pr.games = r.games; pr.draws = r.draws; pr.warnings = r.warnings; if (r.cards) pr.cards = r.cards;
