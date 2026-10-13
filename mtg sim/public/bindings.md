@@ -291,4 +291,4 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 
 Defined in `renderVals()` and bound nowhere in the markup: free for a design to use, or dead.
 
-`earlier`, `goApp`, `goSignin`, `hasSideboard`, `isDuel`, `latest`, `linkDown`, `memoryCount`, `method`, `optionsLabel`, `podCount`, `rateHead`, `runBo`, `runBoToggle`, `sendLabel`, `sideboard`, `toggleBo`
+`earlier`, `goApp`, `goSignin`, `hasMethod`, `hasSideboard`, `isDuel`, `latest`, `linkDown`, `memoryCount`, `method`, `methodLabel`, `methodOpen`, `methodRows`, `optionsLabel`, `podCount`, `rateHead`, `runBo`, `runBoToggle`, `sendLabel`, `sideboard`, `toggleBo`, `toggleMethod`

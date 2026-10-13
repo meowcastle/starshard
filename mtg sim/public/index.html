@@ -397,7 +397,7 @@ class Component extends DCLogic {
   // Real wiring for Design's brewer v3. The server owns every number; this block only
   // turns /api/brews into the bindings the markup reads. The coach is not connected
   // yet, so its brief is computed straight from the games rather than written by a model.
-  state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
+  state = { methodOpen: false, stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
     fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
     deckId: null, runId: null, tab: null, view: 'run', hover: null, askText: '', bo3: false, delAsk: null, cancelAsk: null, look: null, lookErr: '',
     deckName: '', cover: 0, upload: null, uploadErr: '',
@@ -567,7 +567,8 @@ class Component extends DCLogic {
     // pictures come through the server, which knows each card's CDN address (Scryfall's own lookup is rate-limited)
     const art = (n) => n ? '/api/img?v=art_crop&name=' + encodeURIComponent(n) : '';
     const cardImg = (n) => '/api/img?v=normal&name=' + encodeURIComponent(n);
-    const pips = (c) => (c || []).map(x => ({ cls: 'ms-' + x.toLowerCase(), color: MANA[x] }));
+    const CNAME = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };
+    const pips = (c) => (c || []).map(x => ({ cls: 'ms-' + x.toLowerCase(), color: MANA[x], title: CNAME[x] || x }));
     const costPips = (cost) => ((cost || '').match(/\{([^}]+)\}/g) || []).map(t => { const s = t.slice(1, -1); return { cls: 'ms-' + s.toLowerCase().replace('/', ''), color: MANA[s] || '#B5B5B5' }; });
     const HATCH = ((d && d.runs || []).find(r => r.method) || { method: {} }).method.hatchUnder || 30;
     const rng = (w, n, center = 0.5) => { if (!n) return { p: 0, pct: '—', pm: '', lo: 50, w: 0, left: 50, n: 0, color: '#3a3a38', numColor: '#5C5B56', hatch: 'transparent' }; const p = w / n, se = 1.96 * Math.sqrt(p * (1 - p) / n), lo = Math.max(0, p - se), hi = Math.min(1, p + se), prov = n < HATCH; const color = prov ? MUTED : (p >= center ? WIN : LOSS); return { p, pct: Math.round(p * 100) + '%', pm: '±' + Math.round(se * 100), lo: (lo * 100).toFixed(1), w: ((hi - lo) * 100).toFixed(1), left: (p * 100).toFixed(1), n, color, numColor: prov ? MUTED : '#EDEBE6', hatch: prov ? 'repeating-linear-gradient(135deg,rgba(255,255,255,.3) 0 2px,transparent 2px 5px)' : color }; };
@@ -592,7 +593,7 @@ class Component extends DCLogic {
     const tab = S.tab || 'coach'; const tabS = (t) => ({ line: tab === t ? ACC : 'transparent', color: tab === t ? '#EDEBE6' : '#8F8D86' });
     const goTab = (t) => pe(() => this.setState({ tab: t, hover: null, codex: null }));
     const view = S.view; const vS = (x) => ({ color: view === x ? '#0C0C0B' : '#8F8D86', bg: view === x ? ACC : 'transparent' });
-    const setsOf = (b) => (b ? b.oppSets : []).map(o => ({ ...o, ring: S.oppSet === o.id ? ACC : 'rgba(255,255,255,.25)', fill: S.oppSet === o.id ? ACC : 'transparent', pick: pe(() => o.available && this.setState({ oppSet: o.id, runErr: '' })) }));
+    const setsOf = (b) => (b ? b.oppSets : []).map(o => ({ ...o, ring: S.oppSet === o.id ? ACC : 'rgba(255,255,255,.25)', fill: S.oppSet === o.id ? ACC : 'transparent', sel: S.oppSet === o.id, ink: S.oppSet === o.id ? '#0C0C0B' : '#EDEBE6', opacity: o.available ? 1 : 0.4, pick: pe(() => o.available && this.setState({ oppSet: o.id, runErr: '' })) }));
     const ahead = (S.queueLength ? 'Takes turns with ' + plural(S.queueLength, 'other run') + '.' : 'Nothing else is running.') + (S.limits ? ' ' + S.limits.runs.left + ' of ' + S.limits.runs.cap + ' runs left today.' : '');
     const chk = S.check, unknown = chk ? chk.rows.filter(r => r.status === 'unknown') : [];
     const count = (rows, sec) => rows.filter(r => r.section === sec).reduce((a, r) => a + r.qty, 0);
@@ -651,7 +652,7 @@ class Component extends DCLogic {
       fidColor: '#5C5B56', fidTitle: '', fidNote: '', evUnder: '', leversNote: '', evLabel: '', evField: '', evAgainst: '', hasEvBench: false, evVs: '', evSure: '', evSureNote: '', evSureBg: 'transparent', evSureColor: MUTED, hasEvent: false, evRounds: 7, evNeed: '', evOdds: [], evRecord: '', evOddsLo: '', evOddsHi: '', evScale: 20, evLosses: '', evStrip: [], evTableNote: '', evLossHead: '', hasLevers: false, levers: [],
       headlineLabel: '', col2Label: '', rateHead: 'win rate · 95% range', overall: rng(0, 0), evenLine: 50, evenLabel: '', prevPct: '—', prevPm: '', prevNote: '', canCancel: false, cancelLabel: '', doCancelRun: pe(() => {}), runStatus: '', runStatusColor: MUTED, runNote: '', isDuel: true, isPod: false, duelRunning: false, duelDone: true, oppRows: [], podSeats: [], versionRows: [],
       noCompare: true, hasCompare: false, noCompareNote: '', compareRows: [], cmpA: '', cmpB: '', cmpALabel: '', cmpBLabel: '', cmpAShort: '', cmpBShort: '', cmpCycleA: pe(() => {}), cmpCycleB: pe(() => {}), cmpChanges: [], cmpFieldLabel: '', cmpSharedNote: '', cmpFootNote: '',
-      deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], hasConsidering: false, hasGoals: false, coachLive: false, podCount: 0, hasPod: false, mainLabel: '', sideLabel: '',
+      deckSize: '', deckLegal: '', forgeCount: '', forgeColor: '#EDEBE6', forgeNote: '', playsOn: '', playsNote: '', goalCountdown: '', mainRows: [], sideRows: [], considering: [], hasConsidering: false, hasGoals: false, coachLive: false, podCount: 0, hasPod: false, hasMethod: false, methodOpen: false, methodLabel: '', toggleMethod: pe(() => {}), methodRows: [], mainLabel: '', sideLabel: '',
       leaveCard: () => this.setState({ hover: null }), hoverOn: !!S.hover, hoverX: S.hover ? Math.min(S.hover.x + 18, window.innerWidth - 260) : 0, hoverY: S.hover ? Math.min(Math.max(S.hover.y - 170, 8), window.innerHeight - 350) : 0, hoverSrc: S.hover ? cardImg(S.hover.name) : '' };
     // ---- the Codex ----
     const slug = (x) => String(x).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-');
@@ -774,6 +775,20 @@ class Component extends DCLogic {
       const ext = M.extraGames ? ', with more added to the matchups too close to call' : '';
       return ' Forge' + (/^\d/.test(M.forge || '') ? ' ' + M.forge : '') + ' plays every game for both decks.' + pil + ' ' + M.gamesPerPairing + ' games per opponent' + (M.bo3 === 'boarded' ? ' per phase' : '') + ext + '; a game still going after ' + Math.round(M.clockSeconds / 60) + ' minutes counts as a draw.' + fld + cal + (M.notCounted ? ' ' + M.notCounted : '') + ' Numbers from fewer than ' + M.hatchUnder + ' games show hatched. ' + M.cardStats;
     };
+    // the method as rows for the "How these numbers are made" panel; methodS() above says the same as one paragraph
+    const methodRows = (r) => {
+      const M = r && r.method; if (!M) return [];
+      const kinds = { reactive: 'answers with its instants the way a person would', deadcards: 'casts the cards Forge never casts' };
+      return [
+        { k: 'Engine', v: 'Forge' + (/^\d/.test(M.forge || '') ? ' ' + M.forge : '') + ' plays every game for both decks' + (M.pilot && M.pilot.decks.length ? '; our own pilot plays part of ' + M.pilot.decks.map(x => x.name + ' (' + (kinds[x.pilot] || x.pilot) + ')').join(', ') : '') + '.' },
+        { k: 'Games', v: M.gamesPerPairing + ' per opponent' + (M.bo3 === 'boarded' ? ' for game 1 and again sideboarded' : '') + (M.extraGames ? ', more added where a matchup is too close to call' : '') + '. A game still going after ' + Math.round(M.clockSeconds / 60) + ' minutes is a draw.' },
+        { k: 'Field', v: !M.field ? '—' : M.field.source === 'team' ? 'Your team\'s decks.' : M.field.label + ', read ' + day(M.field.date) + ' and kept with this run.' },
+        { k: 'Calibration', v: M.calibration ? 'Corrected against ' + M.calibration.realGames.toLocaleString() + ' real tournament games from ' + M.calibration.events + ' events over the last ' + M.calibration.days + ' days.' + (M.notCounted ? ' ' + M.notCounted : '') : 'None for this run.' },
+        { k: 'Shown as', v: 'Every rate comes with its 95% range. Fewer than ' + M.hatchUnder + ' games shows hatched.' },
+        { k: 'Card stats', v: M.cardStats },
+      ];
+    };
+    v.hasMethod = !!v.method; v.methodOpen = !!S.methodOpen && v.hasMethod; v.methodLabel = 'How these numbers are made'; v.toggleMethod = pe(() => this.setState({ methodOpen: !S.methodOpen })); v.methodRows = methodRows(run);
     const diffS = (df) => df.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name).join(', ');
     const runVer = run ? d.versions.find(x => x.v === run.v) || ver : ver;
     v.change = runVer.diff ? diffS(runVer.diff) : 'first paste';
