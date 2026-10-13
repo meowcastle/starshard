@@ -116,4 +116,25 @@ reshuffled, for `--search-turns` turns, then scored as my position minus the opp
 (Forge's GameStateEvaluator; a win or loss ±3000). Forge's pick stands unless another beats
 it by `--search-margin` standard errors (default 2). Known shortcuts in this version: copies
 see the opponent's real hand; candidates are base abilities only. About 5 minutes a game at
-6 play-outs. `tools/mirror-gate.js ... search` measures it against stock in the mirror.
+6 play-outs (the first version). `tools/mirror-gate.js ... search` measures it against stock in the mirror.
+
+### Making it affordable (13 Oct 2026)
+
+Since the first version, copies deal the opponent a random hand from their hidden cards (no
+peeking), and three economies were added (`Search.choose`): a screen (each move scored once
+to the end of this turn; a clear leader by more than `--search-screen` points skips the
+play-outs, otherwise only moves within that distance go on), sequential halving within a
+total `--search-rollouts` budget, and `--search-turns 1` (one full turn cycle). Same four
+decks, mirror vs stock, 8 matches a half, seeds fixed (a rerun reproduces game for game):
+
+| Settings | Win rate vs stock | 95% range | Seconds a game |
+| --- | --- | --- | --- |
+| 4 play-outs a move, 4 turns, no screen (baseline) | 57% of 168 | 49–64% | ~80 |
+| budget 16, 1 turn, no screen | 60% of 161 | 53–68% | ~57 |
+| budget 16, 1 turn, screen 50 | 57% of 159 | 50–65% | ~36 |
+| budget 16, 1 turn, screen 150 | 53% of 165 | 46–61% | ~35 |
+| **budget 8, 1 turn, screen 50 (now the default)** | **57% of 161** | **50–65%** | **~18** |
+
+The horizon cut was free; a loose screen (150) was the one cut that cost strength. The
+default keeps the baseline's strength under the 20 s target. Per deck it is still mostly
+noise at this sample (48–63%), so no deck clears the 55% gate on its own yet.
