@@ -50,7 +50,7 @@ function context(b, rv) {
   const bm = rv.benchmark && rv.benchmark.status === 'done' ? `The field's #1 deck (${rv.benchmark.name}) ran the same opponents under the same AI for comparison.` : '';
   const cal = rv.calibration;
   return `Brew: "${b.name}", ${b.format}, version v${v.v}.
-Player's notes: ${b.notes.map(n => n.t).join(' | ') || 'none'}.
+Player's notes: ${b.notes.map(n => n.t).join(' | ') || 'none'}.${settingsText(rv)}
 Version history:
 ${hist}
 
@@ -68,6 +68,28 @@ The brew as Forge played it: ${[rv.aiCards.mine.missing.length ? 'Forge does not
 
 Matchups:
 ${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}${functional.text(rv.functional)}`;
+}
+
+// What the player has told the coach (COACH-PARAMETERS-13OCT.md part 1), and the ledger of earlier suggestions.
+const LEVEL = {
+  learning: 'The player is learning: spell out why, name each matchup\'s role (who is the beatdown), and avoid jargon.',
+  competitive: '',
+  grinder: 'The player is an experienced grinder: lead with the numbers and the swap; skip the basics.',
+};
+function settingsText(rv) {
+  const st = rv.settings, ev = rv.eventInfo; if (!st || !ev) return '';
+  const lines = [];
+  lines.push(`Preparing for: ${ev.label}${st.goal.date ? ' on ' + st.goal.date : ''}${ev.noTop8 ? ' (a ladder: no top 8, so judge changes by match win rate and say "points of win rate", not top-8 odds)' : `, ${ev.rounds} rounds, top 8 at ${ev.rounds - 1}-1 or better`}${ev.bo3 ? '' : '; best of one, so sideboards do not count'}.`);
+  lines.push(st.goal.posture === 'ceiling' ? 'Posture: ceiling. The player accepts variance for a higher top-8 chance: big swings in the matchups that matter most are welcome.' : 'Posture: consistent. Prefer changes that raise the floor (mana, curve, the worst matchup) over high-variance swings.');
+  if (st.keep.length) lines.push(`Cards to keep, never suggest cutting: ${st.keep.join(', ')}. If a fix would need one of them, say so.`);
+  if (st.never.length) lines.push(`Cards the player won't play, never suggest adding: ${st.never.join(', ')}.`);
+  if (st.budget) lines.push(`Budget: ${st.budget.rare || 0} rare and ${st.budget.mythic || 0} mythic wildcards${st.budget.paper != null ? `, $${st.budget.paper} in paper` : ''}; keep suggestions inside it and say what each costs.`);
+  if (LEVEL[st.level]) lines.push(LEVEL[st.level]);
+  if (rv.ledger && rv.ledger.length) {
+    const p = x => x ? Math.round(x.p * 100) + '%' : '?';
+    lines.push('What your earlier suggestions did when tested (do not suggest again a change that was tested and did not help; build on the ones that did):\n' + rv.ledger.map(l => `- ${l.title} (${l.change}) as v${l.v}: ${p(l.before)} -> ${p(l.after)}, ${l.verdict}`).join('\n'));
+  }
+  return '\n' + lines.join('\n');
 }
 
 // How well Forge's matchups have carried over to real tournaments (calib.js fidelity), in words.
@@ -125,10 +147,10 @@ async function withCheck(b, rv) {
 async function writeup(b, rv) {
   rv = await withCheck(b, rv);
   return claude.ask({ system: SYSTEM,
-    prompt: context(b, rv) + `\n\nThe page shows the headline: ${headline(rv)}.\n\nWrite the readout for this run: the single matchup or problem costing the most top-8 odds, or a failed functional check, which comes first (weakness, a few words) and why in one or two sentences (weaknessNote); two or three fixes the player could test, ranked by what they should be worth at the tournament, each a concrete main-deck swap (cards out of the main deck, cards in from anywhere legal in ${b.format}, equal numbers) with a title and one or two sentences of why, or kind "note" for advice that isn't a swap; and a summary of two to four sentences that opens the conversation.`,
+    prompt: context(b, rv) + `\n\nThe page shows the headline: ${headline(rv)}.\n\nWrite the readout for this run: the single matchup or problem costing the most top-8 odds, or a failed functional check, which comes first (weakness, a few words) and why in one or two sentences (weaknessNote); two or three fixes the player could test, ranked by what they should be worth at the tournament, each a concrete main-deck swap (cards out of the main deck, cards in from anywhere legal in ${b.format}, equal numbers) with a title and one or two sentences of why, or kind "note" for advice that isn't a swap, each graded: evidence "strong" when the matchup it targets has a range clearly on one side of 50% and the change is worth a point or more of top-8 odds, "weak" when that matchup's range straddles 50%, "untested" when the reason comes from your own knowledge rather than these games, with a one-line basis quoting the numbers ("Azorius 3-17 over 20 games, range 8-32%"); and a summary of two to four sentences that opens the conversation.`,
     tool: { name: 'coach_readout', description: 'The coach readout for one run.', schema: { type: 'object', properties: {
       weakness: { type: 'string' }, weaknessNote: { type: 'string' }, summary: { type: 'string' },
-      options: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, detail: { type: 'string' }, kind: { type: 'string', enum: ['swap', 'note'] }, in: SWAP, out: SWAP }, required: ['title', 'detail', 'kind'] } },
+      options: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, detail: { type: 'string' }, kind: { type: 'string', enum: ['swap', 'note'] }, in: SWAP, out: SWAP, evidence: { type: 'string', enum: ['strong', 'weak', 'untested'] }, basis: { type: 'string' } }, required: ['title', 'detail', 'kind', 'evidence', 'basis'] } },
     }, required: ['weakness', 'weaknessNote', 'summary', 'options'] } } });
 }
 

@@ -17,6 +17,29 @@ const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
 const coach = require('./coach');
+// What the player tells the coach (COACH-PARAMETERS-13OCT.md part 1): the goal, what is fixed, how much
+// explanation. Stored on the brew; every field optional, cleaned here.
+const EVENTS = { rcq: { rounds: 7, bo3: true, label: 'competitive Standard tournament' }, store: { rounds: 5, bo3: true, label: 'store championship' }, fnm: { rounds: 4, bo3: true, label: 'Friday Night Magic' }, 'arena-bo3': { rounds: 7, bo3: true, label: 'Arena best-of-three ladder', noTop8: true }, 'arena-bo1': { rounds: 7, bo3: false, label: 'Arena best-of-one ladder', noTop8: true }, none: { rounds: 7, bo3: true, label: 'no particular event' } };
+const cardNames = v => (Array.isArray(v) ? v : String(v || '').split(/[,\n]/)).map(x => String(x).trim()).filter(Boolean).slice(0, 40).map(x => x.slice(0, 120));
+function cleanSettings(x = {}, prev = {}) {
+  const g = { ...(prev.goal || {}), ...(x.goal || {}) };
+  const out = {
+    goal: {
+      event: EVENTS[g.event] ? g.event : 'rcq',
+      date: /^\d{4}-\d{2}-\d{2}$/.test(g.date || '') ? g.date : null,
+      rounds: Number.isInteger(+g.rounds) && +g.rounds >= 3 && +g.rounds <= 15 ? +g.rounds : null,
+      posture: g.posture === 'ceiling' ? 'ceiling' : 'consistent',
+    },
+    keep: x.keep !== undefined ? cardNames(x.keep) : prev.keep || [],
+    never: x.never !== undefined ? cardNames(x.never) : prev.never || [],
+    budget: x.budget !== undefined ? (x.budget && typeof x.budget === 'object' ? { rare: Math.max(0, +x.budget.rare || 0), mythic: Math.max(0, +x.budget.mythic || 0), paper: x.budget.paper != null ? Math.max(0, +x.budget.paper || 0) : null } : null) : prev.budget || null,
+    level: ['learning', 'competitive', 'grinder'].includes(x.level) ? x.level : prev.level || 'competitive',
+  };
+  return out;
+}
+const settingsOf = b => cleanSettings({}, b.settings || {});
+const roundsOf = b => { const s = settingsOf(b); return s.goal.rounds || EVENTS[s.goal.event].rounds; };
+
 // the formats a brew can be created in (COACH-PARAMETERS-13OCT.md part 2); Standard is the default
 // (Commander comes from the list itself: a list with a commander is a Commander brew)
 const FORMATS = ['standard', 'pioneer', 'modern', 'legacy', 'vintage'];
@@ -663,7 +686,7 @@ function scoreView(b, run, j, out) {
   const prs = j?.pairings || [];
   const earlier = !j || !j.decks ? [] : b.runs.filter(r => r !== run && r.v === run.v && r.created < run.created && r.jobId && r.opponents)
     .map(r => ({ r, rj: jobOf(r.jobId) })).filter(({ rj }) => rj && rj.decks && rj.pairings && (rj.decks[0].ai || null) === (j.decks[0].ai || null));
-  let sig = run.id + '|' + (cal ? cal.at : 0);
+  let sig = run.id + '|' + (cal ? cal.at : 0) + '|' + roundsOf(b);
   const opps = out.opponents.map((o, i) => {
     const ph = phasesOf(prs, i), pre = ph.pre ? { ...ph.pre.pd } : score.T0(), post = ph.post ? { ...ph.post.pd } : score.T0();
     const mine = j && j.decks && j.decks[i + 1];
@@ -697,13 +720,13 @@ function scoreView(b, run, j, out) {
       const t = score.run(theirs.filter(x => shared.has(x.name)).map(x => { const o = opps.find(y => y.name === x.name); return { name: x.name, w: o.w, counted: true, pre: x.ph.pre.pd, post: x.ph.post ? x.ph.post.pd : null, boarded: !!x.ph.post, shift: shiftOf(x.name, bBeta, bVar) }; }), { seed: 11 });
       const d = score.diff(a, t);
       if (d) res.benchScore = { k: shared.size, mine: { p: a.overall.p, lo: a.overall.lo, hi: a.overall.hi, n: a.overall.n }, theirs: { p: t.overall.p, lo: t.overall.lo, hi: t.overall.hi, n: t.overall.n }, edge: d };
-      bt = score.tournament(t);
+      bt = score.tournament(t, { rounds: roundsOf(b) });
     }
   }
   // the tournament: the whole field (decks not played counted as even), top-8 odds, and
   // what bringing each losing matchup to even is worth. The #1 deck on the same footing:
   // its shared opponents as played, everything else even (its own mirror is even exactly).
-  const ev = sc && score.tournament(sc);
+  const ev = sc && score.tournament(sc, { rounds: roundsOf(b) });
   if (ev) {
     const levers = sc.opp.map((o, i) => o && o.counted && o.p < 0.5 ? { name: opps[i].name, p: o.p, ...score.lever(sc, ev, i) } : null).filter(Boolean).sort((a, b) => b.gain - a.gain);
     res.event = { rounds: ev.rounds, rest: ev.rest, field: ev.field, top8: ev.top8, levers, bench: null };
@@ -758,7 +781,21 @@ function diffLists(a, b) {
   for (const k of new Set([...A.keys(), ...B.keys()])) { const q = (B.get(k) || 0) - (A.get(k) || 0); if (q) { const [section, name] = k.split('\u0000'); out.push({ name, section, qty: q }); } }
   return out.sort((x, y) => (x.qty > 0) - (y.qty > 0) || x.section.localeCompare(y.section) || x.name.localeCompare(y.name));
 }
-const brewView = b => ({ ...b, runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b), coachOn: claude.available() });
+// the coach's ledger: each tested suggestion, the version it became, and what the headline did
+function ledgerOf(b) {
+  const out = [];
+  for (const r of b.runs) for (const o of (r.coach && r.coach.options) || []) {
+    if (!o.test) continue;
+    const before = runView(b, r).score, tr = b.runs.find(x => x.id === o.test.run), after = tr ? runView(b, tr).score : null;
+    out.push({ title: o.title, change: [...(o.out || []).map(c => '-' + c.qty + ' ' + c.name), ...(o.in || []).map(c => '+' + c.qty + ' ' + c.name)].join(', '), v: o.test.v, from: r.v,
+      before: before ? { p: before.p, lo: before.lo, hi: before.hi } : null, after: after ? { p: after.p, lo: after.lo, hi: after.hi } : null,
+      verdict: !before || !after ? 'not finished' : after.lo > before.hi ? 'better, outside the noise' : after.hi < before.lo ? 'worse, outside the noise' : 'inside the noise' });
+  }
+  return out;
+}
+// what the coach reads beside the run: the player's settings, the event they mean, and the ledger
+const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings: st, eventInfo: { ...EVENTS[st.goal.event], rounds: roundsOf(b) }, ledger: ledgerOf(b) }; };
+const brewView = b => ({ ...b, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b), coachOn: claude.available() });
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -767,14 +804,17 @@ const brewView = b => ({ ...b, runs: b.runs.map(r => runView(b, r)), oppSets: op
 // a swap that fails the check becomes advice instead of a test button.
 const coachBusy = new Set();
 async function cleanSwap(b, ver, o) {
-  if (o.kind !== 'swap') return { title: o.title, detail: o.detail, kind: 'note' };
+  // the evidence grade the coach gave it (strong / weak / untested) and the one-line basis
+  const ev = { evidence: ['strong', 'weak', 'untested'].includes(o.evidence) ? o.evidence : 'untested', basis: String(o.basis || '').slice(0, 200) };
+  if (o.kind !== 'swap') return { title: o.title, detail: o.detail, kind: 'note', ...ev };
   const main = new Map(ver.list.main.map(c => [c.name.toLowerCase(), c]));
-  const outs = (o.out || []).map(c => { const m2 = main.get(String(c.name).toLowerCase()); return m2 && c.qty > 0 ? { qty: Math.min(c.qty, m2.qty), name: m2.name } : null; }).filter(Boolean);
+  const st = settingsOf(b), keep = new Set(st.keep.map(x => x.toLowerCase())), never = new Set(st.never.map(x => x.toLowerCase()));
+  const outs = (o.out || []).map(c => { const m2 = main.get(String(c.name).toLowerCase()); return m2 && c.qty > 0 && !keep.has(m2.name.toLowerCase()) ? { qty: Math.min(c.qty, m2.qty), name: m2.name } : null; }).filter(Boolean);
   const find = await meta.cards((o.in || []).map(c => c.name));
-  const ins = (o.in || []).map(c => { const k = find(c.name); return k && c.qty > 0 && k.legalities?.[b.format] === 'legal' ? { qty: Math.min(4, c.qty), name: meta.forgeName(k) } : null; }).filter(Boolean);
+  const ins = (o.in || []).map(c => { const k = find(c.name); return k && c.qty > 0 && k.legalities?.[b.format] === 'legal' && !never.has(meta.forgeName(k).toLowerCase()) ? { qty: Math.min(4, c.qty), name: meta.forgeName(k) } : null; }).filter(Boolean);
   const n = Math.min(ins.reduce((t, c) => t + c.qty, 0), outs.reduce((t, c) => t + c.qty, 0));
   const trim = l => { let k = n; return l.map(c => { const q = Math.min(c.qty, k); k -= q; return q ? { qty: q, name: c.name } : null; }).filter(Boolean); };
-  return n ? { title: o.title, detail: o.detail, kind: 'swap', in: trim(ins), out: trim(outs) } : { title: o.title, detail: o.detail, kind: 'note' };
+  return n ? { title: o.title, detail: o.detail, kind: 'swap', in: trim(ins), out: trim(outs), ...ev } : { title: o.title, detail: o.detail, kind: 'note', ...ev };
 }
 function coachWriteups(b) {
   if (!claude.available() || b.seats !== 2) return;
@@ -784,7 +824,7 @@ function coachWriteups(b) {
   coachBusy.add(run.id);
   (async () => {
     const rv = runView(b, run), ver = b.versions.find(x => x.v === run.v);
-    const w = await usage.as({ who: b.owner, kind: 'readout', brew: b.id }, () => coach.writeup(b, rv));
+    const w = await usage.as({ who: b.owner, kind: 'readout', brew: b.id }, () => coach.writeup(b, coachRun(b, rv)));
     const options = await Promise.all((w.options || []).slice(0, 3).map(o => cleanSwap(b, ver, o)));
     run.coach = { weakness: String(w.weakness || '').slice(0, 120), weaknessNote: String(w.weaknessNote || '').slice(0, 600), options, at: Date.now() };
     (b.thread = b.thread || []).push({ role: 'coach', text: String(w.summary || '').slice(0, 2000), at: Date.now(), run: run.id, kind: 'writeup' });
@@ -1019,7 +1059,7 @@ const server = http.createServer(async (req, res) => {
       const no = refusal(user, 'ask'); if (no) return send(res, 429, { error: no });
       usage.mark(user.name, 'ask');
       (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
-      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, talkRun(b), b.thread))
+      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, coachRun(b, talkRun(b)), b.thread))
         .then(t => b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }))
         .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }))
         .finally(() => { b.thinking = false; saveBrews(); });
@@ -1049,7 +1089,8 @@ const server = http.createServer(async (req, res) => {
     // rename a brew and/or change its cover: a card from its newest list, or a new upload
     if ((m = p.match(/^\/api\/brews\/(\w+)$/)) && req.method === 'PATCH') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      const { name, cover } = await readBody(req);
+      const { name, cover, settings } = await readBody(req);
+      if (settings && typeof settings === 'object') b.settings = cleanSettings(settings, b.settings || {});
       if (name != null) { const n = String(name).trim().slice(0, 60); if (!n) return send(res, 400, { error: 'give it a name' }); b.name = n; }
       if (cover?.upload) {
         try { b.coverUrl = saveCover(b.id, cover.upload) + '?v=' + Date.now(); b.coverType = coverTypes[b.id]; } catch (e) { return send(res, 400, { error: e.message }); }
