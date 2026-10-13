@@ -161,8 +161,11 @@ function pump() {
   }
 }
 // Where a pairing's per-turn game logs go, with a meta.json saying what was played and by which engine.
+// background (the default): the calibration round robins and benchmarks, meta deck against meta
+// deck, where nobody waits; the bridge plays about a third slower than forge sim (13 Oct 2026).
+const logsJob = job => config.SIM_GAME_LOG === 'all' || (config.SIM_GAME_LOG === 'background' && (job.owner === 'calibration' || job.owner === 'benchmark'));
 function gameLogDir(job, i) {
-  if (!config.SIM_GAME_LOG) return null;
+  if (!logsJob(job)) return null;
   const dir = path.join(DATA, 'gamelogs', job.id, String(i));
   try { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ job: job.id, pairing: i, mode: job.mode, owner: job.owner, meta: job.meta || null, phase: job.plan[i].phase || null, decks: job.plan[i].decks.map(d => d.name), engine: job.engine || null, created: Date.now() })); } catch { return null; }
   return dir;
@@ -835,7 +838,7 @@ const server = http.createServer(async (req, res) => {
         const id = crypto.randomBytes(6).toString('hex');
         leases.set(id, { ...t, worker: name, engine: engineKey(body.engine), until: Date.now() + LEASE_MS });
         t.pr.seed = seedOf(t.job.id, t.i);
-        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock, seed: t.pr.seed });
+        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock, seed: t.pr.seed, log: logsJob(t.job), meta: { mode: t.job.mode, owner: t.job.owner, phase: t.job.plan[t.i].phase || null } });
       }
       if (p === '/api/worker/report' && req.method === 'POST') {
         const l = leases.get(String(body.lease || ''));

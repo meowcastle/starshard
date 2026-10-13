@@ -19,7 +19,7 @@ const SPEC = {
   USE_XVFB: S('all', 'on', true, 'run Forge under xvfb'),
   // the pilot
   SIM_PILOT: S('all', 'on', true, 'our pilot for the decks that need one (0 = off)'),
-  SIM_GAME_LOG: S('all', 'on', true, 'per-turn game logs for every 1v1 Constructed game (0 = off); games then go through the bridge'),
+  SIM_GAME_LOG: S('all', 'str', 'background', 'per-turn game logs: background (calibration and benchmark runs), all (every 1v1 Constructed game, about a third slower), or off; logged games go through the bridge'),
   PILOT_BRIDGE: S('all', 'str', path.join(__dirname, 'forge-pilot', 'bridge', 'build', 'mtg-bench-bridge.jar'), 'the bridge jar'),
   PILOT_STDERR: S('all', 'raw', undefined, 'append the bridge\'s stderr to this file (research)'),
   // the server

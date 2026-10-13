@@ -83,14 +83,15 @@ function pilotFor(deck, version = forgeVersion()) {
 }
 
 // Run one Forge process. onLine gets every stdout/stderr line; returns {child, done}.
-// logDir: where this pairing's per-turn game logs go (GameLog.java). With SIM_GAME_LOG on, every
-// 1v1 Constructed pairing plays through the bridge, Forge deciding everything our pilot doesn't:
-// the bridge with Forge in every seat matches `forge sim` (Phase 0, forge-pilot/README.md).
+// logDir: where this pairing's per-turn game logs go (GameLog.java); the caller passes one only for
+// pairings it wants logged (SIM_GAME_LOG). A logged 1v1 Constructed pairing plays through the bridge,
+// Forge deciding everything our pilot doesn't: the same results as `forge sim` (Phase 0,
+// forge-pilot/README.md), about a third slower (13 Oct 2026).
 function runSim({ decks, games, format, clock, seed, workDir, logDir, onLine }) {
   fs.mkdirSync(workDir, { recursive: true });
   const names = deckNames(decks);
   const pilots = (!format || format === 'Constructed') && decks.length === 2 ? decks.map(d => pilotFor(d)) : [];
-  const logging = config.SIM_GAME_LOG && logDir && pilotOn() && (!format || format === 'Constructed') && decks.length === 2;
+  const logging = config.SIM_GAME_LOG !== 'off' && config.SIM_GAME_LOG !== '0' && logDir && pilotOn() && (!format || format === 'Constructed') && decks.length === 2;
   if (pilots.some(Boolean) || logging) return runPiloted({ decks, names, pilots: pilots.length ? pilots : [null, null], games, clock, seed, workDir, logDir: logging ? logDir : null, onLine });
   const files = decks.map((d, i) => {
     const f = `deck${i + 1}.dck`;
