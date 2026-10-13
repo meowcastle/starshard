@@ -1051,6 +1051,28 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, brewView(b));
     }
     // ask the coach: the question goes in the thread now, the answer when it is written
+    // a coach mode on request (sideboard, pilot, mulligan, mana, review): the answer lands in the thread
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/coach$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (!claude.available()) return send(res, 400, { error: 'the coach needs an API key on the server' });
+      if (b.thinking) return send(res, 409, { error: 'the coach is still answering' });
+      const { mode, opponent } = await readBody(req);
+      if (!coach.MODES.includes(mode)) return send(res, 400, { error: 'modes: ' + coach.MODES.join(', ') });
+      if (mode === 'review' && b.versions.length < 2) return send(res, 400, { error: 'a review needs two versions' });
+      const no = refusal(user, 'ask'); if (no) return send(res, 429, { error: no });
+      usage.mark(user.name, 'ask');
+      b.thinking = true; saveBrews();
+      const rv = coachRun(b, talkRun(b)), opp = mode === 'pilot' ? String(opponent || '').slice(0, 80) || null : null;
+      b.thread = b.thread || [];
+      usage.as({ who: user.name, kind: 'coach-' + mode, brew: b.id }, () => coach.mode(b, rv, mode, { opp }))
+        .then(out => {
+          if (mode === 'sideboard') { b.guide = { rows: (out.rows || []).slice(0, 20), run: rv.id || null, at: Date.now() }; b.thread.push({ role: 'coach', text: 'Sideboard guide: ' + b.guide.rows.map(r => `${r.opponent} (${r.role}): in ${r.in.map(c => c.qty + ' ' + c.name).join(', ') || 'nothing'}, out ${r.out.map(c => c.qty + ' ' + c.name).join(', ') || 'nothing'}. ${r.why}`).join('\n'), at: Date.now(), kind: 'sideboard' }); }
+          else b.thread.push({ role: 'coach', text: String(out).slice(0, 6000), at: Date.now(), kind: mode });
+        })
+        .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t do that: ' + e.message, at: Date.now(), kind: 'error' }))
+        .finally(() => { b.thinking = false; saveBrews(); });
+      return send(res, 200, { ok: true });
+    }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/ask$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       if (!claude.available()) return send(res, 400, { error: 'the coach needs an API key on the server' });

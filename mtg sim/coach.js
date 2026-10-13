@@ -175,4 +175,23 @@ async function reply(b, rv, thread) {
   return claude.chat({ system, messages: msgs });
 }
 
-module.exports = { writeup, reply, context, headline, useField };
+// The coach's other modes (COACH-PARAMETERS-13OCT.md part 1, item 3), run on request. The sideboard guide
+// is structured (one row per opponent); the rest are prose for the thread. Same grounding as the
+// readout: only the numbers in the context.
+const MODES = {
+  sideboard: 'Write a sideboard guide for this run\'s opponents: for each, what comes in and out (from the sideboard plans above where they exist; improve them where the numbers say they are wrong), why in one sentence, and the role this deck takes after boarding (beatdown or control).',
+  pilot: 'Explain how to play this deck against {opp}: who is the beatdown and why (speed, damage, removal, inevitability; Flores\' question), what to hold, what to answer on sight, what to play around, and when the role switches. Plain prose, at most 250 words. Use the matchup numbers above and say when they are thin.',
+  mulligan: 'Write mulligan guidance for this list: by matchup class (aggro, midrange, control, combo opponents), which seven-card hands to keep and which to ship, with two example hands each from this list. A short table in prose: hand shape, keep or ship, why.',
+  mana: 'Review the mana: land count, colour sources against the cards that need them (the functional check above), the curve for this deck\'s plan, and what to change. Concrete swaps with counts.',
+  review: 'Review this brew\'s version history: what each change did (compare the runs of each version above and say when a difference is inside the noise), what has worked, and what to try next.',
+};
+const GUIDE = { type: 'object', properties: { rows: { type: 'array', items: { type: 'object', properties: { opponent: { type: 'string' }, in: SWAP, out: SWAP, why: { type: 'string' }, role: { type: 'string', enum: ['beatdown', 'control'] } }, required: ['opponent', 'in', 'out', 'why', 'role'] } } }, required: ['rows'] };
+async function mode(b, rv, which, { opp } = {}) {
+  rv = await withCheck(b, rv);
+  const ask = MODES[which]; if (!ask) throw new Error('no such mode');
+  const prompt = context(b, rv) + '\n\n' + ask.replace('{opp}', opp || 'its worst matchup');
+  if (which === 'sideboard') return claude.ask({ system: SYSTEM, prompt, tool: { name: 'sideboard_guide', description: 'A sideboard guide, one row per opponent.', schema: GUIDE } });
+  return claude.chat({ system: SYSTEM, messages: [{ role: 'user', content: prompt }] });
+}
+
+module.exports = { writeup, reply, context, headline, useField, mode, MODES: Object.keys(MODES) };
