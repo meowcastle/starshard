@@ -1,7 +1,8 @@
 // A batch of logged games for the learned-evaluator work (RESEARCH-LEARNED-EVAL-13OCT.md): every
 // pairing among the top N meta decks of a calibration file, stock Forge on both seats, or with
-// POLICY=reactive our reactive pilot on both seats (and the dead-card list), each game's per-turn log
-// written by the bridge.
+// POLICY=reactive (or answers, tapout) that pilot on both seats (and the dead-card list), or with
+// POLICY=profiles each deck's profile by its plan (plan.js: tap-out control -> tapout, draw-go control
+// -> answers, the rest stock Forge). Each game's per-turn log is written by the bridge.
 //
 //   FORGE_DIR=... DATA_DIR=... node tools/log-batch.js <calibration.json> <out dir> [top=12] [matches=10] [at once=4]
 //
@@ -28,14 +29,24 @@ for (let i = 0; i < decks.length; i++) for (let j = i + 1; j < decks.length; j++
 const todo = jobs.filter(([a, b]) => !done[a.name + '|' + b.name]);
 log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}`);
 
+// the profile each plan gets, for POLICY=profiles
+const PROFILE = { 'tap-out control': 'tapout', 'draw-go control': 'answers' };
+const policyOf = {};
+
 (async () => {
+  if (POLICY === 'profiles') {
+    const { planOf } = require('../plan');
+    for (const d of decks) { const p = await planOf(d, d.name); policyOf[d.name] = PROFILE[p.plan] || null; }
+    log('profiles: ' + Object.entries(policyOf).filter(([, x]) => x).map(([n, x]) => n + ' ' + x).join(', '));
+  }
   let i = 0;
   const t0 = Date.now();
   const slot = async () => {
     for (;;) {
       const p = todo[i++]; if (!p) return;
       const [a, b] = p, key = a.name + '|' + b.name, dir = slug(a.name) + '__' + slug(b.name);
-      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: POLICY ? [['priority'], ['priority']] : [[], []], policy: [POLICY, POLICY], deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir) });
+      const pol = POLICY === 'profiles' ? [policyOf[a.name], policyOf[b.name]] : [POLICY, POLICY];
+      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: pol.map(x => x ? ['priority'] : []), policy: pol, deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir) });
       const won = r.games.filter(g => g.winner === 0).length, lost = r.games.filter(g => g.winner === 1).length;
       done[key] = { dir, won, lost, games: r.games.length, errors: r.errors.slice(0, 2) };
       fs.writeFileSync(file, JSON.stringify(done));

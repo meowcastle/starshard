@@ -82,6 +82,8 @@ const roleOf = k => {
     counter: /counter target (?:[\w-]+ )*spell/i.test(t),
     removal: /(?:destroy|exile) target (?:[\w-]+ )*(?:creature|permanent)|deals? (?:\d+|X) damage to (?:any target|target creature)/i.test(t),
     instant: /\bInstant\b/.test(type) || /\bFlash\b/.test(t),
+    sweeper: /(?:destroy|exile) all (?:[\w-]+ )*creatures|deals? (?:\d+|X) damage to each creature|all creatures get -/i.test(t),
+    permanent: /Creature|Planeswalker|Artifact|Enchantment|Battle/.test(type),
   };
 };
 
@@ -125,6 +127,30 @@ function reactive(m, find, { hold = true } = {}) {
     return { choice: [safe ? safe.id : 'pass'] };
   }
   return null;
+}
+
+// The tap-out control profile (RESEARCH-ARCHETYPES-PROFILES-13OCT.md): a sweepers-into-finisher deck
+// spends its mana on its own turn. Forge's AI plays any deck named "Control" as hold-mana-up, which is
+// draw-go: 4c Control left 3-4 mana unspent on its own turn in the 13 Oct logs. On the opponent's turn
+// it answers like 'answers'; on its own main phase it plays its land, then a sweeper only against 3+
+// creatures (2 when its life is 10 or less), else its biggest castable spell that isn't a counter,
+// permanents and finishers first.
+function tapout(m, find) {
+  const s = m.state || {}, opts = m.options || [], you = s.you || {}, opp = s.opponent || {};
+  const mine = s.activePlayer === 'you';
+  if ((s.stack || []).length || !mine || !/MAIN/.test(s.phase || '')) return reactive(m, find, { hold: false });
+  const land = opts.find(o => o.meta && o.meta.type === 'land');
+  if (land) return { choice: [land.id] };
+  const spells = opts.filter(o => o.meta && o.meta.type === 'spell').map(o => ({ o, r: roleOf(find(o.card || '')), k: find(o.card || '') })).filter(x => !x.r.counter);
+  if (!spells.length) return null;
+  const theirs = (opp.battlefield || []).filter(c => c.pt).length, low = (you.life || 20) <= 10;
+  const sweep = spells.find(x => x.r.sweeper);
+  if (sweep && (theirs >= 3 || (theirs >= 2 && low))) return { choice: [sweep.o.id] };
+  const rest = spells.filter(x => !x.r.sweeper && !(x.r.removal && !theirs));
+  if (!rest.length) return null;
+  const mv = x => (x.o.meta && x.o.meta.cmc) || (x.k && x.k.cmc) || 0;
+  rest.sort((a, b) => (b.r.permanent - a.r.permanent) || (mv(b) - mv(a)));
+  return { choice: [rest[0].o.id] };
 }
 
 // ---------------------------------------------------------------- dead cards
@@ -187,7 +213,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       }
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
-        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
+        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
         if (a) { res.acted = (res.acted || 0) + 1; return a; }
       }
       return { delegate: true };
@@ -232,7 +258,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   }));
 }
 
-module.exports = { runMatches, keep, boarded, produced, reactive, deadcards, roleOf };
+module.exports = { runMatches, keep, boarded, produced, reactive, tapout, deadcards, roleOf };
 
 // ---------------------------------------------------------------- self-play
 
