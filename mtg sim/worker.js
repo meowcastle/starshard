@@ -50,7 +50,10 @@ async function slot(n) {
     if (c.status !== 200) { log(`slot ${n}: ${c.data?.error || 'status ' + c.status}`); await sleep(c.status === 409 || c.status === 401 ? 5 * 60e3 : IDLE_MS); continue; }
     const { lease, job, pairing, decks, games, format, clock, seed } = c.data;
     log(`slot ${n}: ${decks.map(d => d.name).join(' vs ')} (${games} games)`);
-    const run = runSim({ decks, games, format, clock, seed, workDir: path.join(DATA, 'jobs', job, String(pairing)) });
+    // per-turn game logs stay on this machine, under DATA_DIR/gamelogs/<job>/<pairing>
+    const logDir = path.join(DATA, 'gamelogs', job, String(pairing));
+    if (config.SIM_GAME_LOG) { fs.mkdirSync(logDir, { recursive: true }); fs.writeFileSync(path.join(logDir, 'meta.json'), JSON.stringify({ job, pairing, decks: decks.map(d => d.name), engine: eng, worker: NAME, created: Date.now() })); }
+    const run = runSim({ decks, games, format, clock, seed, workDir: path.join(DATA, 'jobs', job, String(pairing)), logDir });
     let cancelled = false;
     const report = async done => {
       const res = run.results;

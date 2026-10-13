@@ -160,11 +160,18 @@ function pump() {
       .finally(() => { localBusy--; t.job.inflight--; settle(t.job); pump(); });
   }
 }
+// Where a pairing's per-turn game logs go, with a meta.json saying what was played and by which engine.
+function gameLogDir(job, i) {
+  if (!config.SIM_GAME_LOG) return null;
+  const dir = path.join(DATA, 'gamelogs', job.id, String(i));
+  try { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ job: job.id, pairing: i, mode: job.mode, owner: job.owner, meta: job.meta || null, phase: job.plan[i].phase || null, decks: job.plan[i].decks.map(d => d.name), engine: job.engine || null, created: Date.now() })); } catch { return null; }
+  return dir;
+}
 async function playLocal({ job, i, pr }) {
   pr.seed = seedOf(job.id, i);
   const run = runSim({
     decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock, seed: pr.seed,
-    workDir: path.join(DATA, 'jobs', job.id, String(i)),
+    workDir: path.join(DATA, 'jobs', job.id, String(i)), logDir: gameLogDir(job, i),
     onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
   });
   job.children.add(run.child);

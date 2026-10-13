@@ -83,11 +83,15 @@ function pilotFor(deck, version = forgeVersion()) {
 }
 
 // Run one Forge process. onLine gets every stdout/stderr line; returns {child, done}.
-function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
+// logDir: where this pairing's per-turn game logs go (GameLog.java). With SIM_GAME_LOG on, every
+// 1v1 Constructed pairing plays through the bridge, Forge deciding everything our pilot doesn't:
+// the bridge with Forge in every seat matches `forge sim` (Phase 0, forge-pilot/README.md).
+function runSim({ decks, games, format, clock, seed, workDir, logDir, onLine }) {
   fs.mkdirSync(workDir, { recursive: true });
   const names = deckNames(decks);
   const pilots = (!format || format === 'Constructed') && decks.length === 2 ? decks.map(d => pilotFor(d)) : [];
-  if (pilots.some(Boolean)) return runPiloted({ decks, names, pilots, games, clock, seed, workDir, onLine });
+  const logging = config.SIM_GAME_LOG && logDir && pilotOn() && (!format || format === 'Constructed') && decks.length === 2;
+  if (pilots.some(Boolean) || logging) return runPiloted({ decks, names, pilots: pilots.length ? pilots : [null, null], games, clock, seed, workDir, logDir: logging ? logDir : null, onLine });
   const files = decks.map((d, i) => {
     const f = `deck${i + 1}.dck`;
     fs.writeFileSync(path.join(workDir, f), toDck(names[i], d));
@@ -155,7 +159,7 @@ function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
 // The same pairing through the bridge: `games` single-game matches (match i seeded seed + i),
 // a pilot policy on the seats that have one and Forge's AI everywhere else, and the same
 // results object runSim fills, updated live, with card stats from the same log parser.
-function runPiloted({ decks, names, pilots, games, clock, seed, workDir, onLine }) {
+function runPiloted({ decks, names, pilots, games, clock, seed, workDir, logDir, onLine }) {
   const results = { names, wins: names.map(() => 0), draws: 0, games: [], warnings: [], cards: cardstats.empty(names.length), pilot: pilots };
   const maps = decks.map(cardstats.nameMap);
   let child = null, killed = false;
@@ -163,7 +167,7 @@ function runPiloted({ decks, names, pilots, games, clock, seed, workDir, onLine 
   const done = require('./pilot').runMatches({
     decks: decks.map((d, i) => ({ ...d, name: names[i] })), matches: games, games: 1, seed: seed == null ? Date.now() % 2147483647 : seed,
     own: pilots.map(p => p ? ['priority'] : []), policy: pilots, deadCards: readJson('dead-cards.json')[forgeVersion()] || [],
-    simLog: true, clock: clock || 120, keepLogs: true, workDir,
+    simLog: true, clock: clock || 120, keepLogs: true, workDir, gameLog: logDir || null,
     onChild: c => { child = c; if (killed) c.kill('SIGKILL'); },
     onGame: g => {
       const r = { n: results.games.length + 1, ms: g.ms || 0, turn: g.turns, first: g.onThePlay, winner: g.winner };
