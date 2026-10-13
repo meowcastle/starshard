@@ -138,3 +138,21 @@ decks, mirror vs stock, 8 matches a half, seeds fixed (a rerun reproduces game f
 The horizon cut was free; a loose screen (150) was the one cut that cost strength. The
 default keeps the baseline's strength under the 20 s target. Per deck it is still mostly
 noise at this sample (48–63%), so no deck clears the 55% gate on its own yet.
+
+### Does search on both seats move Forge toward real results? (13 Oct 2026)
+
+`tools/probe-search.js`: the reactive probe's 51 real pairings (same lists, seeds and match
+counts), search (the defaults above) on both seats, 144 minutes on four processes.
+
+| Deck | Real | Forge decides | Reactive pilot | Search, both seats |
+| --- | --- | --- | --- | --- |
+| Azorius Control | 41% | 13% | 27% | 20% |
+| 4c Control | 49% | 41% | 40% | 46% |
+| Dimir Excruciator | 50% | 32% | 37% | 31% |
+| Bant Airbending Combo | 22% | 28% | 41% | 31% |
+| **k** (Forge's edge that carries over) | | 0.06 (−0.04 to 0.16) | 0.10 (−0.01 to 0.22) | 0.08 (−0.03 to 0.19) |
+
+A stronger player on both seats doesn't close the gap: k moves inside its noise, Dimir
+Excruciator doesn't move at all, and the reactive rules (free, and on one seat) did as much.
+Search plays main-phase choices; what the control decks lack is instant-speed play, which it
+leaves to Forge. Search stays research-only.
