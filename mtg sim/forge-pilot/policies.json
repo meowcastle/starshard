@@ -1,4 +1,4 @@
 {
-  "_": "Decks whose full pilot policy beat stock Forge in their own mirror (tools/mirror-gate.js: 55%+, range above 50%), by Forge version. Every other deck with a dead card gets the deadcards policy only.",
-  "2.0.15": { "Azorius Control": "reactive" }
+  "_": "Production pilots by deck, by Forge version. A profile goes here when it passes research's field-test gate (NOTE-TO-CODE-13OCT-ORDER.md and the profiles review): on the 66-pairing batch it moves the deck toward its real rate, no other deck moves outside the noise, and its behaviour targets are met. Azorius Control answers and 4c Control tapout accepted 13 Oct 2026 (ENGINE-STATUS-13OCT.md 5.4). Every other deck with a dead card gets the deadcards policy only.",
+  "2.0.15": { "Azorius Control": "answers", "4c Control": "tapout" }
 }

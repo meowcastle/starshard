@@ -178,7 +178,7 @@ With `reactive`, the control-ahead-of-aggro inversion goes (49–64% under 1,000
 
 4c Control under `tapout`: mana left at the end of its own turn **4.6 → 2.5**; after the opponent's turn 1.9; a held instant used after a creature or planeswalker 81% of 68. Azorius under `answers`: 89% of 284; 2.1 left after the opponent's turn. The first configuration that moves both control decks toward their real rates without moving any other deck outside noise: the profiles touch only the decks whose plan calls for them. (The curve's class rows in this batch use plan.js's classes, which split tempo from aggro, so they are not comparable row for row with batches 1–4; control ahead of midrange is still inverted, 34–51% under 1,000 points.)
 
-A sixth batch is running with Azorius Control on `reactive` instead of `answers` (production runs `reactive` today), to choose between them; 4c Control `tapout` is the candidate for production either way.
+**Batch 6, the same with Azorius Control on `reactive`** (same seeds): Azorius 26% (42 of 159) against 31% (50 of 159) under `answers`; every other deck within two games of batch 5. `answers` keeps its lead, and research's rule takes it either way (the smaller rule set, the one the draw-go profile is built on). **Production from 13 Oct evening: Azorius Control `answers`, 4c Control `tapout`.**
 
 ## 6. Reading decks: tags and plans
 
@@ -201,7 +201,7 @@ A sixth batch is running with Azorius Control on `reactive` instead of `answers`
 | Piece | State |
 | --- | --- |
 | Engine | Forge 2.0.15; pilot rules `0e428316`; code `a5c199f7`; NAS and Mac worker on the same |
-| Pilots | `reactive` for Azorius Control, `deadcards` where they apply; `answers` and `tapout` not in production yet (`tapout` for 4c Control is the candidate, §5.4) |
+| Pilots | **`answers` for Azorius Control and `tapout` for 4c Control** (accepted by research's field-test gate, 13 Oct evening), `deadcards` where they apply; the calibration round robins play both on both seats |
 | Logging | background jobs (calibration round robins, benchmarks) |
 | Readings | plan, nearest meta deck, what's missing on every 1v1 brew version, in the coach |
 | Search, no-chump | built, off |
