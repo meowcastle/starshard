@@ -80,5 +80,7 @@ function scan(deck, { version, commander = false } = {}) {
   return out;
 }
 const hintOf = (name, version) => { try { load(version); } catch { return null; } return idx[keyOf(name)] || null; };
+// whether this Forge has the card at all (null: the hint index couldn't be read)
+const hasCard = (name, version) => { try { load(version); } catch { return null; } return known.has(keyOf(name)); };
 
-module.exports = { scan, hintOf };
+module.exports = { scan, hintOf, hasCard };

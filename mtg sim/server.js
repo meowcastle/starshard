@@ -44,6 +44,7 @@ const roundsOf = b => { const s = settingsOf(b); return s.goal.rounds || EVENTS[
 // (Commander comes from the list itself: a list with a commander is a Commander brew)
 const FORMATS = ['standard', 'pioneer', 'modern', 'legacy', 'vintage'];
 const planner = require('./plan');
+const cardSearch = require('./cards');
 const claude = require('./claude');
 
 const PORT = config.PORT;
@@ -1051,6 +1052,32 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, brewView(b));
     }
     // ask the coach: the question goes in the thread now, the answer when it is written
+    // card search for editing a list (Design's change 7): ?q=<text>&format=<f>, 8 results
+    if (p === '/api/cards' && req.method === 'GET') {
+      const q = String(u.searchParams.get('q') || '').slice(0, 60), f = String(u.searchParams.get('format') || 'standard').toLowerCase();
+      if (!FORMATS.includes(f) && f !== 'commander') return send(res, 400, { error: 'unknown format' });
+      return send(res, 200, { cards: await cardSearch.search(q, f, { version: forgeVersion() }) });
+    }
+    // an edited list against the brew's current version, before it's saved (Design's change 7): what
+    // changed, whether it's legal, what Forge makes of each card, and the version it would become
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/check$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const { list, text } = await readBody(req);
+      const parsed = text ? meta.parseList(String(text)) : list;
+      const deck = { main: parsed?.main || [], side: parsed?.side || [], commander: parsed?.commander || [] };
+      if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
+      const d = await meta.describeDeck(deck, b.seats === 4 ? null : b.format), cur = latest(b), diff = diffLists(cur.list, d.list);
+      const count = l => (l || []).reduce((t, c) => t + c.qty, 0), size = count(d.list.main);
+      const tally = l => { const t = new Map(); for (const c of l || []) t.set(c.name, (t.get(c.name) || 0) + c.qty); return t; }, curMain = tally(cur.list.main), newMain = tally(d.list.main);
+      const shared = [...newMain].reduce((t, [n, q]) => t + Math.min(q, curMain.get(n) || 0), 0);
+      const ai = aihints.scan(d.list, { version: forgeVersion(), commander: b.seats === 4 });
+      const problems = [];
+      if (b.seats === 2 && size < 60) problems.push(`${size} cards in the main deck; a constructed deck needs 60`);
+      if (b.seats === 2 && count(d.list.side) > 15) problems.push(`${count(d.list.side)} sideboard cards; the limit is 15`);
+      if (d.legality && !d.legality.ok) problems.push(meta.legalityError(d.legality));
+      return send(res, 200, { diff, shared, size, sideSize: count(d.list.side), currentSize: count(cur.list.main), becomes: diff.length ? cur.v + 1 : null, unchanged: !diff.length,
+        legality: d.legality, forge: { unplayable: ai.unplayable, limited: ai.limited, missing: ai.missing }, problems, saveable: !!diff.length && !problems.length, list: d.list, rows: d.rows });
+    }
     // a coach mode on request (sideboard, pilot, mulligan, mana, review): the answer lands in the thread
     if ((m = p.match(/^\/api\/brews\/(\w+)\/coach$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
@@ -1182,6 +1209,7 @@ const server = http.createServer(async (req, res) => {
 });
 server.listen(PORT, HOST, () => console.log(`sim listening on ${HOST}:${PORT}, engine ${engineKey(engine())}, accounts via ${STARSHARD_API}\n${config.describe('server')}`));
 backfill().catch(e => console.error('backfill:', e.message));
+setTimeout(() => { cardSearch.forgeView('Plains', forgeVersion()); cardSearch.standardIndex().catch(e => console.warn('card index:', e.message)); }, 20e3); // warm both, so no one waits on the first search
 // calibration: refit from what is on disk, then queue anything due, then check every six hours
 for (const f of new Set(history.filter(h => h.meta).map(h => h.meta))) refit(f).catch(e => console.error('refit:', e.message));
 setTimeout(() => calibrateDue(), 60e3); setInterval(() => calibrateDue(), 6 * 3600e3);
