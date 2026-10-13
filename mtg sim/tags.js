@@ -83,6 +83,9 @@ function tagsOf(k, scry) {
   if (['flying', 'menace', 'trample'].some(has) || /can't be blocked/i.test(text)) out.add('evasive');
   if (/\bcreate\b[^.]*\btokens?\b/i.test(text)) out.add('tokens');
   if (/Instant/.test(t) || has('flash')) out.add('instant');
+  if (/Instant|Sorcery/.test(t)) out.add('spell');
+  // a payoff for discarding your own cards (Mardu Discard's plan), not making the opponent discard
+  if (/whenever you discard|discard a card[,:]|if you discarded/i.test(text)) out.add('discard-payoff');
   // rules for what the Tagger may not have yet (a new card): the common answer, counter and wipe wordings
   if (!st.size) {
     if (/\b(destroy|exile) target\b|deals? \d+ damage to target (creature|any)|return target [^.]* to its owner's hand/i.test(text)) out.add('answer');
