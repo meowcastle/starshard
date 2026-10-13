@@ -139,6 +139,7 @@ async function importUrl(url) {
 // card in the field, and a restart should not ask Scryfall for hundreds again.
 // Unknown names are not persisted, so a card printed after the miss is found later.
 const fs = require('fs'), path = require('path');
+const { writeJson } = require('./store');
 const SCRY_FILE = () => path.join(process.env.DATA_DIR || '/data', 'scryfall.json');
 const scry = new Map(); // lowercased name -> card | null
 const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_cost', 'cmc', 'colors', 'legalities', 'games', 'set', 'set_name', 'image_uris', 'power', 'toughness', 'loyalty'];
@@ -146,7 +147,7 @@ const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_
 const missed = new Map(); // key -> when
 try { const d = JSON.parse(fs.readFileSync(SCRY_FILE(), 'utf8')); for (const [k, c] of Object.entries(d.cards || d)) if (k !== 'missed') scry.set(nk(k), c); for (const [k, at] of Object.entries(d.missed || {})) if (Date.now() - at < 864e5) { missed.set(k, at); scry.set(k, null); } } catch {}
 let scrySave = null;
-const persist = () => { clearTimeout(scrySave); scrySave = setTimeout(() => { try { fs.writeFileSync(SCRY_FILE(), JSON.stringify({ cards: Object.fromEntries([...scry].filter(([, c]) => c)), missed: Object.fromEntries(missed) })); } catch {} }, 2000); };
+const persist = () => { clearTimeout(scrySave); scrySave = setTimeout(() => { try { writeJson(SCRY_FILE(), { cards: Object.fromEntries([...scry].filter(([, c]) => c)), missed: Object.fromEntries(missed) }, { keep: 0 }); } catch {} }, 2000); };
 const slim = c => Object.fromEntries(KEEP.filter(k => c[k] != null).map(k => [k, c[k]]));
 const FRONT_ONLY = new Set(['transform', 'modal_dfc', 'flip', 'adventure', 'meld', 'reversible_card', 'prepare']);
 const forgeName = c => (FRONT_ONLY.has(c.layout) && c.card_faces ? c.card_faces[0].name : c.name);

@@ -52,19 +52,20 @@ function fit(forge, real, { minForge = 10, minReal = 6, lambdaMin = 4, lambdaMax
   solve(rows, names, beta, lambda);
   return { beta, evidence: ev, lambda, pairs: rows.length, realGames: rows.reduce((s, r) => s + r.nr, 0) };
 }
+// The ridge solution exactly: (L + lambda I) beta = b, with L the pairings' weighted graph
+// Laplacian, by Gaussian elimination (the matrix is symmetric positive definite). It replaced
+// coordinate descent, which stalled along the all-decks-shift direction when the evidence far
+// outweighed lambda (13 Oct 2026, test/calib.test.js: betas recovered 0.6 apart but all 0.35
+// high); on the live fit both agreed to 1e-4, so no number moved.
 function solve(rows, names, beta, lambda) {
-  for (let it = 0; it < 400; it++) {
-    let moved = 0;
-    for (const n of names) {
-      let num = 0, den = lambda;
-      for (const r of rows) {
-        if (r.a === n) { num += r.w * (r.y + beta[r.b]); den += r.w; }
-        else if (r.b === n) { num += r.w * (beta[r.a] - r.y); den += r.w; }
-      }
-      const nb = num / den; moved = Math.max(moved, Math.abs(nb - beta[n])); beta[n] = nb;
-    }
-    if (moved < 1e-6) break;
+  const n = names.length, ix = Object.fromEntries(names.map((x, i) => [x, i]));
+  const A = names.map((_, i) => names.map((__, j) => (i === j ? lambda : 0))), B = new Array(n).fill(0);
+  for (const r of rows) {
+    const i = ix[r.a], j = ix[r.b];
+    A[i][i] += r.w; A[j][j] += r.w; A[i][j] -= r.w; A[j][i] -= r.w; B[i] += r.w * r.y; B[j] -= r.w * r.y;
   }
+  for (let i = 0; i < n; i++) for (let k = i + 1; k < n; k++) { const m = A[k][i] / A[i][i]; for (let j = i; j < n; j++) A[k][j] -= m * A[i][j]; B[k] -= m * B[i]; }
+  for (let i = n - 1; i >= 0; i--) { let t = B[i]; for (let j = i + 1; j < n; j++) t -= A[i][j] * beta[names[j]]; beta[names[i]] = t / A[i][i]; }
 }
 
 // How well Forge predicts people: on every pairing with both kinds of data, real results

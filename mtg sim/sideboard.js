@@ -5,6 +5,7 @@
 // the deck stays the same size) and cached on disk by the two lists, so a pairing
 // is planned once no matter how many runs play it.
 const fs = require('fs');
+const { writeJson, readJson } = require('./store');
 const path = require('path');
 const crypto = require('crypto');
 const usage = require('./usage');
@@ -12,8 +13,8 @@ const usage = require('./usage');
 const MODEL = process.env.COACH_MODEL || 'claude-opus-5-5';
 const FILE = () => path.join(process.env.DATA_DIR || '/data', 'plans.json');
 let plans = null;
-const load = () => { if (!plans) { try { plans = JSON.parse(fs.readFileSync(FILE(), 'utf8')); } catch { plans = {}; } } return plans; };
-const save = () => fs.writeFileSync(FILE(), JSON.stringify(plans));
+const load = () => { if (!plans) { plans = readJson(FILE(), {}); } return plans; };
+const save = () => writeJson(FILE(), plans);
 
 const canon = d => ['main', 'side'].map(s => (d[s] || []).map(c => c.qty + ' ' + c.name).sort().join('|')).join('#');
 const keyOf = (a, b) => crypto.createHash('sha1').update(canon(a) + '\n' + canon(b)).digest('hex').slice(0, 16);

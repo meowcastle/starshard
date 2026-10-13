@@ -1,6 +1,7 @@
 // sim.starshard.net — tiny API + static UI around Forge's headless simulator.
 // No dependencies: Node 20's http + fetch only.
 const http = require('http');
+const { writeJson, readJson } = require('./store');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -86,8 +87,8 @@ async function currentUser(req) {
 
 // ---------- jobs ----------
 const HIST = path.join(DATA, 'history.json');
-let history = []; try { history = JSON.parse(fs.readFileSync(HIST, 'utf8')); } catch {}
-const saveHist = () => fs.writeFileSync(HIST, JSON.stringify(history.slice(0, 200)));
+let history = readJson(HIST, []);
+const saveHist = () => writeJson(HIST, history.slice(0, 200));
 const jobs = new Map(); const queue = []; // queue: every job not yet finished, in the order it was queued
 
 function publicJob(j) {
@@ -248,8 +249,8 @@ const clean = r => ({
 // run is filed under the version it played, with the field it faced frozen beside
 // it. Results themselves live on the job (live) or in history (finished).
 const BREWS = path.join(DATA, 'brews.json');
-let brews = []; try { brews = JSON.parse(fs.readFileSync(BREWS, 'utf8')); } catch {}
-const saveBrews = () => fs.writeFileSync(BREWS, JSON.stringify(brews));
+let brews = readJson(BREWS, []);
+const saveBrews = () => writeJson(BREWS, brews);
 // A run that was still reading decklists when the process stopped will never finish.
 brews.forEach(b => b.runs.forEach(r => { if (r.status === 'preparing') { r.status = 'failed'; r.error = 'the server restarted before this run was queued'; } }));
 // an answer that was being written when the process stopped will not arrive
@@ -375,8 +376,8 @@ const tally = p => p ? { wins: [p.wins[0] || 0, p.wins[1] || 0], draws: p.draws 
 // it and a brew is what the brew itself is worth. One benchmark serves every run
 // against the same field for a week, and it queues behind the run that asked.
 const BENCH = path.join(DATA, 'benchmarks.json');
-let benches = []; try { benches = JSON.parse(fs.readFileSync(BENCH, 'utf8')); } catch {}
-const saveBench = () => fs.writeFileSync(BENCH, JSON.stringify(benches.slice(-100)));
+let benches = readJson(BENCH, []);
+const saveBench = () => writeJson(BENCH, benches.slice(-100));
 const BENCH_DAYS = 7;
 // A queued job does not survive a restart, so a benchmark is only as alive as its job.
 const jobOf = id => jobs.get(id) || history.find(h => h.id === id) || null;
@@ -413,8 +414,8 @@ function benchView(id) {
 // calib.fit turns the two into one "how much does Forge overrate this deck"
 // number per archetype, which the page uses to correct every matchup.
 const CAL = path.join(DATA, 'calibration.json');
-let calibs = {}; try { calibs = JSON.parse(fs.readFileSync(CAL, 'utf8')); } catch {}
-const saveCal = () => fs.writeFileSync(CAL, JSON.stringify(calibs));
+let calibs = readJson(CAL, {});
+const saveCal = () => writeJson(CAL, calibs);
 coach.useField(format => calibs[String(format).toLowerCase()]?.lists || null);
 const CAL_TOP = +process.env.CALIBRATE_TOP || 10;
 const CAL_DAYS = 7, FORGE_DAYS = 21, REAL_DAYS = +process.env.REAL_DAYS || 42;

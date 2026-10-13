@@ -11,6 +11,7 @@
 // the page asks again. An archetype's text is keyed by its list, so a new week's
 // list is written fresh and an unchanged one is not.
 const fs = require('fs');
+const { writeJson, readJson } = require('./store');
 const path = require('path');
 const crypto = require('crypto');
 const meta = require('./meta');
@@ -19,8 +20,8 @@ const TERMS = require('./terms');
 
 const FILE = () => path.join(process.env.DATA_DIR || '/data', 'codex.json');
 let store = null;
-const load = () => { if (!store) { try { store = JSON.parse(fs.readFileSync(FILE(), 'utf8')); } catch { store = {}; } store.gen = store.gen || {}; store.notes = store.notes || {}; } return store; };
-const save = () => fs.writeFileSync(FILE(), JSON.stringify(store));
+const load = () => { if (!store) { store = readJson(FILE(), {}); store.gen = store.gen || {}; store.notes = store.notes || {}; } return store; };
+const save = () => writeJson(FILE(), store);
 
 const slug = s => String(s).toLowerCase().normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/[\s_]+/g, '-');
 const faceOf = k => k?.card_faces?.[0] || k || {};
