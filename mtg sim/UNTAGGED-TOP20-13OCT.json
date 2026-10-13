@@ -1,0 +1,340 @@
+[
+ {
+  "card": "Eddymurk Crab",
+  "decks": [
+   "Izzet Spellementals",
+   "Izzet Prowess"
+  ],
+  "type": "Creature — Elemental Crab",
+  "rulesTags": [
+   "threat",
+   "instant",
+   "finisher"
+  ]
+ },
+ {
+  "card": "Keen-Eyed Curator",
+  "decks": [
+   "Mono-Green Landfall"
+  ],
+  "type": "Creature — Raccoon Scout",
+  "rulesTags": [
+   "threat",
+   "answer"
+  ]
+ },
+ {
+  "card": "Mutagen Man, Living Ooze",
+  "decks": [
+   "Jund Sacrifice"
+  ],
+  "type": "Legendary Creature — Ooze Mutant",
+  "rulesTags": [
+   "threat",
+   "evasive",
+   "tokens"
+  ]
+ },
+ {
+  "card": "The Wondrous Wasp",
+  "decks": [
+   "Dimir Midrange"
+  ],
+  "type": "Legendary Creature — Human Hero",
+  "rulesTags": [
+   "threat",
+   "evasive",
+   "instant"
+  ]
+ },
+ {
+  "card": "Clarion Conqueror",
+  "decks": [
+   "Boros Dragons",
+   "Azorius Momo"
+  ],
+  "type": "Creature — Dragon",
+  "rulesTags": [
+   "threat",
+   "evasive"
+  ]
+ },
+ {
+  "card": "Momo, Friendly Flier",
+  "decks": [
+   "Boros Dragons",
+   "Azorius Momo"
+  ],
+  "type": "Legendary Creature — Lemur Bat Ally",
+  "rulesTags": [
+   "threat",
+   "evasive"
+  ]
+ },
+ {
+  "card": "Voice of Victory",
+  "decks": [
+   "Boros Dragons",
+   "Lifegain",
+   "Boros Tokens"
+  ],
+  "type": "Creature — Human Bard",
+  "rulesTags": [
+   "threat",
+   "tokens"
+  ]
+ },
+ {
+  "card": "Dwarven Mauler",
+  "decks": [
+   "Boros Dwarves"
+  ],
+  "type": "Creature — Dwarf Warrior",
+  "rulesTags": [
+   "threat"
+  ]
+ },
+ {
+  "card": "Leyline Axe",
+  "decks": [
+   "Boros Dwarves"
+  ],
+  "type": "Artifact — Equipment",
+  "rulesTags": []
+ },
+ {
+  "card": "Skateboard",
+  "decks": [
+   "Boros Dwarves"
+  ],
+  "type": "Artifact — Equipment",
+  "rulesTags": []
+ },
+ {
+  "card": "Essence Channeler",
+  "decks": [
+   "Lifegain"
+  ],
+  "type": "Creature — Bat Cleric",
+  "rulesTags": [
+   "threat"
+  ]
+ },
+ {
+  "card": "Starscape Cleric",
+  "decks": [
+   "Lifegain"
+  ],
+  "type": "Creature — Bat Cleric",
+  "rulesTags": [
+   "threat",
+   "evasive",
+   "tokens"
+  ]
+ },
+ {
+  "card": "Simulacrum Synthesizer",
+  "decks": [
+   "Jeskai Artifacts"
+  ],
+  "type": "Artifact",
+  "rulesTags": [
+   "threat",
+   "engine",
+   "tokens"
+  ]
+ },
+ {
+  "card": "The Fire Crystal",
+  "decks": [
+   "Jeskai Artifacts"
+  ],
+  "type": "Legendary Artifact",
+  "rulesTags": [
+   "threat",
+   "engine",
+   "tokens"
+  ]
+ },
+ {
+  "card": "Torpor Orb",
+  "decks": [
+   "Jeskai Artifacts"
+  ],
+  "type": "Artifact",
+  "rulesTags": []
+ },
+ {
+  "card": "Drake Hatcher",
+  "decks": [
+   "Izzet Prowess"
+  ],
+  "type": "Creature — Human Wizard",
+  "rulesTags": [
+   "threat",
+   "tokens"
+  ]
+ },
+ {
+  "card": "Elusive Otter",
+  "decks": [
+   "Izzet Prowess"
+  ],
+  "type": "Creature — Otter",
+  "rulesTags": [
+   "threat"
+  ]
+ },
+ {
+  "card": "Slickshot Show-Off",
+  "decks": [
+   "Izzet Prowess"
+  ],
+  "type": "Creature — Bird Wizard",
+  "rulesTags": [
+   "threat",
+   "evasive"
+  ]
+ },
+ {
+  "card": "Wizard's Staff",
+  "decks": [
+   "Izzet Prowess"
+  ],
+  "type": "Artifact — Equipment",
+  "rulesTags": [
+   "threat",
+   "engine"
+  ]
+ },
+ {
+  "card": "Iron-Shield Elf",
+  "decks": [
+   "Mardu Discard"
+  ],
+  "type": "Creature — Elf Warrior",
+  "rulesTags": [
+   "threat",
+   "discard-payoff"
+  ]
+ },
+ {
+  "card": "Moonshadow",
+  "decks": [
+   "Mardu Discard"
+  ],
+  "type": "Creature — Elemental",
+  "rulesTags": [
+   "threat",
+   "evasive"
+  ]
+ },
+ {
+  "card": "Frontline Rush",
+  "decks": [
+   "Boros Tokens"
+  ],
+  "type": "Instant",
+  "rulesTags": [
+   "tokens",
+   "instant",
+   "spell"
+  ]
+ },
+ {
+  "card": "Hop to It",
+  "decks": [
+   "Boros Tokens"
+  ],
+  "type": "Sorcery",
+  "rulesTags": [
+   "tokens",
+   "spell"
+  ]
+ },
+ {
+  "card": "Song of Totentanz",
+  "decks": [
+   "Boros Tokens"
+  ],
+  "type": "Sorcery",
+  "rulesTags": [
+   "tokens",
+   "spell"
+  ]
+ },
+ {
+  "card": "Daydream",
+  "decks": [
+   "Azorius Momo"
+  ],
+  "type": "Sorcery",
+  "rulesTags": [
+   "spell",
+   "answer"
+  ]
+ },
+ {
+  "card": "Guiding Hydra",
+  "decks": [
+   "Azorius Momo"
+  ],
+  "type": "Creature — Hydra Horror",
+  "rulesTags": [
+   "threat"
+  ]
+ },
+ {
+  "card": "Master of Barbs",
+  "decks": [
+   "Rakdos Lizards"
+  ],
+  "type": "Creature — Lizard Bard",
+  "rulesTags": [
+   "threat",
+   "evasive"
+  ]
+ },
+ {
+  "card": "Valley Flamecaller",
+  "decks": [
+   "Rakdos Lizards"
+  ],
+  "type": "Creature — Lizard Warlock",
+  "rulesTags": [
+   "threat"
+  ]
+ },
+ {
+  "card": "Doc Aurlock, Grizzled Genius",
+  "decks": [
+   "Bant Airbending Combo"
+  ],
+  "type": "Legendary Creature — Bear Druid",
+  "rulesTags": [
+   "threat"
+  ]
+ },
+ {
+  "card": "Colorstorm Stallion",
+  "decks": [
+   "Izzet Aggro"
+  ],
+  "type": "Creature — Elemental Horse",
+  "rulesTags": [
+   "threat",
+   "tokens"
+  ]
+ },
+ {
+  "card": "Mockingbird",
+  "decks": [
+   "Izzet Aggro"
+  ],
+  "type": "Creature — Bird Bard",
+  "rulesTags": [
+   "threat",
+   "evasive"
+  ]
+ }
+]

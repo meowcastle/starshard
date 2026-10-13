@@ -16,7 +16,7 @@ const AXES = ['spell', 'discard-payoff', 'threat', 'evasive', 'tokens', 'answer'
 
 /** The plan for one list: { plan, strategy, why, counts, avgMV, lands }. name: an optional deck name ("... Combo"). */
 async function planOf(list, name = '') {
-  const [p, f] = await Promise.all([tags.profileOf(list), functional.check(list).catch(() => null)]);
+  const [p, f] = await Promise.all([tags.profileOf(list, name), functional.check(list).catch(() => null)]);
   const n = k => p.counts[k] || 0, mv = f ? f.avgMV : null, lands = f ? f.lands : null;
   const threats = n('threat'), answers = n('answer'), instantAnswers = n('answer.instant');
   let plan, why;

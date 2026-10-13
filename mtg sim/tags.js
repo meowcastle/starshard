@@ -86,6 +86,11 @@ function tagsOf(k, scry) {
   if (/Instant|Sorcery/.test(t)) out.add('spell');
   // a payoff for discarding your own cards (Mardu Discard's plan), not making the opponent discard
   if (/whenever you discard|discard a card[,:]|if you discarded/i.test(text)) out.add('discard-payoff');
+  // finisher, research's generic rule: a card that wins or loses the game, 5+ damage to a player,
+  // or a creature or planeswalker of mana value 5+ (the curated lists add the rest)
+  const big = (k.cmc || 0) >= 5 && /Creature|Planeswalker/.test(t);
+  const burn5 = [...text.matchAll(/deals? (\d+) damage to (target player|each opponent|target opponent|any target|each player)/gi)].some(m => +m[1] >= 5);
+  if (/you win the game|loses the game/i.test(text) || burn5 || big) out.add('finisher');
   // rules for what the Tagger may not have yet (a new card): the common answer, counter and wipe wordings
   if (!st.size) {
     if (/\b(destroy|exile) target\b|deals? \d+ damage to target (creature|any)|return target [^.]* to its owner's hand/i.test(text)) out.add('answer');
@@ -97,21 +102,51 @@ function tagsOf(k, scry) {
   return out;
 }
 
-/** A list's tag counts over its main deck (copies counted). */
-async function profileOf(list) {
+// research's curated lists (curated-standard-*.json beside this file, newest wins): the tags no rule
+// derives, per meta deck. An entry applies to a list by its exact name, or by an alias only when the
+// list holds at least half the entry's cards (one research alias named a different field deck).
+const CURATED = (() => {
+  try {
+    const f = fs.readdirSync(__dirname).filter(x => /^curated-standard-.*\.json$/.test(x)).sort().pop();
+    return f ? JSON.parse(fs.readFileSync(path.join(__dirname, f), 'utf8')).decks || {} : {};
+  } catch { return {}; }
+})();
+const curatedCards = e => [...(e.finisher || []), ...(e['finisher-enabler'] || []), ...(e.engine || []), ...(e['combo-enabler'] || []), ...((e['combo-piece'] || []).map(x => x.card))];
+function curatedFor(name, list) {
+  if (!name) return null;
+  if (CURATED[name]) return CURATED[name];
+  const have = new Set([...(list.main || []), ...(list.side || [])].map(c => nk(c.name)));
+  for (const e of Object.values(CURATED)) {
+    if (!(e.aliases || []).some(a => a.toLowerCase() === String(name).toLowerCase())) continue;
+    const cs = curatedCards(e); if (cs.length && cs.filter(c => have.has(nk(c))).length * 2 >= cs.length) return e;
+  }
+  return null;
+}
+function curatedTags(e, card) {
+  const out = [], k = nk(card);
+  if (!e) return out;
+  for (const t of ['finisher', 'finisher-enabler', 'engine', 'combo-enabler']) if ((e[t] || []).some(c => nk(c) === k)) out.push(t);
+  const piece = (e['combo-piece'] || []).find(x => nk(x.card) === k);
+  if (piece) out.push('combo-piece');
+  return out;
+}
+
+/** A list's tag counts over its main deck (copies counted); name: the deck's name, for the curated lists. */
+async function profileOf(list, name = '') {
   const meta = require('./meta');
   const main = (list && list.main) || [];
   const [scry, find] = await Promise.all([load().catch(() => new Map()), meta.cards(main.map(c => c.name))]);
-  const counts = {}, cards = {}, untagged = [];
+  const counts = {}, cards = {}, untagged = [], cur = curatedFor(name, list);
   for (const c of main) {
     const k = find(c.name); if (!k) continue;
     const ts = tagsOf(k, scry);
+    for (const t of curatedTags(cur, c.name)) ts.add(t);
     cards[c.name] = [...ts];
     if (!ts.size) untagged.push(c.name);
     for (const t of ts) counts[t] = (counts[t] || 0) + c.qty;
     if (ts.has('answer') && ts.has('instant')) counts['answer.instant'] = (counts['answer.instant'] || 0) + c.qty;
   }
-  return { counts, cards, untagged };
+  return { counts, cards, untagged, curated: cur ? true : false };
 }
 
 module.exports = { load, tagsOf, profileOf, OTAGS };

@@ -1,0 +1,53 @@
+{
+  "_about": "Curated tags per meta deck for tags.js (RESEARCH-ARCHETYPES-PROFILES-13OCT.md): the two tags no rule derives. finisher = ends the game from a stable board, whatever its card type; combo-piece = part of the deck's named win, with role. Keyed by deck name as the field names it; a card in a deck's list that appears here gets the tag on top of the derived ones. Lists read 13 Oct 2026 from June–Aug 2026 top-8 lists; Code should confirm against the live field lists on the NAS (names in the field may differ from these).",
+  "_generic": {
+    "finisher": "any card whose text says 'you win the game' or 'loses the game', any spell or permanent that deals 5+ damage to a player or each opponent, any creature or planeswalker with mana value >= 5, and anything listed below",
+    "combo-piece": "only from the lists below; never derived"
+  },
+  "decks": {
+    "4c Control": {
+      "aliases": ["Four-Color Control", "4C Control", "4 Color Control", "Jeskai Control"],
+      "finisher": ["Jeskai Revelation", "North Wind Avatar", "Riverchurn Monument"],
+      "finisher-enabler": ["Flashback", "Tablet of Discovery"],
+      "engine": ["Tablet of Discovery"],
+      "notes": "Wins by resolving Jeskai Revelation, then recasting it with Flashback; Tablet of Discovery makes the turn-five Revelation. North Wind Avatar is the one creature; Riverchurn Monument (sideboard) wins by mill. Day of Judgment is the sweeper; Inevitable Defeat, Sear, Lightning Helix, Firebending Lesson the answers; No More Lies / Negate / Together as One the counters; Stock Up and Consult the Star Charts the selection. Plan: tap-out control (sweepers into a finisher), with a draw-go turn when it holds No More Lies."
+    },
+    "Dimir Excruciator": {
+      "aliases": ["Dimir Doomsday", "Excruciator"],
+      "combo-piece": [
+        { "card": "Doomsday Excruciator", "role": "engine: exiles both libraries down to six" },
+        { "card": "Restless Reef", "role": "finish: attacks mill the opponent's last cards so their draw step loses" },
+        { "card": "Superior Spider-Man", "role": "copy: a second Excruciator effect or body" }
+      ],
+      "finisher": ["Doomsday Excruciator", "Harvester of Misery"],
+      "combo-enabler": ["Stock Up", "Insatiable Avarice", "Deceit", "Winternight Stories"],
+      "notes": "Interaction (Requiting Hex, Bitter Triumph, Deadly Cover-Up, Duress, Day of Black Sun) until Excruciator is castable with the opponent unable to answer; then Reef attacks for the empty-library win. Plan: disrupt-and-clock until the finish, library attack for one turn. The logs read it as midrange (3% of turns holding a castable card), which is right for how Forge plays it; the profile is disrupt-and-clock with the library-attack finisher rule."
+    },
+    "Bant Airbending": {
+      "aliases": ["Bant Airbending Combo", "Bant Combo"],
+      "combo-piece": [
+        { "card": "Spider Manifestation", "role": "piece (provisional)" },
+        { "card": "Gene Pollinator", "role": "piece (provisional)" },
+        { "card": "Quantum Riddler", "role": "airbend engine (provisional)" },
+        { "card": "Mockingbird", "role": "copy (provisional)" }
+      ],
+      "combo-enabler": ["Nature's Rhythm", "Brightglass Gearhulk", "Llanowar Elves"],
+      "finisher": ["Craterhoof Behemoth", "Ouroboroid"],
+      "notes": "PROVISIONAL: the lists research could reach predate the Badgermole Cub ban (June 2026) and the current build may differ. Code: read the live field list and confirm the pieces before this entry is used; the enabler and finisher names are stable across the lists seen."
+    },
+    "Temur Omniscience": {
+      "aliases": ["Omniscience Combo"],
+      "combo-piece": [{ "card": "Omniscience", "role": "engine: free spells, wins the same turn" }],
+      "notes": "Pieces that cheat Omniscience into play and the win line vary by list; Code: fill from the live field list. Plan: fast combo."
+    },
+    "Azorius Control": {
+      "finisher": [],
+      "notes": "Finishers derive (creatures/planeswalkers with MV >= 5); no curated entry needed unless the live list wins with a noncreature (a Monument, a lesson). Plan: draw-go."
+    },
+    "Mardu Discard": {
+      "engine": ["Iron-Shield Elf", "Hardened Academic"],
+      "finisher": ["Cool but Rude"],
+      "notes": "discard-as-value; Marauding Mako and Moonshadow grow on discard; Cool but Rude is the damage finish (per Karsten). Confirm names against the live list."
+    }
+  }
+}
