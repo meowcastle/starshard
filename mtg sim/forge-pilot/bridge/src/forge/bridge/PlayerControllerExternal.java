@@ -417,7 +417,7 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         agentChosen = null;
         if (turnCapReached()) return null;
         if (ai()) return super.chooseSpellAbilityToPlay();
-        if (!ctx.owns(seat, "priority")) return asAi(() -> super.chooseSpellAbilityToPlay());
+        if (!ctx.owns(seat, "priority") && !ctx.owns(seat, "search")) return asAi(() -> super.chooseSpellAbilityToPlay());
         if (!shouldStop()) { ctx.auto(seat, "policy", "priority", "not a meaningful stop"); return null; }
         Game g = getGame();
         String stateKey = priorityStateKey(g);
@@ -474,6 +474,37 @@ public class PlayerControllerExternal extends PlayerControllerAi {
             } catch (RuntimeException e) {
                 // Some abilities throw when probed out of context; they are simply not offered.
             }
+        }
+        if (!ctx.owns(seat, "priority")) {
+            // starshard: a search-only seat searches its own main-phase plays when there's a real choice
+            // (Search.java); every other priority is Forge's, as stock
+            final Game sg = getGame();
+            boolean searchable = sg.getStack().isEmpty() && sg.getPhaseHandler().isPlayerTurn(player) && sg.getPhaseHandler().getPhase() != null
+                    && sg.getPhaseHandler().getPhase().isMain() && !byId.isEmpty();
+            if (!searchable) return asAi(() -> super.chooseSpellAbilityToPlay());
+            // Forge's own choice is the baseline the search has to beat
+            final List<SpellAbility> aiPick = asAi(() -> super.chooseSpellAbilityToPlay());
+            SpellAbility pick = aiPick == null || aiPick.isEmpty() ? null : aiPick.get(0), base = null;
+            // land drops are Forge's: searching them costs most of the time and buys nothing
+            if (pick != null && pick.isLandAbility()) return aiPick;
+            final List<SpellAbility> spells = new ArrayList<>();
+            for (SpellAbility c : byId.values()) if (!c.isLandAbility()) spells.add(c);
+            if (spells.isEmpty()) return aiPick;
+            final List<SpellAbility> cands = spells.subList(0, Math.min(spells.size(), ctx.searchMax));
+            if (pick != null) {
+                for (SpellAbility c : byId.values()) if (c.getHostCard() == pick.getHostCard() && String.valueOf(c.getDescription()).equals(String.valueOf(pick.getDescription()))) { base = c; break; }
+                if (base == null) return aiPick; // a choice the options don't list (alternative cost...): Forge's
+            }
+            final List<SpellAbility> tried = new ArrayList<>(cands);
+            if (base != null && !tried.contains(base)) tried.add(base);
+            final SpellAbility fb = base;
+            Search.Result sr = asAi(() -> Search.choose(sg, player, fb, tried, ctx.searchRollouts, ctx.searchTurns, ctx.searchMargin));
+            ctx.auto(seat, "search", "priority", sr.override ? "overrode Forge" : "kept Forge's choice");
+            if (Search.TRACE) client.log("search: " + (sr.override ? "OVERRIDE " : "") + String.join(", ", sr.scores));
+            if (!sr.override) return aiPick;
+            if (sr.best == null) return null;
+            agentChosen = sr.best;
+            return Collections.singletonList(agentChosen);
         }
         if (opts.size() == 1) { ctx.auto(seat, "policy", "priority", "nothing playable and affordable"); return null; }
         String prompt = g.getStack().isEmpty()

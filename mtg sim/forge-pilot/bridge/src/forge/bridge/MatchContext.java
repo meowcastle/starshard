@@ -47,6 +47,11 @@ public final class MatchContext {
     @SuppressWarnings("unchecked")
     public final java.util.Set<String>[] own = new java.util.Set[2];
 
+    /** starshard: Search.java's settings: play-outs per candidate, turns before the evaluator scores, candidates at most. */
+    public int searchRollouts = 4, searchTurns = 8, searchMax = 6;
+    /** override Forge's choice only when a candidate beats it by this many standard errors */
+    public double searchMargin = 2.0;
+
     public boolean owns(int seat, String kind) {
         return own[seat] == null || own[seat].contains(kind);
     }

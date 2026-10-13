@@ -161,7 +161,7 @@ function boarded(main, plan) {
 
 // ---------------------------------------------------------------- matches
 
-function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, workDir, maxTurns = 60, keepLogs = false, onGame, onChild }) {
+function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, search = null, workDir, maxTurns = 60, keepLogs = false, onGame, onChild }) {
   fs.mkdirSync(workDir, { recursive: true });
   const files = decks.map((d, i) => { const f = path.join(workDir, `seat${i}.dck`); fs.writeFileSync(f, toDck(d.name, d)); return f; });
   const names = [...new Set(decks.flatMap(d => [...d.main, ...(d.side || [])].map(c => c.name)))];
@@ -203,6 +203,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
           else if (m.type === 'game_start') { match = m.match || 0; if (m.game === 1) lastGame = 0; }
           else if (m.type === 'game_end') { const g = { match: m.match || 0, game: m.game, winner: m.winner ?? -1, onThePlay: m.onThePlay, turns: m.turns, ms: m.ms, slow: !!m.slow, reason: m.reason }; if (keepLogs) g.log = m.log; res.games.push(g); onGame && onGame(g); }
           else if (m.type === 'warning') res.warnings.length < 50 && res.warnings.push(m.msg);
+          else if (m.type === 'log' && /^search: /.test(m.msg)) { (res.trace = res.trace || []).length < 400 && res.trace.push(m.msg); }
           else if (m.type === 'error') res.errors.push(m.msg);
         }
       });
@@ -212,10 +213,11 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       const args = [`-Xmx${XMX}`, '-Djava.awt.headless=true', '--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.desktop/java.awt=ALL-UNNAMED',
         '-cp', forgeJar() + path.delimiter + BRIDGE, 'forge.bridge.AgentBridge', '--port', String(srv.address().port), '--token', token,
         '--deck0', files[0], '--deck1', files[1], '--external0', 'true', '--external1', 'true', '--games', String(games), '--seed', String(seed), '--sim-log', String(simLog), '--clock', String(clock || 0),
-        '--max-turns', String(maxTurns), '--stops', 'all', '--own0', ownArg(0), '--own1', ownArg(1), '--matches', String(matches)];
+        '--max-turns', String(maxTurns), '--stops', 'all', '--own0', ownArg(0), '--own1', ownArg(1), '--matches', String(matches),
+        ...(search ? ['--search-rollouts', String(search.rollouts || 4), '--search-turns', String(search.turns || 8), '--search-max', String(search.max || 6), '--search-margin', String(search.margin ?? 2)] : [])];
       const ch = spawn('java', args, { cwd: FORGE_DIR, env: { ...process.env, HOME: process.env.DATA_DIR || '/data' }, stdio: ['ignore', 'ignore', 'pipe'] });
       onChild && onChild(ch);
-      let err = ''; ch.stderr.on('data', d => { err = (err + d).slice(-4000); });
+      let err = ''; ch.stderr.on('data', d => { err = (err + d).slice(-4000); if (process.env.PILOT_STDERR) fs.appendFileSync(process.env.PILOT_STDERR, d); });
       ch.on('close', code => { res.ms = Date.now() - t0; res.code = code; if (code) res.errors.push('bridge exited ' + code + ': ' + err.slice(-600)); srv.close(); resolve(res); });
     });
   }));

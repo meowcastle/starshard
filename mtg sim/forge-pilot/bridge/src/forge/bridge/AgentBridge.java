@@ -59,6 +59,10 @@ public final class AgentBridge {
             MatchContext ctx = new MatchContext(Integer.parseInt(a.getOrDefault("max-turns", "40")), !"all".equals(a.get("stops")), "always".equals(a.get("mana")),
                     Integer.parseInt(a.getOrDefault("max-retries", "3")));
 
+            ctx.searchRollouts = Integer.parseInt(a.getOrDefault("search-rollouts", "4"));
+            ctx.searchTurns = Integer.parseInt(a.getOrDefault("search-turns", "8"));
+            ctx.searchMax = Integer.parseInt(a.getOrDefault("search-max", "6"));
+            ctx.searchMargin = Double.parseDouble(a.getOrDefault("search-margin", "2.0"));
             for (int s = 0; s < 2; s++) {
                 String own = a.getOrDefault("own" + s, a.get("own"));
                 if (own != null) ctx.own[s] = new java.util.HashSet<>(java.util.Arrays.asList(own.split(",")));

@@ -102,3 +102,18 @@ calibration (51 pairings):
 k 0.06 → 0.10 (−0.01 to 0.22). The rules make the control decks stronger and Azorius closes
 half its gap to real; they don't help Dimir Excruciator's mirror and make the combo deck
 weaker. A rule set has to be per archetype and earn its place in its own mirror.
+
+## Search (research, 12 Oct 2026; not used in production)
+
+Forge's own full look-ahead isn't the route: in the mirror against stock it won 11 of 24
+games that finished, 15x slower, and processes died mid-run (16 of 40 games never finished).
+
+`Search.java` is our own: flat Monte Carlo on a seat that owns `search`. At its main-phase
+plays with a real choice (land drops stay Forge's), each candidate (pass, each spell or
+ability, Forge's own pick among them) is played out on copies of the game (Forge's
+GameCopier): plain Forge AI on both sides, the searcher's first choice forced, libraries
+reshuffled, for `--search-turns` turns, then scored as my position minus the opponent's
+(Forge's GameStateEvaluator; a win or loss ±3000). Forge's pick stands unless another beats
+it by `--search-margin` standard errors (default 2). Known shortcuts in this version: copies
+see the opponent's real hand; candidates are base abilities only. About 5 minutes a game at
+6 play-outs. `tools/mirror-gate.js ... search` measures it against stock in the mirror.
