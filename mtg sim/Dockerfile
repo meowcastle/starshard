@@ -1,5 +1,7 @@
 # sim.starshard.net — Forge (headless AI-vs-AI) + a small Node API/UI.
 FROM node:20-bookworm-slim
+# Java 17 takes its default charset from the locale: without this, javac and the bridge run as ASCII
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 # Java 17 for Forge (the JDK: the image compiles our pilot bridge against Forge's jar), xvfb as a safety net (Forge's desktop jar touches AWT
 # even in sim mode on some builds), bzip2 to unpack the release.
