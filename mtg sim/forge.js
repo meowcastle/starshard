@@ -153,7 +153,11 @@ function runSim({ decks, games, format, clock, seed, workDir, logDir, onLine }) 
     stream.on('end', () => buf && handle(buf));
   };
   split(child.stdout); split(child.stderr);
-  const done = new Promise(res => child.on('close', code => res({ code, results })));
+  // a launcher that can't start (no java, no xvfb-run) fails this run, not the process that called it
+  const done = new Promise(res => {
+    child.on('error', e => { results.warnings.push('could not start ' + cmd + ': ' + e.message); res({ code: 1, results }); });
+    child.on('close', code => res({ code, results }));
+  });
   return { child, done, results };
 }
 
