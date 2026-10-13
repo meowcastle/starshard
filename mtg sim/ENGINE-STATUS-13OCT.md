@@ -74,7 +74,7 @@ Two ways a pairing is played:
 | budget 16, 1 turn, screen 50 | 57% (50–65%) | ~36 |
 | **budget 8, 1 turn, screen 50 (default)** | **57% (50–65%)** | **~18** |
 
-**Fidelity with search on both seats** (51 real pairings): k 0.06 → 0.08, inside noise; Azorius Control 13% → 20% (real 41%), Dimir Excruciator unchanged. Search decides main-phase plays; the control gap is instant-speed play. **Search stays research-only.** Forge's own full simulation was also tried: 11 of 24 finished games, 15× slower, processes dying.
+**Fidelity with search on both seats** (51 real pairings): k 0.06 → 0.08, inside noise; Azorius Control 13% → 20% (real 41%), Dimir Excruciator unchanged. Search decides main-phase plays; the control gap is instant-speed play. **Search stays research-only.** Rerun with the learned evaluator at the leaf (NOTE-TO-RESEARCH-13OCT-EVALUATOR.md): k 0.07, Azorius 17%, no change outside noise; the better judge doesn't help a search that only chooses main-phase plays. Forge's own full simulation was also tried: 11 of 24 finished games, 15× slower, processes dying.
 
 ## 5. The per-turn game log
 

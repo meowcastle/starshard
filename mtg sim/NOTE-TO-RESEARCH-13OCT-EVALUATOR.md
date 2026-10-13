@@ -55,3 +55,17 @@ Forge's own AI decisions don't read `GameStateEvaluator` (its heuristics do the 
 1. Search with this score at the leaf instead of Forge's, rerun the 13 Oct fidelity probe (search on both seats): does k move now that the leaf can tell who is ahead?
 2. The `answers` and `tapout` close calls (cast now or hold) scored by it.
 3. The evaluator proper (more features, the card embedding), trained on profile games, as your doc lays out.
+
+## Result: the learned score as search's leaf (added 19:30)
+
+The 13 Oct fidelity probe rerun with search on both seats scoring its play-outs by this model instead of Forge's `GameStateEvaluator` (`--search-eval forge-pilot/eval-linear.json`), same 51 real pairings and seeds, 166 minutes:
+
+| | Search, Forge's score | Search, learned score | Real |
+| --- | --- | --- | --- |
+| k | 0.08 (−0.03 to 0.19) | 0.07 (−0.04 to 0.17) | |
+| Azorius Control | 20% | 17% | 41% |
+| 4c Control | 46% | 41% | 49% |
+| Dimir Excruciator | 31% | 34% | 50% |
+| Bant Airbending (36 games) | 31% | 39% | 22% |
+
+No change outside the noise. A better judge at the leaf does not make search more faithful: search only chooses among main-phase plays, and the control gap is instant-speed play and posture, which the profiles address (Azorius 16% → 31% from rules alone). **Search stays research-only.** The evaluator's place is the profiles' close calls (cast now or hold; which threat to answer) and, trained on profile games as the production round robins accumulate them, the full evaluator of your doc.
