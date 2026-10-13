@@ -15,17 +15,22 @@
 const meta = require('./meta');
 const { produced } = require('./pilot');
 
-// Karsten, "How many sources do you need to consistently cast your spells?" (2022 update),
-// 60 cards: sources for a ~90% chance to cast on curve, by coloured pips and mana value.
-// Past the end of a row the last entry stands.
+// Karsten, "How Many Sources Do You Need to Consistently Cast Your Spells? A 2022 Update"
+// (TCGplayer Infinite, 8 Feb 2022), 60-card decks, as verified from the live page in
+// KARSTEN-SOURCES-VERIFIED.md: coloured sources for an (89 + mana value)% chance to cast on
+// curve, by coloured pips and mana value, at 20 / 25 / 30 lands. Between columns the count is
+// interpolated by the deck's lands; past the end of a row the last entry stands.
 const NEED = {
-  1: { 1: 14, 2: 13, 3: 12, 4: 10, 5: 9, 6: 9 },
-  2: { 2: 21, 3: 18, 4: 16, 5: 15, 6: 14 },
-  3: { 3: 23, 4: 21, 5: 19, 6: 18 },
+  1: { 1: [12, 14, 15], 2: [11, 13, 14], 3: [10, 12, 13], 4: [9, 10, 12], 5: [8, 9, 11], 6: [7, 9, 10] },
+  2: { 2: [18, 21, 23], 3: [15, 18, 21], 4: [13, 16, 19], 5: [12, 15, 17], 6: [11, 13, 16], 7: [10, 12, 15] },
+  3: { 3: [19, 23, 27], 4: [17, 21, 24], 5: [15, 19, 22], 6: [14, 17, 20], 7: [12, 16, 19] },
+  4: { 4: [20, 24, 29], 5: [18, 22, 26] },
 };
-const need = (pips, mv) => {
-  const row = NEED[Math.min(3, pips)], ks = Object.keys(row).map(Number);
-  return row[Math.min(Math.max(mv, ks[0]), ks[ks.length - 1])];
+const need = (pips, mv, lands = 25) => {
+  const row = NEED[Math.min(4, pips)], ks = Object.keys(row).map(Number);
+  const [l20, l25, l30] = row[Math.min(Math.max(mv, ks[0]), ks[ks.length - 1])];
+  const L = Math.min(30, Math.max(20, lands));
+  return Math.round(L <= 25 ? l20 + (l25 - l20) * (L - 20) / 5 : l25 + (l30 - l25) * (L - 25) / 5);
 };
 const NAME = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };
 
@@ -51,7 +56,7 @@ function mvOf(k) {
 function measure(main, find) {
   const unknown = [], src = { W: 0, U: 0, B: 0, R: 0, G: 0 }, worst = {};
   let lands = 0, spells = 0, mvSum = 0, early = 0;
-  const curve = {};
+  const curve = {}, spellList = [];
   for (const c of main) {
     const k = find(c.name);
     if (!k) { unknown.push(c.name); continue; }
@@ -66,10 +71,12 @@ function measure(main, find) {
     spells += c.qty; mvSum += mv * c.qty;
     if (mv <= 2) early += c.qty;
     curve[Math.min(mv, 6)] = (curve[Math.min(mv, 6)] || 0) + c.qty;
-    for (const [col, n] of Object.entries(pipsOf(k))) {
-      const want = need(n, Math.max(1, mv));
-      if (!worst[col] || want > worst[col].need) worst[col] = { need: want, card: c.name, cost: faces(k)[0].mana_cost || k.mana_cost, mv };
-    }
+    spellList.push({ name: c.name, cost: faces(k)[0].mana_cost || k.mana_cost, mv, pips: pipsOf(k) });
+  }
+  // the land count sets the column, so the worst card per colour is found after counting
+  for (const sp of spellList) for (const [col, n] of Object.entries(sp.pips)) {
+    const want = need(n, Math.max(1, sp.mv), lands);
+    if (!worst[col] || want > worst[col].need) worst[col] = { need: want, card: sp.name, cost: sp.cost, mv: sp.mv };
   }
   const avgMV = spells ? mvSum / spells : 0;
   const colours = Object.keys(worst).map(c => ({ colour: NAME[c], sources: src[c], need: worst[c].need, card: worst[c].card, cost: worst[c].cost, mv: worst[c].mv, short: Math.max(0, worst[c].need - src[c]) }));
@@ -131,7 +138,7 @@ function text(f) {
   const cols = f.colours.map(c => `${c.colour} ${c.sources} sources (the most demanding ${c.colour} card, ${c.card} ${c.cost}, wants ${c.need})`).join('; ');
   return `
 
-Functional check (rules of thumb, before any matchup number): ${f.ok ? 'passes.' : 'flags ' + f.flags.join('; ') + '.'}${f.shared.length ? ` Breaks a rule the way its archetype does on purpose, not flagged: ${f.shared.join('; ')}.` : ''} Lands ${f.lands} of ${f.size} (rule for this curve ${f.landRange[0]}-${f.landRange[1]}: 24-26 in Standard, one fewer under 2.5 average mana value, one more over 3.5${f.typical != null ? `; meta decks with this curve run about ${Math.round(f.typical)}, from a line through the ${f.fieldDecks} meta lists` : ''}); average mana value of the spells ${f.avgMV.toFixed(1)}; ${f.early} plays at two mana or less; curve ${curve}. Colour sources counted from lands (and spells with a land on the back), against Frank Karsten's table of sources needed to cast a card on curve about 9 times in 10: ${cols || 'colourless'}${f.shortCut != null ? ` (tuned meta lists commonly run up to ${f.shortCut} short of the table in their worst colour, so only a bigger gap is flagged)` : ''}.${f.unknown.length ? ' Not found in the card data, left out: ' + f.unknown.join(', ') + '.' : ''} If the deck fails the check, fixing that comes before any matchup advice, since a deck that stumbles on mana loses to everything; but a tuned list that breaks a rule of thumb on purpose (a low-curve aggro deck on 22 lands) is fine, so say why it matters for this list rather than quoting the rule.`;
+Functional check (rules of thumb, before any matchup number): ${f.ok ? 'passes.' : 'flags ' + f.flags.join('; ') + '.'}${f.shared.length ? ` Breaks a rule the way its archetype does on purpose, not flagged: ${f.shared.join('; ')}.` : ''} Lands ${f.lands} of ${f.size} (rule for this curve ${f.landRange[0]}-${f.landRange[1]}: 24-26 in Standard, one fewer under 2.5 average mana value, one more over 3.5${f.typical != null ? `; meta decks with this curve run about ${Math.round(f.typical)}, from a line through the ${f.fieldDecks} meta lists` : ''}); average mana value of the spells ${f.avgMV.toFixed(1)}; ${f.early} plays at two mana or less; curve ${curve}. Colour sources counted from lands (and spells with a land on the back), against Frank Karsten's 2022 table of sources needed to cast a card on curve about 9 times in 10 (read at this deck's land count; a one-drop counts only lands that enter untapped, which this count doesn't separate): ${cols || 'colourless'}${f.shortCut != null ? ` (tuned meta lists commonly run up to ${f.shortCut} short of the table in their worst colour, so only a bigger gap is flagged)` : ''}.${f.unknown.length ? ' Not found in the card data, left out: ' + f.unknown.join(', ') + '.' : ''} If the deck fails the check, fixing that comes before any matchup advice, since a deck that stumbles on mana loses to everything; but a tuned list that breaks a rule of thumb on purpose (a low-curve aggro deck on 22 lands) is fine, so say why it matters for this list rather than quoting the rule.`;
 }
 
 module.exports = { check, text, need };
