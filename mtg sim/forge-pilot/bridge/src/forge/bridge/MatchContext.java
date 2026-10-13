@@ -51,6 +51,8 @@ public final class MatchContext {
     public int searchRollouts = 4, searchTurns = 8, searchMax = 6;
     /** override Forge's choice only when a candidate beats it by this many standard errors */
     public double searchMargin = 2.0;
+    /** screen a decision first and skip the play-outs when the best leads by this much (0 = off); searchRollouts is then the play-out budget */
+    public int searchScreen = 0;
 
     public boolean owns(int seat, String kind) {
         return own[seat] == null || own[seat].contains(kind);

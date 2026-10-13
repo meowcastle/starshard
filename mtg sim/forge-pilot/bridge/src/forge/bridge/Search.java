@@ -28,12 +28,14 @@ import forge.game.zone.ZoneType;
  * libraries reshuffled, until the game ends or `turns` more turns pass (then Forge's position
  * evaluator scores it). The candidate with the best average wins.
  *
- * Version 1 known shortcut: a copy keeps the opponent's real hand, so play-outs see it.
+ * Hidden information: each copy deals the opponent a random hand from their hand and library
+ * together (PEEK=false, the default); SEARCH_PEEK=1 keeps their real hand, for comparison.
  */
 final class Search {
     private Search() {}
 
     static final boolean TRACE = "1".equals(System.getenv("SEARCH_TRACE"));
+    static final boolean PEEK = "1".equals(System.getenv("SEARCH_PEEK"));
 
     /** Forge's AI, except its first priority choice is fixed to the candidate being tried. */
     static final class Forced extends PlayerControllerAi {
@@ -115,6 +117,15 @@ final class Search {
             if (cand != null && c == null) return Double.NaN;
             me.dangerouslySetController(new Forced(g, me, me.getLobbyPlayer(), c));
             for (Player p : g.getPlayers()) p.getZone(ZoneType.Library).shuffle();
+            if (!PEEK) {
+                // the searcher doesn't know their hand: deal one from everything it can't see
+                Player op = me.getWeakestOpponent();
+                List<Card> hand = new ArrayList<>(op.getCardsIn(ZoneType.Hand)), pool = new ArrayList<>(hand);
+                pool.addAll(op.getCardsIn(ZoneType.Library));
+                Collections.shuffle(pool, forge.util.MyRandom.getRandom());
+                op.getZone(ZoneType.Hand).setCards(new ArrayList<>(pool.subList(0, hand.size())));
+                op.getZone(ZoneType.Library).setCards(new ArrayList<>(pool.subList(hand.size(), pool.size())));
+            }
             if (TRACE) { Player op = me.getWeakestOpponent(); System.err.println("[search] start turn " + g.getPhaseHandler().getTurn() + " " + g.getPhaseHandler().getPhase() + " me lib " + me.getCardsIn(ZoneType.Library).size() + " hand " + me.getCardsIn(ZoneType.Hand).size() + " life " + me.getLife() + " | opp lib " + op.getCardsIn(ZoneType.Library).size() + " life " + op.getLife() + " | orig me lib " + origMe.getCardsIn(ZoneType.Library).size()); }
             Cap cap = new Cap(g, me, g.getPhaseHandler().getTurn() + turns);
             g.subscribeToEvents(cap);
@@ -138,36 +149,68 @@ final class Search {
     /** The best candidate (null = pass), whether it beat Forge's own choice, and what each scored. */
     static final class Result {
         SpellAbility best;
-        boolean override = false;
+        boolean override = false, screened = false;
+        int playouts = 0;
         final List<String> scores = new ArrayList<>();
+    }
+
+    private static final class Stat {
+        final SpellAbility sa;
+        double sum = 0, sq = 0;
+        int n = 0;
+        Stat(SpellAbility sa) { this.sa = sa; }
+        double mean() { return n == 0 ? Double.NEGATIVE_INFINITY : sum / n; }
+        double var() { return n > 1 ? Math.max(0, (sq - n * mean() * mean()) / (n - 1)) : W * (double) W; }
+        void add(double x) { if (!Double.isNaN(x)) { sum += x; sq += x * x; n++; } }
     }
 
     /**
      * Forge's own choice (`base`, null = pass) stands unless another candidate beats its average
      * by more than `z` standard errors of the difference: ties and noise leave the decision to Forge.
+     *
+     * Three economies (RESEARCH-PILOT-QUESTIONS-12OCT.md, Q1):
+     *  - screen > 0: score every candidate once through the end of this turn; if the best leads the
+     *    second by more than `screen`, the decision is clear and Forge's choice stands unsearched;
+     *    otherwise only candidates within `screen` of the best (and Forge's) go on;
+     *  - play-outs are raced by sequential halving: 2 each, drop the worse half, double, until one
+     *    is left or `budget` play-outs are spent (Forge's choice always stays in the race);
+     *  - `turns` is the horizon: 1 = to the start of my next turn, one full cycle.
      */
-    static Result choose(Game game, Player me, SpellAbility base, List<SpellAbility> candidates, int rollouts, int turns, double z) {
+    static Result choose(Game game, Player me, SpellAbility base, List<SpellAbility> candidates, int budget, int turns, double z, int screen) {
         Result r = new Result();
-        double bestScore = Double.NEGATIVE_INFINITY, baseScore = Double.NaN, bestVar = 0, baseVar = 0;
-        int bestN = 0, baseN = 0;
-        List<SpellAbility> all = new ArrayList<>();
-        all.add(null); // pass
-        all.addAll(candidates);
-        for (SpellAbility sa : all) {
-            double sum = 0, sq = 0;
-            int n = 0;
-            for (int i = 0; i < rollouts; i++) {
-                double x = rollout(game, me, sa, turns);
-                if (!Double.isNaN(x)) { sum += x; sq += x * x; n++; }
-            }
-            if (n == 0) continue;
-            double avg = sum / n, var = n > 1 ? Math.max(0, (sq - n * avg * avg) / (n - 1)) : W * (double) W;
-            r.scores.add((sa == base ? "*" : "") + (sa == null ? "pass" : sa.getHostCard().getName()) + "=" + Math.round(avg) + "/" + n);
-            if (sa == base) { baseScore = avg; baseVar = var; baseN = n; }
-            if (avg > bestScore) { bestScore = avg; bestVar = var; bestN = n; r.best = sa; }
+        List<Stat> alive = new ArrayList<>();
+        alive.add(new Stat(null)); // pass
+        for (SpellAbility sa : candidates) alive.add(new Stat(sa));
+        Stat baseStat = null;
+        for (Stat st : alive) if (st.sa == base) baseStat = st;
+        if (baseStat == null) return r;
+        if (screen > 0) {
+            List<double[]> quick = new ArrayList<>();
+            for (int i = 0; i < alive.size(); i++) { double x = rollout(game, me, alive.get(i).sa, 0); r.playouts++; if (!Double.isNaN(x)) quick.add(new double[]{x, i}); }
+            quick.sort((a, b) -> Double.compare(b[0], a[0]));
+            if (quick.size() < 2 || quick.get(0)[0] - quick.get(1)[0] > screen) { r.screened = true; r.best = base; return r; }
+            double top = quick.get(0)[0];
+            List<Stat> keep = new ArrayList<>();
+            for (double[] q : quick) if (top - q[0] <= screen) keep.add(alive.get((int) q[1]));
+            if (!keep.contains(baseStat)) keep.add(baseStat);
+            alive = keep;
         }
-        double se = Math.sqrt(bestVar / Math.max(1, bestN) + baseVar / Math.max(1, baseN));
-        r.override = !Double.isNaN(baseScore) && r.best != base && bestScore - baseScore > z * Math.max(se, 1);
+        int k = 2;
+        while (r.playouts < budget) {
+            for (Stat st : alive) for (int i = 0; i < k && r.playouts < budget; i++) { st.add(rollout(game, me, st.sa, turns)); r.playouts++; }
+            if (alive.size() <= 2) { if (r.playouts >= budget || alive.size() == 1) break; continue; }
+            alive.sort((a, b) -> Double.compare(b.mean(), a.mean()));
+            List<Stat> next = new ArrayList<>(alive.subList(0, (alive.size() + 1) / 2));
+            if (!next.contains(baseStat)) next.add(baseStat);
+            alive = next;
+            k *= 2;
+        }
+        Stat best = baseStat;
+        for (Stat st : alive) if (st.n > 0 && st.mean() > best.mean()) best = st;
+        for (Stat st : alive) r.scores.add((st == baseStat ? "*" : "") + (st.sa == null ? "pass" : st.sa.getHostCard().getName()) + "=" + Math.round(st.mean()) + "/" + st.n);
+        r.best = best.sa;
+        double se = Math.sqrt(best.var() / Math.max(1, best.n) + baseStat.var() / Math.max(1, baseStat.n));
+        r.override = best != baseStat && baseStat.n > 0 && best.mean() - baseStat.mean() > z * Math.max(se, 1);
         return r;
     }
 }

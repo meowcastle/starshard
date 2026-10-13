@@ -10,7 +10,7 @@ const { runMatches } = require('../pilot');
 
 const [CAL, OUT, POLICY = 'reactive', M = '14', PAR = '4', ONLY = ''] = process.argv.slice(2);
 const lists = JSON.parse(fs.readFileSync(CAL, 'utf8')).standard.lists.filter(l => !ONLY || ONLY.split(',').includes(l.name));
-const SEARCH = POLICY === 'search' ? { rollouts: +(process.env.SEARCH_ROLLOUTS || 4), turns: +(process.env.SEARCH_TURNS || 4), max: +(process.env.SEARCH_MAX || 5), margin: +(process.env.SEARCH_MARGIN || 2) } : null;
+const SEARCH = POLICY === 'search' ? { rollouts: +(process.env.SEARCH_ROLLOUTS || 4), turns: +(process.env.SEARCH_TURNS || 4), max: +(process.env.SEARCH_MAX || 5), margin: +(process.env.SEARCH_MARGIN || 2), screen: +(process.env.SEARCH_SCREEN || 0) } : null;
 const done = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : {};
 const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };

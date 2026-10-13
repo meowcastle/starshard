@@ -498,9 +498,9 @@ public class PlayerControllerExternal extends PlayerControllerAi {
             final List<SpellAbility> tried = new ArrayList<>(cands);
             if (base != null && !tried.contains(base)) tried.add(base);
             final SpellAbility fb = base;
-            Search.Result sr = asAi(() -> Search.choose(sg, player, fb, tried, ctx.searchRollouts, ctx.searchTurns, ctx.searchMargin));
-            ctx.auto(seat, "search", "priority", sr.override ? "overrode Forge" : "kept Forge's choice");
-            if (Search.TRACE) client.log("search: " + (sr.override ? "OVERRIDE " : "") + String.join(", ", sr.scores));
+            Search.Result sr = asAi(() -> Search.choose(sg, player, fb, tried, ctx.searchRollouts, ctx.searchTurns, ctx.searchMargin, ctx.searchScreen));
+            ctx.auto(seat, "search", "priority", sr.screened ? "clear, not searched" : sr.override ? "overrode Forge" : "kept Forge's choice");
+            if (Search.TRACE) client.log("search: " + (sr.screened ? "SCREENED " : sr.override ? "OVERRIDE " : "") + sr.playouts + " play-outs " + String.join(", ", sr.scores));
             if (!sr.override) return aiPick;
             if (sr.best == null) return null;
             agentChosen = sr.best;

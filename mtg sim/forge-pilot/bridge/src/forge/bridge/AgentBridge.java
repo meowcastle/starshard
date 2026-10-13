@@ -63,6 +63,7 @@ public final class AgentBridge {
             ctx.searchTurns = Integer.parseInt(a.getOrDefault("search-turns", "8"));
             ctx.searchMax = Integer.parseInt(a.getOrDefault("search-max", "6"));
             ctx.searchMargin = Double.parseDouble(a.getOrDefault("search-margin", "2.0"));
+            ctx.searchScreen = Integer.parseInt(a.getOrDefault("search-screen", "0"));
             for (int s = 0; s < 2; s++) {
                 String own = a.getOrDefault("own" + s, a.get("own"));
                 if (own != null) ctx.own[s] = new java.util.HashSet<>(java.util.Arrays.asList(own.split(",")));
