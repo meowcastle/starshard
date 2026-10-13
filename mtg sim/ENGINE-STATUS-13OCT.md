@@ -55,7 +55,7 @@ Two ways a pairing is played:
 | --- | --- |
 | `reactive`, all 20 meta decks (12 Oct) | Only Azorius Control passes (72–82%); it hurt four decks (Boros Dwarves 37%, Lifegain 40%, Jeskai Control 40%, Dimir Midrange 41%) |
 | `answers` | Azorius Control 72% of 68 (passes); 4c Control 41% of 73 (fails) |
-| `tapout` | 4c Control **51% of 69** (fails the bar, but the first rule set that doesn't play 4c worse than Forge) |
+| `tapout` | 4c Control **51% of 69** (fails the bar, but the first rule set that doesn't play 4c worse than Forge; against the field it moves 4c 45% → 47%, §5.4) |
 | play-out search (§4), four decks | 57% pooled; no single deck passes at ~40 games |
 | no-chump blocks, eight decks | every deck 48–50%: no effect (§5.4) |
 
@@ -162,7 +162,23 @@ With `reactive`, the control-ahead-of-aggro inversion goes (49–64% under 1,000
 
 **Attacks:** with the defender holding no untapped creatures, Forge attacked with nothing on 7–11% of turns and held some back on 4–5% (this count includes creatures that couldn't attack); 1% of attacks lost creatures for nothing. Combat looks reasonable on both sides.
 
-**Batch 5 (profiles by plan: 4c Control `tapout`, Azorius Control `answers`, the rest stock):** running at the time of writing; results appended when done.
+**Batch 5, profiles by plan** (plan.js decides: 4c Control `tapout`, Azorius Control `answers`, every other deck stock Forge; 965 games):
+
+| Deck | Stock | `answers` on every deck | Profiles by plan | Real |
+| --- | --- | --- | --- | --- |
+| Azorius Control | 16% | 26% | **31%** | 41% |
+| 4c Control | 45% | 41% | **47%** | 49% |
+| Dimir Excruciator | 34% | 34% | 32% | 50% |
+| Izzet Spellementals | 47% | 41% | 46% | |
+| Jund Sacrifice | 47% | 41% | 47% | |
+| Dimir Midrange | 50% | 59% | 50% | |
+| Mono-Green Landfall | 51% | 63% | 47% | |
+| Boros Dwarves | 74% | 66% | 72% | |
+| Lifegain | 72% | 72% | 70% | |
+
+4c Control under `tapout`: mana left at the end of its own turn **4.6 → 2.5**; after the opponent's turn 1.9; a held instant used after a creature or planeswalker 81% of 68. Azorius under `answers`: 89% of 284; 2.1 left after the opponent's turn. The first configuration that moves both control decks toward their real rates without moving any other deck outside noise: the profiles touch only the decks whose plan calls for them. (The curve's class rows in this batch use plan.js's classes, which split tempo from aggro, so they are not comparable row for row with batches 1–4; control ahead of midrange is still inverted, 34–51% under 1,000 points.)
+
+A sixth batch is running with Azorius Control on `reactive` instead of `answers` (production runs `reactive` today), to choose between them; 4c Control `tapout` is the candidate for production either way.
 
 ## 6. Reading decks: tags and plans
 
@@ -185,7 +201,7 @@ With `reactive`, the control-ahead-of-aggro inversion goes (49–64% under 1,000
 | Piece | State |
 | --- | --- |
 | Engine | Forge 2.0.15; pilot rules `0e428316`; code `a5c199f7`; NAS and Mac worker on the same |
-| Pilots | `reactive` for Azorius Control, `deadcards` where they apply; `answers` and `tapout` not in production |
+| Pilots | `reactive` for Azorius Control, `deadcards` where they apply; `answers` and `tapout` not in production yet (`tapout` for 4c Control is the candidate, §5.4) |
 | Logging | background jobs (calibration round robins, benchmarks) |
 | Readings | plan, nearest meta deck, what's missing on every 1v1 brew version, in the coach |
 | Search, no-chump | built, off |

@@ -30,7 +30,7 @@ const todo = jobs.filter(([a, b]) => !done[a.name + '|' + b.name]);
 log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}`);
 
 // the profile each plan gets, for POLICY=profiles
-const PROFILE = { 'tap-out control': 'tapout', 'draw-go control': 'answers' };
+const PROFILE = { 'tap-out control': process.env.PROFILE_TAPOUT || 'tapout', 'draw-go control': process.env.PROFILE_DRAWGO || 'answers' };
 const policyOf = {};
 
 (async () => {
