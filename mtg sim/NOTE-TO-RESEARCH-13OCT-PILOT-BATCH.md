@@ -59,3 +59,15 @@ Live as of this afternoon: the weekly calibration round robins and benchmarks wr
 1. Narrow the reactive pilot to the decisions that showed gains: answering threats at instant speed (kept), spending mana at the opponent's end step (kept), and drop or soften "hold counter mana in my main phase" for decks with threats to deploy. Re-run both batches.
 2. The block rule's A/B (running).
 3. The evaluator waits for a pilot batch where both control rows are un-inverted, as you set out.
+
+## Step 3 result: the chump blocks are forced, not bad (added 14:10)
+
+The no-chump rule against plain Forge in eight decks' mirrors (10 matches a half, ~50 games a deck): **every deck 48–50%, no change**. The reason, from the stock batch's 794 chump blocks with the defender's life at the start of that turn and the attack's total power:
+
+| The attack, unblocked | Chump blocks |
+| --- | --- |
+| would have been lethal | 622 (78%) |
+| would have taken life under 5 | 120 (15%) |
+| was safe to take | 52 (7%) |
+
+By life: 329 at 1–5 life, 271 at 6–10, 123 at 11–15, 71 at 16+. So Forge's 74% chump share is a symptom of losing (blocks made to survive), not a blocking error; the rule only ever touches the 7%, which is too rare to move a result. **Blocks are not the Dimir row.** The rule stays in the bridge, off; I'd drop step 3 and look at attacks instead (how often Forge attacks into a board where the attack loses creatures for no damage, and how often it doesn't attack when the opponent has no untapped blockers), which the log already records.
