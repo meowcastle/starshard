@@ -11,13 +11,14 @@
 // call reads every script's Name: and hint lines once and caches the result per Forge
 // version in DATA_DIR, so later calls are a lookup.
 const fs = require('fs');
+const config = require('./config');
 const path = require('path');
 const zlib = require('zlib');
 
-const FORGE_DIR = process.env.FORGE_DIR || '/opt/forge';
+const FORGE_DIR = config.FORGE_DIR;
 // names compared the way Forge's deck loader does: front face only, no accents, any case
 const keyOf = n => String(n).split(/\s*\/\/?\s*/)[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
-const cacheFile = v => path.join(process.env.DATA_DIR || '/data', `aihints2-${String(v).replace(/[^\w.-]/g, '_')}.json`);
+const cacheFile = v => path.join(config.DATA_DIR, `aihints2-${String(v).replace(/[^\w.-]/g, '_')}.json`);
 
 // every file in a zip, as { name, data } (stored or deflated; no zip64, which Forge's zip doesn't need)
 function* zipEntries(buf) {

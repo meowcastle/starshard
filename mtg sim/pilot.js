@@ -11,6 +11,7 @@
 // swapped, fixed seeds; 50% = no stronger):
 //   FORGE_DIR=... DATA_DIR=... node pilot.js selfplay <calibration.json> <out dir> [matches per half=8] [at once=4] [decks=12]
 const net = require('net');
+const config = require('./config');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -18,9 +19,9 @@ const crypto = require('crypto');
 const { toDck } = require('./forge');
 const meta = require('./meta');
 
-const FORGE_DIR = process.env.FORGE_DIR || '/opt/forge';
-const BRIDGE = process.env.PILOT_BRIDGE || path.join(__dirname, 'forge-pilot', 'bridge', 'build', 'mtg-bench-bridge.jar');
-const XMX = process.env.FORGE_XMX || '3g';
+const FORGE_DIR = config.FORGE_DIR;
+const BRIDGE = config.PILOT_BRIDGE;
+const XMX = config.FORGE_XMX;
 const forgeJar = () => path.join(FORGE_DIR, fs.readdirSync(FORGE_DIR).find(f => /^forge-gui-desktop-.*jar-with-dependencies\.jar$/.test(f)));
 
 // ---------------------------------------------------------------- mulligans
@@ -215,9 +216,9 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
         '--deck0', files[0], '--deck1', files[1], '--external0', 'true', '--external1', 'true', '--games', String(games), '--seed', String(seed), '--sim-log', String(simLog), '--clock', String(clock || 0),
         '--max-turns', String(maxTurns), '--stops', 'all', '--own0', ownArg(0), '--own1', ownArg(1), '--matches', String(matches),
         ...(search ? ['--search-rollouts', String(search.rollouts || 4), '--search-turns', String(search.turns || 8), '--search-max', String(search.max || 6), '--search-margin', String(search.margin ?? 2), '--search-screen', String(search.screen || 0)] : [])];
-      const ch = spawn('java', args, { cwd: FORGE_DIR, env: { ...process.env, HOME: process.env.DATA_DIR || '/data' }, stdio: ['ignore', 'ignore', 'pipe'] });
+      const ch = spawn('java', args, { cwd: FORGE_DIR, env: config.childEnv({ HOME: config.DATA_DIR }), stdio: ['ignore', 'ignore', 'pipe'] });
       onChild && onChild(ch);
-      let err = ''; ch.stderr.on('data', d => { err = (err + d).slice(-4000); if (process.env.PILOT_STDERR) fs.appendFileSync(process.env.PILOT_STDERR, d); });
+      let err = ''; ch.stderr.on('data', d => { err = (err + d).slice(-4000); if (config.PILOT_STDERR) fs.appendFileSync(config.PILOT_STDERR, d); });
       ch.on('close', code => { res.ms = Date.now() - t0; res.code = code; if (code) res.errors.push('bridge exited ' + code + ': ' + err.slice(-600)); srv.close(); resolve(res); });
     });
   }));

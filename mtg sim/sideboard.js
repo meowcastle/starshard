@@ -5,20 +5,21 @@
 // the deck stays the same size) and cached on disk by the two lists, so a pairing
 // is planned once no matter how many runs play it.
 const fs = require('fs');
+const config = require('./config');
 const { writeJson, readJson } = require('./store');
 const path = require('path');
 const crypto = require('crypto');
 const usage = require('./usage');
 
-const MODEL = process.env.COACH_MODEL || 'claude-opus-5-5';
-const FILE = () => path.join(process.env.DATA_DIR || '/data', 'plans.json');
+const MODEL = config.COACH_MODEL;
+const FILE = () => path.join(config.DATA_DIR, 'plans.json');
 let plans = null;
 const load = () => { if (!plans) { plans = readJson(FILE(), {}); } return plans; };
 const save = () => writeJson(FILE(), plans);
 
 const canon = d => ['main', 'side'].map(s => (d[s] || []).map(c => c.qty + ' ' + c.name).sort().join('|')).join('#');
 const keyOf = (a, b) => crypto.createHash('sha1').update(canon(a) + '\n' + canon(b)).digest('hex').slice(0, 16);
-const available = () => !!process.env.ANTHROPIC_API_KEY;
+const available = () => !!config.ANTHROPIC_API_KEY;
 
 const listText = d => '[main]\n' + d.main.map(c => `${c.qty} ${c.name}`).join('\n') + '\n[sideboard]\n' + ((d.side || []).map(c => `${c.qty} ${c.name}`).join('\n') || '(none)');
 const SIDE_SCHEMA = { type: 'object', properties: {
@@ -29,9 +30,9 @@ const SIDE_SCHEMA = { type: 'object', properties: {
 
 async function ask(a, b, format, hints = {}) {
   const hint = [hints.a && 'Deck A: ' + hints.a, hints.b && 'Deck B: ' + hints.b].filter(Boolean).join('\n');
-  const r = await fetch((process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com') + '/v1/messages', {
+  const r = await fetch(config.ANTHROPIC_BASE_URL + '/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    headers: { 'Content-Type': 'application/json', 'x-api-key': config.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model: MODEL, max_tokens: 8000, // the model thinks first (~1.3k tokens on a test pairing); leave room for the plan after it
       system: 'You are a strong competitive Magic: The Gathering player. You write the sideboard plan a skilled player would actually use for games 2 and 3 of a best-of-three match. Board only what improves the matchup; boarding nothing is a valid plan. Swap card for card so each main deck keeps its size, bring cards in only from that deck\'s own sideboard, and take cards out only from that deck\'s own main deck. Use exact card names from the lists.',

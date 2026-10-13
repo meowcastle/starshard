@@ -1,6 +1,7 @@
 // sim.starshard.net — tiny API + static UI around Forge's headless simulator.
 // No dependencies: Node 20's http + fetch only.
 const http = require('http');
+const config = require('./config');
 const { writeJson, readJson } = require('./store');
 const fs = require('fs');
 const path = require('path');
@@ -18,18 +19,17 @@ const codex = require('./codex');
 const coach = require('./coach');
 const claude = require('./claude');
 
-const PORT = +process.env.PORT || 8088;
-const DATA = process.env.DATA_DIR || '/data';
-const HOST = process.env.HOST || '127.0.0.1';
+const PORT = config.PORT;
+const DATA = config.DATA_DIR;
+const HOST = config.HOST;
 // Logins are Star Shard accounts. The sim never sees a password hash: it asks the
 // Star Shard API (same NAS, loopback only) to log the user in, keeps the session
 // token it gets back in its own cookie, and re-checks it against /api/me, so a
 // Star Shard logout or password reset ends the sim session too.
-const STARSHARD_API = (process.env.STARSHARD_API || 'http://127.0.0.1:4001').replace(/\/$/, '');
-const list = v => (v || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-const ALLOWED = list(process.env.SIM_USERS);   // Star Shard usernames allowed in; "*" = any account
-const ADMINS = list(process.env.SIM_ADMINS);
-const MAX_GAMES = +process.env.MAX_GAMES || 200;
+const STARSHARD_API = config.STARSHARD_API.replace(/\/$/, '');
+const ALLOWED = config.SIM_USERS.map(x => x.toLowerCase());   // Star Shard usernames allowed in; "*" = any account
+const ADMINS = config.SIM_ADMINS.map(x => x.toLowerCase());
+const MAX_GAMES = config.MAX_GAMES;
 
 // Forge's newest stable release, checked daily (daily snapshots are prereleases, so
 // /releases/latest skips them). Admins see a notice when it is newer than ours.
@@ -48,8 +48,8 @@ setTimeout(checkForge, 30e3); setInterval(checkForge, 24 * 3600e3);
 // Daily limits, per person over the last 24 hours (admins are exempt): runs started,
 // questions asked, and a ceiling on what the whole sim spends on the model in a day.
 const D24 = 864e5;
-const RUNS_PER_DAY = +process.env.SIM_RUNS_PER_DAY || 4, ASKS_PER_DAY = +process.env.SIM_ASKS_PER_DAY || 25;
-const DAILY_BUDGET = process.env.SIM_DAILY_BUDGET != null && process.env.SIM_DAILY_BUDGET !== '' ? +process.env.SIM_DAILY_BUDGET : 10;
+const RUNS_PER_DAY = config.SIM_RUNS_PER_DAY, ASKS_PER_DAY = config.SIM_ASKS_PER_DAY;
+const DAILY_BUDGET = config.SIM_DAILY_BUDGET;
 const inTime = ms => { const m = Math.max(1, Math.ceil(ms / 60e3)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : ''); };
 function limitsFor(user) {
   if (user.isAdmin) return null;
@@ -123,7 +123,7 @@ function pairingsOf(job) {
 // served longest ago goes next, a person's own jobs in the order they started), and
 // calibration only plays when nobody is waiting and never takes the last local
 // player, so a person's run always starts at once.
-const SLOTS = Math.max(1, +process.env.SIM_PARALLEL || 3);
+const SLOTS = Math.max(1, config.SIM_PARALLEL);
 let localBusy = 0;
 const lastServed = new Map();
 function claim(where) {
@@ -202,7 +202,7 @@ function settle(job) {
 // squared times the matchup's variance, discounted by the games it already has),
 // until the extra games reach SIM_EXTRA times the first pass. Games already played by
 // earlier runs of the same list count, so a rerun often needs none.
-const TARGET = (+process.env.SIM_TARGET || 5) / 100, EXTRA = process.env.SIM_EXTRA != null && process.env.SIM_EXTRA !== '' ? +process.env.SIM_EXTRA : 1;
+const TARGET = config.SIM_TARGET / 100, EXTRA = config.SIM_EXTRA;
 function extend(job) {
   if (!job.brew || job.mode !== 'gauntlet' || !job.base || !EXTRA) return;
   const room = Math.min(Math.max(4, SLOTS + leases.size) - job.inflight, Math.round(job.base * EXTRA) - (job.plan.length - job.base)); if (room <= 0) return;
@@ -228,8 +228,8 @@ function extend(job) {
 // Forge version than ours is turned away, so every game in a run plays the same AI.
 // where a job stands in line: -1 once it has started playing
 const waitPos = j => j && jobs.has(j.id) && j.status === 'queued' ? queue.filter(x => x.status === 'queued').indexOf(j) : -1;
-const WORKER_TOKEN = process.env.SIM_WORKER_TOKEN || '';
-const LEASE_MS = +process.env.SIM_LEASE_MS || 120e3;
+const WORKER_TOKEN = config.SIM_WORKER_TOKEN;
+const LEASE_MS = config.SIM_LEASE_MS;
 const leases = new Map(); // id -> { job, i, pr, worker, until }
 const workersSeen = new Map(); // name -> { at, forge, playing }
 const workerOk = req => {
@@ -417,8 +417,8 @@ const CAL = path.join(DATA, 'calibration.json');
 let calibs = readJson(CAL, {});
 const saveCal = () => writeJson(CAL, calibs);
 coach.useField(format => calibs[String(format).toLowerCase()]?.lists || null);
-const CAL_TOP = +process.env.CALIBRATE_TOP || 10;
-const CAL_DAYS = 7, FORGE_DAYS = 21, REAL_DAYS = +process.env.REAL_DAYS || 42;
+const CAL_TOP = config.CALIBRATE_TOP;
+const CAL_DAYS = 7, FORGE_DAYS = 21, REAL_DAYS = config.REAL_DAYS;
 
 // Forge's meta-vs-meta results, pooled over game 1 and boarded games, keyed by pair.
 function forgePairs(format) {
@@ -1076,7 +1076,7 @@ const server = http.createServer(async (req, res) => {
     return send(res, 502, { error: e.message });
   }
 });
-server.listen(PORT, HOST, () => console.log(`sim listening on ${HOST}:${PORT} (forge ${forgeVersion()}), accounts via ${STARSHARD_API}`));
+server.listen(PORT, HOST, () => console.log(`sim listening on ${HOST}:${PORT}, engine ${engineKey(engine())}, accounts via ${STARSHARD_API}\n${config.describe('server')}`));
 backfill().catch(e => console.error('backfill:', e.message));
 // calibration: refit from what is on disk, then queue anything due, then check every six hours
 for (const f of new Set(history.filter(h => h.meta).map(h => h.meta))) refit(f).catch(e => console.error('refit:', e.message));

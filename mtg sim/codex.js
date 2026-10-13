@@ -11,6 +11,7 @@
 // the page asks again. An archetype's text is keyed by its list, so a new week's
 // list is written fresh and an unchanged one is not.
 const fs = require('fs');
+const config = require('./config');
 const { writeJson, readJson } = require('./store');
 const path = require('path');
 const crypto = require('crypto');
@@ -18,7 +19,7 @@ const meta = require('./meta');
 const claude = require('./claude');
 const TERMS = require('./terms');
 
-const FILE = () => path.join(process.env.DATA_DIR || '/data', 'codex.json');
+const FILE = () => path.join(config.DATA_DIR, 'codex.json');
 let store = null;
 const load = () => { if (!store) { store = readJson(FILE(), {}); store.gen = store.gen || {}; store.notes = store.notes || {}; } return store; };
 const save = () => writeJson(FILE(), store);

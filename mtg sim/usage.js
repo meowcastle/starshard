@@ -4,10 +4,11 @@
 // a request or job wraps its work in `as({ who, kind }, fn)`, and every model call
 // made inside it, however deep, is filed under that person.
 const fs = require('fs');
+const config = require('./config');
 const path = require('path');
 const { AsyncLocalStorage } = require('async_hooks');
 
-const FILE = () => path.join(process.env.DATA_DIR || '/data', 'usage.jsonl');
+const FILE = () => path.join(config.DATA_DIR, 'usage.jsonl');
 const als = new AsyncLocalStorage();
 const as = (ctx, fn) => als.run({ ...(als.getStore() || {}), ...ctx }, fn);
 
@@ -15,7 +16,7 @@ const as = (ctx, fn) => als.run({ ...(als.getStore() || {}), ...ctx }, fn);
 // PRICE_CACHE_WRITE / PRICE_CACHE_READ in .env override them when Anthropic's own
 // pricing page says otherwise.
 const PRICES = { 'claude-opus-5-5': { in: 4, out: 20, cw: 5, cr: 0.2 } };
-const env = (k, d) => process.env[k] != null && process.env[k] !== '' ? +process.env[k] : d;
+const env = (k, d) => config[k] ?? d;
 const priceOf = model => { const p = PRICES[model] || PRICES['claude-opus-5-5']; return { in: env('PRICE_IN', p.in), out: env('PRICE_OUT', p.out), cw: env('PRICE_CACHE_WRITE', p.cw), cr: env('PRICE_CACHE_READ', p.cr) }; };
 const costOf = (model, u) => { const p = priceOf(model); return ((u.input_tokens || 0) * p.in + (u.output_tokens || 0) * p.out + (u.cache_creation_input_tokens || 0) * p.cw + (u.cache_read_input_tokens || 0) * p.cr) / 1e6; };
 

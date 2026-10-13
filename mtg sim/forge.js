@@ -2,12 +2,13 @@
 // Forge CLI: sim -d <a.dck> <b.dck> ... -D <dir> -n <games> [-f Commander] -c <clock>
 // Not quiet: each game's full log is read for card-level stats (cardstats.js).
 const { spawn } = require('child_process');
+const config = require('./config');
 const fs = require('fs');
 const path = require('path');
 const cardstats = require('./cardstats');
 
-const FORGE_DIR = process.env.FORGE_DIR || '/opt/forge';
-const XMX = process.env.FORGE_XMX || '3g';
+const FORGE_DIR = config.FORGE_DIR;
+const XMX = config.FORGE_XMX;
 
 function findJar() {
   const jar = fs.readdirSync(FORGE_DIR).find(f => /^forge-gui-desktop-.*jar-with-dependencies\.jar$/.test(f));
@@ -54,7 +55,7 @@ function deckNames(decks) {
 const PILOT_DIR = path.join(__dirname, 'forge-pilot');
 const PILOT_JAR = path.join(PILOT_DIR, 'bridge', 'build', 'mtg-bench-bridge.jar');
 const readJson = f => { try { return JSON.parse(fs.readFileSync(path.join(PILOT_DIR, f), 'utf8')); } catch { return {}; } };
-const pilotOn = () => process.env.SIM_PILOT !== '0' && fs.existsSync(PILOT_JAR);
+const pilotOn = () => config.SIM_PILOT && fs.existsSync(PILOT_JAR);
 // changes whenever who gets piloted changes, so results from before and after are never mixed
 const pilotTag = () => pilotOn() ? require('crypto').createHash('md5').update(JSON.stringify([readJson('policies.json'), readJson('dead-cards.json')])).digest('hex').slice(0, 8) : 'off';
 // The engine a game was played with: the Forge version and, when the pilot is on, who it pilots
@@ -93,7 +94,7 @@ function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
     return f;
   });
   const args = [
-    `-Xmx${XMX}`, '-Djava.awt.headless=true', ...(process.env.FORGE_JAVA_OPTS || '').split(' ').filter(Boolean),
+    `-Xmx${XMX}`, '-Djava.awt.headless=true', ...config.FORGE_JAVA_OPTS.split(' ').filter(Boolean),
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
     '--add-opens', 'java.desktop/java.awt=ALL-UNNAMED',
@@ -105,10 +106,10 @@ function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
   if (seed != null) args.push('-s', String(seed));
   // an AI profile per seat (res/ai/<name>.ai), only when one is asked for; Forge's own default otherwise
   if (decks.some(d => d.profile)) args.push('-a', ...decks.map(d => d.profile || 'Default'));
-  const useXvfb = process.env.USE_XVFB !== '0';
+  const useXvfb = config.USE_XVFB;
   const cmd = useXvfb ? 'xvfb-run' : 'java';
   const argv = useXvfb ? ['-a', 'java', ...args] : args;
-  const child = spawn(cmd, argv, { cwd: FORGE_DIR, env: { ...process.env, HOME: process.env.DATA_DIR || '/data' } });
+  const child = spawn(cmd, argv, { cwd: FORGE_DIR, env: config.childEnv({ HOME: config.DATA_DIR }) });
 
   const results = { names, wins: names.map(() => 0), draws: 0, games: [], warnings: [], cards: cardstats.empty(names.length) };
   const maps = decks.map(cardstats.nameMap);

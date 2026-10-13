@@ -11,6 +11,7 @@
 // (the MTGGoldfish lists the run plays against), by overlap of main-deck
 // nonland cards. Decks near nothing are "other" and only count toward volume.
 const fs = require('fs');
+const config = require('./config');
 const path = require('path');
 
 const REPO = 'Jiliac/MTGODecklistCache';
@@ -18,11 +19,11 @@ const SOURCES = ['melee.gg', 'topdeck.gg'];
 const UA = { 'User-Agent': 'sim.starshard.net', Accept: 'application/vnd.github+json' };
 const DAY = 864e5;
 
-const cacheDir = () => path.join(process.env.DATA_DIR || '/data', 'realdata');
+const cacheDir = () => path.join(config.DATA_DIR, 'realdata');
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
 
 async function gh(url) {
-  const r = await fetch(url, { headers: process.env.GITHUB_TOKEN ? { ...UA, Authorization: 'Bearer ' + process.env.GITHUB_TOKEN } : UA });
+  const r = await fetch(url, { headers: config.GITHUB_TOKEN ? { ...UA, Authorization: 'Bearer ' + config.GITHUB_TOKEN } : UA });
   if (!r.ok) throw new Error(`GitHub answered ${r.status} for ${url.replace(/^https:\/\/[^/]+/, '')}`);
   return r.json();
 }

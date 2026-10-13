@@ -1,16 +1,17 @@
+const config = require('./config');
 // One call to the Messages API that returns a structured answer through a tool.
 // Opus 5.5 refuses a forced tool_choice ("tool"/"any" answer 400), so the tool is
 // offered with `auto` and the prompt asks for it; a JSON object in a text answer is
 // accepted as a fallback.
 const usage = require('./usage');
-const MODEL = process.env.COACH_MODEL || 'claude-opus-5-5';
-const available = () => !!process.env.ANTHROPIC_API_KEY;
+const MODEL = config.COACH_MODEL;
+const available = () => !!config.ANTHROPIC_API_KEY;
 
 async function ask({ system, prompt, tool, maxTokens = 8000 }) {
   if (!available()) throw new Error('no ANTHROPIC_API_KEY');
-  const r = await fetch((process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com') + '/v1/messages', {
+  const r = await fetch(config.ANTHROPIC_BASE_URL + '/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    headers: { 'Content-Type': 'application/json', 'x-api-key': config.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model: MODEL, max_tokens: maxTokens, system,
       messages: [{ role: 'user', content: prompt + `\n\nAnswer by calling ${tool.name}.` }],
@@ -30,9 +31,9 @@ async function ask({ system, prompt, tool, maxTokens = 8000 }) {
 // A plain-text answer to a conversation: [{ role: 'user'|'assistant', content }].
 async function chat({ system, messages, maxTokens = 8000 }) {
   if (!available()) throw new Error('no ANTHROPIC_API_KEY');
-  const r = await fetch((process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com') + '/v1/messages', {
+  const r = await fetch(config.ANTHROPIC_BASE_URL + '/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+    headers: { 'Content-Type': 'application/json', 'x-api-key': config.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
   });
   if (!r.ok) throw new Error(`Anthropic answered ${r.status}: ${(await r.text()).slice(0, 200)}`);
