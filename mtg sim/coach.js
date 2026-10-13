@@ -9,6 +9,7 @@
 // reply(): the conversation. Each turn sends the brew's context plus the recent
 // thread, so the coach always answers from the current results.
 const claude = require('./claude');
+const functional = require('./functional');
 
 const SYSTEM = `You are the coach in Forge Sim, a deck-testing tool for a small group of Magic: The Gathering players. You are a strong competitive player and a plain-spoken teacher.
 
@@ -66,7 +67,7 @@ Headline: ${headline(rv)}.${rv.aiCards && rv.aiCards.mine ? `
 The brew as Forge played it: ${[rv.aiCards.mine.missing.length ? 'Forge does not have ' + rv.aiCards.mine.missing.map(x => x.qty + ' ' + x.name).join(', ') + ', so the deck played without them' : '', rv.aiCards.mine.unplayable.length ? 'Forge\'s AI will not cast ' + rv.aiCards.mine.unplayable.map(x => x.qty + ' ' + x.name).join(', ') : '', rv.aiCards.mine.limited.length ? 'it casts ' + rv.aiCards.mine.limited.map(x => x.qty + ' ' + x.name).join(', ') + ' only situationally' : ''].filter(Boolean).join('; ')}. Discount anything the numbers say about those cards.` : ''}
 
 Matchups:
-${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}`;
+${matchups(rv)}${levers(rv)}${cardsText(rv.cards)}${functional.text(rv.functional)}`;
 }
 
 // How well Forge's matchups have carried over to real tournaments (calib.js fidelity), in words.
@@ -111,9 +112,20 @@ function levers(rv) {
   return '\n\nWhat bringing each losing matchup to even is worth at the tournament:\n' + E.levers.map(l => `- ${l.name}: top-8 odds +${(l.gain * 100).toFixed(1)} points (wins ${pct(l.p)} now)`).join('\n');
 }
 
+// The functional check for the run's version, added to the run before the coach reads it.
+// The field's lists come from the server (the calibration's meta decks), set with useField.
+let fieldOf = () => null;
+function useField(fn) { fieldOf = fn; }
+async function withCheck(b, rv) {
+  if (b.seats === 4 || !rv) return rv;
+  const v = b.versions.find(x => x.v === rv.v) || b.versions[b.versions.length - 1];
+  try { return { ...rv, functional: await functional.check(v.list, fieldOf(b.format), rv.calibration?.me?.near || null) }; } catch { return rv; }
+}
+
 async function writeup(b, rv) {
+  rv = await withCheck(b, rv);
   return claude.ask({ system: SYSTEM,
-    prompt: context(b, rv) + `\n\nThe page shows the headline: ${headline(rv)}.\n\nWrite the readout for this run: the single matchup or problem costing the most top-8 odds (weakness, a few words) and why in one or two sentences (weaknessNote); two or three fixes the player could test, ranked by what they should be worth at the tournament, each a concrete main-deck swap (cards out of the main deck, cards in from anywhere legal in ${b.format}, equal numbers) with a title and one or two sentences of why, or kind "note" for advice that isn't a swap; and a summary of two to four sentences that opens the conversation.`,
+    prompt: context(b, rv) + `\n\nThe page shows the headline: ${headline(rv)}.\n\nWrite the readout for this run: the single matchup or problem costing the most top-8 odds, or a failed functional check, which comes first (weakness, a few words) and why in one or two sentences (weaknessNote); two or three fixes the player could test, ranked by what they should be worth at the tournament, each a concrete main-deck swap (cards out of the main deck, cards in from anywhere legal in ${b.format}, equal numbers) with a title and one or two sentences of why, or kind "note" for advice that isn't a swap; and a summary of two to four sentences that opens the conversation.`,
     tool: { name: 'coach_readout', description: 'The coach readout for one run.', schema: { type: 'object', properties: {
       weakness: { type: 'string' }, weaknessNote: { type: 'string' }, summary: { type: 'string' },
       options: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, detail: { type: 'string' }, kind: { type: 'string', enum: ['swap', 'note'] }, in: SWAP, out: SWAP }, required: ['title', 'detail', 'kind'] } },
@@ -121,6 +133,7 @@ async function writeup(b, rv) {
 }
 
 async function reply(b, rv, thread) {
+  rv = await withCheck(b, rv);
   // roles alternate, and the conversation opens with the player: what the coach said
   // before the player's first message (the run summaries) goes in as context instead
   const msgs = [], said = [];
@@ -140,4 +153,4 @@ async function reply(b, rv, thread) {
   return claude.chat({ system, messages: msgs });
 }
 
-module.exports = { writeup, reply, context, headline };
+module.exports = { writeup, reply, context, headline, useField };

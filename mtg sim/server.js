@@ -415,6 +415,7 @@ function benchView(id) {
 const CAL = path.join(DATA, 'calibration.json');
 let calibs = {}; try { calibs = JSON.parse(fs.readFileSync(CAL, 'utf8')); } catch {}
 const saveCal = () => fs.writeFileSync(CAL, JSON.stringify(calibs));
+coach.useField(format => calibs[String(format).toLowerCase()]?.lists || null);
 const CAL_TOP = +process.env.CALIBRATE_TOP || 10;
 const CAL_DAYS = 7, FORGE_DAYS = 21, REAL_DAYS = +process.env.REAL_DAYS || 42;
 
