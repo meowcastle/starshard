@@ -35,6 +35,14 @@ const need = (pips, mv, lands = 25) => {
 const NAME = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };
 
 const faces = k => k.card_faces && k.card_faces.length ? k.card_faces : [k];
+// Can this land be tapped for mana on turn 1? Not if it enters tapped, except the fast lands
+// (untapped with two or fewer other lands) and the shocks (pay 2 life); a fetch that finds a
+// tapped land (Fabled Passage, Evolving Wilds) doesn't either. Karsten counts only these for a one-drop.
+const untappedT1 = k => {
+  const t = faces(k).map(f => f.oracle_text || '').join('\n');
+  if (/two or fewer other lands|you may pay 2 life/i.test(t)) return true;
+  return !/enters (the battlefield )?tapped|onto the battlefield tapped/i.test(t);
+};
 const isLand = k => /\bLand\b/.test(faces(k)[0].type_line || k.type_line || '');
 // coloured pips of the front face's cost; hybrid and Phyrexian pips are left out (they can be paid otherwise)
 const pipsOf = k => {
@@ -54,7 +62,7 @@ function mvOf(k) {
 }
 
 function measure(main, find) {
-  const unknown = [], src = { W: 0, U: 0, B: 0, R: 0, G: 0 }, worst = {};
+  const unknown = [], src = { W: 0, U: 0, B: 0, R: 0, G: 0 }, src1 = { W: 0, U: 0, B: 0, R: 0, G: 0 }, worst = {};
   let lands = 0, spells = 0, mvSum = 0, early = 0;
   const curve = {}, spellList = [];
   for (const c of main) {
@@ -62,11 +70,12 @@ function measure(main, find) {
     if (!k) { unknown.push(c.name); continue; }
     if (isLand(k)) {
       lands += c.qty;
-      for (const col of produced(k)) src[col] += c.qty;
+      for (const col of produced(k)) { src[col] += c.qty; if (untappedT1(k)) src1[col] += c.qty; }
       continue;
     }
     // a spell with a land on its back (a modal double-faced card) still makes mana
-    if (faces(k).slice(1).some(f => /\bLand\b/.test(f.type_line || ''))) for (const col of produced({ card_faces: faces(k).slice(1) })) src[col] += c.qty;
+    // ... and counts as 0.4 of a land (Karsten, for the non-mythic ones)
+    if (faces(k).slice(1).some(f => /\bLand\b/.test(f.type_line || ''))) { lands += 0.4 * c.qty; for (const col of produced({ card_faces: faces(k).slice(1) })) { src[col] += c.qty; if (untappedT1({ card_faces: faces(k).slice(1) })) src1[col] += c.qty; } }
     const mv = mvOf(k);
     spells += c.qty; mvSum += mv * c.qty;
     if (mv <= 2) early += c.qty;
@@ -74,13 +83,15 @@ function measure(main, find) {
     spellList.push({ name: c.name, cost: faces(k)[0].mana_cost || k.mana_cost, mv, pips: pipsOf(k) });
   }
   // the land count sets the column, so the worst card per colour is found after counting
+  // the worst card per colour is the one furthest short of its sources (a one-drop counts only
+  // lands untapped on turn 1)
   for (const sp of spellList) for (const [col, n] of Object.entries(sp.pips)) {
-    const want = need(n, Math.max(1, sp.mv), lands);
-    if (!worst[col] || want > worst[col].need) worst[col] = { need: want, card: sp.name, cost: sp.cost, mv: sp.mv };
+    const want = need(n, Math.max(1, sp.mv), lands), have = sp.mv <= 1 ? src1[col] : src[col];
+    if (!worst[col] || want - have > worst[col].need - worst[col].have) worst[col] = { need: want, have, card: sp.name, cost: sp.cost, mv: sp.mv };
   }
   const avgMV = spells ? mvSum / spells : 0;
-  const colours = Object.keys(worst).map(c => ({ colour: NAME[c], sources: src[c], need: worst[c].need, card: worst[c].card, cost: worst[c].cost, mv: worst[c].mv, short: Math.max(0, worst[c].need - src[c]) }));
-  return { lands, avgMV, colours, early, curve, unknown };
+  const colours = Object.keys(worst).map(c => ({ colour: NAME[c], sources: worst[c].have, untapped: worst[c].mv <= 1, need: worst[c].need, card: worst[c].card, cost: worst[c].cost, mv: worst[c].mv, short: Math.max(0, worst[c].need - worst[c].have) }));
+  return { lands: Math.round(lands * 10) / 10, avgMV, colours, early, curve, unknown };
 }
 
 const sizeOf = main => main.reduce((s, c) => s + c.qty, 0);
@@ -125,8 +136,8 @@ async function check(list, field, near) {
   for (const c of m.colours) {
     if (c.short < cut) continue;
     const nc = nm && nm.colours.find(x => x.colour === c.colour);
-    if (nc && c.short <= nc.short + 1) { shared.push(`${c.sources} ${c.colour} sources, as the stock ${near} list runs ${nc.sources}`); continue; }
-    flags.push(`${c.sources} ${c.colour} sources; ${c.card} (${c.cost}) wants ${c.need} to be cast on turn ${Math.max(1, c.mv)} about 9 times in 10`);
+    if (nc && c.short <= nc.short + 1) { shared.push(`${c.sources} ${c.untapped ? 'untapped ' : ''}${c.colour} sources, as the stock ${near} list runs ${nc.sources}`); continue; }
+    flags.push(`${c.sources} ${c.untapped ? 'untapped ' : ''}${c.colour} sources; ${c.card} (${c.cost}) wants ${c.need} to be cast on turn ${Math.max(1, c.mv)} about 9 times in 10`);
   }
   return { size, ...m, near: nm ? near : null, shared, landRange, typical, fieldDecks: f ? f.decks : 0, shortCut: f ? f.shortCut : null, flags, ok: !flags.length };
 }
@@ -135,10 +146,10 @@ async function check(list, field, near) {
 function text(f) {
   if (!f) return '';
   const curve = Object.entries(f.curve).map(([mv, n]) => `${n} at ${mv === '6' ? '6+' : mv}`).join(', ');
-  const cols = f.colours.map(c => `${c.colour} ${c.sources} sources (the most demanding ${c.colour} card, ${c.card} ${c.cost}, wants ${c.need})`).join('; ');
+  const cols = f.colours.map(c => `${c.colour} ${c.sources} ${c.untapped ? 'untapped ' : ''}sources (the ${c.colour} card furthest short, ${c.card} ${c.cost}, wants ${c.need})`).join('; ');
   return `
 
-Functional check (rules of thumb, before any matchup number): ${f.ok ? 'passes.' : 'flags ' + f.flags.join('; ') + '.'}${f.shared.length ? ` Breaks a rule the way its archetype does on purpose, not flagged: ${f.shared.join('; ')}.` : ''} Lands ${f.lands} of ${f.size} (rule for this curve ${f.landRange[0]}-${f.landRange[1]}: 24-26 in Standard, one fewer under 2.5 average mana value, one more over 3.5${f.typical != null ? `; meta decks with this curve run about ${Math.round(f.typical)}, from a line through the ${f.fieldDecks} meta lists` : ''}); average mana value of the spells ${f.avgMV.toFixed(1)}; ${f.early} plays at two mana or less; curve ${curve}. Colour sources counted from lands (and spells with a land on the back), against Frank Karsten's 2022 table of sources needed to cast a card on curve about 9 times in 10 (read at this deck's land count; a one-drop counts only lands that enter untapped, which this count doesn't separate): ${cols || 'colourless'}${f.shortCut != null ? ` (tuned meta lists commonly run up to ${f.shortCut} short of the table in their worst colour, so only a bigger gap is flagged)` : ''}.${f.unknown.length ? ' Not found in the card data, left out: ' + f.unknown.join(', ') + '.' : ''} If the deck fails the check, fixing that comes before any matchup advice, since a deck that stumbles on mana loses to everything; but a tuned list that breaks a rule of thumb on purpose (a low-curve aggro deck on 22 lands) is fine, so say why it matters for this list rather than quoting the rule.`;
+Functional check (rules of thumb, before any matchup number): ${f.ok ? 'passes.' : 'flags ' + f.flags.join('; ') + '.'}${f.shared.length ? ` Breaks a rule the way its archetype does on purpose, not flagged: ${f.shared.join('; ')}.` : ''} Lands ${f.lands} of ${f.size} (rule for this curve ${f.landRange[0]}-${f.landRange[1]}: 24-26 in Standard, one fewer under 2.5 average mana value, one more over 3.5${f.typical != null ? `; meta decks with this curve run about ${Math.round(f.typical)}, from a line through the ${f.fieldDecks} meta lists` : ''}); average mana value of the spells ${f.avgMV.toFixed(1)}; ${f.early} plays at two mana or less; curve ${curve}. Colour sources counted from lands (and spells with a land on the back), against Frank Karsten's 2022 table of sources needed to cast a card on curve about 9 times in 10 (read at this deck's land count; a one-drop counts only lands untapped on turn 1, a spell with a land on its back counts 0.4 of a land): ${cols || 'colourless'}${f.shortCut != null ? ` (tuned meta lists commonly run up to ${f.shortCut} short of the table in their worst colour, so only a bigger gap is flagged)` : ''}.${f.unknown.length ? ' Not found in the card data, left out: ' + f.unknown.join(', ') + '.' : ''} If the deck fails the check, fixing that comes before any matchup advice, since a deck that stumbles on mana loses to everything; but a tuned list that breaks a rule of thumb on purpose (a low-curve aggro deck on 22 lands) is fine, so say why it matters for this list rather than quoting the rule.`;
 }
 
 module.exports = { check, text, need };
