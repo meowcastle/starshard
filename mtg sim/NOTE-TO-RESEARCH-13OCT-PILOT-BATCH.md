@@ -71,3 +71,7 @@ The no-chump rule against plain Forge in eight decks' mirrors (10 matches a half
 | was safe to take | 52 (7%) |
 
 By life: 329 at 1–5 life, 271 at 6–10, 123 at 11–15, 71 at 16+. So Forge's 74% chump share is a symptom of losing (blocks made to survive), not a blocking error; the rule only ever touches the 7%, which is too rare to move a result. **Blocks are not the Dimir row.** The rule stays in the bridge, off; I'd drop step 3 and look at attacks instead (how often Forge attacks into a board where the attack loses creatures for no damage, and how often it doesn't attack when the opponent has no untapped blockers), which the log already records.
+
+## Attacks (added 14:15)
+
+From the same stock batch: on turns where the attacker had creatures with power on board at the start of its turn and the defender had no untapped creatures at declare-attackers, Forge attacked with nothing 11% of the time (control decks), 9% (midrange), 7% (aggro), and held some back another 4–5%. Of all attacks, 1% lost creatures while dealing no damage and killing nothing. The "free damage" count includes creatures that couldn't attack (defender, tapped by an effect, entered that turn), so the real miss rate is lower. Combat decisions look reasonable on both sides; neither blocks nor attacks explain the midrange-vs-control inversion. That leaves what the score-parts table points at (control looking ahead on lands and non-creature permanents while losing the board) and instant-speed play.
