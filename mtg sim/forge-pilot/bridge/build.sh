@@ -11,7 +11,7 @@ fi
 rm -rf "$here/build/classes"
 mkdir -p "$here/build/classes"
 # starshard: the source list goes through an argfile, so a path with spaces ("mtg sim") compiles
-find "$here/src" -name '*.java' | sed 's/.*/"&"/' > "$here/build/sources.txt"
+find "$here/src" -name '*.java' ! -name '._*' | sed 's/.*/"&"/' > "$here/build/sources.txt"
 javac --release 17 -cp "$jar" -d "$here/build/classes" @"$here/build/sources.txt"
 jar cf "$here/build/mtg-bench-bridge.jar" -C "$here/build/classes" .
 echo "built $here/build/mtg-bench-bridge.jar"

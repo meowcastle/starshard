@@ -1,0 +1,7 @@
+# macOS metadata (AppleDouble ._ files) that a tar from a Mac can carry: javac reads ._X.java as source
+**/._*
+**/.DS_Store
+data
+design
+.env
+forge-pilot/bridge/build
