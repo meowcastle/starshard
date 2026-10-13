@@ -53,6 +53,8 @@ const SPEC = {
   WORKER_SLOTS: S('worker', 'or', Math.max(1, Math.floor(os.cpus().length / 2)), 'pairings a worker plays at once'),
   WORKER_NAME: S('worker', 'str', os.hostname().split('.')[0], 'the name a worker reports'),
   WORKER_AC_ONLY: S('worker', 'on', true, 'on a Mac, play only on mains power'),
+  ARENA_OWNER: S('worker', 'str', '', 'the sim account whose Arena games this Mac reads (empty = off)'),
+  ARENA_LOG_DIR: S('worker', 'str', path.join(os.homedir(), 'Library', 'Logs', 'Wizards Of The Coast', 'MTGA'), 'where MTG Arena writes Player.log'),
 };
 
 const env = process.env;

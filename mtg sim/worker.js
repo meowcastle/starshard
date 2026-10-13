@@ -72,5 +72,31 @@ async function slot(n) {
   }
 }
 
-log(`worker ${NAME}: engine ${engineKey(eng)}, ${SLOTS} at once, serving ${URL_}\n${config.describe('worker')}`);
+// The player's own Arena games (arena.js): Arena rewrites Player.log on every launch, so each changed
+// log is copied to DATA_DIR/arena/ first, then parsed and sent to the server, which files each match
+// once on the owner's brew it was played with. Off unless ARENA_OWNER names the account.
+const seenLogs = new Map();
+async function arenaSweep() {
+  if (!config.ARENA_OWNER) return;
+  for (const f of ['Player-prev.log', 'Player.log']) {
+    const src = path.join(config.ARENA_LOG_DIR, f);
+    let st; try { st = fs.statSync(src); } catch { continue; }
+    const key = st.mtimeMs + ':' + st.size; if (seenLogs.get(f) === key || !st.size) continue;
+    try {
+      const text = fs.readFileSync(src, 'utf8');
+      fs.mkdirSync(path.join(DATA, 'arena'), { recursive: true });
+      fs.writeFileSync(path.join(DATA, 'arena', `${f.replace('.log', '')}-${new Date(st.mtimeMs).toISOString().replace(/[:.]/g, '-')}.log`), text);
+      const { matches } = await require('./arena').parse(text);
+      if (matches.length) {
+        const r = await call('/api/worker/real', { owner: config.ARENA_OWNER, matches: matches.map(m => ({ matchId: m.matchId, at: m.at, event: m.event, result: m.result, games: m.games, playerCards: m.playerCards, opponentCards: m.opponentCards })) });
+        if (r.status !== 200) { log(`arena: the server answered ${r.status}`); continue; } // try again next sweep
+        if (r.data.added || r.data.unmatched.length) log(`arena: ${f}: ${matches.length} matches, ${r.data.added} new, ${r.data.known} already filed${r.data.unmatched.length ? ', ' + r.data.unmatched.length + ' not matched to a brew' : ''}`);
+      }
+      seenLogs.set(f, key);
+    } catch (e) { log(`arena: ${f}: ${e.message}`); }
+  }
+}
+if (config.ARENA_OWNER) { setTimeout(arenaSweep, 5e3); setInterval(arenaSweep, 60e3); }
+
+log(`worker ${NAME}: engine ${engineKey(eng)}, ${SLOTS} at once, serving ${URL_}${config.ARENA_OWNER ? ', reading Arena games for ' + config.ARENA_OWNER : ''}\n${config.describe('worker')}`);
 for (let i = 1; i <= SLOTS; i++) slot(i);

@@ -796,7 +796,34 @@ function ledgerOf(b) {
 }
 // what the coach reads beside the run: the player's settings, the event they mean, and the ledger
 const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings: st, eventInfo: { ...EVENTS[st.goal.event], rounds: roundsOf(b) }, ledger: ledgerOf(b) }; };
-const brewView = b => ({ ...b, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b), coachOn: claude.available() });
+// The player's own games with a brew (Design's change 8), from Arena logs the Mac worker sends:
+// b.realMatches keeps one row per match; the page reads this summary.
+const BASIC = /^(Plains|Island|Swamp|Mountain|Forest|Wastes)$/;
+function realOf(b) {
+  const ms = b.realMatches || []; if (!ms.length) return null;
+  const by = new Map();
+  for (const m of ms) { const k = m.opponent || 'Unknown', o = by.get(k) || { name: k, wins: 0, losses: 0 }; m.won ? o.wins++ : o.losses++; by.set(k, o); }
+  const bo3 = ms.filter(m => /bo3|best_of_three|traditional/i.test(m.event || '')).length;
+  return { wins: ms.filter(m => m.won).length, losses: ms.filter(m => !m.won).length, matches: ms.length,
+    source: bo3 > ms.length / 2 ? 'Arena Bo3' : 'Arena Bo1', since: ms.map(m => m.at).filter(Boolean).sort()[0]?.slice(0, 10) || null, byOpponent: [...by.values()] };
+}
+// the meta deck an opponent was most likely on: the field list sharing the most of the cards they showed
+// (2+); else their colours ("Green, not a meta list"), else Unknown. A ladder opponent is often on no meta list.
+const COLOR_WORD = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+async function archetypeOf(cards, format = 'standard') {
+  const lists = calibs[format]?.lists || [], seen = new Set(cards.filter(n => !BASIC.test(n)));
+  let best = null, bn = 1;
+  for (const l of lists) { const n = new Set([...l.main, ...(l.side || [])].map(c => c.name).filter(x => seen.has(x))).size; if (n > bn) { best = l.name; bn = n; } }
+  if (best) return best;
+  try {
+    const find = await meta.cards([...seen]), cols = new Set();
+    for (const n of seen) { const k = find(n); for (const c of (k && (k.colors || k.card_faces?.[0]?.colors)) || []) cols.add(c); }
+    const order = ['W', 'U', 'B', 'R', 'G'].filter(c => cols.has(c));
+    if (order.length) return order.map(c => COLOR_WORD[c]).join('-') + ', not a meta list';
+  } catch { /* the label falls back */ }
+  return 'Unknown';
+}
+const brewView = b => ({ ...b, real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b), coachOn: claude.available() });
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -916,6 +943,25 @@ const server = http.createServer(async (req, res) => {
           job.inflight--; settle(job); pump();
         }
         return send(res, 200, { ok: true });
+      }
+      // the player's own Arena matches (arena.js on the Mac): each one is filed once on the owner's brew
+      // whose latest list holds most of the cards the player showed (half or more of the nonbasic ones)
+      if (p === '/api/worker/real' && req.method === 'POST') {
+        const owner = String(body.owner || '').toLowerCase(), out = { added: 0, known: 0, unmatched: [] };
+        const mine = brews.filter(b => b.owner.toLowerCase() === owner && b.seats === 2);
+        for (const m of (Array.isArray(body.matches) ? body.matches : []).slice(0, 200)) {
+          if (!m || !m.matchId || !m.result) continue;
+          if (mine.some(b => (b.realMatches || []).some(x => x.matchId === m.matchId))) { out.known++; continue; }
+          const cards = (m.playerCards || []).map(String).filter(n => !BASIC.test(n));
+          let best = null, bs = 0;
+          for (const b of mine) { const names = new Set(latest(b).list.main.map(c => c.name)), share = cards.length ? cards.filter(n => names.has(n)).length / cards.length : 0; if (share > bs) { best = b; bs = share; } }
+          if (!best || bs < 0.5) { out.unmatched.push(m.matchId); continue; }
+          (best.realMatches = best.realMatches || []).push({ matchId: String(m.matchId).slice(0, 60), at: m.at || null, event: String(m.event || '').slice(0, 60), won: !!m.result.won,
+            onThePlay: m.games && m.games[0] ? m.games[0].onThePlay : null, opponent: await archetypeOf((m.opponentCards || []).map(String), best.format), v: latest(best).v, games: (m.games || []).length });
+          out.added++;
+        }
+        if (out.added) saveBrews();
+        return send(res, 200, out);
       }
       return send(res, 404, { error: 'not found' });
     }
