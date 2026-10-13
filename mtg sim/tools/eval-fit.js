@@ -12,12 +12,16 @@
 // so the score is judged on matchups it has not seen. Reported: log loss and accuracy on the test
 // turns, and the calibration rows for control against midrange.
 //
-//   node tools/eval-fit.js <classes.json> <logs dir> [more logs dirs...]
+//   node tools/eval-fit.js <classes.json> <logs dir> [more logs dirs...] [--out model.json]
+//
+// --out writes the linear model (feature names, means, standard deviations, intercept and weights)
+// for Search.java's leaf (--search-eval).
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 
-const [CLASSES, ...DIRS] = process.argv.slice(2);
+const argv = process.argv.slice(2), outAt = argv.indexOf('--out'), OUT = outAt >= 0 ? argv.splice(outAt, 2)[1] : null;
+const [CLASSES, ...DIRS] = argv;
 const cls = Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(CLASSES, 'utf8'))).map(([n, x]) => [n, x.class || x]));
 const CLASSES_ = ['aggro', 'midrange', 'control', 'tempo', 'combo'];
 
@@ -77,7 +81,9 @@ function fit(X, y, lambda = 1) {
     w = w.map((v, i) => v - step[i]);
     if (Math.max(...step.map(Math.abs)) < 1e-6) break;
   }
-  return x => 1 / (1 + Math.exp(-[1, ...x].reduce((s, v, i) => s + v * w[i], 0)));
+  const f = x => 1 / (1 + Math.exp(-[1, ...x].reduce((s, v, i) => s + v * w[i], 0)));
+  f.w = w;
+  return f;
 }
 const models = {
   forge: fit(train.map(r => [r.forge]), train.map(r => r.won)),
@@ -107,3 +113,9 @@ for (const [name, m] of Object.entries(models)) {
 console.log('\nthe linear model\'s weights, per standard deviation of each feature, and Forge\'s implied price per unit (score-parts.js) for comparison');
 const probe = i => { const x = new Array(k).fill(0); x[i] = 1; return Math.log(models.linear(x) / (1 - models.linear(x))) - Math.log(models.linear(new Array(k).fill(0)) / (1 - models.linear(new Array(k).fill(0)))); };
 NAMES.forEach((n, i) => console.log(`  ${n.padEnd(20)} ${probe(i).toFixed(3).padStart(7)} per sd (sd ${sd[i].toFixed(2)})`));
+
+if (OUT) {
+  fs.writeFileSync(OUT, JSON.stringify({ about: 'Logistic win model on the per-turn logs (tools/eval-fit.js): p(this seat wins) from this seat minus the other on each feature, standardised. Trained on Forge games.', features: NAMES, mean: mu, sd, intercept: models.linear.w[0], weights: models.linear.w.slice(1), trainedOn: { games: new Set(train.map(r => r.game)).size, turnSides: train.length }, at: new Date().toISOString() }, null, 1));
+  // a check value for the Java port: the model on the first held-out row
+  const r = held[0]; console.log(`\nwrote ${OUT}; check: features ${JSON.stringify(r.x)} -> p ${models.linear(z(r)).toFixed(6)}`);
+}

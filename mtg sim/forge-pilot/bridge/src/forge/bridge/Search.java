@@ -85,7 +85,43 @@ final class Search {
     /** A win or loss counts this much; a capped play-out scores my position minus the opponent's, within it. */
     static final int W = 3000;
 
+    /**
+     * The learned leaf (tools/eval-fit.js, NOTE-TO-RESEARCH-13OCT-EVALUATOR.md): a logistic model on 13
+     * board differences, read from --search-eval. When set, a capped play-out scores (2p - 1) * W, p the
+     * model's chance that `me` wins, in place of Forge's GameStateEvaluator difference.
+     */
+    static double[] evalMean, evalSd, evalW; static double evalB;
+    static void loadEval(String file) throws java.io.IOException {
+        com.google.gson.JsonObject o = com.google.gson.JsonParser.parseString(new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(file)), java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+        evalMean = arr(o.getAsJsonArray("mean")); evalSd = arr(o.getAsJsonArray("sd")); evalW = arr(o.getAsJsonArray("weights")); evalB = o.get("intercept").getAsDouble();
+    }
+    private static double[] arr(com.google.gson.JsonArray a) { double[] d = new double[a.size()]; for (int i = 0; i < d.length; i++) d[i] = a.get(i).getAsDouble(); return d; }
+    /** One side's numbers, in the log's feature order (GameLog.java / eval-fit.js sideOf). */
+    static double[] side(Game g, Player p) {
+        int lands = 0, untapped = 0, creatures = 0, power = 0, tough = 0, evasive = 0, other = 0, otherMv = 0;
+        for (Card c : p.getCardsIn(ZoneType.Battlefield)) {
+            if (c.isLand()) { lands++; if (!c.isTapped()) untapped++; }
+            else if (c.isCreature()) {
+                creatures++; power += c.getNetPower(); tough += c.getNetToughness();
+                if (c.hasKeyword(forge.game.keyword.Keyword.FLYING) || c.hasKeyword(forge.game.keyword.Keyword.MENACE) || c.hasKeyword(forge.game.keyword.Keyword.TRAMPLE)) evasive++;
+            } else { other++; otherMv += Math.max(0, c.getCMC()); }
+        }
+        return new double[]{ lands, untapped, p.getLife(), p.getCardsIn(ZoneType.Hand).size(), creatures, power, tough, evasive, other, otherMv, p.getCardsIn(ZoneType.Library).size() };
+    }
+    static double winChance(Game g, Player me) {
+        Player op = me.getWeakestOpponent();
+        double[] a = side(g, me), b = side(g, op);
+        double[] x = new double[13];
+        for (int i = 0; i < 11; i++) x[i] = a[i] - b[i];
+        x[11] = g.getStartingPlayer() == me ? 1 : -1;
+        x[12] = g.getPhaseHandler().getTurn() / 10.0;
+        double t = evalB;
+        for (int i = 0; i < 13; i++) t += evalW[i] * (x[i] - evalMean[i]) / evalSd[i];
+        return 1 / (1 + Math.exp(-t));
+    }
+
     static int rel(Game g, Player me) {
+        if (evalW != null) return (int) Math.round((2 * winChance(g, me) - 1) * W);
         GameStateEvaluator e = new GameStateEvaluator();
         int v = e.getScoreForGameState(g, me).value - e.getScoreForGameState(g, me.getWeakestOpponent()).value;
         return Math.max(-W, Math.min(W, v));

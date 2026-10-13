@@ -24,7 +24,7 @@ const done = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {
 const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };
 const env = (k, d) => process.env[k] === undefined ? d : +process.env[k];
-const SEARCH = { rollouts: env('SEARCH_ROLLOUTS', 8), turns: env('SEARCH_TURNS', 1), max: env('SEARCH_MAX', 5), margin: env('SEARCH_MARGIN', 2), screen: env('SEARCH_SCREEN', 50) };
+const SEARCH = { rollouts: env('SEARCH_ROLLOUTS', 8), turns: env('SEARCH_TURNS', 1), max: env('SEARCH_MAX', 5), margin: env('SEARCH_MARGIN', 2), screen: env('SEARCH_SCREEN', 50), ...(process.env.SEARCH_EVAL ? { eval: path.resolve(process.env.SEARCH_EVAL) } : {}) };
 const M = +(process.env.MATCHES || 14);
 
 const pairs = Object.keys(probe).filter(id => id.endsWith('|stock')).map(id => {
