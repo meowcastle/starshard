@@ -123,6 +123,31 @@ function reactive(m, find) {
   return null;
 }
 
+// ---------------------------------------------------------------- dead cards
+
+// Only the cards Forge's AI never casts (tools/dead-cards.js, forge-pilot/dead-cards.json);
+// every other decision stays Forge's. A dead counter answers their spell that matters, a dead
+// instant or flash card goes at their end step, anything else in our main phase.
+function deadcards(m, find, dead) {
+  const s = m.state || {}, opts = m.options || [], opp = s.opponent || {};
+  const mine = opts.filter(o => o.meta && o.meta.type === 'spell' && dead.has(nk(o.card || '')));
+  if (!mine.length) return null;
+  const role = o => roleOf(find(o.card || ''));
+  const top = (s.stack || [])[0];
+  if (top) {
+    if (top.controller !== 'opponent') return null;
+    const k = find(top.source), onField = (opp.battlefield || []).some(c => c.name === top.source);
+    const matters = k && !onField && !landish(k) && ((k.cmc || 0) >= 2 || /Creature|Planeswalker/.test((faces(k)[0] || k).type_line || k.type_line || ''));
+    const c = matters && mine.find(o => role(o).counter);
+    return c ? { choice: [c.id] } : null;
+  }
+  const yours = s.activePlayer === 'you';
+  if (!yours && s.phase === 'END_OF_TURN') { const c = mine.filter(o => role(o).instant && !role(o).counter).sort((a, b) => (b.meta.cmc || 0) - (a.meta.cmc || 0))[0]; return c ? { choice: [c.id] } : null; }
+  if (yours && /MAIN/.test(s.phase || '')) { const c = mine.find(o => !role(o).instant && !role(o).counter); return c ? { choice: [c.id] } : null; }
+  return null;
+}
+const nk = n => String(n).split(' // ')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 // ---------------------------------------------------------------- sideboarding
 
 // a plan { in: [{qty,name}], out: [{qty,name}] } applied to the bridge's main deck { name: qty }
@@ -136,7 +161,7 @@ function boarded(main, plan) {
 
 // ---------------------------------------------------------------- matches
 
-function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], workDir, maxTurns = 60, keepLogs = false, onGame }) {
+function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, workDir, maxTurns = 60, keepLogs = false, onGame, onChild }) {
   fs.mkdirSync(workDir, { recursive: true });
   const files = decks.map((d, i) => { const f = path.join(workDir, `seat${i}.dck`); fs.writeFileSync(f, toDck(d.name, d)); return f; });
   const names = [...new Set(decks.flatMap(d => [...d.main, ...(d.side || [])].map(c => c.name)))];
@@ -145,6 +170,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   const t0 = Date.now();
   // this match's mulligans so far, per seat, to know the size a hand would be kept at
   let match = 0, mulls = [0, 0], lastGame = 0;
+  const dead = new Set([...deadCards].map(nk));
   return meta.cards(names).then(find => new Promise((resolve) => {
     const answer = m => {
       if (m.game !== lastGame) { mulls = [0, 0]; lastGame = m.game; }
@@ -155,7 +181,11 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
         if (!k) mulls[m.seat]++;
         return { choice: [k ? 'keep' : 'mulligan'] };
       }
-      if (m.kind === 'priority' && policy[m.seat] === 'reactive') { res.decisions++; const a = reactive(m, find); if (a) { res.acted = (res.acted || 0) + 1; return a; } }
+      if (m.kind === 'priority' && policy[m.seat]) {
+        res.decisions++;
+        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
+        if (a) { res.acted = (res.acted || 0) + 1; return a; }
+      }
       return { delegate: true };
     };
     const srv = net.createServer(sock => {
@@ -171,7 +201,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
           else if (m.type === 'sideboard') { const p = plans[m.seat]; send({ type: 'answer', rid: m.rid, ...(p ? { main: boarded(m.main, p) } : {}) }); }
           else if (m.type === 'between_games') send({ type: 'answer', rid: m.rid });
           else if (m.type === 'game_start') { match = m.match || 0; if (m.game === 1) lastGame = 0; }
-          else if (m.type === 'game_end') { const g = { match: m.match || 0, game: m.game, winner: m.winner ?? -1, onThePlay: m.onThePlay, turns: m.turns, reason: m.reason }; if (keepLogs) g.log = m.log; res.games.push(g); onGame && onGame(g); }
+          else if (m.type === 'game_end') { const g = { match: m.match || 0, game: m.game, winner: m.winner ?? -1, onThePlay: m.onThePlay, turns: m.turns, ms: m.ms, slow: !!m.slow, reason: m.reason }; if (keepLogs) g.log = m.log; res.games.push(g); onGame && onGame(g); }
           else if (m.type === 'warning') res.warnings.length < 50 && res.warnings.push(m.msg);
           else if (m.type === 'error') res.errors.push(m.msg);
         }
@@ -181,16 +211,17 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       const ownArg = s => (own[s] && own[s].length ? own[s] : ['none']).join(',');
       const args = [`-Xmx${XMX}`, '-Djava.awt.headless=true', '--add-opens', 'java.base/java.lang=ALL-UNNAMED', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.desktop/java.awt=ALL-UNNAMED',
         '-cp', forgeJar() + path.delimiter + BRIDGE, 'forge.bridge.AgentBridge', '--port', String(srv.address().port), '--token', token,
-        '--deck0', files[0], '--deck1', files[1], '--external0', 'true', '--external1', 'true', '--games', '3', '--seed', String(seed),
+        '--deck0', files[0], '--deck1', files[1], '--external0', 'true', '--external1', 'true', '--games', String(games), '--seed', String(seed), '--sim-log', String(simLog), '--clock', String(clock || 0),
         '--max-turns', String(maxTurns), '--stops', 'all', '--own0', ownArg(0), '--own1', ownArg(1), '--matches', String(matches)];
       const ch = spawn('java', args, { cwd: FORGE_DIR, env: { ...process.env, HOME: process.env.DATA_DIR || '/data' }, stdio: ['ignore', 'ignore', 'pipe'] });
+      onChild && onChild(ch);
       let err = ''; ch.stderr.on('data', d => { err = (err + d).slice(-4000); });
       ch.on('close', code => { res.ms = Date.now() - t0; res.code = code; if (code) res.errors.push('bridge exited ' + code + ': ' + err.slice(-600)); srv.close(); resolve(res); });
     });
   }));
 }
 
-module.exports = { runMatches, keep, boarded, produced, reactive, roleOf };
+module.exports = { runMatches, keep, boarded, produced, reactive, deadcards, roleOf };
 
 // ---------------------------------------------------------------- self-play
 

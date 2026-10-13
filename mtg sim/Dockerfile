@@ -1,10 +1,10 @@
 # sim.starshard.net — Forge (headless AI-vs-AI) + a small Node API/UI.
 FROM node:20-bookworm-slim
 
-# Java 17 for Forge, xvfb as a safety net (Forge's desktop jar touches AWT
+# Java 17 for Forge (the JDK: the image compiles our pilot bridge against Forge's jar), xvfb as a safety net (Forge's desktop jar touches AWT
 # even in sim mode on some builds), bzip2 to unpack the release.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends openjdk-17-jre-headless xvfb xauth bzip2 curl ca-certificates \
+ && apt-get install -y --no-install-recommends openjdk-17-jdk-headless xvfb xauth bzip2 curl ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
 # Pin a release. FORGE_VERSION comes from docker-compose.yml, which reads it from
@@ -21,6 +21,11 @@ RUN mkdir -p /opt/forge \
 WORKDIR /app
 COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js ./
 COPY public ./public
+# our pilot on Forge's rules engine (forge-pilot/README.md): built against this image's own
+# Forge jar; SIM_PILOT=0 in .env turns it off
+COPY pilot.js ./
+COPY forge-pilot ./forge-pilot
+RUN rm -rf forge-pilot/bridge/build && bash forge-pilot/bridge/build.sh /opt/forge/forge-gui-desktop-*-jar-with-dependencies.jar
 
 ENV PORT=8088 \
     FORGE_DIR=/opt/forge \

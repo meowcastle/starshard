@@ -1,0 +1,4 @@
+{
+  "_": "Decks whose full pilot policy beat stock Forge in their own mirror (tools/mirror-gate.js: 55%+, range above 50%), by Forge version. Every other deck with a dead card gets the deadcards policy only.",
+  "2.0.15": { "Azorius Control": "reactive" }
+}

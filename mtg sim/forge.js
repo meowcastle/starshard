@@ -36,18 +36,42 @@ function toDck(name, deck) {
 
 const safe = s => String(s).replace(/[^A-Za-z0-9 _'.,-]/g, '').trim().slice(0, 60) || 'Deck';
 
-// Run one Forge process. onLine gets every stdout/stderr line; returns {child, done}.
-function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
-  fs.mkdirSync(workDir, { recursive: true });
-  // Forge's AI plays a deck defensively only when its name contains "Control" (or
-  // its average mana value is over 3), so a control brew called "Squall" would get
-  // attack logic meant for aggro. A deck marked ai: 'control' carries the word.
+// Forge's AI plays a deck defensively only when its name contains "Control" (or
+// its average mana value is over 3), so a control brew called "Squall" would get
+// attack logic meant for aggro. A deck marked ai: 'control' carries the word.
+function deckNames(decks) {
   const forgeName = d => { const n = safe(d.name); return d.ai === 'control' && !/control/i.test(n) ? n.slice(0, 52) + ' Control' : n; };
-  const names = decks.map((d, i) => {
+  return decks.map((d, i) => {
     let n = forgeName(d);
     if (decks.slice(0, i).some(o => forgeName(o) === n)) n += ` (${i + 1})`;
     return n;
   });
+}
+
+// Our own pilot (forge-pilot/, pilot.js) for the decisions Forge's AI gets wrong: a deck's
+// cards Forge never casts, and the full reactive policy for decks that beat stock Forge with
+// it in their own mirror. SIM_PILOT=0 turns it off; without the bridge jar it's off.
+const PILOT_DIR = path.join(__dirname, 'forge-pilot');
+const PILOT_JAR = path.join(PILOT_DIR, 'bridge', 'build', 'mtg-bench-bridge.jar');
+const readJson = f => { try { return JSON.parse(fs.readFileSync(path.join(PILOT_DIR, f), 'utf8')); } catch { return {}; } };
+const pilotOn = () => process.env.SIM_PILOT !== '0' && fs.existsSync(PILOT_JAR);
+// changes whenever who gets piloted changes, so results from before and after are never mixed
+const pilotTag = () => pilotOn() ? require('crypto').createHash('md5').update(JSON.stringify([readJson('policies.json'), readJson('dead-cards.json')])).digest('hex').slice(0, 8) : 'off';
+const deadKey = n => String(n).split(' // ')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+function pilotFor(deck, version = forgeVersion()) {
+  if (!pilotOn()) return null;
+  const pol = (readJson('policies.json')[version] || {})[deck.name];
+  if (pol) return pol;
+  const dead = new Set((readJson('dead-cards.json')[version] || []).map(deadKey));
+  return (deck.main || []).some(c => dead.has(deadKey(c.name))) ? 'deadcards' : null;
+}
+
+// Run one Forge process. onLine gets every stdout/stderr line; returns {child, done}.
+function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
+  fs.mkdirSync(workDir, { recursive: true });
+  const names = deckNames(decks);
+  const pilots = (!format || format === 'Constructed') && decks.length === 2 ? decks.map(d => pilotFor(d)) : [];
+  if (pilots.some(Boolean)) return runPiloted({ decks, names, pilots, games, clock, seed, workDir, onLine });
   const files = decks.map((d, i) => {
     const f = `deck${i + 1}.dck`;
     fs.writeFileSync(path.join(workDir, f), toDck(names[i], d));
@@ -112,4 +136,28 @@ function runSim({ decks, games, format, clock, seed, workDir, onLine }) {
   return { child, done, results };
 }
 
-module.exports = { runSim, forgeVersion, toDck };
+// The same pairing through the bridge: `games` single-game matches (match i seeded seed + i),
+// a pilot policy on the seats that have one and Forge's AI everywhere else, and the same
+// results object runSim fills, updated live, with card stats from the same log parser.
+function runPiloted({ decks, names, pilots, games, clock, seed, workDir, onLine }) {
+  const results = { names, wins: names.map(() => 0), draws: 0, games: [], warnings: [], cards: cardstats.empty(names.length), pilot: pilots };
+  const maps = decks.map(cardstats.nameMap);
+  let child = null, killed = false;
+  const handle = { kill: sig => { killed = true; if (child) child.kill(sig); } };
+  const done = require('./pilot').runMatches({
+    decks: decks.map((d, i) => ({ ...d, name: names[i] })), matches: games, games: 1, seed: seed == null ? Date.now() % 2147483647 : seed,
+    own: pilots.map(p => p ? ['priority'] : []), policy: pilots, deadCards: readJson('dead-cards.json')[forgeVersion()] || [],
+    simLog: true, clock: clock || 120, keepLogs: true, workDir,
+    onChild: c => { child = c; if (killed) c.kill('SIGKILL'); },
+    onGame: g => {
+      const r = { n: results.games.length + 1, ms: g.ms || 0, turn: g.turns, first: g.onThePlay, winner: g.winner };
+      if (g.winner === -1) results.draws++; else results.wins[g.winner]++;
+      results.games.push(r);
+      try { cardstats.add(results.cards, cardstats.parseGame(g.log || [], names, maps), g.winner); } catch (e) { results.warnings.length < 50 && results.warnings.push('card stats: ' + e.message); }
+      onLine && onLine(`Game Result: Game ${r.n} ${g.winner === -1 ? 'ended in a Draw!' : 'ended in ' + r.ms + ' ms. Ai(' + (g.winner + 1) + ')-' + names[g.winner] + ' has won!'}${g.slow ? ' (time limit)' : ''}`);
+    },
+  }).then(res => { for (const e of res.errors) results.warnings.length < 50 && results.warnings.push(e.slice(0, 300)); return { code: res.code ?? (killed ? 137 : 0), results }; });
+  return { child: handle, done, results };
+}
+
+module.exports = { runSim, forgeVersion, toDck, pilotFor, pilotTag };

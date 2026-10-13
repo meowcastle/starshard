@@ -4,7 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { runSim, forgeVersion } = require('./forge');
+const { runSim, forgeVersion, pilotTag } = require('./forge');
 const meta = require('./meta');
 const sideboard = require('./sideboard');
 const cardstats = require('./cardstats');
@@ -385,14 +385,14 @@ const benchPending = new Map(); // field key -> promise, so two runs at once sha
 async function benchmarkFor(field, format) {
   const names = field.map(f => f.name), key = format + '|' + names.join('|');
   // an unboarded benchmark is not reused once plans can be written
-  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && (x.bo3 === 'boarded' || !sideboard.available()) && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
+  const same = x => x.format === format && Date.now() - x.created < BENCH_DAYS * 864e5 && benchAlive(x) && (x.bo3 === 'boarded' || !sideboard.available()) && (x.pilot || 'off') === pilotTag() && x.names[0] === names[0] && names.slice(1).every(n => x.names.includes(n));
   const hit = benches.find(same); if (hit) return hit;
   if (benchPending.has(key)) return benchPending.get(key);
   const p = (async () => {
     const bd = await usage.as({ who: 'benchmark', kind: 'plans' }, () => boardAll(field, field.slice(1).map((_, i) => [0, i + 1]), format));
     const job = enqueue({ mode: 'gauntlet', decks: field, post: bd.post, games: GAMES, format: 'Constructed', clock: 180, owner: 'benchmark', meta: format, onDone: () => refit(format).catch(e => console.error('refit:', e.message)) });
     const failed = bd.note !== 'no-model' && Object.values(bd.plans).every(p => p.error);
-    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
+    const bm = { id: crypto.randomBytes(5).toString('hex'), format, created: Date.now(), names, jobId: job.id, pilot: pilotTag(), bo3: bd.note === 'no-model' ? 'unboarded' : failed ? 'plan-failed' : 'boarded' };
     benches.push(bm); saveBench();
     return bm;
   })().finally(() => benchPending.delete(key));

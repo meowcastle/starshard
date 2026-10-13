@@ -36,7 +36,7 @@ import forge.util.MyRandom;
  *   java -cp forge-gui-desktop-...-jar-with-dependencies.jar:mtg-bench-bridge.jar forge.bridge.AgentBridge \
  *     --port P --token T --deck0 a.dck --deck1 b.dck --external0 true --external1 false \
  *     --games 3 --seed 42 --max-turns 40 [--stops smart|all] [--mana smart|always]
- *     [--own|--own0|--own1 mulligan,sideboard,...] [--type Constructed|Draft] [--matches N]   (starshard additions)
+ *     [--own|--own0|--own1 mulligan,sideboard,...] [--type Constructed|Draft] [--matches N] [--sim-log true] [--clock S]   (starshard additions)
  * Must run with the Forge install (the directory containing res/) as working directory.
  */
 public final class AgentBridge {
@@ -72,6 +72,8 @@ public final class AgentBridge {
             // starshard: --matches N plays N matches in this one process (Forge's start-up is ~6 s, a game ~2-3 s);
             // match i is seeded with seed + i, so any one of them replays on its own
             int matches = Integer.parseInt(a.getOrDefault("matches", "1"));
+            final boolean simLog = Boolean.parseBoolean(a.getOrDefault("sim-log", "false"));
+            final long clock = Long.parseLong(a.getOrDefault("clock", "0")); // starshard: seconds a game may take, 0 = no limit
             for (int mi = 0; mi < matches; mi++) {
             MyRandom.setRandom(new Random(seed + mi));
             ctx.wins[0] = 0;
@@ -81,7 +83,9 @@ public final class AgentBridge {
             for (int s = 0; s < 2; s++) {
                 Deck deck = DeckSerializer.fromFile(new File(a.get("deck" + s)));
                 if (deck == null) throw new IllegalArgumentException("could not load deck " + a.get("deck" + s));
-                String name = "P" + (s + 1); // neutral names: agents never learn who they are playing
+                // neutral names: agents never learn who they are playing. starshard: --sim-log names players as
+                // `forge sim` does (Ai(1)-<deck name>), so the same log parser reads both
+                String name = simLog ? "Ai(" + (s + 1) + ")-" + deck.getName() : "P" + (s + 1);
                 boolean external = Boolean.parseBoolean(a.getOrDefault("external" + s, "true"));
                 boolean human = Boolean.parseBoolean(a.getOrDefault("human", "false")); // spike: Forge's human controller + headless screen
                 lobby[s] = !external ? GamePlayerUtil.createAiPlayer(name, s)
@@ -108,8 +112,14 @@ public final class AgentBridge {
                 start.addProperty("match", mi);
                 client.send(start);
                 String error = null;
+                long t0 = System.currentTimeMillis();
+                boolean slow = false;
                 try {
-                    match.startGame(game); // runs the whole game on this thread
+                    if (clock > 0) {
+                        // starshard: the same per-game limit `forge sim -c` applies; a game past it is a draw
+                        try { forge.view.TimeLimitedCodeBlock.runWithTimeout(() -> match.startGame(game), clock, java.util.concurrent.TimeUnit.SECONDS); }
+                        catch (java.util.concurrent.TimeoutException te) { slow = true; for (Player p : game.getPlayers()) p.intentionalDraw(); game.setGameOver(GameEndReason.Draw); }
+                    } else match.startGame(game); // runs the whole game on this thread
                 } catch (Throwable t) {
                     error = t.toString();
                     t.printStackTrace();
@@ -126,11 +136,13 @@ public final class AgentBridge {
                 Player starter = game.getStartingPlayer();
                 if (starter != null) end.addProperty("onThePlay", starter.getLobbyPlayer().equals(lobby[0]) ? 0 : 1);
                 end.addProperty("turns", out != null ? out.getLastTurnNumber() : game.getPhaseHandler().getTurn());
+                end.addProperty("ms", System.currentTimeMillis() - t0);
+                if (slow) end.addProperty("slow", true);
                 end.addProperty("reason", error != null ? "error: " + error : cap.reached ? "Draw (turn cap of " + ctx.maxTurns + " turns)"
                         : loop.reached ? "Draw (unbreakable loop)" : out != null ? String.valueOf(out.getWinCondition()) : "unknown");
                 // Full Forge game log, chronological, for offline review. The harness writes it to a file; it never reaches agents.
                 JsonArray log = new JsonArray();
-                for (GameLogEntry e : game.getGameLog().getAllEntries()) log.add(e.type() + ": " + e.message());
+                for (GameLogEntry e : game.getGameLog().getAllEntries()) log.add((simLog ? e.type().getCaption() : e.type().toString()) + ": " + e.message());
                 end.add("log", log);
                 JsonArray auto = new JsonArray();
                 for (int i = 0; i < 2; i++) auto.add(ctx.drainAuto(i));
