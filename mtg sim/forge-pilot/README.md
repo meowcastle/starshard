@@ -82,3 +82,23 @@ Two decks can't move k, and the other half of the gap is the aggro decks Forge o
 The bridge baseline (9%) sits below the calibration's 19% because the calibration's boarded
 games used sideboard plans and the probe's lists carry no sideboards; compare pilot to stock
 on the bridge only.
+
+### Second pass (12 Oct 2026, evening)
+
+`tools/dead-cards.js` found cards Forge never casts though no script hint says so: Azorius
+Control's 4 Countersculpt (its extra "behold a Jace or pay {1}" cost) and 4 Jace's Machinations
+(no AI logic), Bant Airbending Combo's 4 Appa, Steadfast Guardian (flash creature never cast),
+plus the already-flagged Springleaf Drum. The policy gained rule 4 (their end step: instant
+removal on a creature, then the biggest spare instant or flash card). Against the live
+calibration (51 pairings):
+
+| | real | Forge decides | reactive | mirror, pilot vs stock |
+|---|---|---|---|---|
+| Azorius Control | 41% | 13% | 27% | 82% of 66 |
+| 4c Control | 49% | 41% | 40% | 62% of 69 |
+| Dimir Excruciator | 50% | 32% | 37% | 47% of 70 |
+| Bant Airbending Combo | 22% | 28% | 41% (32 games) | 38% of 72 |
+
+k 0.06 → 0.10 (−0.01 to 0.22). The rules make the control decks stronger and Azorius closes
+half its gap to real; they don't help Dimir Excruciator's mirror and make the combo deck
+weaker. A rule set has to be per archetype and earn its place in its own mirror.

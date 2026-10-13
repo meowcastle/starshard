@@ -13,7 +13,7 @@ const path = require('path');
 const { runMatches } = require('../pilot');
 const calib = require('../calib');
 
-const [CAL, OUT, M = '14', PAR = '4', DECKS = 'Azorius Control,4c Control'] = process.argv.slice(2);
+const [CAL, OUT, M = '14', PAR = '4', DECKS = 'Azorius Control,4c Control,Dimir Excruciator,Bant Airbending Combo'] = process.argv.slice(2);
 const c = JSON.parse(fs.readFileSync(CAL, 'utf8')).standard;
 const lists = new Map(c.lists.map(l => [l.name, l]));
 const SEP = '\u0000';

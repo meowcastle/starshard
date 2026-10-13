@@ -67,7 +67,11 @@ function keep(hand, size, find) {
 //   1. their spell on top of the stack: counter it if it's a creature, planeswalker, or 2+ mana;
 //   2. their attack: kill an attacker with instant-speed removal (Forge picks the target);
 //   3. our main phase: play the land; while holding a counter, don't spend below its cost:
-//      cast the biggest spell that keeps it open, or pass.
+//      cast the biggest spell that keeps it open, or pass;
+//   4. their end step: if they have a creature, instant removal on it (Forge picks which);
+//      then spend what's left on the biggest instant or flash card that isn't a
+//      counter or removal (draw spells, flash creatures). Forge leaves that mana unused and
+//      never casts some of these at all (Jace's Machinations, Appa, Steadfast Guardian).
 const textOf = k => faces(k).map(f => f.oracle_text || '').join('\n') || k?.oracle_text || '';
 const roleOf = k => {
   if (!k) return {};
@@ -95,6 +99,13 @@ function reactive(m, find) {
   if (!mine && s.phase === 'COMBAT_DECLARE_ATTACKERS' && (s.combat || []).length) {
     const r = opts.find(o => o.meta && o.meta.type === 'spell' && role(o).removal);
     return r ? { choice: [r.id] } : null;
+  }
+  if (!mine && s.phase === 'END_OF_TURN') {
+    const theirs = (opp.battlefield || []).some(c => c.pt);
+    const kill = theirs && opts.find(o => o.meta && o.meta.type === 'spell' && role(o).removal && role(o).instant);
+    if (kill) return { choice: [kill.id] };
+    const spare = opts.filter(o => o.meta && o.meta.type === 'spell' && role(o).instant && !role(o).counter && !role(o).removal).sort((a, b) => (b.meta.cmc || 0) - (a.meta.cmc || 0))[0];
+    return spare ? { choice: [spare.id] } : null;
   }
   if (mine && /MAIN/.test(s.phase || '')) {
     const land = opts.find(o => o.meta && o.meta.type === 'land');
