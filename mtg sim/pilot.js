@@ -85,7 +85,9 @@ const roleOf = k => {
   };
 };
 
-function reactive(m, find) {
+// hold: rule 3, keep counter mana up in my own main phase. The 'answers' policy is the same rules
+// without it (13 Oct 2026: the hold seemed to cost decks that need to deploy threats).
+function reactive(m, find, { hold = true } = {}) {
   const s = m.state || {}, opts = m.options || [], you = s.you || {}, opp = s.opponent || {};
   const role = o => roleOf(find(o.card || ''));
   const top = (s.stack || [])[0];
@@ -109,7 +111,7 @@ function reactive(m, find) {
     const spare = opts.filter(o => o.meta && o.meta.type === 'spell' && role(o).instant && !role(o).counter && !role(o).removal).sort((a, b) => (b.meta.cmc || 0) - (a.meta.cmc || 0))[0];
     return spare ? { choice: [spare.id] } : null;
   }
-  if (mine && /MAIN/.test(s.phase || '')) {
+  if (hold && mine && /MAIN/.test(s.phase || '')) {
     const land = opts.find(o => o.meta && o.meta.type === 'land');
     if (land) return { choice: [land.id] };
     const held = (you.hand || []).map(c => find(c.name)).filter(k => k && roleOf(k).counter);
@@ -185,7 +187,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       }
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
-        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
+        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
         if (a) { res.acted = (res.acted || 0) + 1; return a; }
       }
       return { delegate: true };
