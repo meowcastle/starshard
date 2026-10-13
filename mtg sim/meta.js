@@ -199,7 +199,38 @@ function colorsOf(deck, find) {
   for (const c of [...deck.main, ...(deck.commander || [])]) { const k = find(c.name); if (k && !isLand(k)) (k.colors || k.card_faces?.[0]?.colors || []).forEach(x => set.add(x)); }
   return COLORS.filter(x => set.has(x));
 }
+const NARROW = ['standard', 'pioneer', 'modern', 'legacy', 'vintage'];
+const legalIn = k => NARROW.find(f => ['legal', 'restricted'].includes(k.legalities?.[f])) || 'casual';
+const FORMAT_NAME = f => ({ standard: 'Standard', pioneer: 'Pioneer', modern: 'Modern', legacy: 'Legacy', vintage: 'Vintage', commander: 'Commander', casual: 'no constructed format' })[f] || f;
+/**
+ * A list against a chosen format (COACH-PARAMETERS-13OCT.md part 2): the cards that aren't legal in
+ * it, each with the narrowest format it is legal in, and the names Scryfall doesn't know (an unknown
+ * card can't be shown legal, so it fails the check too). find: meta's card lookup.
+ */
+function legalFor(list, format, find) {
+  const cards = [...(list.main || []), ...(list.side || []), ...(format === 'commander' ? list.commander || [] : [])];
+  const illegal = [], unknown = [], seen = new Set();
+  for (const c of cards) {
+    if (seen.has(c.name)) continue; seen.add(c.name);
+    const k = find(c.name);
+    if (!k) { unknown.push(c.name); continue; }
+    const st = k.legalities?.[format];
+    if (!['legal', 'restricted'].includes(st)) illegal.push({ name: forgeName(k), status: st || 'not_legal', legalIn: legalIn(k) });
+  }
+  return { ok: !illegal.length && !unknown.length, format, illegal, unknown };
+}
+// The refusal for a list that fails legalFor, in words.
+function legalityError(r) {
+  const parts = [];
+  if (r.illegal.length) parts.push(`Not ${FORMAT_NAME(r.format)}-legal: ` + r.illegal.map(x => `${x.name} (${x.status === 'banned' ? 'banned' : FORMAT_NAME(x.legalIn)})`).join(', ') + '.');
+  if (r.unknown.length) parts.push(`Not recognised, so can't be shown ${FORMAT_NAME(r.format)}-legal: ${r.unknown.join(', ')}.`);
+  const other = [...new Set(r.illegal.map(x => x.legalIn))].filter(f => f !== 'casual');
+  const wider = NARROW.filter(f => other.includes(f)).pop();
+  parts.push(`Remove ${r.illegal.length + r.unknown.length === 1 ? 'it' : 'them'}${wider && !r.unknown.length ? `, or create the brew as ${FORMAT_NAME(wider)}` : ''}.`);
+  return parts.join(' ');
+}
 // Narrowest constructed format every card is legal in; commander decks are commander.
+// Shown as a hint only: a brew's format is chosen (COACH-PARAMETERS-13OCT.md part 2), never inferred.
 function formatOf(deck, find) {
   if (deck.commander?.length) return 'commander';
   const all = [...deck.main, ...(deck.side || [])].map(c => find(c.name)).filter(Boolean);
@@ -207,9 +238,10 @@ function formatOf(deck, find) {
 }
 // Validate a list against Scryfall, convert names to Forge's front-face spelling,
 // and return the rows the Deck tab shows. Unknown names stay in the list, flagged.
-async function describeDeck(deck) {
+async function describeDeck(deck, format = null) {
   const all = [...deck.main, ...(deck.side || []), ...(deck.commander || [])];
   const find = await scryfall(all.map(c => c.name));
+  const chosen = deck.commander?.length ? 'commander' : format;
   const row = (c, section) => {
     const k = find(c.name);
     const type = (k?.card_faces?.[0]?.type_line || k?.type_line || '');
@@ -217,7 +249,10 @@ async function describeDeck(deck) {
   };
   const rows = [...deck.main.map(c => row(c, 'main')), ...(deck.side || []).map(c => row(c, 'side')), ...(deck.commander || []).map(c => row(c, 'commander'))];
   const list = { main: rows.filter(r => r.section === 'main').map(({ qty, name }) => ({ qty, name })), side: rows.filter(r => r.section === 'side').map(({ qty, name }) => ({ qty, name })), commander: rows.filter(r => r.section === 'commander').map(({ qty, name }) => ({ qty, name })) };
-  return { list, rows, format: formatOf(deck, find), coverCard: coverOf(list, find), colors: colorsOf(list, find), style: styleOf('', list, find) };
+  const inferred = formatOf(deck, find), legality = chosen ? legalFor(list, chosen, find) : null;
+  // a card not legal in the chosen format is marked on its row, in the slot "unknown, skipped" uses
+  if (legality) for (const r of rows) { const x = legality.illegal.find(i => i.name === r.name); if (x) { r.legal = false; r.statusNote = x.status === 'banned' ? `banned in ${FORMAT_NAME(chosen)}` : `not ${FORMAT_NAME(chosen)}-legal (${FORMAT_NAME(x.legalIn)})`; } }
+  return { list, rows, format: chosen || inferred, inferred, legality, coverCard: coverOf(list, find), colors: colorsOf(list, find), style: styleOf('', list, find) };
 }
 // What a list is built to do, as far as Forge's AI is concerned. The AI plays
 // creatures on curve and attacks well; it holds counterspells, plays at instant
@@ -253,4 +288,4 @@ async function faceOf(deck, name) {
 // Raw Scryfall cards for a set of names (for the Codex): a lookup function, or null per unknown name.
 async function cards(names) { await scryfall(names); return findCard; }
 
-module.exports = { cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
+module.exports = { legalFor, legalityError, legalIn, cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };

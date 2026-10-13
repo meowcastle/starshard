@@ -17,6 +17,9 @@ const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
 const coach = require('./coach');
+// the formats a brew can be created in (COACH-PARAMETERS-13OCT.md part 2); Standard is the default
+// (Commander comes from the list itself: a list with a commander is a Commander brew)
+const FORMATS = ['standard', 'pioneer', 'modern', 'legacy', 'vintage'];
 const planner = require('./plan');
 const claude = require('./claude');
 
@@ -554,7 +557,12 @@ async function codexCtx(user) {
 async function readVersion(b, v) {
   const c = calibs[b.format];
   if (b.seats !== 2 || !c || !c.lists || (v.reading && v.reading.at === c.at)) return false;
-  try { v.reading = { ...(await planner.readList(v.list, c.lists)), at: c.at }; delete v.reading.counts; return true; }
+  try {
+    v.reading = { ...(await planner.readList(v.list, c.lists)), at: c.at }; delete v.reading.counts;
+    // rotation: re-checked with each field refresh; a version that has stopped being legal is marked
+    if (b.format !== 'commander') { const find = await meta.cards([...v.list.main, ...(v.list.side || [])].map(x => x.name)); const r = meta.legalFor(v.list, b.format, find); v.legal = { ok: r.ok, illegal: r.illegal, unknown: r.unknown, at: Date.now() }; }
+    return true;
+  }
   catch (e) { console.warn('reading:', e.message); return false; }
 }
 const readSoon = (b, v) => { readVersion(b, v).then(ch => { if (ch) saveBrews(); }); };
@@ -905,10 +913,11 @@ const server = http.createServer(async (req, res) => {
     // brews
     let m;
     if (p === '/api/check' && req.method === 'POST') {
-      const text = String((await readBody(req)).text || '').trim();
+      const lastBody = await readBody(req), text = String(lastBody.text || '').trim();
       const deck = /^https?:\/\/\S+$/.test(text) ? await meta.importUrl(text) : meta.parseList(text);
       if (!deck.main?.length && !deck.commander?.length) return send(res, 400, { error: "That doesn't read as a decklist. One card per line, like \"4 Lightning Bolt\"." });
-      return send(res, 200, { ...(await meta.describeDeck({ main: deck.main || [], side: deck.side || [], commander: deck.commander || [] })), importedName: deck.name || null });
+      const fmt = FORMATS.includes(String(lastBody.format || '').toLowerCase()) ? String(lastBody.format).toLowerCase() : 'standard';
+      return send(res, 200, { ...(await meta.describeDeck({ main: deck.main || [], side: deck.side || [], commander: deck.commander || [] }, fmt)), importedName: deck.name || null });
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/cover$/)) && req.method === 'GET') {
       const b = brews.find(x => x.id === m[1]); const f = b && b.coverUrl && path.join(DATA, 'covers', b.id + '.img');
@@ -949,10 +958,12 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length, bo3: sideboard.available(), limits: limitsFor(user) });
     }
     if (p === '/api/brews' && req.method === 'POST') {
-      const { list, name, note, cover } = await readBody(req);
+      const { list, name, note, cover, format } = await readBody(req);
       const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
       if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
-      const d = await meta.describeDeck(deck);
+      const fmt = FORMATS.includes(String(format || '').toLowerCase()) ? String(format).toLowerCase() : 'standard';
+      const d = await meta.describeDeck(deck, fmt);
+      if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality), legality: d.legality });
       const now = Date.now(), id = crypto.randomBytes(5).toString('hex');
       // the cover: a card from the list (by name), or an uploaded image kept beside the data
       const pickCard = cover?.card && d.rows.some(r => r.name === cover.card && !r.land) ? cover.card : d.coverCard;
@@ -971,7 +982,8 @@ const server = http.createServer(async (req, res) => {
       const { list, note } = await readBody(req);
       const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
       if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
-      const d = await meta.describeDeck(deck);
+      const d = await meta.describeDeck(deck, b.seats === 4 ? null : b.format);
+      if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality), legality: d.legality });
       if ((d.format === 'commander') !== (b.seats === 4)) return send(res, 400, { error: b.seats === 4 ? 'This brew is a Commander deck; that list has no commander.' : "That's a Commander list. Paste it as a new deck instead." });
       const prev = latest(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
@@ -987,6 +999,8 @@ const server = http.createServer(async (req, res) => {
       const set = oppSets(b).find(s => s.id === body.oppSet);
       if (!set || !set.available) return send(res, 400, { error: set ? set.detail : 'pick who it should play' });
       const v = b.versions.some(x => x.v === body.v) ? body.v : latest(b).v;
+      const vl = (b.versions.find(x => x.v === v) || {}).legal;
+      if (vl && !vl.ok) return send(res, 400, { error: `v${v} is no longer ${b.format}-legal (${[...vl.illegal.map(x => x.name), ...vl.unknown].join(', ')}). Paste a new version without ${vl.illegal.length + vl.unknown.length === 1 ? 'it' : 'them'}; v${v}'s results stay.` });
       // a run is quiet while it reads the field, so a second click would start an identical one
       const dup = b.runs.find(r => r.v === v && r.oppSet === set.id && ['preparing', 'queued', 'running'].includes(runView(b, r).status));
       if (dup) return send(res, 409, { error: `v${v} is already running against that field. Cancel it first if you want to start over.` });
@@ -1021,7 +1035,8 @@ const server = http.createServer(async (req, res) => {
       const base = b.versions.find(x => x.v === run.v), main = new Map(base.list.main.map(c => [c.name, c.qty]));
       o.out.forEach(c => main.set(c.name, (main.get(c.name) || 0) - c.qty)); o.in.forEach(c => main.set(c.name, (main.get(c.name) || 0) + c.qty));
       const list = { ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) };
-      const d = await meta.describeDeck(list), prev = latest(b), diff = diffLists(prev.list, d.list);
+      const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
+      if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality) });
       if (!diff.length) return send(res, 400, { error: 'that is the current list already' });
       b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i } });
       readSoon(b, b.versions[b.versions.length - 1]);
