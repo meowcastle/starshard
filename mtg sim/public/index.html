@@ -55,6 +55,7 @@
 3 Squall, SeeD Mercenary (FIN) 234
 3 Aerith Gainsborough (FIN) 2
 …"></textarea>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted)">Format</span><sc-for list="{{ fsFormats }}" as="f" hint-placeholder-count="5"><a href="#" onClick="{{ f.pick }}" style="border:1px solid {{ f.ring }};background:{{ f.fill }};color:{{ f.ink }};border-radius:999px;padding:6px 14px;font-size:var(--fs-s);font-weight:600">{{ f.label }}</a></sc-for><span style="font-size:var(--fs-s);color:var(--muted)">{{ fsFormatNote }}</span></div>
     <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:var(--fs-s);color:{{ fsNoteColor }}">{{ fsNote }}</div><a href="#" onClick="{{ doCheck }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:12px 20px;font-weight:600;font-size:var(--fs-m)">{{ checkLabel }}</a></div>
     <div style="display:flex;flex-direction:column;gap:14px;margin-top:16px;padding-top:24px;border-top:1px solid var(--line)">
       <div style="font-size:var(--fs-l);font-weight:600;color:var(--ink)">Paper deck? Type it in.</div>
@@ -212,7 +213,7 @@ Deck
           </div>
           <sc-if value="{{ hasWeak }}" hint-placeholder-val="{{ true }}"><div style="font-size:var(--fs-l);line-height:1.6;text-wrap:pretty"><span style="font-weight:600">{{ brief.weakness }}.</span> {{ brief.weaknessNote }} <sc-if value="{{ hasWeakLink }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ cxOpenWeak }}" style="color:var(--muted);text-decoration:underline">What is that?</a></sc-if></div></sc-if>
           <div style="display:flex;flex-direction:column">
-            <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0;border-top:1px solid var(--line)"><div><div style="font-size:var(--fs-m);font-weight:600;line-height:1.4">{{ o.title }}</div><div style="font-size:var(--fs-m);color:var(--muted);line-height:1.55;margin-top:2px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:var(--fs-m);margin-top:8px;font-family:var(--mono)">{{ o.resA }} → <span style="color:{{ o.resColor }}">{{ o.resB }}</span> {{ o.resPm }} <span style="font-family:Manrope,sans-serif;color:var(--muted)">· {{ o.resNote }}</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:var(--fs-s);font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:3px">{{ o.label }}</a></div></sc-for>
+            <sc-for list="{{ options }}" as="o" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:14px 0 14px 12px;border-top:1px solid var(--line);border-left:3px solid transparent;border-image:{{ o.edge }} 1;opacity:{{ o.opacity }}"><div><div style="font-size:var(--fs-m);font-weight:600;line-height:1.4">{{ o.title }} <span style="font-size:var(--fs-xs);font-family:var(--mono);color:{{ o.evColor }};font-weight:400;margin-left:6px">{{ o.evLabel }}</span></div><div style="font-size:var(--fs-m);color:var(--muted);line-height:1.55;margin-top:2px;text-wrap:pretty">{{ o.detail }}</div><sc-if value="{{ o.hasResult }}" hint-placeholder-val="{{ false }}"><div style="font-size:var(--fs-m);margin-top:8px;font-family:var(--mono)">{{ o.resA }} → <span style="color:{{ o.resColor }}">{{ o.resB }}</span> {{ o.resPm }} <span style="font-family:Manrope,sans-serif;color:var(--muted)">· {{ o.resNote }}</span></div></sc-if></div><a href="#" onClick="{{ o.go }}" style="font-size:var(--fs-s);font-weight:600;color:{{ o.color }};white-space:nowrap;padding-top:3px">{{ o.label }}</a></div></sc-for>
           </div>
           <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)">{{ runAt }} · {{ snapshotLabel }}<sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ doCancelRun }}" style="color:var(--muted)">{{ cancelLabel }}</a></sc-if></div>
         </div>
@@ -225,6 +226,8 @@ Deck
 
       <sc-if value="{{ coachLive }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column;gap:12px;position:sticky;bottom:0;padding:24px 0 8px;background:linear-gradient(to bottom,rgba(12,12,11,0),var(--bg) 32%)">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted)">Ask for</span><sc-for list="{{ coachModes }}" as="m" hint-placeholder-count="5"><a href="#" onClick="{{ m.go }}" title="{{ m.title }}" style="border:1px solid {{ m.ring }};background:{{ m.fill }};color:{{ m.ink }};opacity:{{ m.opacity }};border-radius:999px;padding:6px 14px;font-size:var(--fs-s);font-weight:600">{{ m.label }}</a></sc-for></div>
+        <sc-if value="{{ pickingOpp }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted)">Against</span><sc-for list="{{ pilotOpps }}" as="m" hint-placeholder-count="4"><a href="#" onClick="{{ m.go }}" style="border:1px solid {{ m.ring }};background:{{ m.fill }};color:{{ m.ink }};opacity:{{ m.opacity }};border-radius:999px;padding:6px 14px;font-size:var(--fs-s);font-weight:600">{{ m.label }}</a></sc-for></div></sc-if>
         <div style="display:flex;gap:12px;align-items:flex-end;background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;padding:12px 16px"><textarea rows="1" value="{{ askText }}" onChange="{{ onAsk }}" onKeyDown="{{ askKey }}" placeholder="{{ askPlaceholder }}" style="flex:1;background:none;border:0;padding:2px 0;color:var(--ink);font-size:var(--fs-m);outline:none;resize:none;min-width:0;line-height:1.5"></textarea><a href="#" onClick="{{ sendAsk }}" style="width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--bg);display:grid;place-items:center;font-size:var(--fs-m);font-weight:600;flex:none">↑</a></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3"><a href="#" onClick="{{ p.go }}" style="font-size:var(--fs-s);color:var(--muted);padding:5px 10px;border:1px solid var(--line-strong);border-radius:999px">{{ p.t }}</a></sc-for></div>
       </div></sc-if>
@@ -350,6 +353,27 @@ Deck
     <div data-screen-label="Deck" style="display:flex;flex-direction:column;gap:36px">
       <div style="display:flex;flex-direction:column;gap:14px">
         <div style="display:flex;flex-wrap:wrap;gap:6px 24px;font-size:var(--fs-s);color:var(--muted);line-height:1.5"><span><b style="color:var(--ink);font-weight:600">{{ deckSize }}</b> cards · {{ deckLegal }}</span><span style="color:{{ forgeColor }}">{{ forgeLine }}</span><span>{{ playsOn }} · {{ playsNote }}</span><sc-if value="{{ hasGoals }}" hint-placeholder-val="{{ false }}"><span>Goal: {{ deck.goal.label }} · <span style="font-family:var(--mono);font-size:var(--fs-s);color:var(--accent)">{{ goalCountdown }}</span></span></sc-if><sc-if value="{{ notEditingLook }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ openLook }}" style="color:var(--accent)">Edit name and cover</a></sc-if></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 24px;font-size:var(--fs-s);color:var(--muted);line-height:1.5"><sc-if value="{{ hasReading }}" hint-placeholder-val="{{ true }}"><span>Reads as <b style="color:var(--ink);font-weight:600">{{ readingPlan }}</b>{{ readingNearest }}</span></sc-if><span>Goal: <b style="color:var(--ink);font-weight:600">{{ goalLabel }}</b>{{ goalExtra }}</span><span>{{ constraintsLabel }}</span><span>{{ levelLabel }}</span><sc-if value="{{ notEditingSettings }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ openSettings }}" style="color:var(--accent)">Edit goal and constraints</a></sc-if></div>
+        <sc-for list="{{ readingMissing }}" as="m" hint-placeholder-count="1"><div style="font-size:var(--fs-s);color:var(--amber)">{{ m }}</div></sc-for>
+        <sc-if value="{{ editingSettings }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px;border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface);max-width:820px">
+          <div style="font-size:var(--fs-xl);font-weight:600">What you are playing for</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:72px">Event</span><sc-for list="{{ stEvents }}" as="f" hint-placeholder-count="6"><a href="#" onClick="{{ f.pick }}" style="border:1px solid {{ f.ring }};background:{{ f.fill }};color:{{ f.ink }};border-radius:999px;padding:6px 14px;font-size:var(--fs-s);font-weight:600">{{ f.label }}</a></sc-for></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:72px">Posture</span><sc-for list="{{ stPostures }}" as="f" hint-placeholder-count="2"><a href="#" onClick="{{ f.pick }}" style="border:1px solid {{ f.ring }};background:{{ f.fill }};color:{{ f.ink }};border-radius:999px;padding:6px 14px;font-size:var(--fs-s);font-weight:600">{{ f.label }}</a></sc-for><span style="font-size:var(--fs-s);color:var(--muted)">{{ postureNote }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:var(--fs-s);color:var(--muted)">Ready by</span><input value="{{ stDate }}" onChange="{{ setStDate }}" placeholder="2026-10-25" style="background:var(--bg);border:1px solid var(--line-strong);border-radius:6px;padding:9px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;font-family:var(--mono)"></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:var(--fs-s);color:var(--muted)">Rounds (blank for the event's usual)</span><input value="{{ stRounds }}" onChange="{{ setStRounds }}" placeholder="7" style="background:var(--bg);border:1px solid var(--line-strong);border-radius:6px;padding:9px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;font-family:var(--mono)"></div>
+          </div>
+          <div style="font-size:var(--fs-xl);font-weight:600;padding-top:8px">What is fixed</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:var(--fs-s);color:var(--muted)">Cards that stay, one per line</span><textarea rows="3" value="{{ stKeep }}" onChange="{{ setStKeep }}" style="background:var(--bg);border:1px solid var(--line-strong);border-radius:6px;padding:9px 12px;color:var(--ink);font-size:var(--fs-s);outline:none;resize:vertical;font-family:var(--mono)"></textarea></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:var(--fs-s);color:var(--muted)">Cards you will not play</span><textarea rows="3" value="{{ stNever }}" onChange="{{ setStNever }}" style="background:var(--bg);border:1px solid var(--line-strong);border-radius:6px;padding:9px 12px;color:var(--ink);font-size:var(--fs-s);outline:none;resize:vertical;font-family:var(--mono)"></textarea></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:72px">Wildcards</span><input value="{{ stRare }}" onChange="{{ setStRare }}" placeholder="rare" style="width:80px;background:var(--bg);border:1px solid var(--line-strong);border-radius:6px;padding:7px 10px;color:var(--ink);font-size:var(--fs-s);outline:none;font-family:var(--mono)"><input value="{{ stMythic }}" onChange="{{ setStMythic }}" placeholder="mythic" style="width:80px;background:var(--bg);border:1px solid var(--line-strong);border-radius:6px;padding:7px 10px;color:var(--ink);font-size:var(--fs-s);outline:none;font-family:var(--mono)"><span style="font-size:var(--fs-s);color:var(--muted)">blank means no limit; the coach says what each swap costs</span></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:72px">Explain</span><sc-for list="{{ stLevels }}" as="f" hint-placeholder-count="3"><a href="#" onClick="{{ f.pick }}" style="border:1px solid {{ f.ring }};background:{{ f.fill }};color:{{ f.ink }};border-radius:999px;padding:6px 14px;font-size:var(--fs-s);font-weight:600">{{ f.label }}</a></sc-for></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><span style="font-size:var(--fs-s);color:var(--loss)">{{ settingsErr }}</span><span style="display:flex;gap:16px;align-items:center"><a href="#" onClick="{{ closeSettings }}" style="font-size:var(--fs-s);color:var(--muted)">Cancel</a><a href="#" onClick="{{ saveSettings }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:9px 16px;font-weight:600;font-size:var(--fs-s)">{{ settingsSaveLabel }}</a></span></div>
+        </div>
+        </sc-if>
           <sc-if value="{{ editingLook }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:16px;border:1px solid var(--line);border-radius:8px;padding:20px;background:var(--surface)">
             <div style="font-size:var(--fs-xl);font-weight:600">Name and cover</div>
@@ -404,7 +428,7 @@ class Component extends DCLogic {
   // turns /api/brews into the bindings the markup reads. The coach is not connected
   // yet, so its brief is computed straight from the games rather than written by a model.
   state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
-    fsStep: 1, pasteText: '', check: null, fsErr: '', noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
+    fsStep: 1, fsFormat: 'standard', pasteText: '', check: null, fsErr: '', settingsOpen: false, settingsErr: '', st: null, coachMode: 'readout', pilotOpp: null, noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
     deckId: null, runId: null, tab: null, view: 'run', methodOpen: false, oppOpen: null, hover: null, askText: '', bo3: false, delAsk: null, cancelAsk: null, look: null, lookErr: '',
     deckName: '', cover: 0, upload: null, uploadErr: '',
     codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
@@ -474,7 +498,7 @@ class Component extends DCLogic {
     const S = this.state; if (S.busy || !S.pasteText.trim()) return;
     this.setState({ busy: true, fsErr: '' });
     try {
-      const check = await this.api('/api/check', { method: 'POST', body: { text: S.pasteText } });
+      const check = await this.api('/api/check', { method: 'POST', body: { text: S.pasteText, format: S.fsFormat } });
       const spells = this.covers(check), legend = check.rows.find(r => r.legend && r.section !== 'side') || null;
       const from = legend || spells[0] || null;
       this.setState({ check, fsStep: S.versionOf ? 3 : 2, deckName: check.importedName || (from ? from.name.split(',')[0] : 'Untitled'), cover: Math.max(0, spells.findIndex(r => from && r.name === from.name)), upload: null, uploadPreview: null, uploadErr: '' });
@@ -488,7 +512,7 @@ class Component extends DCLogic {
     try {
       const b = S.versionOf
         ? await this.api('/api/brews/' + S.versionOf + '/versions', { method: 'POST', body: { list: S.check.list, note: S.noteText } })
-        : await this.api('/api/brews', { method: 'POST', body: { list: S.check.list, name: S.deckName, note: S.noteText, cover: S.cover === 'upload' ? (S.upload ? { upload: S.upload } : null) : { card: (this.covers(S.check)[S.cover] || {}).name } } });
+        : await this.api('/api/brews', { method: 'POST', body: { format: S.fsFormat, list: S.check.list, name: S.deckName, note: S.noteText, cover: S.cover === 'upload' ? (S.upload ? { upload: S.upload } : null) : { card: (this.covers(S.check)[S.cover] || {}).name } } });
       const first = b.oppSets.find(o => o.available);
       this.setState(s => ({ brews: S.versionOf ? s.brews.map(x => x.id === b.id ? b : x) : [b, ...(s.brews || [])], newBrewId: b.id, oppSet: first ? first.id : 'meta20', fsStep: 4, cmpA: null, cmpB: null }));
     } catch (e) { this.setState({ fsErr: e.message }); }
@@ -550,6 +574,19 @@ class Component extends DCLogic {
   }
   // the Deck tab's name and cover editor shares the wizard's name/cover/upload state
   lookCovers(d) { const ver = d.versions[d.versions.length - 1]; return this.covers({ rows: ver.rows || [] }); }
+  async coachMode(id, mode, opponent) {
+    this.setState(s => ({ coachMode: 'readout', brews: s.brews.map(x => x.id === id ? { ...x, thinking: true } : x) }));
+    try { await this.api('/api/brews/' + id + '/coach', { method: 'POST', body: { mode, opponent } }); await this.load(); }
+    catch (e) { this.setState({ askErr: e.message }); }
+  }
+  async saveSettings(d, e) {
+    const S = this.state; if (S.busy) return;
+    const lines = (t) => String(t || '').split('\n').map(x => x.trim()).filter(Boolean);
+    const settings = { goal: { event: e.event, posture: e.posture, date: e.date || null, rounds: e.rounds ? +e.rounds : null }, keep: lines(e.keep), never: lines(e.never), budget: e.rare || e.mythic ? { rare: +e.rare || 0, mythic: +e.mythic || 0 } : null, level: e.level };
+    this.setState({ busy: true, settingsErr: '' });
+    try { const b = await this.api('/api/brews/' + d.id, { method: 'PATCH', body: { settings } }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), settingsOpen: false, st: null, busy: false })); }
+    catch (err) { this.setState({ settingsErr: err.message, busy: false }); }
+  }
   openLook(d) {
     const cs = this.lookCovers(d);
     this.setState({ look: d.id, lookErr: '', delAsk: null, deckName: d.name, upload: null, uploadErr: '', uploadPreview: d.coverUrl || null,
@@ -577,6 +614,7 @@ class Component extends DCLogic {
   deck() { const B = this.state.brews || []; return B.find(b => b.id === this.state.deckId) || B[0] || null; }
   renderVals() {
     const S = this.state, d = this.deck();
+    const FORMATS = ['standard', 'pioneer', 'modern', 'legacy', 'vintage'];
     const MANA = { W: '#F8F6D8', U: '#6AA3DC', B: '#A89DB0', R: '#E06A58', G: '#5BB07A' }; const SEAT = ['var(--accent)', '#E9A0F2', '#7FDCEA', 'var(--amber)']; const WIN = 'var(--win)', LOSS = 'var(--loss)', MUTED = 'var(--muted)', ACC = 'var(--accent)', AMBER = 'var(--amber)';
     // pictures come through the server, which knows each card's CDN address (Scryfall's own lookup is rate-limited)
     const art = (n) => n ? '/api/img?v=art_crop&name=' + encodeURIComponent(n) : '';
@@ -641,7 +679,9 @@ class Component extends DCLogic {
       uploadArt: S.uploadPreview ? 'url("' + S.uploadPreview + '") center/cover' : 'var(--surface)', uploadNote: S.uploadErr || (S.upload ? 'This one. Click to choose another.' : 'Drop an image or click to choose. Landscape works best; it\'s cropped to 16:10.'), uploadNoteColor: S.uploadErr ? LOSS : 'var(--muted)',
       onCoverFile: (e) => this.takeCover(e.target.files && e.target.files[0]), onCoverDrag: (e) => e.preventDefault(), onCoverDrop: (e) => { e.preventDefault(); this.takeCover(e.dataTransfer.files && e.dataTransfer.files[0]); },
       pasteText: S.pasteText, onPaste: (e) => this.setState({ pasteText: e.target.value }), doCheck: pe(() => this.check()), checkLabel: S.busy ? 'Checking…' : 'Check it',
-      fsNote: S.fsErr || 'Format is read from the list. Commander decks need a commander line.', fsNoteColor: S.fsErr ? LOSS : 'var(--muted)',
+      fsNote: S.fsErr || 'A card that is not legal in the format you chose stops the brew being made; the check names it. Commander decks need a commander line.', fsNoteColor: S.fsErr ? LOSS : 'var(--muted)',
+      fsFormats: FORMATS.map(f => ({ label: cap(f), pick: pe(() => this.setState({ fsFormat: f })), ring: S.fsFormat === f ? ACC : 'var(--line-strong)', fill: S.fsFormat === f ? ACC : 'transparent', ink: S.fsFormat === f ? 'var(--bg)' : 'var(--ink)' })),
+      fsFormatNote: S.check && S.check.legality ? (S.check.legality.ok ? 'every card is ' + cap(S.fsFormat) + '-legal' : plural(S.check.legality.illegal.length + S.check.legality.unknown.length, 'card') + ' not ' + cap(S.fsFormat) + '-legal: ' + S.check.legality.illegal.map(x => x.name + ' (' + cap(x.legalIn || 'none') + ')').concat(S.check.legality.unknown).join(', ')) : 'Standard is the sim\'s field; pick another only for a deck built for it.',
       chkTitle: chk ? (vOf ? vOf.name : S.deckName || 'Untitled') + ' · ' + sizeS + ' · ' + (chk.format === 'casual' ? 'no constructed format fits' : cap(chk.format) + (chk.format === 'commander' ? '' : ' legal')) : '',
       chkSub: !chk ? '' : unknown.length ? 'Scryfall doesn\'t know ' + plural(unknown.length, 'card') + '. Forge will skip ' + (unknown.length === 1 ? 'it' : 'them') + ' unless the spelling is fixed.' : 'Every card found. Names are already in Forge\'s spelling.',
       chkRows: unknown.map(r => ({ name: r.name, note: 'not found, skipped in games', section: r.section, color: LOSS })),
@@ -807,19 +847,28 @@ class Component extends DCLogic {
     v.options = C ? C.options.map((o, i) => {
       const tr = o.test && d.runs.find(r => r.id === o.test.run), done = tr && tr.status === 'done', before = scoreOf(run), after = tr ? scoreOf(tr) : null;
       const swapS = o.kind === 'swap' ? ' (' + o.out.map(c => '−' + c.qty + ' ' + c.name).concat(o.in.map(c => '+' + c.qty + ' ' + c.name)).join(', ') + ')' : '';
-      return { title: o.title, detail: o.detail + swapS, label: o.kind !== 'swap' ? '' : !o.test ? 'Test it' : done ? 'Tested · v' + o.test.v : 'Testing as v' + o.test.v + '…',
-        color: o.test ? MUTED : ACC, go: pe(() => o.kind === 'swap' && !o.test && this.test(d.id, run.id, i)),
+      const ev = o.evidence || 'strong', basis = o.basis ? ' · ' + o.basis : '';
+      return { evLabel: (ev === 'strong' ? 'strong evidence' : ev === 'weak' ? 'weak evidence' : 'untested') + basis, evColor: ev === 'strong' ? WIN : AMBER, edge: ev === 'strong' ? 'linear-gradient(var(--win),var(--win))' : 'repeating-linear-gradient(135deg,var(--amber) 0 3px,transparent 3px 6px)', opacity: ev === 'strong' ? 1 : 0.85,
+        title: o.title, detail: o.detail + swapS, label: o.kind !== 'swap' ? '' : !o.test ? 'Test it' : done ? 'Tested · v' + o.test.v : 'Testing as v' + o.test.v + '…',
+        color: o.test ? MUTED : ev === 'strong' ? ACC : MUTED, go: pe(() => o.kind === 'swap' && !o.test && this.test(d.id, run.id, i)),
         hasResult: !!done, resA: before.pct, resB: after ? after.pct : '', resPm: after ? after.pm : '', resColor: after && after.p > before.p ? WIN : LOSS,
         resNote: after ? plural(after.n, 'game') + (Math.abs(after.p - before.p) * 100 < 7 ? ' · inside the noise' : '') : '' };
     }) : [];
     // the thread: everything except the summary the readout above stands in for
-    v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.text, at: at(m.at) }));
+    v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.text, at: at(m.at) + (m.kind && !['writeup', 'error'].includes(m.kind) ? ' · ' + { sideboard: 'sideboard guide', pilot: 'how to play it', mulligan: 'mulligans', mana: 'mana', review: 'version review' }[m.kind] || m.kind : '') }));
     if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: 'Thinking…', at: '' });
-    v.askPlaceholder = !d.coachOn ? '' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run' + (S.limits && S.limits.asks.left <= 5 ? ' · ' + plural(S.limits.asks.left, 'question') + ' left today' : '');
+    v.askPlaceholder = !d.coachOn ? '' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run' + (S.limits && S.limits.asks ? ' · ' + plural(S.limits.asks.left, 'question') + ' left today' : '');
     v.sendAsk = pe(() => this.ask(S.askText)); v.askKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.ask(S.askText); } };
     const topOpp = v.isDuel && run && run.opponents && run.opponents[0];
     v.prompts = !d.coachOn ? [] : [worst && 'Why do I lose to ' + worst.o.name + '?', topOpp && 'What should I board against ' + topOpp.name + '?', d.notes.length ? 'Is it ready for ' + d.notes[0].t.slice(0, 40) + '?' : 'Which card is my weakest?'].filter(Boolean).map(t => ({ t, go: pe(() => this.ask(t)) }));
     v.waiting = waiting;
+    // the coach's modes (COACH-PARAMETERS-13OCT.md part 1.3): the readout runs itself; the others on request
+    const modes = [['sideboard', 'Sideboard guide', 'In and out per opponent, with the role after boarding'], ['pilot', 'How to play a matchup', 'Who is the beatdown, what to hold, what to answer on sight'], ['mulligan', 'Mulligans', 'Keep or ship, by what you are facing'], ['mana', 'Mana', 'Lands, colours and curve for this plan'], ['review', 'Review the versions', 'What each change did, and what to try next']];
+    const canMode = (id) => d.coachOn && !d.thinking && (id !== 'review' || d.versions.length >= 2);
+    v.coachModes = modes.map(([id, label, title]) => ({ label, title: canMode(id) ? title : id === 'review' ? 'needs two versions' : 'the coach is busy', opacity: canMode(id) ? 1 : 0.4, ring: S.coachMode === id ? ACC : 'var(--line-strong)', fill: S.coachMode === id ? ACC : 'transparent', ink: S.coachMode === id ? 'var(--bg)' : 'var(--ink)',
+      go: pe(() => { if (!canMode(id)) return; if (id === 'pilot') this.setState(s => ({ coachMode: s.coachMode === 'pilot' ? 'readout' : 'pilot' })); else this.coachMode(d.id, id); }) }));
+    v.pickingOpp = S.coachMode === 'pilot';
+    v.pilotOpps = (run && run.opponents ? run.opponents.slice().sort((a, b) => (b.metaPct || 0) - (a.metaPct || 0)) : []).slice(0, 8).map(g => ({ label: g.name, opacity: 1, ring: 'var(--line-strong)', fill: 'transparent', ink: 'var(--ink)', go: pe(() => this.coachMode(d.id, 'pilot', g.name)) }));
     // a 1v1 run's results stay off the Results tab until it finishes: a handful of games read as a verdict
     v.duelRunning = v.isDuel && waiting; v.duelDone = v.isDuel && !waiting;
     if (waiting && run && run.pulse) {
@@ -992,6 +1041,23 @@ class Component extends DCLogic {
       v.noCompareNote = v.isDuel ? 'Compare needs two versions. Paste a new list from the Deck tab and run it.' : 'Compare is for 1v1 decks for now.';
     }
 
+    // the reading and the player's settings (COACH-PARAMETERS-13OCT.md part 1)
+    const EVENT_LABEL = { rcq: 'RCQ', store: 'Store championship', fnm: 'FNM', 'arena-bo3': 'Arena Bo3', 'arena-bo1': 'Arena Bo1', none: 'No event' };
+    const rd = ver.reading; v.hasReading = !!rd; v.readingPlan = rd ? rd.plan : ''; v.readingNearest = rd && rd.nearest ? ', closest to ' + rd.nearest : ''; v.readingMissing = rd && rd.missing ? rd.missing.map(m => typeof m === 'string' ? m : m.text || JSON.stringify(m)) : [];
+    const st = d.settings || { goal: { event: 'rcq', posture: 'consistent' }, keep: [], never: [], budget: null, level: 'competitive' };
+    v.goalLabel = EVENT_LABEL[st.goal.event] || st.goal.event; v.goalExtra = (st.goal.date ? ' · by ' + day(new Date(st.goal.date + 'T12:00:00').getTime()) : '') + (st.goal.rounds ? ' · ' + st.goal.rounds + ' rounds' : '') + ' · ' + st.goal.posture;
+    v.constraintsLabel = [st.keep.length ? 'keeps ' + plural(st.keep.length, 'card') : 'nothing fixed', st.never.length ? 'avoids ' + st.never.length : '', st.budget ? 'budget ' + (st.budget.rare || 0) + 'R/' + (st.budget.mythic || 0) + 'M' : ''].filter(Boolean).join(' · ');
+    v.levelLabel = { learning: 'explain everything', competitive: 'competitive', grinder: 'numbers and the swap' }[st.level] || st.level;
+    const E0 = S.st || { event: st.goal.event, posture: st.goal.posture, date: st.goal.date || '', rounds: st.goal.rounds || '', keep: st.keep.join('\n'), never: st.never.join('\n'), rare: st.budget ? st.budget.rare : '', mythic: st.budget ? st.budget.mythic : '', level: st.level };
+    const setSt = (k) => (e) => this.setState(s => ({ st: { ...(s.st || E0), [k]: e.target.value } }));
+    const pillsOf = (opts, cur, k) => opts.map(([id, label]) => ({ label, pick: pe(() => this.setState(s => ({ st: { ...(s.st || E0), [k]: id } }))), ring: cur === id ? ACC : 'var(--line-strong)', fill: cur === id ? ACC : 'transparent', ink: cur === id ? 'var(--bg)' : 'var(--ink)' }));
+    v.editingSettings = !!S.settingsOpen; v.notEditingSettings = !S.settingsOpen;
+    v.openSettings = pe(() => this.setState({ settingsOpen: true, settingsErr: '', st: null })); v.closeSettings = pe(() => this.setState({ settingsOpen: false, st: null }));
+    v.stEvents = pillsOf(Object.entries(EVENT_LABEL), E0.event, 'event'); v.stPostures = pillsOf([['consistent', 'Consistent'], ['ceiling', 'Ceiling']], E0.posture, 'posture'); v.stLevels = pillsOf([['learning', 'Teach me'], ['competitive', 'Competitive'], ['grinder', 'Just the numbers']], E0.level, 'level');
+    v.postureNote = E0.posture === 'ceiling' ? 'accept variance for a higher top-8 chance' : 'raise the floor first: mana, curve, the worst matchup';
+    v.stDate = E0.date; v.setStDate = setSt('date'); v.stRounds = E0.rounds; v.setStRounds = setSt('rounds'); v.stKeep = E0.keep; v.setStKeep = setSt('keep'); v.stNever = E0.never; v.setStNever = setSt('never'); v.stRare = E0.rare; v.setStRare = setSt('rare'); v.stMythic = E0.mythic; v.setStMythic = setSt('mythic');
+    v.settingsErr = S.settingsErr || ''; v.settingsSaveLabel = S.busy ? 'Saving…' : 'Save';
+    v.saveSettings = pe(() => this.saveSettings(d, E0));
     // deck
     const hover = (name) => ({ enter: (e) => this.setState({ hover: { name, x: e.clientX, y: e.clientY } }), move: (e) => this.setState({ hover: { name, x: e.clientX, y: e.clientY } }) });
     const rowOf = (c) => Object.assign({ ...c, pips: costPips(c.cost), statusColor: c.status === 'unknown' ? LOSS : 'var(--mark)', statusNote: c.status === 'unknown' ? 'unknown, skipped' : '' }, hover(c.name));
