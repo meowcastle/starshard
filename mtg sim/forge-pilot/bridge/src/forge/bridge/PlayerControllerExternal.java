@@ -37,6 +37,7 @@ import forge.game.GameEntity;
 import forge.game.GameObject;
 import forge.game.card.Card;
 import forge.game.card.CardCollection;
+import forge.game.keyword.Keyword;
 import forge.game.card.CardCollectionView;
 import forge.game.card.CounterType;
 import forge.game.combat.Combat;
@@ -989,7 +990,12 @@ public class PlayerControllerExternal extends PlayerControllerAi {
             nextAttempt = attempt;
             List<String> r = ask("blockers", error + "Declare blockers. Each of your creatures can block one attacker; several can block the same attacker. Choose none to take the damage.",
                     opts, 0, defender.getCreaturesInPlay().size(), null, hints);
-            if (r == null && lastAnswerDelegate) { delegated("blockers", "pilot delegated"); asAiRun(() -> super.declareBlockers(defender, combat)); return; }
+            if (r == null && lastAnswerDelegate) {
+                delegated("blockers", "pilot delegated");
+                asAiRun(() -> super.declareBlockers(defender, combat));
+                if (ctx.owns(seat, "nochump")) pruneChumps(defender, combat);
+                return;
+            }
             if (r == null) break;
             Set<Card> used = new HashSet<>();
             List<Card> added = new ArrayList<>();
@@ -1014,6 +1020,50 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         }
         if (!counted) forfeited("blockers", "no legal blocks in " + (ctx.maxRetries + 1) + " attempts; a required block was declared by the engine");
         asAiRun(() -> super.declareBlockers(defender, combat));
+    }
+
+    /**
+     * starshard: Forge's blocks, less the chump blocks it didn't need (NOTE-TO-CODE-13OCT-ORDER.md step 3;
+     * 73% of Forge's blocks in the 13 Oct logs were chumps). A block is a chump when the blockers on that
+     * attacker die and the attacker lives (first strike, double strike, deathtouch, indestructible
+     * counted). One is kept only while the damage it stops is needed to keep life above CHUMP_FLOOR;
+     * the rest are removed, the smallest attacker's first. Trades, safe blocks and double blocks stay
+     * as Forge chose them.
+     */
+    static final int CHUMP_FLOOR = 5;
+    private void pruneChumps(Player defender, Combat combat) {
+        int life = defender.getLife(), through = 0;
+        if (System.getenv("NOCHUMP_TRACE") != null) System.err.println("[nochump-trace] blocks declared: " + combat.getAllBlockers().size());
+        List<Card[]> chumps = new ArrayList<>();
+        for (Card a : combat.getAttackers()) {
+            if (combat.getDefenderByAttacker(a) != defender) continue;
+            CardCollection bs = new CardCollection(combat.getBlockers(a));
+            if (bs.isEmpty()) { through += a.getNetCombatDamage(); continue; }
+            boolean aFirst = a.hasFirstStrike() || a.hasDoubleStrike();
+            int aPow = a.getNetCombatDamage() * (a.hasDoubleStrike() ? 2 : 1);
+            // does the block kill the attacker before it is killed, and does the attacker kill every blocker?
+            int bPow = 0; boolean bDeath = false, bFirst = true;
+            for (Card b : bs) { bPow += b.getNetCombatDamage(); bDeath |= b.hasKeyword(Keyword.DEATHTOUCH) && b.getNetCombatDamage() > 0; bFirst &= b.hasFirstStrike() || b.hasDoubleStrike(); }
+            boolean attackerDies = !a.hasKeyword(Keyword.INDESTRUCTIBLE) && (bDeath || bPow >= a.getNetToughness() - a.getDamage());
+            int need = 0; for (Card b : bs) need += b.hasKeyword(Keyword.INDESTRUCTIBLE) ? 1000 : a.hasKeyword(Keyword.DEATHTOUCH) ? 1 : Math.max(1, b.getNetToughness() - b.getDamage());
+            boolean blockersDie = aPow >= need;
+            if (aFirst && !bFirst && blockersDie) attackerDies = false; // it kills them before they strike
+            if (bFirst && !aFirst && attackerDies) blockersDie = false;
+            if (blockersDie && !attackerDies) chumps.add(new Card[]{a, null});
+            if (System.getenv("NOCHUMP_TRACE") != null) System.err.println("[nochump-trace] " + a.getName() + " " + a.getNetPower() + "/" + a.getNetToughness() + " blocked by " + bs.size() + " (" + bs.get(0).getName() + " " + bs.get(0).getNetPower() + "/" + bs.get(0).getNetToughness() + ") blockersDie=" + blockersDie + " attackerDies=" + attackerDies + " life=" + life);
+        }
+        chumps.sort((x, y) -> Integer.compare(x[0].getNetCombatDamage(), y[0].getNetCombatDamage()));
+        for (Card[] c : chumps) {
+            Card a = c[0];
+            int dmg = a.getNetCombatDamage() * (a.hasDoubleStrike() ? 2 : 1);
+            if (life - through - dmg < CHUMP_FLOOR) continue; // needed: keep it
+            CardCollection bs = new CardCollection(combat.getBlockers(a));
+            for (Card b : bs) combat.removeFromCombat(b);
+            if (CombatUtil.validateBlocks(combat, defender) != null) { for (Card b : bs) combat.addBlocker(a, b); continue; } // a required block
+            through += dmg;
+            ctx.auto(seat, "nochump", "blockers", "took " + dmg + " from " + a.getName() + " rather than chump block");
+            System.err.println("[nochump] seat " + seat + " took " + dmg + " from " + a.getName() + " at " + life + " life rather than chump block");
+        }
     }
 
     /** Divide an attacker's (or multi-blocking blocker's) combat damage. Null key = damage to the defending player/planeswalker. */

@@ -4,6 +4,7 @@
 //
 //   FORGE_DIR=... DATA_DIR=... node tools/mirror-gate.js <calibration.json> <out.json> [policy=reactive] [matches per half=14] [at once=4] [deck,deck,...]
 // policy "search": the bridge's play-out search (Search.java) on the seat's main-phase plays.
+// policy "nochump": Forge's blocks less the chump blocks it didn't need (pruneChumps in the bridge).
 const fs = require('fs');
 const path = require('path');
 const { runMatches } = require('../pilot');
@@ -20,8 +21,10 @@ let i = 0;
 const slot = async () => {
   for (;;) {
     const t = halves[i++]; if (!t) return;
-    const policy = [null, null]; if (!SEARCH) policy[t.at] = POLICY;
-    const own = [[], []]; own[t.at] = SEARCH ? ['search'] : ['priority'];
+    // search and nochump live in the bridge (Search.java, pruneChumps); the rest are pilot.js priority policies
+    const BRIDGE = { search: ['search'], nochump: ['nochump'] };
+    const policy = [null, null]; if (!BRIDGE[POLICY]) policy[t.at] = POLICY;
+    const own = [[], []]; own[t.at] = BRIDGE[POLICY] || ['priority'];
     const r = await runMatches({ decks: [0, 1].map(k => ({ ...t.l, name: t.l.name + (k === t.at ? ' A' : ' B') })), matches: +M, seed: seedOf(t.l.name), own, policy, search: SEARCH, workDir: path.join(path.dirname(OUT), 'gate', String(seedOf(t.l.name + t.at))) });
     const d = ((done[t.l.name] = done[t.l.name] || {})[POLICY] = done[t.l.name][POLICY] || {});
     d['h' + t.at] = { won: r.games.filter(g => g.winner === t.at).length, lost: r.games.filter(g => g.winner === 1 - t.at).length, acted: r.acted || 0 };
