@@ -418,7 +418,7 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         agentChosen = null;
         if (turnCapReached()) return null;
         if (ai()) return super.chooseSpellAbilityToPlay();
-        if (!ctx.owns(seat, "priority") && !ctx.owns(seat, "search")) return asAi(() -> super.chooseSpellAbilityToPlay());
+        if (!ctx.owns(seat, "priority") && !ctx.owns(seat, "search") && !ctx.owns(seat, "isearch")) return asAi(() -> super.chooseSpellAbilityToPlay());
         if (!shouldStop()) { ctx.auto(seat, "policy", "priority", "not a meaningful stop"); return null; }
         Game g = getGame();
         String stateKey = priorityStateKey(g);
@@ -478,10 +478,13 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         }
         if (!ctx.owns(seat, "priority")) {
             // starshard: a search-only seat searches its own main-phase plays when there's a real choice
-            // (Search.java); every other priority is Forge's, as stock
+            // (Search.java); "isearch" also searches instant speed: the opponent's turn and responses to
+            // the stack (the control gap, ENGINE-STATUS-13OCT.md section 9); every other priority is Forge's
             final Game sg = getGame();
-            boolean searchable = sg.getStack().isEmpty() && sg.getPhaseHandler().isPlayerTurn(player) && sg.getPhaseHandler().getPhase() != null
-                    && sg.getPhaseHandler().getPhase().isMain() && !byId.isEmpty();
+            boolean mainPlay = sg.getStack().isEmpty() && sg.getPhaseHandler().isPlayerTurn(player) && sg.getPhaseHandler().getPhase() != null
+                    && sg.getPhaseHandler().getPhase().isMain();
+            boolean searchable = !byId.isEmpty() && ((mainPlay && (ctx.owns(seat, "search") || ctx.owns(seat, "isearch")))
+                    || (!mainPlay && ctx.owns(seat, "isearch")));
             if (!searchable) return asAi(() -> super.chooseSpellAbilityToPlay());
             // Forge's own choice is the baseline the search has to beat
             final List<SpellAbility> aiPick = asAi(() -> super.chooseSpellAbilityToPlay());
@@ -500,8 +503,8 @@ public class PlayerControllerExternal extends PlayerControllerAi {
             if (base != null && !tried.contains(base)) tried.add(base);
             final SpellAbility fb = base;
             Search.Result sr = asAi(() -> Search.choose(sg, player, fb, tried, ctx.searchRollouts, ctx.searchTurns, ctx.searchMargin, ctx.searchScreen));
-            ctx.auto(seat, "search", "priority", sr.screened ? "clear, not searched" : sr.override ? "overrode Forge" : "kept Forge's choice");
-            if (Search.TRACE) client.log("search: " + (sr.screened ? "SCREENED " : sr.override ? "OVERRIDE " : "") + sr.playouts + " play-outs " + String.join(", ", sr.scores));
+            ctx.auto(seat, "search", "priority", (mainPlay ? "" : "instant: ") + (sr.screened ? "clear, not searched" : sr.override ? "overrode Forge" : "kept Forge's choice"));
+            if (Search.TRACE) client.log("search: " + (mainPlay ? "" : "[instant " + sg.getPhaseHandler().getPhase() + (sg.getStack().isEmpty() ? "" : ", stack " + sg.getStack().size()) + "] ") + (sr.screened ? "SCREENED " : sr.override ? "OVERRIDE " : "") + sr.playouts + " play-outs " + String.join(", ", sr.scores));
             if (!sr.override) return aiPick;
             if (sr.best == null) return null;
             agentChosen = sr.best;

@@ -26,17 +26,21 @@ const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ 
 const env = (k, d) => process.env[k] === undefined ? d : +process.env[k];
 const SEARCH = { rollouts: env('SEARCH_ROLLOUTS', 8), turns: env('SEARCH_TURNS', 1), max: env('SEARCH_MAX', 5), margin: env('SEARCH_MARGIN', 2), screen: env('SEARCH_SCREEN', 50), ...(process.env.SEARCH_EVAL ? { eval: path.resolve(process.env.SEARCH_EVAL) } : {}) };
 const M = +(process.env.MATCHES || 14);
+// SEARCH_KIND=isearch also searches instant speed (the opponent's turn, responses); ONLY=deck,deck plays
+// only the pairings with one of those decks in them
+const KIND = process.env.SEARCH_KIND || 'search';
+const ONLY = process.env.ONLY ? new Set(process.env.ONLY.split(',')) : null;
 
 const pairs = Object.keys(probe).filter(id => id.endsWith('|stock')).map(id => {
   const [deck, opp] = id.split('|');
   const key = Object.keys(c.inputs.real).find(k => { const [a, b] = k.split(SEP); return (a === deck && b === opp) || (a === opp && b === deck); });
   return { id: `${deck}|${opp}|search`, deck, opp, key };
-}).filter(j => j.key);
+}).filter(j => j.key && (!ONLY || ONLY.has(j.deck) || ONLY.has(j.opp)));
 const todo = pairs.filter(j => !done[j.id]);
-log(`${pairs.length} pairings, ${todo.length} to play, ${M} best-of-threes each, search ${JSON.stringify(SEARCH)} on both seats`);
+log(`${pairs.length} pairings, ${todo.length} to play, ${M} best-of-threes each, ${KIND} ${JSON.stringify(SEARCH)} on both seats`);
 
 async function play(j) {
-  const r = await runMatches({ decks: [lists.get(j.deck), lists.get(j.opp)], matches: M, seed: seedOf(j.deck + '|' + j.opp), own: [['search'], ['search']], policy: [null, null], search: SEARCH, workDir: path.join(OUT, 'work', String(seedOf(j.id))) });
+  const r = await runMatches({ decks: [lists.get(j.deck), lists.get(j.opp)], matches: M, seed: seedOf(j.deck + '|' + j.opp), own: [[KIND], [KIND]], policy: [null, null], search: SEARCH, workDir: path.join(OUT, 'work', String(seedOf(j.id))) });
   const won = r.games.filter(g => g.winner === 0).length, lost = r.games.filter(g => g.winner === 1).length;
   return { won, lost, draws: r.games.length - won - lost, ms: r.ms, errors: r.errors.slice(0, 2) };
 }

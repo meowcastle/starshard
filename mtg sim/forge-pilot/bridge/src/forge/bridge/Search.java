@@ -1,5 +1,8 @@
 package forge.bridge;
 
+import forge.ai.ComputerUtil;
+import forge.ai.simulation.GameSimulator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +54,7 @@ final class Search {
         public List<SpellAbility> chooseSpellAbilityToPlay() {
             if (!used) {
                 used = true;
+                if (TRACE) System.err.println("[search] forced at turn " + getGame().getPhaseHandler().getTurn() + " " + getGame().getPhaseHandler().getPhase() + " stack " + getGame().getStack().size() + ": " + (first == null ? "pass" : first.getHostCard().getName() + (first.canPlay() ? " (playable here)" : " (NOT playable here)")));
                 return first == null ? null : Collections.singletonList(first);
             }
             return super.chooseSpellAbilityToPlay();
@@ -151,7 +155,6 @@ final class Search {
             Player me = cp.find(origMe);
             SpellAbility c = cand == null ? null : find(cp, cand, me);
             if (cand != null && c == null) return Double.NaN;
-            me.dangerouslySetController(new Forced(g, me, me.getLobbyPlayer(), c));
             for (Player p : g.getPlayers()) p.getZone(ZoneType.Library).shuffle();
             if (!PEEK) {
                 // the searcher doesn't know their hand: deal one from everything it can't see
@@ -163,6 +166,20 @@ final class Search {
                 op.getZone(ZoneType.Library).setCards(new ArrayList<>(pool.subList(hand.size(), pool.size())));
             }
             if (TRACE) { Player op = me.getWeakestOpponent(); System.err.println("[search] start turn " + g.getPhaseHandler().getTurn() + " " + g.getPhaseHandler().getPhase() + " me lib " + me.getCardsIn(ZoneType.Library).size() + " hand " + me.getCardsIn(ZoneType.Hand).size() + " life " + me.getLife() + " | opp lib " + op.getCardsIn(ZoneType.Library).size() + " life " + op.getLife() + " | orig me lib " + origMe.getCardsIn(ZoneType.Library).size()); }
+            // the candidate is played here, on the copy, in the step it was chosen in, the way Forge's own
+            // simulator does (GameSimulator.simulateSpellAbility), and the stack resolved before the copy
+            // runs on. (Until 13 Oct it was forced at the copy's first priority, which comes a step later:
+            // the copy resumes as if this step's priority had been passed, so a main-1 play was cast at
+            // beginning of combat and an end-step instant in the next upkeep, after its lands untapped.)
+            if (c != null) {
+                c.setActivatingPlayer(me);
+                g.copyLastState();
+                boolean played = ComputerUtil.handlePlayingSpellAbility(me, c, null);
+                if (TRACE) System.err.println("[search] played at turn " + g.getPhaseHandler().getTurn() + " " + g.getPhaseHandler().getPhase() + ": " + cand.getHostCard().getName() + (played ? "" : " FAILED"));
+                if (!played) return Double.NaN;
+            }
+            GameSimulator.resolveStack(g, me.getWeakestOpponent());
+            if (g.isGameOver()) { GameOutcome o = g.getOutcome(); return o == null || o.isDraw() ? 0 : me.hasLost() ? -W : o.isWinner(me.getLobbyPlayer()) ? W : 0; }
             Cap cap = new Cap(g, me, g.getPhaseHandler().getTurn() + turns);
             g.subscribeToEvents(cap);
             g.getPhaseHandler().mainGameLoop();
