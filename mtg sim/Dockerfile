@@ -1,5 +1,5 @@
 # sim.starshard.net — Forge (headless AI-vs-AI) + a small Node API/UI.
-FROM node:20-bookworm-slim
+FROM node:24-bookworm-slim
 # Java 17 takes its default charset from the locale: without this, javac and the bridge run as ASCII
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -21,7 +21,7 @@ RUN mkdir -p /opt/forge \
  && ls /opt/forge/*.jar
 
 WORKDIR /app
-COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js functional.js store.js config.js tags.js plan.js cards.js leaks.js weekly.js ./
+COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js functional.js store.js config.js tags.js plan.js cards.js leaks.js weekly.js accounts.js ./
 COPY public ./public
 COPY curated-standard-*.json ./
 # our pilot on Forge's rules engine (forge-pilot/README.md): built against this image's own

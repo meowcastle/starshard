@@ -36,10 +36,10 @@
 <div data-screen-label="Sign in" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px">
   <div style="width:360px;display:flex;flex-direction:column;gap:32px">
     <div style="display:flex;align-items:center;gap:10px"><div style="width:16px;height:16px;background:var(--accent);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="font-weight:600;font-size:var(--fs-m)">Forge Sim</div></div>
-    <sc-if value="{{ invites }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ isInvite }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:var(--fs-xxl);font-weight:600;line-height:1.1;letter-spacing:-.01em">Justin invited you</div><div style="font-size:var(--fs-m);color:var(--muted)">Pick a name and a password. Decks and results stay inside the team.</div></div>
-    <div style="display:flex;flex-direction:column;gap:16px"><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Display name<input value="Theo" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Password<input type="password" value="••••••••••" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><a href="#" onClick="{{ goFirstrun }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:12px;font-weight:600;font-size:var(--fs-m);text-align:center">Join</a><a href="#" onClick="{{ toggleInvite }}" style="font-size:var(--fs-s);color:var(--muted)">Already a member · sign in</a></div></sc-if></sc-if>
-    <sc-if value="{{ isNotInvite }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:var(--fs-xxl);font-weight:600;line-height:1.1;letter-spacing:-.01em">Sign in</div><div style="font-size:var(--fs-m);color:var(--muted)">Members only. No public sign-up.</div></div>
-    <div style="display:flex;flex-direction:column;gap:16px"><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Star Shard username<input value="{{ signinName }}" onChange="{{ onSigninName }}" autocomplete="username" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Password<input type="password" value="{{ signinPw }}" onChange="{{ onSigninPw }}" onKeyDown="{{ signinKey }}" autocomplete="current-password" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><a href="#" onClick="{{ doSignin }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:12px;font-weight:600;font-size:var(--fs-m);text-align:center">{{ signinLabel }}</a></div></sc-if>
+    <sc-if value="{{ invites }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ isInvite }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:var(--fs-xxl);font-weight:600;line-height:1.1;letter-spacing:-.01em">Make an account</div><div style="font-size:var(--fs-m);color:var(--muted)">Pick a name and a password. Your decks and results are yours alone. There is no email and no password reset yet, so keep the password somewhere safe. You must be 13 or older.</div></div>
+    <div style="display:flex;flex-direction:column;gap:16px"><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Name<input value="{{ joinName }}" onChange="{{ onJoinName }}" autocomplete="username" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Password<input type="password" value="{{ joinPw }}" onChange="{{ onJoinPw }}" onKeyDown="{{ joinKey }}" autocomplete="new-password" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><a href="#" onClick="{{ doJoin }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:12px;font-weight:600;font-size:var(--fs-m);text-align:center">{{ joinLabel }}</a><a href="#" onClick="{{ toggleInvite }}" style="font-size:var(--fs-s);color:var(--muted)">Already a member · sign in</a></div></sc-if></sc-if>
+    <sc-if value="{{ isNotInvite }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:var(--fs-xxl);font-weight:600;line-height:1.1;letter-spacing:-.01em">Sign in</div><div style="font-size:var(--fs-m);color:var(--muted)">New here? <a href="#" onClick="{{ toggleInvite }}" style="color:var(--ink);text-decoration:underline">Make an account</a>: a name and a password.</div></div>
+    <div style="display:flex;flex-direction:column;gap:16px"><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Username<input value="{{ signinName }}" onChange="{{ onSigninName }}" autocomplete="username" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:var(--fs-s);color:var(--muted)">Password<input type="password" value="{{ signinPw }}" onChange="{{ onSigninPw }}" onKeyDown="{{ signinKey }}" autocomplete="current-password" style="background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;padding:11px 12px;color:var(--ink);font-size:var(--fs-m);outline:none;width:100%"></label><a href="#" onClick="{{ doSignin }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:12px;font-weight:600;font-size:var(--fs-m);text-align:center">{{ signinLabel }}</a></div></sc-if>
     <div style="font-size:var(--fs-s);color:{{ signinNoteColor }};line-height:1.5">{{ signinNote }}</div>
   </div>
 </div>
@@ -449,7 +449,7 @@ class Component extends DCLogic {
   // Real wiring for Design's brewer v3. The server owns every number; this block only
   // turns /api/brews into the bindings the markup reads. The coach is not connected
   // yet, so its brief is computed straight from the games rather than written by a model.
-  state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
+  state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', joinName: '', joinPw: '', busy: false,
     fsStep: 1, fsFormat: 'standard', pasteText: '', check: null, fsErr: '', settingsOpen: false, settingsErr: '', st: null, coachMode: 'readout', pilotOpp: null, ed: null, lm: null, noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
     deckId: null, runId: null, tab: null, view: 'run', methodOpen: false, oppOpen: null, hover: null, askText: '', bo3: false, delAsk: null, cancelAsk: null, look: null, lookErr: '',
     deckName: '', cover: 0, upload: null, uploadErr: '',
@@ -496,7 +496,7 @@ class Component extends DCLogic {
   }
   async api(path, opts = {}) {
     const wantFx = this.props.fixtures || (!/starshard\.net$/.test(location.hostname) && !/^localhost|^127\./.test(location.hostname));
-    if (wantFx) { const fx = await this.fixtures(); if (fx) { const key = path.split('?')[0]; const hit = fx[key] || fx[key.replace(/\/[^/]+$/, '/*')]; if (hit) return JSON.parse(JSON.stringify(hit)); if (path === '/api/login' || path === '/api/logout') return {}; throw new Error('no fixture for ' + key); } }
+    if (wantFx) { const fx = await this.fixtures(); if (fx) { const key = path.split('?')[0]; const hit = fx[key] || fx[key.replace(/\/[^/]+$/, '/*')]; if (hit) return JSON.parse(JSON.stringify(hit)); if (path === '/api/login' || path === '/api/signup' || path === '/api/logout') return {}; throw new Error('no fixture for ' + key); } }
     const r = await fetch(path, { credentials: 'same-origin', method: opts.method || 'GET', headers: { 'Content-Type': 'application/json' }, body: opts.body && JSON.stringify(opts.body) });
     const data = (r.headers.get('content-type') || '').includes('json') ? await r.json() : { error: await r.text() };
     if (r.status === 401 && path !== '/api/login') { this.setState({ stage: 'signin' }); }
@@ -509,6 +509,13 @@ class Component extends DCLogic {
     this.setState(s => ({ brews, queueLength, bo3: !!bo3, limits: limits || null, stage: first ? (brews.length ? 'app' : 'firstrun') : s.stage }));
   }
   active(r) { return r.status === 'preparing' || r.status === 'queued' || r.status === 'running'; }
+  async signup() {
+    const S = this.state; if (S.busy) return;
+    this.setState({ busy: true, signinErr: '' });
+    try { await this.api('/api/signup', { method: 'POST', body: { username: S.joinName, password: S.joinPw } }); const me = await this.api('/api/me'); this.setState({ me, joinPw: '', invite: false }); await this.load(true); }
+    catch (e) { this.setState({ signinErr: e.message }); }
+    this.setState({ busy: false });
+  }
   async signin() {
     const S = this.state; if (S.busy) return;
     this.setState({ busy: true, signinErr: '' });
@@ -753,10 +760,12 @@ class Component extends DCLogic {
     const newBrew = (S.brews || []).find(b => b.id === S.newBrewId);
     const vOf = (S.brews || []).find(b => b.id === S.versionOf);
 
-    const v = { isSignin: stage === 'signin', isFirstrun: stage === 'firstrun', hasApp: stage === 'app', invites: false, isInvite: false, isNotInvite: true,
+    const v = { isSignin: stage === 'signin', isFirstrun: stage === 'firstrun', hasApp: stage === 'app', invites: true, isInvite: !!S.invite, isNotInvite: !S.invite,
       toggleInvite: pe(() => this.setState({ signinErr: '', invite: !S.invite })),
       signinName: S.signinName, signinPw: S.signinPw, onSigninName: (e) => this.setState({ signinName: e.target.value }), onSigninPw: (e) => this.setState({ signinPw: e.target.value }),
       signinKey: (e) => { if (e.key === 'Enter') this.signin(); }, doSignin: pe(() => this.signin()), signinLabel: S.busy ? '…' : 'Sign in',
+      joinName: S.joinName, joinPw: S.joinPw, onJoinName: (e) => this.setState({ joinName: e.target.value }), onJoinPw: (e) => this.setState({ joinPw: e.target.value }),
+      joinKey: (e) => { if (e.key === 'Enter') this.signup(); }, doJoin: pe(() => this.signup()), joinLabel: S.busy ? '…' : 'Make the account',
       signinNote: S.signinErr || 'Forge plays every game; results read as "when the AI plays both lists."',
       signinNoteColor: S.signinErr ? LOSS : 'var(--mark)',
       goFirstrun: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: null, pasteText: '', check: null, noteText: '' })),

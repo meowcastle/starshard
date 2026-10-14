@@ -1,5 +1,5 @@
 // sim.starshard.net — tiny API + static UI around Forge's headless simulator.
-// No dependencies: Node 20's http + fetch only.
+// No dependencies: Node's http, fetch and built-in SQLite only.
 const http = require('http');
 const config = require('./config');
 const { writeJson, readJson } = require('./store');
@@ -15,6 +15,7 @@ const score = require('./score');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
+const accounts = require('./accounts');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -52,12 +53,12 @@ const claude = require('./claude');
 const PORT = config.PORT;
 const DATA = config.DATA_DIR;
 const HOST = config.HOST;
-// Logins are Star Shard accounts. The sim never sees a password hash: it asks the
-// Star Shard API (same NAS, loopback only) to log the user in, keeps the session
-// token it gets back in its own cookie, and re-checks it against /api/me, so a
-// Star Shard logout or password reset ends the sim session too.
+// Logins (14 Oct 2026, Justin: anyone who reaches the site can sign up): a simulator account (a name and a
+// password, kept in the sim's own database, accounts.js) on the free plan, or, for the founders on
+// SIM_USERS, their Star Shard login, which the sim checks with the Star Shard API (same NAS, loopback only)
+// once at sign-in. Either way the sim then keeps its own session; the Star Shard token isn't stored.
 const STARSHARD_API = config.STARSHARD_API.replace(/\/$/, '');
-const ALLOWED = config.SIM_USERS.map(x => x.toLowerCase());   // Star Shard usernames allowed in; "*" = any account
+const ALLOWED = config.SIM_USERS.map(x => x.toLowerCase());   // the founders: Star Shard usernames that sign in with Star Shard; "*" = any Star Shard account
 const ADMINS = config.SIM_ADMINS.map(x => x.toLowerCase());
 const MAX_GAMES = config.MAX_GAMES;
 
@@ -81,17 +82,21 @@ const D24 = 864e5;
 const RUNS_PER_DAY = config.SIM_RUNS_PER_DAY, ASKS_PER_DAY = config.SIM_ASKS_PER_DAY;
 const DAILY_BUDGET = config.SIM_DAILY_BUDGET;
 const inTime = ms => { const m = Math.max(1, Math.ceil(ms / 60e3)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : ''); };
+// The sim's own database: accounts, sessions, plans and the credits ledger (accounts.js).
+const A = accounts.open(path.join(DATA, 'sim.db'), { runsPerDay: RUNS_PER_DAY, asksPerDay: ASKS_PER_DAY });
+const planOfName = name => { const a = A.accountByName(name); return A.planOf(a ? a.plan : 'founder'); };
 function limitsFor(user) {
   if (user.isAdmin) return null;
-  const left = (kind, cap) => { const t = usage.events(user.name, kind, D24).sort((a, b) => a - b); return { cap, left: Math.max(0, cap - t.length), freeIn: t.length >= cap ? t[t.length - cap] + D24 - Date.now() : 0 }; };
-  return { runs: left('run', RUNS_PER_DAY), asks: left('ask', ASKS_PER_DAY), budget: DAILY_BUDGET > 0 && usage.spent(D24) >= DAILY_BUDGET };
+  const f = A.planOf(user.plan).features;
+  const left = (kind, cap) => { if (cap == null) return null; const t = usage.events(user.name, kind, D24).sort((a, b) => a - b); return { cap, left: Math.max(0, cap - t.length), freeIn: t.length >= cap ? t[t.length - cap] + D24 - Date.now() : 0 }; };
+  return { plan: user.plan, runs: left('run', f.runsPerDay), asks: left('ask', f.asksPerDay), budget: DAILY_BUDGET > 0 && usage.spent(D24) >= DAILY_BUDGET };
 }
 // null if allowed, else the sentence to show
 function refusal(user, kind) {
   const l = limitsFor(user); if (!l) return null;
   if (l.budget) return 'The sim has spent its model budget for today. Try again tomorrow, or ask Justin.';
   const x = kind === 'run' ? l.runs : l.asks;
-  return x.left ? null : `That's your ${x.cap} ${kind === 'run' ? 'runs' : 'questions'} for today. The next one frees up in ${inTime(x.freeIn)}.`;
+  return !x || x.left ? null : `That's your ${x.cap === 1 ? 'one' : x.cap} ${kind === 'run' ? 'run' : 'question'}${x.cap === 1 ? '' : 's'} for today. The next one frees up in ${inTime(x.freeIn)}.`;
 }
 const forgeUpdate = () => forgeLatest && newer(forgeLatest.version, forgeVersion()) ? forgeLatest : null;
 fs.mkdirSync(path.join(DATA, 'jobs'), { recursive: true });
@@ -101,19 +106,30 @@ const COOKIE = 'sim_session';
 const allowed = u => ALLOWED.includes('*') || ALLOWED.includes(u.toLowerCase());
 const tokenOf = req => { const c = (req.headers.cookie || '').match(/(?:^|;\s*)sim_session=([^;]+)/); return c && decodeURIComponent(c[1]); };
 const clientIp = req => (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress;
-const seen = new Map(); // token -> { user, at }
+const isAdminName = n => ADMINS.includes(String(n).toLowerCase());
+// a session's person; a founder taken off SIM_USERS loses access, a simulator account keeps it
+function userOf(s) {
+  if (!s || (s.source === 'starshard' && !allowed(s.name))) return null;
+  return { name: s.name, accountId: s.accountId, plan: s.plan, source: s.source, isAdmin: s.source === 'starshard' && isAdminName(s.name) };
+}
 async function currentUser(req) {
   const token = tokenOf(req); if (!token) return null;
-  const hit = seen.get(token);
-  if (hit && Date.now() - hit.at < 60e3) return hit.user;
-  const r = await fetch(STARSHARD_API + '/api/me', { headers: { Cookie: `starshard_session=${token}` } });
-  if (!r.ok) { seen.delete(token); return null; }
-  const me = await r.json();
-  const user = me.username && allowed(me.username) ? { name: me.username, isAdmin: ADMINS.includes(me.username.toLowerCase()) } : null;
-  seen.set(token, { user, at: Date.now() });
-  if (seen.size > 500) seen.delete(seen.keys().next().value);
-  return user;
+  const s = A.session(token); if (s) return userOf(s);
+  // a cookie from before the sim kept its own sessions holds the Star Shard token itself: Star Shard checks
+  // it once, then it carries on as a sim session (the founders stay signed in across this change)
+  const id = accounts.starshardId(token); if (id == null) return null;
+  let me; try { const r = await fetch(STARSHARD_API + '/api/me', { headers: { Cookie: `starshard_session=${token}` } }); if (!r.ok) return null; me = await r.json(); } catch { return null; }
+  if (!me.username || !allowed(me.username)) return null;
+  let a; try { a = A.accountFor({ id, name: me.username, admin: isAdminName(me.username) }); } catch { return null; }
+  A.startSession(a.id, token);
+  return userOf(A.session(token));
 }
+// Sign-in and sign-up tries per address: 10 failed sign-ins in 15 minutes, 5 sign-ups an hour.
+const tries = new Map();
+function tooMany(kind, ip, max, ms) { const k = kind + ':' + ip, t = (tries.get(k) || []).filter(x => Date.now() - x < ms); tries.set(k, t); return t.length >= max; }
+const tried = (kind, ip) => { const k = kind + ':' + ip; tries.set(k, [...(tries.get(k) || []), Date.now()]); };
+setInterval(() => { for (const [k, t] of tries) if (!t.some(x => Date.now() - x < 3600e3)) tries.delete(k); }, 600e3);
+const sessionCookie = token => ({ 'Set-Cookie': `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 86400}` });
 
 // ---------- jobs ----------
 const HIST = path.join(DATA, 'history.json');
@@ -232,6 +248,7 @@ function settle(job) {
     decks: job.decks, meta: job.meta || null, engine: job.engine || null });
   saveHist();
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
+  if (job.brew) try { settleRuns(); } catch (e) { console.error('settle:', e.message); }
   if (job.onDone) try { job.onDone(job); } catch (e) { console.error('onDone:', e.message); }
 }
 
@@ -290,6 +307,8 @@ const clean = r => ({
 // it. Results themselves live on the job (live) or in history (finished).
 const BREWS = path.join(DATA, 'brews.json');
 let brews = readJson(BREWS, []);
+// every founder and every existing deck owner holds their name, so no sign-up can take it, or their decks
+for (const n of new Set([...ALLOWED.filter(x => x !== '*'), ...ADMINS, ...brews.map(b => b.owner)])) A.reserveName(n);
 const saveBrews = () => writeJson(BREWS, brews);
 // A run that was still reading decklists when the process stopped will never finish.
 brews.forEach(b => b.runs.forEach(r => { if (r.status === 'preparing') { r.status = 'failed'; r.error = 'the server restarted before this run was queued'; } }));
@@ -304,20 +323,29 @@ function secondsPerGame(pod) {
   return ms.length ? ms.reduce((a, b) => a + b, 0) / ms.length / 1000 : pod ? 41 : 14;
 }
 const fmtTime = s => s < 3600 ? `~${Math.max(1, Math.round(s / 60))} min` : `~${(s / 3600).toFixed(1)} h`;
-const teamFor = b => brews.filter(o => o.owner !== b.owner && o.format === b.format).slice(0, b.seats === 4 ? 3 : 12);
+// Whose decks a person may see: the founders see each other's (the team); anyone on another plan sees only
+// their own. Strangers who signed up never see each other's lists.
+const founderName = n => planOfName(n).code === 'founder';
+const canSee = (viewer, owner) => viewer === owner || (founderName(viewer) && founderName(owner));
+const teamFor = b => brews.filter(o => o.owner !== b.owner && o.format === b.format && canSee(b.owner, o.owner)).slice(0, b.seats === 4 ? 3 : 12);
+const ASK_CREDITS = 5;   // a coach question's Opus call, in credits (work order §3)
 
 // The opponent sets the run picker offers for this brew.
 function oppSets(b) {
   // a best-of-three run plays game 1 and the boarded games as separate pairings
   const pod = b.seats === 4, per = (LOAD_SECONDS + GAMES * secondsPerGame(pod)) * (!pod && sideboard.available() ? 2 : 1), team = teamFor(b);
   const teamSet = { id: 'team', title: `My pod · ${team.length} team deck${team.length === 1 ? '' : 's'}`, detail: team.length ? team.map(o => `${o.owner}'s ${o.name}`).join(', ') + '.' : `No other member has a ${b.format} brew yet.`, time: team.length ? fmtTime(per) : '', available: team.length > 0, n: team.length };
-  if (pod) return [{ id: 'meta20', title: 'The field · top 3 commanders', detail: 'EDHREC, this week. Average decks, one pod.', time: fmtTime(per), available: true, n: 3 }, teamSet];
-  if (!meta.GOLDFISH_FORMATS.includes(b.format)) return [{ id: 'meta20', title: 'The field', detail: `No metagame source for ${b.format}.`, time: '', available: false, n: 0 }, teamSet];
-  return [
+  // credits: about a minute of simulator time each (work order §3); the plan decides which sets are open
+  const f = planOfName(b.owner).features;
+  const priced = sets => sets.map(x => ({ ...x, credits: Math.ceil(x.n * per / 60) })).map(x => f.fields.includes(x.id) || !x.available ? x
+    : { ...x, available: false, detail: x.id === 'team' ? "Team decks aren't on the free plan." : "The top 20 isn't on the free plan; the top 10 is." });
+  if (pod) return priced([{ id: 'meta20', title: 'The field · top 3 commanders', detail: 'EDHREC, this week. Average decks, one pod.', time: fmtTime(per), available: true, n: 3 }, teamSet]);
+  if (!meta.GOLDFISH_FORMATS.includes(b.format)) return priced([{ id: 'meta20', title: 'The field', detail: `No metagame source for ${b.format}.`, time: '', available: false, n: 0 }, teamSet]);
+  return priced([
     { id: 'meta20', title: 'The field · top 20', detail: `MTGGoldfish ${b.format}, read when you queue. Weighted by meta share.`, time: fmtTime(20 * per), available: true, n: 20 },
     { id: 'meta10', title: 'The field · top 10', detail: 'Same source, the decks you will actually face.', time: fmtTime(10 * per), available: true, n: 10 },
     teamSet,
-  ];
+  ]);
 }
 
 async function mapLimit(items, n, fn) {
@@ -573,7 +601,7 @@ async function codexCtx(user) {
     }
     return [];
   });
-  return { brews: brews.filter(b => b.format === format), field: field.map(d => ({ name: d.name, main: d.main, side: d.side || [] })), shares, me: user.name,
+  return { brews: brews.filter(b => b.format === format && canSee(user.name, b.owner)), field: field.map(d => ({ name: d.name, main: d.main, side: d.side || [] })), shares, me: user.name,
     snapshot: new Date(at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' field', real: n => calibs[format]?.realField?.[n] || null, records };
 }
 
@@ -952,12 +980,15 @@ async function weeklyDue() {
       if (!last || last.created >= changedAt) continue;                        // already played this field
       if (Date.now() - last.created > RUN_DAYS * 864e5) continue;              // no field run in 60 days
       if (Date.now() - (weeklyState.seen[b.owner] || 0) > IDLE_DAYS * 864e5) continue;
+      if (!planOfName(b.owner).features.weekly) continue;
       if (b.runs.some(r => r.weekly && Date.now() - r.created < WEEK)) continue; // one a week
       if (b.runs.some(r => ['preparing', 'queued', 'running'].includes(runView(b, r).status))) continue;
       const v = latest(b);
       if (v.legal && !v.legal.ok) continue;                                    // rotated out: nothing to rerun
       const run = { id: crypto.randomBytes(4).toString('hex'), v: v.v, oppSet: last.oppSet, created: Date.now(), status: 'preparing', weekly: true };
       b.runs.unshift(run); saveBrews();
+      const set = oppSets(b).find(x => x.id === run.oppSet), acct = A.accountByName(b.owner);
+      if (acct) A.reserve(acct.id, { kind: 'weekly', ref: run.id, credits: set ? set.credits : 0, note: `${b.name} v${v.v} · weekly rerun`, free: true });
       console.log(`weekly: ${b.owner}'s ${b.name} v${v.v} against the new ${format} field`);
       await prepareRun(b, run, { name: b.owner }, { low: true });
     }
@@ -982,6 +1013,22 @@ function weeklyFinish() {
   }
   if (dirty) saveBrews();
 }
+// Settle each reserved run once it has stopped: what it played, in credits (a minute of play and loading
+// each), never more than its quote. A run the server lost on a restart, or one that failed, uses nothing.
+function settleRuns() {
+  for (const r of A.openRuns()) {
+    let b = null, run = null; for (const x of brews) { const y = x.runs.find(z => z.id === r.ref); if (y) { b = x; run = y; break; } }
+    if (!run) { A.settle(r.ref, 0, 'the deck was deleted'); continue; }
+    const st = runView(b, run).status; if (!['done', 'failed', 'cancelled', 'lost'].includes(st)) continue;
+    const h = run.jobId && history.find(x => x.id === run.jobId);
+    const min = Math.ceil((h ? h.pairings.filter(x => x.played).reduce((t, x) => t + x.played * (x.avgMs || 0) / 1000 + LOAD_SECONDS, 0) : 0) / 60);
+    A.settle(r.ref, min, `${st}: about ${min} min of play`);
+  }
+}
+setTimeout(settleRuns, 30e3); setInterval(settleRuns, 600e3);
+// the database's nightly copy (seven kept) and expired sessions
+const dbChores = () => { try { A.backup(path.join(DATA, 'backups')); A.sweepSessions(); } catch (e) { console.error('database backup:', e.message); } };
+setTimeout(dbChores, 120e3); setInterval(dbChores, 24 * 3600e3);
 setTimeout(() => weeklyDue().catch(e => console.error('weekly:', e.message)), 90e3);
 setInterval(() => weeklyDue().catch(e => console.error('weekly:', e.message)), 6 * 3600e3);
 
@@ -1015,22 +1062,38 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/login' && req.method === 'POST') {
       const { username, password } = await readBody(req);
       if (typeof username !== 'string' || typeof password !== 'string' || !username.trim()) return send(res, 400, { error: 'enter your Star Shard username and password' });
-      const id = username.trim();
+      const id = username.trim(), ip = clientIp(req);
+      if (tooMany('login', ip, 10, 15 * 60e3)) return send(res, 429, { error: 'too many tries, wait 15 minutes' });
+      // a simulator account signs in here; a name that is one never goes to Star Shard
+      const local = A.signIn(id, password);
+      if (local) return send(res, 200, { ok: true, user: local.name }, sessionCookie(A.startSession(local.id)));
+      const held = A.accountByName(id);
+      if (held && held.source === 'sim') { tried('login', ip); return send(res, 401, { error: 'wrong username or password' }); }
       const r = await fetch(STARSHARD_API + '/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': clientIp(req) },
         body: JSON.stringify(id.includes('@') ? { email: id, password } : { username: id, password }),
       });
       if (r.status === 429) return send(res, 429, { error: 'too many tries, wait 15 minutes' });
-      if (!r.ok) return send(res, 401, { error: 'wrong username or password' });
+      if (!r.ok) { tried('login', ip); return send(res, 401, { error: 'wrong username or password' }); }
       const me = await r.json();
       const token = (r.headers.getSetCookie?.() || []).map(c => c.match(/^starshard_session=([^;]+)/)).find(Boolean)?.[1];
       if (!token) return send(res, 502, { error: 'Star Shard login did not return a session' });
-      if (!allowed(me.username)) return send(res, 403, { error: `@${me.username} isn't on the simulator list yet. Ask Justin to add you.` });
-      seen.delete(token);
-      return send(res, 200, { ok: true, user: me.username }, { 'Set-Cookie': `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${60 * 86400}` });
+      if (!allowed(me.username)) return send(res, 403, { error: 'Star Shard sign-in is for the founders. Create a simulator account instead: it takes a name and a password.' });
+      let acct; try { acct = A.accountFor({ id: accounts.starshardId(token), name: me.username, admin: isAdminName(me.username) }); } catch (e) { return send(res, 409, { error: e.message }); }
+      return send(res, 200, { ok: true, user: acct.name }, sessionCookie(A.startSession(acct.id)));
     }
-    if (p === '/api/logout') { seen.delete(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
+    // anyone can make a simulator account: a name and a password, the free plan
+    if (p === '/api/signup' && req.method === 'POST') {
+      const ip = clientIp(req);
+      if (tooMany('signup', ip, 5, 3600e3)) return send(res, 429, { error: 'too many new accounts from here; try again in an hour' });
+      const { username, password } = await readBody(req);
+      let a; try { a = A.signUp(username, password); } catch (e) { return send(res, 400, { error: e.message }); }
+      tried('signup', ip);
+      console.log(`signup: ${a.name}`);
+      return send(res, 200, { ok: true, user: a.name }, sessionCookie(A.startSession(a.id)));
+    }
+    if (p === '/api/logout') { A.endSession(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
     if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion() });
     if (!p.startsWith('/api/')) return serveStatic(req, res, p);
     // remote workers authenticate with SIM_WORKER_TOKEN, not a person's session
@@ -1110,6 +1173,23 @@ const server = http.createServer(async (req, res) => {
       return res.end();
     }
 
+    // the Account tab (work order §4): plan, balance, and the ledger with the balance after each row. No
+    // packs until Stripe is connected.
+    if (p === '/api/account' && req.method === 'GET') {
+      const a = A.account(user.accountId), plan = A.planOf(a.plan), bal = A.balance(a.id);
+      return send(res, 200, { name: a.name, source: a.source, since: a.created, plan: { code: plan.code, name: plan.name, charges: plan.charges, features: plan.features },
+        balance: bal, minutes: bal, packs: [], ledger: A.statement(a.id), limits: limitsFor(user),
+        note: plan.code === 'founder' ? "Founders' plan · free while the sim is calibrated · thank you for the logs." : plan.code === 'free' ? `Free plan · ${plan.features.runsPerDay} run and ${plan.features.asksPerDay} coach questions a day, one deck, the top 10.` : null });
+    }
+    // a simulator account can delete itself and its decks; a founder's account goes through Justin
+    if (p === '/api/account' && req.method === 'DELETE') {
+      if (user.source !== 'sim') return send(res, 400, { error: 'a founder account is removed by Justin' });
+      for (const b of brews.filter(x => x.owner === user.name)) { for (const r of b.runs) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); } try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
+      brews = brews.filter(x => x.owner !== user.name); saveBrews();
+      A.db.prepare('DELETE FROM accounts WHERE id = ?').run(user.accountId);
+      console.log(`account deleted: ${user.name}`);
+      return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` });
+    }
     if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, spentToday: user.isAdmin ? usage.spent(D24) : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
 
     // meta
@@ -1136,7 +1216,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ...(await meta.describeDeck({ main: deck.main || [], side: deck.side || [], commander: deck.commander || [] }, fmt)), importedName: deck.name || null });
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/cover$/)) && req.method === 'GET') {
-      const b = brews.find(x => x.id === m[1]); const f = b && b.coverUrl && path.join(DATA, 'covers', b.id + '.img');
+      const b = brews.find(x => x.id === m[1] && canSee(user.name, x.owner)); const f = b && b.coverUrl && path.join(DATA, 'covers', b.id + '.img');
       if (!f || !fs.existsSync(f)) return send(res, 404, 'no cover');
       return send(res, 200, fs.readFileSync(f), { 'Content-Type': b.coverType || 'image/jpeg', 'Cache-Control': 'private, max-age=86400' });
     }
@@ -1175,6 +1255,8 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/api/brews' && req.method === 'POST') {
       const { list, name, note, cover, format } = await readBody(req);
+      const cap = A.planOf(user.plan).features.brews;
+      if (!user.isAdmin && cap != null && brews.filter(x => x.owner === user.name).length >= cap) return send(res, 403, { error: `The free plan keeps ${cap === 1 ? 'one deck' : cap + ' decks'}. Paste a new version of it, or delete it to start another.` });
       const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
       if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
       const fmt = FORMATS.includes(String(format || '').toLowerCase()) ? String(format).toLowerCase() : 'standard';
@@ -1222,6 +1304,8 @@ const server = http.createServer(async (req, res) => {
       if (dup) return send(res, 409, { error: `v${v} is already running against that field. Cancel it first if you want to start over.` });
       const no = refusal(user, 'run'); if (no) return send(res, 429, { error: no });
       const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
+      const paid = A.reserve(user.accountId, { ref: run.id, credits: set.credits || 0, note: `${b.name} v${v} · ${set.title}` });
+      if (!paid.ok) return send(res, 402, { error: `This run needs ${paid.need} credits; you have ${paid.have}.` });
       b.runs.unshift(run); saveBrews(); usage.mark(user.name, 'run');
       prepareRun(b, run, user);
       return send(res, 200, brewView(b));
@@ -1262,6 +1346,8 @@ const server = http.createServer(async (req, res) => {
       if (!coach.MODES.includes(mode)) return send(res, 400, { error: 'modes: ' + coach.MODES.join(', ') });
       if (mode === 'review' && b.versions.length < 2) return send(res, 400, { error: 'a review needs two versions' });
       const no = refusal(user, 'ask'); if (no) return send(res, 429, { error: no });
+      const paid = A.reserve(user.accountId, { kind: 'ask', credits: ASK_CREDITS, note: `${b.name} · a coach question` });
+      if (!paid.ok) return send(res, 402, { error: `A question needs ${paid.need} credits; you have ${paid.have}.` });
       usage.mark(user.name, 'ask');
       b.thinking = true; saveBrews();
       const rv = coachRun(b, talkRun(b)), opp = mode === 'pilot' ? String(opponent || '').slice(0, 80) || null : null;
@@ -1281,6 +1367,8 @@ const server = http.createServer(async (req, res) => {
       if (b.thinking) return send(res, 409, { error: 'the coach is still answering' });
       const text = String((await readBody(req)).text || '').trim().slice(0, 2000); if (!text) return send(res, 400, { error: 'ask something' });
       const no = refusal(user, 'ask'); if (no) return send(res, 429, { error: no });
+      const paid = A.reserve(user.accountId, { kind: 'ask', credits: ASK_CREDITS, note: `${b.name} · a coach question` });
+      if (!paid.ok) return send(res, 402, { error: `A question needs ${paid.need} credits; you have ${paid.have}.` });
       usage.mark(user.name, 'ask');
       (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
       usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, coachRun(b, talkRun(b)), b.thread))
@@ -1302,9 +1390,12 @@ const server = http.createServer(async (req, res) => {
       const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
       if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality) });
       if (!diff.length) return send(res, 400, { error: 'that is the current list already' });
+      const nr = { id: crypto.randomBytes(4).toString('hex'), v: prev.v + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
+      const set = oppSets(b).find(x => x.id === run.oppSet);
+      const paid = A.reserve(user.accountId, { ref: nr.id, credits: set ? set.credits : 0, note: `${b.name} v${nr.v} · testing a swap` });
+      if (!paid.ok) return send(res, 402, { error: `This run needs ${paid.need} credits; you have ${paid.have}.` });
       b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i } });
       readSoon(b, b.versions[b.versions.length - 1]);
-      const nr = { id: crypto.randomBytes(4).toString('hex'), v: prev.v + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
       o.test = { v: nr.v, run: nr.id };
       b.runs.unshift(nr); saveBrews(); usage.mark(user.name, 'run');
       prepareRun(b, nr, user);
@@ -1317,6 +1408,7 @@ const server = http.createServer(async (req, res) => {
       // the weekly badge: the page clears it once the owner has opened the brew
       if (weeklySeen === true && b.weekly) b.weekly.seen = true;
       // the guide's share link: true mints one (always the newest version), false revokes it
+      if (share === true && !user.isAdmin && !A.planOf(user.plan).features.sharing) return send(res, 403, { error: "Sharing the guide isn't on the free plan." });
       if (share === true) b.share = { token: b.share ? b.share.token : crypto.randomBytes(8).toString('hex'), at: Date.now() };
       else if (share === false) delete b.share;
       if (settings && typeof settings === 'object') b.settings = cleanSettings(settings, b.settings || {});
