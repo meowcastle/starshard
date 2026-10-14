@@ -180,7 +180,7 @@ function spells(m, find) {
 // Only the cards Forge's AI never casts (tools/dead-cards.js, forge-pilot/dead-cards.json);
 // every other decision stays Forge's. A dead counter answers their spell that matters, a dead
 // instant or flash card goes at their end step, anything else in our main phase.
-function deadcards(m, find, dead) {
+function deadcards(m, find, dead, xPlan = []) {
   const s = m.state || {}, opts = m.options || [], opp = s.opponent || {};
   const mine = opts.filter(o => o.meta && o.meta.type === 'spell' && dead.has(nk(o.card || '')));
   if (!mine.length) return null;
@@ -195,8 +195,36 @@ function deadcards(m, find, dead) {
   }
   const yours = s.activePlayer === 'you';
   if (!yours && s.phase === 'END_OF_TURN') { const c = mine.filter(o => role(o).instant && !role(o).counter).sort((a, b) => (b.meta.cmc || 0) - (a.meta.cmc || 0))[0]; return c ? { choice: [c.id] } : null; }
-  if (yours && /MAIN/.test(s.phase || '')) { const c = mine.find(o => !role(o).instant && !role(o).counter); return c ? { choice: [c.id] } : null; }
+  if (yours && /MAIN/.test(s.phase || '')) {
+    const w = mine.find(o => wipeX(find(o.card || '')));
+    if (w) { const x = wipeAt(s, find, find(w.card)); if (x != null) { xPlan[m.seat] = x; return { choice: [w.id] }; } }
+    const c = mine.find(o => !role(o).instant && !role(o).counter && !wipeX(find(o.card || '')));
+    return c ? { choice: [c.id] } : null;
+  }
   return null;
+}
+
+// A board wipe with X in its cost (Day of Black Sun: "each creature with mana value X or less ... destroy those
+// creatures"), which Forge's AI never casts: 0 of 2,380 chances in batches 1, 2 and 5. Cast it in our main phase
+// only when, at the best X our untapped lands pay for, it kills at least two more of their creatures than of ours;
+// the X goes to the bridge's announce_x question (a seat with a pilot owns it; any other X spell goes back to Forge).
+const oracleOf = k => !k ? '' : k.oracle_text || (k.card_faces || []).map(f => f.oracle_text || '').join('\n');
+const wipeX = k => /each creature with mana value X or less/i.test(oracleOf(k)) && /destroy/i.test(oracleOf(k));
+function wipeAt(s, find, k) {
+  const you = s.you || {}, opp = s.opponent || {};
+  const lands = (you.battlefield || []).filter(c => !c.tapped && landish(find(c.name))).length;
+  const top = lands - (k.cmc || 0); if (top < 0) return null;
+  const mv = c => c.token || c.faceDown ? 0 : ((find(c.name) || {}).cmc || 0);
+  const theirs = (opp.battlefield || []).filter(c => c.pt).map(mv), ours = (you.battlefield || []).filter(c => c.pt).map(mv);
+  let best = null, gain = 1;
+  for (let x = 0; x <= top; x++) { const g = theirs.filter(v => v <= x).length - ours.filter(v => v <= x).length; if (g > gain) { gain = g; best = x; } }
+  return best;
+}
+// the X a seat's pilot chose when it cast its wipe; the bridge asks for it right after
+function announceX(m, xPlan) {
+  const x = xPlan[m.seat]; xPlan[m.seat] = null;
+  const o = x != null && (m.options || []).find(o => o.id === 'n' + x);
+  return o ? { choice: [o.id] } : { delegate: true };
 }
 const nk = n => String(n).split(' // ')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
@@ -223,6 +251,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   // this match's mulligans so far, per seat, to know the size a hand would be kept at
   let match = 0, mulls = [0, 0], lastGame = 0;
   const dead = new Set([...deadCards].map(nk));
+  const xPlan = [null, null];
   return meta.cards(names).then(find => new Promise((resolve) => {
     const answer = m => {
       if (m.game !== lastGame) { mulls = [0, 0]; lastGame = m.game; }
@@ -233,9 +262,10 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
         if (!k) mulls[m.seat]++;
         return { choice: [k ? 'keep' : 'mulligan'] };
       }
+      if (m.kind === 'announce_x') return announceX(m, xPlan);
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
-        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'spells' ? spells(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
+        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'spells' ? spells(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead, xPlan) : null;
         if (a) { res.acted = (res.acted || 0) + 1; return a; }
       }
       return { delegate: true };

@@ -7,6 +7,8 @@
 // policy "nochump": Forge's blocks less the chump blocks it didn't need (pruneChumps in the bridge).
 const fs = require('fs');
 const path = require('path');
+const DEAD = [...(() => { try { const j = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '..', 'forge-pilot', 'dead-cards.json'), 'utf8')); return Object.entries(j).filter(([k]) => k !== '_').flatMap(([, v]) => v); } catch { return []; } })(),
+  ...(process.env.EXTRA_DEAD || '').split(';').map(x => x.trim()).filter(Boolean)];
 const { runMatches } = require('../pilot');
 
 const [CAL, OUT, POLICY = 'reactive', M = '14', PAR = '4', ONLY = ''] = process.argv.slice(2);
@@ -24,8 +26,8 @@ const slot = async () => {
     // search and nochump live in the bridge (Search.java, pruneChumps); the rest are pilot.js priority policies
     const BRIDGE = { search: ['search'], nochump: ['nochump'] };
     const policy = [null, null]; if (!BRIDGE[POLICY]) policy[t.at] = POLICY;
-    const own = [[], []]; own[t.at] = BRIDGE[POLICY] || ['priority'];
-    const r = await runMatches({ decks: [0, 1].map(k => ({ ...t.l, name: t.l.name + (k === t.at ? ' A' : ' B') })), matches: +M, seed: seedOf(t.l.name), own, policy, search: SEARCH, workDir: path.join(path.dirname(OUT), 'gate', String(seedOf(t.l.name + t.at))) });
+    const own = [[], []]; own[t.at] = BRIDGE[POLICY] || ['priority', 'announce_x'];
+    const r = await runMatches({ decks: [0, 1].map(k => ({ ...t.l, name: t.l.name + (k === t.at ? ' A' : ' B') })), matches: +M, seed: seedOf(t.l.name), own, policy, deadCards: DEAD, search: SEARCH, workDir: path.join(path.dirname(OUT), 'gate', String(seedOf(t.l.name + t.at))) });
     const d = ((done[t.l.name] = done[t.l.name] || {})[POLICY] = done[t.l.name][POLICY] || {});
     d['h' + t.at] = { won: r.games.filter(g => g.winner === t.at).length, lost: r.games.filter(g => g.winner === 1 - t.at).length, acted: r.acted || 0 };
     if (d.h0 && d.h1) {

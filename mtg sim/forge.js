@@ -171,7 +171,7 @@ function runPiloted({ decks, names, pilots, games, clock, seed, workDir, logDir,
   const handle = { kill: sig => { killed = true; if (child) child.kill(sig); } };
   const done = require('./pilot').runMatches({
     decks: decks.map((d, i) => ({ ...d, name: names[i] })), matches: games, games: 1, seed: seed == null ? Date.now() % 2147483647 : seed,
-    own: pilots.map(p => p ? ['priority'] : []), policy: pilots, deadCards: readJson('dead-cards.json')[forgeVersion()] || [],
+    own: pilots.map(p => p ? ['priority', 'announce_x'] : []), policy: pilots, deadCards: readJson('dead-cards.json')[forgeVersion()] || [],
     simLog: true, clock: clock || 120, keepLogs: true, workDir, gameLog: logDir || null,
     onChild: c => { child = c; if (killed) c.kill('SIGKILL'); },
     onGame: g => {
