@@ -272,7 +272,18 @@ Deck
         <div style="font-size:var(--fs-xxl);line-height:1.22;font-weight:500;letter-spacing:-.01em;text-wrap:balance">{{ deck.name }} wins about <span style="color:var(--accent);font-weight:700">{{ evField }}</span> matches{{ evAgainst }}.</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px 28px;font-size:var(--fs-s);color:var(--muted);line-height:1.5"><span>Likely between <b style="color:var(--ink);font-weight:600">{{ evSpan }}</b></span><sc-if value="{{ hasEvent }}" hint-placeholder-val="{{ true }}"><span>Top 8 at a {{ evRounds }}-round tournament <b style="color:var(--ink);font-weight:600">{{ evTop8 }}</b></span></sc-if><sc-if value="{{ hasEvBench }}" hint-placeholder-val="{{ true }}"><span>{{ benchName }}, the most-played deck, wins <b style="color:var(--ink);font-weight:600">{{ benchPct }}</b> · <span style="font-weight:600;color:{{ evSureColor }}">{{ evSure }}</span></span></sc-if></div>
         <div style="display:grid;grid-template-columns:8px minmax(0,1fr);gap:10px;align-items:start;font-size:var(--fs-s);line-height:1.55;color:var(--muted);max-width:700px"><span style="width:8px;height:8px;border-radius:50%;margin-top:7px;background:{{ fidColor }}"></span><div><b style="font-weight:600;color:var(--ink-2)">{{ fidTitle }}</b> {{ fidNote }}</div></div>
-        <sc-if value="{{ hasReal }}" hint-placeholder-val="{{ true }}"><div data-change8="real-games" style="display:flex;flex-wrap:wrap;gap:6px 28px;font-size:var(--fs-s);color:var(--muted);line-height:1.5"><span>In your own games <b style="color:{{ realColor }};font-weight:600">{{ realRecord }}</b> · {{ realNote }}</span><sc-for list="{{ realOpps }}" as="m" hint-placeholder-count="2"><span>{{ m.name }} <b style="color:{{ m.color }};font-weight:600">{{ m.record }}</b></span></sc-for><span style="color:var(--muted)">{{ realCalNote }}</span></div></sc-if>
+        <div data-change8="real-games" style="display:flex;flex-wrap:wrap;gap:6px 28px;font-size:var(--fs-s);color:var(--muted);line-height:1.5"><sc-if value="{{ hasReal }}" hint-placeholder-val="{{ true }}"><span>In your own games <b style="color:{{ realColor }};font-weight:600">{{ realRecord }}</b> · {{ realNote }}</span><sc-for list="{{ realOpps }}" as="m" hint-placeholder-count="2"><span>{{ m.name }} <b style="color:{{ m.color }};font-weight:600">{{ m.record }}</b></span></sc-for><span style="color:var(--muted)">{{ realCalNote }}</span></sc-if><sc-if value="{{ noReal }}" hint-placeholder-val="{{ false }}"><span>In your own games: none logged yet · games you play on the Mac are read from Arena's log</span></sc-if><sc-if value="{{ notLogging }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ lmOpen }}" style="color:var(--accent);font-weight:600">Log a match</a></sc-if></div>
+        <sc-if value="{{ logging }}" hint-placeholder-val="{{ false }}"><div data-change9="log-match" style="display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 18px;max-width:820px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:64px">Against</span><sc-for list="{{ lmOpps }}" as="m" hint-placeholder-count="6"><a href="#" onClick="{{ m.pick }}" style="border:1px solid {{ m.ring }};background:{{ m.fill }};color:{{ m.ink }};border-radius:999px;padding:5px 12px;font-size:var(--fs-s);font-weight:600">{{ m.label }}</a></sc-for></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:64px">Result</span><sc-for list="{{ lmResults }}" as="m" hint-placeholder-count="2"><a href="#" onClick="{{ m.pick }}" style="border:1px solid {{ m.ring }};background:{{ m.fill }};color:{{ m.ink }};border-radius:999px;padding:5px 12px;font-size:var(--fs-s);font-weight:600">{{ m.label }}</a></sc-for><span style="width:12px"></span><sc-for list="{{ lmSeats }}" as="m" hint-placeholder-count="2"><a href="#" onClick="{{ m.pick }}" style="border:1px solid {{ m.ring }};background:{{ m.fill }};color:{{ m.ink }};border-radius:999px;padding:5px 12px;font-size:var(--fs-s);font-weight:600">{{ m.label }}</a></sc-for></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:var(--fs-s);color:var(--muted);min-width:64px">Where</span><sc-for list="{{ lmSources }}" as="m" hint-placeholder-count="3"><a href="#" onClick="{{ m.pick }}" style="border:1px solid {{ m.ring }};background:{{ m.fill }};color:{{ m.ink }};border-radius:999px;padding:5px 12px;font-size:var(--fs-s);font-weight:600">{{ m.label }}</a></sc-for></div>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span style="font-size:var(--fs-xs);color:{{ lmNoteColor }}">{{ lmNote }}</span><span style="flex:1"></span><a href="#" onClick="{{ lmClose }}" style="font-size:var(--fs-s);color:var(--muted)">Cancel</a><a href="#" onClick="{{ lmSave }}" style="background:{{ lmSaveBg }};color:{{ lmSaveInk }};border-radius:6px;padding:8px 14px;font-weight:600;font-size:var(--fs-s)">{{ lmSaveLabel }}</a></div>
+        </div></sc-if>
+        <sc-if value="{{ hasLeaks }}" hint-placeholder-val="{{ true }}"><div data-change10="leaks" style="display:flex;flex-direction:column;gap:14px;max-width:820px;margin-top:8px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px 16px"><div style="font-size:var(--fs-xl);font-weight:600">Your play with this deck</div><div style="font-size:var(--fs-s);color:var(--muted)">{{ leaksNote }}</div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px"><sc-for list="{{ leakTiles }}" as="m" hint-placeholder-count="8"><div style="background:var(--surface);border:1px solid var(--line);border-left:3px solid {{ m.edge }};border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px"><div style="font-size:var(--fs-xs);color:var(--muted);line-height:1.4;min-height:2.8em">{{ m.label }}</div><div style="font-family:var(--mono);font-size:var(--fs-xl);font-weight:500;color:{{ m.color }}">{{ m.value }}</div><div style="font-size:var(--fs-xs);color:var(--muted)">{{ m.sub }}</div></div></sc-for></div>
+          <sc-if value="{{ hasMoments }}" hint-placeholder-val="{{ true }}"><div style="display:flex;flex-direction:column"><div style="font-size:var(--fs-s);color:var(--muted);padding-bottom:6px">{{ momentsNote }}</div><sc-for list="{{ leakMoments }}" as="m" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:96px 72px minmax(0,1fr);gap:12px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);font-size:var(--fs-s);line-height:1.5"><span style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)">{{ m.when }}</span><span style="font-size:var(--fs-xs);font-weight:600;color:{{ m.color }}">{{ m.kind }}</span><span style="color:var(--ink-2)">{{ m.text }}</span></div></sc-for></div></sc-if>
+        </div></sc-if>
         <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)">{{ runStatus }} · {{ overall.n }} games<sc-if value="{{ canCancel }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ doCancelRun }}" style="color:var(--muted)">{{ cancelLabel }}</a></sc-if><sc-if value="{{ hasMethod }}" hint-placeholder-val="{{ true }}"> · <a href="#" onClick="{{ toggleMethod }}" style="color:var(--muted)">{{ methodLabel }}</a></sc-if></div>
       <sc-if value="{{ methodOpen }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 18px;max-width:820px"><sc-for list="{{ methodRows }}" as="m" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;padding:10px 0;border-top:1px solid var(--line);font-size:var(--fs-s);line-height:1.5"><span style="color:var(--muted)">{{ m.k }}</span><span style="color:var(--ink-2)">{{ m.v }}</span></div></sc-for></div></sc-if>
       </div>
@@ -439,7 +450,7 @@ class Component extends DCLogic {
   // turns /api/brews into the bindings the markup reads. The coach is not connected
   // yet, so its brief is computed straight from the games rather than written by a model.
   state = { stage: null, me: null, brews: null, queueLength: 0, invite: false, signinName: '', signinPw: '', signinErr: '', busy: false,
-    fsStep: 1, fsFormat: 'standard', pasteText: '', check: null, fsErr: '', settingsOpen: false, settingsErr: '', st: null, coachMode: 'readout', pilotOpp: null, ed: null, noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
+    fsStep: 1, fsFormat: 'standard', pasteText: '', check: null, fsErr: '', settingsOpen: false, settingsErr: '', st: null, coachMode: 'readout', pilotOpp: null, ed: null, lm: null, noteText: '', newBrewId: null, versionOf: null, cmpA: null, cmpB: null, oppSet: 'meta20', runOpen: false, runErr: '',
     deckId: null, runId: null, tab: null, view: 'run', methodOpen: false, oppOpen: null, hover: null, askText: '', bo3: false, delAsk: null, cancelAsk: null, look: null, lookErr: '',
     deckName: '', cover: 0, upload: null, uploadErr: '',
     codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
@@ -643,6 +654,23 @@ class Component extends DCLogic {
       this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), ed: null, busy: false, cmpA: null, cmpB: null }));
       if (ed.queue) await this.queue(b.id, last ? last.oppSet : S.oppSet, b.versions.length);
     } catch (e) { this.setState({ busy: false }); this.edUpdate(x => ({ ...x, err: e.message })); }
+  }
+  // ---- change 9: a match logged by hand. S.lm = { opponent, won, onPlay, source, err } ----
+  async lmSave(d) {
+    const S = this.state, m = S.lm; if (!m || S.busy || !m.opponent || m.won == null) return;
+    this.setState({ busy: true });
+    try {
+      const body = { opponent: m.opponent, won: m.won, onPlay: m.onPlay, source: m.source, at: new Date().toISOString() };
+      let b; try { b = await this.api('/api/brews/' + d.id + '/real', { method: 'POST', body }); }
+      catch (e) {
+        if (!/no fixture/.test(e.message)) throw e;
+        // the canvas: fold the match into the brew's summary locally
+        const R = JSON.parse(JSON.stringify(d.real || { wins: 0, losses: 0, matches: 0, source: m.source, since: body.at.slice(0, 10), byOpponent: [] }));
+        R.wins += m.won ? 1 : 0; R.losses += m.won ? 0 : 1; R.matches++; const o = R.byOpponent.find(x => x.name === m.opponent) || (R.byOpponent.push({ name: m.opponent, wins: 0, losses: 0 }), R.byOpponent[R.byOpponent.length - 1]); o.wins += m.won ? 1 : 0; o.losses += m.won ? 0 : 1;
+        b = { ...d, real: R };
+      }
+      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), lm: null, busy: false }));
+    } catch (e) { this.setState(s => ({ busy: false, lm: { ...s.lm, err: e.message } })); }
   }
   async coachMode(id, mode, opponent) {
     this.setState(s => ({ coachMode: 'readout', brews: s.brews.map(x => x.id === id ? { ...x, thinking: true } : x) }));
@@ -973,6 +1001,43 @@ class Component extends DCLogic {
         v.realOpps = (R.byOpponent || []).slice().sort((a, b) => (b.wins + b.losses) - (a.wins + a.losses)).slice(0, 4).map(o => ({ name: o.name, record: o.wins + '–' + o.losses, color: rc(o.wins, o.losses) }));
         const need = 30 - R.matches; v.realCalNote = need > 0 ? 'Forge\'s number adjusts to your results after 30 matches · ' + need + ' to go' : 'Forge\'s number is adjusted to your results';
       }
+      v.noReal = !v.hasReal;
+      // change 10: the player's own play, graded like the pilots are (tools/log-leaks.js). Targets are the pilot targets.
+      const LK = d.real && d.real.leaks; v.hasLeaks = !!(LK && LK.games);
+      if (v.hasLeaks) {
+        const T = [ // key, label, target, direction (lower is better / higher is better), unit words
+          ['unspentOwn', 'Mana unspent at the end of your own turn', 1.0, 'low', 'a turn'],
+          ['heldUsed', 'Held an instant through their turn and used it', 0.5, 'high', ''],
+          ['threatsAnswered', 'Answered a creature or planeswalker the turn it came', 0.7, 'high', ''],
+          ['openBoardAttacked', 'Attacked with everything into an empty board', 0.95, 'high', ''],
+          ['lethalTaken', 'Took lethal when it was on the board', 1.0, 'high', ''],
+          ['earlyInstants', 'Instants cast in an upkeep or draw step, unprovoked', 0.05, 'low', ''],
+          ['keeps7', 'Kept seven', null, null, '']];
+        const fmt = (st) => st.unit === 'mana' ? st.value.toFixed(1) : Math.round(st.value * 100) + '%';
+        v.leakTiles = T.map(([k, label, target, dir, words]) => { const st = LK.stats[k] || { n: 0 };
+          if (!st.n) return { label, value: '—', sub: 'not measured yet', edge: 'var(--line)', color: MUTED };
+          const good = target == null ? null : dir === 'low' ? st.value <= target : st.value >= target;
+          const near = target == null ? null : dir === 'low' ? st.value <= target * 1.5 : st.value >= target * 0.8;
+          return { label, value: fmt(st), edge: good == null ? 'var(--line-strong)' : good ? WIN : near ? AMBER : LOSS, color: good == null ? 'var(--ink)' : good ? WIN : near ? AMBER : LOSS,
+            sub: (target == null ? '' : 'a strong pilot: ' + (st.unit === 'mana' ? target.toFixed(1) + ' ' + words : (dir === 'low' ? 'under ' : 'over ') + Math.round(target * 100) + '%') + ' · ') + 'from ' + st.n + (st.unit === 'mana' ? ' turns' : st.n === 1 ? ' case' : ' cases') }; });
+        v.leaksNote = LK.games + (LK.games === 1 ? ' game' : ' games') + ', ' + LK.wins + ' won · ' + LK.turns + ' of your turns · graded the way the sim grades its own pilots';
+        const KIND = { held: ['held mana', AMBER], mana: ['unspent', AMBER], lethal: ['lethal', LOSS], attack: ['attack', AMBER], timing: ['timing', MUTED] };
+        const short = (m) => 'match ' + String(m.match).slice(0, 4) + ' · t' + m.turn;
+        v.leakMoments = (LK.moments || []).slice(0, 12).map(m => ({ when: short(m), kind: (KIND[m.kind] || [m.kind, MUTED])[0], color: (KIND[m.kind] || [m.kind, MUTED])[1], text: m.text }));
+        v.hasMoments = v.leakMoments.length > 0; v.momentsNote = 'The turns behind the numbers' + ((LK.moments || []).length > 12 ? ' · first 12 of ' + LK.moments.length : '') + '. A held instant with nothing worth answering is fine; a pattern is not.';
+      } else { v.leakTiles = []; v.leaksNote = ''; v.leakMoments = []; v.hasMoments = false; v.momentsNote = ''; }
+      // change 9: log a match by hand (iPad and paper games, which the Arena log never sees)
+      const LM = S.lm; v.logging = !!LM; v.notLogging = !LM;
+      v.lmOpen = pe(() => this.setState({ lm: { opponent: null, won: null, onPlay: null, source: 'Arena Bo1', err: '' } })); v.lmClose = pe(() => this.setState({ lm: null }));
+      const lmPill = (label, on, patch) => ({ label, pick: pe(() => this.setState(s => ({ lm: { ...s.lm, ...patch } }))), ring: on ? ACC : 'var(--line-strong)', fill: on ? ACC : 'transparent', ink: on ? 'var(--bg)' : 'var(--ink)' });
+      const lmNames = (run.opponents || []).slice().sort((a, b) => (b.metaPct || 0) - (a.metaPct || 0)).slice(0, 8).map(g => g.name).concat(['Other']);
+      v.lmOpps = LM ? lmNames.map(n => lmPill(n, LM.opponent === n, { opponent: n })) : [];
+      v.lmResults = LM ? [lmPill('Won', LM.won === true, { won: true }), lmPill('Lost', LM.won === false, { won: false })] : [];
+      v.lmSeats = LM ? [lmPill('On the play', LM.onPlay === true, { onPlay: true }), lmPill('On the draw', LM.onPlay === false, { onPlay: false })] : [];
+      v.lmSources = LM ? ['Arena Bo1', 'Arena Bo3', 'Paper'].map(x => lmPill(x, LM.source === x, { source: x })) : [];
+      const lmReady = !!(LM && LM.opponent && LM.won != null);
+      v.lmNote = LM ? (LM.err || (lmReady ? 'counts toward the 30 matches that adjust Forge\'s number' : 'pick the opponent and the result; play or draw is optional')) : ''; v.lmNoteColor = LM && LM.err ? LOSS : MUTED;
+      v.lmSaveLabel = S.busy ? 'Saving…' : 'Save the match'; v.lmSaveBg = lmReady ? ACC : 'var(--track)'; v.lmSaveInk = lmReady ? 'var(--bg)' : MUTED; v.lmSave = pe(() => lmReady && this.lmSave(d));
       // how the archetype does in real tournaments, overall, for a reader to set Forge's verdict against
       const AI = run.aiCards || { mine: null, opp: [] }, cardsS = (xs) => xs.map(x => x.qty + ' ' + x.name).join(', ');
       const aiS = (r) => !r ? '' : [r.missing.length ? 'Forge doesn\'t have ' + cardsS(r.missing) : '', r.unplayable.length ? 'Forge\'s AI won\'t cast ' + cardsS(r.unplayable) : '', r.limited.length ? 'casts ' + cardsS(r.limited) + ' only now and then' : ''].filter(Boolean).join(' · ');

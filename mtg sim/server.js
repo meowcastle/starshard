@@ -13,6 +13,7 @@ const cardstats = require('./cardstats');
 const usage = require('./usage');
 const score = require('./score');
 const realdata = require('./realdata');
+const leaks = require('./leaks');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -803,9 +804,20 @@ function realOf(b) {
   const ms = b.realMatches || []; if (!ms.length) return null;
   const by = new Map();
   for (const m of ms) { const k = m.opponent || 'Unknown', o = by.get(k) || { name: k, wins: 0, losses: 0 }; m.won ? o.wins++ : o.losses++; by.set(k, o); }
-  const bo3 = ms.filter(m => /bo3|best_of_three|traditional/i.test(m.event || '')).length;
+  // where each match was played: a hand-logged one says so, a parsed one by its Arena event
+  const where = m => m.source === 'manual' ? m.event : /bo3|best_of_three|traditional/i.test(m.event || '') ? 'Arena Bo3' : 'Arena Bo1';
+  const places = [...new Set(ms.map(where))];
   return { wins: ms.filter(m => m.won).length, losses: ms.filter(m => !m.won).length, matches: ms.length,
-    source: bo3 > ms.length / 2 ? 'Arena Bo3' : 'Arena Bo1', since: ms.map(m => m.at).filter(Boolean).sort()[0]?.slice(0, 10) || null, byOpponent: [...by.values()] };
+    source: places.length === 1 ? places[0] : places.includes('Paper') ? 'Arena and paper' : 'Arena Bo1 and Bo3', since: ms.map(m => m.at).filter(Boolean).sort()[0]?.slice(0, 10) || null, byOpponent: [...by.values()],
+    leaks: ms.some(m => m.leaks) ? leaks.view(leaks.merge(ms.map(m => m.leaks))) : null };
+}
+// a match's leak counts as the worker sends them (leaks.tally), kept to numbers and short moments: match ids
+// are 8 characters and no opponent name is in them
+function leaksIn(t) {
+  if (!t || typeof t !== 'object' || !t.acc) return null;
+  const n = x => Math.max(0, Math.min(1e5, +x || 0));
+  return { games: n(t.games), wins: n(t.wins), turns: n(t.turns), acc: Object.fromEntries(leaks.KEYS.map(k => [k, Array.isArray(t.acc[k]) ? [n(t.acc[k][0]), n(t.acc[k][1])] : [0, 0]])),
+    moments: (Array.isArray(t.moments) ? t.moments : []).slice(0, 30).map(x => ({ match: String(x.match || '').slice(0, 8), game: n(x.game), turn: n(x.turn), kind: String(x.kind || '').slice(0, 12), text: String(x.text || '').slice(0, 240) })) };
 }
 // the meta deck an opponent was most likely on: the field list sharing the most of the cards they showed
 // (2+); else their colours ("Green, not a meta list"), else Unknown. A ladder opponent is often on no meta list.
@@ -951,16 +963,17 @@ const server = http.createServer(async (req, res) => {
         const mine = brews.filter(b => b.owner.toLowerCase() === owner && b.seats === 2);
         for (const m of (Array.isArray(body.matches) ? body.matches : []).slice(0, 200)) {
           if (!m || !m.matchId || !m.result) continue;
-          if (mine.some(b => (b.realMatches || []).some(x => x.matchId === m.matchId))) { out.known++; continue; }
+          const had = mine.flatMap(b => b.realMatches || []).find(x => x.matchId === m.matchId);
+          if (had) { if (!had.leaks && leaksIn(m.leaks)) { had.leaks = leaksIn(m.leaks); out.leaks = (out.leaks || 0) + 1; } out.known++; continue; }
           const cards = (m.playerCards || []).map(String).filter(n => !BASIC.test(n));
           let best = null, bs = 0;
           for (const b of mine) { const names = new Set(latest(b).list.main.map(c => c.name)), share = cards.length ? cards.filter(n => names.has(n)).length / cards.length : 0; if (share > bs) { best = b; bs = share; } }
           if (!best || bs < 0.5) { out.unmatched.push(m.matchId); continue; }
           (best.realMatches = best.realMatches || []).push({ matchId: String(m.matchId).slice(0, 60), at: m.at || null, event: String(m.event || '').slice(0, 60), won: !!m.result.won,
-            onThePlay: m.games && m.games[0] ? m.games[0].onThePlay : null, opponent: await archetypeOf((m.opponentCards || []).map(String), best.format), v: latest(best).v, games: (m.games || []).length });
+            onThePlay: m.games && m.games[0] ? m.games[0].onThePlay : null, opponent: await archetypeOf((m.opponentCards || []).map(String), best.format), v: latest(best).v, games: (m.games || []).length, leaks: leaksIn(m.leaks) });
           out.added++;
         }
-        if (out.added) saveBrews();
+        if (out.added || out.leaks) saveBrews();
         return send(res, 200, out);
       }
       return send(res, 404, { error: 'not found' });
@@ -1194,6 +1207,20 @@ const server = http.createServer(async (req, res) => {
         b.coverCard = cover.card;
         if (b.coverUrl) { b.coverUrl = null; delete b.coverType; try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
       }
+      saveBrews();
+      return send(res, 200, brewView(b));
+    }
+    // a match logged by hand (Design's change 9: iPad and paper games the Arena log can't see), pooled with the
+    // parsed ones in b.realMatches
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/real$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const { opponent, won, onPlay, source, at } = await readBody(req);
+      const opp = String(opponent || '').trim().slice(0, 60);
+      if (!opp || typeof won !== 'boolean') return send(res, 400, { error: 'pick the opponent and the result' });
+      const src = ['Arena Bo1', 'Arena Bo3', 'Paper'].includes(source) ? source : 'Arena Bo1';
+      const when = at && !isNaN(Date.parse(at)) ? new Date(at).toISOString() : new Date().toISOString();
+      (b.realMatches = b.realMatches || []).push({ matchId: 'manual-' + crypto.randomBytes(5).toString('hex'), at: when, event: src, won, onThePlay: onPlay === true ? 'player' : onPlay === false ? 'opponent' : null,
+        opponent: opp, v: latest(b).v, games: null, source: 'manual' });
       saveBrews();
       return send(res, 200, brewView(b));
     }

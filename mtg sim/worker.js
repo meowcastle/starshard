@@ -86,9 +86,11 @@ async function arenaSweep() {
       const text = fs.readFileSync(src, 'utf8');
       fs.mkdirSync(path.join(DATA, 'arena'), { recursive: true });
       fs.writeFileSync(path.join(DATA, 'arena', `${f.replace('.log', '')}-${new Date(st.mtimeMs).toISOString().replace(/[:.]/g, '-')}.log`), text);
-      const { matches } = await require('./arena').parse(text);
+      const { matches, logs } = await require('./arena').parse(text);
+      // each match's leaks (leaks.js: the pilot statistics on the player's own turns); the game logs stay here
+      const leaksOf = m => { try { const t = require('./leaks').tally(logs.get(m.matchId) || []); t.moments = t.moments.map(x => ({ ...x, match: String(x.match).slice(0, 8) })); return t; } catch { return null; } };
       if (matches.length) {
-        const r = await call('/api/worker/real', { owner: config.ARENA_OWNER, matches: matches.map(m => ({ matchId: m.matchId, at: m.at, event: m.event, result: m.result, games: m.games, playerCards: m.playerCards, opponentCards: m.opponentCards })) });
+        const r = await call('/api/worker/real', { owner: config.ARENA_OWNER, matches: matches.map(m => ({ matchId: m.matchId, at: m.at, event: m.event, result: m.result, games: m.games, playerCards: m.playerCards, opponentCards: m.opponentCards, leaks: leaksOf(m) })) });
         if (r.status !== 200) { log(`arena: the server answered ${r.status}`); continue; } // try again next sweep
         if (r.data.added || r.data.unmatched.length) log(`arena: ${f}: ${matches.length} matches, ${r.data.added} new, ${r.data.known} already filed${r.data.unmatched.length ? ', ' + r.data.unmatched.length + ' not matched to a brew' : ''}`);
       }
