@@ -1337,6 +1337,11 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { diff, shared, size, sideSize: count(d.list.side), currentSize: count(cur.list.main), becomes: diff.length ? cur.v + 1 : null, unchanged: !diff.length,
         legality: d.legality, forge: { unplayable: ai.unplayable, limited: ai.limited, missing: ai.missing }, problems, saveable: !!diff.length && !problems.length, list: d.list, rows: d.rows });
     }
+    // the coach's answer so far, while it is being written: small, so the page can ask often
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/draft$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      return send(res, 200, { thinking: !!b.thinking, draft: b.thinking ? b.draft || '' : '' });
+    }
     // a coach mode on request (sideboard, pilot, mulligan, mana, review): the answer lands in the thread
     if ((m = p.match(/^\/api\/brews\/(\w+)\/coach$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
@@ -1352,13 +1357,13 @@ const server = http.createServer(async (req, res) => {
       b.thinking = true; saveBrews();
       const rv = coachRun(b, talkRun(b)), opp = mode === 'pilot' ? String(opponent || '').slice(0, 80) || null : null;
       b.thread = b.thread || [];
-      usage.as({ who: user.name, kind: 'coach-' + mode, brew: b.id }, () => coach.mode(b, rv, mode, { opp }))
+      usage.as({ who: user.name, kind: 'coach-' + mode, brew: b.id }, () => coach.mode(b, rv, mode, { opp, onText: t => { b.draft = t; } }))
         .then(out => {
           if (mode === 'sideboard') { b.guide = { rows: (out.rows || []).slice(0, 20), run: rv.id || null, at: Date.now() }; b.thread.push({ role: 'coach', text: 'Sideboard guide: ' + b.guide.rows.map(r => `${r.opponent} (${r.role}): in ${r.in.map(c => c.qty + ' ' + c.name).join(', ') || 'nothing'}, out ${r.out.map(c => c.qty + ' ' + c.name).join(', ') || 'nothing'}. ${r.why}`).join('\n'), at: Date.now(), kind: 'sideboard' }); }
           else b.thread.push({ role: 'coach', text: String(out).slice(0, 6000), at: Date.now(), kind: mode, ...(opp ? { opponent: opp } : {}) });
         })
         .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t do that: ' + e.message, at: Date.now(), kind: 'error' }))
-        .finally(() => { b.thinking = false; saveBrews(); });
+        .finally(() => { b.thinking = false; delete b.draft; saveBrews(); });
       return send(res, 200, { ok: true });
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/ask$/)) && req.method === 'POST') {
@@ -1371,10 +1376,10 @@ const server = http.createServer(async (req, res) => {
       if (!paid.ok) return send(res, 402, { error: `A question needs ${paid.need} credits; you have ${paid.have}.` });
       usage.mark(user.name, 'ask');
       (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
-      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, coachRun(b, talkRun(b)), b.thread))
+      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, coachRun(b, talkRun(b)), b.thread, { onText: t => { b.draft = t; } }))
         .then(t => b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }))
         .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }))
-        .finally(() => { b.thinking = false; saveBrews(); });
+        .finally(() => { b.thinking = false; delete b.draft; saveBrews(); });
       return send(res, 200, brewView(b));
     }
     // "Test it": the coach's swap becomes the next version and runs against the same kind of field

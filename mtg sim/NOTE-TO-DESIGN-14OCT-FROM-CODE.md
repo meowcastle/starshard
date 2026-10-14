@@ -98,3 +98,11 @@ brew.weekly = { at, run, prevRun, v, prevV, field: {date, label},
 Checked:
 - `test/weekly.test.js` covers the comparison and the badge text (5 cases; 26/26 in total).
 - On a local server, a field change queued the rerun against the same 10 opponents.
+
+## The coach's answers stream (later the same day)
+The coach's prose answers (chat questions; the pilot, mulligan, mana and review modes) now appear as they're written, instead of after a 20–60 second "Thinking…".
+- `GET /api/brews/:id/draft` returns `{ thinking, draft }`, the answer so far. The page polls it every 0.6 s while a brew is `thinking`, and reloads the brew once it's done.
+- In the thread, the pending coach message shows `draft` in place of "Thinking…", with "writing…" where its time would go. No markup changed.
+- The readout and the sideboard guide are structured answers, so they still arrive whole.
+
+The deck list's mana dots changed too: one dot per mana, generic mana outlined, coloured mana solid, hybrid split. It's the `ms-pip-*` classes at the end of the `<style>` block, with no markup change.

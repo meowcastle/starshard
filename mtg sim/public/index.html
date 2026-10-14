@@ -459,11 +459,22 @@ class Component extends DCLogic {
     // poll while games are playing or the coach is writing
     const busy = (b) => b.runs.some(r => this.active(r)) || b.thinking || (b.coachOn && b.runs[0] && b.runs[0].status === 'done' && !b.runs[0].coach);
     this._poll = setInterval(() => { if (this.state.stage === 'app' && (this.state.brews || []).some(busy)) this.load().catch(() => {}); }, 2500);
+    // while the coach writes, its answer so far, a few times a second (a small request); the whole brew once it is done
+    this._draft = setInterval(async () => {
+      if (this.state.stage !== 'app' || this._drafting) return;
+      const b = (this.state.brews || []).find(x => x.thinking); if (!b) return;
+      this._drafting = true;
+      try {
+        const r = await this.api('/api/brews/' + b.id + '/draft');
+        if (!r.thinking) await this.load();
+        else if (r.draft !== b.draft) this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? { ...x, draft: r.draft } : x) }));
+      } catch (e) {} finally { this._drafting = false; }
+    }, 600);
     // "✓ Squall done" stays in the tab until you come back to it
     this._vis = () => { if (!document.hidden && this._doneTitle) setTimeout(() => { if (!document.hidden && this._doneTitle) { this._doneTitle = null; this.setTitle('Forge Sim'); } }, 4000); };
     document.addEventListener('visibilitychange', this._vis);
   }
-  componentWillUnmount() { clearInterval(this._poll); document.removeEventListener('visibilitychange', this._vis); this._titleObs && this._titleObs.disconnect(); }
+  componentWillUnmount() { clearInterval(this._poll); clearInterval(this._draft); document.removeEventListener('visibilitychange', this._vis); this._titleObs && this._titleObs.disconnect(); }
   // A run takes most of an hour, so the tab says how far along it is, and a run that
   // finishes says so: in the title, and as a browser notification if allowed.
   notice(before, after) {
@@ -971,7 +982,7 @@ class Component extends DCLogic {
     }) : [];
     // the thread: everything except the summary the readout above stands in for
     v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.text, at: at(m.at) + (m.kind && !['writeup', 'error'].includes(m.kind) ? ' · ' + { sideboard: 'sideboard guide', pilot: 'how to play it', mulligan: 'mulligans', mana: 'mana', review: 'version review' }[m.kind] || m.kind : '') }));
-    if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: 'Thinking…', at: '' });
+    if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: d.draft || 'Thinking…', at: d.draft ? 'writing…' : '' });
     v.askPlaceholder = !d.coachOn ? '' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run' + (S.limits && S.limits.asks ? ' · ' + plural(S.limits.asks.left, 'question') + ' left today' : '');
     v.sendAsk = pe(() => this.ask(S.askText)); v.askKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.ask(S.askText); } };
     const topOpp = v.isDuel && run && run.opponents && run.opponents[0];

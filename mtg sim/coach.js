@@ -154,7 +154,7 @@ async function writeup(b, rv) {
     }, required: ['weakness', 'weaknessNote', 'summary', 'options'] } } });
 }
 
-async function reply(b, rv, thread) {
+async function reply(b, rv, thread, { onText } = {}) {
   rv = await withCheck(b, rv);
   // roles alternate, and the conversation opens with the player: what the coach said
   // before the player's first message (the run summaries) goes in as context instead
@@ -172,7 +172,7 @@ async function reply(b, rv, thread) {
   if (said.length) system.push({ type: 'text', text: 'What you already told the player:\n' + said.join('\n\n') });
   const last = msgs[msgs.length - 1];
   if (last) msgs[msgs.length - 1] = { role: last.role, content: [{ type: 'text', text: last.content, cache_control: { type: 'ephemeral' } }] };
-  return claude.chat({ system, messages: msgs });
+  return claude.chat({ system, messages: msgs, onText });
 }
 
 // The coach's other modes (COACH-PARAMETERS-13OCT.md part 1, item 3), run on request. The sideboard guide
@@ -186,12 +186,12 @@ const MODES = {
   review: 'Review this brew\'s version history: what each change did (compare the runs of each version above and say when a difference is inside the noise), what has worked, and what to try next.',
 };
 const GUIDE = { type: 'object', properties: { rows: { type: 'array', items: { type: 'object', properties: { opponent: { type: 'string' }, in: SWAP, out: SWAP, why: { type: 'string' }, role: { type: 'string', enum: ['beatdown', 'control'] } }, required: ['opponent', 'in', 'out', 'why', 'role'] } } }, required: ['rows'] };
-async function mode(b, rv, which, { opp } = {}) {
+async function mode(b, rv, which, { opp, onText } = {}) {
   rv = await withCheck(b, rv);
   const ask = MODES[which]; if (!ask) throw new Error('no such mode');
   const prompt = context(b, rv) + '\n\n' + ask.replace('{opp}', opp || 'its worst matchup');
   if (which === 'sideboard') return claude.ask({ system: SYSTEM, prompt, tool: { name: 'sideboard_guide', description: 'A sideboard guide, one row per opponent.', schema: GUIDE } });
-  return claude.chat({ system: SYSTEM, messages: [{ role: 'user', content: prompt }] });
+  return claude.chat({ system: SYSTEM, messages: [{ role: 'user', content: prompt }], onText });
 }
 
 module.exports = { writeup, reply, context, headline, useField, mode, MODES: Object.keys(MODES) };

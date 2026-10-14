@@ -29,19 +29,53 @@ async function ask({ system, prompt, tool, maxTokens = 8000 }) {
 }
 
 // A plain-text answer to a conversation: [{ role: 'user'|'assistant', content }].
-async function chat({ system, messages, maxTokens = 8000 }) {
+// With `onText`, the answer streams: onText(textSoFar) is called as it is written,
+// so the page can show it filling in instead of waiting for the whole thing.
+async function chat({ system, messages, maxTokens = 8000, onText }) {
   if (!available()) throw new Error('no ANTHROPIC_API_KEY');
+  const stream = typeof onText === 'function';
   const r = await fetch(config.ANTHROPIC_BASE_URL + '/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-api-key': config.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages, ...(stream ? { stream: true } : {}) }),
   });
   if (!r.ok) throw new Error(`Anthropic answered ${r.status}: ${(await r.text()).slice(0, 200)}`);
-  const j = await r.json();
-  usage.record(j.model || MODEL, j.usage);
-  const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n').trim();
-  if (!text) throw new Error('empty answer');
-  return text;
+  if (!stream) {
+    const j = await r.json();
+    usage.record(j.model || MODEL, j.usage);
+    const text = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n').trim();
+    if (!text) throw new Error('empty answer');
+    return text;
+  }
+  const { text, model, use } = await readStream(r, onText);
+  usage.record(model || MODEL, use);
+  if (!text.trim()) throw new Error('empty answer');
+  return text.trim();
+}
+
+// Server-sent events from the Messages API: text deltas build the answer; usage
+// comes in two parts (input and cache on message_start, output on message_delta).
+async function readStream(r, onText) {
+  const dec = new TextDecoder(); let buf = '', text = '', model = null, use = {}, lastSent = 0;
+  const handle = (ev) => {
+    if (ev.type === 'message_start') { model = ev.message?.model; Object.assign(use, ev.message?.usage || {}); }
+    else if (ev.type === 'message_delta') Object.assign(use, ev.usage || {});
+    else if (ev.type === 'content_block_delta' && ev.delta?.type === 'text_delta') {
+      text += ev.delta.text;
+      if (Date.now() - lastSent > 150) { lastSent = Date.now(); try { onText(text); } catch {} }
+    } else if (ev.type === 'error') throw new Error('Anthropic stream: ' + (ev.error?.message || 'error'));
+  };
+  for await (const chunk of r.body) {
+    buf += dec.decode(chunk, { stream: true });
+    let i;
+    while ((i = buf.indexOf('\n\n')) >= 0) {
+      const block = buf.slice(0, i); buf = buf.slice(i + 2);
+      const data = block.split('\n').filter(l => l.startsWith('data:')).map(l => l.slice(5).trim()).join('');
+      if (data) { let ev; try { ev = JSON.parse(data); } catch { continue; } handle(ev); }
+    }
+  }
+  try { onText(text); } catch {}
+  return { text, model, use };
 }
 
 module.exports = { ask, chat, available, MODEL };
