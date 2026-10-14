@@ -877,6 +877,46 @@ function talkRun(b) {
   return r ? runView(b, r) : { v: latest(b).v, opponents: [], status: 'not run yet', played: 0, total: 0, field: null };
 }
 
+// The deck guide (Design's change 11): one read-only document per brew version, assembled from what the
+// coach modes and the run already wrote. A section nobody has asked for yet comes back null with the mode
+// that writes it in `missing`, so the page doubles as the prep checklist.
+function guideOf(b, vn) {
+  const ver = b.versions.find(x => x.v === vn) || latest(b);
+  const pick = b.runs.filter(r => r.v === ver.v).map(r => runView(b, r)).filter(r => r.played > 0);
+  const rv = pick.find(r => r.score && r.field) || pick.find(r => r.score) || pick[0] || null;
+  const said = (kind, opp) => [...(b.thread || [])].reverse().find(t => t.role === 'coach' && t.kind === kind && (opp === undefined || t.opponent === opp)) || null;
+  const pct = s => s ? { p: s.p, lo: s.lo, hi: s.hi } : { p: null, lo: null, hi: null };
+  const rows = (b.guide && b.guide.rows) || [];
+  const matchups = rv && rv.opponents ? rv.opponents.map(o => {
+    const sb = rows.find(r => r.opponent === o.name), t = said('pilot', o.name);
+    return { opponent: o.name, metaPct: o.metaPct ?? null, ...pct(o.score), role: sb ? sb.role : null, text: t ? t.text : null, at: t ? t.at : null,
+      evidence: o.score ? o.score.n + ' games' : null, basis: o.score ? (o.score.cal ? 'calibrated against real results' : 'Forge games') : null };
+  }) : [];
+  const mull = said('mulligan'), prevOf = v => b.versions.filter(x => x.v < v).pop() || null;
+  const scoreOfV = v => { const r = b.runs.filter(x => x.v === v).map(x => runView(b, x)).find(x => x.score); return r ? r.score : null; };
+  const qtyIn = (l, n) => (l ? l.main || [] : []).filter(c => c.name === n).reduce((a, c) => a + c.qty, 0);
+  const pv = prevOf(ver.v);
+  const cards = rv && rv.cards ? (rv.cards.rows || []).filter(c => !c.side).map(c => ({ name: c.name, qty: c.qty, was: pv ? qtyIn(pv.list, c.name) : null, text: null,
+    whenCast: { p: c.castPct, n: c.cast, turn: c.turn }, lift: c.lift, arena: null })) : [];
+  const changes = b.versions.filter(x => x.v <= ver.v && x.v > 1).map(x => { const now = scoreOfV(x.v), was = scoreOfV(x.v - 1);
+    return { v: x.v, at: x.created, diff: x.diff || [], note: x.note || null, result: now ? { p: now.p, delta: was ? now.p - was.p : null } : null }; }).reverse();
+  const plan = rv && rv.coach && !rv.coach.error ? { title: rv.coach.weakness || null, text: rv.coach.weaknessNote || null, evidence: rv.score ? rv.score.n + ' games' : null, basis: 'the run readout' } : null;
+  const reading = ver.reading || null;
+  const out = { title: b.name, owner: b.owner, format: b.format, version: ver.v,
+    writtenAt: Math.max(0, ...[b.guide && b.guide.at, rv && rv.coach && rv.coach.at, ...(b.thread || []).filter(t => t.role === 'coach').map(t => t.at)].filter(Boolean)) || null,
+    run: rv ? { id: rv.id, v: rv.v, oppSet: rv.oppSet, n: rv.score ? rv.score.n : rv.played } : null,
+    field: rv && rv.field ? { date: rv.field.date || null, label: rv.field.label || null, n: (rv.opponents || []).length } : null,
+    summary: { text: reading ? [reading.plan, reading.strategy].filter(Boolean).join(' ') || null : null, nearest: reading ? reading.nearest || null : null, ...pct(rv && rv.score), top8: rv && rv.event && rv.event.top8 ? rv.event.top8 : null, rounds: rv && rv.event ? rv.event.rounds : null },
+    plan, matchups,
+    // the mulligan mode writes prose; per-hand win rates need the batch per hand class that doesn't exist yet
+    hands: [], mulligan: mull ? { text: mull.text, at: mull.at, graded: 'untested' } : null,
+    sideboard: rows.length ? rows : null, sideboardAt: b.guide ? b.guide.at : null,
+    cards, changes, real: realOf(b), method: rv ? rv.method : null };
+  out.missing = [!plan && 'readout', !matchups.some(m => m.text) && 'pilot', !mull && 'mulligan', !rows.length && 'sideboard', !rv && 'run'].filter(Boolean);
+  out.missingPilot = matchups.filter(m => !m.text).map(m => m.opponent);
+  return out;
+}
+
 // ---------- http ----------
 const send = (res, code, body, headers = {}) => {
   const isStr = typeof body === 'string' || Buffer.isBuffer(body);
@@ -977,6 +1017,13 @@ const server = http.createServer(async (req, res) => {
         return send(res, 200, out);
       }
       return send(res, 404, { error: 'not found' });
+    }
+    // a shared deck guide: no login, read-only, the owner's name only
+    const gm = req.method === 'GET' && p.match(/^\/api\/guide\/([a-f0-9]{16})$/);
+    if (gm) {
+      const b = brews.find(x => x.share && x.share.token === gm[1]); if (!b) return send(res, 404, { error: 'no such guide' });
+      const g = guideOf(b, b.share.v || latest(b).v); delete g.real; g.shared = true;
+      return send(res, 200, g);
     }
     const user = await currentUser(req);
     if (!user) return send(res, 401, { error: 'login required' });
@@ -1087,7 +1134,7 @@ const server = http.createServer(async (req, res) => {
       if ((d.format === 'commander') !== (b.seats === 4)) return send(res, 400, { error: b.seats === 4 ? 'This brew is a Commander deck; that list has no commander.' : "That's a Commander list. Paste it as a new deck instead." });
       const prev = latest(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
-      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff });
+      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, ...(note && String(note).trim() ? { note: String(note).trim().slice(0, 500) } : {}) });
       readSoon(b, b.versions[b.versions.length - 1]);
       if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
       saveBrews();
@@ -1153,7 +1200,7 @@ const server = http.createServer(async (req, res) => {
       usage.as({ who: user.name, kind: 'coach-' + mode, brew: b.id }, () => coach.mode(b, rv, mode, { opp }))
         .then(out => {
           if (mode === 'sideboard') { b.guide = { rows: (out.rows || []).slice(0, 20), run: rv.id || null, at: Date.now() }; b.thread.push({ role: 'coach', text: 'Sideboard guide: ' + b.guide.rows.map(r => `${r.opponent} (${r.role}): in ${r.in.map(c => c.qty + ' ' + c.name).join(', ') || 'nothing'}, out ${r.out.map(c => c.qty + ' ' + c.name).join(', ') || 'nothing'}. ${r.why}`).join('\n'), at: Date.now(), kind: 'sideboard' }); }
-          else b.thread.push({ role: 'coach', text: String(out).slice(0, 6000), at: Date.now(), kind: mode });
+          else b.thread.push({ role: 'coach', text: String(out).slice(0, 6000), at: Date.now(), kind: mode, ...(opp ? { opponent: opp } : {}) });
         })
         .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t do that: ' + e.message, at: Date.now(), kind: 'error' }))
         .finally(() => { b.thinking = false; saveBrews(); });
@@ -1197,7 +1244,10 @@ const server = http.createServer(async (req, res) => {
     // rename a brew and/or change its cover: a card from its newest list, or a new upload
     if ((m = p.match(/^\/api\/brews\/(\w+)$/)) && req.method === 'PATCH') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      const { name, cover, settings } = await readBody(req);
+      const { name, cover, settings, share } = await readBody(req);
+      // the guide's share link: true mints one (always the newest version), false revokes it
+      if (share === true) b.share = { token: b.share ? b.share.token : crypto.randomBytes(8).toString('hex'), at: Date.now() };
+      else if (share === false) delete b.share;
       if (settings && typeof settings === 'object') b.settings = cleanSettings(settings, b.settings || {});
       if (name != null) { const n = String(name).trim().slice(0, 60); if (!n) return send(res, 400, { error: 'give it a name' }); b.name = n; }
       if (cover?.upload) {
@@ -1209,6 +1259,11 @@ const server = http.createServer(async (req, res) => {
       }
       saveBrews();
       return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/guide$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const v = parseInt(u.searchParams.get('v'), 10);
+      return send(res, 200, { ...guideOf(b, Number.isFinite(v) ? v : latest(b).v), share: b.share ? { token: b.share.token, v: b.share.v || null } : null });
     }
     // a match logged by hand (Design's change 9: iPad and paper games the Arena log can't see), pooled with the
     // parsed ones in b.realMatches
