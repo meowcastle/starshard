@@ -1079,12 +1079,13 @@ const server = http.createServer(async (req, res) => {
       const me = await r.json();
       const token = (r.headers.getSetCookie?.() || []).map(c => c.match(/^starshard_session=([^;]+)/)).find(Boolean)?.[1];
       if (!token) return send(res, 502, { error: 'Star Shard login did not return a session' });
-      if (!allowed(me.username)) return send(res, 403, { error: 'Star Shard sign-in is for the founders. Create a simulator account instead: it takes a name and a password.' });
+      if (!allowed(me.username)) return send(res, 403, { error: config.SIM_SIGNUP === 'open' ? 'Star Shard sign-in is for the founders. Create a simulator account instead: it takes a name and a password.' : 'The sim is open to its founders for now.' });
       let acct; try { acct = A.accountFor({ id: accounts.starshardId(token), name: me.username, admin: isAdminName(me.username) }); } catch (e) { return send(res, 409, { error: e.message }); }
       return send(res, 200, { ok: true, user: acct.name }, sessionCookie(A.startSession(acct.id)));
     }
-    // anyone can make a simulator account: a name and a password, the free plan
+    // a simulator account: a name and a password, the free plan; only while SIM_SIGNUP is open
     if (p === '/api/signup' && req.method === 'POST') {
+      if (config.SIM_SIGNUP !== 'open') return send(res, 403, { error: 'Sign-up is closed for now: the sim is open to its founders while it is calibrated.' });
       const ip = clientIp(req);
       if (tooMany('signup', ip, 5, 3600e3)) return send(res, 429, { error: 'too many new accounts from here; try again in an hour' });
       const { username, password } = await readBody(req);
@@ -1094,7 +1095,7 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ok: true, user: a.name }, sessionCookie(A.startSession(a.id)));
     }
     if (p === '/api/logout') { A.endSession(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
-    if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion() });
+    if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion(), signup: config.SIM_SIGNUP === 'open' });
     if (!p.startsWith('/api/')) return serveStatic(req, res, p);
     // remote workers authenticate with SIM_WORKER_TOKEN, not a person's session
     if (p.startsWith('/api/worker/')) {

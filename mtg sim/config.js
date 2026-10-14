@@ -27,6 +27,7 @@ const SPEC = {
   HOST: S('server', 'str', '127.0.0.1', 'HTTP interface'),
   STARSHARD_API: S('server', 'str', 'http://127.0.0.1:4001', 'Star Shard accounts API'),
   SIM_USERS: S('server', 'list', '', 'Star Shard usernames allowed in ("*" = any account)'),
+  SIM_SIGNUP: S('server', 'str', 'closed', '"open" lets anyone make a simulator account; "closed" keeps the sim to the founders'),
   SIM_ADMINS: S('server', 'list', '', 'usernames who see spend and can cancel any run'),
   MAX_GAMES: S('server', 'or', 200, 'games a run may ask for'),
   SIM_RUNS_PER_DAY: S('server', 'or', 4, 'runs a member may start a day'),

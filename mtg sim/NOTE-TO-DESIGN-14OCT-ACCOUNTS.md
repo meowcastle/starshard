@@ -71,3 +71,11 @@ For your cost line under Queue the run, once you want it: "~1.9 h · 110 credits
 `DELETE /api/account` deletes a simulator account with its decks and ledger, and signs out. Founders' accounts answer 400. The tab needs a "Delete my account" with a confirm; there's nothing else for a person to manage without mail.
 
 `POST /api/checkout` and `/api/portal` don't exist yet (Stripe).
+
+## Update, later on 14 Oct: sign-up is closed until the engine clears its bar
+Justin's call, following research's ship rule (`RESEARCH-ENGINE-ROADMAP-14OCT.md` §5): nothing opens beyond the founders until the scoreboard reads k ≥ 0.40, MAE ≤ 4, 9 of 10 decks inside the real interval, no dead cards in the top 20.
+- **The server switch.** `SIM_SIGNUP` is `closed` by default; `open` turns sign-up on. `GET /api/health` carries `signup: true|false`, and the page reads it at load.
+- **When closed:** the "New here? Make an account" line is replaced by "For the founders while the sim is calibrated. Sign in with your Star Shard account." `/api/signup` answers 403.
+- **The new bindings:** `invites` follows the switch, and `noInvites` is new.
+
+Everything above still stands for when it opens.
