@@ -92,6 +92,39 @@ function fidelity(forge, real, { minForge = 10, minReal = 6 } = {}) {
   return { k, lo: k - 1.96 * se, hi: k + 1.96 * se, pairs: rows.length, realGames: rows.reduce((s, r) => s + r.n, 0) };
 }
 
+// k as a scoreboard (research's method review, 14 Oct 2026), fixing two ways the raw k understates the engine:
+// 1. Scale. The real records are best-of-three MATCHES and the sim's are GAMES; a game edge becomes a bigger
+//    match edge (×1.5 near even), so a perfect engine scored ~1.5 on the raw k. The sim's game rate is turned
+//    into a best-of-three rate first, so a perfect engine scores 1.
+// 2. Noise. The sim's rate for a pairing is an estimate, and noise in what we regress on shrinks the slope by
+//    the reliability (true spread² / observed spread²; errors-in-variables). The corrected k divides by it.
+// Also per deck, on the same pairings (only ones with both real and sim results): the real match rate with a
+// 95% interval, the sim's expected rate weighted by real matches, the error, and the error a perfect engine
+// would still show from the real side's own sampling noise.
+function scoreboard(forge, real, { minForge = 10, minReal = 6 } = {}) {
+  const m3 = p => p * p * (3 - 2 * p), dm3 = p => 6 * p * (1 - p);
+  const rows = [], decks = {};
+  for (const [key, f] of Object.entries(forge)) {
+    const r = real[key]; if (!r) continue; const nf = f[0] + f[1], nr = r[0] + r[1];
+    if (nf < minForge || nr < minReal) continue;
+    const p = (f[0] + 0.5) / (nf + 1), m = m3(p);
+    rows.push({ key, x: logit(m), v: (dm3(p) ** 2) * p * (1 - p) / nf / (m * (1 - m)) ** 2, w: r[0], n: nr, nf });
+    const [a, b] = key.split('\u0000');
+    for (const [d, won, rate] of [[a, r[0], m], [b, r[1], 1 - m]]) { const D = decks[d] = decks[d] || { w: 0, n: 0, sim: 0, pairs: 0 }; D.w += won; D.n += nr; D.sim += nr * rate; D.pairs++; }
+  }
+  if (rows.length < 5) return null;
+  let k = 0, h = 0; // from 0: the log-likelihood is concave in k, and Newton from 1 can overshoot
+  for (let it = 0; it < 50; it++) { let g = 0; h = 0; for (const r of rows) { const q = inv(k * r.x); g += (r.w - r.n * q) * r.x; h += r.n * q * (1 - q) * r.x * r.x; } const st = g / h; k += st; if (Math.abs(st) < 1e-9) break; }
+  const se = 1 / Math.sqrt(h), mx = rows.reduce((a, r) => a + r.x, 0) / rows.length;
+  const vx = rows.reduce((a, r) => a + (r.x - mx) ** 2, 0) / (rows.length - 1), vn = rows.reduce((a, r) => a + r.v, 0) / rows.length;
+  const rel = Math.max(0.05, (vx - vn) / vx);
+  const wilson = (w, n) => { const z = 1.96, p = w / n, d = 1 + z * z / n, c = (p + z * z / (2 * n)) / d, e = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d; return [c - e, c + e]; };
+  const per = Object.entries(decks).map(([deck, D]) => { const realP = D.w / D.n, sim = D.sim / D.n, [lo, hi] = wilson(D.w, D.n); return { deck, real: realP, lo, hi, sim, err: sim - realP, inside: sim >= lo && sim <= hi, matches: D.n, pairs: D.pairs, floor: Math.sqrt(2 / Math.PI) * Math.sqrt(realP * (1 - realP) / D.n) }; }).sort((a, b) => b.matches - a.matches);
+  const nfs = rows.map(r => r.nf).sort((a, b) => a - b);
+  return { k, lo: k - 1.96 * se, hi: k + 1.96 * se, reliability: rel, kCorrected: k / rel, loCorrected: (k - 1.96 * se) / rel, hiCorrected: (k + 1.96 * se) / rel,
+    pairs: rows.length, realMatches: rows.reduce((a, r) => a + r.n, 0), simGamesPerPair: nfs[nfs.length >> 1], decks: per };
+}
+
 // The same question for a deck's overall strength: across decks, does Forge's win rate over
 // its Forge pairings track the deck's real match record? Pearson correlation with a 95% range
 // (Fisher z), over decks with 40+ Forge games and 30+ real matches. Measured 12 Oct 2026:
@@ -110,4 +143,4 @@ function deckFidelity(forge, realField, { minForge = 40, minReal = 30 } = {}) {
 // Best-of-three from game rates: p1 for game 1, p2 for each boarded game.
 const match = (p1, p2) => p1 * (p2 + (1 - p2) * p2) + (1 - p1) * p2 * p2;
 
-module.exports = { fit, fidelity, deckFidelity, logit, inv, pairKey, match };
+module.exports = { fit, fidelity, scoreboard, deckFidelity, logit, inv, pairKey, match };
