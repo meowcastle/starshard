@@ -21,7 +21,7 @@ RUN mkdir -p /opt/forge \
  && ls /opt/forge/*.jar
 
 WORKDIR /app
-COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js functional.js store.js config.js tags.js plan.js cards.js leaks.js ./
+COPY server.js forge.js meta.js sideboard.js realdata.js calib.js claude.js codex.js terms.js coach.js cardstats.js usage.js score.js aihints.js functional.js store.js config.js tags.js plan.js cards.js leaks.js weekly.js ./
 COPY public ./public
 COPY curated-standard-*.json ./
 # our pilot on Forge's rules engine (forge-pilot/README.md): built against this image's own

@@ -26,14 +26,15 @@
     "Bant Airbending": {
       "aliases": ["Bant Airbending Combo", "Bant Combo"],
       "combo-piece": [
-        { "card": "Spider Manifestation", "role": "piece (provisional)" },
-        { "card": "Gene Pollinator", "role": "piece (provisional)" },
-        { "card": "Quantum Riddler", "role": "airbend engine (provisional)" },
-        { "card": "Mockingbird", "role": "copy (provisional)" }
+        { "card": "Aang, Swift Savior", "role": "airbend: re-casts a permanent from exile for {2}" },
+        { "card": "Appa, Steadfast Guardian", "role": "airbends any number of your permanents; an Ally token per spell cast from exile" },
+        { "card": "Interdimensional Web Watch", "role": "mana only for spells cast from exile" },
+        { "card": "Airbender Ascension", "role": "counts creatures entering; flickers one at end step" },
+        { "card": "Aang, at the Crossroads", "role": "the second Aang" }
       ],
-      "combo-enabler": ["Nature's Rhythm", "Brightglass Gearhulk", "Llanowar Elves"],
-      "finisher": ["Craterhoof Behemoth", "Ouroboroid"],
-      "notes": "PROVISIONAL: the lists research could reach predate the Badgermole Cub ban (June 2026) and the current build may differ. Code: read the live field list and confirm the pieces before this entry is used; the enabler and finisher names are stable across the lists seen."
+      "combo-enabler": ["Doc Aurlock, Grizzled Genius", "Bramble Familiar", "Llanowar Elves", "Spider Manifestation", "Michelangelo's Technique", "The Mind Stone"],
+      "finisher": [],
+      "notes": "Re-curated 14 Oct 2026 from the live list (research's names, NOTE-TO-CODE-13OCT-ENGINE-REVIEW.md) and checked against 296 logged games (tools/combo-pieces.js, design/combo-pieces-bant.json). The log cannot confirm the pieces, because Forge does not play the combo: only 17% of Bant's wins cast 3+ spells on the winning turn, the median win is turn 8, and no card reaches the 80% (piece) or 60% (enabler) bar. It wins as a flash-flier creature deck, which is why the sim rates it 51% against the field while real players see 22%. Forge never casts Airbender Ascension (in hand 837 times, cast 0): a dead card for the dead-card list. Plan: fast combo by its name."
     },
     "Temur Omniscience": {
       "aliases": ["Omniscience Combo"],

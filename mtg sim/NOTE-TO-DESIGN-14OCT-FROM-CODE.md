@@ -1,4 +1,4 @@
-# Note to Design (14 Oct 2026, from Code): changes 9, 10 and 11 on the server
+# Note to Design (14 Oct 2026, from Code): changes 9, 10, 11 and 12 on the server
 
 Replies to `NOTE-TO-CODE-14OCT-LEAKS.md`, `NOTE-TO-CODE-13OCT-LOG-MATCH.md` and `NOTE-TO-CODE-14OCT-GUIDE-AND-WEEKLY.md`. Commits 2c041a8 and 489d352 on `mtg-sim`. They go live with the next NAS rebuild.
 
@@ -57,7 +57,44 @@ Also changed:
 **Routes still needed:**
 - The page routes `/g/:brew/v:n` and `/g/:token` serve nothing yet. Once you hand me the template, I'll serve it at both, filled from these two endpoints.
 
-## Change 12, the weekly rerun: not started
-Next after this, as specced.
+## Change 12, the weekly rerun: built as specced, badge only
+It goes live with the next NAS rebuild.
 
-One thing to settle first: you suggested a notification email when a brew moves. The sim has no mail sending of its own; Star Shard's Resend setup is the other product's. Until Justin decides on mail, I'll build the badge only.
+**When it runs:**
+- Every 6 hours the server reads MTGGoldfish's top 20 for each format with brews and fingerprints the names and shares.
+- The first reading is only a baseline. When the fingerprint changes, the field has changed.
+- After a change, each brew is rerun once if all of these hold:
+  - it has a field run (top 10 or top 20) from the last 60 days that predates the change;
+  - its owner has opened the site in the last 30 days;
+  - it hasn't had a weekly rerun in the last 7 days;
+  - nothing of it is already running;
+  - its newest version is still legal.
+- The rerun plays the newest version against the same opponent set, at background priority: it waits behind people's runs, like calibration.
+
+**What it writes**, once the rerun finishes. It's compared with the brew's previous field run, the same version where there is one:
+
+```
+brew.weekly = { at, run, prevRun, v, prevV, field: {date, label},
+  p, prev, delta,                 // fractions, like every other score (0.47, 0.52, -0.05)
+  movers: [{ opponent, metaPct, prevPct, p, prevP, new }],   // up to 6, the biggest effect on the headline first
+  notify,                         // |delta| >= 3 points, or a matchup moved 8+
+  text,                           // "Squall 52 → 47 this week: Mono-Green Landfall rose to 28% and you are 38% against it (was 47%)."
+  guideUpdated: false, seen }
+```
+
+- A mover is a matchup that moved 8+ points, a deck whose share moved 3+ points, or a deck new to the field.
+- `run.weekly: true` marks the rerun in the runs list, so it can read "weekly rerun" rather than looking like something the owner started.
+
+**What the page does:**
+- **The badge:** show `weekly.text` on the deck row when `weekly.notify && !weekly.seen`.
+- **Clearing it:** `PATCH /api/brews/:id {weeklySeen: true}`, when the owner opens the brew.
+- **The guide:** each matchup row now carries `moved` (that opponent's mover entry, or null). It's set when the weekly rerun is the guide's run and the owner hasn't opened the guide since. Opening the newest version's guide resets it. The public share link never carries it.
+
+**Different from the spec:**
+1. **No email.** The sim sends no mail; Star Shard's mail setup belongs to the other product. That stays open until Justin decides.
+2. **`guideUpdated` is always false.** The sideboard guide is written by the coach when asked, at a model call per opponent, so it isn't rewritten on its own each week. Drop "the sideboard guide is updated" from the badge until Justin wants that cost.
+3. **The first field reading after the rebuild is a baseline,** so the first reruns come with the first real change after it, not on day one.
+
+Checked:
+- `test/weekly.test.js` covers the comparison and the badge text (5 cases; 26/26 in total).
+- On a local server, a field change queued the rerun against the same 10 opponents.

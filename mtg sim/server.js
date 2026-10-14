@@ -14,6 +14,7 @@ const usage = require('./usage');
 const score = require('./score');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
+const weekly = require('./weekly');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -346,7 +347,7 @@ async function boardAll(decks, pairs, format) {
 
 // Resolve an opponent set to real decklists, then queue the job. Runs after the
 // request has answered, because 20 decklists from MTGGoldfish can take a while.
-async function prepareRun(b, run, user) {
+async function prepareRun(b, run, user, { low = false } = {}) {
   try {
     let field;
     if (run.oppSet === 'team') {
@@ -380,7 +381,8 @@ async function prepareRun(b, run, user) {
       run.opponents.forEach((o, i) => { const p = bd.plans['0:' + (i + 1)]; o.plan = p ? (p.error ? { error: p.error } : { me: p.a, opp: p.b }) : null; });
     }
     if (run.cancelled) { saveBrews(); return; }
-    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id });
+    // a weekly rerun waits behind people's runs, like calibration, and is compared with the last run when it finishes
+    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, ...(low ? { low: true, onDone: () => weeklyFinish() } : {}) });
     run.jobId = job.id; run.status = 'queued';
     if (run.field.source === 'goldfish') run.benchmarkId = (await benchmarkFor(decks.slice(1), b.format)).id;
   } catch (e) { run.status = 'failed'; run.error = e.message; }
@@ -614,7 +616,7 @@ function runView(b, run) {
   const status = run.cancelled && !(j && j.status === 'done') ? 'cancelled' : run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
   const status2 = status;
   const prs = j?.pairings || [];
-  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: waitPos(j), games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null };
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: waitPos(j), games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null, ...(run.weekly ? { weekly: true } : {}) };
   if (b.seats === 4) {
     const p = prs[0];
     out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));
@@ -880,7 +882,7 @@ function talkRun(b) {
 // The deck guide (Design's change 11): one read-only document per brew version, assembled from what the
 // coach modes and the run already wrote. A section nobody has asked for yet comes back null with the mode
 // that writes it in `missing`, so the page doubles as the prep checklist.
-function guideOf(b, vn) {
+function guideOf(b, vn, { since = null } = {}) {
   const ver = b.versions.find(x => x.v === vn) || latest(b);
   const pick = b.runs.filter(r => r.v === ver.v).map(r => runView(b, r)).filter(r => r.played > 0);
   const rv = pick.find(r => r.score && r.field) || pick.find(r => r.score) || pick[0] || null;
@@ -890,7 +892,9 @@ function guideOf(b, vn) {
   const matchups = rv && rv.opponents ? rv.opponents.map(o => {
     const sb = rows.find(r => r.opponent === o.name), t = said('pilot', o.name);
     return { opponent: o.name, metaPct: o.metaPct ?? null, ...pct(o.score), role: sb ? sb.role : null, text: t ? t.text : null, at: t ? t.at : null,
-      evidence: o.score ? o.score.n + ' games' : null, basis: o.score ? (o.score.cal ? 'calibrated against real results' : 'Forge games') : null };
+      evidence: o.score ? o.score.n + ' games' : null, basis: o.score ? (o.score.cal ? 'calibrated against real results' : 'Forge games') : null,
+      // the weekly rerun moved this row since the owner last opened the guide (only on the owner's own view)
+      moved: since != null && b.weekly && b.weekly.at > since && b.weekly.run === rv.id ? (b.weekly.movers.find(x => x.opponent === o.name) || null) : null };
   }) : [];
   const mull = said('mulligan'), prevOf = v => b.versions.filter(x => x.v < v).pop() || null;
   const scoreOfV = v => { const r = b.runs.filter(x => x.v === v).map(x => runView(b, x)).find(x => x.score); return r ? r.score : null; };
@@ -917,8 +921,72 @@ function guideOf(b, vn) {
   return out;
 }
 
+// ---------- the weekly rerun (Design's change 12) ----------
+// When a format's weekly field changes (MTGGoldfish's top 20, names and shares), each brew with a field run
+// in the last 60 days reruns its newest version against the same opponent set, at background priority, once
+// a week, and only while its owner has opened the site in the last 30 days. When the rerun finishes it is
+// compared with the brew's previous field run and the result goes on `brew.weekly`; `notify` is set when the
+// headline moved 3+ points or a matchup 8+. No mail: the sim sends none, so it is a badge on the deck row.
+const WEEKLY = path.join(DATA, 'weekly.json');
+const weeklyState = readJson(WEEKLY, { fields: {}, seen: {} });   // fields: format -> { sig, at }; seen: user -> last visit
+const saveWeekly = () => writeJson(WEEKLY, weeklyState);
+const WEEK = 7 * 864e5, RUN_DAYS = 60, IDLE_DAYS = 30;
+let seenDirty = false;
+function markSeen(name) { const was = weeklyState.seen[name] || 0; if (Date.now() - was > 3600e3) { weeklyState.seen[name] = Date.now(); seenDirty = true; } }
+setInterval(() => { if (seenDirty) { seenDirty = false; saveWeekly(); } }, 60e3);
+
+const isFieldRun = r => r.field && r.field.source === 'goldfish';
+async function weeklyDue() {
+  const formats = [...new Set(brews.filter(b => b.seats === 2 && meta.GOLDFISH_FORMATS.includes(b.format)).map(b => b.format))];
+  for (const format of formats) {
+    let top; try { top = (await meta.goldfishMeta(format)).slice(0, 20); } catch (e) { console.warn('weekly', format, e.message); continue; }
+    if (!top.length) continue;
+    const sig = crypto.createHash('md5').update(top.map(d => d.name + ':' + Math.round(d.pct || 0)).join('|')).digest('hex').slice(0, 12);
+    const f = weeklyState.fields[format];
+    if (!f) { weeklyState.fields[format] = { sig, at: Date.now(), changed: false }; saveWeekly(); continue; }   // the first look is a baseline, not a change
+    if (f.sig !== sig) { weeklyState.fields[format] = { sig, at: Date.now(), changed: true }; saveWeekly(); }
+    if (!weeklyState.fields[format].changed) continue;
+    const changedAt = weeklyState.fields[format].at;
+    for (const b of brews.filter(x => x.format === format && x.seats === 2)) {
+      const last = b.runs.find(r => isFieldRun(r) && r.oppSet !== 'team');
+      if (!last || last.created >= changedAt) continue;                        // already played this field
+      if (Date.now() - last.created > RUN_DAYS * 864e5) continue;              // no field run in 60 days
+      if (Date.now() - (weeklyState.seen[b.owner] || 0) > IDLE_DAYS * 864e5) continue;
+      if (b.runs.some(r => r.weekly && Date.now() - r.created < WEEK)) continue; // one a week
+      if (b.runs.some(r => ['preparing', 'queued', 'running'].includes(runView(b, r).status))) continue;
+      const v = latest(b);
+      if (v.legal && !v.legal.ok) continue;                                    // rotated out: nothing to rerun
+      const run = { id: crypto.randomBytes(4).toString('hex'), v: v.v, oppSet: last.oppSet, created: Date.now(), status: 'preparing', weekly: true };
+      b.runs.unshift(run); saveBrews();
+      console.log(`weekly: ${b.owner}'s ${b.name} v${v.v} against the new ${format} field`);
+      await prepareRun(b, run, { name: b.owner }, { low: true });
+    }
+  }
+  weeklyFinish();
+}
+// Compare each finished weekly rerun with the brew's previous field run (the same version where there is one).
+function weeklyFinish() {
+  let dirty = false;
+  for (const b of brews) for (const run of b.runs) {
+    if (!run.weekly || run.compared) continue;
+    const now = runView(b, run);
+    if (['failed', 'cancelled', 'lost'].includes(now.status)) { run.compared = true; dirty = true; continue; }
+    if (now.status !== 'done' || !now.score) continue;
+    const before = b.runs.filter(r => r !== run && r.created < run.created && isFieldRun(r) && r.oppSet === run.oppSet).map(r => runView(b, r)).filter(r => r.status === 'done' && r.score);
+    const prev = before.find(r => r.v === run.v) || before[0] || null;
+    run.compared = true; dirty = true;
+    if (!prev) continue;
+    const w = weekly.compare(b.name, now, prev);
+    b.weekly = { at: Date.now(), run: run.id, prevRun: prev.id, v: run.v, prevV: prev.v, field: run.field ? { date: run.field.date, label: run.field.label } : null,
+      ...w, guideUpdated: false, seen: false };
+  }
+  if (dirty) saveBrews();
+}
+setTimeout(() => weeklyDue().catch(e => console.error('weekly:', e.message)), 90e3);
+setInterval(() => weeklyDue().catch(e => console.error('weekly:', e.message)), 6 * 3600e3);
+
 // ---------- http ----------
-const send = (res, code, body, headers = {}) => {
+const send =(res, code, body, headers = {}) => {
   const isStr = typeof body === 'string' || Buffer.isBuffer(body);
   res.writeHead(code, { 'Content-Type': isStr ? 'text/plain; charset=utf-8' : 'application/json', 'Cache-Control': 'no-store', ...headers });
   res.end(isStr ? body : JSON.stringify(body));
@@ -1027,6 +1095,7 @@ const server = http.createServer(async (req, res) => {
     }
     const user = await currentUser(req);
     if (!user) return send(res, 401, { error: 'login required' });
+    markSeen(user.name);
 
     // A card's picture: Scryfall's image CDN address from the card data the server already
     // fetched in one batch when the deck was made. The page used to ask Scryfall's exact-name
@@ -1244,7 +1313,9 @@ const server = http.createServer(async (req, res) => {
     // rename a brew and/or change its cover: a card from its newest list, or a new upload
     if ((m = p.match(/^\/api\/brews\/(\w+)$/)) && req.method === 'PATCH') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      const { name, cover, settings, share } = await readBody(req);
+      const { name, cover, settings, share, weeklySeen } = await readBody(req);
+      // the weekly badge: the page clears it once the owner has opened the brew
+      if (weeklySeen === true && b.weekly) b.weekly.seen = true;
       // the guide's share link: true mints one (always the newest version), false revokes it
       if (share === true) b.share = { token: b.share ? b.share.token : crypto.randomBytes(8).toString('hex'), at: Date.now() };
       else if (share === false) delete b.share;
@@ -1263,7 +1334,9 @@ const server = http.createServer(async (req, res) => {
     if ((m = p.match(/^\/api\/brews\/(\w+)\/guide$/)) && req.method === 'GET') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const v = parseInt(u.searchParams.get('v'), 10);
-      return send(res, 200, { ...guideOf(b, Number.isFinite(v) ? v : latest(b).v), share: b.share ? { token: b.share.token, v: b.share.v || null } : null });
+      const g = guideOf(b, Number.isFinite(v) ? v : latest(b).v, { since: b.guideSeenAt || 0 });
+      if (!Number.isFinite(v) || v === latest(b).v) { b.guideSeenAt = Date.now(); saveBrews(); }
+      return send(res, 200, { ...g, share: b.share ? { token: b.share.token, v: b.share.v || null } : null });
     }
     // a match logged by hand (Design's change 9: iPad and paper games the Arena log can't see), pooled with the
     // parsed ones in b.realMatches

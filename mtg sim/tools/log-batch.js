@@ -6,17 +6,21 @@
 //
 //   FORGE_DIR=... DATA_DIR=... node tools/log-batch.js <calibration.json> <out dir> [top=12] [matches=10] [at once=4]
 //
+// ONLY="Bant Airbending Combo" plays just that deck against each of the top N (it need not be in the top N).
+//
 // Writes <out>/logs/<deck A>__<deck B>/m<match>-g<game>.jsonl.gz and <out>/batch.json (results
 // per pairing). Rerunning skips pairings already done.
 const fs = require('fs');
 const path = require('path');
-const { runMatches } = require('../pilot');
+const { runMatches, payoff } = require('../pilot');
 const POLICY = process.env.POLICY || null;
 const DEAD = (() => { try { return Object.values(JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'forge-pilot', 'dead-cards.json'), 'utf8'))).flat(); } catch { return []; } })();
 
 const [CAL, OUT, TOP = '12', M = '10', PAR = '4'] = process.argv.slice(2);
 const c = JSON.parse(fs.readFileSync(CAL, 'utf8')).standard;
+const ONLY = process.env.ONLY || null;
 const decks = c.lists.slice(0, +TOP);
+if (ONLY) { const o = c.lists.find(l => l.name === ONLY); if (!o) { console.error(`no deck named ${ONLY} in ${CAL}`); process.exit(1); } if (!decks.includes(o)) decks.unshift(o); }
 const slug = s => s.replace(/[^\w]+/g, '-');
 const file = path.join(OUT, 'batch.json');
 fs.mkdirSync(OUT, { recursive: true });
@@ -25,18 +29,23 @@ const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };
 
 const jobs = [];
-for (let i = 0; i < decks.length; i++) for (let j = i + 1; j < decks.length; j++) jobs.push([decks[i], decks[j]]);
+for (let i = 0; i < decks.length; i++) for (let j = i + 1; j < decks.length; j++) if (!ONLY || decks[i].name === ONLY || decks[j].name === ONLY) jobs.push([decks[i], decks[j]]);
 const todo = jobs.filter(([a, b]) => !done[a.name + '|' + b.name]);
 log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}`);
 
 // the profile each plan gets, for POLICY=profiles
-const PROFILE = { 'tap-out control': process.env.PROFILE_TAPOUT || 'tapout', 'draw-go control': process.env.PROFILE_DRAWGO || 'answers' };
+const PROFILE = { 'tap-out control': process.env.PROFILE_TAPOUT || 'tapout', 'draw-go control': process.env.PROFILE_DRAWGO || 'answers', 'spells-matter': process.env.PROFILE_SPELLS || null };
 const policyOf = {};
 
 (async () => {
   if (POLICY === 'profiles') {
     const { planOf } = require('../plan');
-    for (const d of decks) { const p = await planOf(d, d.name); policyOf[d.name] = PROFILE[p.plan] || null; }
+    const find = await require('../meta').cards([...new Set(decks.flatMap(d => d.main.map(c => c.name)))]);
+    for (const d of decks) {
+      const p = await planOf(d, d.name); policyOf[d.name] = PROFILE[p.plan] || null;
+      // the spells profile is for a deck built on payoffs that get cheaper (Spellementals: 12), not one splashing a Crab (Prowess)
+      if (p.plan === 'spells-matter' && d.main.filter(c => find(c.name) && payoff(find(c.name))).reduce((a, c) => a + c.qty, 0) < 8) policyOf[d.name] = null;
+    }
     log('profiles: ' + Object.entries(policyOf).filter(([, x]) => x).map(([n, x]) => n + ' ' + x).join(', '));
   }
   let i = 0;

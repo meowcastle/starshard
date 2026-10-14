@@ -153,6 +153,28 @@ function tapout(m, find) {
   return { choice: [rest[0].o.id] };
 }
 
+// The spells-matter profile (NOTE-TO-RESEARCH-13OCT-TONIGHT.md §1): a deck whose payoffs get cheaper
+// with spells in the graveyard (Spellementals: Eddymurk Crab, Hearth Elemental, then Sunderflock off the
+// biggest Elemental) spends its cheap spells on its own turn, toward the payoff, rather than holding them
+// as answers for the opponent's end step. Its own main phase: the land, then a payoff that has become
+// castable (the most expensive first), then its cheapest draw or selection spell. A counter is kept for
+// their spell that matters, as 'answers' does; everything else on their turn stays Forge's.
+const payoff = k => /costs? \{(?:X|\d+)\} less to cast/i.test(textOf(k)) && /Creature/.test((faces(k)[0] || k).type_line || k.type_line || '');
+const cantrip = k => /\bdraw (?:a|two|three) cards?\b|look at the top|surveil|scry/i.test(textOf(k));
+function spells(m, find) {
+  const s = m.state || {}, opts = m.options || [];
+  const top = (s.stack || [])[0];
+  if (top) return top.controller === 'opponent' ? reactive(m, find, { hold: false }) : null;
+  if (s.activePlayer !== 'you' || !/MAIN/.test(s.phase || '')) return null;
+  const land = opts.find(o => o.meta && o.meta.type === 'land');
+  if (land) return { choice: [land.id] };
+  const cast = opts.filter(o => o.meta && o.meta.type === 'spell').map(o => ({ o, k: find(o.card || '') })).filter(x => x.k);
+  const big = cast.filter(x => payoff(x.k)).sort((a, b) => (b.k.cmc || 0) - (a.k.cmc || 0))[0];
+  if (big) return { choice: [big.o.id] };
+  const dig = cast.filter(x => cantrip(x.k) && !roleOf(x.k).counter && !payoff(x.k)).sort((a, b) => (a.o.meta.cmc || 0) - (b.o.meta.cmc || 0))[0];
+  return dig ? { choice: [dig.o.id] } : null;
+}
+
 // ---------------------------------------------------------------- dead cards
 
 // Only the cards Forge's AI never casts (tools/dead-cards.js, forge-pilot/dead-cards.json);
@@ -213,7 +235,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       }
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
-        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
+        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'spells' ? spells(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead) : null;
         if (a) { res.acted = (res.acted || 0) + 1; return a; }
       }
       return { delegate: true };
@@ -258,7 +280,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   }));
 }
 
-module.exports = { runMatches, keep, boarded, produced, reactive, tapout, deadcards, roleOf };
+module.exports = { runMatches, keep, boarded, produced, reactive, tapout, spells, payoff, deadcards, roleOf };
 
 // ---------------------------------------------------------------- self-play
 
