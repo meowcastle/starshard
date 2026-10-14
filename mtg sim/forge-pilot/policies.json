@@ -1,4 +1,8 @@
 {
-  "_": "Production pilots by deck, by Forge version. A profile goes here when it passes research's field-test gate (NOTE-TO-CODE-13OCT-ORDER.md and the profiles review): on the 66-pairing batch it moves the deck toward its real rate, no other deck moves outside the noise, and its behaviour targets are met. Azorius Control answers and 4c Control tapout accepted 13 Oct 2026 (ENGINE-STATUS-13OCT.md 5.4). Every other deck with a dead card gets the deadcards policy only.",
-  "2.0.15": { "Azorius Control": "answers", "4c Control": "tapout" }
+ "_": "Production pilots by deck, by Forge version. A profile goes here when it passes research's field-test gate (NOTE-TO-CODE-13OCT-ORDER.md and the profiles review): on the 66-pairing batch it moves the deck toward its real rate, no other deck moves outside the noise, and its behaviour targets are met. Azorius Control answers and 4c Control tapout accepted 13 Oct 2026 (ENGINE-STATUS-13OCT.md 5.4); Izzet Spellementals spells accepted 14 Oct 2026 (field 46% -> 50% against a real 48%, no other deck moved beyond 2 points, mirror 73% of 71). Every other deck with a dead card gets the deadcards policy only.",
+ "2.0.15": {
+  "Azorius Control": "answers",
+  "4c Control": "tapout",
+  "Izzet Spellementals": "spells"
+ }
 }

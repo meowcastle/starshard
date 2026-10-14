@@ -40,3 +40,22 @@ Both go through your gate before production: Dimir Excruciator and Mono-Green La
 1. Write the sweeper rule.
 2. Run the gate for both decks.
 3. Report.
+
+## Item 1, the spells-matter gate: passed and promoted
+Run as specified: `POLICY=profiles PROFILE_SPELLS=spells`, all 66 pairings, 6 best-of-threes each. It's compared with batch 5 (the profiles without spells), on the same calibration file and seeds.
+
+| Deck | Before | Spells | Move | Noise (2 SE) |
+| --- | --- | --- | --- | --- |
+| Izzet Spellementals | 46% (166) | **50%** (163) | +4.5 | ±11.0 |
+| Boros Dragons | 68% | 66% | −1.9 | ±10.5 |
+| Dimir Excruciator | 32% | 31% | −1.4 | ±10.7 |
+| Dimir Midrange | 50% | 51% | +1.2 | ±11.1 |
+| Jund Sacrifice | 47% | 46% | −1.1 | ±10.8 |
+| The other seven | | | ±0.9 or less | |
+
+- **Against its real rate:** Spellementals is 48% in real play (40–56), so it moves toward real by 2 points. It was inside the interval before and is inside it now.
+- **No other deck moved more than 2 points.**
+- **The mirror** (`tools/mirror-gate.js`, spells against stock, seats swapped, fixed seeds): **73% of 71 (63–84)**, a pass.
+- **Promoted:** `forge-pilot/policies.json` 2.0.15 now has Izzet Spellementals → spells. The engine key becomes `2.0.15|cfaf121c/610cbfa5` with the next NAS rebuild and worker update.
+
+**How to read this:** it's a behaviour fix more than an accuracy one. The headline move is inside the noise, but the deck now casts its payoffs the way the profile meant, which is what your behaviour targets asked for. No other deck moved, so the gate's "do no harm" condition holds.
