@@ -1,4 +1,4 @@
-# Forge Sim engine: where it stands (13 Oct 2026, evening)
+# Forge Sim engine: where it stands (14 Oct 2026)
 
 From Code, for research to review. Everything specific to the engine: how games are played, what our pilot changes, what the logs measure, what each experiment found, what is live, and what is open. The page, coach copy and design work are out of scope here except where they read engine output. Commits are on branch `mtg-sim`; the detailed write-ups are the dated NOTE-TO-RESEARCH files in this folder and `forge-pilot/README.md`.
 
@@ -75,6 +75,18 @@ Two ways a pairing is played:
 | **budget 8, 1 turn, screen 50 (default)** | **57% (50–65%)** | **~18** |
 
 **Fidelity with search on both seats** (51 real pairings): k 0.06 → 0.08, inside noise; Azorius Control 13% → 20% (real 41%), Dimir Excruciator unchanged. Search decides main-phase plays; the control gap is instant-speed play. **Search stays research-only.** Rerun with the learned evaluator at the leaf (NOTE-TO-RESEARCH-13OCT-EVALUATOR.md): k 0.07, Azorius 17%, no change outside noise; the better judge doesn't help a search that only chooses main-phase plays. Forge's own full simulation was also tried: 11 of 24 finished games, 15× slower, processes dying.
+
+**14 Oct: instant speed, and the line closed (`NOTE-TO-RESEARCH-14OCT-SEARCH.md`).**
+- A bug was fixed: the search played its candidate one step after the one it was chosen in (b82dcd8).
+- `isearch` extends the search to the opponent's turn and to responses on the stack.
+- Azorius Control under each variant:
+  - Forge decides: 13%;
+  - main-phase search, fixed: 17%;
+  - instant speed with Forge's score: 21%;
+  - instant speed with the learned score: 19%;
+  - real: 41%.
+- k stays at 0.06–0.09 in every variant.
+- No form of the search moves fidelity, so **the search line is stopped**. It stays built and off.
 
 ## 5. The per-turn game log
 
@@ -209,12 +221,21 @@ With `reactive`, the control-ahead-of-aggro inversion goes (49–64% under 1,000
 ## 9. Open questions for research
 
 1. **The control-ahead-of-midrange inversion survives every pilot.** §5.3 says it is the score pricing lands and non-creature permanents. Is the right next step the learned evaluator (on logs from accepted profiles, as research set out), or a cheap correction to the score first (discount lands past what the deck needs and non-creature permanents by what they do) to see how much of the inversion it removes?
-2. **Spellementals: answered (`NOTE-TO-RESEARCH-13OCT-TONIGHT.md` §1).** Under the pilots it casts Sunderflock in 27–31% of games against 49% stock; it wins 67% when it does. It spends its instants at end step (0.9 a game against 0.65) instead of building toward the payoff. It stays on Forge's play, as production has it. Still open: a spells-matter profile of its own.
+2. **Spellementals: answered (`NOTE-TO-RESEARCH-13OCT-TONIGHT.md` §1).** Under the pilots it casts Sunderflock in 27–31% of games against 49% stock; it wins 67% when it does. It spends its instants at end step (0.9 a game against 0.65) instead of building toward the payoff. It stays on Forge's play, as production has it.
+   - **14 Oct: the `spells` profile is built** (`NOTE-TO-RESEARCH-14OCT-SMALL-ITEMS.md` §3). Against batch 5 on the same seeds:
+     - Sunderflock cast in 55% of games (43% before);
+     - own-turn instants 4.3 a game (1.1 before);
+     - wins 50% (46% before), inside the noise.
+   - There's no real rate to judge it against, so it isn't in `policies.json`. Promoting it is research's call.
 3. **Unspent mana after the opponent's turn stays about 2.0 for both control decks** under every pilot against a target of 1.5. Is 1.5 right for Forge's card pools (what does a draw-go deck have to spend at end step in these lists), or does end-step spending need a broader rule (activate abilities, cycle, flash creatures)?
 4. **Production pilots.** Research asked that the round robins run with accepted profiles on both seats once one passes. None has passed by the mirror bar except `reactive` on Azorius. Should a profile go to the round robins on field-batch evidence (closer to real rates without hurting other decks) rather than the mirror bar, given that mirror strength and fidelity are different things?
 5. **The bridge's overhead: measured (`NOTE-TO-RESEARCH-13OCT-TONIGHT.md` §3).** About 10% inside games plus a second of startup on unpiloted pairings, not 30%. The profile shows only Forge's AI. Not worth optimising.
-6. **Population.** k is fitted on paper and MTGO together, last 42 days. Research's population question (which field to calibrate against, recency weighting) is still open and is the stop signal research named if strength rises and k doesn't.
-7. **Curation still owed:** Bant Airbending's pieces from the live list (in `NOTE-TO-RESEARCH-13OCT-PLANS.md`); hand tags for the 31 untagged cards; Temur Omniscience when it reappears in the field.
+6. **Population.** k is fitted on paper and MTGO together, last 42 days. Research's population question (which field to calibrate against, recency weighting) is still open and is the stop signal research named if strength rises and k doesn't. **Since 14 Oct this is the next fidelity step:** decision quality is exhausted as an explanation (§4).
+7. **Curation still owed:** hand tags for the 31 untagged cards, and Temur Omniscience when it reappears in the field.
+   - **Bant Airbending is re-curated (14 Oct)** from the live list, and checked against 296 logged games (`NOTE-TO-RESEARCH-14OCT-SMALL-ITEMS.md` §2).
+   - The log can't confirm its pieces, because Forge plays it as a creature deck: 17% of wins look like a combo turn.
+   - Forge never casts Airbender Ascension, which makes it a dead-card candidate for research to gate.
+8. **`creaturesLost` checked (14 Oct):** it counts the death after 109 of 113 blocks that should kill a creature. It reads 0 because most combats have no blocks. No `GameLog` change is needed.
 
 ## 10. Files
 
