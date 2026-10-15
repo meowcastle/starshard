@@ -32,6 +32,8 @@ if (ONLY) { const o = c.lists.find(l => l.name === ONLY); if (!o) { console.erro
 const slug = s => s.replace(/[^\w]+/g, '-');
 const file = path.join(OUT, 'batch.json');
 fs.mkdirSync(OUT, { recursive: true });
+// what this batch was played with, beside its results, so a set of batches can be compared later
+fs.writeFileSync(path.join(OUT, 'settings.json'), JSON.stringify({ policy: POLICY, profileSpells: process.env.PROFILE_SPELLS || null, extraDead: process.env.EXTRA_DEAD || null, err: ERR, errPlay: ERR_PLAY, errCombat: ERR_COMBAT, bridge: process.env.PILOT_BRIDGE || null, top: +TOP, matches: +M }, null, 1));
 const done = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
 const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };
