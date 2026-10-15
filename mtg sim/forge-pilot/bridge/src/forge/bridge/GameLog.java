@@ -43,7 +43,9 @@ import forge.game.zone.ZoneType;
  *
  * Records, in order: "game" (who is who), then per turn "turn" (both seats' state at the start of
  * the turn, each seat's hand visible only in its own view, and Forge's static score of the position
- * for each seat), "cast" (every spell and ability put on the stack, with when), "attack", "block",
+ * for each seat), "cast" (every spell and ability put on the stack, with when and its targets), "attack"
+ * (with a planeswalker or battle attacked named), "block", "leaves" (a creature or planeswalker leaving the
+ * battlefield, and where to),
  * "combat" (what combat cost each side), "turn_end" (each seat's unspent mana and what it could have
  * cast), and finally "end" (the result). Never the library order or the opponent's hand: what a player
  * could see, so an evaluator trained on it can't learn to cheat.
@@ -237,8 +239,53 @@ final class GameLog {
                 o.addProperty("kind", c.isCreature() ? "creature" : c.isPlaneswalker() ? "planeswalker" : c.isInstant() ? "instant" : c.isSorcery() ? "sorcery" : c.isLand() ? "land" : "other");
                 if (c.isInstant() || c.hasKeyword(Keyword.FLASH)) o.addProperty("instant", true);
             }
+            // what it was aimed at (15 Oct 2026: is the removal going to the right creature?). The event carries
+            // only a view; the real ability is the one just put on the stack, checked by its host
+            SpellAbility sa = game.getStack().peekAbility();
+            if (sa != null && sa.getHostCard() != null && sa.getHostCard().getId() == host.getId()) {
+                JsonArray tg = new JsonArray();
+                for (forge.game.spellability.TargetChoices tc : sa.getAllTargetChoices())
+                    for (forge.game.GameObject g : tc) tg.add(target(g));
+                if (tg.size() > 0) o.add("targets", tg);
+            }
             write(o);
         } catch (RuntimeException ex) { /* a missed cast line */ }
+    }
+
+    /** A target as the record keeps it: a permanent or card (with whose it is), a player's seat, or a spell. */
+    private JsonObject target(forge.game.GameObject g) {
+        JsonObject x = new JsonObject();
+        if (g instanceof Card c) {
+            x.addProperty("name", c.getName()); x.addProperty("seat", seatOf(c.getController()));
+            x.addProperty("kind", c.isCreature() ? "creature" : c.isPlaneswalker() ? "planeswalker" : c.isLand() ? "land" : "other");
+            if (c.getZone() != null && c.getZone().getZoneType() != ZoneType.Battlefield) x.addProperty("zone", String.valueOf(c.getZone().getZoneType()));
+            if (c.isCreature()) { x.addProperty("power", c.getNetPower()); x.addProperty("toughness", c.getNetToughness()); }
+            if (!c.isLand()) x.addProperty("mv", mv(c));
+        } else if (g instanceof Player p) {
+            x.addProperty("player", seatOf(p));
+        } else if (g instanceof SpellAbility s) {
+            x.addProperty("spell", s.getHostCard() == null ? "?" : s.getHostCard().getName());
+            if (s.getActivatingPlayer() != null) x.addProperty("seat", seatOf(s.getActivatingPlayer()));
+        }
+        return x;
+    }
+
+    /** "leaves": a creature or planeswalker leaving the battlefield, where to, and whose it was (15 Oct 2026). */
+    @Subscribe
+    public void zone(forge.game.event.GameEventCardChangeZone e) { quietly(() -> zone0(e)); }
+    private void zone0(forge.game.event.GameEventCardChangeZone e) {
+        if (e.from() == null || e.from().zoneType() != ZoneType.Battlefield || e.to() == null || e.to().zoneType() == ZoneType.Battlefield) return;
+        CardView.CardStateView st = e.card().getCurrentState();
+        if (st == null || !(st.isCreature() || st.isPlaneswalker())) return;
+        JsonObject o = base("leaves");
+        o.addProperty("name", e.card().getName());
+        o.addProperty("seat", seatOf(e.from().player()));
+        o.addProperty("kind", st.isCreature() ? "creature" : "planeswalker");
+        if (st.isCreature()) { o.addProperty("power", st.getPower()); o.addProperty("toughness", st.getToughness()); }
+        if (e.card().isToken()) o.addProperty("token", true);
+        o.addProperty("to", String.valueOf(e.to().zoneType()));
+        o.addProperty("stack", game.getStack().size());
+        write(o);
     }
 
     @Subscribe
@@ -248,7 +295,11 @@ final class GameLog {
         for (int s = 0; s < 2; s++) { Player p = player(s); if (p == null) return; lifeAtAttack[s] = p.getLife(); creaturesAtAttack[s] = p.getCreaturesInPlay().size(); }
         if (game.getPhaseHandler().getCombat() == null) return;
         for (Card a : game.getPhaseHandler().getCombat().getAttackers()) {
-            JsonObject x = new JsonObject(); x.addProperty("name", a.getName()); x.addProperty("power", a.getNetPower()); x.addProperty("toughness", a.getNetToughness()); attackers.add(x);
+            JsonObject x = new JsonObject(); x.addProperty("name", a.getName()); x.addProperty("power", a.getNetPower()); x.addProperty("toughness", a.getNetToughness());
+            // a planeswalker or battle attacked instead of the player is named
+            forge.game.GameEntity d = game.getPhaseHandler().getCombat().getDefenderByAttacker(a);
+            if (d instanceof Card dc) x.addProperty("at", dc.getName());
+            attackers.add(x);
         }
         JsonObject o = base("attack");
         o.addProperty("seat", seatOf(e.player()));
