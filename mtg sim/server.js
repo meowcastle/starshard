@@ -1210,8 +1210,11 @@ const server = http.createServer(async (req, res) => {
     // packs until Stripe is connected.
     if (p === '/api/account' && req.method === 'GET') {
       const a = A.account(user.accountId), plan = A.planOf(a.plan), bal = A.balance(a.id);
-      return send(res, 200, { name: a.name, source: a.source, since: a.created, plan: { code: plan.code, name: plan.name, charges: plan.charges, features: plan.features },
-        balance: bal, minutes: bal, packs: [], ledger: A.statement(a.id), limits: limitsFor(user),
+      // the page's plan table reads limits.decks/runsPerDay/asksPerDay and features.share (change 13); they ride beside
+      // the live counts (runs/asks: cap, left, freeIn) and the plan's own names (brews, sharing). An admin's limits stay null.
+      const lim = limitsFor(user);
+      return send(res, 200, { name: a.name, source: a.source, since: a.created, plan: { code: plan.code, name: plan.name, charges: plan.charges, features: { ...plan.features, share: plan.features.sharing } },
+        balance: bal, minutes: bal, packs: [], ledger: A.statement(a.id), limits: lim && { ...lim, decks: plan.features.brews, runsPerDay: plan.features.runsPerDay, asksPerDay: plan.features.asksPerDay },
         note: plan.code === 'founder' ? "Founders' plan · free while the sim is calibrated · thank you for the logs." : plan.code === 'free' ? `Free plan · ${plan.features.runsPerDay} run and ${plan.features.asksPerDay} coach questions a day, one deck, the top 10.` : null });
     }
     // a simulator account can delete itself and its decks; a founder's account goes through Justin
