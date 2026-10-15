@@ -1,0 +1,6 @@
+Subject: {{deck}} finished: {{score}}
+{{deck}} finished: {{score}} against {{field}}.
+
+{{link}}
+
+You get this mail because "run finished" is on in your Account. Turn it off there.

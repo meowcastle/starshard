@@ -16,6 +16,7 @@ const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
 const accounts = require('./accounts');
+const mail = require('./mail');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -123,6 +124,18 @@ async function currentUser(req) {
   let a; try { a = A.accountFor({ id, name: me.username, admin: isAdminName(me.username) }); } catch { return null; }
   A.startSession(a.id, token);
   return userOf(A.session(token));
+}
+// The Account tab's account (work order §4, changes 13 and 15): plan, balance, the ledger with the balance
+// after each row, and the address with its mail settings. No packs until Stripe is connected.
+function accountView(user) {
+  const a = A.account(user.accountId), plan = A.planOf(a.plan), bal = A.balance(a.id);
+  // the page's plan table reads limits.decks/runsPerDay/asksPerDay and features.share (change 13); they ride beside
+  // the live counts (runs/asks: cap, left, freeIn) and the plan's own names (brews, sharing). An admin's limits stay null.
+  const lim = limitsFor(user);
+  return { name: a.name, source: a.source, since: a.created, plan: { code: plan.code, name: plan.name, charges: plan.charges, features: { ...plan.features, share: plan.features.sharing } },
+    balance: bal, minutes: bal, packs: [], ledger: A.statement(a.id), limits: lim && { ...lim, decks: plan.features.brews, runsPerDay: plan.features.runsPerDay, asksPerDay: plan.features.asksPerDay },
+    email: a.email || null, mailable: !!a.mailable, mail: A.mailOf(a),
+    note: plan.code === 'founder' ? "Founders' plan · free while the sim is calibrated · thank you for the logs." : plan.code === 'free' ? `Free plan · ${plan.features.runsPerDay} run and ${plan.features.asksPerDay} coach questions a day, one deck, the top 10.` : null };
 }
 // Sign-in and sign-up tries per address: 10 failed sign-ins in 15 minutes, 5 sign-ups an hour.
 const tries = new Map();
@@ -1045,6 +1058,46 @@ function weeklyFinish() {
   }
   if (dirty) saveBrews();
 }
+// ---- mail after runs (change 15): the weekly digest and "run finished" ----
+// Both go only to an account with an address that takes mail and the toggle on. The digest is one message a
+// week at most, a paragraph per deck that moved (weekly.compare's notify); run-finished is opt-in.
+const pct = x => Math.round(x * 100);
+const deckLink = b => config.SITE_URL + '/?deck=' + encodeURIComponent(b.id);
+// the unsubscribe link works without signing in: an HMAC of the account id under a key kept in the database
+function mailKey() { let k = A.db.prepare("SELECT value FROM meta WHERE key = 'mailKey'").get(); if (!k) { A.db.prepare("INSERT INTO meta (key, value) VALUES ('mailKey', ?)").run(crypto.randomBytes(32).toString('hex')); k = A.db.prepare("SELECT value FROM meta WHERE key = 'mailKey'").get(); } return k.value; }
+const offToken = id => crypto.createHmac('sha256', mailKey()).update('digest-off:' + id).digest('hex').slice(0, 32);
+const mailTo = name => { const a = A.accountByName(name); return a && a.email && a.mailable && a.status === 'active' ? a : null; };
+const flagsOf = a => { try { return JSON.parse(a.flags || '{}'); } catch { return {}; } };
+const setFlag = (a, k, v) => A.db.prepare('UPDATE accounts SET flags = ? WHERE id = ?').run(JSON.stringify({ ...flagsOf(a), [k]: v }), a.id);
+async function mailDigests() {
+  const due = new Map();
+  for (const b of brews) if (b.weekly && b.weekly.notify && !b.weekly.mailed && Date.now() - b.weekly.at < 3 * 864e5) (due.get(b.owner) || due.set(b.owner, []).get(b.owner)).push(b);
+  let dirty = false;
+  for (const [owner, bs] of due) {
+    for (const b of bs) { b.weekly.mailed = true; dirty = true; }
+    const a = mailTo(owner); if (!a || !A.mailOf(a).digest) continue;
+    if (Date.now() - (flagsOf(a).lastDigest || 0) < 6 * 864e5) continue;
+    const paragraphs = bs.map(b => b.weekly.text + (b.weekly.guideUpdated ? ' The sideboard guide is updated.' : '')).join('\n\n');
+    const r = await mail.send({ to: a.email, kind: 'digest', tag: 'digest', vals: { paragraphs, link: bs.length === 1 ? deckLink(bs[0]) : config.SITE_URL, unsubscribe: `${config.SITE_URL}/api/mail/off?a=${a.id}&t=${offToken(a.id)}` } });
+    if (r.ok) setFlag(a, 'lastDigest', Date.now());
+  }
+  if (dirty) saveBrews();
+}
+async function mailRunsDone() {
+  let dirty = false;
+  for (const b of brews) for (const run of b.runs) {
+    if (run.mailed || run.weekly || Date.now() - run.created > 2 * 864e5) continue;
+    const rv = runView(b, run); if (!['done', 'failed', 'cancelled', 'lost'].includes(rv.status)) continue;
+    run.mailed = true; dirty = true;
+    if (rv.status !== 'done' || !rv.score) continue;
+    const a = mailTo(b.owner); if (!a || !A.mailOf(a).runDone) continue;
+    const field = rv.field && rv.field.label ? rv.field.label : 'the field';
+    await mail.send({ to: a.email, kind: 'run-done', tag: 'run-done', vals: { deck: `${b.name} v${run.v}`, score: `${pct(rv.score.p)}% (${pct(rv.score.lo)}–${pct(rv.score.hi)})`, field, link: deckLink(b) } });
+  }
+  if (dirty) saveBrews();
+}
+setInterval(() => { if (mail.on()) mailRunsDone().then(mailDigests).catch(e => console.warn('mail: ' + e.message)); }, 120e3);
+
 // Settle each reserved run once it has stopped: what it played, in credits (a minute of play and loading
 // each), never more than its quote. A run the server lost on a restart, or one that failed, uses nothing.
 function settleRuns() {
@@ -1070,6 +1123,10 @@ const send =(res, code, body, headers = {}) => {
   res.writeHead(code, { 'Content-Type': isStr ? 'text/plain; charset=utf-8' : 'application/json', 'Cache-Control': 'no-store', ...headers });
   res.end(isStr ? body : JSON.stringify(body));
 };
+const readRaw = req => new Promise((ok, bad) => {
+  let b = ''; req.on('data', d => { b += d; if (b.length > 2e6) { bad(new Error('too large')); req.destroy(); } });
+  req.on('end', () => ok(b));
+});
 const readBody = req => new Promise((ok, bad) => {
   let b = ''; req.on('data', d => { b += d; if (b.length > 2e6) { bad(new Error('too large')); req.destroy(); } });
   req.on('end', () => { try { ok(b ? JSON.parse(b) : {}); } catch (e) { bad(e); } });
@@ -1125,6 +1182,58 @@ const server = http.createServer(async (req, res) => {
       tried('signup', ip);
       console.log(`signup: ${a.name}`);
       return send(res, 200, { ok: true, user: a.name }, sessionCookie(A.startSession(a.id)));
+    }
+    // Sign in with an email code (change 15, NOTE-TO-CODE-14OCT-EMAIL.md): a six-digit code to the address, then
+    // verify for a session. An address with no account gets one only while sign-up is open. purpose 'change' is a
+    // signed-in account proving a new address (then POST /api/account/email).
+    if (p === '/api/auth/code' && req.method === 'POST') {
+      const { email, purpose = 'signin' } = await readBody(req);
+      const ip = clientIp(req), e = A.normEmail(email);
+      if (!A.validEmail(e)) return send(res, 400, { error: 'Enter an email address.' });
+      if (!['signin', 'change'].includes(purpose)) return send(res, 400, { error: 'unknown purpose' });
+      if (tooMany('code-ip', ip, 20, 3600e3) || tooMany('code:' + e, 'addr', 3, 3600e3)) return send(res, 429, { error: 'Too many codes for now. Try again in an hour.' });
+      let acct = A.accountByEmail(e), accountId = acct ? acct.id : null;
+      if (purpose === 'change') {
+        const me = await currentUser(req); if (!me) return send(res, 401, { error: 'login required' });
+        if (acct && acct.id !== me.accountId) return send(res, 409, { error: 'That address is on another account.' });
+        accountId = me.accountId;
+      } else if (!acct && config.SIM_SIGNUP !== 'open') {
+        return send(res, 404, { error: 'No account uses that address. Sign in with your password, then add it under Account.' });
+      } else if (acct && acct.status !== 'active') return send(res, 403, { error: 'That account is closed.' });
+      tried('code-ip', ip); tried('code:' + e, 'addr');
+      const code = A.issueCode(e, purpose, accountId);
+      const r = await mail.send({ to: e, kind: 'code', vals: { code: code.slice(0, 3) + ' ' + code.slice(3) }, tag: 'code' });
+      if (!r.ok) return send(res, 503, { error: "Couldn't send the code. Try again in a minute." });
+      return send(res, 200, { ok: true, note: acct && !acct.mailable ? "We couldn't deliver to that address before; check it." : null });
+    }
+    if (p === '/api/auth/verify' && req.method === 'POST') {
+      const { email, code } = await readBody(req);
+      const ip = clientIp(req);
+      if (tooMany('verify', ip, 20, 15 * 60e3)) return send(res, 429, { error: 'too many tries, wait 15 minutes' });
+      const c = A.checkCode(email, 'signin', code);
+      if (!c.ok) { tried('verify', ip); return send(res, 401, { error: c.error }); }
+      let a = c.accountId ? A.account(c.accountId) : A.accountByEmail(c.email);
+      if (!a) { if (config.SIM_SIGNUP !== 'open') return send(res, 403, { error: 'Sign-up is closed for now.' }); a = A.signUpByEmail(c.email); console.log(`signup by email: ${a.name}`); }
+      if (a.status !== 'active') return send(res, 403, { error: 'That account is closed.' });
+      if (a.source === 'starshard' && !allowed(a.name)) return send(res, 403, { error: 'The sim is open to its founders for now.' });
+      A.setMailable(c.email, true);   // the code arrived, so the address takes mail
+      return send(res, 200, { ok: true, user: a.name }, sessionCookie(A.startSession(a.id)));
+    }
+    // Resend's bounce and complaint events (signed): the address stops getting the digest and run mail
+    if (p === '/api/resend/webhook' && req.method === 'POST') {
+      const raw = await readRaw(req);
+      if (!mail.verifyWebhook(req.headers, raw)) return send(res, 401, { error: 'bad signature' });
+      let ev; try { ev = JSON.parse(raw); } catch { return send(res, 400, { error: 'bad body' }); }
+      if (ev.type === 'email.bounced' || ev.type === 'email.complained') for (const to of [].concat(ev.data && ev.data.to || [])) { A.setMailable(to, false); console.log(`mail: ${ev.type} for an address, mail off`); }
+      return send(res, 200, { ok: true });
+    }
+    // the digest's unsubscribe link: no sign-in, a signed link per account
+    if (p === '/api/mail/off' && req.method === 'GET') {
+      const id = Number(u.searchParams.get('a')), t = String(u.searchParams.get('t') || '');
+      const a = Number.isInteger(id) && A.account(id), want = a ? offToken(id) : '';
+      if (!a || t.length !== want.length || !crypto.timingSafeEqual(Buffer.from(t), Buffer.from(want))) return send(res, 400, 'That link is not valid.', { 'Content-Type': 'text/plain; charset=utf-8' });
+      A.setMail(a.id, { digest: false });
+      return send(res, 200, '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Weekly digest off</title><body style="font-family:system-ui;max-width:520px;margin:48px auto;padding:0 16px;line-height:1.5"><p>The weekly digest is off. Turn it back on under Account any time.</p><p><a href="/">Back to Forge Sim</a></p><p style="color:#777;font-size:13px">' + mail.FAN + '</p>', { 'Content-Type': 'text/html; charset=utf-8' });
     }
     if (p === '/api/logout') { A.endSession(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
     if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion(), signup: config.SIM_SIGNUP === 'open' });
@@ -1206,16 +1315,23 @@ const server = http.createServer(async (req, res) => {
       return res.end();
     }
 
-    // the Account tab (work order §4): plan, balance, and the ledger with the balance after each row. No
-    // packs until Stripe is connected.
-    if (p === '/api/account' && req.method === 'GET') {
-      const a = A.account(user.accountId), plan = A.planOf(a.plan), bal = A.balance(a.id);
-      // the page's plan table reads limits.decks/runsPerDay/asksPerDay and features.share (change 13); they ride beside
-      // the live counts (runs/asks: cap, left, freeIn) and the plan's own names (brews, sharing). An admin's limits stay null.
-      const lim = limitsFor(user);
-      return send(res, 200, { name: a.name, source: a.source, since: a.created, plan: { code: plan.code, name: plan.name, charges: plan.charges, features: { ...plan.features, share: plan.features.sharing } },
-        balance: bal, minutes: bal, packs: [], ledger: A.statement(a.id), limits: lim && { ...lim, decks: plan.features.brews, runsPerDay: plan.features.runsPerDay, asksPerDay: plan.features.asksPerDay },
-        note: plan.code === 'founder' ? "Founders' plan · free while the sim is calibrated · thank you for the logs." : plan.code === 'free' ? `Free plan · ${plan.features.runsPerDay} run and ${plan.features.asksPerDay} coach questions a day, one deck, the top 10.` : null });
+    if (p === '/api/account' && req.method === 'GET') return send(res, 200, accountView(user));
+    // the mail toggles: { mail: { digest, runDone } }
+    if (p === '/api/account' && req.method === 'PATCH') {
+      const { mail: m } = await readBody(req);
+      if (m && typeof m === 'object') A.setMail(user.accountId, m);
+      return send(res, 200, accountView(user));
+    }
+    // a new address, proved by the code sent to it (POST /api/auth/code {email, purpose: 'change'})
+    if (p === '/api/account/email' && req.method === 'POST') {
+      const { email, code } = await readBody(req);
+      const ip = clientIp(req);
+      if (tooMany('verify', ip, 20, 15 * 60e3)) return send(res, 429, { error: 'too many tries, wait 15 minutes' });
+      const c = A.checkCode(email, 'change', code);
+      if (!c.ok) { tried('verify', ip); return send(res, 401, { error: c.error }); }
+      if (c.accountId !== user.accountId) return send(res, 403, { error: 'That code was for another account.' });
+      try { A.setEmail(user.accountId, c.email); } catch (e) { return send(res, 409, { error: e.message }); }
+      return send(res, 200, accountView(user));
     }
     // a simulator account can delete itself and its decks; a founder's account goes through Justin
     if (p === '/api/account' && req.method === 'DELETE') {

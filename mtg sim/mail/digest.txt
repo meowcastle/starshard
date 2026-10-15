@@ -1,0 +1,6 @@
+Subject: Your decks this week
+{{paragraphs}}
+
+{{link}}
+
+Turn the weekly digest off: {{unsubscribe}}

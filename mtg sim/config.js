@@ -49,6 +49,12 @@ const SPEC = {
   PRICE_OUT: S('server', 'num', undefined, 'override, output'),
   PRICE_CACHE_WRITE: S('server', 'num', undefined, 'override, cache writes'),
   PRICE_CACHE_READ: S('server', 'num', undefined, 'override, cache reads'),
+  // mail (mail.js, NOTE-TO-CODE-14OCT-EMAIL.md): Resend's REST API; unset key = no mail, and sign-in codes say so
+  RESEND_API_KEY: S('server', 'raw', undefined, 'sends sign-in codes, the weekly digest and run-finished mail; unset = off', true),
+  RESEND_WEBHOOK_SECRET: S('server', 'raw', undefined, 'whsec_... from the Resend webhook, for bounces and complaints', true),
+  MAIL_FROM: S('server', 'str', 'Forge Sim <noreply@sim.starshard.net>', 'the From line'),
+  MAIL_REPLY_TO: S('server', 'str', '', 'the Reply-To address (empty = none)'),
+  SITE_URL: S('server', 'str', 'https://sim.starshard.net', 'the address links in mail point at'),
   // a remote worker
   SIM_URL: S('worker', 'str', 'https://sim.starshard.net', 'the server a worker serves'),
   WORKER_SLOTS: S('worker', 'or', Math.max(1, Math.floor(os.cpus().length / 2)), 'pairings a worker plays at once'),

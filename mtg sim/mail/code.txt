@@ -1,0 +1,6 @@
+Subject: Your Forge Sim code: {{code}}
+Your Forge Sim code is {{code}}
+
+It expires in 10 minutes.
+
+If you didn't ask for this, ignore it: nothing happens without the code.

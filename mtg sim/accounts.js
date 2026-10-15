@@ -53,6 +53,10 @@ CREATE TABLE IF NOT EXISTS ledger (
 CREATE INDEX IF NOT EXISTS ledger_account ON ledger(account_id, at);
 -- one reserve and one settle per run, one grant per Stripe object: a retried call can't double-count
 CREATE UNIQUE INDEX IF NOT EXISTS ledger_once ON ledger(kind, ref) WHERE ref IS NOT NULL;
+-- sign-in and change-of-address codes (change 15): one live code per address and purpose, only its hash kept
+CREATE TABLE IF NOT EXISTS auth_codes (
+  email TEXT NOT NULL, purpose TEXT NOT NULL, code_hash TEXT NOT NULL, account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
+  created INTEGER NOT NULL, expires INTEGER NOT NULL, tries INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (email, purpose));
 CREATE TABLE IF NOT EXISTS stripe_events (
   id TEXT PRIMARY KEY, type TEXT NOT NULL, received INTEGER NOT NULL, processed INTEGER, payload TEXT NOT NULL);
 `;
@@ -85,6 +89,12 @@ function open(file, { runsPerDay = 3, asksPerDay = 10 } = {}) {
     ON CONFLICT(code) DO UPDATE SET name = excluded.name, charges = excluded.charges, monthly_credits = excluded.monthly_credits, features = excluded.features`);
   for (const p of PLANS) upsertPlan.run(p.code, p.name, p.charges, p.monthly_credits, JSON.stringify(p.features));
   db.prepare("INSERT OR IGNORE INTO meta (key, value) VALUES ('schema', '1')").run();
+  // change 15: the account's mail settings. mailable goes false on a bounce or a complaint (Resend's webhook);
+  // mail holds { digest, runDone }, read through mailOf() so an old row gets the defaults.
+  const cols = new Set(db.prepare('PRAGMA table_info(accounts)').all().map(c => c.name));
+  if (!cols.has('mailable')) db.exec('ALTER TABLE accounts ADD COLUMN mailable INTEGER NOT NULL DEFAULT 1');
+  if (!cols.has('mail')) db.exec("ALTER TABLE accounts ADD COLUMN mail TEXT NOT NULL DEFAULT '{}'");
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS accounts_email ON accounts(lower(email)) WHERE email IS NOT NULL');
 
   const q = {
     accountByStarshard: db.prepare('SELECT * FROM accounts WHERE starshard_id = ?'),
@@ -103,6 +113,15 @@ function open(file, { runsPerDay = 3, asksPerDay = 10 } = {}) {
     byRef: db.prepare('SELECT * FROM ledger WHERE kind = ? AND ref = ?'),
     balance: db.prepare('SELECT COALESCE(SUM(credits), 0) AS b FROM ledger WHERE account_id = ?'),
     rows: db.prepare('SELECT * FROM ledger WHERE account_id = ? ORDER BY at, id'),
+    accountByEmail: db.prepare('SELECT * FROM accounts WHERE lower(email) = lower(?)'),
+    setEmail: db.prepare('UPDATE accounts SET email = ?, mailable = 1 WHERE id = ?'),
+    setMail: db.prepare('UPDATE accounts SET mail = ? WHERE id = ?'),
+    setMailable: db.prepare('UPDATE accounts SET mailable = ? WHERE lower(email) = lower(?)'),
+    putCode: db.prepare('INSERT OR REPLACE INTO auth_codes (email, purpose, code_hash, account_id, created, expires, tries) VALUES (?, ?, ?, ?, ?, ?, 0)'),
+    getCode: db.prepare('SELECT * FROM auth_codes WHERE email = ? AND purpose = ?'),
+    triedCode: db.prepare('UPDATE auth_codes SET tries = tries + 1 WHERE email = ? AND purpose = ?'),
+    dropCode: db.prepare('DELETE FROM auth_codes WHERE email = ? AND purpose = ?'),
+    dropOldCodes: db.prepare('DELETE FROM auth_codes WHERE expires <= ?'),
     openRuns: db.prepare("SELECT r.* FROM ledger r WHERE r.kind IN ('run', 'weekly') AND r.ref IS NOT NULL AND NOT EXISTS (SELECT 1 FROM ledger s WHERE s.kind = 'adjust' AND s.ref = r.ref || ':settle')"),
   };
 
@@ -149,6 +168,53 @@ function open(file, { runsPerDay = 3, asksPerDay = 10 } = {}) {
   }
   const endSession = token => { if (token) q.dropSession.run(hash(token)); };
 
+  // ---- email (change 15) ----
+  const MAIL_DEFAULTS = { digest: true, runDone: false };
+  const normEmail = e => String(e || '').trim().toLowerCase();
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const mailOf = a => { let m = {}; try { m = JSON.parse(a.mail || '{}'); } catch {} return { ...MAIL_DEFAULTS, ...m }; };
+  function setMail(accountId, patch) {
+    const a = q.accountById.get(accountId), m = mailOf(a);
+    for (const k of Object.keys(MAIL_DEFAULTS)) if (typeof patch[k] === 'boolean') m[k] = patch[k];
+    q.setMail.run(JSON.stringify(m), accountId); return m;
+  }
+  // A six-digit code for an address: 10 minutes, 5 tries, one live code per address and purpose (a new one
+  // replaces the old). Returns the code; only its hash is stored.
+  const CODE_MS = 10 * 60e3, CODE_TRIES = 5;
+  const codeHash = (email, code) => hash(email + ':' + String(code).replace(/\D/g, ''));
+  function issueCode(email, purpose, accountId = null) {
+    email = normEmail(email); const code = String(crypto.randomInt(0, 1e6)).padStart(6, '0'), now = Date.now();
+    q.putCode.run(email, purpose, codeHash(email, code), accountId, now, now + CODE_MS); return code;
+  }
+  // Check a code: { ok, accountId } or { ok: false, error } with the sentence to show.
+  function checkCode(email, purpose, code) {
+    email = normEmail(email); const c = q.getCode.get(email, purpose);
+    if (!c) return { ok: false, error: 'No code is waiting for that address. Send a new one.' };
+    if (c.expires <= Date.now()) { q.dropCode.run(email, purpose); return { ok: false, error: 'Code expired. Send a new one.' }; }
+    if (c.tries >= CODE_TRIES) return { ok: false, error: 'Too many tries. Send a new code.' };
+    const want = Buffer.from(c.code_hash, 'hex'), got = Buffer.from(codeHash(email, code), 'hex');
+    if (!crypto.timingSafeEqual(want, got)) {
+      q.triedCode.run(email, purpose); const left = CODE_TRIES - c.tries - 1;
+      return { ok: false, error: left > 0 ? `Wrong code. ${left} ${left === 1 ? 'try' : 'tries'} left.` : 'Too many tries. Send a new code.' };
+    }
+    q.dropCode.run(email, purpose); return { ok: true, accountId: c.account_id, email };
+  }
+  // Give an account an address (it has proved it holds it). Throws if another account has it.
+  function setEmail(accountId, email) {
+    email = normEmail(email); const other = q.accountByEmail.get(email);
+    if (other && other.id !== accountId) throw new Error('That address is on another account.');
+    q.setEmail.run(email, accountId); return q.accountById.get(accountId);
+  }
+  // A new account from an email sign-in (sign-up open): its name from the address, made unique.
+  function signUpByEmail(email) {
+    email = normEmail(email);
+    let base = email.split('@')[0].replace(/[^A-Za-z0-9_-]/g, '').slice(0, 18); if (!/^[A-Za-z0-9]/.test(base)) base = 'player' + base;
+    if (base.length < 3) base = (base + 'player').slice(0, 8);
+    let name = base; for (let i = 2; q.accountByName.get(name); i++) name = base.slice(0, 20) + i;
+    const r = q.insertAccount.run(Date.now(), name, 'sim', null, null, 'free', '{}');
+    q.setEmail.run(email, r.lastInsertRowid); return q.accountById.get(r.lastInsertRowid);
+  }
+
   const balance = accountId => q.balance.get(accountId).b;
   // one ledger row; a repeated (kind, ref) is a no-op that returns the existing row
   function post(accountId, kind, credits, { cost = 0, ref = null, note = null } = {}) {
@@ -192,7 +258,9 @@ function open(file, { runsPerDay = 3, asksPerDay = 10 } = {}) {
   }
 
   return { db, accountFor, reserveName: reserve0, signUp, signIn, account: id => q.accountById.get(id), accountByName: n => q.accountByName.get(n), setPlan: (id, code) => q.setPlan.run(code, id), planOf,
-    startSession, session, endSession, sweepSessions: () => q.dropExpired.run(Date.now()), balance, post, reserve, settle, openRuns, statement, backup };
+    startSession, session, endSession, sweepSessions: () => { q.dropExpired.run(Date.now()); q.dropOldCodes.run(Date.now()); },
+    accountByEmail: e => q.accountByEmail.get(normEmail(e)), validEmail: e => EMAIL.test(normEmail(e)) && normEmail(e).length <= 200, normEmail,
+    mailOf, setMail, setEmail, setMailable: (email, ok) => q.setMailable.run(ok ? 1 : 0, normEmail(email)), issueCode, checkCode, signUpByEmail, balance, post, reserve, settle, openRuns, statement, backup };
 }
 
 module.exports = { open, starshardId, hash, hashPassword, checkPassword, PLANS, KINDS };
