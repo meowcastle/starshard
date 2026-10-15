@@ -413,8 +413,23 @@ public class PlayerControllerExternal extends PlayerControllerAi {
                 || phase == PhaseType.END_OF_TURN || phase == PhaseType.UPKEEP;
     }
 
+    /**
+     * starshard: the pilot-error knob (15 Oct 2026). Real players miss plays and misjudge combat; Forge doesn't, which
+     * lets deck strength show through undiluted (the sim spreads the top 12 decks 22-84% where real play spreads them
+     * 44-57%). With probability errPlay, a non-land play this seat was about to make (Forge's or the pilot's, at any
+     * timing) is skipped. Seeded separately from the game's own random so it doesn't reshuffle the games.
+     */
     @Override
     public List<SpellAbility> chooseSpellAbilityToPlay() {
+        List<SpellAbility> r = choosePlay0();
+        if (ai() || ctx.errPlay <= 0 || r == null || r.isEmpty() || r.get(0).isLandAbility()) return r;
+        if (ctx.errRng.nextDouble() >= ctx.errPlay) return r;
+        ctx.errors[seat]++;
+        agentChosen = null;
+        return null;
+    }
+
+    private List<SpellAbility> choosePlay0() {
         agentChosen = null;
         if (turnCapReached()) return null;
         if (ai()) return super.chooseSpellAbilityToPlay();
@@ -898,8 +913,16 @@ public class PlayerControllerExternal extends PlayerControllerAi {
 
     // ====================================================================== combat
 
+    /** starshard: the combat half of the pilot-error knob: each declared attacker is held back with probability errCombat. */
     @Override
     public void declareAttackers(Player attacker, Combat combat) {
+        declareAttackers0(attacker, combat);
+        if (ai() || ctx.errCombat <= 0) return;
+        for (Card c : new ArrayList<>(combat.getAttackers()))
+            if (c.getController() == player && ctx.errRng.nextDouble() < ctx.errCombat) { combat.removeFromCombat(c); ctx.errors[seat]++; }
+    }
+
+    private void declareAttackers0(Player attacker, Combat combat) {
         if (turnCapReached()) return;
         if (ai()) { super.declareAttackers(attacker, combat); return; }
         FCollectionView<GameEntity> defenders = combat.getDefenders();
@@ -965,8 +988,16 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         return new ArrayList<>(r);
     }
 
+    /** starshard: the combat half of the pilot-error knob: each declared blocker is withdrawn with probability errCombat. */
     @Override
     public void declareBlockers(Player defender, Combat combat) {
+        declareBlockers0(defender, combat);
+        if (ai() || ctx.errCombat <= 0) return;
+        for (Card b : new ArrayList<>(combat.getAllBlockers()))
+            if (b.getController() == defender && ctx.errRng.nextDouble() < ctx.errCombat) { combat.removeFromCombat(b); ctx.errors[seat]++; }
+    }
+
+    private void declareBlockers0(Player defender, Combat combat) {
         if (ai()) { super.declareBlockers(defender, combat); return; }
         List<Opt> opts = new ArrayList<>();
         Map<String, Card[]> pairs = new HashMap<>();

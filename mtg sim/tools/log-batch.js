@@ -16,6 +16,8 @@ const { runMatches, payoff } = require('../pilot');
 const POLICY = process.env.POLICY || null;
 // PILOT_ERR=0.1: the pilot-error knob (pilot.js runMatches err), on both seats
 const ERR = +(process.env.PILOT_ERR || 0);
+// PILOT_ERR_PLAY / PILOT_ERR_COMBAT: the bridge's version (any seat, any timing; attackers and blockers withdrawn)
+const ERR_PLAY = +(process.env.PILOT_ERR_PLAY || 0), ERR_COMBAT = +(process.env.PILOT_ERR_COMBAT || 0);
 const DEAD = [...(() => { try { const j = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'forge-pilot', 'dead-cards.json'), 'utf8')); return Object.entries(j).filter(([k]) => k !== '_').flatMap(([, v]) => v); } catch { return []; } })(),
   // EXTRA_DEAD="Day of Black Sun;Meltstrider's Resolve": test cards for the dead-card list before they go on it
   ...(process.env.EXTRA_DEAD || '').split(';').map(x => x.trim()).filter(Boolean)];
@@ -37,7 +39,7 @@ const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ 
 const jobs = [];
 for (let i = 0; i < decks.length; i++) for (let j = i + 1; j < decks.length; j++) if (!ONLY || decks[i].name === ONLY || decks[j].name === ONLY) jobs.push([decks[i], decks[j]]);
 const todo = jobs.filter(([a, b]) => !done[a.name + '|' + b.name]);
-log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}${ERR ? ', pilot error ' + ERR : ''}`);
+log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}${ERR ? ', pilot error ' + ERR : ''}${ERR_PLAY || ERR_COMBAT ? `, bridge error play ${ERR_PLAY} combat ${ERR_COMBAT}` : ''}`);
 
 // the profile each plan gets, for POLICY=profiles
 const PROFILE = { 'tap-out control': process.env.PROFILE_TAPOUT || 'tapout', 'draw-go control': process.env.PROFILE_DRAWGO || 'answers', 'spells-matter': process.env.PROFILE_SPELLS || null };
@@ -63,7 +65,7 @@ const policyOf = {};
       const p = todo[i++]; if (!p) return;
       const [a, b] = p, key = a.name + '|' + b.name, dir = slug(a.name) + '__' + slug(b.name);
       const pol = POLICY === 'profiles' ? [policyOf[a.name], policyOf[b.name]] : [POLICY, POLICY];
-      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: pol.map(x => x ? ['priority', 'announce_x'] : []), policy: pol, deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir), err: ERR });
+      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: pol.map(x => x ? ['priority', 'announce_x'] : []), policy: pol, deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir), err: ERR, errPlay: ERR_PLAY, errCombat: ERR_COMBAT });
       const won = r.games.filter(g => g.winner === 0).length, lost = r.games.filter(g => g.winner === 1).length;
       done[key] = { dir, won, lost, games: r.games.length, missed: r.missed || 0, errors: r.errors.slice(0, 2) };
       fs.writeFileSync(file, JSON.stringify(done));

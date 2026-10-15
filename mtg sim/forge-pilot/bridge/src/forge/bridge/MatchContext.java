@@ -54,6 +54,11 @@ public final class MatchContext {
     /** screen a decision first and skip the play-outs when the best leads by this much (0 = off); searchRollouts is then the play-out budget */
     public int searchScreen = 50;
 
+    /** starshard: the pilot-error knob (PlayerControllerExternal): skip a play / withdraw an attacker or blocker with these probabilities. */
+    public double errPlay = 0, errCombat = 0;
+    public java.util.Random errRng = new java.util.Random(1);
+    public final int[] errors = new int[2];
+
     public boolean owns(int seat, String kind) {
         return own[seat] == null || own[seat].contains(kind);
     }

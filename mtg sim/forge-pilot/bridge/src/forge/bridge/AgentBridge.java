@@ -64,6 +64,9 @@ public final class AgentBridge {
             ctx.searchMax = Integer.parseInt(a.getOrDefault("search-max", String.valueOf(ctx.searchMax)));
             ctx.searchMargin = Double.parseDouble(a.getOrDefault("search-margin", String.valueOf(ctx.searchMargin)));
             ctx.searchScreen = Integer.parseInt(a.getOrDefault("search-screen", String.valueOf(ctx.searchScreen)));
+            ctx.errPlay = Double.parseDouble(a.getOrDefault("err-play", "0"));
+            ctx.errCombat = Double.parseDouble(a.getOrDefault("err-combat", "0"));
+            ctx.errRng = new Random(seed * 7919 + 13);
             if (a.get("search-eval") != null) Search.loadEval(a.get("search-eval")); // starshard: the learned leaf
             for (int s = 0; s < 2; s++) {
                 String own = a.getOrDefault("own" + s, a.get("own"));
