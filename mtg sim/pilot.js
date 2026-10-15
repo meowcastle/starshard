@@ -129,6 +129,48 @@ function reactive(m, find, { hold = true } = {}) {
   return null;
 }
 
+// The draw-go profile (15 Oct 2026). 'answers' on the opponent's turn, and on our own turn the hold that
+// 'reactive' rule 3 only half kept: rule 3 looked at spells, but Azorius tapped below its counter for
+// abilities (animating Restless Anchorage, Map tokens, Theorist's Sanctum) as often as for spells, and in 32%
+// of the opponent's turns with a counter in hand it had under two lands open (two thirds of those, they cast
+// a threat). So on our own turn, with the stack empty, Forge chooses as it likes, but a play that would leave
+// fewer open lands than the cheapest counter in hand costs is vetoed (the seat passes instead). Free:
+// lands, loyalty abilities, anything once the opponent's hand is empty, and a planeswalker onto a board
+// where they have no creature (the walker is safe and is the deck's engine).
+const COUNTER_COST = { 'Countersculpt': (jace) => jace ? 2 : 3 };
+function costOf(o, find) {
+  if (!o.meta) return 0;
+  if (o.meta.type === 'spell') return o.meta.cmc || 0;
+  if (o.meta.type !== 'ability') return 0;
+  const m = /^Activate [^:]*: ((?:\{[^}]+\}(?:, )?)+)[^:]*:/.exec(o.label || '') || /^Activate [^:]*: ((?:\{[^}]+\})+)/.exec(o.label || '');
+  if (!m) return 0; // a loyalty ability (+1: ...) or no mana in the cost
+  let n = 0;
+  for (const [, x] of m[1].matchAll(/\{([^}]+)\}/g)) n += /^\d+$/.test(x) ? +x : /^[WUBRGC](\/[WUBRGP])?$/.test(x) ? 1 : 0;
+  // a land's own ability taps or animates the land itself: one land fewer for the counter
+  if (landish(find(o.card || ''))) n++;
+  return n;
+}
+function drawgo(m, find) {
+  const s = m.state || {}, opts = m.options || [], you = s.you || {}, opp = s.opponent || {};
+  const a = reactive(m, find, { hold: false });
+  if (a || s.activePlayer !== 'you' || (s.stack || []).length) return a;
+  const land = /MAIN/.test(s.phase || '') && opts.find(o => o.meta && o.meta.type === 'land');
+  if (land) return { choice: [land.id] };
+  if ((opp.handSize ?? 1) === 0) return null;
+  const jace = [...(you.hand || []), ...(you.battlefield || [])].some(c => /\bJace\b/.test(c.name || '') && !/Machinations/.test(c.name || ''));
+  const counters = (you.hand || []).map(c => c.name).filter(n => roleOf(find(n)).counter);
+  if (!counters.length) return null;
+  const need = Math.min(...counters.map(n => COUNTER_COST[n] ? COUNTER_COST[n](jace) : (find(n) || {}).cmc || 2));
+  const open = (you.battlefield || []).filter(c => !c.tapped && landish(find(c.name))).length;
+  const theirs = (opp.battlefield || []).some(c => c.pt);
+  const veto = opts.filter(o => {
+    if (!o.meta || (o.meta.type !== 'spell' && o.meta.type !== 'ability')) return false;
+    if (o.meta.type === 'spell' && !theirs && /Planeswalker/.test(((faces(find(o.card || ''))[0]) || {}).type_line || '')) return false;
+    return open - costOf(o, find) < need;
+  }).map(o => o.id);
+  return veto.length ? { delegate: true, veto } : null;
+}
+
 // The tap-out control profile (RESEARCH-ARCHETYPES-PROFILES-13OCT.md): a sweepers-into-finisher deck
 // spends its mana on its own turn. Forge's AI plays any deck named "Control" as hold-mana-up, which is
 // draw-go: 4c Control left 3-4 mana unspent on its own turn in the 13 Oct logs. On the opponent's turn
@@ -409,7 +451,8 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       }
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
-        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'spells' ? spells(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead, xPlan) : null;
+        const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'drawgo' ? drawgo(m, find) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'spells' ? spells(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead, xPlan) : null;
+        if (a && a.veto) { res.vetoes = (res.vetoes || 0) + 1; return a; }
         if (a) { res.acted = (res.acted || 0) + 1; return a; }
       }
       return { delegate: true };
@@ -458,7 +501,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   }));
 }
 
-module.exports = { runMatches, keep, boarded, produced, reactive, tapout, spells, payoff, deadcards, roleOf, combo, COMBO_OWNS };
+module.exports = { runMatches, keep, boarded, produced, reactive, drawgo, costOf, tapout, spells, payoff, deadcards, roleOf, combo, COMBO_OWNS };
 
 // ---------------------------------------------------------------- self-play
 

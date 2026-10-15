@@ -99,6 +99,10 @@ public class PlayerControllerExternal extends PlayerControllerAi {
     private boolean lastAnswerForfeit = false;
     /** starshard: the pilot handed the last question to Forge's AI ({"delegate": true}, or a kind it doesn't own). */
     private boolean lastAnswerDelegate = false;
+    /** starshard: options the pilot vetoed while delegating a priority ({"delegate": true, "veto": [ids]}): if Forge's
+     *  pick is one of them the seat passes instead (the draw-go hold: Forge plays as it likes, short of spending the
+     *  counter mana). */
+    private final Set<String> lastVeto = new HashSet<>();
     /** True while an agent-chosen cast is being set up and paid for. */
     private boolean inAgentCast = false;
     /** A sub-decision of the current cast was forfeited: the next cancellable step cancels the cast. */
@@ -187,6 +191,8 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         JsonObject ans = client.request(req);
         lastAnswerForfeit = ans != null && ans.has("forfeit") && ans.get("forfeit").getAsBoolean();
         lastAnswerDelegate = ans != null && ans.has("delegate") && ans.get("delegate").getAsBoolean();
+        lastVeto.clear();
+        if (lastAnswerDelegate && ans.has("veto")) for (JsonElement e : ans.getAsJsonArray("veto")) lastVeto.add(e.getAsString());
         if (lastAnswerForfeit && inAgentCast) castCancelled = true;
         if (ans == null || !ans.has("choice")) return null;
         Set<String> valid = new HashSet<>();
@@ -532,7 +538,18 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         List<String> r = ask("priority", prompt, opts, 1, 1, null, null);
         if (r == null) {
             delegated("priority", "no valid answer");
-            return asAi(() -> super.chooseSpellAbilityToPlay());
+            final List<SpellAbility> aiPick = asAi(() -> super.chooseSpellAbilityToPlay());
+            if (!lastVeto.isEmpty() && aiPick != null && !aiPick.isEmpty()) {
+                SpellAbility p0 = aiPick.get(0);
+                for (String id : lastVeto) {
+                    SpellAbility v = byId.get(id);
+                    if (v != null && (v == p0 || v.getHostCard() == p0.getHostCard() && String.valueOf(v.getDescription()).equals(String.valueOf(p0.getDescription())))) {
+                        ctx.auto(seat, "policy", "priority", "vetoed " + p0.getHostCard().getName());
+                        return null;
+                    }
+                }
+            }
+            return aiPick;
         }
         if (r.get(0).equals("pass")) return null;
         agentChosen = byId.get(r.get(0));
