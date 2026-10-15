@@ -422,8 +422,8 @@ public class PlayerControllerExternal extends PlayerControllerAi {
     @Override
     public List<SpellAbility> chooseSpellAbilityToPlay() {
         List<SpellAbility> r = choosePlay0();
-        if (ai() || ctx.errPlay <= 0 || r == null || r.isEmpty() || r.get(0).isLandAbility()) return r;
-        if (ctx.errRng.nextDouble() >= ctx.errPlay) return r;
+        if (ai() || ctx.errPlay[seat] <= 0 || r == null || r.isEmpty() || r.get(0).isLandAbility()) return r;
+        if (ctx.errRng.nextDouble() >= ctx.errPlay[seat]) return r;
         ctx.errors[seat]++;
         agentChosen = null;
         return null;
@@ -917,9 +917,9 @@ public class PlayerControllerExternal extends PlayerControllerAi {
     @Override
     public void declareAttackers(Player attacker, Combat combat) {
         declareAttackers0(attacker, combat);
-        if (ai() || ctx.errCombat <= 0) return;
+        if (ai() || ctx.errCombat[seat] <= 0) return;
         for (Card c : new ArrayList<>(combat.getAttackers()))
-            if (c.getController() == player && ctx.errRng.nextDouble() < ctx.errCombat) { combat.removeFromCombat(c); ctx.errors[seat]++; }
+            if (c.getController() == player && ctx.errRng.nextDouble() < ctx.errCombat[seat]) { combat.removeFromCombat(c); ctx.errors[seat]++; }
     }
 
     private void declareAttackers0(Player attacker, Combat combat) {
@@ -992,9 +992,9 @@ public class PlayerControllerExternal extends PlayerControllerAi {
     @Override
     public void declareBlockers(Player defender, Combat combat) {
         declareBlockers0(defender, combat);
-        if (ai() || ctx.errCombat <= 0) return;
+        if (ai() || ctx.errCombat[seat] <= 0) return;
         for (Card b : new ArrayList<>(combat.getAllBlockers()))
-            if (b.getController() == defender && ctx.errRng.nextDouble() < ctx.errCombat) { combat.removeFromCombat(b); ctx.errors[seat]++; }
+            if (b.getController() == defender && ctx.errRng.nextDouble() < ctx.errCombat[seat]) { combat.removeFromCombat(b); ctx.errors[seat]++; }
     }
 
     private void declareBlockers0(Player defender, Combat combat) {

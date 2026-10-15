@@ -40,6 +40,13 @@ import forge.util.MyRandom;
  * Must run with the Forge install (the directory containing res/) as working directory.
  */
 public final class AgentBridge {
+    /** starshard: "0.2" for both seats, or "0.2,0" for seat 0 and seat 1. */
+    static double[] perSeat(String v) {
+        String[] x = v.split(",");
+        double a = Double.parseDouble(x[0].trim()), b = x.length > 1 ? Double.parseDouble(x[1].trim()) : a;
+        return new double[] { a, b };
+    }
+
     public static void main(String[] args) throws Exception {
         if (System.getProperty("java.awt.headless") == null) System.setProperty("java.awt.headless", "true");
         System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); // same workaround Forge's Main applies
@@ -64,8 +71,8 @@ public final class AgentBridge {
             ctx.searchMax = Integer.parseInt(a.getOrDefault("search-max", String.valueOf(ctx.searchMax)));
             ctx.searchMargin = Double.parseDouble(a.getOrDefault("search-margin", String.valueOf(ctx.searchMargin)));
             ctx.searchScreen = Integer.parseInt(a.getOrDefault("search-screen", String.valueOf(ctx.searchScreen)));
-            ctx.errPlay = Double.parseDouble(a.getOrDefault("err-play", "0"));
-            ctx.errCombat = Double.parseDouble(a.getOrDefault("err-combat", "0"));
+            ctx.errPlay = perSeat(a.getOrDefault("err-play", "0"));
+            ctx.errCombat = perSeat(a.getOrDefault("err-combat", "0"));
             ctx.errRng = new Random(seed * 7919 + 13);
             if (a.get("search-eval") != null) Search.loadEval(a.get("search-eval")); // starshard: the learned leaf
             for (int s = 0; s < 2; s++) {
