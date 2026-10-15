@@ -305,7 +305,9 @@ function combo(m, find0, dead, xPlan) {
     // the pieces are castable but it isn't time: keep one Spider-Man for the copy when the line is live (the engine
     // already in the graveyard, or in hand with a way to discard it), and never hard-cast into a lost board; play
     // something else ourselves, so Forge doesn't spend them. A spare Spider-Man, or one with no line, is Forge's.
-    const holdCopy = copy && st.copies <= 1 && (st.inGy || (st.inHand && st.outlet));
+    // Under pressure (we wouldn't survive two of their turns) Spider-Man is a blocker first: the 318-game trial lost
+    // its fair games to the fast creature decks while it held him (15 Oct 2026).
+    const holdCopy = copy && st.safe && st.copies <= 1 && (st.inGy || (st.inHand && st.outlet));
     if (holdCopy || hard) {
       const rest = opts.filter(o => o.meta && o.meta.type === 'spell' && !(holdCopy && o.card === COMBO.copy) && o.card !== COMBO.engine).map(o => ({ o, k: find(o.card), r: roleOf(find(o.card)) }));
       const theirs = (s.opponent.battlefield || []).some(c => c.pt);
