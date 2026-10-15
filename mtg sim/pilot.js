@@ -228,6 +228,126 @@ function announceX(m, xPlan) {
 }
 const nk = n => String(n).split(' // ')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
+// ---------------------------------------------------------------- the combo profile (Dimir Excruciator)
+
+// Research's line (NOTE-TO-CODE-15OCT-EXCRUCIATOR-LINE.md, from the Pro Tour winner's deck and its coverage): put
+// Doomsday Excruciator in the graveyard (Bitter Triumph's discard cost, Winternight Stories' discard), cast Superior
+// Spider-Man as a copy of it (its "if it was cast" trigger leaves each player the bottom six cards), then finish:
+// Restless Reef's attack mills four, Emeritus of Ideation's Ancestral Recall makes them draw three. Forge plays none
+// of it: in the 160-game logs the trigger resolved in 617 of 1,542 games, Excruciator hard-cast at a median turn 18
+// on 7 life (555 hard casts, 62 through Spider-Man). Go when (1) the copy (or a hard cast) is castable, (2) a
+// finisher is in reach, (3) we survive two of their turns, (4) a likely counter is stripped first by Deceit if we
+// can afford both. Until then the profile never lets the pieces go to waste: Spider-Man and Excruciator are not
+// cast early, so the main phase is ours whenever one of them is castable. The rest stays Forge's, except the X
+// wipe (deadcards' rule) and the choices the line needs (discards, the copy, targets, modes, Stock Up's picks).
+const COMBO = { engine: 'Doomsday Excruciator', copy: 'Superior Spider-Man', mill: 'Restless Reef', recall: 'Emeritus of Ideation', avarice: 'Insatiable Avarice', strip: ['Deceit', 'Duress'], outlets: ['Bitter Triumph', 'Winternight Stories'] };
+// the kinds a combo seat owns, beyond priority (pilot.js answers them or hands them back to Forge)
+const COMBO_OWNS = ['priority', 'announce_x', 'discard', 'choose_entity', 'choose_ability', 'confirm', 'targets', 'choose_mode', 'choose_cards'];
+const names = list => (list || []).map(c => c && (c.name || (typeof c === 'string' ? c : null))).filter(Boolean);
+function comboState(s, find0) {
+  const find = n => n ? find0(n) : null;   // a face-down card has no name
+  const you = s.you || {}, opp = s.opponent || {};
+  const hand = names(you.hand), gy = [...names(you.graveyard), ...names(opp.graveyard)];
+  const ourLands = (you.battlefield || []).filter(c => landish(find(c.name)));
+  const oppPower = (opp.battlefield || []).filter(c => c.pt && !c.tapped).reduce((a, c) => a + (+String(c.pt).split('/')[0] || 0), 0);
+  const oppCards = [...(opp.battlefield || []), ...(opp.graveyard || [])].map(c => find(c.name)).filter(Boolean);
+  const colour = c => oppCards.some(k => (k.colors || (k.card_faces || []).flatMap(f => f.colors || []) || []).includes(c) || (k.color_identity || []).includes(c));
+  const oppOpen = (opp.battlefield || []).filter(c => !c.tapped && landish(find(c.name))).length;
+  return {
+    you, opp, hand, inGy: gy.includes(COMBO.engine), inHand: hand.includes(COMBO.engine),
+    // after the trigger: their library is down to the bottom six (a natural late game rarely gets here before it)
+    after: (opp.librarySize ?? 99) <= 7,
+    // Emeritus can show under its prepared face's name (Ancestral Recall)
+    finisher: hand.some(n => n.includes(COMBO.recall) || /Ancestral Recall/.test(n) || n.includes(COMBO.avarice)) || ourLands.some(c => c.name === COMBO.mill),
+    copies: hand.filter(n => n === COMBO.copy).length,
+    outlet: hand.includes('Winternight Stories') || (hand.includes('Bitter Triumph') && (opp.battlefield || []).some(c => c.pt)),
+    safe: (you.life || 20) > 2 * oppPower + (colour('R') ? 3 : 0),
+    counterRisk: colour('U') && oppOpen >= 2 && (opp.handSize || 0) >= 1,
+    lands: ourLands.length,
+  };
+}
+function combo(m, find0, dead, xPlan) {
+  const find = n => n ? find0(n) : null;
+  const s = m.state || {}, opts = m.options || [], st = comboState(s, find0), prompt = m.prompt || '';
+  const pick = o => o ? { choice: [o.id] } : null;
+  const byCard = n => opts.find(o => o.card === n);
+  if (m.kind === 'priority') {
+    if ((s.stack || []).length || s.activePlayer !== 'you' || !/MAIN/.test(s.phase || '')) return null;
+    const spell = n => opts.find(o => o.card === n && o.meta && o.meta.type === 'spell');
+    const ability = n => opts.find(o => o.card === n && o.meta && o.meta.type === 'ability');
+    const land = opts.find(o => o.meta && o.meta.type === 'land');
+    if (st.after) {
+      // make them draw, and turn the Reef on before combat (Forge picks the attack)
+      const draw = opts.find(o => o.meta && o.meta.type === 'spell' && (/Ancestral Recall/i.test(o.label) || o.card === COMBO.avarice));
+      if (draw) return pick(draw);
+      if (land) return pick(land);
+      if (s.phase === 'MAIN1') { const reef = ability(COMBO.mill); if (reef && /becomes a 4\/4/i.test(reef.label)) return pick(reef); }
+      return null;
+    }
+    const copy = spell(COMBO.copy), hard = spell(COMBO.engine);
+    const go = st.finisher && st.safe;
+    if (land) return pick(land);
+    if (go && ((st.inGy && copy) || hard)) {
+      // strip a likely counter first when the mana covers both
+      const strip = opts.find(o => o.meta && o.meta.type === 'spell' && COMBO.strip.includes(o.card));
+      const need = (st.inGy && copy ? 4 : 6) + (strip ? (strip.card === 'Duress' ? 1 : 2) : 0);
+      if (st.counterRisk && strip && st.lands >= need) return pick(strip);
+      return pick(st.inGy && copy ? copy : hard);
+    }
+    // set up: the engine into the graveyard
+    if (!st.inGy && st.inHand) {
+      const bt = spell('Bitter Triumph');
+      if (bt && (s.opponent.battlefield || []).some(c => c.pt || /Planeswalker/.test((find(c.name) || {}).type_line || ''))) return pick(bt);
+      const ws = spell('Winternight Stories'); if (ws) return pick(ws);
+    }
+    // the X wipe, as the deadcards profile casts it
+    const dc = deadcards(m, find0, dead, xPlan); if (dc) return dc;
+    // the pieces are castable but it isn't time: keep one Spider-Man for the copy when the line is live (the engine
+    // already in the graveyard, or in hand with a way to discard it), and never hard-cast into a lost board; play
+    // something else ourselves, so Forge doesn't spend them. A spare Spider-Man, or one with no line, is Forge's.
+    const holdCopy = copy && st.copies <= 1 && (st.inGy || (st.inHand && st.outlet));
+    if (holdCopy || hard) {
+      const rest = opts.filter(o => o.meta && o.meta.type === 'spell' && !(holdCopy && o.card === COMBO.copy) && o.card !== COMBO.engine).map(o => ({ o, k: find(o.card), r: roleOf(find(o.card)) }));
+      const theirs = (s.opponent.battlefield || []).some(c => c.pt);
+      const kill = theirs && rest.find(x => x.r.removal && !x.r.instant);
+      if (kill) return pick(kill.o);
+      const dig = rest.filter(x => x.k && cantrip(x.k)).sort((a, b) => (a.o.meta.cmc || 0) - (b.o.meta.cmc || 0))[0];
+      if (dig) return pick(dig.o);
+      const body = rest.filter(x => x.r.permanent && !x.r.instant).sort((a, b) => (b.o.meta.cmc || 0) - (a.o.meta.cmc || 0))[0];
+      return body ? pick(body.o) : { choice: ['pass'] };
+    }
+    return null;
+  }
+  if (m.kind === 'announce_x') return null; // handled before the profile
+  if (m.kind === 'choose_ability') {
+    // Bitter Triumph: discard the engine; otherwise pay life while it's cheap
+    if (/Bitter Triumph/.test(prompt)) {
+      if (st.inHand && !st.inGy) return pick(opts.find(o => /discard/i.test(o.label)));
+      if ((st.you.life || 20) > 8) return pick(opts.find(o => /life/i.test(o.label)));
+    }
+    // Deceit: evoke when it is the counter-stripper before the combo
+    if (/Deceit/.test(prompt) && st.inGy && !st.after) return pick(opts.find(o => /evoke/i.test(o.label)));
+    return null;
+  }
+  if (m.kind === 'discard' && !st.inGy) return pick(byCard(COMBO.engine));
+  if (m.kind === 'confirm' && /Superior Spider-Man|copy of any creature/i.test(prompt)) return { choice: [st.inGy ? opts[0].id : opts[1].id] };
+  if (m.kind === 'choose_entity' && /Superior Spider-Man|copy/i.test(prompt)) return pick(byCard(COMBO.engine));
+  if (m.kind === 'targets') {
+    const casting = (s.casting || '') + ' ' + prompt;
+    if (/Restless Reef/.test(casting) && /mill/i.test(prompt)) return pick(opts.find(o => o.id === 'opponent'));
+    if (/Ancestral Recall|Emeritus|Insatiable Avarice/.test(casting) && /draw/i.test(prompt)) return pick(opts.find(o => o.id === (st.after ? 'opponent' : 'you')));
+    return null;
+  }
+  if (m.kind === 'choose_mode' && /Insatiable Avarice/.test(prompt) && st.after) return pick(opts.find(o => /draws three/i.test(o.label)));
+  if (m.kind === 'choose_cards' && /Stock Up|top five/i.test(prompt)) {
+    // to hand: what the line still lacks, then a finisher; the rest goes to the bottom, which is what the trigger keeps
+    const want = [!st.inGy && !st.inHand && COMBO.engine, !st.hand.includes(COMBO.copy) && COMBO.copy, !st.inGy && !st.inHand && 'Bitter Triumph', !st.finisher && COMBO.recall, !st.inGy && 'Winternight Stories'].filter(Boolean);
+    const got = []; for (const n of want) { const o = opts.find(o => o.card === n && !got.includes(o.id)); if (o && got.length < (m.max || 2)) got.push(o.id); }
+    return got.length === (m.max || 2) ? { choice: got } : null;
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------- sideboarding
 
 // a plan { in: [{qty,name}], out: [{qty,name}] } applied to the bridge's main deck { name: qty }
@@ -260,6 +380,8 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   let rs = (seed * 48271 + 11) % 2147483647 || 1;
   const rnd = () => (rs = (rs * 48271) % 2147483647) / 2147483647;
   if (err > 0) own = own.map(o => [...new Set([...(o || []), 'priority'])]);
+  // a combo seat owns the choices its line needs (anything it doesn't answer goes back to Forge)
+  own = own.map((o, i) => policy[i] === 'combo' ? [...new Set([...(o || []), ...COMBO_OWNS])] : o);
   return meta.cards(names).then(find => new Promise((resolve) => {
     const answer = m => {
       if (m.game !== lastGame) { mulls = [0, 0]; lastGame = m.game; }
@@ -274,6 +396,14 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       if (err > 0 && m.kind === 'priority') {
         const st = m.state || {};
         if (st.activePlayer === 'you' && /MAIN/.test(st.phase || '') && !(st.stack || []).length && (m.options || []).some(o => o.meta && o.meta.type === 'spell') && rnd() < err) { res.missed = (res.missed || 0) + 1; return { choice: ['pass'] }; }
+      }
+      if (policy[m.seat] === 'combo') {
+        res.decisions++;
+        const a = combo(m, find, dead, xPlan);
+        // COMBO_TRACE=file: each question the combo seat was asked, and its answer (null: Forge's)
+        if (process.env.COMBO_TRACE && m.kind !== 'priority' || process.env.COMBO_TRACE && a) fs.appendFileSync(process.env.COMBO_TRACE, JSON.stringify({ g: m.game, turn: (m.state || {}).turn, kind: m.kind, st: (({ inGy, inHand, after, finisher, safe, counterRisk, lands }) => ({ inGy, inHand, after, finisher, safe, counterRisk, lands }))(comboState(m.state || {}, n => n ? find(n) : null)), prompt: String(m.prompt || '').slice(0, 140), opts: (m.options || []).map(o => o.card || o.label).slice(0, 8), a: a && a.choice ? a.choice.map(id => { const o = (m.options || []).find(o => o.id === id); return o ? (o.card || o.label) : id; }) : null }) + '\n');
+        if (a) { res.acted = (res.acted || 0) + 1; return a; }
+        return { delegate: true };
       }
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
@@ -326,7 +456,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   }));
 }
 
-module.exports = { runMatches, keep, boarded, produced, reactive, tapout, spells, payoff, deadcards, roleOf };
+module.exports = { runMatches, keep, boarded, produced, reactive, tapout, spells, payoff, deadcards, roleOf, combo, COMBO_OWNS };
 
 // ---------------------------------------------------------------- self-play
 

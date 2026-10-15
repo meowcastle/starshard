@@ -1486,6 +1486,21 @@ public class PlayerControllerExternal extends PlayerControllerAi {
         return r;
     }
 
+    /**
+     * starshard (15 Oct 2026): "discard two cards unless you discard a creature card" (Winternight Stories), which
+     * went to Forge's AI. A combo deck that wants its creature in the graveyard picks it here. The answer is either
+     * the full count, or a single card of one of the types that excuse the rest.
+     */
+    @Override
+    public CardCollectionView chooseCardsToDiscardUnlessType(int num, CardCollectionView hand, String[] uTypes, SpellAbility sa) {
+        if (ai() || hand.isEmpty()) return super.chooseCardsToDiscardUnlessType(num, hand, uTypes, sa);
+        int n = Math.min(num, hand.size());
+        CardCollection r = askCards("discard", src(sa) + "Discard " + n + " card(s), or one " + String.join(" or ", uTypes) + " card instead.", hand, 1, n);
+        boolean ok = r != null && (r.size() == n || (r.size() == 1 && java.util.Arrays.stream(uTypes).anyMatch(t -> r.get(0).isValid(t, player, sa == null ? null : sa.getHostCard(), sa))));
+        if (!ok) { delegated("discard", "no valid answer"); return asAi(() -> super.chooseCardsToDiscardUnlessType(num, hand, uTypes, sa)); }
+        return r;
+    }
+
     // ====================================================================== still Forge AI (rare in cube) — counted as delegated
 
     @Override

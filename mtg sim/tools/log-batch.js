@@ -41,7 +41,7 @@ const slug = s => s.replace(/[^\w]+/g, '-');
 const file = path.join(OUT, 'batch.json');
 fs.mkdirSync(OUT, { recursive: true });
 // what this batch was played with, beside its results, so a set of batches can be compared later
-fs.writeFileSync(path.join(OUT, 'settings.json'), JSON.stringify({ policy: POLICY, profileSpells: process.env.PROFILE_SPELLS || null, extraDead: process.env.EXTRA_DEAD || null, err: ERR, errPlay: ERR_PLAY, errCombat: ERR_COMBAT, errStyle: process.env.PILOT_ERR_STYLE || null, errDecks: process.env.PILOT_ERR_DECKS || null, classes: process.env.PILOT_CLASSES || null, bridge: process.env.PILOT_BRIDGE || null, top: +TOP, matches: +M }, null, 1));
+fs.writeFileSync(path.join(OUT, 'settings.json'), JSON.stringify({ policy: POLICY, profileSpells: process.env.PROFILE_SPELLS || null, profileDecks: process.env.PROFILE_DECKS || null, extraDead: process.env.EXTRA_DEAD || null, err: ERR, errPlay: ERR_PLAY, errCombat: ERR_COMBAT, errStyle: process.env.PILOT_ERR_STYLE || null, errDecks: process.env.PILOT_ERR_DECKS || null, classes: process.env.PILOT_CLASSES || null, bridge: process.env.PILOT_BRIDGE || null, top: +TOP, matches: +M }, null, 1));
 const done = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
 const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };
@@ -67,6 +67,8 @@ const policyOf = {};
     }
     // as production does (forge.js pilotFor): a deck with no profile and a dead card plays the deadcards policy
     for (const d of decks) if (!policyOf[d.name] && hasDead(d)) policyOf[d.name] = 'deadcards';
+    // PROFILE_DECKS="Dimir Excruciator=combo": a profile by deck name, for a profile on trial (wins over the rest)
+    for (const x of (process.env.PROFILE_DECKS || '').split(';').map(x => x.trim()).filter(Boolean)) { const [n, p] = x.split('='); policyOf[n.trim()] = p.trim(); }
     log('profiles: ' + Object.entries(policyOf).filter(([, x]) => x).map(([n, x]) => n + ' ' + x).join(', '));
   }
   let i = 0;
