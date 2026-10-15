@@ -241,7 +241,7 @@ function boarded(main, plan) {
 
 // ---------------------------------------------------------------- matches
 
-function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, search = null, workDir, maxTurns = 60, keepLogs = false, gameLog = null, onGame, onChild }) {
+function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [null, null], policy = [null, null], deadCards = [], games = 3, simLog = false, clock = 0, search = null, workDir, maxTurns = 60, keepLogs = false, gameLog = null, onGame, onChild, err = 0 }) {
   fs.mkdirSync(workDir, { recursive: true });
   const files = decks.map((d, i) => { const f = path.join(workDir, `seat${i}.dck`); fs.writeFileSync(f, toDck(d.name, d)); return f; });
   const names = [...new Set(decks.flatMap(d => [...d.main, ...(d.side || [])].map(c => c.name)))];
@@ -252,6 +252,12 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   let match = 0, mulls = [0, 0], lastGame = 0;
   const dead = new Set([...deadCards].map(nk));
   const xPlan = [null, null];
+  // the pilot-error knob (research's spread finding, 15 Oct 2026): real players miss plays and Forge doesn't,
+  // which lets deck strength show through undiluted. With probability err, a seat with a spell it could cast
+  // in its own main phase (empty stack) passes instead. Seeded per match so both arms of a test see the same.
+  let rs = (seed * 48271 + 11) % 2147483647 || 1;
+  const rnd = () => (rs = (rs * 48271) % 2147483647) / 2147483647;
+  if (err > 0) own = own.map(o => [...new Set([...(o || []), 'priority'])]);
   return meta.cards(names).then(find => new Promise((resolve) => {
     const answer = m => {
       if (m.game !== lastGame) { mulls = [0, 0]; lastGame = m.game; }
@@ -263,6 +269,10 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
         return { choice: [k ? 'keep' : 'mulligan'] };
       }
       if (m.kind === 'announce_x') return announceX(m, xPlan);
+      if (err > 0 && m.kind === 'priority') {
+        const st = m.state || {};
+        if (st.activePlayer === 'you' && /MAIN/.test(st.phase || '') && !(st.stack || []).length && (m.options || []).some(o => o.meta && o.meta.type === 'spell') && rnd() < err) { res.missed = (res.missed || 0) + 1; return { choice: ['pass'] }; }
+      }
       if (m.kind === 'priority' && policy[m.seat]) {
         res.decisions++;
         const a = policy[m.seat] === 'reactive' ? reactive(m, find) : policy[m.seat] === 'answers' ? reactive(m, find, { hold: false }) : policy[m.seat] === 'tapout' ? tapout(m, find) : policy[m.seat] === 'spells' ? spells(m, find) : policy[m.seat] === 'deadcards' ? deadcards(m, find, dead, xPlan) : null;

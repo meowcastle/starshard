@@ -11,6 +11,9 @@
 //     [--b-dead "Day of Black Sun;Meltstrider's Resolve"] [--b-policy "Izzet Spellementals=spells"]
 //     [--delta 0.03] [--matches 2] [--max-rounds 120] [--top 12] [--at-once 4]
 //
+// A deck production already plays inside its real 95% interval has no "toward real"; for it the test is
+// two-sided on the unsigned difference: does B move it DELTA either way (out of line), or leave it.
+//
 // Arm A is production: forge-pilot/policies.json, and the deadcards policy for any other deck holding a card
 // on forge-pilot/dead-cards.json (forge.js pilotFor). Arm B is A with the changes given. Resumes from
 // <out dir>/sprt.json.
@@ -34,8 +37,10 @@ if (!me) { console.error(`no deck named ${DECK}`); process.exit(1); }
 const opps = decks.filter(d => d.name !== DECK);
 
 // where real is, relative to where production's sim is: the sign that "toward real" takes
-const realOf = () => { let w = 0, n = 0; for (const o of opps) { const r = c.inputs.real[calib.pairKey(DECK, o.name)]; if (!r) continue; const flip = calib.pairKey(DECK, o.name).startsWith(o.name + '\u0000'); w += flip ? r[1] : r[0]; n += r[0] + r[1]; } return n ? w / n : null; };
-const REAL = realOf();
+const realOf = () => { let w = 0, n = 0; for (const o of opps) { const r = c.inputs.real[calib.pairKey(DECK, o.name)]; if (!r) continue; const flip = calib.pairKey(DECK, o.name).startsWith(o.name + '\u0000'); w += flip ? r[1] : r[0]; n += r[0] + r[1]; } return n ? { p: w / n, n } : null; };
+const RN = realOf(), REAL = RN ? RN.p : null;
+// the real rate's 95% half-width: a deck production already plays inside it has no "toward real"
+const HALF = RN ? 1.96 * Math.sqrt(RN.p * (1 - RN.p) / RN.n) : 0;
 
 const readJ = f => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'forge-pilot', f), 'utf8')); } catch { return {}; } };
 const nk = n => String(n).split(' // ')[0].normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -51,9 +56,9 @@ const st = fs.existsSync(STATE) ? JSON.parse(fs.readFileSync(STATE, 'utf8')) : {
 const LO = Math.log(0.05 / 0.95), HI = Math.log(0.95 / 0.05);
 
 // GSPRT for a normal mean with estimated variance: H0 mean 0, H1 mean DELTA (both signed toward real)
-function llr(d) {
+function llr(d, sign = 1) {
   const n = d.length; if (n < 8) return 0;
-  const mean = d.reduce((a, x) => a + x, 0) / n, v = d.reduce((a, x) => a + (x - mean) ** 2, 0) / (n - 1);
+  const mean = sign * d.reduce((a, x) => a + x, 0) / n, v = d.reduce((a, x) => a + (x - mean * sign) ** 2, 0) / (n - 1);
   return v > 0 ? (DELTA * (2 * mean * n - n * DELTA)) / (2 * v) : 0;
 }
 
@@ -74,19 +79,30 @@ function llr(d) {
     } };
     await Promise.all(Array.from({ length: PAR }, slot));
     // the direction toward real: from production's running rate (arm A), fixed once there's a first round
-    if (st.sign == null) { let w = 0, n = 0; for (const x of Object.values(res)) { w += x.A[0]; n += x.A[0] + x.A[1]; } const sim = calib.match(w / n, w / n); st.sign = REAL == null ? 1 : (REAL >= sim ? 1 : -1); log(`production plays ${DECK} at ${(100 * sim).toFixed(0)}% (match rate) in round 1, so "toward real" is ${st.sign > 0 ? 'up' : 'down'}`); }
+    if (st.sign == null) { let w = 0, n = 0; for (const x of Object.values(res)) { w += x.A[0]; n += x.A[0] + x.A[1]; } const sim = calib.match(w / n, w / n); 
+      // inside the real interval already (15 Oct 2026: Landfall at 52 against a real 51 got a coin-flip sign):
+      // the question becomes "does B move the deck out", tested both ways on the unsigned difference
+      if (REAL != null && Math.abs(REAL - sim) <= HALF) { st.sign = 0; log(`production plays ${DECK} at ${(100 * sim).toFixed(0)}% (match rate) in round 1, inside the real ${(100 * REAL).toFixed(0)}% ± ${(100 * HALF).toFixed(0)}: testing whether B moves it ${(100 * DELTA).toFixed(0)} points either way`); }
+      else { st.sign = REAL == null ? 1 : (REAL >= sim ? 1 : -1); log(`production plays ${DECK} at ${(100 * sim).toFixed(0)}% (match rate) in round 1, so "toward real" is ${st.sign > 0 ? 'up' : 'down'}`); } }
     const d = [];
     for (const [o, x] of Object.entries(res)) {
       if (!x.A || !x.B) continue; const nA = x.A[0] + x.A[1], nB = x.B[0] + x.B[1]; if (!nA || !nB) continue;
-      d.push(st.sign * (x.B[0] / nB - x.A[0] / nA));
+      d.push((st.sign || 1) * (x.B[0] / nB - x.A[0] / nA));
       st.A[0] += x.A[0]; st.A[1] += x.A[1]; st.B[0] += x.B[0]; st.B[1] += x.B[1];
     }
     st.rounds.push({ at: Date.now(), d, res });
-    const all = st.rounds.flatMap(r => r.d), L = llr(all);
+    const all = st.rounds.flatMap(r => r.d);
+    // two-sided when already inside: the larger of the up and down tests decides a move; both low decide none
+    const Lu = llr(all, 1), Ld = st.sign === 0 ? llr(all, -1) : -Infinity, L = Math.max(Lu, Ld);
     st.llr = L;
     const pA = st.A[0] / (st.A[0] + st.A[1]), pB = st.B[0] / (st.B[0] + st.B[1]);
     log(`round ${round + 1}: A ${(100 * pA).toFixed(1)}% · B ${(100 * pB).toFixed(1)}% of ${st.A[0] + st.A[1]} games each · LLR ${L.toFixed(2)} (bounds ${LO.toFixed(2)} / ${HI.toFixed(2)})`);
     fs.writeFileSync(STATE, JSON.stringify(st, null, 1));
+    if (st.sign === 0) {
+      if (L >= HI) { st.verdict = `H1: B moves an accurate deck ${Lu >= Ld ? 'up' : 'down'}, out of line with real`; break; }
+      if (Lu <= LO && Ld <= LO) { st.verdict = 'H0: B leaves an accurate deck where it is (no move of ' + (100 * DELTA).toFixed(0) + ' points either way)'; break; }
+      continue;
+    }
     if (L >= HI) { st.verdict = 'H1: B moves the deck toward real'; break; }
     if (L <= LO) { st.verdict = 'H0: no move toward real worth ' + (100 * DELTA).toFixed(0) + ' points'; break; }
   }

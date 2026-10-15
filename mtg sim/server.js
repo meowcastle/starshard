@@ -841,6 +841,38 @@ function realOf(b) {
     source: places.length === 1 ? places[0] : places.includes('Paper') ? 'Arena and paper' : 'Arena Bo1 and Bo3', since: ms.map(m => m.at).filter(Boolean).sort()[0]?.slice(0, 10) || null, byOpponent: [...by.values()],
     leaks: ms.some(m => m.leaks) ? leaks.view(leaks.merge(ms.map(m => m.leaks))) : null };
 }
+// The relative headline (research's method review, point C; approved 15 Oct 2026). Forge spreads the decks far
+// wider than real play does, so a brew's raw sim rate overstates how good or bad it is. Its headline is the
+// nearest meta deck's REAL match rate plus the sim's difference between the brew and that deck against the
+// same opponents: Forge pilots both, so most of its bias cancels in the difference. Per opponent the two
+// game rates become best-of-three rates; opponents weigh by meta share where known. Null without a nearest
+// deck that has real results and sim games against at least three of the run's opponents.
+let fpCache = { at: 0, by: {} };
+const forgePairsSoon = f => { if (Date.now() - fpCache.at > 60e3) fpCache = { at: Date.now(), by: {} }; return fpCache.by[f] = fpCache.by[f] || forgePairs(f); };
+function relativeOf(b, rv) {
+  const c = calibs[b.format], ver = b.versions.find(x => x.v === rv.v), near = ver && ver.reading && ver.reading.nearest && ver.reading.nearest.name;
+  // the real rate: against the whole field where published, else head-to-head against the field decks, whichever has more matches
+  let real = near && c && c.realField && c.realField[near];
+  if (near && c && c.inputs && c.inputs.real) { let w = 0, l = 0; for (const [key, r] of Object.entries(c.inputs.real)) { const [a, x] = key.split('\u0000'); if (a === x) continue; if (a === near) { w += r[0]; l += r[1]; } else if (x === near) { w += r[1]; l += r[0]; } } if (w + l > (real ? real.w + real.l : 0)) real = { w, l, vs: 'field decks' }; }
+  if (!real || !rv.opponents || real.w + real.l < 20) return null;
+  const fp = forgePairsSoon(b.format), sm = (w, n) => (w + 0.5) / (n + 1), m3 = p => p * p * (3 - 2 * p), slope = p => 6 * p * (1 - p);
+  let W = 0, D = 0, V = 0, k = 0, games = 0;
+  for (const o of rv.opponents) {
+    const w = o.wins[0] + (o.post ? o.post.wins[0] : 0), n = w + o.wins[1] + (o.post ? o.post.wins[1] : 0);
+    let nw, nn;
+    if (o.name === near) { nw = 1; nn = 2; }   // the nearest deck's own mirror is even
+    else { const x = fp[calib.pairKey(near, o.name)]; if (!x) continue; nw = near < o.name ? x[0] : x[1]; nn = x[0] + x[1]; }
+    if (n < 6 || nn < 6) continue;
+    const pb = sm(w, n), pn = sm(nw, nn), wt = o.metaPct != null && o.metaPct > 0 ? o.metaPct : 1;
+    W += wt; D += wt * (m3(pb) - m3(pn)); V += wt * wt * (slope(pb) ** 2 * pb * (1 - pb) / n + (o.name === near ? 0 : slope(pn) ** 2 * pn * (1 - pn) / nn)); k++; games += n;
+  }
+  if (k < 3) return null;
+  const rp = real.w / (real.w + real.l), rv2 = rp * (1 - rp) / (real.w + real.l), d = D / W, dv = V / (W * W);
+  const clip = x => Math.max(0.01, Math.min(0.99, x)), p = clip(rp + d), half = 1.96 * Math.sqrt(rv2 + dv);
+  return { near, real: { p: rp, matches: real.w + real.l, vs: real.vs },
+    difference: { p: d, lo: d - 1.96 * Math.sqrt(dv), hi: d + 1.96 * Math.sqrt(dv), opponents: k, games },
+    p, lo: clip(p - half), hi: clip(p + half), raw: rv.score ? rv.score.p : null };
+}
 // a match's leak counts as the worker sends them (leaks.tally), kept to numbers and short moments: match ids
 // are 8 characters and no opponent name is in them
 function leaksIn(t) {
@@ -865,7 +897,7 @@ async function archetypeOf(cards, format = 'standard') {
   } catch { /* the label falls back */ }
   return 'Unknown';
 }
-const brewView = b => ({ ...b, real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => runView(b, r)), oppSets: oppSets(b), coachOn: claude.available() });
+const brewView = b => ({ ...b, real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -938,7 +970,7 @@ function guideOf(b, vn, { since = null } = {}) {
     writtenAt: Math.max(0, ...[b.guide && b.guide.at, rv && rv.coach && rv.coach.at, ...(b.thread || []).filter(t => t.role === 'coach').map(t => t.at)].filter(Boolean)) || null,
     run: rv ? { id: rv.id, v: rv.v, oppSet: rv.oppSet, n: rv.score ? rv.score.n : rv.played } : null,
     field: rv && rv.field ? { date: rv.field.date || null, label: rv.field.label || null, n: (rv.opponents || []).length } : null,
-    summary: { text: reading ? [reading.plan, reading.strategy].filter(Boolean).join(' ') || null : null, nearest: reading ? reading.nearest || null : null, ...pct(rv && rv.score), top8: rv && rv.event && rv.event.top8 ? rv.event.top8 : null, rounds: rv && rv.event ? rv.event.rounds : null },
+    summary: { text: reading ? [reading.plan, reading.strategy].filter(Boolean).join(' ') || null : null, nearest: reading ? reading.nearest || null : null, ...pct(rv && rv.score), relative: rv && rv.status === 'done' && b.seats === 2 ? relativeOf(b, rv) : null, top8: rv && rv.event && rv.event.top8 ? rv.event.top8 : null, rounds: rv && rv.event ? rv.event.rounds : null },
     plan, matchups,
     // the mulligan mode writes prose; per-hand win rates need the batch per hand class that doesn't exist yet
     hands: [], mulligan: mull ? { text: mull.text, at: mull.at, graded: 'untested' } : null,
