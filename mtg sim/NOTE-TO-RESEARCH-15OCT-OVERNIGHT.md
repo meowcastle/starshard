@@ -48,3 +48,11 @@ The pattern is the one the spread finding predicts: **proactive creature decks w
 ## Next on the Mac
 - Fix the sequential test's sign for decks already inside the real interval.
 - Then the knob: a reactive-play error rate fitted to the spread, judged by the spread and the mean error (the two measures judgeable today).
+
+## Justin's calls (15 Oct, approved both)
+1. **The ship bar, revised.** Judged now: the sim's spread against real, and mean deck error against the printed floor (≤ 4 points), at ≥ 160 games a pairing. Rank correlation (≥ 0.7) and corrected k (≥ 0.6) join once the real side's split-half reliability reaches 0.5; until then the scoreboard prints them but they don't gate. Sign-up stays closed until the bar is met.
+2. **The relative headline.** Built server-side (`relativeOf` in `server.js`; `run.relative` and the guide's `summary.relative`), handed to Design (`NOTE-TO-DESIGN-15OCT-RELATIVE-HEADLINE.md`). Check: a meta deck fed in as its own brew lands exactly on its real rate; a brew that wins 10 game points more than Boros Dragons reads 57% (48–66) against Dragons' real 46%.
+
+## Done since
+- The sequential test is two-sided for a deck already inside its real range. Landfall re-read that way: "up 3 points" rejected (LLR −10.2), "down 3 points" undecided (0.8). The aura doesn't help, and may hurt.
+- The pilot-error knob is in `pilot.js` (`err`, off by default; `PILOT_ERR` in `log-batch.js`): with that probability, a seat in its own main phase with a castable spell and an empty stack passes instead, a missed play. A sweep at 0.1, 0.2 and 0.35 (15 best-of-threes a pairing each) is running; the scoreboard reads each.
