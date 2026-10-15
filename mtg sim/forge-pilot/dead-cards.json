@@ -1,4 +1,9 @@
 {
-  "_": "Cards Forge's AI never casts though no script hint says so, by Forge version. From tools/dead-cards.js (12 Oct 2026); the pilot's deadcards policy casts them.",
-  "2.0.15": ["Countersculpt", "Jace's Machinations", "Appa, Steadfast Guardian"]
+  "_": "Cards Forge's AI never casts though no script hint says so, by Forge version. From tools/dead-cards.js (12 Oct 2026); the pilot's deadcards policy casts them. Day of Black Sun added 15 Oct 2026 (sequential test: Dimir Excruciator moved toward real, LLR 3.05 over 26 rounds); cast only through the pilot's X-wipe rule.",
+  "2.0.15": [
+    "Countersculpt",
+    "Jace's Machinations",
+    "Appa, Steadfast Guardian",
+    "Day of Black Sun"
+  ]
 }
