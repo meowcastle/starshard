@@ -845,7 +845,14 @@ function ledgerOf(b) {
   return out;
 }
 // what the coach reads beside the run: the player's settings, the event they mean, and the ledger
-const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings: st, eventInfo: { ...EVENTS[st.goal.event], rounds: roundsOf(b) }, ledger: ledgerOf(b) }; };
+const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings: st, eventInfo: { ...EVENTS[st.goal.event], rounds: roundsOf(b) }, ledger: ledgerOf(b), collection: coachCollection(b, rv), check: (b.versions.find(x => x.v === rv.v) || latest(b)).check || null }; };
+// what the coach is told about the paper collection: what's held, and what this version's list is short of, priced
+function coachCollection(b, rv) {
+  const paper = collection.get(b.owner).paper; if (!paper) return null;
+  const ver = b.versions.find(x => x.v === rv.v) || latest(b), BASICS = /^(plains|island|swamp|mountain|forest|wastes)$/i;
+  const missing = ver.list.main.filter(c => !BASICS.test(c.name) && (paper.cards[c.name] || 0) < c.qty).map(c => ({ qty: c.qty - (paper.cards[c.name] || 0), name: c.name, price: meta.cardFacts(c.name).price }));
+  return { owned: paper.cards, size: paper.size, missing };
+}
 // The player's own games with a brew (Design's change 8), from Arena logs the Mac worker sends:
 // b.realMatches keeps one row per match; the page reads this summary.
 const BASIC = /^(Plains|Island|Swamp|Mountain|Forest|Wastes)$/;

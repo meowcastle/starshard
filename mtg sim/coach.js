@@ -16,6 +16,7 @@ const SYSTEM = `You are the coach in Forge Sim, a deck-testing tool for a small 
 Your one job: make the player's deck do better at a competitive tournament against the current meta. Judge every suggestion by what it is worth there, in top-8 odds, not by how much it improves one matchup in isolation. A small gain against a deck that is 14% of the field can beat a big gain against one that is 3%. You are given what bringing each losing matchup to even is worth; use it to rank.
 
 How you talk (the page's voice, design/VOICE-AND-LEXICON-15OCT.md). The reader grinds Standard; write the way a teammate texts after a testing session.
+0. It's a paper tool. The player plays paper Magic: FNM, RCQs, the LGS. Arena is only where the sim learns how they play. Talk about the paper deck, paper prices and the printed sheet; mention Arena only as practice.
 1. Number first, then the read: "Azorius Control 27% (11-49)", "57% vs the field (48-66)". Never "you win about 27 in 100 against".
 2. The read is eight words or fewer: "Worst matchup.", "Too close to call yet.", "Real gap."
 3. Don't explain the method (how Forge plays, calibration, noise, selection bias); the page has one place for that. Name the number and stop, unless the player asks how it works.
@@ -91,7 +92,20 @@ function settingsText(rv) {
   lines.push(st.goal.posture === 'ceiling' ? 'Posture: ceiling. The player accepts variance for a higher top-8 chance: big swings in the matchups that matter most are welcome.' : 'Posture: consistent. Prefer changes that raise the floor (mana, curve, the worst matchup) over high-variance swings.');
   if (st.keep.length) lines.push(`Cards to keep, never suggest cutting: ${st.keep.join(', ')}. If a fix would need one of them, say so.`);
   if (st.never.length) lines.push(`Cards the player won't play, never suggest adding: ${st.never.join(', ')}.`);
-  if (st.budget) lines.push(`Budget: ${st.budget.rare || 0} rare and ${st.budget.mythic || 0} mythic wildcards${st.budget.paper != null ? `, $${st.budget.paper} in paper` : ''}; keep suggestions inside it and say what each costs.`);
+  // the Cards dial (change 22) and the paper collection; the wildcards are only for practising the list on Arena
+  const mode = st.budget && st.budget.mode, col = rv.collection;
+  if (mode === 'owned') lines.push('Cards: owned only. Suggest only cards in the player\'s paper collection (below). The one exception: a card outside it that is worth real points, named with its price, e.g. "Jecht is worth 3.4 over Haliya. $9.80."');
+  else if (mode === 'usd') lines.push(`Cards: up to $${st.budget.usd || 0}. Owned cards first; a card outside the collection only when it is worth points outside the noise and the running bill stays under $${st.budget.usd || 0}. Give each one's price.`);
+  if (st.budget && (st.budget.rare || st.budget.mythic)) lines.push(`Arena practice: ${st.budget.rare || 0} rare and ${st.budget.mythic || 0} mythic wildcards to build this list on Arena.`);
+  if (col && col.owned) {
+    const names = Object.entries(col.owned).sort((a, b) => b[1] - a[1]).slice(0, 300).map(([n, q]) => `${q} ${n}`);
+    lines.push(`The player's paper collection (${col.size} cards${names.length < Object.keys(col.owned).length ? '; the 300 most-held shown' : ''}): ${names.join(', ')}.`);
+    if (col.missing && col.missing.length) lines.push(`Cards in this list they don't own, at TCGplayer market: ${col.missing.map(m => `${m.qty} ${m.name}${m.price != null ? ` ($${m.price.toFixed(2)} each)` : ''}`).join(', ')}.`);
+  }
+  if (rv.check) {
+    const c = rv.check;
+    lines.push(`The brew check: ${c.archetype ? `closest shell ${c.archetype} (${c.shellPct}% of its core, norms from ${c.lists} real lists)` : `no meta shell (closest ${c.closest}, ${c.shellPct}% of its core)`}. ${c.findings.length ? 'Findings: ' + c.findings.map(f => `[${f.sev}] ${f.text}${f.fix ? ' Fix: ' + f.fix : ''}`).join(' ') : 'No findings.'} Agree with it, or say why not.`);
+  }
   if (LEVEL[st.level]) lines.push(LEVEL[st.level]);
   if (rv.ledger && rv.ledger.length) {
     const p = x => x ? Math.round(x.p * 100) + '%' : '?';
