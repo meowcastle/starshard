@@ -1544,6 +1544,8 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/logout') { A.endSession(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
     if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion(), signup: config.SIM_SIGNUP === 'open' });
     if (p === '/api/public') return send(res, 200, { signup: config.SIM_SIGNUP === 'open', forge: forgeVersion() }); // change 19: no auth
+    // the plan page (Design's Guide.dc.html): /g/<brew>/v<n> for the owner, /g/<token> shared
+    if (/^\/g\/[\w-]+(\/v\d+)?\/?$/.test(p)) return serveStatic(req, res, '/guide.html');
     if (!p.startsWith('/api/')) return serveStatic(req, res, p);
     // remote workers authenticate with SIM_WORKER_TOKEN, not a person's session
     if (p.startsWith('/api/worker/')) {

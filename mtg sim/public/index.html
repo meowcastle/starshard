@@ -1425,7 +1425,7 @@ class Component extends DCLogic {
     v.coachModes = modes.map(([id, label, title]) => ({ label, title: canMode(id) ? title : id === 'review' ? '' : 'thinking', opacity: canMode(id) ? 1 : 0.4, ring: S.coachMode === id || S.askFrom === id ? ACC : 'var(--line-strong)', fill: S.coachMode === id ? ACC : 'transparent', ink: S.coachMode === id ? 'var(--bg)' : 'var(--ink)',
       go: pe(() => { if (!canMode(id)) return; if (id === 'pilot') this.setState(s => ({ coachMode: s.coachMode === 'pilot' ? 'readout' : 'pilot' })); else this.coachMode(d.id, id); }) }));
     v.pickingOpp = S.coachMode === 'pilot';
-    v.hasGuideLink = !!(d && d.runs && d.runs.some(r => r.status === 'done')); v.guideHref = d && d.id ? '/g/' + d.id + '/v' + d.versions.length : '#';
+    v.hasGuideLink = !!(d && d.runs && d.runs.some(r => r.status === 'done')); v.guideHref = d && d.id ? '/g/' + d.id + '/v' + ((d.versions.find(x => x.v === d.current) || d.versions[d.versions.length - 1]) || {}).v : '#';
     v.pilotOpps = (run && run.opponents ? run.opponents.slice().sort((a, b) => (b.metaPct || 0) - (a.metaPct || 0)) : []).slice(0, 8).map(g => ({ label: g.name, opacity: 1, ring: 'var(--line-strong)', fill: 'transparent', ink: 'var(--ink)', go: pe(() => this.coachMode(d.id, 'pilot', g.name)) }));
     // a 1v1 run's results stay off the Results tab until it finishes: a handful of games read as a verdict
     v.duelRunning = v.isDuel && waiting; v.duelDone = v.isDuel && !waiting;

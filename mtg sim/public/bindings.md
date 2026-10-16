@@ -257,7 +257,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `goTable` · handler · constant or derived
 - `gripDown` · handler · constant or derived
 - `gripReset` · handler · constant or derived
-- `guideHref` · url · reads brew.id, brew.versions
+- `guideHref` · url · reads brew.id, brew.versions, brew.current
 - `hasBuyMissing` · flag · constant or derived
 - `hasCards` · flag · constant or derived
 - `hasCoachCol` · flag · reads state.codex, state.account, state.brewFrom

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><title>Forge Sim · the guide</title><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>:root{
+  --bg:#0C0C0B;--surface:#121211;--track:#1f1f1e;--mark:#4a4a48;--ink:#EDEBE6;--ink-2:#C9C7C0;--muted:#8F8D86;--accent:#C5EC7A;--win:#7CC4F0;--loss:#F0A070;--amber:#F3CB6B;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.12);
+  --fs-xs:12px;--fs-s:13px;--fs-m:15px;--fs-l:17px;--fs-xl:22px;--fs-xxl:34px;--mono:'JetBrains Mono',monospace}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;font-size:var(--fs-m);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:none}*{box-sizing:border-box}
+.k{font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)}
+.sec{display:flex;flex-direction:column;gap:12px}
+h2{font-size:var(--fs-xl);font-weight:600;margin:0}
+.hd{display:grid;gap:12px;padding:8px 0;border-bottom:1px solid var(--line-strong);font-family:var(--mono);font-size:var(--fs-xs);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.row{display:grid;gap:12px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line);font-size:var(--fs-s);line-height:1.5}
+.chip{display:inline-block;font-size:var(--fs-xs);font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.ev{font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)}
+.minus{color:var(--loss)}.plus{color:var(--win)}
+.todo{display:flex;align-items:center;gap:12px;font-size:var(--fs-s);color:var(--muted);border:1px dashed var(--line-strong);border-radius:8px;padding:12px 16px}
+.pill{border:1px solid var(--line-strong);border-radius:999px;padding:5px 12px;font-size:var(--fs-s);font-weight:600;color:var(--ink)}
+@media print{body{background:#fff;color:#000}.noprint{display:none !important}.print-only{display:block !important}:root{--ink:#000;--ink-2:#111;--muted:#444;--win:#000;--loss:#000;--accent:#000;--line:#ccc;--line-strong:#999}}
+.print-only{display:none}
+</style></helmet>
+
+<div style="max-width:960px;margin:0 auto;padding:40px 24px 80px;display:flex;flex-direction:column;gap:40px">
+
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}"><div class="k">reading the guide…</div></sc-if>
+<sc-if value="{{ failed }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:8px"><div style="font-size:var(--fs-xl);font-weight:600">This guide isn't available</div><div style="color:var(--muted)">{{ errText }}</div></div></sc-if>
+
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div class="noprint" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 16px">
+  <div class="k">{{ crumbs }}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-if value="{{ isOwner }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ toggleShare }}" class="pill" style="border-color:{{ shareRing }};background:{{ shareFill }};color:{{ shareInk }}">{{ shareLabel }}</a><a href="{{ backHref }}" class="pill">Back to the deck</a></sc-if><a href="#" onClick="{{ doPrint }}" class="pill">Print the table card</a></div>
+</div>
+<sc-if value="{{ shareOn }}" hint-placeholder-val="{{ false }}"><div class="noprint" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:var(--fs-s);color:var(--muted);margin-top:-24px"><span>Anyone with this link can read it (your own games stay private):</span><span class="k" style="color:var(--ink);user-select:all">{{ shareUrl }}</span></div></sc-if>
+
+<div class="noprint" style="display:flex;flex-direction:column;gap:10px">
+  <div class="k">{{ byline }}</div>
+  <div style="font-size:var(--fs-xxl);font-weight:600;line-height:1.15">{{ title }}</div>
+  <div style="font-size:var(--fs-l);color:var(--ink-2);max-width:760px;text-wrap:pretty">{{ summaryText }} Wins about <b style="color:var(--accent)">{{ pct }}</b> of matches against {{ fieldLabel }}, likely {{ span }}<sc-if value="{{ hasTop8 }}" hint-placeholder-val="{{ true }}">; top 8 at a {{ rounds }}-round event about <b style="color:var(--ink)">{{ top8 }}</b></sc-if>.</div>
+  <div style="display:flex;flex-wrap:wrap;gap:6px 20px;font-size:var(--fs-s)"><sc-for list="{{ toc }}" as="t" hint-placeholder-count="7"><a href="{{ t.href }}" style="color:{{ t.color }}">{{ t.label }}</a></sc-for></div>
+</div>
+
+<div class="print-only" style="display:flex;flex-direction:column;gap:4px"><div style="font-size:var(--fs-xl);font-weight:600">{{ title }} · table card</div><div class="k">{{ byline }}</div></div>
+
+<div class="sec noprint" id="plan">
+  <h2>The plan</h2>
+  <sc-if value="{{ hasPlan }}" hint-placeholder-val="{{ true }}"><div style="font-size:var(--fs-m);line-height:1.6;color:var(--ink-2);max-width:760px;text-wrap:pretty"><b style="color:var(--ink)">{{ planTitle }}.</b> {{ planText }}</div><div class="ev">{{ planEv }}</div></sc-if>
+  <sc-if value="{{ noPlan }}" hint-placeholder-val="{{ false }}"><div class="todo"><span>Not written yet.</span><sc-if value="{{ isOwner }}" hint-placeholder-val="{{ true }}"><a href="{{ coachHref }}" class="pill">Ask the coach for a readout</a></sc-if></div></sc-if>
+</div>
+
+<div class="sec noprint" id="matchups">
+  <h2>Matchups and roles</h2>
+  <div class="hd" style="grid-template-columns:170px 80px 120px minmax(0,1fr)"><span>opponent</span><span>you win</span><span>your role</span><span>how it goes</span></div>
+  <sc-for list="{{ matchups }}" as="m" hint-placeholder-count="10"><div class="row" style="grid-template-columns:170px 80px 120px minmax(0,1fr)"><span style="font-weight:600"><span>{{ m.opponent }}</span><span class="ev"> {{ m.share }}</span></span><span class="ev" style="color:{{ m.color }}">{{ m.pct }}</span><span><sc-if value="{{ m.hasRole }}" hint-placeholder-val="{{ true }}"><span class="chip" style="background:{{ m.roleBg }};color:{{ m.roleInk }}">{{ m.role }}</span></sc-if><sc-if value="{{ m.noRole }}" hint-placeholder-val="{{ false }}"><span class="ev">—</span></sc-if></span><span style="color:var(--ink-2)"><sc-if value="{{ m.hasText }}" hint-placeholder-val="{{ true }}">{{ m.text }} <span class="ev">{{ m.ev }}</span></sc-if><sc-if value="{{ m.noText }}" hint-placeholder-val="{{ false }}"><span style="color:var(--muted)">not written yet<sc-if value="{{ isOwner }}" hint-placeholder-val="{{ true }}"> · <a href="{{ m.askHref }}" style="color:var(--accent)">ask how to play it</a></sc-if></span></sc-if></span></div></sc-for>
+  <div class="ev">{{ matchupsNote }}</div>
+</div>
+
+<div class="sec" id="hands">
+  <h2>Keep or ship</h2>
+  <sc-if value="{{ hasHands }}" hint-placeholder-val="{{ false }}"><div class="hd" style="grid-template-columns:minmax(0,1fr) 130px 130px"><span>the hand</span><span>on the play</span><span>on the draw</span></div><sc-for list="{{ hands }}" as="h" hint-placeholder-count="4"><div class="row" style="grid-template-columns:minmax(0,1fr) 130px 130px"><span>{{ h.hand }}</span><span class="ev" style="color:{{ h.playColor }}">{{ h.play }}</span><span class="ev" style="color:{{ h.drawColor }}">{{ h.draw }}</span></div></sc-for></sc-if>
+  <sc-if value="{{ hasMullText }}" hint-placeholder-val="{{ true }}"><div style="font-size:var(--fs-m);line-height:1.6;color:var(--ink-2);max-width:760px;text-wrap:pretty">{{ mullText }}</div><div class="ev">{{ mullEv }}</div></sc-if>
+  <sc-if value="{{ noMull }}" hint-placeholder-val="{{ false }}"><div class="todo"><span>Not written yet.</span><sc-if value="{{ isOwner }}" hint-placeholder-val="{{ true }}"><a href="{{ mullHref }}" class="pill">Ask the coach about mulligans</a></sc-if></div></sc-if>
+</div>
+
+<div class="sec" id="sideboard">
+  <h2>Sideboard sheet</h2>
+  <sc-if value="{{ hasSide }}" hint-placeholder-val="{{ true }}"><div class="hd" style="grid-template-columns:170px minmax(0,1fr) minmax(0,1fr) 110px"><span>against</span><span>out</span><span>in</span><span>after boarding</span></div><sc-for list="{{ sideRows }}" as="r" hint-placeholder-count="2"><div class="row" style="grid-template-columns:170px minmax(0,1fr) minmax(0,1fr) 110px"><span style="font-weight:600">{{ r.opponent }}</span><span class="minus">{{ r.out }}</span><span class="plus">{{ r.in }}</span><span><span class="chip" style="background:{{ r.roleBg }};color:{{ r.roleInk }}">{{ r.role }}</span><span class="ev" style="color:{{ r.balColor }}"> {{ r.balance }}</span></span></div><div class="row noprint" style="grid-template-columns:170px minmax(0,1fr);border-top:0;padding-top:0;color:var(--muted)"><span></span><span>{{ r.why }}</span></div></sc-for><div class="ev">{{ sideNote }}</div></sc-if>
+  <sc-if value="{{ noSide }}" hint-placeholder-val="{{ false }}"><div class="todo"><span>Not written yet.</span><sc-if value="{{ isOwner }}" hint-placeholder-val="{{ true }}"><a href="{{ sideHref }}" class="pill">Ask the coach for a sideboard guide</a></sc-if></div></sc-if>
+</div>
+
+<div class="sec noprint" id="cards">
+  <h2>Card choices</h2>
+  <div class="hd" style="grid-template-columns:28px minmax(0,1fr) 110px 90px"><span>#</span><span>card</span><span>won when cast</span><span>lift</span></div>
+  <sc-for list="{{ cards }}" as="c" hint-placeholder-count="12"><div class="row" style="grid-template-columns:28px minmax(0,1fr) 110px 90px"><span class="ev">{{ c.qty }}</span><span><span style="font-weight:600">{{ c.name }}</span><sc-if value="{{ c.hasText }}" hint-placeholder-val="{{ false }}"> <span style="color:var(--ink-2)">{{ c.text }}</span></sc-if></span><span class="ev" style="color:{{ c.color }}">{{ c.when }}</span><span class="ev" style="color:{{ c.liftColor }}">{{ c.lift }}</span></div></sc-for>
+  <div class="ev">{{ cardsNote }}</div>
+</div>
+
+<div class="sec noprint" id="changes">
+  <h2>What changed</h2>
+  <sc-for list="{{ changes }}" as="x" hint-placeholder-count="2"><div class="row" style="grid-template-columns:48px 110px minmax(0,1fr) 140px"><span class="k">v{{ x.v }}</span><span class="k">{{ x.date }}</span><span>{{ x.diff }}<sc-if value="{{ x.hasNote }}" hint-placeholder-val="{{ false }}"> <span style="color:var(--muted)">· "{{ x.note }}"</span></sc-if></span><span class="ev" style="color:{{ x.color }}">{{ x.result }}</span></div></sc-for>
+</div>
+
+<div class="sec noprint" id="method">
+  <h2>How these numbers are made</h2>
+  <div style="font-size:var(--fs-s);color:var(--muted);max-width:760px;line-height:1.6">{{ methodText }}</div>
+</div>
+</sc-if>
+</div>
+
+<script type="text/x-dc" data-dc-script data-props="{&quot;fixtures&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Canvas&quot;},&quot;path&quot;:{&quot;editor&quot;:&quot;string&quot;,&quot;default&quot;:&quot;/g/f8ac0477a9/v2&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;View&quot;}}">
+class Component extends DCLogic {
+  // The guide page: one document per brew version, read-only, from GET /api/brews/:id/guide?v=n (owner, at /g/:brew/v:n)
+  // or GET /api/guide/:token (shared, at /g/:token). Markup is Design's; every number is the server's.
+  state = { doc: null, err: '', shareBusy: false };
+  async fixtures() {
+    if (this._fx === undefined) { try { const r = await fetch(new URL('./fixtures.json', document.baseURI).href); this._fx = r.ok ? await r.json() : null; } catch (e) { this._fx = null; } }
+    return this._fx;
+  }
+  async api(path, opts = {}) {
+    const wantFx = this.props.fixtures || (!/starshard\.net$/.test(location.hostname) && !/^localhost|^127\./.test(location.hostname));
+    if (wantFx) { const fx = await this.fixtures(); if (fx) { const key = path.split('?')[0]; const hit = fx[key] || fx[key.replace(/\/[^/]+$/, '/*')]; if (hit) return JSON.parse(JSON.stringify(hit)); throw new Error('no fixture for ' + key); } }
+    const r = await fetch(path, { credentials: 'same-origin', method: opts.method || 'GET', headers: { 'Content-Type': 'application/json' }, body: opts.body && JSON.stringify(opts.body) });
+    const data = (r.headers.get('content-type') || '').includes('json') ? await r.json() : { error: await r.text() };
+    if (!r.ok) throw new Error(data.error || r.statusText);
+    return data;
+  }
+  // /g/<brew>/v<n> (owner) or /g/<token> (shared); the canvas passes the path as a prop
+  route() {
+    const p = this.props.path || location.pathname, m = p.match(/^\/g\/([^/]+)(?:\/v(\d+))?\/?$/);
+    if (!m) return null;
+    return m[2] ? { kind: 'owner', brew: m[1], v: +m[2] } : { kind: 'shared', token: m[1] };
+  }
+  async componentDidMount() {
+    const r = this.route(); if (!r) { this.setState({ err: 'There is no guide at this address.' }); return; }
+    try { const doc = await this.api(r.kind === 'owner' ? '/api/brews/' + r.brew + '/guide?v=' + r.v : '/api/guide/' + r.token); this.setState({ doc }); }
+    catch (e) { this.setState({ err: /login/i.test(e.message) ? 'This guide is private. Sign in to the Brewer, or ask its owner for the shared link.' : e.message }); }
+  }
+  async share(on) {
+    const r = this.route(), d = this.state.doc; if (!d || r.kind !== 'owner' || this.state.shareBusy) return;
+    this.setState({ shareBusy: true });
+    try { const b = await this.api('/api/brews/' + r.brew, { method: 'PATCH', body: { share: on } }); this.setState(s => ({ doc: { ...s.doc, share: b.share || (on ? { token: 'pending', v: r.v } : null) }, shareBusy: false })); }
+    catch (e) { this.setState(s => ({ doc: { ...s.doc, share: on ? { token: 'canvas', v: r.v } : null }, shareBusy: false })); }
+  }
+  renderVals() {
+    const S = this.state, d = S.doc, pe = (fn) => (e) => { e && e.preventDefault && e.preventDefault(); fn(e); };
+    const WIN = 'var(--win)', LOSS = 'var(--loss)', MUTED = 'var(--muted)', AMBER = 'var(--amber)', ACC = 'var(--accent)';
+    const v = { loading: !d && !S.err, failed: !!S.err, errText: S.err, ready: !!d, isOwner: false, toggleShare: pe(() => {}), doPrint: pe(() => window.print && window.print()) };
+    if (!d) return v;
+    const r = this.route() || { kind: 'shared' }, owner = r.kind === 'owner' && !d.shared; v.isOwner = owner;
+    const pct = (p) => Math.round(p * 100) + '%', date = (t) => new Date(typeof t === 'string' && t.length === 10 ? t + 'T12:00:00' : t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const col = (p) => p >= 0.5 ? WIN : LOSS, ROLE = { beatdown: ['you are the beatdown', 'rgba(240,160,112,.14)', LOSS], control: ['you are the control', 'rgba(124,196,240,.14)', WIN] };
+    const evS = (x) => x && x.evidence ? (x.evidence === 'strong' ? 'strong evidence' : x.evidence === 'weak' ? 'weak evidence' : 'untested') + (x.basis ? ' · ' + x.basis : '') : '';
+    v.crumbs = 'sim.starshard.net · guide · ' + (d.format ? d.format[0].toUpperCase() + d.format.slice(1) : 'Standard') + (d.shared ? ' · shared by ' + d.owner : '');
+    v.byline = 'written ' + date(d.writtenAt) + ' from run v' + (d.run ? d.run.v : d.version) + ' against ' + (d.field ? d.field.label : 'the field') + (d.field && d.field.date ? ' · field of ' + date(d.field.date) : '') + ' · ' + (d.run ? d.run.n + ' games' : '');
+    v.title = d.title + ', v' + d.version;
+    v.summaryText = d.summary ? d.summary.text : ''; v.pct = d.summary ? pct(d.summary.p) : '—'; v.span = d.summary ? pct(d.summary.lo) + '–' + pct(d.summary.hi) : ''; v.fieldLabel = d.field ? d.field.label : 'the field';
+    v.hasTop8 = !!(d.summary && d.summary.top8); v.top8 = v.hasTop8 ? (d.summary.top8.p >= 0.5 ? pct(d.summary.top8.p) : '1 in ' + Math.round(1 / Math.max(0.01, d.summary.top8.p))) : ''; v.rounds = d.summary && d.summary.rounds || 7;
+    const missing = new Set(d.missing || []);
+    v.toc = [['plan', 'The plan', missing.has('readout')], ['matchups', 'Matchups and roles', false], ['hands', 'Keep or ship', missing.has('mulligan')], ['sideboard', 'Sideboard sheet', missing.has('sideboard')], ['cards', 'Card choices', false], ['changes', 'What changed', false], ['method', 'How these numbers are made', false]].map(([id, label, todo]) => ({ href: '#' + id, label, color: todo ? MUTED : 'var(--ink)' }));
+    // share
+    v.shareOn = !!d.share; v.shareLabel = S.shareBusy ? '…' : d.share ? 'Shared · stop sharing' : 'Share'; v.shareRing = d.share ? ACC : 'var(--line-strong)'; v.shareFill = d.share ? ACC : 'transparent'; v.shareInk = d.share ? 'var(--bg)' : 'var(--ink)';
+    v.toggleShare = pe(() => this.share(!d.share)); v.shareUrl = d.share ? (typeof location !== 'undefined' && location.origin ? location.origin : 'https://sim.starshard.net') + '/g/' + d.share.token : '';
+    v.backHref = '/'; v.coachHref = '/?deck=' + (r.brew || '') + '&tab=coach'; v.mullHref = v.coachHref + '&ask=mulligan'; v.sideHref = v.coachHref + '&ask=sideboard';
+    // plan
+    v.hasPlan = !!d.plan; v.noPlan = !d.plan; v.planTitle = d.plan ? d.plan.title : ''; v.planText = d.plan ? d.plan.text : ''; v.planEv = d.plan ? evS(d.plan) : '';
+    // matchups
+    v.matchups = (d.matchups || []).map(m => { const R = ROLE[m.role]; return { opponent: m.opponent, share: m.metaPct != null ? m.metaPct.toFixed(1) + '%' : '', pct: pct(m.p), color: col(m.p), hasRole: !!R, noRole: !R, role: R ? R[0] : '', roleBg: R ? R[1] : '', roleInk: R ? R[2] : '', hasText: !!m.text, noText: !m.text, text: m.text || '', ev: evS(m), askHref: v.coachHref + '&ask=pilot&opponent=' + encodeURIComponent(m.opponent) }; });
+    const nMiss = (d.missingPilot || []).length; v.matchupsNote = 'Rows in meta-share order; you win = Forge\'s calibrated match win rate on this run' + (nMiss ? ' · ' + nMiss + ' matchup' + (nMiss > 1 ? 's' : '') + ' without a plan yet' : '') + '.';
+    // hands
+    v.hasHands = !!(d.hands && d.hands.length); v.hands = (d.hands || []).map(h => { const f = (x) => x ? (x.keep ? 'keep' : 'ship') + (x.p != null ? ' · ' + pct(x.p) : '') + (x.six != null && !x.keep ? ' (six: ' + pct(x.six) + ')' : '') : '—'; const c = (x) => !x ? MUTED : x.keep ? (x.p != null && x.p < 0.48 ? AMBER : WIN) : LOSS; return { hand: h.hand, play: f(h.play), draw: f(h.draw), playColor: c(h.play), drawColor: c(h.draw) }; });
+    v.hasMullText = !v.hasHands && !!(d.mulligan && d.mulligan.text); v.mullText = d.mulligan ? d.mulligan.text : ''; v.mullEv = d.mulligan ? (d.mulligan.graded === 'untested' ? 'untested · the coach\'s reading; hand-by-hand numbers come with the mulligan batches' : evS(d.mulligan)) : ''; v.noMull = !v.hasHands && !v.hasMullText;
+    // sideboard
+    const cardsS = (xs) => (xs || []).map(c => (c.qty > 0 ? '' : '') + c.qty + ' ' + c.name).join(', ') || 'nothing';
+    v.hasSide = !!(d.sideboard && d.sideboard.length); v.noSide = !v.hasSide;
+    v.sideRows = (d.sideboard || []).map(x => { const R = ROLE[x.role] || ROLE.beatdown, o = (x.out || []).reduce((a, c) => a + c.qty, 0), i = (x.in || []).reduce((a, c) => a + c.qty, 0); return { opponent: x.opponent, out: '−' + cardsS(x.out).replace(/, /g, ', −'), in: '+' + cardsS(x.in).replace(/, /g, ', +'), role: x.role === 'control' ? 'the control' : 'the beatdown', roleBg: R[1], roleInk: R[2], why: x.why || '', balance: o || i ? o + ' out · ' + i + ' in' : '', balColor: o === i ? MUTED : AMBER }; });
+    v.sideNote = d.sideboardAt ? 'written ' + date(d.sideboardAt) + ' by the coach from this run · "Print the table card" prints this sheet with Keep or ship' : '';
+    // cards
+    v.cards = (d.cards || []).map(c => ({ qty: c.qty, name: c.name, hasText: !!c.text, text: c.text || '', when: c.whenCast && c.whenCast.n ? pct(c.whenCast.p) + ' · ' + c.whenCast.n : '—', color: c.whenCast && c.whenCast.n ? col(c.whenCast.p) : MUTED, lift: c.lift != null ? (c.lift >= 0 ? '+' : '−') + Math.round(Math.abs(c.lift) * 100) : '', liftColor: c.lift == null ? MUTED : c.lift >= 0 ? WIN : LOSS }));
+    v.cardsNote = 'Won when cast: the share of games won in which the card was cast, with the count · lift: against games where it was not. Small counts are noise; the coach\'s reasons appear when it has written them.';
+    // changes
+    const diffS = (diff) => diff && diff.length ? diff.map(x => (x.qty < 0 ? '−' : '+') + Math.abs(x.qty) + ' ' + x.name).join(' ') : 'the list as pasted';
+    v.changes = (d.changes || []).map(x => ({ v: x.v, date: date(x.at), diff: diffS(x.diff), hasNote: !!x.note, note: x.note || '', result: x.result ? pct(x.result.p) + (x.result.delta != null ? ' · ' + (x.result.delta >= 0 ? '+' : '−') + Math.round(Math.abs(x.result.delta) * 100) + ' on v' + (x.v - 1) : '') : 'not run', color: x.result ? col(x.result.p) : MUTED }));
+    // method
+    const M = d.method || {}, cal = M.calibration;
+    v.methodText = 'Forge ' + (M.forge || '') + (M.pilot ? ' with the sim\'s pilots' : '') + ', ' + (d.run ? d.run.n + ' games against ' + (d.field ? d.field.label : 'the field') : '') + (M.field && M.field.weighted ? ' weighted by meta share' : '') + (cal ? ', calibrated against ' + cal.realGames.toLocaleString() + ' real tournament games from ' + cal.events + ' events over the last ' + cal.days + ' days' : ', uncalibrated') + '. Written by the coach from the run, the reading' + (d.real ? ' and the owner\'s own games' : '') + '; every claim carries its evidence grade.';
+    return v;
+  }
+}
+</script>
+</x-dc>
+</body>
+</html>
