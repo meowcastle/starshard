@@ -181,7 +181,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `buildInk` · colour · constant or derived
 - `buildLabel` · string · constant or derived
 - `buildNote` · string · constant or derived
-- `buildOwned` · handler · reads this.api(), brew.versions, state.busy, brew.id · sets busy, edErr
+- `buildOwned` · handler · reads this.api(), brew.versions, brew.current, state.busy, brew.id · sets busy, edErr
 - `buyMissing` · url · constant or derived
 - `canCancel` · flag · constant or derived
 - `cancelLabel` · string · reads state.cancelAsk, run.id
@@ -221,7 +221,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `cxNavBg` · colour · reads state.codex
 - `cxNavColor` · colour · reads state.codex
 - `cxOpenWeak` · handler · reads this.codexOpen()
-- `deck` · object {name, version, versionLabel, goal.label} · reads brew.versions, brew.name, brew.runs, brew.format · also on Deck
+- `deck` · object {name, version, versionLabel, goal.label} · reads brew.versions, brew.current, brew.name, brew.runs, brew.format · also on Deck
 - `deckArt` · url · constant or derived
 - `deckArtBg` · colour · reads brew.colors
 - `deckKicker` · string · reads brew.seats
@@ -491,10 +491,10 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `ckCurve` · list of {mineH, color (colour), normH, label} · constant or derived
 - `ckCurveNote` · string · constant or derived
 - `ckFindings` · list of {color (colour), text, fix} · constant or derived
-- `ckFoot` · string · reads brew.versions, run.status, run.queuePos, run.played, run.total
+- `ckFoot` · string · reads brew.versions, brew.current, run.status, run.queuePos, run.played, run.total
 - `ckLoading` · flag · reads state.ed, state.tab, brew.id
 - `ckMix` · list of {k, w, color (colour), normW, mine, norm} · constant or derived
-- `ckOptimize` · handler · reads this.api(), brew.versions, state.busy, brew.id · sets busy, edErr
+- `ckOptimize` · handler · reads this.api(), brew.versions, brew.current, state.busy, brew.id · sets busy, edErr
 - `ckSub` · string · constant or derived
 - `ckTitle` · string · constant or derived
 - `closeLook` · handler · sets look
@@ -586,7 +586,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `stRounds` · string · reads state.st
 - `stRoundsHint` · string · reads state.st
 - `stUsd` · string · reads state.st
-- `versionRows` · list of {vColor (colour), v, label, date, change, results[], results.pick (handler), results.rr.numColor (colour), results.rr.pct, results.rr.pm, results.rr.lo, results.rr.w, results.rr.hatch (colour), results.rr.left, results.rr.color (colour), results.snapLabel, results.live, rerun (handler), rerunLabel} · reads brew.versions, this.api(), run.status, run.queuePos, run.played, run.total, state.view, brew.runs, brew.id, this.active(), this.queue() · sets view
+- `versionRows` · list of {vColor (colour), v, label, date, change, results[], results.pick (handler), results.rr.numColor (colour), results.rr.pct, results.rr.pm, results.rr.lo, results.rr.w, results.rr.hatch (colour), results.rr.left, results.rr.color (colour), results.snapLabel, results.live, rerun (handler), rerunLabel} · reads brew.versions, brew.current, this.api(), run.status, run.queuePos, run.played, run.total, state.view, brew.runs, brew.id, this.active(), this.queue() · sets view
 
 ## Card hover
 

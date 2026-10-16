@@ -907,11 +907,11 @@ class Component extends DCLogic {
     this.setState({ busy: false });
   }
   // the Deck tab's name and cover editor shares the wizard's name/cover/upload state
-  lookCovers(d) { const ver = d.versions[d.versions.length - 1]; return this.covers({ rows: ver.rows || [] }); }
+  lookCovers(d) { const ver = (d.versions.find(x => x.v === d.current) || d.versions[d.versions.length - 1]); return this.covers({ rows: ver.rows || [] }); }
   // ---- change 7: editing the list in place. S.ed = { id, rows, swap, q, hits, hitsNote, chk, queue, err } ----
   edKey(r) { return r.section + '|' + r.name; }
   edRowsFrom(d, pasted) {
-    const ver = d.versions[d.versions.length - 1], cur = ver.rows || [];
+    const ver = (d.versions.find(x => x.v === d.current) || d.versions[d.versions.length - 1]), cur = ver.rows || [];
     if (!pasted) return cur.map(r => ({ ...r, orig: r.qty, added: false }));
     const seen = new Set();
     const rows = pasted.map(r => { const o = cur.find(c => this.edKey(c) === this.edKey(r)); seen.add(this.edKey(r)); return { ...(o || {}), ...r, orig: o ? o.qty : 0, added: !o }; });
@@ -962,7 +962,7 @@ class Component extends DCLogic {
       const b = await this.api('/api/brews/' + d.id + '/versions', { method: 'POST', body: { list: this.edList(ed.rows), note: words } });
       const last = d.runs.find(r => r.status === 'done' || r.status === 'running') || d.runs[0];
       this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), ed: null, busy: false, cmpA: null, cmpB: null }));
-      if (ed.queue) await this.queue(b.id, last ? last.oppSet : S.oppSet, b.versions.length);
+      if (ed.queue) await this.queue(b.id, last ? last.oppSet : S.oppSet, b.current);   // the version just saved, by its number
     } catch (e) { this.setState({ busy: false }); this.edUpdate(x => ({ ...x, err: e.message })); }
   }
   // ---- change 9: a match logged by hand. S.lm = { opponent, won, onPlay, source, err } ----
@@ -1232,7 +1232,7 @@ class Component extends DCLogic {
     });
     if (!d) return v;
 
-    const ver = d.versions[d.versions.length - 1];
+    const ver = (d.versions.find(x => x.v === d.current) || d.versions[d.versions.length - 1]);
     const coverOf = (b) => b.coverUrl || art(b.coverCard);
     // change 15: the weekly rerun (brew.weekly). The pill shows until the deck is opened after the rerun.
     const artWash = (cs) => { const M = { W: '#d9d3b4', U: '#5d8fc4', B: '#6f6478', R: '#c3604f', G: '#4f9a69' }, xs = (cs || []).map(c => M[c]).filter(Boolean);
@@ -1274,7 +1274,7 @@ class Component extends DCLogic {
       v.weeklyLineColor = w ? (w.up ? WIN : LOSS) : MUTED;
       v.weeklyWhy = w ? [w.moved.slice(0, 2).map(m => m.opponent + (m.metaPct != null && m.prevPct != null && Math.abs(m.metaPct - m.prevPct) >= 2 ? ' ' + (m.metaPct > m.prevPct ? 'up' : 'down') + ' to ' + Math.round(m.metaPct) + '% of the field' : '') + ', you ' + Math.round(m.prevP * 100) + '→' + Math.round(m.p * 100)).join(' · '), w.W.guideUpdated ? 'plan updated' : ''].filter(Boolean).join(' · ') : ''; }
     v.memory = d.notes.map(m => ({ ...m, forget: pe(() => this.forget(d.id, m.k)) })); v.memoryCount = v.memory.length;
-    v.deck = { name: d.name, version: ver.v, versionLabel: 'pasted ' + day(ver.created), subtitle: plural(d.runs.length, 'run'), format: cap(d.format), goal: { label: 'No goal set' } };
+    v.deck = { name: d.name, version: ver.v, versionLabel: ({ pasted: 'pasted ', optimize: 'from Optimize ', coach: 'coach swap ', owned: 'owned version ' }[ver.origin] || 'saved ') + day(ver.created) + (ver.state ? ' · ' + ver.state.line : ''), subtitle: plural(d.runs.length, 'run'), format: cap(d.format), goal: { label: 'No goal set' } };
     v.deckArt = coverOf(d); v.deckPips = pips(d.colors); v.seatsLabel = d.seats === 2 ? '1v1' : '4-seat pods';
     // change 16: no "1v1" in the kicker (every Standard deck is); a colour wash behind missing art
     v.deckKicker = [v.deck.format, d.seats === 2 ? '' : '4-seat pods', v.deck.subtitle].filter(Boolean).join(' · ');

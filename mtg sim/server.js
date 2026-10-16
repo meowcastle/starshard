@@ -371,6 +371,24 @@ brews.forEach(b => { if (b.thinking) { b.thinking = false; (b.thread = b.thread 
 const GAMES = 20;            // per pairing; the UI says "20 games each"
 const LOAD_SECONDS = 30;     // Forge reads its card database once per pairing
 const latest = b => b.versions[b.versions.length - 1];
+// The deck is the version the player chose, not the newest one (16 Oct 2026, NOTE-TO-CODE-16OCT-STATE.md A).
+// b.current: a version the player saves (pasted, edited) becomes current; Optimize, a coach swap test and the
+// owned version are proposals and never change it. Runs, the plan, the guide and the coach default to current.
+// Every version says where it came from (origin), and numbers never repeat, even after a discard (b.maxV).
+const current = b => b.versions.find(x => x.v === b.current) || latest(b);
+const PROPOSALS = new Set(['optimize', 'coach', 'owned']);
+const originOf = v => v.origin || (v.v === 1 ? 'pasted' : /^Optimize/.test(v.note || '') ? 'optimize' : v.from && v.from.run ? 'coach' : /^owned version/.test(v.note || '') ? 'owned' : 'edited');
+function pushVersion(b, origin, fields) {
+  const v = Math.max(b.maxV || 0, ...b.versions.map(x => x.v)) + 1; b.maxV = v;
+  const ver = { v, created: Date.now(), origin, ...fields }; b.versions.push(ver);
+  if (!PROPOSALS.has(origin)) b.current = v;
+  return ver;
+}
+{ let moved = 0;
+  for (const b of brews) { for (const v of b.versions) if (!v.origin) { v.origin = originOf(v); moved++; }
+    if (b.maxV == null) { b.maxV = Math.max(...b.versions.map(v => v.v)); moved++; }
+    if (b.current == null) { const mine = b.versions.filter(v => !PROPOSALS.has(v.origin)); b.current = (mine[mine.length - 1] || latest(b)).v; moved++; } }
+  if (moved) saveBrews(); }
 
 function secondsPerGame(pod) {
   const ms = history.filter(h => (h.format === 'Commander') === pod).flatMap(h => h.pairings || []).filter(p => p.avgMs).slice(0, 50).map(p => p.avgMs);
@@ -834,7 +852,7 @@ const MIN_CAST = 8;
 function cardsView(b, run, prs) {
   const mine = cardstats.merge(prs.map(p => p.cards && p.cards[0]));
   if (!mine.games) return null;
-  const ver = b.versions.find(x => x.v === run.v) || latest(b), land = new Map((ver.rows || []).map(r => [r.name, !!r.land]));
+  const ver = b.versions.find(x => x.v === run.v) || current(b), land = new Map((ver.rows || []).map(r => [r.name, !!r.land]));
   const qty = new Map((ver.list.main || []).concat(ver.list.commander || []).map(c => [c.name, c.qty])), side = new Set((ver.list.side || []).map(c => c.name));
   const rate = (w, n) => n ? w / n : null;
   const rows = [...new Set([...qty.keys(), ...Object.keys(mine.cards)])].filter(n => !land.get(n) && !(mine.cards[n] && mine.cards[n].l) && (qty.has(n) || side.has(n))).map(n => {
@@ -885,7 +903,7 @@ const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings
 // what the coach is told about the paper collection: what's held, and what this version's list is short of, priced
 function coachCollection(b, rv) {
   const paper = collection.get(b.owner).paper; if (!paper) return null;
-  const ver = b.versions.find(x => x.v === rv.v) || latest(b), BASICS = /^(plains|island|swamp|mountain|forest|wastes)$/i;
+  const ver = b.versions.find(x => x.v === rv.v) || current(b), BASICS = /^(plains|island|swamp|mountain|forest|wastes)$/i;
   const missing = ver.list.main.filter(c => !BASICS.test(c.name) && (paper.cards[c.name] || 0) < c.qty).map(c => ({ qty: c.qty - (paper.cards[c.name] || 0), name: c.name, price: meta.cardFacts(c.name).price }));
   return { owned: paper.cards, size: paper.size, missing };
 }
@@ -975,7 +993,7 @@ async function createBrew(user, { list, name, note, cover, format, settings } = 
   if (cover?.upload) { try { coverUrl = saveCover(id, cover.upload); } catch (e) { return { status: 400, error: e.message }; } }
   const b = { id, owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').trim().slice(0, 60) || 'Untitled', format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
     coverCard: pickCard, coverUrl, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
-    versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [], ...(settings ? { settings: cleanSettings({}, settings) } : {}) };
+    versions: [{ v: 1, created: now, origin: 'pasted', list: d.list, rows: d.rows, style: d.style }], current: 1, maxV: 1, runs: [], ...(settings ? { settings: cleanSettings({}, settings) } : {}) };
   setImmediate(() => readSoon(b, b.versions[0]));
   if (coverTypes[id]) b.coverType = coverTypes[id];
   brews.unshift(b); saveBrews(); await checkSoon(b);
@@ -987,7 +1005,7 @@ async function createBrew(user, { list, name, note, cover, format, settings } = 
 function startRun(b, user, vIn, oppSet) {
   const set = oppSets(b).find(s => s.id === oppSet);
   if (!set || !set.available) return { status: 400, error: set ? set.detail : 'pick who it should play' };
-  const v = b.versions.some(x => x.v === vIn) ? vIn : latest(b).v;
+  const v = b.versions.some(x => x.v === vIn) ? vIn : current(b).v;
   const vl = (b.versions.find(x => x.v === v) || {}).legal;
   if (vl && !vl.ok) return { status: 400, error: `v${v} is no longer ${b.format}-legal (${[...vl.illegal.map(x => x.name), ...vl.unknown].join(', ')}). Paste a new version without ${vl.illegal.length + vl.unknown.length === 1 ? 'it' : 'them'}; v${v}'s results stay.` };
   // a run is quiet while it reads the field, so a second click would start an identical one
@@ -1031,15 +1049,15 @@ async function optimizeTick(b) {
     opt.out.forEach(c => main.set(c.name, (main.get(c.name) || 0) - c.qty)); opt.in.forEach(c => main.set(c.name, (main.get(c.name) || 0) + c.qty));
     optBusy.add(b.id);
     try {
-      const d = await meta.describeDeck({ ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) }, b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
+      const d = await meta.describeDeck({ ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) }, b.format), diff = diffLists(base.list, d.list);
       if (!diff.length || (d.legality && !d.legality.ok)) { o.status = 'writing'; return optimizeWrite(b, o.v, `The coach's swap didn't make a legal new list, so v${o.v} stands.`); }
       const swapText = `−${opt.out.map(c => c.qty + ' ' + c.name).join(', ')} · +${opt.in.map(c => c.qty + ' ' + c.name).join(', ')}`;
-      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i }, note: 'Optimize, matchup swap: ' + swapText });
-      readSoon(b, b.versions[b.versions.length - 1]);
-      const r = startRun(b, user, prev.v + 1, run.oppSet);
+      const nv = pushVersion(b, 'optimize', { list: d.list, rows: d.rows, style: d.style, diff, base: base.v, from: { run: run.id, option: i }, note: 'Optimize, matchup swap: ' + swapText });
+      readSoon(b, nv);
+      const r = startRun(b, user, nv.v, run.oppSet);
       if (r.error) { o.status = 'writing'; return optimizeWrite(b, o.v, `I couldn't test the swap (${r.error}), so v${o.v} stands.`); }
-      opt.test = { v: prev.v + 1, run: r.run.id }; o.test = { v: prev.v + 1, run: r.run.id, swap: swapText };
-      optLine(b, 'matchups', `Testing the coach's swap for ${run.coach.weakness || 'the worst matchups'} as v${prev.v + 1}: ${swapText}.`);
+      opt.test = { v: nv.v, run: r.run.id }; o.test = { v: nv.v, run: r.run.id, swap: swapText };
+      optLine(b, 'matchups', `Testing the coach's swap for ${run.coach.weakness || 'the worst matchups'} as v${nv.v}: ${swapText}.`);
     } finally { optBusy.delete(b.id); }
     return;
   }
@@ -1056,11 +1074,14 @@ async function optimizeTick(b) {
 // the last step: say which version won, then the sideboard guide for it (the coach's sideboard mode)
 function optimizeWrite(b, v, line) {
   const o = b.optimize; o.final = v; optLine(b, 'writing', line);
+  // the end hands the choice back: nothing becomes the deck, and the deck's plan isn't replaced, until the player says
+  const cur = current(b).v, ready = v === cur ? `Done. v${v} is still your deck; nothing needed changing.` : `Done. v${v} is ready; v${cur} is still your deck. Make v${v} current, run v${o.from} to compare, or discard v${v}.`;
   const run = b.runs.find(r => r.v === v && runView(b, r).status === 'done');
-  if (!claude.available() || !run) { optLine(b, 'done', `Done. v${v} is the list to play.`); return; }
+  if (!claude.available() || !run) { optLine(b, 'done', ready); return; }
+  const keep = g => { if (v === current(b).v) b.guide = g; else o.guide = { ...g, v }; };
   usage.as({ who: b.owner, kind: 'coach-sideboard', brew: b.id }, () => coach.mode(b, coachRun(b, runView(b, run)), 'sideboard', {}))
-    .then(out => { b.guide = { rows: (out.rows || []).slice(0, 20), run: run.id, at: Date.now() }; optLine(b, 'done', `Done. v${v} is the list to play; its sideboard guide is on the Guide tab.`); })
-    .catch(e => optLine(b, 'done', `Done. v${v} is the list to play. The sideboard guide didn't write (${e.message}); ask for it from the Coach tab.`));
+    .then(out => { keep({ rows: (out.rows || []).slice(0, 20), run: run.id, at: Date.now() }); optLine(b, 'done', ready + ` v${v}'s sideboard plan is written and comes with it.`); })
+    .catch(e => optLine(b, 'done', ready + ` Its sideboard plan didn't write (${e.message}); ask the coach for one.`));
 }
 setInterval(() => { for (const b of brews) if (b.optimize && ['running', 'matchups'].includes(b.optimize.status)) optimizeTick(b).catch(e => console.error('optimize:', b.id, e.message)); }, 30e3);
 
@@ -1171,9 +1192,21 @@ setTimeout(warmNorms, 20e3); setInterval(warmNorms, 6 * 36e5);
 
 // every version's rows carry today's card facts (type, rarity, price, buy link) from the card cache, so a version
 // saved before they existed shows them and prices stay current
-const versionsView = b => (b.versions || []).map(v => { const o = b.optimize, mine = o && [o.from, o.v, o.test && o.test.v].includes(v.v);
-  return { ...v, rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })), ...(mine ? { optimize: { status: o.status, steps: o.steps, final: o.final || null } } : {}) }; });
-const brewView = b => (ensureChecks(b), { ...b, craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
+// each version's state, for the header line and the Versions ledger: a run in progress first, else its newest
+// finished result (a later stopped run doesn't hide it), else "stopped", else "not run yet". Weekly reruns don't count.
+const shortDay = t => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/New_York' });
+function stateOf(rvs, v) {
+  const mine = rvs.filter(x => x.v === v && !x.weekly);
+  const live = mine.find(r => ['preparing', 'queued', 'running'].includes(r.status)), done = mine.find(r => r.status === 'done' && r.score);
+  if (live && live.status === 'running') { const pct = live.total ? Math.round(100 * live.played / live.total) : 0; return { kind: 'running', run: live.id, pct, line: `running ${pct}%` }; }
+  if (live) return { kind: 'queued', run: live.id, line: live.queuePos > 0 ? `queued · ${live.queuePos} ahead` : 'queued' };
+  if (done) return { kind: 'done', run: done.id, p: done.score.p, line: `${Math.round(100 * done.score.p)}% on ${done.field && done.field.date ? shortDay(done.field.date) : shortDay(done.created)} field` };
+  if (mine.length) return { kind: 'stopped', run: mine[0].id, cause: mine[0].status, line: 'stopped' };
+  return { kind: 'none', line: 'not run yet' };
+}
+const versionsView = (b, rvs = []) => (b.versions || []).map(v => { const o = b.optimize, mine = o && [o.from, o.v, o.test && o.test.v].includes(v.v);
+  return { ...v, origin: v.origin || originOf(v), current: v.v === current(b).v, state: stateOf(rvs, v.v), rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })), ...(mine ? { optimize: { status: o.status, steps: o.steps, final: o.final || null } } : {}) }; });
+const brewView = b => { ensureChecks(b); const rvs = b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }); return { ...b, current: current(b).v, craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b, rvs), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: rvs, oppSets: oppSets(b), coachOn: claude.available() }; };
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -1212,14 +1245,14 @@ function coachWriteups(b) {
 // The run the coach talks about: the newest one with games, else a stand-in with none.
 function talkRun(b) {
   const r = b.runs.find(x => runView(b, x).played > 0);
-  return r ? runView(b, r) : { v: latest(b).v, opponents: [], status: 'not run yet', played: 0, total: 0, field: null };
+  return r ? runView(b, r) : { v: current(b).v, opponents: [], status: 'not run yet', played: 0, total: 0, field: null };
 }
 
 // The deck guide (Design's change 11): one read-only document per brew version, assembled from what the
 // coach modes and the run already wrote. A section nobody has asked for yet comes back null with the mode
 // that writes it in `missing`, so the page doubles as the prep checklist.
 function guideOf(b, vn, { since = null } = {}) {
-  const ver = b.versions.find(x => x.v === vn) || latest(b);
+  const ver = b.versions.find(x => x.v === vn) || current(b);
   const pick = b.runs.filter(r => r.v === ver.v).map(r => runView(b, r)).filter(r => r.played > 0);
   const rv = pick.find(r => r.score && r.field) || pick.find(r => r.score) || pick[0] || null;
   const said = (kind, opp) => [...(b.thread || [])].reverse().find(t => t.role === 'coach' && t.kind === kind && (opp === undefined || t.opponent === opp)) || null;
@@ -1291,7 +1324,7 @@ async function weeklyDue() {
       if (!planOfName(b.owner).features.weekly) continue;
       if (b.runs.some(r => r.weekly && Date.now() - r.created < WEEK)) continue; // one a week
       if (b.runs.some(r => ['preparing', 'queued', 'running'].includes(runView(b, r).status))) continue;
-      const v = latest(b);
+      const v = current(b);
       if (v.legal && !v.legal.ok) continue;                                    // rotated out: nothing to rerun
       const run = { id: crypto.randomBytes(4).toString('hex'), v: v.v, oppSet: last.oppSet, created: Date.now(), status: 'preparing', weekly: true };
       b.runs.unshift(run); saveBrews();
@@ -1559,7 +1592,7 @@ const server = http.createServer(async (req, res) => {
           if (had) { const nl = leaksIn(m.leaks); if (nl && (!had.leaks || nl.grade > (had.leaks.grade || 0))) { had.leaks = nl; out.leaks = (out.leaks || 0) + 1; } out.known++; continue; } // a newer grading replaces the old
           const cards = (m.playerCards || []).map(String).filter(n => !BASIC.test(n));
           let best = null, bs = 0;
-          for (const b of mine) { const names = new Set(latest(b).list.main.map(c => c.name)), share = cards.length ? cards.filter(n => names.has(n)).length / cards.length : 0; if (share > bs) { best = b; bs = share; } }
+          for (const b of mine) { const names = new Set(current(b).list.main.map(c => c.name)), share = cards.length ? cards.filter(n => names.has(n)).length / cards.length : 0; if (share > bs) { best = b; bs = share; } }
           if (!best || bs < 0.5) { out.unmatched.push(m.matchId); continue; }
           (best.realMatches = best.realMatches || []).push({ matchId: String(m.matchId).slice(0, 60), at: m.at || null, event: String(m.event || '').slice(0, 60), won: !!m.result.won,
             onThePlay: m.games && m.games[0] ? m.games[0].onThePlay : null, opponent: await archetypeOf((m.opponentCards || []).map(String), best.format), v: latest(best).v, games: (m.games || []).length, leaks: leaksIn(m.leaks) });
@@ -1574,7 +1607,7 @@ const server = http.createServer(async (req, res) => {
     const gm = req.method === 'GET' && p.match(/^\/api\/guide\/([a-f0-9]{16})$/);
     if (gm) {
       const b = brews.find(x => x.share && x.share.token === gm[1]); if (!b) return send(res, 404, { error: 'no such guide' });
-      const g = guideOf(b, b.share.v || latest(b).v); delete g.real; g.shared = true;
+      const g = guideOf(b, b.share.v || current(b).v); delete g.real; g.shared = true;
       return send(res, 200, g);
     }
     const user = await currentUser(req);
@@ -1692,11 +1725,11 @@ const server = http.createServer(async (req, res) => {
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/versions$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      const { list: given, note, from, swaps, run: runIt } = await readBody(req);
+      const { list: given, note, from, swaps, run: runIt, origin: asked } = await readBody(req);
       // change 20: { from, swaps: [{out, in}] } makes the list from version `from` (one copy out, one in, per swap)
       let list = given;
       if (!list && Array.isArray(swaps) && swaps.length) {
-        const base = b.versions.find(x => x.v === from) || latest(b), main = base.list.main.map(c => ({ ...c }));
+        const base = b.versions.find(x => x.v === from) || current(b), main = base.list.main.map(c => ({ ...c }));
         for (const sw of swaps.slice(0, 15)) {
           const o = main.find(c => c.name === sw.out); if (!o || !sw.in) return send(res, 400, { error: `${sw.out || 'a card'} isn't in v${base.v}.` });
           o.qty--; const i = main.find(c => c.name === sw.in); if (i) i.qty++; else main.push({ qty: 1, name: String(sw.in).slice(0, 80) });
@@ -1708,33 +1741,82 @@ const server = http.createServer(async (req, res) => {
       const d = await meta.describeDeck(deck, b.seats === 4 ? null : b.format);
       if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality), legality: d.legality });
       if ((d.format === 'commander') !== (b.seats === 4)) return send(res, 400, { error: b.seats === 4 ? 'This brew is a Commander deck; that list has no commander.' : "That's a Commander list. Paste it as a new deck instead." });
-      const prev = latest(b), diff = diffLists(prev.list, d.list);
+      const prev = b.versions.find(x => x.v === from) || current(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
-      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, ...(note && String(note).trim() ? { note: String(note).trim().slice(0, 500) } : {}) });
-      readSoon(b, b.versions[b.versions.length - 1]);
+      const origin = ['pasted', 'edited', 'owned'].includes(asked) ? asked : /^owned version/.test(String(note || '')) ? 'owned' : given ? 'pasted' : 'edited';
+      const nv = pushVersion(b, origin, { list: d.list, rows: d.rows, style: d.style, diff, base: prev.v, ...(note && String(note).trim() ? { note: String(note).trim().slice(0, 500) } : {}) });
+      readSoon(b, nv);
       if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
       saveBrews();
       await checkSoon(b);
-      if (runIt) { const r = startRun(b, user, latest(b).v, 'meta10'); if (r.error) return send(res, 200, { ...brewView(b), runError: r.error }); }
+      if (runIt) { const r = startRun(b, user, nv.v, 'meta10'); if (r.error) return send(res, 200, { ...brewView(b), runError: r.error }); }
+      return send(res, 200, brewView(b));
+    }
+    // ---- the deck is the player's choice (NOTE-TO-CODE-16OCT-STATE.md A-C, 16 Oct 2026) ----
+    // make a version the deck: runs, the plan, the guide and the coach read it from now on
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/current$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const { v } = await readBody(req); if (!b.versions.some(x => x.v === v)) return send(res, 404, { error: `There's no v${v}.` });
+      b.current = v;
+      if (b.optimize && b.optimize.guide && b.optimize.guide.v === v) { const { v: _v, ...g } = b.optimize.guide; b.guide = g; delete b.optimize.guide; }   // Optimize's plan for v comes with it
+      saveBrews(); return send(res, 200, brewView(b));
+    }
+    // discard a version nobody chose (an Optimize or coach proposal, or any version but the current one): its runs go with it
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/versions\/(\d+)$/)) && req.method === 'DELETE') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const v = +m[2], ver = b.versions.find(x => x.v === v); if (!ver) return send(res, 404, { error: `There's no v${v}.` });
+      if (v === current(b).v) return send(res, 400, { error: `v${v} is your deck. Make another version current first.` });
+      if (b.optimize && [b.optimize.v, b.optimize.test && b.optimize.test.v].includes(v) && !['done', 'failed', 'cancelled'].includes(b.optimize.status)) return send(res, 409, { error: `Optimize is still working on v${v}. Cancel it first.` });
+      for (const r of b.runs.filter(r => r.v === v)) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); }
+      b.maxV = Math.max(b.maxV || 0, ...b.versions.map(x => x.v));   // a discarded number is never reused
+      b.runs = b.runs.filter(r => r.v !== v); b.versions = b.versions.filter(x => x.v !== v); saveBrews();
+      return send(res, 200, brewView(b));
+    }
+    // what a run will do before it's queued: "Run v3 · 200 games · ~30 min · Oct 16 field · 1 run ahead"
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/estimate$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const vq = +u.searchParams.get('v'), v = b.versions.some(x => x.v === vq) ? vq : current(b).v;
+      const set = oppSets(b).find(x => x.id === (u.searchParams.get('oppSet') || 'meta10')) || oppSets(b)[0];
+      const ahead = queue.filter(j => j.brew && !j.low && ['queued', 'running'].includes(j.status)).length;
+      return send(res, 200, { v, current: v === current(b).v, oppSet: set.id, field: set.title, games: set.n * GAMES * (b.seats === 2 && sideboard.available() ? 2 : 1), time: set.time, credits: set.credits, ahead,
+        line: `Run v${v} · ${set.n * GAMES * (b.seats === 2 && sideboard.available() ? 2 : 1)} games · ${set.time} · ${set.title.replace(/^The field · /, '')}${ahead ? ` · ${ahead} run${ahead === 1 ? '' : 's'} ahead` : ''}` });
+    }
+    // Optimize, before it starts: what it will change and how long it takes. Nothing is saved.
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/optimize\/preview$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (b.seats !== 2) return send(res, 400, { error: 'Optimize is for 60-card decks.' });
+      const field = fieldLists(b.format); if (!field) return send(res, 400, { error: `No ${b.format} field yet to optimize against.` });
+      const fq = +u.searchParams.get('from'), ver = b.versions.find(x => x.v === fq) || current(b);
+      const budget = settingsOf(b).budget, st = await shell.structure(ver.list, { field, format: b.format, paper: collection.get(b.owner).paper || null, budget });
+      const set = oppSets(b).find(x => x.id === 'meta10'), next = Math.max(b.maxV || 0, ...b.versions.map(x => x.v)) + 1, changes = !!(st && st.swaps.length);
+      return send(res, 200, { from: ver.v, saves: changes ? next : null, structure: st ? st.lines : [], usd: st ? st.usd || 0 : 0, cards: (budget && budget.mode) || 'any', time: set ? set.time : '',
+        steps: [changes ? `Structure: save the fixes as v${next}; v${ver.v} stays your deck` : `Structure: v${ver.v} needs no structural change`, `Run v${changes ? next : ver.v} against this week's top 10${set ? ' (' + set.time + ')' : ''}`, 'Test the coach\'s best swap for the worst matchup', 'Write it up'],
+        after: changes ? `Then you choose: make v${next} your deck, run v${ver.v} to compare, or discard v${next}.` : '' });
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/optimize\/cancel$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const o = b.optimize; if (!o || ['done', 'failed', 'cancelled'].includes(o.status)) return send(res, 400, { error: 'Optimize isn\'t working on this deck.' });
+      for (const id of [o.run, o.test && o.test.run].filter(Boolean)) { const r = b.runs.find(x => x.id === id); const j = r && r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); if (r) r.cancelled = true; }
+      optLine(b, 'cancelled', 'Cancelled. Your deck is unchanged.'); saveBrews();
       return send(res, 200, brewView(b));
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/optimize$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       if (b.seats !== 2) return send(res, 400, { error: 'Optimize is for 60-card decks.' });
-      if (b.optimize && !['done', 'failed'].includes(b.optimize.status)) return send(res, 409, { error: 'Optimize is already working on this deck.' });
+      if (b.optimize && !['done', 'failed', 'cancelled'].includes(b.optimize.status)) return send(res, 409, { error: 'Optimize is already working on this deck.' });
       const field = fieldLists(b.format); if (!field) return send(res, 400, { error: `No ${b.format} field yet to optimize against.` });
-      const { from } = await readBody(req), ver = b.versions.find(x => x.v === from) || latest(b);
+      const { from } = await readBody(req), ver = b.versions.find(x => x.v === from) || current(b);
       const paper = collection.get(b.owner).paper || null, budget = settingsOf(b).budget;
       const st = await shell.structure(ver.list, { field, format: b.format, paper, budget });
       if (!st) return send(res, 400, { error: 'That list has nothing to check against yet.' });
       b.optimize = { status: 'structure', from: ver.v, v: ver.v, steps: [], at: Date.now(), who: { name: user.name, accountId: user.accountId, plan: user.plan, source: user.source, isAdmin: user.isAdmin } };
       if (st.swaps.length) {
-        const d = await meta.describeDeck(st.list, b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
+        const d = await meta.describeDeck(st.list, b.format), diff = diffLists(ver.list, d.list);
         if (diff.length && !(d.legality && !d.legality.ok)) {
           const note = 'Optimize, structure: ' + st.lines.join('; ');
-          b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, note });
-          readSoon(b, b.versions[b.versions.length - 1]); b.optimize.v = prev.v + 1;
-          optLine(b, 'structure', `Structure: ${st.lines.join('; ')}${st.usd ? ` (about $${st.usd.toFixed(2)} of cards you don't own)` : ''}. Saved as v${prev.v + 1}.`);
+          const nv = pushVersion(b, 'optimize', { list: d.list, rows: d.rows, style: d.style, diff, base: ver.v, note });
+          readSoon(b, nv); b.optimize.v = nv.v;
+          optLine(b, 'structure', `Structure: ${st.lines.join('; ')}${st.usd ? ` (about $${st.usd.toFixed(2)} of cards you don't own)` : ''}. Saved as v${nv.v}; v${ver.v} stays your deck until you choose.`);
         } else optLine(b, 'structure', `Structure: v${ver.v} already matches its shell, nothing to change.`);
       } else optLine(b, 'structure', `Structure: ${st.check.archetype ? `v${ver.v} already matches ${st.check.archetype}` : `v${ver.v} has no meta shell to match, so only its mana was checked, and it holds`}. Nothing to change.`);
       const r = startRun(b, user, b.optimize.v, 'meta10');
@@ -1802,7 +1884,7 @@ const server = http.createServer(async (req, res) => {
       const parsed = text ? meta.parseList(String(text)) : list;
       const deck = { main: parsed?.main || [], side: parsed?.side || [], commander: parsed?.commander || [] };
       if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
-      const d = await meta.describeDeck(deck, b.seats === 4 ? null : b.format), cur = latest(b), diff = diffLists(cur.list, d.list);
+      const d = await meta.describeDeck(deck, b.seats === 4 ? null : b.format), cur = current(b), diff = diffLists(cur.list, d.list);
       const count = l => (l || []).reduce((t, c) => t + c.qty, 0), size = count(d.list.main);
       const tally = l => { const t = new Map(); for (const c of l || []) t.set(c.name, (t.get(c.name) || 0) + c.qty); return t; }, curMain = tally(cur.list.main), newMain = tally(d.list.main);
       const shared = [...newMain].reduce((t, [n, q]) => t + Math.min(q, curMain.get(n) || 0), 0);
@@ -1869,16 +1951,16 @@ const server = http.createServer(async (req, res) => {
       const base = b.versions.find(x => x.v === run.v), main = new Map(base.list.main.map(c => [c.name, c.qty]));
       o.out.forEach(c => main.set(c.name, (main.get(c.name) || 0) - c.qty)); o.in.forEach(c => main.set(c.name, (main.get(c.name) || 0) + c.qty));
       const list = { ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) };
-      const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
+      const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format), diff = diffLists(base.list, d.list);
       if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality) });
       if (!diff.length) return send(res, 400, { error: 'that is the current list already' });
-      const nr = { id: crypto.randomBytes(4).toString('hex'), v: prev.v + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
+      const nr = { id: crypto.randomBytes(4).toString('hex'), v: Math.max(b.maxV || 0, ...b.versions.map(x => x.v)) + 1, oppSet: run.oppSet, created: Date.now(), status: 'preparing' };
       const set = oppSets(b).find(x => x.id === run.oppSet);
       const paid = A.reserve(user.accountId, { ref: nr.id, credits: set ? set.credits : 0, note: `${b.name} v${nr.v} · testing a swap` });
       if (!paid.ok) return send(res, 402, { error: `This run needs ${paid.need} credits; you have ${paid.have}.` });
-      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i } });
-      readSoon(b, b.versions[b.versions.length - 1]);
-      o.test = { v: nr.v, run: nr.id };
+      const nv = pushVersion(b, 'coach', { list: d.list, rows: d.rows, style: d.style, diff, base: base.v, from: { run: run.id, option: i } });
+      readSoon(b, nv);
+      o.test = { v: nv.v, run: nr.id };
       b.runs.unshift(nr); saveBrews(); usage.mark(user.name, 'run');
       prepareRun(b, nr, user);
       return send(res, 200, brewView(b));
@@ -1898,7 +1980,7 @@ const server = http.createServer(async (req, res) => {
       if (cover?.upload) {
         try { b.coverUrl = saveCover(b.id, cover.upload) + '?v=' + Date.now(); b.coverType = coverTypes[b.id]; } catch (e) { return send(res, 400, { error: e.message }); }
       } else if (cover?.card) {
-        if (!(latest(b).rows || []).some(r => r.name === cover.card && !r.land)) return send(res, 400, { error: 'that card isn\'t in the list' });
+        if (!(current(b).rows || []).some(r => r.name === cover.card && !r.land)) return send(res, 400, { error: 'that card isn\'t in the list' });
         b.coverCard = cover.card;
         if (b.coverUrl) { b.coverUrl = null; delete b.coverType; try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
       }
@@ -1908,8 +1990,8 @@ const server = http.createServer(async (req, res) => {
     if ((m = p.match(/^\/api\/brews\/(\w+)\/guide$/)) && req.method === 'GET') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const v = parseInt(u.searchParams.get('v'), 10);
-      const g = guideOf(b, Number.isFinite(v) ? v : latest(b).v, { since: b.guideSeenAt || 0 });
-      if (!Number.isFinite(v) || v === latest(b).v) { b.guideSeenAt = Date.now(); saveBrews(); }
+      const g = guideOf(b, Number.isFinite(v) ? v : current(b).v, { since: b.guideSeenAt || 0 });
+      if (!Number.isFinite(v) || v === current(b).v) { b.guideSeenAt = Date.now(); saveBrews(); }
       return send(res, 200, { ...g, share: b.share ? { token: b.share.token, v: b.share.v || null } : null });
     }
     // a match logged by hand (Design's change 9: iPad and paper games the Arena log can't see), pooled with the
@@ -1928,7 +2010,7 @@ const server = http.createServer(async (req, res) => {
       const gs = Array.isArray(games) ? games.slice(0, 3).filter(g => g && typeof g.won === 'boolean').map(g => ({ won: g.won, onPlay: g.onPlay === true ? true : g.onPlay === false ? false : null, ...([5, 6, 7].includes(+g.mull) ? { mull: +g.mull } : {}) })) : null;
       const ms = Array.isArray(mulls) ? mulls.slice(0, 3).map(Number).filter(x => x >= 0 && x <= 7) : null;
       (b.realMatches = b.realMatches || []).push({ matchId, at: when, event: src, won, onThePlay: onPlay === true ? 'player' : onPlay === false ? 'opponent' : null,
-        opponent: opp, v: latest(b).v, games: gs && gs.length ? gs.length : null, ...(gs && gs.length ? { gameList: gs } : {}), ...(ms && ms.length ? { mulls: ms } : {}), source: 'manual' });
+        opponent: opp, v: current(b).v, games: gs && gs.length ? gs.length : null, ...(gs && gs.length ? { gameList: gs } : {}), ...(ms && ms.length ? { mulls: ms } : {}), source: 'manual' });
       saveBrews();
       return send(res, 200, brewView(b));
     }
