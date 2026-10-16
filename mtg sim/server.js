@@ -915,6 +915,29 @@ async function archetypeOf(cards, format = 'standard') {
   } catch { /* the label falls back */ }
   return 'Unknown';
 }
+// A new brew from a list: { b } or { error, status }. The paste box and "Start this brew" (change 22) come here.
+async function createBrew(user, { list, name, note, cover, format, settings } = {}) {
+  const cap = A.planOf(user.plan).features.brews;
+  if (!user.isAdmin && cap != null && brews.filter(x => x.owner === user.name).length >= cap) return { status: 403, error: `The free plan keeps ${cap === 1 ? 'one deck' : cap + ' decks'}. Paste a new version of it, or delete it to start another.` };
+  const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
+  if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return { status: 400, error: 'that list has no cards' };
+  const fmt = FORMATS.includes(String(format || '').toLowerCase()) ? String(format).toLowerCase() : 'standard';
+  const d = await meta.describeDeck(deck, fmt);
+  if (d.legality && !d.legality.ok) return { status: 400, error: meta.legalityError(d.legality), legality: d.legality };
+  const now = Date.now(), id = crypto.randomBytes(5).toString('hex');
+  // the cover: a card from the list (by name), or an uploaded image kept beside the data
+  const pickCard = cover?.card && d.rows.some(r => r.name === cover.card && !r.land) ? cover.card : d.coverCard;
+  let coverUrl = null;
+  if (cover?.upload) { try { coverUrl = saveCover(id, cover.upload); } catch (e) { return { status: 400, error: e.message }; } }
+  const b = { id, owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').trim().slice(0, 60) || 'Untitled', format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
+    coverCard: pickCard, coverUrl, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
+    versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [], ...(settings ? { settings: cleanSettings({}, settings) } : {}) };
+  setImmediate(() => readSoon(b, b.versions[0]));
+  if (coverTypes[id]) b.coverType = coverTypes[id];
+  brews.unshift(b); saveBrews(); await checkSoon(b);
+  return { b };
+}
+
 // Start a run of version v against an opponent set: { run } or { error, status }. The Run button, a new version
 // saved with run: true (change 20) and Optimize (change 24) all come through here.
 function startRun(b, user, vIn, oppSet) {
@@ -1049,6 +1072,16 @@ function craftCollect(b) {
 }
 setInterval(() => { for (const b of brews) { craftStart(b).catch(e => console.error('craft:', b.id, e.message)); craftCollect(b); } }, 60e3);
 
+const colBrews = new Map(); // owner -> { key, data }
+async function collectionBrews(owner, format = 'standard') {
+  const paper = collection.get(owner).paper, field = fieldLists(format); if (!paper || !field) return null;
+  const key = paper.at + ':' + field.map(d => d.name).sort().join('|'), c = colBrews.get(owner);
+  if (c && c.key === key) return c.data;
+  const r = await shell.fromCollection(paper, field, format);
+  const data = { field: `${format[0].toUpperCase() + format.slice(1)} field · ${field.length} decks`, at: Date.now(), note: r.note, rows: r.rows };
+  colBrews.set(owner, { key, data }); return data;
+}
+
 // The field, by what the paper collection can build (change 20 §5): each field deck's share owned and the price of
 // the rest, with the missing cards for a buy link (change 23).
 async function fieldCraft(owner, format = 'standard') {
@@ -1061,7 +1094,7 @@ async function fieldCraft(owner, format = 'standard') {
     for (const c of d.main) { size += c.qty; const have = BASICS.test(c.name) ? c.qty : Math.min(c.qty, paper.cards[c.name] || 0); owned += have; if (have < c.qty) { missing.push({ qty: c.qty - have, name: c.name }); usd += (c.qty - have) * (meta.cardFacts(c.name).price || 0); } }
     return { name: d.name, metaPct: shares[d.name] ?? null, owned, size, usd: +usd.toFixed(2), missing };
   });
-  return { paper: { field: `the ${format} field, ${field.length} decks`, at: Date.now(), rows } };
+  return { paper: { field: `${format[0].toUpperCase() + format.slice(1)} field · ${field.length} decks`, at: Date.now(), rows } };
 }
 
 // The brew check (change 24, shell.js) on each of a brew's last three versions: worked out in the background and
@@ -1600,26 +1633,8 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length, bo3: sideboard.available(), limits: limitsFor(user) });
     }
     if (p === '/api/brews' && req.method === 'POST') {
-      const { list, name, note, cover, format } = await readBody(req);
-      const cap = A.planOf(user.plan).features.brews;
-      if (!user.isAdmin && cap != null && brews.filter(x => x.owner === user.name).length >= cap) return send(res, 403, { error: `The free plan keeps ${cap === 1 ? 'one deck' : cap + ' decks'}. Paste a new version of it, or delete it to start another.` });
-      const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
-      if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
-      const fmt = FORMATS.includes(String(format || '').toLowerCase()) ? String(format).toLowerCase() : 'standard';
-      const d = await meta.describeDeck(deck, fmt);
-      if (d.legality && !d.legality.ok) return send(res, 400, { error: meta.legalityError(d.legality), legality: d.legality });
-      const now = Date.now(), id = crypto.randomBytes(5).toString('hex');
-      // the cover: a card from the list (by name), or an uploaded image kept beside the data
-      const pickCard = cover?.card && d.rows.some(r => r.name === cover.card && !r.land) ? cover.card : d.coverCard;
-      let coverUrl = null;
-      if (cover?.upload) { try { coverUrl = saveCover(id, cover.upload); } catch (e) { return send(res, 400, { error: e.message }); } }
-      const b = { id, owner: user.name, name: String(name || d.coverCard.split(',')[0] || 'Untitled').trim().slice(0, 60) || 'Untitled', format: d.format, seats: d.format === 'commander' ? 4 : 2, created: now,
-        coverCard: pickCard, coverUrl, colors: d.colors, notes: note && String(note).trim() ? [{ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) }] : [],
-        versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [] };
-      setImmediate(() => readSoon(b, b.versions[0]));
-      if (coverTypes[id]) b.coverType = coverTypes[id];
-      brews.unshift(b); saveBrews(); await checkSoon(b);
-      return send(res, 200, brewView(b));
+      const r = await createBrew(user, await readBody(req));
+      return r.error ? send(res, r.status, { error: r.error, ...(r.legality ? { legality: r.legality } : {}) }) : send(res, 200, brewView(r.b));
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/versions$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
@@ -1685,6 +1700,22 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/collection' && req.method === 'GET') {
       const c = collection.get(user.name);
       return c.paper || c.arena ? send(res, 200, c) : send(res, 404, { error: 'no collection yet' });
+    }
+    // brew from your collection (change 22 §C): suggestions, cached per collection and field; a started one links to its brew
+    if (p === '/api/collection/brews' && req.method === 'GET') {
+      const r = await collectionBrews(user.name); if (!r) return send(res, 404, { error: 'no paper collection or no field yet' });
+      const mine = brews.filter(b => b.owner === user.name && b.fromRow);
+      return send(res, 200, { ...r, rows: r.rows.map(x => { const b = mine.find(y => y.fromRow === x.id), run = b && b.runs.find(q => runView(b, q).status === 'done'), sc = run && runView(b, run).score;
+        return { ...x, list: undefined, brew: b ? b.id : null, p: sc ? sc.p : null, lo: sc ? sc.lo : null, hi: sc ? sc.hi : null }; }) });
+    }
+    if ((m = p.match(/^\/api\/collection\/brews\/([\w-]+)\/start$/)) && req.method === 'POST') {
+      const r = await collectionBrews(user.name), row = r && r.rows.find(x => x.id === m[1]);
+      if (!row) return send(res, 404, { error: 'That suggestion is gone; the field or your collection changed.' });
+      const made = await createBrew(user, { list: row.list, name: row.name, format: 'standard', note: 'Brewed from your collection: ' + row.why, settings: { budget: { mode: 'owned' } } });
+      if (made.error) return send(res, made.status, { error: made.error });
+      made.b.fromRow = row.id; saveBrews();
+      const run = startRun(made.b, user, 1, 'meta10');
+      return send(res, 200, { ...brewView(made.b), ...(run.error ? { runError: run.error } : {}) });
     }
     if (p === '/api/field/craft' && req.method === 'GET') {
       const fc = await fieldCraft(user.name, FORMATS.includes(u.searchParams.get('format')) ? u.searchParams.get('format') : 'standard');

@@ -211,4 +211,63 @@ async function structure(list, { field, format = 'standard', paper = null, budge
   return { list: { ...list, main: main.filter(x => x.qty > 0) }, swaps, lines, usd: +usd.toFixed(2), check: c };
 }
 
-module.exports = { norms, check, structure, roleOf, shapeOf };
+// Brew from your collection (change 22 §C): the field's shells filled from the paper shelf, and up to three brews
+// built around the strongest cards it holds. The sim can't invent a deck; it fills shells and says what's missing.
+// Each row: { id, name, kind: 'meta'|'brew', why, owned, size, core, usd, missing, list }; nothing is run here.
+async function fromCollection(paper, field, format = 'standard') {
+  const owned = (paper && paper.cards) || {}; if (!field || !field.length) return [];
+  const N = await norms(field, format);
+  const find = await meta.cards([...new Set([...Object.keys(owned), ...field.flatMap(d => d.main.map(c => c.name)), ...Object.values(N).flatMap(a => Object.keys(a.rate))])]);
+  const kind = k => (String(faces(k)[0]?.type_line || k?.type_line || '').match(/Creature|Planeswalker|Battle|Instant|Sorcery|Enchantment|Artifact|Land/) || [''])[0];
+  const colors = k => new Set(k?.colors || faces(k)[0]?.colors || []);
+  const slug = x => String(x).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  // fill a shell's list from the collection: core cards stay; a flex card you don't own becomes the owned card the
+  // shell plays most of the same type, sharing a colour, within one mana value (else it stays, as a card to buy)
+  const fill = (name, force = null) => {
+    const A = N[name], core = new Set(A.core.map(c => c.name)), used = new Map(), main = [];
+    const left = n => (owned[n] || 0) - (used.get(n) || 0), take = (n, q) => { used.set(n, (used.get(n) || 0) + q); const x = main.find(c => c.name === n); if (x) x.qty += q; else main.push({ qty: q, name: n }); };
+    const tmpl = A.main.map(c => ({ ...c, name: meta.forgeName(find(c.name) || { name: c.name }) }));
+    const deckCols = new Set(tmpl.flatMap(c => meta.isLand(find(c.name)) ? [] : [...colors(find(c.name))])); // a substitute stays inside the shell's colours
+    if (force) { const f = tmpl.find(c => c.name === force); if (!f) { const out = tmpl.filter(c => !core.has(c.name) && !meta.isLand(find(c.name)) && kind(find(c.name)) === kind(find(force))).sort((a, b) => (A.rate[a.name] || 0) - (A.rate[b.name] || 0))[0] || tmpl.filter(c => !core.has(c.name) && !meta.isLand(find(c.name)))[0]; if (out) { const q = Math.min(out.qty, owned[force] || 0); out.qty -= q; take(force, q); } } }
+    for (const c of tmpl) {
+      if (c.qty <= 0) continue;
+      if (core.has(c.name) || BASIC.test(c.name) || left(c.name) >= c.qty) { take(c.name, c.qty); continue; }
+      let q = c.qty; const mine = Math.max(0, left(c.name)); if (mine) { take(c.name, mine); q -= mine; }
+      const k = find(c.name), subs = meta.isLand(k) ? [] : Object.keys(owned).filter(n => n !== c.name && left(n) > 0 && !BASIC.test(n)).map(n => [n, find(n)])
+        .filter(([, x]) => x && kind(x) === kind(k) && Math.abs((x.cmc || 0) - (k?.cmc || 0)) <= 1 && [...colors(x)].every(col => deckCols.has(col)) && ['legal', 'restricted'].includes(x.legalities?.[format]))
+        .sort((a, b) => (A.rate[b[0]] || 0) - (A.rate[a[0]] || 0));
+      for (const [n] of subs) { if (q <= 0) break; const t = Math.min(q, left(n)); take(n, t); q -= t; }
+      if (q > 0) take(c.name, q);
+    }
+    let have = 0, size = 0, usd = 0; const missing = [];
+    for (const c of main) { size += c.qty; const h = BASIC.test(c.name) ? c.qty : Math.min(c.qty, owned[c.name] || 0); have += h; if (h < c.qty) { missing.push({ qty: c.qty - h, name: c.name }); usd += (c.qty - h) * (meta.cardFacts(c.name).price || 0); } }
+    const want = A.core.reduce((t, c) => t + c.copies, 0), gotCore = A.core.reduce((t, c) => t + Math.min(c.copies, owned[c.name] || 0), 0);
+    return { main, owned: have, size, usd: +usd.toFixed(2), missing, core: want ? Math.round(gotCore / want * 100) : 0 };
+  };
+  const rows = [];
+  for (const d of field) { const f = fill(d.name); if (f.core >= 60) rows.push({ id: 'meta-' + slug(d.name), name: d.name, kind: 'meta', why: `${f.owned} of ${f.size} cards you own, ${f.core}% of its core`, ...f, list: { main: f.main, side: [] } }); }
+  // the strongest owned cards: those the field's shells play most (4+ copies owned, 2+ for a planeswalker), each in
+  // the shell that plays it most, when that shell isn't already a row
+  const strong = Object.entries(owned).filter(([n, q]) => { const k = find(n); return k && !BASIC.test(n) && !meta.isLand(k) && q >= (/Planeswalker/.test(kind(k)) ? 2 : 4); })
+    .map(([n]) => { let best = null, r = 0; for (const [a, A] of Object.entries(N)) if ((A.rate[n] || 0) > r) { r = A.rate[n]; best = a; } return { n, best, r }; })
+    .filter(x => x.best && x.r >= 0.3).sort((a, b) => b.r - a.r);
+  for (const x of strong) {
+    if (rows.filter(r => r.kind === 'brew').length >= 3) break;
+    if (rows.some(r => r.name === x.best || r.name.startsWith(x.best + ' with'))) continue;
+    const f = fill(x.best, x.n); if (f.owned < f.size / 2) continue;
+    const ownedTop = f.main.filter(c => !BASIC.test(c.name) && (owned[c.name] || 0) >= c.qty).sort((a, b) => b.qty - a.qty).slice(0, 3).map(c => `${c.qty} ${c.name}`);
+    rows.push({ id: 'brew-' + slug(x.best + '-' + x.n), name: `${x.best} with ${x.n.split(',')[0]}`, kind: 'brew', why: `${ownedTop.join(', ')} you own; ${Math.round(x.r * 100)}% of ${x.best} lists play ${x.n.split(',')[0]}`, ...f, list: { main: f.main, side: [] } });
+  }
+  // nothing close: say so, and offer the three cheapest shells to finish
+  let note = null;
+  if (!rows.length) {
+    const all = field.map(d => ({ d, f: fill(d.name) })).sort((a, b) => a.f.usd - b.f.usd);
+    note = `Your collection carries no shell above ${Math.max(0, ...all.map(x => x.f.core))}% of its core. The cheapest to finish:`;
+    for (const { d, f } of all.slice(0, 3)) rows.push({ id: 'meta-' + slug(d.name), name: d.name, kind: 'meta', far: true, why: `you own ${f.owned} of ${f.size}; about $${Math.round(f.usd)} to finish`, ...f, list: { main: f.main, side: [] } });
+  }
+  rows.forEach(r => { delete r.main; });
+  rows.sort((a, b) => (a.kind === 'meta') !== (b.kind === 'meta') ? (a.kind === 'meta' ? -1 : 1) : a.usd - b.usd || b.core - a.core);
+  return { rows, note };
+}
+
+module.exports = { norms, check, structure, fromCollection, roleOf, shapeOf };
