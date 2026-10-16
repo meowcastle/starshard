@@ -18,6 +18,7 @@ const weekly = require('./weekly');
 const accounts = require('./accounts');
 const mail = require('./mail');
 const collection = require('./collection');
+const shell = require('./shell');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -37,7 +38,9 @@ function cleanSettings(x = {}, prev = {}) {
     },
     keep: x.keep !== undefined ? cardNames(x.keep) : prev.keep || [],
     never: x.never !== undefined ? cardNames(x.never) : prev.never || [],
-    budget: x.budget !== undefined ? (x.budget && typeof x.budget === 'object' ? { rare: Math.max(0, +x.budget.rare || 0), mythic: Math.max(0, +x.budget.mythic || 0), paper: x.budget.paper != null ? Math.max(0, +x.budget.paper || 0) : null } : null) : prev.budget || null,
+    budget: x.budget !== undefined ? (x.budget && typeof x.budget === 'object' ? { rare: Math.max(0, +x.budget.rare || 0), mythic: Math.max(0, +x.budget.mythic || 0), paper: x.budget.paper != null ? Math.max(0, +x.budget.paper || 0) : null,
+      // the Cards dial (change 22): owned only, up to $usd, or anything
+      mode: ['owned', 'usd', 'any'].includes(x.budget.mode) ? x.budget.mode : 'any', usd: x.budget.mode === 'usd' ? Math.max(0, +x.budget.usd || 0) : null } : null) : prev.budget || null,
     level: ['learning', 'competitive', 'grinder'].includes(x.level) ? x.level : prev.level || 'competitive',
   };
   return out;
@@ -911,10 +914,58 @@ async function archetypeOf(cards, format = 'standard') {
   } catch { /* the label falls back */ }
   return 'Unknown';
 }
+// Start a run of version v against an opponent set: { run } or { error, status }. The Run button, a new version
+// saved with run: true (change 20) and Optimize (change 24) all come through here.
+function startRun(b, user, vIn, oppSet) {
+  const set = oppSets(b).find(s => s.id === oppSet);
+  if (!set || !set.available) return { status: 400, error: set ? set.detail : 'pick who it should play' };
+  const v = b.versions.some(x => x.v === vIn) ? vIn : latest(b).v;
+  const vl = (b.versions.find(x => x.v === v) || {}).legal;
+  if (vl && !vl.ok) return { status: 400, error: `v${v} is no longer ${b.format}-legal (${[...vl.illegal.map(x => x.name), ...vl.unknown].join(', ')}). Paste a new version without ${vl.illegal.length + vl.unknown.length === 1 ? 'it' : 'them'}; v${v}'s results stay.` };
+  // a run is quiet while it reads the field, so a second click would start an identical one
+  const dup = b.runs.find(r => r.v === v && r.oppSet === set.id && ['preparing', 'queued', 'running'].includes(runView(b, r).status));
+  if (dup) return { status: 409, error: `v${v} is already running against that field. Cancel it first if you want to start over.` };
+  const no = refusal(user, 'run'); if (no) return { status: 429, error: no };
+  const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
+  const paid = A.reserve(user.accountId, { ref: run.id, credits: set.credits || 0, note: `${b.name} v${v} · ${set.title}` });
+  if (!paid.ok) return { status: 402, error: `This run needs ${paid.need} credits; you have ${paid.have}.` };
+  b.runs.unshift(run); saveBrews(); usage.mark(user.name, 'run');
+  prepareRun(b, run, user);
+  return { run };
+}
+
+// The brew check (change 24, shell.js) on each of a brew's last three versions: worked out in the background and
+// kept on the version, keyed by the field, the paper collection and the Cards dial, so it is redone when any moves.
+// Constructed brews in a format with a field only.
+const checking = new Set();
+function ensureChecks(b) {
+  const started = [];
+  if (b.seats !== 2) return Promise.resolve();
+  const field = fieldLists(b.format); if (!field) return Promise.resolve();
+  const paper = collection.get(b.owner).paper || null, budget = settingsOf(b).budget;
+  const key = crypto.createHash('sha1').update(JSON.stringify([field.map(d => d.name).sort(), paper ? paper.at : 0, budget ? [budget.mode, budget.usd] : null])).digest('hex').slice(0, 12);
+  for (const ver of b.versions.slice(-3)) {
+    const id = b.id + ':' + ver.v;
+    if ((ver.check && ver.check.key === key) || checking.has(id)) continue;
+    checking.add(id);
+    const illegal = (ver.rows || []).filter(r => r.legal === false && r.section === 'main').map(r => ({ name: r.name }));
+    started.push(shell.check(ver.list, { field, format: b.format, legality: { ok: !illegal.length, illegal }, paper, budget })
+      .then(c => { if (c) { ver.check = { ...c, key }; saveBrews(); } })
+      .catch(e => console.error('check:', b.id, ver.v, e.message))
+      .finally(() => checking.delete(id)));
+  }
+  return Promise.all(started);
+}
+// a new list's check is the first thing the page shows: wait for it briefly (the norms are kept warm)
+const checkSoon = b => Promise.race([ensureChecks(b), new Promise(ok => setTimeout(ok, 1500))]);
+// keep the Standard norms warm: at boot and every six hours (realdata's files are cached on disk)
+const warmNorms = () => { const f = fieldLists('standard'); if (f) shell.norms(f, 'standard', REAL_DAYS).catch(e => console.error('norms:', e.message)); };
+setTimeout(warmNorms, 20e3); setInterval(warmNorms, 6 * 36e5);
+
 // every version's rows carry today's card facts (type, rarity, price, buy link) from the card cache, so a version
 // saved before they existed shows them and prices stay current
 const versionsView = b => (b.versions || []).map(v => ({ ...v, rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })) }));
-const brewView = b => ({ ...b, versions: versionsView(b), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
+const brewView = b => (ensureChecks(b), { ...b, versions: versionsView(b), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -1436,12 +1487,22 @@ const server = http.createServer(async (req, res) => {
         versions: [{ v: 1, created: now, list: d.list, rows: d.rows, style: d.style }], runs: [] };
       setImmediate(() => readSoon(b, b.versions[0]));
       if (coverTypes[id]) b.coverType = coverTypes[id];
-      brews.unshift(b); saveBrews();
+      brews.unshift(b); saveBrews(); await checkSoon(b);
       return send(res, 200, brewView(b));
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/versions$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      const { list, note } = await readBody(req);
+      const { list: given, note, from, swaps, run: runIt } = await readBody(req);
+      // change 20: { from, swaps: [{out, in}] } makes the list from version `from` (one copy out, one in, per swap)
+      let list = given;
+      if (!list && Array.isArray(swaps) && swaps.length) {
+        const base = b.versions.find(x => x.v === from) || latest(b), main = base.list.main.map(c => ({ ...c }));
+        for (const sw of swaps.slice(0, 15)) {
+          const o = main.find(c => c.name === sw.out); if (!o || !sw.in) return send(res, 400, { error: `${sw.out || 'a card'} isn't in v${base.v}.` });
+          o.qty--; const i = main.find(c => c.name === sw.in); if (i) i.qty++; else main.push({ qty: 1, name: String(sw.in).slice(0, 80) });
+        }
+        list = { ...base.list, main: main.filter(c => c.qty > 0) };
+      }
       const deck = { main: list?.main || [], side: list?.side || [], commander: list?.commander || [] };
       if (!validDeck(deck.main.length ? deck : { ...deck, main: deck.commander })) return send(res, 400, { error: 'that list has no cards' });
       const d = await meta.describeDeck(deck, b.seats === 4 ? null : b.format);
@@ -1453,26 +1514,15 @@ const server = http.createServer(async (req, res) => {
       readSoon(b, b.versions[b.versions.length - 1]);
       if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
       saveBrews();
+      await checkSoon(b);
+      if (runIt) { const r = startRun(b, user, latest(b).v, 'meta10'); if (r.error) return send(res, 200, { ...brewView(b), runError: r.error }); }
       return send(res, 200, brewView(b));
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/run$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const body = await readBody(req);
-      const set = oppSets(b).find(s => s.id === body.oppSet);
-      if (!set || !set.available) return send(res, 400, { error: set ? set.detail : 'pick who it should play' });
-      const v = b.versions.some(x => x.v === body.v) ? body.v : latest(b).v;
-      const vl = (b.versions.find(x => x.v === v) || {}).legal;
-      if (vl && !vl.ok) return send(res, 400, { error: `v${v} is no longer ${b.format}-legal (${[...vl.illegal.map(x => x.name), ...vl.unknown].join(', ')}). Paste a new version without ${vl.illegal.length + vl.unknown.length === 1 ? 'it' : 'them'}; v${v}'s results stay.` });
-      // a run is quiet while it reads the field, so a second click would start an identical one
-      const dup = b.runs.find(r => r.v === v && r.oppSet === set.id && ['preparing', 'queued', 'running'].includes(runView(b, r).status));
-      if (dup) return send(res, 409, { error: `v${v} is already running against that field. Cancel it first if you want to start over.` });
-      const no = refusal(user, 'run'); if (no) return send(res, 429, { error: no });
-      const run = { id: crypto.randomBytes(4).toString('hex'), v, oppSet: set.id, created: Date.now(), status: 'preparing' };
-      const paid = A.reserve(user.accountId, { ref: run.id, credits: set.credits || 0, note: `${b.name} v${v} · ${set.title}` });
-      if (!paid.ok) return send(res, 402, { error: `This run needs ${paid.need} credits; you have ${paid.have}.` });
-      b.runs.unshift(run); saveBrews(); usage.mark(user.name, 'run');
-      prepareRun(b, run, user);
-      return send(res, 200, brewView(b));
+      const r = startRun(b, user, body.v, body.oppSet);
+      return r.error ? send(res, r.status, { error: r.error }) : send(res, 200, brewView(b));
     }
     // ask the coach: the question goes in the thread now, the answer when it is written
     // card search for editing a list (Design's change 7): ?q=<text>&format=<f>, 8 results
@@ -1483,7 +1533,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/api/collection/paper' && req.method === 'POST') {
       const { text } = await readBody(req);
-      try { return send(res, 200, await collection.setPaper(user.name, text)); } catch (e) { if (e.status) return send(res, e.status, { error: e.message }); throw e; }
+      try { const shelf = await collection.setPaper(user.name, text); brews.filter(b => b.owner === user.name).forEach(ensureChecks); return send(res, 200, shelf); } catch (e) { if (e.status) return send(res, e.status, { error: e.message }); throw e; }
     }
     if (p === '/api/cards' && req.method === 'GET') {
       const q = String(u.searchParams.get('q') || '').slice(0, 60), f = String(u.searchParams.get('format') || 'standard').toLowerCase();

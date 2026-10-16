@@ -201,4 +201,18 @@ async function sideboards(field, format, { days = 42, isLand } = {}) {
   return out;
 }
 
-module.exports = { matrix, events, sideboards, overlap, vec, MATCH_AT };
+// What real pilots of each archetype play in the main deck (the brew check's norms, shell.js): per archetype,
+// the real lists filed under it (main decks only, newest first, 200 at most).
+async function mains(field, format, { days = 42, isLand } = {}) {
+  const fv = field.map(d => vec(d.main, isLand)), out = Object.fromEntries(field.map(d => [d.name, { pilots: 0, lists: [] }]));
+  for (const e of await events(format, days)) for (const d of e.decks) {
+    if (!d.main || !d.main.length) continue;
+    const v = vec(d.main, isLand); let best = -1, bi = -1;
+    fv.forEach((f, i) => { const s = overlap(v, f); if (s > best) { best = s; bi = i; } });
+    if (best < MATCH_AT) continue;
+    const a = out[field[bi].name]; a.pilots++; if (a.lists.length < 200) a.lists.push(d.main.map(c => ({ qty: c.qty, name: c.name })));
+  }
+  return out;
+}
+
+module.exports = { matrix, events, sideboards, mains, overlap, vec, MATCH_AT };
