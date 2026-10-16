@@ -19,6 +19,7 @@ const accounts = require('./accounts');
 const mail = require('./mail');
 const collection = require('./collection');
 const shell = require('./shell');
+const push = require('./push');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -1288,12 +1289,20 @@ const offToken = id => crypto.createHmac('sha256', mailKey()).update('digest-off
 const mailTo = name => { const a = A.accountByName(name); return a && a.email && a.mailable && a.status === 'active' ? a : null; };
 const flagsOf = a => { try { return JSON.parse(a.flags || '{}'); } catch { return {}; } };
 const setFlag = (a, k, v) => A.db.prepare('UPDATE accounts SET flags = ? WHERE id = ?').run(JSON.stringify({ ...flagsOf(a), [k]: v }), a.id);
+// a push to the owner's phones when that switch is on (account.mail.push); the link opens the deck on the tab
+function pushTo(owner, kind, msg) {
+  if (!push.has(owner)) return;
+  const a = A.accountByName(owner); if (!a || a.status !== 'active' || !A.mailOf(a).push[kind]) return;
+  push.send(owner, msg).catch(e => console.warn('push: ' + e.message));
+}
+const deckPath = (b, tab) => '/?deck=' + encodeURIComponent(b.id) + (tab ? '&tab=' + tab : '');
 async function mailDigests() {
   const due = new Map();
   for (const b of brews) if (b.weekly && b.weekly.notify && !b.weekly.mailed && Date.now() - b.weekly.at < 3 * 864e5) (due.get(b.owner) || due.set(b.owner, []).get(b.owner)).push(b);
   let dirty = false;
   for (const [owner, bs] of due) {
     for (const b of bs) { b.weekly.mailed = true; dirty = true; }
+    pushTo(owner, 'digest', { title: bs.length === 1 ? `${bs[0].name} moved this week` : `${bs.length} of your decks moved this week`, body: String(bs[0].weekly.text || '').split('. ')[0], url: bs.length === 1 ? deckPath(bs[0], 'results') : '/' });
     const a = mailTo(owner); if (!a || !A.mailOf(a).digest) continue;
     if (Date.now() - (flagsOf(a).lastDigest || 0) < 6 * 864e5) continue;
     const paragraphs = bs.map(b => b.weekly.text + (b.weekly.guideUpdated ? ' The sideboard guide is updated.' : '')).join('\n\n');
@@ -1309,13 +1318,15 @@ async function mailRunsDone() {
     const rv = runView(b, run); if (!['done', 'failed', 'cancelled', 'lost'].includes(rv.status)) continue;
     run.mailed = true; dirty = true;
     if (rv.status !== 'done' || !rv.score) continue;
-    const a = mailTo(b.owner); if (!a || !A.mailOf(a).runDone) continue;
     const field = rv.field && rv.field.label ? rv.field.label : 'the field';
+    pushTo(b.owner, 'runDone', { title: `${b.name} v${run.v}`, body: `${pct(rv.score.p)}% (${pct(rv.score.lo)}–${pct(rv.score.hi)}) vs ${field}`, url: deckPath(b, 'results') });
+    const a = mailTo(b.owner); if (!a || !A.mailOf(a).runDone) continue;
     await mail.send({ to: a.email, kind: 'run-done', tag: 'run-done', vals: { deck: `${b.name} v${run.v}`, score: `${pct(rv.score.p)}% (${pct(rv.score.lo)}–${pct(rv.score.hi)})`, field, link: deckLink(b) } });
   }
   if (dirty) saveBrews();
 }
-setInterval(() => { if (mail.on()) mailRunsDone().then(mailDigests).catch(e => console.warn('mail: ' + e.message)); }, 120e3);
+// mail and push both: mail.send does nothing without a key, so this runs either way
+setInterval(() => { mailRunsDone().then(mailDigests).catch(e => console.warn('notify: ' + e.message)); }, 120e3);
 
 // Settle each reserved run once it has stopped: what it played, in credits (a minute of play and loading
 // each), never more than its quote. A run the server lost on a restart, or one that failed, uses nothing.
@@ -1350,7 +1361,7 @@ const readBody = req => new Promise((ok, bad) => {
   let b = ''; req.on('data', d => { b += d; if (b.length > 2e6) { bad(new Error('too large')); req.destroy(); } });
   req.on('end', () => { try { ok(b ? JSON.parse(b) : {}); } catch (e) { bad(e); } });
 });
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
 function serveStatic(req, res, p) {
   const file = path.join(__dirname, 'public', p === '/' ? 'index.html' : path.normalize(p).replace(/^(\.\.[/\\])+/, ''));
   if (!file.startsWith(path.join(__dirname, 'public'))) return send(res, 403, 'no');
@@ -1562,7 +1573,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/account' && req.method === 'DELETE') {
       if (user.source !== 'sim') return send(res, 400, { error: 'a founder account is removed by Justin' });
       for (const b of brews.filter(x => x.owner === user.name)) { for (const r of [...b.runs, ...(b.craftRuns || [])]) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); } try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
-      brews = brews.filter(x => x.owner !== user.name); saveBrews(); collection.remove(user.name);
+      brews = brews.filter(x => x.owner !== user.name); saveBrews(); collection.remove(user.name); push.remove(user.name);
       A.db.prepare('DELETE FROM accounts WHERE id = ?').run(user.accountId);
       console.log(`account deleted: ${user.name}`);
       return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` });
@@ -1696,6 +1707,11 @@ const server = http.createServer(async (req, res) => {
     }
     // ask the coach: the question goes in the thread now, the answer when it is written
     // card search for editing a list (Design's change 7): ?q=<text>&format=<f>, 8 results
+    // push (change 18): the VAPID public key, and a device's subscription
+    if (p === '/api/push/key' && req.method === 'GET') return send(res, 200, { key: push.key() });
+    if (p === '/api/push/subscribe' && req.method === 'POST') {
+      try { return send(res, 200, push.subscribe(user.name, await readBody(req))); } catch (e) { if (e.status) return send(res, e.status, { error: e.message }); throw e; }
+    }
     // the collection (changes 20 and 22): both shelves; 404 while neither has anything
     if (p === '/api/collection' && req.method === 'GET') {
       const c = collection.get(user.name);
@@ -1790,7 +1806,7 @@ const server = http.createServer(async (req, res) => {
       usage.mark(user.name, 'ask');
       (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
       usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, coachRun(b, talkRun(b)), b.thread, { onText: t => { b.draft = t; } }))
-        .then(t => b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }))
+        .then(t => { b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }); pushTo(b.owner, 'coach', { title: `The coach on ${b.name}`, body: (t.match(/^[^.!?]*[.!?]/) || [t.slice(0, 140)])[0].slice(0, 200), url: deckPath(b, 'coach') }); })
         .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }))
         .finally(() => { b.thinking = false; delete b.draft; saveBrews(); });
       return send(res, 200, brewView(b));

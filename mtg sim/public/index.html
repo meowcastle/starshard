@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- change 18: the installable app (manifest, icons, the service worker for offline reading, the match queue and push) -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0C0C0B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Forge Sim">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function () {}); window.addEventListener('online', function () { if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage('online'); }); }</script>
 <script src="./support.js"></script>
 </head>
 <body>

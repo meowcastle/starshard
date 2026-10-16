@@ -170,12 +170,15 @@ function open(file, { runsPerDay = 3, asksPerDay = 10 } = {}) {
 
   // ---- email (change 15) ----
   const MAIL_DEFAULTS = { digest: true, runDone: false };
+  // the phone's push switches (change 18): run finished, weekly moved, coach answered on; between rounds opt-in
+  const PUSH_DEFAULTS = { runDone: true, digest: true, coach: true, rounds: false };
   const normEmail = e => String(e || '').trim().toLowerCase();
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const mailOf = a => { let m = {}; try { m = JSON.parse(a.mail || '{}'); } catch {} return { ...MAIL_DEFAULTS, ...m }; };
+  const mailOf = a => { let m = {}; try { m = JSON.parse(a.mail || '{}'); } catch {} return { ...MAIL_DEFAULTS, ...m, push: { ...PUSH_DEFAULTS, ...(m.push || {}) } }; };
   function setMail(accountId, patch) {
     const a = q.accountById.get(accountId), m = mailOf(a);
     for (const k of Object.keys(MAIL_DEFAULTS)) if (typeof patch[k] === 'boolean') m[k] = patch[k];
+    if (patch.push && typeof patch.push === 'object') for (const k of Object.keys(PUSH_DEFAULTS)) if (typeof patch.push[k] === 'boolean') m.push[k] = patch.push[k];
     q.setMail.run(JSON.stringify(m), accountId); return m;
   }
   // A six-digit code for an address: 10 minutes, 5 tries, one live code per address and purpose (a new one
