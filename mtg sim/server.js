@@ -1023,6 +1023,78 @@ function startRun(b, user, vIn, oppSet) {
   return { run };
 }
 
+// The coach acts when the player tells it to (Justin, 16 Oct 2026: "if I tell coach I want an updated deck with x
+// cards, it will update the version and it will go live"). Three tools, each the same path a button takes (a saved
+// version, the current switch, startRun), each leaving an `action` line in the thread that the page shows with Undo.
+// What may change: the deck only on an instruction (coach.js ACT); runs only when asked, and they pay like the button.
+const BASIC_LAND = /^(snow-covered )?(plains|island|swamp|mountain|forest|wastes)$/i;
+const swapText = diff => diff.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name + (c.section === 'side' ? ' (side)' : '')).join(', ');
+function coachTools(b, user) {
+  const CARDS = { type: 'array', items: { type: 'object', properties: { qty: { type: 'integer', minimum: 1, maximum: 60 }, name: { type: 'string' } }, required: ['qty', 'name'] } };
+  const fields = oppSets(b).filter(x => x.available).map(x => x.id);
+  const tools = [
+    { name: 'edit_deck', description: 'Save a new version of the deck from swaps against a base version (default: the current deck). With make_current true (the default) it becomes the player\'s deck right away.',
+      schema: { type: 'object', properties: { from: { type: 'integer', description: 'version number to start from; omit for the current deck' }, main_out: CARDS, main_in: CARDS, side_out: CARDS, side_in: CARDS,
+        make_current: { type: 'boolean' }, note: { type: 'string', description: 'one line on why, shown in the version history' } } } },
+    { name: 'make_current', description: 'Make an existing version the player\'s deck.', schema: { type: 'object', properties: { v: { type: 'integer' } }, required: ['v'] } },
+    ...(fields.length ? [{ name: 'run_version', description: 'Queue a sim run of a version (default: the current deck). Uses one of the player\'s runs. Only when they ask for a run.',
+      schema: { type: 'object', properties: { v: { type: 'integer' }, field: { type: 'string', enum: fields, description: 'meta10 = this week\'s top 10 (default), meta20 = top 20, team = the pod' } } } }] : []),
+  ];
+  let done = 0;
+  const note = (text, action) => { (b.thread = b.thread || []).push({ role: 'coach', kind: 'action', text, action: { ...action, at: Date.now() }, at: Date.now() }); saveBrews(); };
+  async function run(name, x) {
+    if (++done > 4) return 'Error: that is enough changes for one message. Tell the player what you did.';
+    if (name === 'edit_deck') {
+      const base = b.versions.find(v => v.v === x.from) || current(b);
+      const zones = { main: base.list.main.map(c => ({ ...c })), side: (base.list.side || []).map(c => ({ ...c })) };
+      const find = (z, n) => zones[z].find(c => c.name.toLowerCase() === String(n).trim().toLowerCase());
+      for (const [z, outs] of [['main', x.main_out], ['side', x.side_out]]) for (const c of outs || []) {
+        const have = find(z, c.name); if (!have) return `Error: ${c.name} isn't in v${base.v}'s ${z === 'main' ? 'main deck' : 'sideboard'}.`;
+        if (have.qty < c.qty) return `Error: v${base.v} has only ${have.qty} ${have.name} in the ${z === 'main' ? 'main deck' : 'sideboard'}.`;
+        have.qty -= c.qty;
+      }
+      for (const [z, ins] of [['main', x.main_in], ['side', x.side_in]]) for (const c of ins || []) {
+        const have = find(z, c.name); if (have) have.qty += c.qty; else zones[z].push({ qty: c.qty, name: String(c.name).trim().slice(0, 80) });
+      }
+      const list = { ...base.list, main: zones.main.filter(c => c.qty > 0), side: zones.side.filter(c => c.qty > 0) };
+      const count = l => l.reduce((a, c) => a + c.qty, 0);
+      if (b.seats !== 4) {
+        if (count(list.main) < 60) return `Error: the main deck would be ${count(list.main)} cards; it needs at least 60.`;
+        if (count(list.side) > 15) return `Error: the sideboard would be ${count(list.side)} cards; at most 15.`;
+        const tot = new Map(); for (const c of [...list.main, ...list.side]) tot.set(c.name.toLowerCase(), (tot.get(c.name.toLowerCase()) || 0) + c.qty);
+        const over = [...tot].filter(([n, q]) => q > 4 && !BASIC_LAND.test(n)); if (over.length) return `Error: more than 4 of ${over.map(([n]) => n).join(', ')} across main and side.`;
+      }
+      const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format);
+      if (d.legality && !d.legality.ok) return 'Error: ' + meta.legalityError(d.legality);
+      const diff = diffLists(base.list, d.list); if (!diff.length) return `Error: that's the same list as v${base.v}.`;
+      const live = x.make_current !== false, prev = current(b).v;
+      const nv = pushVersion(b, live ? 'asked' : 'coach', { list: d.list, rows: d.rows, style: d.style, diff, base: base.v, note: ('Coach: ' + (x.note ? String(x.note).trim() : swapText(diff))).slice(0, 500) });
+      readSoon(b, nv); saveBrews(); checkSoon(b).catch(() => {});
+      note(`Saved v${nv.v} from v${base.v} · ${swapText(diff)}${live ? ` · it's your deck now (was v${prev})` : ` · v${prev} is still your deck`}`, { type: 'save', v: nv.v, prev, live });
+      return `Saved as v${nv.v} (${swapText(diff)}). ${live ? `v${nv.v} is now the player's deck.` : `v${prev} is still the player's deck.`}`;
+    }
+    if (name === 'make_current') {
+      const v = x.v | 0; if (!b.versions.some(y => y.v === v)) return `Error: there's no v${v}. Versions: ${b.versions.map(y => 'v' + y.v).join(', ')}.`;
+      const prev = current(b).v; if (prev === v) return `v${v} is already the player's deck.`;
+      b.current = v;
+      if (b.optimize && b.optimize.guide && b.optimize.guide.v === v) { const { v: _v, ...g } = b.optimize.guide; b.guide = g; delete b.optimize.guide; }
+      note(`Made v${v} your deck (was v${prev})`, { type: 'current', v, prev });
+      return `v${v} is now the player's deck.`;
+    }
+    if (name === 'run_version') {
+      const v = b.versions.some(y => y.v === x.v) ? x.v : current(b).v, set = fields.includes(x.field) ? x.field : fields.includes('meta10') ? 'meta10' : fields[0];
+      const r = startRun(b, user, v, set); if (r.error) return 'Error: ' + r.error;
+      const title = (oppSets(b).find(y => y.id === set) || {}).title || set;
+      note(`Queued a run of v${v} · ${title}`, { type: 'run', v, run: r.run.id });
+      return `Queued: v${v} against ${title}. It shows on the Sim tab.`;
+    }
+    return 'Error: no such tool.';
+  }
+  const cur = current(b), list = l => l.map(c => c.qty + ' ' + c.name).join('\n') || '(none)';
+  const deckText = `The player's deck right now (the current version) is v${cur.v}. Versions: ${b.versions.map(y => `v${y.v} (${y.origin || originOf(y)})`).join(', ')}.\nMain deck (v${cur.v}):\n${list(cur.list.main)}\nSideboard (v${cur.v}):\n${list(cur.list.side || [])}`;
+  return { tools, run, deckText };
+}
+
 // Optimize (change 24, NOTE-TO-CODE-16OCT-CHECK.md §2): structure -> run -> a matchup swap -> the write-up, one line
 // each in the Coach thread. b.optimize = { status, from, v, run, test, steps, who }; status is preparing, structure,
 // running, matchups, writing, done or failed. The structure step and the first run start on the request; a tick
@@ -1979,11 +2051,37 @@ const server = http.createServer(async (req, res) => {
       const paid = A.reserve(user.accountId, { kind: 'ask', credits: ASK_CREDITS, note: `${b.name} · a coach question` });
       if (!paid.ok) return send(res, 402, { error: `A question needs ${paid.need} credits; you have ${paid.have}.` });
       usage.mark(user.name, 'ask');
-      (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews();
-      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.reply(b, coachRun(b, talkRun(b)), b.thread, { onText: t => { b.draft = t; } }))
+      (b.thread = b.thread || []).push({ role: 'user', text, at: Date.now() }); b.thinking = true; saveBrews(); const asked = b.thread.length;
+      usage.as({ who: user.name, kind: 'chat', brew: b.id }, () => coach.act(b, coachRun(b, talkRun(b)), b.thread.slice(), { ...coachTools(b, user), onText: t => { b.draft = t; } }))
         .then(t => { b.thread.push({ role: 'coach', text: t.slice(0, 6000), at: Date.now() }); pushTo(b.owner, 'coach', { title: `The coach on ${b.name}`, body: (t.match(/^[^.!?]*[.!?]/) || [t.slice(0, 140)])[0].slice(0, 200), url: deckPath(b, 'coach') }); })
-        .catch(e => b.thread.push({ role: 'coach', text: 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }))
+        .catch(e => { const acted = b.thread.slice(asked).some(t => t.kind === 'action');   // the change stands; only the words are missing
+          b.thread.push({ role: 'coach', text: acted ? 'The change above is done, but I couldn\'t finish my answer: ' + e.message : 'I couldn\'t answer that: ' + e.message, at: Date.now(), kind: 'error' }); })
         .finally(() => { b.thinking = false; delete b.draft; saveBrews(); });
+      return send(res, 200, brewView(b));
+    }
+    // Undo one of the coach's actions (its `at`): a save goes back to the version that was the deck and the new one is
+    // discarded if nothing ran on it; a switch goes back; a run is cancelled. Only while nothing has moved on since.
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/undo$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const at = +(await readBody(req)).at, line = (b.thread || []).find(t => t.kind === 'action' && t.action && t.action.at === at), a = line && line.action;
+      if (!a) return send(res, 404, { error: 'nothing to undo' });
+      if (a.undone) return send(res, 400, { error: 'already undone' });
+      let said;
+      if (a.type === 'save' || a.type === 'current') {
+        if (a.type === 'current' || a.live) {
+          if (current(b).v !== a.v) return send(res, 409, { error: `v${current(b).v} is your deck now, not v${a.v}. Switch decks from Versions instead.` });
+          if (b.versions.some(x => x.v === a.prev)) b.current = a.prev;
+        }
+        const busy = b.runs.some(r => r.v === a.v);
+        if (a.type === 'save' && !busy && current(b).v !== a.v) { b.maxV = Math.max(b.maxV || 0, ...b.versions.map(x => x.v)); b.versions = b.versions.filter(x => x.v !== a.v); }
+        said = a.type === 'save' ? `Undone: ${b.versions.some(x => x.v === a.v) ? `v${a.v} kept (it has runs)` : `v${a.v} discarded`}${a.live ? `, v${a.prev} is your deck again` : ''}.` : `Undone: v${a.prev} is your deck again.`;
+      } else if (a.type === 'run') {
+        const r = b.runs.find(x => x.id === a.run), j = r && r.jobId && jobs.get(r.jobId);
+        if (!r || ['done', 'failed', 'cancelled', 'lost'].includes(runView(b, r).status)) return send(res, 409, { error: 'that run has already finished' });
+        if (j) cancelJob(j); if (r.status === 'preparing') r.status = 'cancelled'; r.cancelled = true;   // as the run's own Cancel does
+        said = `Undone: the run of v${a.v} is cancelled.`;
+      } else return send(res, 400, { error: 'nothing to undo' });
+      a.undone = Date.now(); b.thread.push({ role: 'coach', kind: 'undo', text: said, at: Date.now() }); saveBrews();
       return send(res, 200, brewView(b));
     }
     // "Test it": the coach's swap becomes the next version and runs against the same kind of field

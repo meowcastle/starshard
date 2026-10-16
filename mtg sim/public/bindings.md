@@ -451,7 +451,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `tbYouM5` · handler · constant or derived
 - `tbYouP1` · handler · constant or derived
 - `tbYouP5` · handler · constant or derived
-- `thread` · list of {isUser (flag), text, isCoach (flag), dia, textCls, at} · reads run.id, brew.thread
+- `thread` · list of {isUser (flag), text, isCoach (flag), dia, textCls, ink (colour), at, undoOn (flag), undo (handler)} · reads run.id, brew.thread, brew.id, this.coachUndo()
 - `threatRows` · list of {name, opp, castS, youS, baseS, dropS, dmgS} · reads run.cards, state.acColText, run.bo3
 - `threatsNote` · string · constant or derived
 - `toggleMethod` · handler · constant or derived

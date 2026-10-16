@@ -703,7 +703,7 @@ Deck
 
       <sc-for list="{{ thread }}" as="m" hint-placeholder-count="3">
         <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}"><div class="fs-in" style="display:flex;justify-content:flex-end"><div style="max-width:78%;background:var(--surface);border-radius:14px 14px 4px 14px;padding:12px 16px;font-size:var(--fs-m);line-height:1.55;color:var(--ink);text-wrap:pretty">{{ m.text }}</div></div></sc-if>
-        <sc-if value="{{ m.isCoach }}" hint-placeholder-val="{{ true }}"><div class="fs-in" style="display:grid;grid-template-columns:20px minmax(0,1fr);gap:16px;align-items:start"><div class="{{ m.dia }}" style="width:10px;height:10px;margin-top:7px;background:var(--accent);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="display:flex;flex-direction:column;gap:8px"><div class="{{ m.textCls }}" style="font-size:var(--fs-m);line-height:1.6;color:var(--ink-2);text-wrap:pretty;white-space:pre-wrap">{{ m.text }}</div><div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)">{{ m.at }}</div></div></div></sc-if>
+        <sc-if value="{{ m.isCoach }}" hint-placeholder-val="{{ true }}"><div class="fs-in" style="display:grid;grid-template-columns:20px minmax(0,1fr);gap:16px;align-items:start"><div class="{{ m.dia }}" style="width:10px;height:10px;margin-top:7px;background:var(--accent);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div><div style="display:flex;flex-direction:column;gap:8px"><div class="{{ m.textCls }}" style="font-size:var(--fs-m);line-height:1.6;color:{{ m.ink }};text-wrap:pretty;white-space:pre-wrap">{{ m.text }}</div><div data-coachact="1" style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted)">{{ m.at }}<sc-if value="{{ m.undoOn }}" hint-placeholder-val="{{ false }}"> · <a href="#" onClick="{{ m.undo }}" style="color:var(--accent);font-weight:600">Undo</a></sc-if></div></div></div></sc-if>
       </sc-for>
 
       <sc-if value="{{ coachLive }}" hint-placeholder-val="{{ true }}">
@@ -934,6 +934,12 @@ class Component extends DCLogic {
     this.setState({ askText: '', askErr: '' });
     try { const b = await this.api('/api/brews/' + d.id + '/ask', { method: 'POST', body: { text: t } }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x) })); }
     catch (e) { this.setState({ askText: t, askErr: e.message }); }
+  }
+  async coachUndo(brewId, at) {
+    if (this.state.busy) return; this.setState({ busy: true });
+    try { const b = await this.api('/api/brews/' + brewId + '/undo', { method: 'POST', body: { at } }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), msg: null })); }
+    catch (e) { this.setState({ msg: { text: 'Not undone: ' + e.message, bad: true } }); }
+    this.setState({ busy: false });
   }
   async test(brewId, runId, i) {
     if (this.state.busy) return; this.setState({ busy: true, runErr: '' });
@@ -1340,7 +1346,7 @@ class Component extends DCLogic {
       v.weeklyLineColor = w ? (w.up ? WIN : LOSS) : MUTED;
       v.weeklyWhy = w ? [w.moved.slice(0, 2).map(m => m.opponent + (m.metaPct != null && m.prevPct != null && Math.abs(m.metaPct - m.prevPct) >= 2 ? ' ' + (m.metaPct > m.prevPct ? 'up' : 'down') + ' to ' + Math.round(m.metaPct) + '% of the field' : '') + ', you ' + Math.round(m.prevP * 100) + '→' + Math.round(m.p * 100)).join(' · '), w.W.guideUpdated ? 'plan updated' : ''].filter(Boolean).join(' · ') : ''; }
     v.memory = d.notes.map(m => ({ ...m, forget: pe(() => this.forget(d.id, m.k)) })); v.memoryCount = v.memory.length;
-    v.deck = { name: d.name, version: ver.v, versionLabel: ({ pasted: 'pasted ', optimize: 'from Optimize ', coach: 'coach swap ', owned: 'owned version ' }[ver.origin] || 'saved ') + day(ver.created) + (ver.state ? ' · ' + ver.state.line : ''), subtitle: plural(d.runs.length, 'run'), format: cap(d.format), goal: { label: 'No goal set' } };
+    v.deck = { name: d.name, version: ver.v, versionLabel: ({ pasted: 'pasted ', optimize: 'from Optimize ', coach: 'coach swap ', asked: 'from the coach ', owned: 'owned version ' }[ver.origin] || 'saved ') + day(ver.created) + (ver.state ? ' · ' + ver.state.line : ''), subtitle: plural(d.runs.length, 'run'), format: cap(d.format), goal: { label: 'No goal set' } };
     v.deckArt = coverOf(d); v.deckPips = pips(d.colors); v.seatsLabel = d.seats === 2 ? '1v1' : '4-seat pods';
     // change 16: no "1v1" in the kicker (every Standard deck is); a colour wash behind missing art
     v.deckKicker = [v.deck.format, d.seats === 2 ? '' : '4-seat pods', v.deck.subtitle].filter(Boolean).join(' · ');
@@ -1463,8 +1469,10 @@ class Component extends DCLogic {
         resNote: after ? plural(after.n, 'game') + (Math.abs(after.p - before.p) * 100 < 7 ? ' · inside the noise' : '') : '' };
     }) : [];
     // the thread: everything except the summary the readout above stands in for
-    v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.text, at: at(m.at) + (m.kind && !['writeup', 'error'].includes(m.kind) ? ' · ' + { sideboard: 'sideboard plan', pilot: 'how to play it', mulligan: 'mulligans', mana: 'mana', review: 'version review' }[m.kind] || m.kind : '') }));
-    if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: d.draft || 'Thinking…', at: d.draft ? 'writing…' : '', dia: 'fs-breath', textCls: d.draft ? '' : 'fs-sheen', thinking: true });
+    v.thread = (d.thread || []).filter(m => !(m.kind === 'writeup' && run && m.run === run.id)).map(m => ({ isUser: m.role === 'user', isCoach: m.role !== 'user', text: m.kind === 'action' ? '✓ ' + m.text : String(m.text || '').replace(/\*\*/g, ''),   /* the thread is plain text: markdown bold would print its asterisks */ ink: ['action', 'undo'].includes(m.kind) ? 'var(--ink)' : 'var(--ink-2)',
+      at: at(m.at) + (m.kind && !['writeup', 'error', 'undo'].includes(m.kind) ? ' · ' + ({ sideboard: 'sideboard plan', pilot: 'how to play it', mulligan: 'mulligans', mana: 'mana', review: 'version review', action: m.action && m.action.undone ? 'undone' : 'done' }[m.kind] || m.kind) : ''),
+      undoOn: m.kind === 'action' && !!m.action && !m.action.undone, undo: pe(() => this.coachUndo(d.id, m.action.at)) }));
+    if (d.thinking) v.thread.push({ isUser: false, isCoach: true, text: d.draft || 'Thinking…', at: d.draft ? 'writing…' : '', dia: 'fs-breath', textCls: d.draft ? '' : 'fs-sheen', thinking: true, ink: 'var(--ink-2)', undoOn: false, undo: pe(() => {}) });
     v.askPlaceholder = !d.coachOn ? '' : d.thinking ? 'The coach is answering…' : S.askErr || 'Ask about this run' + (S.limits && S.limits.asks ? ' · ' + plural(S.limits.asks.left, 'question') + ' left today' : '');
     v.sendAsk = pe(() => this.ask(S.askText)); v.askKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.ask(S.askText); } };
     const topOpp = v.isDuel && run && run.opponents && run.opponents[0];

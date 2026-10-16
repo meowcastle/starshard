@@ -196,6 +196,37 @@ async function reply(b, rv, thread, { onText } = {}) {
   return claude.chat({ system, messages: msgs, onText });
 }
 
+// The coach can act on the player's say-so (Justin, 16 Oct 2026: "if I tell coach I want an updated deck with x
+// cards, it will update the version and it will go live"). The tools themselves live in the server, which owns the
+// brew; this is the conversation and the rules for when to use them. His standing rule still holds: nothing changes
+// the deck unless he chose it. A clear instruction is a choice; a vague one gets a proposal and a question.
+const ACT = `You can change the player's deck, but only when they ask you to. Tools: edit_deck (save a new version from swaps; make_current puts it live as their deck), make_current (switch which version is their deck), run_version (queue a sim run, which uses one of their runs for the day).
+
+When to act:
+- A clear instruction ("cut the Squalls for 3 Seam Rip", "put that swap in", "make v4 my deck", "update the deck with these cards"): do it now with make_current true, then say in one or two lines what changed. Don't ask for confirmation they already gave.
+- A vague wish ("make it better against Azorius", "what should I change?"): propose exact swaps (counts and names) and ask "Want me to make that your deck?". Don't call a tool.
+- If they say "save it but don't switch", use make_current false.
+- Only run_version when they ask for a run ("and run it", "sim it", "test it"). Never queue one on your own.
+- If a tool answers with an error (a card isn't in the list, the deck would be 59 cards, a card isn't legal), fix it and try again once, or tell them what's wrong.
+- One deck change per message unless they asked for more. Main deck must stay at least 60 cards, at most 4 of any card but basic lands, sideboard at most 15.
+- After acting, the page shows a card with Undo; you don't need to explain how to undo.`;
+
+async function act(b, rv, thread, { tools, run, deckText, onText } = {}) {
+  rv = await withCheck(b, rv);
+  // what the coach did earlier reads as part of its own turn: "[done: Saved v6 ...]" before what it said
+  const msgs = [], said = [];
+  for (const m of thread.slice(-20)) {
+    const role = m.role === 'user' ? 'user' : 'assistant';
+    const text = m.kind === 'action' ? '[done: ' + m.text + (m.action && m.action.undone ? ' (the player undid this)' : '') + ']' : m.text;
+    if (!msgs.length && role === 'assistant') { said.push(text); continue; }
+    if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\n\n' + text; else msgs.push({ role, content: text });
+  }
+  const system = [{ type: 'text', text: SYSTEM + '\n\n' + ACT + '\n\nThe current state of this brew:\n\n' + context(b, rv), cache_control: { type: 'ephemeral' } },
+    { type: 'text', text: deckText }];
+  if (said.length) system.push({ type: 'text', text: 'What you already told the player:\n' + said.join('\n\n') });
+  return claude.agent({ system, messages: msgs, tools, run, onText });
+}
+
 // The coach's other modes (COACH-PARAMETERS-13OCT.md part 1, item 3), run on request. The sideboard guide
 // is structured (one row per opponent); the rest are prose for the thread. Same grounding as the
 // readout: only the numbers in the context.
@@ -215,4 +246,4 @@ async function mode(b, rv, which, { opp, onText } = {}) {
   return claude.chat({ system: SYSTEM, messages: [{ role: 'user', content: prompt }], onText });
 }
 
-module.exports = { writeup, reply, context, headline, useField, mode, MODES: Object.keys(MODES) };
+module.exports = { writeup, reply, act, context, headline, useField, mode, MODES: Object.keys(MODES) };
