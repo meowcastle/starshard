@@ -48,4 +48,7 @@ sub1("const OP = ver.optimize || null, optimizing = !!OP &&", "const OP = d.opti
 sub1("if (optimizing) { const STEP = { preparing: 1, structure: 1, running: 2, matchups: 3, writing: 4 }, last = OP.steps && OP.steps.length ? OP.steps[OP.steps.length - 1].text : ''; v.ckSub = 'Optimize · step '",
      "if (optimizing) { const STEP = { preparing: 1, structure: 1, running: 2, matchups: 3, writing: 4 }, last = OP.steps && OP.steps.length ? OP.steps[OP.steps.length - 1].text : ''; v.ckSub = (OP.from !== ver.v ? 'On v' + OP.from + ', not this version · ' : '') + 'Optimize · step '", 'which version')
 sub1("v.pickerLabel = (d.name || 'Decks') + ' · v' + ((d.versions || []).slice(-1)[0] || {}).v;", "v.pickerLabel = (d.name || 'Decks') + ' · v' + ver.v;", 'picker label')
+# "Paste your ManaBox export" opened Account without loading it: "reading the account..." forever (16 Oct)
+sub1("v.colPaste = pe(() => this.setState({ account: true, acColStep: 'paste', acColText: '', acColNote: '', codex: null }));",
+     "v.colPaste = pe(() => { this.accountOpen(); this.setState({ acColStep: 'paste', acColText: '', acColNote: '' }); });", 'paste opens a loaded account')
 open(out, 'w', encoding='utf-8').write(s); print('patched', out)

@@ -211,7 +211,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `col2Label` · string · constant or derived
 - `colHeadLine` · string · reads state.collection
 - `colNote` · string · constant or derived
-- `colPaste` · handler · sets account
+- `colPaste` · handler · reads this.accountOpen() · sets acColStep
 - `colStats` · list of {label, value, sub} · reads this.api()
 - `compareRows` · list of {name, metaS, aS, bS, dColor (colour), dS} · reads this.api()
 - `craftNote` · string · reads brew.craft, run.bo3
