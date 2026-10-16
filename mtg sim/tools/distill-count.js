@@ -6,7 +6,7 @@ const fs = require('fs');
 const file = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : 'public/index.html';
 const s = fs.readFileSync(file, 'utf8');
 const at = s.indexOf('<script type="text/x-dc"');
-const body = s.slice(0, at), code = s.slice(at);
+const body = s.slice(0, at), code = s.slice(at).replace(/^[ \t]*\/\/.*$/gm, m => m.replace(/./g, ' ')); // comment lines aren't UI
 
 const strings = [];
 const lineOf = (src, i, base) => base + src.slice(0, i).split('\n').length - 1;
@@ -19,7 +19,7 @@ for (const m of code.matchAll(/'((?:[^'\\\n]|\\.)*)'|"((?:[^"\\\n]|\\.)*)"|`((?:
   const t = (m[1] ?? m[2] ?? m[3] ?? '').replace(/\$\{[^}]*\}/g, ' ');
   if (!/[a-z]/.test(t) || !(/ /.test(t.trim()) || /^[A-Z][a-z]/.test(t))) continue;
   if (/^[\w.\-/:#?=&%]+$/.test(t) && !/^[A-Z][a-z]+$/.test(t)) continue; // paths, keys, urls
-  if (/[{};]|=>|var\(--|px|rgba?\(|^(?:\.|#)?[a-z-]+:/.test(t)) continue; // css and code fragments
+  if (/[{}]|=>|var\(--|\dpx|rgba?\(|^(?:\.|#)?[a-z-]+:[^ ]/.test(t)) continue; // css and code fragments (a ';' alone is prose)
   strings.push({ line: lineOf(code, m.index, base), kind: 'L', t });
 }
 
