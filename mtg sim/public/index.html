@@ -82,7 +82,9 @@ a[style*="border-radius:999px"]:not([style*="background:var(--accent)"]):hover{b
 .fs-side{display:none!important}
 .fs-side.open{animation:fsSlide var(--t2) var(--ease) both;display:flex!important;position:fixed!important;inset:0;z-index:50;height:100vh;width:100%;max-width:320px;box-shadow:0 0 0 100vmax rgba(0,0,0,.55)}
 .fs-top{display:flex!important}
-.fs-coach{border-left:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto;padding:24px 20px;background:var(--bg)}
+.fs-coach{border-left:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto;padding:24px 20px 0;background:var(--bg)}
+/* the ask bar is sticky to the column's bottom edge; the column's own bottom padding would leave a strip the thread shows through */
+.fs-coach .fs-ask{padding-bottom:20px!important}
 .fs-askbar{display:none!important}
 .fs-coach .fs-close{display:none}
 /* change 18 · the bottom bar and the counter */
@@ -126,7 +128,7 @@ a[style*="border-radius:999px"]:not([style*="background:var(--accent)"]):hover{b
   .fs-tbl{min-height:calc(100vh - 150px)}
   .fs-ask{bottom:64px!important;padding-bottom:12px!important}
   /* v5: the coach sheet covers the bottom bar, so inside it the ask bar sits at the bottom */
-  .fs-coach.open{padding-bottom:12px!important}.fs-coach.open .fs-ask{bottom:0!important}
+  .fs-coach.open{padding-bottom:0!important}.fs-coach.open .fs-ask{bottom:0!important;padding-bottom:12px!important}
   .fs-modes{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}.fs-modes::-webkit-scrollbar{display:none}.fs-modes>a{white-space:nowrap;flex:none}
   .fs-head[data-tbl="1"]{display:none!important}
   :root{--fs-xxl:28px;--fs-xl:19px}
