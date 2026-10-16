@@ -1433,11 +1433,11 @@ const send =(res, code, body, headers = {}) => {
   res.end(isStr ? body : JSON.stringify(body));
 };
 const readRaw = req => new Promise((ok, bad) => {
-  let b = ''; req.on('data', d => { b += d; if (b.length > 2e6) { bad(new Error('too large')); req.destroy(); } });
+  let b = ''; req.on('data', d => { b += d; if (b.length > 10e6) { bad(new Error('too large')); req.destroy(); } });
   req.on('end', () => ok(b));
 });
 const readBody = req => new Promise((ok, bad) => {
-  let b = ''; req.on('data', d => { b += d; if (b.length > 2e6) { bad(new Error('too large')); req.destroy(); } });
+  let b = ''; req.on('data', d => { b += d; if (b.length > 10e6) { bad(new Error('too large')); req.destroy(); } });
   req.on('end', () => { try { ok(b ? JSON.parse(b) : {}); } catch (e) { bad(e); } });
 });
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };

@@ -27,7 +27,7 @@ sub1("    v.msgOn = !!S.msg;",
      "      const fieldDay = r => r.field && r.field.date ? new Date(r.field.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';\n"
      "      v.hlKicker = 'v' + ver.v + (mine ? ' · your deck · ' + fieldDay(mine) + ' field' : ' · your deck');\n"
      "      v.hlHas = !!mine; v.hlNoRun = !mine; v.hlRunLabel = 'Run v' + ver.v;\n"
-     "      v.hlHead = mine ? pc(mine.score.p) + ' vs the field' : 'Not run yet';\n"
+     "      const live = !mine && ver.state && ['running', 'queued'].includes(ver.state.kind); v.hlHead = mine ? pc(mine.score.p) + ' vs the field' : live ? (ver.state.kind === 'running' ? 'Running · ' + ver.state.pct + '%' : 'Queued') : 'Not run yet'; if (live) v.hlNoRun = false;\n"
      "      v.hlSub = mine ? 'likely ' + pc(mine.score.lo) + '–' + pc(mine.score.hi) + ' · ' + (mine.score.n || mine.played) + ' games' : any ? 'The last result is v' + any.v + ': ' + pc(any.score.p) + ' on the ' + fieldDay(any) + ' field. Run v' + ver.v + ' to see its own numbers.' : 'Run it to see how it does against the field.';\n"
      "      const ms = mine ? mine.opponents.map((o, i) => ({ name: o.name, s: mine.scores && mine.scores[i] })).filter(x => x.s && x.s.n >= 10) : [];\n"
      "      const best = ms.slice().sort((a, b) => b.s.p - a.s.p).slice(0, 3), worst = ms.slice().sort((a, b) => a.s.p - b.s.p).slice(0, 3);\n"
