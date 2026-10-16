@@ -95,7 +95,6 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 
 ## App shell
 
-- `acArenaLine` · string · constant or derived
 - `acBalance` · string · reads state.accountData, state.me
 - `acBalanceLabel` · string · constant or derived
 - `acBalanceNote` · string · constant or derived
@@ -461,7 +460,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `closeLook` · handler · sets look
 - `closeSettings` · handler · sets settingsOpen
 - `colNote` · string · constant or derived
-- `colShelves` · list of {pick (handler), ring (colour), fill (colour), ink (colour), label} · sets colShelf
+- `colPaste` · handler · sets account
 - `considering` · list of {qty, name, note, add (handler)} · constant or derived
 - `constraintsLabel` · string · constant or derived
 - `craftLine` · string · reads this.api()
@@ -527,6 +526,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `mainLabel` · string · constant or derived
 - `mainRows` · list of {hasHead (flag), head, enter (handler), move (handler), i, divider (colour), qtyColor (colour), qty, deco, rowOp, name, statusColor (colour), statusNote, tag, pips[], pips.cls, pips.color (colour), cmcS, dec (handler), decOp, inc (handler), incOp, swap (handler), swapColor (colour), swapping (flag)} · reads this.edSet(), this.edOpen()
 - `missingRows` · list of {color (colour), need, buy (url), name, have, rarity} · reads this.api()
+- `noCol` · flag · constant or derived
 - `noCraft` · flag · reads brew.craft
 - `noMissing` · flag · constant or derived
 - `notEditing` · flag · reads state.ed, state.tab, brew.id
@@ -585,4 +585,4 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 
 Defined in `renderVals()` and bound nowhere in the markup: free for a design to use, or dead.
 
-`benchPct`, `buyList`, `buyUrl`, `earlier`, `evLosses`, `evNeed`, `evOdds`, `evOddsHi`, `evOddsLo`, `evRecord`, `evScale`, `evStrip`, `evSureBg`, `evSureNote`, `evTop8`, `evUnder`, `evVs`, `forgeCount`, `forgeNote`, `goApp`, `goSignin`, `hasSideboard`, `isDuel`, `latest`, `linkDown`, `memoryCount`, `method`, `optionsLabel`, `podCount`, `rateHead`, `runBo`, `runBoToggle`, `seatsLabel`, `sendLabel`, `setViewVersions`, `sideboard`, `tabCoachLine`, `tabDeckLine`, `tabResultsLine`, `toggleBo`, `viewVersions`, `viewVersionsBg`, `viewVersionsColor`
+`acArenaLine`, `benchPct`, `buyList`, `buyUrl`, `colShelves`, `earlier`, `evLosses`, `evNeed`, `evOdds`, `evOddsHi`, `evOddsLo`, `evRecord`, `evScale`, `evStrip`, `evSureBg`, `evSureNote`, `evTop8`, `evUnder`, `evVs`, `forgeCount`, `forgeNote`, `goApp`, `goSignin`, `hasSideboard`, `isDuel`, `latest`, `linkDown`, `memoryCount`, `method`, `optionsLabel`, `podCount`, `rateHead`, `runBo`, `runBoToggle`, `seatsLabel`, `sendLabel`, `setViewVersions`, `sideboard`, `tabCoachLine`, `tabDeckLine`, `tabResultsLine`, `toggleBo`, `viewVersions`, `viewVersionsBg`, `viewVersionsColor`
