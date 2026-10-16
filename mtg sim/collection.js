@@ -7,6 +7,7 @@
 //          until there is another honest source for them.
 //
 //   get(owner) -> { paper?, arena? }      setPaper(owner, text) -> shelf      setArena(owner, wildcards) -> shelf
+//   undoPaper(owner) -> the shelf before the last paste, or null (one step, kept until the next paste: change 26)
 const path = require('path');
 const config = require('./config');
 const { writeJson, readJson } = require('./store');
@@ -63,8 +64,15 @@ async function setPaper(owner, text) {
     const n = meta.forgeName(k); cards[n] = (cards[n] || 0) + l.qty;
   }
   const shelf = { at: Date.now(), source, cards, size: Object.values(cards).reduce((a, b) => a + b, 0), ...(unknown.size ? { unknown: [...unknown].slice(0, 50) } : {}) };
-  load()[key(owner)] = { ...(all[key(owner)] || {}), paper: shelf }; save();
+  const prev = load()[key(owner)]?.paper;
+  all[key(owner)] = { ...(all[key(owner)] || {}), paper: shelf, paperPrev: prev || null }; save();
   return shelf;
+}
+
+function undoPaper(owner) {
+  const c = load()[key(owner)]; if (!c || !c.paperPrev) return null;
+  all[key(owner)] = { ...c, paper: c.paperPrev, paperPrev: null }; save();
+  return c.paperPrev;
 }
 
 function setArena(owner, wildcards) {
@@ -77,7 +85,7 @@ function setArena(owner, wildcards) {
   return shelf;
 }
 
-const get = owner => load()[key(owner)] || {};
+const get = owner => { const { paperPrev, ...c } = load()[key(owner)] || {}; return c; };
 function remove(owner) { if (load()[key(owner)]) { delete all[key(owner)]; save(); } }
 
-module.exports = { get, setPaper, setArena, remove, parse };
+module.exports = { get, setPaper, undoPaper, setArena, remove, parse };

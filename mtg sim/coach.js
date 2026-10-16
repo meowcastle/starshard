@@ -92,11 +92,10 @@ function settingsText(rv) {
   lines.push(st.goal.posture === 'ceiling' ? 'Posture: ceiling. The player accepts variance for a higher top-8 chance: big swings in the matchups that matter most are welcome.' : 'Posture: consistent. Prefer changes that raise the floor (mana, curve, the worst matchup) over high-variance swings.');
   if (st.keep.length) lines.push(`Cards to keep, never suggest cutting: ${st.keep.join(', ')}. If a fix would need one of them, say so.`);
   if (st.never.length) lines.push(`Cards the player won't play, never suggest adding: ${st.never.join(', ')}.`);
-  // the Cards dial (change 22) and the paper collection; the wildcards are only for practising the list on Arena
+  // the Cards dial (change 22) and the paper collection (paper only: rule zero)
   const mode = st.budget && st.budget.mode, col = rv.collection;
   if (mode === 'owned') lines.push('Cards: owned only. Suggest only cards in the player\'s paper collection (below). The one exception: a card outside it that is worth real points, named with its price, e.g. "Jecht is worth 3.4 over Haliya. $9.80."');
   else if (mode === 'usd') lines.push(`Cards: up to $${st.budget.usd || 0}. Owned cards first; a card outside the collection only when it is worth points outside the noise and the running bill stays under $${st.budget.usd || 0}. Give each one's price.`);
-  if (st.budget && (st.budget.rare || st.budget.mythic)) lines.push(`Arena practice: ${st.budget.rare || 0} rare and ${st.budget.mythic || 0} mythic wildcards to build this list on Arena.`);
   if (col && col.owned) {
     const names = Object.entries(col.owned).sort((a, b) => b[1] - a[1]).slice(0, 300).map(([n, q]) => `${q} ${n}`);
     lines.push(`The player's paper collection (${col.size} cards${names.length < Object.keys(col.owned).length ? '; the 300 most-held shown' : ''}): ${names.join(', ')}.`);

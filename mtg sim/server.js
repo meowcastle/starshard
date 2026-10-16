@@ -39,7 +39,7 @@ function cleanSettings(x = {}, prev = {}) {
     },
     keep: x.keep !== undefined ? cardNames(x.keep) : prev.keep || [],
     never: x.never !== undefined ? cardNames(x.never) : prev.never || [],
-    budget: x.budget !== undefined ? (x.budget && typeof x.budget === 'object' ? { rare: Math.max(0, +x.budget.rare || 0), mythic: Math.max(0, +x.budget.mythic || 0), paper: x.budget.paper != null ? Math.max(0, +x.budget.paper || 0) : null,
+    budget: x.budget !== undefined ? (x.budget && typeof x.budget === 'object' ? { paper: x.budget.paper != null ? Math.max(0, +x.budget.paper || 0) : null, // wildcards left the budget (change 26)
       // the Cards dial (change 22): owned only, up to $usd, or anything
       mode: ['owned', 'usd', 'any'].includes(x.budget.mode) ? x.budget.mode : 'any', usd: x.budget.mode === 'usd' ? Math.max(0, +x.budget.usd || 0) : null } : null) : prev.budget || null,
     level: ['learning', 'competitive', 'grinder'].includes(x.level) ? x.level : prev.level || 'competitive',
@@ -1747,6 +1747,11 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/collection/paper' && req.method === 'POST') {
       const { text } = await readBody(req);
       try { const shelf = await collection.setPaper(user.name, text); brews.filter(b => b.owner === user.name).forEach(ensureChecks); return send(res, 200, shelf); } catch (e) { if (e.status) return send(res, e.status, { error: e.message }); throw e; }
+    }
+    // change 26: the paste is reversible, one step back
+    if (p === '/api/collection/paper/undo' && req.method === 'POST') {
+      const shelf = collection.undoPaper(user.name); if (!shelf) return send(res, 404, { error: 'Nothing to undo.' });
+      brews.filter(b => b.owner === user.name).forEach(ensureChecks); return send(res, 200, shelf);
     }
     if (p === '/api/cards' && req.method === 'GET') {
       const q = String(u.searchParams.get('q') || '').slice(0, 60), f = String(u.searchParams.get('format') || 'standard').toLowerCase();
