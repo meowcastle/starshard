@@ -94,7 +94,10 @@ const planOfName = name => { const a = A.accountByName(name); return A.planOf(a 
 function limitsFor(user) {
   if (user.isAdmin) return null;
   const f = A.planOf(user.plan).features;
-  const left = (kind, cap) => { if (cap == null) return null; const t = usage.events(user.name, kind, D24).sort((a, b) => a - b); return { cap, left: Math.max(0, cap - t.length), freeIn: t.length >= cap ? t[t.length - cap] + D24 - Date.now() : 0 }; };
+  // a run that never played a game (lost in a restart, or failed before it started) doesn't use up the day's runs:
+  // that's our failure, not the player's use (16 Oct 2026)
+  const wasted = kind => kind !== 'run' ? 0 : brews.filter(b => b.owner === user.name).reduce((n, b) => n + b.runs.filter(r => !r.weekly && Date.now() - r.created < D24).filter(r => { const rv = runView(b, r); return ['lost', 'failed'].includes(rv.status) && !rv.played; }).length, 0);
+  const left = (kind, cap) => { if (cap == null) return null; const t = usage.events(user.name, kind, D24).sort((a, b) => a - b).slice(wasted(kind)); return { cap, left: Math.max(0, cap - t.length), freeIn: t.length >= cap ? t[t.length - cap] + D24 - Date.now() : 0 }; };
   return { plan: user.plan, runs: left('run', f.runsPerDay), asks: left('ask', f.asksPerDay), budget: DAILY_BUDGET > 0 && usage.spent(D24) >= DAILY_BUDGET };
 }
 // null if allowed, else the sentence to show
