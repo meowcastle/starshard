@@ -1938,7 +1938,7 @@ const server = http.createServer(async (req, res) => {
       if (b.seats === 2 && size < 60) problems.push(`${size} cards in the main deck; a constructed deck needs 60`);
       if (b.seats === 2 && count(d.list.side) > 15) problems.push(`${count(d.list.side)} sideboard cards; the limit is 15`);
       if (d.legality && !d.legality.ok) problems.push(meta.legalityError(d.legality));
-      return send(res, 200, { diff, shared, size, sideSize: count(d.list.side), currentSize: count(cur.list.main), becomes: diff.length ? cur.v + 1 : null, unchanged: !diff.length,
+      return send(res, 200, { diff, shared, size, sideSize: count(d.list.side), currentSize: count(cur.list.main), becomes: diff.length ? Math.max(b.maxV || 0, ...b.versions.map(x => x.v)) + 1 : null, unchanged: !diff.length,
         legality: d.legality, forge: { unplayable: ai.unplayable, limited: ai.limited, missing: ai.missing }, problems, saveable: !!diff.length && !problems.length, list: d.list, rows: d.rows });
     }
     // the coach's answer so far, while it is being written: small, so the page can ask often

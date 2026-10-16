@@ -379,7 +379,7 @@ Deck
     <sc-if value="{{ isSim }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Results" class="fs-in" style="display:flex;flex-direction:column;gap:48px">
       <div class="fs-wrap" style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px 24px"><div style="display:flex;gap:0;border:1px solid var(--line-strong);border-radius:6px;overflow:hidden;font-size:var(--fs-m)"><a href="#" onClick="{{ setViewRun }}" style="padding:8px 16px;font-weight:600;color:{{ viewRunColor }};background:{{ viewRunBg }}">This run</a><a href="#" onClick="{{ setViewCompare }}" style="padding:8px 16px;font-weight:600;color:{{ viewCompareColor }};background:{{ viewCompareBg }};border-left:1px solid var(--line)">Compare</a></div>
-        <div style="display:flex;align-items:center;gap:12px;font-size:var(--fs-s);color:var(--muted)"><span>Field</span><a href="#" onClick="{{ toggleSource }}" style="border:1px solid var(--line-strong);border-radius:6px;padding:7px 12px;color:var(--ink);font-weight:600">{{ sourceLabel }} ▾</a><span style="font-family:var(--mono)">{{ snapshotLabel }}</span></div></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:var(--fs-s);color:var(--muted)"><span>Field</span><span style="color:var(--ink);font-weight:600">{{ sourceLabel }}</span><span style="font-family:var(--mono)">{{ snapshotLabel }}</span></div></div>
       <sc-if value="{{ hasSources }}" hint-placeholder-val="{{ false }}">
       <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;border:1px solid var(--line);border-radius:8px;padding:24px;background:var(--surface)">
         <div style="display:flex;flex-direction:column"><div style="font-size:var(--fs-s);color:var(--muted);padding-bottom:8px">Sources</div>
@@ -1855,7 +1855,7 @@ class Component extends DCLogic {
     v.edHits = ED ? ED.hits.map(h => { const f = FORGE_NOTE[h.forge] || ['', MUTED]; return { name: h.name, type: h.type || '', note: (h.legal === false ? (h.legality === 'banned' ? 'banned' : 'not ' + cap(d.format || 'standard') + '-legal') + ' · ' : '') + f[0] + (h.owned === true ? ' · owned' : ''), noteColor: h.legal === false ? LOSS : f[1], pick: pe(() => this.edPick(h)) }; }) : [];
     v.edHitsNote = ED ? ED.hitsNote : '';
     if (ED) {
-      const chk = ED.chk, next = chk && chk.becomes ? chk.becomes : ver.v + 1, nM = count(rows, 'main'), nS = count(rows, 'side');
+      const chk = ED.chk, next = chk && chk.becomes ? chk.becomes : Math.max(d.maxV || 0, ...d.versions.map(x => x.v)) + 1, nM = count(rows, 'main'), nS = count(rows, 'side');
       const changes = rows.map(r => ({ r, delta: r.qty - (r.orig || 0) })).filter(x => x.delta).sort((a, b) => a.delta - b.delta);
       v.edDiff = changes.map(({ r, delta }) => ({ sign: (delta < 0 ? '−' : '+') + Math.abs(delta), color: delta < 0 ? LOSS : WIN, name: r.name + (r.section === 'side' ? ' (side)' : '') }));
       const words = changes.map(({ r, delta }) => (delta < 0 ? '-' : '+') + Math.abs(delta) + ' ' + r.name).join(', ');
@@ -1872,7 +1872,7 @@ class Component extends DCLogic {
       v.edProblems = problems;
       const saveable = changes.length > 0 && nM >= 60 && nS <= 15 && !(chk && chk.legality && !chk.legality.ok) && !(chk && chk.saveable === false && !(chk.forge && (chk.forge.unplayable.length || chk.forge.missing.length)));
       const anyway = chk && chk.forge && (chk.forge.unplayable.length || chk.forge.missing.length);
-      v.edSaveLabel = S.busy ? 'Saving…' : anyway ? 'Save anyway' : 'Save as v' + next; v.edSaveBg = saveable ? ACC : 'var(--track)'; v.edSaveInk = saveable ? 'var(--bg)' : MUTED;
+      v.edSaveLabel = S.busy ? 'Saving…' : !changes.length ? 'No changes yet' : anyway ? 'Save anyway' : 'Save as v' + next; v.edSaveBg = saveable ? ACC : 'var(--track)'; v.edSaveInk = saveable ? 'var(--bg)' : MUTED;
       v.edSave = pe(() => saveable && this.edSave(d, words)); v.edDiscard = pe(() => this.setState({ ed: null }));
       const last = d.runs.find(r => r.status === 'done' || r.status === 'running') || d.runs[0], os = last && (d.oppSets || []).find(o => o.id === last.oppSet);
       v.edQueueLabel = 'queue v' + next + ' against ' + (os ? os.title.replace(/^The field · /, 'the ') + (os.time ? ' (' + os.time + ')' : '') : 'the field'); v.edQueueFill = ED.queue ? ACC : 'transparent'; v.edToggleQueue = pe(() => this.edUpdate(e => ({ ...e, queue: !e.queue })));

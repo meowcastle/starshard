@@ -22,4 +22,11 @@ sub1("      const b = await this.api('/api/brews/' + brewId + '/run', { method: 
      "      { const r = b && b.runs && b.runs[0], st = b && b.versions && (b.versions.find(x => x.v === (r && r.v)) || {}).state; if (r) this.setState({ msg: { text: 'v' + r.v + ' is queued' + (st && st.line && st.line !== 'queued' ? ' · ' + st.line : '') + '. It keeps going if you leave this page.' } }); }", 'queue ok')
 sub1("plans: [], hasPlans: false, brewList: [], ", "plans: [], hasPlans: false, brewList: [], msgOn: false, msgText: '', msgRing: 'var(--line-strong)', msgClose: pe(() => {}), ", 'defaults')
 sub1("    v.buyUrl = buyUrl; v.buyList = buyList;", "    v.buyUrl = buyUrl; v.buyList = buyList;\n    v.msgOn = !!S.msg; v.msgText = S.msg ? S.msg.text : ''; v.msgRing = S.msg && S.msg.bad ? LOSS : 'var(--line-strong)'; v.msgClose = pe(() => this.setState({ msg: null }));", 'render')
+# found by clicking everything (16 Oct): the list editor's Save named the wrong number (current + 1, but numbers never
+# repeat and Optimize's proposals take them) and did nothing silently with no changes; "Field: MTGGoldfish" looked
+# like a button and had no handler (the sources panel was never built), so it reads as text now
+sub1("next = chk && chk.becomes ? chk.becomes : ver.v + 1", "next = chk && chk.becomes ? chk.becomes : Math.max(d.maxV || 0, ...d.versions.map(x => x.v)) + 1", 'next number')
+sub1("v.edSaveLabel = S.busy ? 'Saving…' : anyway ? 'Save anyway' : 'Save as v' + next;", "v.edSaveLabel = S.busy ? 'Saving…' : !changes.length ? 'No changes yet' : anyway ? 'Save anyway' : 'Save as v' + next;", 'no changes')
+sub1('<span>Field</span><a href="#" onClick="{{ toggleSource }}" style="border:1px solid var(--line-strong);border-radius:6px;padding:7px 12px;color:var(--ink);font-weight:600">{{ sourceLabel }} ▾</a>',
+     '<span>Field</span><span style="color:var(--ink);font-weight:600">{{ sourceLabel }}</span>', 'field text')
 open(out, 'w', encoding='utf-8').write(s); print('patched', out)
