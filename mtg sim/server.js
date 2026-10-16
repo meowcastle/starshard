@@ -198,6 +198,9 @@ function claim(where) {
     from = open;
   }
   if (!from.length) return null;
+  // a person's run goes ahead of benchmark and calibration jobs, which nobody is waiting on (16 Oct 2026: a
+  // benchmark gauntlet held the worker's slots for an hour while a user run sat behind it)
+  const people = from.filter(j => j.brew); if (people.length) from = people;
   const job = from.reduce((best, j) => !best || (lastServed.get(j.owner) || 0) < (lastServed.get(best.owner) || 0) ? j : best, null);
   const i = job.pending.shift(), pr = job.pairings[i];
   job.inflight++; lastServed.set(job.owner, Date.now());
@@ -302,7 +305,8 @@ function extend(job) {
 // back in line. Off unless SIM_WORKER_TOKEN is set, and a worker running a different
 // Forge version than ours is turned away, so every game in a run plays the same AI.
 // where a job stands in line: -1 once it has started playing
-const waitPos = j => j && jobs.has(j.id) && j.status === 'queued' ? queue.filter(x => x.status === 'queued').indexOf(j) : -1;
+// a person's run waits only behind other people's runs (claim() serves them before benchmark and calibration jobs)
+const waitPos = j => !(j && jobs.has(j.id) && j.status === 'queued') ? -1 : queue.filter(x => x.status === 'queued' && (!j.brew || x.brew && !x.low)).indexOf(j);
 const WORKER_TOKEN = config.SIM_WORKER_TOKEN;
 const LEASE_MS = config.SIM_LEASE_MS;
 const leases = new Map(); // id -> { job, i, pr, worker, until }
@@ -328,8 +332,40 @@ let brews = readJson(BREWS, []);
 // every founder and every existing deck owner holds their name, so no sign-up can take it, or their decks
 for (const n of new Set([...ALLOWED.filter(x => x !== '*'), ...ADMINS, ...brews.map(b => b.owner)])) A.reserveName(n);
 const saveBrews = () => writeJson(BREWS, brews);
-// A run that was still reading decklists when the process stopped will never finish.
-brews.forEach(b => b.runs.forEach(r => { if (r.status === 'preparing') { r.status = 'failed'; r.error = 'the server restarted before this run was queued'; } }));
+// ---------- live runs survive a restart (16 Oct 2026) ----------
+// Jobs live in memory, so a restart (every NAS rebuild) used to turn every queued or running run into "lost"
+// ("Stopped at game 0") and fail any Optimize waiting on one. The jobs people wait on (a brew's runs) are now
+// written to jobs-live.json every few seconds and on SIGTERM, and go back in the queue at start. A pairing that
+// was mid-game starts over; finished pairings keep their games. Calibration and benchmark jobs aren't kept:
+// their own schedulers queue them again. A run still reading decklists is read again instead of failed.
+const LIVE = path.join(DATA, 'jobs-live.json');
+const keepLive = j => !!j.brew && !j.finished && j.status !== 'cancelled';
+const blankPairing = pr => ({ ...pr, status: 'queued', where: null, wins: pr.names.map(() => 0), draws: 0, games: [], warnings: [], cards: null });
+function saveLive() {
+  const live = queue.filter(keepLive).map(j => {
+    const { children, log, onDone, ...rest } = j;
+    const midGame = j.pairings.map((p, i) => p.status === 'running' ? i : -1).filter(i => i >= 0);
+    return { ...rest, inflight: 0, pending: [...midGame, ...j.pending], pairings: j.pairings.map(p => p.status === 'running' ? blankPairing(p) : p) };
+  });
+  try { writeJson(LIVE, live, { keep: 0 }); } catch (e) { console.error('jobs-live:', e.message); }
+}
+function restoreLive() {
+  let n = 0;
+  for (const j of readJson(LIVE, [], { keep: 0 })) {
+    if (jobs.has(j.id) || history.some(h => h.id === j.id)) continue;
+    const b = brews.find(x => x.id === j.brew), run = b && b.runs.find(r => r.jobId === j.id);
+    if (!run || run.cancelled) continue;
+    Object.assign(j, { children: new Set(), log: [], inflight: 0, status: j.started ? 'running' : 'queued' }, j.low ? { onDone: () => weeklyFinish() } : {});
+    jobs.set(j.id, j); queue.push(j); n++;
+    (b.thread = b.thread || []).push({ role: 'coach', kind: 'note', text: `The sim restarted; v${run.v}'s run is back in the queue and picks up where it was.`, at: Date.now() });
+  }
+  if (n) saveBrews();
+  for (const b of brews) for (const r of b.runs) if (r.status === 'preparing' && !r.jobId && !r.cancelled) { n++; prepareRun(b, r, { name: b.owner }, { low: !!r.weekly }); }
+  if (n) console.log(`restored ${n} run${n === 1 ? '' : 's'} from before the restart`);
+  pump();
+}
+setInterval(saveLive, 5000).unref();
+for (const sig of ['SIGTERM', 'SIGINT']) process.on(sig, () => { saveLive(); for (const j of jobs.values()) for (const c of j.children || []) try { c.kill('SIGKILL'); } catch {} process.exit(0); });
 // an answer that was being written when the process stopped will not arrive
 brews.forEach(b => { if (b.thinking) { b.thinking = false; (b.thread = b.thread || []).push({ role: 'coach', text: 'I lost that question when the simulator restarted. Ask again?', at: Date.now(), kind: 'error' }); } });
 const GAMES = 20;            // per pairing; the UI says "20 games each"
@@ -1952,7 +1988,7 @@ const server = http.createServer(async (req, res) => {
     return send(res, 502, { error: e.message });
   }
 });
-server.listen(PORT, HOST, () => console.log(`sim listening on ${HOST}:${PORT}, engine ${engineKey(engine())}, accounts via ${STARSHARD_API}\n${config.describe('server')}`));
+server.listen(PORT, HOST, () => { console.log(`sim listening on ${HOST}:${PORT}, engine ${engineKey(engine())}, accounts via ${STARSHARD_API}\n${config.describe('server')}`); restoreLive(); });
 backfill().catch(e => console.error('backfill:', e.message));
 setTimeout(() => { cardSearch.forgeView('Plains', forgeVersion()); cardSearch.standardIndex().catch(e => console.warn('card index:', e.message)); }, 20e3); // warm both, so no one waits on the first search
 // calibration: refit from what is on disk, then queue anything due, then check every six hours
