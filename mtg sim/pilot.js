@@ -166,6 +166,9 @@ function drawgo(m, find) {
   const veto = opts.filter(o => {
     if (!o.meta || (o.meta.type !== 'spell' && o.meta.type !== 'ability')) return false;
     if (o.meta.type === 'spell' && !theirs && /Planeswalker/.test(((faces(find(o.card || ''))[0]) || {}).type_line || '')) return false;
+    // our own answers are interaction too: a sweeper, a Starcage, a Seam Rip on our turn is never vetoed
+    // (the first trial vetoed them and lost: 34.6% -> 28.4% after five rounds, 15 Oct)
+    if (o.meta.type === 'spell' && (roleOf(find(o.card || '')).removal || roleOf(find(o.card || '')).sweeper)) return false;
     return open - costOf(o, find) < need;
   }).map(o => o.id);
   return veto.length ? { delegate: true, veto } : null;
