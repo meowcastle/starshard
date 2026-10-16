@@ -392,7 +392,7 @@ async function boardAll(decks, pairs, format) {
 
 // Resolve an opponent set to real decklists, then queue the job. Runs after the
 // request has answered, because 20 decklists from MTGGoldfish can take a while.
-async function prepareRun(b, run, user, { low = false } = {}) {
+async function prepareRun(b, run, user, { low = false, onDone = null } = {}) {
   try {
     let field;
     if (run.oppSet === 'team') {
@@ -413,7 +413,8 @@ async function prepareRun(b, run, user, { low = false } = {}) {
     field = field.filter(f => !f.error && f.list?.main?.length);
     if (!field.length) throw new Error('no opponent decklists could be read');
     run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list, f.name)) }));
-    const v = b.versions.find(x => x.v === run.v);
+    // a craft test (change 20) carries its own list: the version with one card swapped, never saved as a version
+    const v = run.list ? { list: run.list, style: (b.versions.find(x => x.v === run.v) || {}).style } : b.versions.find(x => x.v === run.v);
     const decks = [{ name: b.name, ...v.list, ...(v.style?.kind === 'control' ? { ai: 'control' } : {}) }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
     let post = null;
     if (b.seats !== 4) {
@@ -427,7 +428,7 @@ async function prepareRun(b, run, user, { low = false } = {}) {
     }
     if (run.cancelled) { saveBrews(); return; }
     // a weekly rerun waits behind people's runs, like calibration, and is compared with the last run when it finishes
-    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, ...(low ? { low: true, onDone: () => weeklyFinish() } : {}) });
+    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, ...(low ? { low: true, onDone: onDone || (() => weeklyFinish()) } : {}) });
     run.jobId = job.id; run.status = 'queued';
     if (run.field.source === 'goldfish') run.benchmarkId = (await benchmarkFor(decks.slice(1), b.format)).id;
   } catch (e) { run.status = 'failed'; run.error = e.message; }
@@ -934,6 +935,135 @@ function startRun(b, user, vIn, oppSet) {
   return { run };
 }
 
+// Optimize (change 24, NOTE-TO-CODE-16OCT-CHECK.md §2): structure -> run -> a matchup swap -> the write-up, one line
+// each in the Coach thread. b.optimize = { status, from, v, run, test, steps, who }; status is preparing, structure,
+// running, matchups, writing, done or failed. The structure step and the first run start on the request; a tick
+// moves the rest along as runs finish. The matchup step tests the coach's first swap that fits the Cards dial (the
+// coach reads the run's matchups and names what costs the most), as a version of its own against the same field.
+function optLine(b, status, text) {
+  const o = b.optimize; o.status = status; o.steps.push({ at: Date.now(), status, text });
+  (b.thread = b.thread || []).push({ role: 'coach', text, at: Date.now(), kind: 'optimize' }); saveBrews();
+}
+const optBusy = new Set();
+async function optimizeTick(b) {
+  const o = b.optimize; if (!o || !['running', 'matchups'].includes(o.status) || optBusy.has(b.id)) return;
+  const user = o.who, runOf = id => b.runs.find(r => r.id === id), rvOf = id => { const r = runOf(id); return r ? runView(b, r) : null; };
+  if (o.status === 'running') {
+    const rv = rvOf(o.run); if (!rv) return optLine(b, 'failed', 'The run is gone, so Optimize stopped.');
+    if (['failed', 'cancelled', 'lost'].includes(rv.status)) return optLine(b, 'failed', `The run of v${o.v} ${rv.status === 'cancelled' ? 'was cancelled' : 'failed'}, so Optimize stopped.`);
+    if (rv.status !== 'done') return;
+    const run = runOf(o.run);
+    if (!run.coach) { coachWriteups(b); if (claude.available()) return; } // wait for the readout: it names the matchup swaps
+    const s = rv.score;
+    if (s) optLine(b, 'matchups', `v${o.v} wins ${pct(s.p)}% against the top 10 (${pct(s.lo)}–${pct(s.hi)}).`);
+    const budget = settingsOf(b).budget, mode = (budget && budget.mode) || 'any', owned = (collection.get(b.owner).paper || {}).cards || {};
+    const fits = opt => opt.in.every(c => mode === 'any' || (owned[c.name] || 0) >= c.qty || (mode === 'usd' && (meta.cardFacts(c.name).price || Infinity) * c.qty <= (budget.usd || 0)));
+    const i = ((run.coach && run.coach.options) || []).findIndex(x => x && x.kind === 'swap' && !x.test && fits(x));
+    if (i < 0) { o.status = 'writing'; return optimizeWrite(b, o.v, `No swap the coach suggested fits ${mode === 'owned' ? 'your collection' : mode === 'usd' ? 'the budget' : 'the list'}, so v${o.v} stands.`); }
+    const opt = run.coach.options[i], base = b.versions.find(x => x.v === run.v), main = new Map(base.list.main.map(c => [c.name, c.qty]));
+    opt.out.forEach(c => main.set(c.name, (main.get(c.name) || 0) - c.qty)); opt.in.forEach(c => main.set(c.name, (main.get(c.name) || 0) + c.qty));
+    optBusy.add(b.id);
+    try {
+      const d = await meta.describeDeck({ ...base.list, main: [...main].filter(([, q]) => q > 0).map(([name, qty]) => ({ qty, name })) }, b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
+      if (!diff.length || (d.legality && !d.legality.ok)) { o.status = 'writing'; return optimizeWrite(b, o.v, `The coach's swap didn't make a legal new list, so v${o.v} stands.`); }
+      const swapText = `−${opt.out.map(c => c.qty + ' ' + c.name).join(', ')} · +${opt.in.map(c => c.qty + ' ' + c.name).join(', ')}`;
+      b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, from: { run: run.id, option: i }, note: 'Optimize, matchup swap: ' + swapText });
+      readSoon(b, b.versions[b.versions.length - 1]);
+      const r = startRun(b, user, prev.v + 1, run.oppSet);
+      if (r.error) { o.status = 'writing'; return optimizeWrite(b, o.v, `I couldn't test the swap (${r.error}), so v${o.v} stands.`); }
+      opt.test = { v: prev.v + 1, run: r.run.id }; o.test = { v: prev.v + 1, run: r.run.id, swap: swapText };
+      optLine(b, 'matchups', `Testing the coach's swap for ${run.coach.weakness || 'the worst matchups'} as v${prev.v + 1}: ${swapText}.`);
+    } finally { optBusy.delete(b.id); }
+    return;
+  }
+  // matchups: the swap's run against the structured version's
+  const tv = rvOf(o.test && o.test.run); if (!tv) return;
+  if (['failed', 'cancelled', 'lost'].includes(tv.status)) { o.status = 'writing'; return optimizeWrite(b, o.v, `The swap's run ${tv.status === 'cancelled' ? 'was cancelled' : 'failed'}, so v${o.v} stands.`); }
+  if (tv.status !== 'done') return;
+  const a = rvOf(o.run).score, t = tv.score;
+  // kept only when it is ahead and its range clears the other's middle: inside the noise, the simpler list stays
+  const kept = a && t && t.p > a.p && t.lo > a.p;
+  o.status = 'writing';
+  return optimizeWrite(b, kept ? o.test.v : o.v, a && t ? (kept ? `The swap beat the noise: ${pct(a.p)}% → ${pct(t.p)}% (${pct(t.lo)}–${pct(t.hi)}). Keeping v${o.test.v}.` : `The swap scored ${pct(t.p)}% against ${pct(a.p)}%, inside the noise, so v${o.v} stays.`) : `v${o.v} stays.`);
+}
+// the last step: say which version won, then the sideboard guide for it (the coach's sideboard mode)
+function optimizeWrite(b, v, line) {
+  const o = b.optimize; o.final = v; optLine(b, 'writing', line);
+  const run = b.runs.find(r => r.v === v && runView(b, r).status === 'done');
+  if (!claude.available() || !run) { optLine(b, 'done', `Done. v${v} is the list to play.`); return; }
+  usage.as({ who: b.owner, kind: 'coach-sideboard', brew: b.id }, () => coach.mode(b, coachRun(b, runView(b, run)), 'sideboard', {}))
+    .then(out => { b.guide = { rows: (out.rows || []).slice(0, 20), run: run.id, at: Date.now() }; optLine(b, 'done', `Done. v${v} is the list to play; its sideboard guide is on the Guide tab.`); })
+    .catch(e => optLine(b, 'done', `Done. v${v} is the list to play. The sideboard guide didn't write (${e.message}); ask for it from the Coach tab.`));
+}
+setInterval(() => { for (const b of brews) if (b.optimize && ['running', 'matchups'].includes(b.optimize.status)) optimizeTick(b).catch(e => console.error('optimize:', b.id, e.message)); }, 30e3);
+
+// Craft (change 20, NOTE-TO-CODE-16OCT-CRAFT.md §3): what each card you don't own is worth against the best one you
+// do. After a brew's newest field run finishes, for the three dearest cards the paper shelf is short of, the owned
+// substitute (same card type, a shared colour, mana value within one, legal; the one its shell plays most) is
+// tested in the full list against the same field, at low priority behind people's runs. A test is a run that is
+// never saved as a version (b.craftRuns); delta is the paired difference in field win rate, in points, with the
+// two runs' ranges combined. The Arena shelf has no cards to substitute from (collection.js), so paper only.
+const CRAFT_MAX = 3;
+async function craftStart(b) {
+  const paper = collection.get(b.owner).paper; if (!paper || b.seats !== 2) return;
+  const base = b.runs.find(r => ['meta10', 'meta20'].includes(r.oppSet) && runView(b, r).status === 'done');
+  if (!base || (b.craft && b.craft.run === base.id)) return;
+  const ver = b.versions.find(x => x.v === base.v); if (!ver) return;
+  const field = fieldLists(b.format); const N = field ? await shell.norms(field, b.format).catch(() => null) : null;
+  const names = ver.list.main.map(c => c.name), owned = paper.cards;
+  const find = await meta.cards([...new Set([...names, ...Object.keys(owned)])]);
+  const BASICS = /^(plains|island|swamp|mountain|forest|wastes)$/i, kind = k => (String((k?.card_faces?.[0] || k || {}).type_line || '').match(/Creature|Planeswalker|Battle|Instant|Sorcery|Enchantment|Artifact|Land/) || [''])[0];
+  const colors = k => new Set(k?.colors || k?.card_faces?.[0]?.colors || []);
+  const rateOf = n => { const A = ver.check && ver.check.archetype && N ? N[ver.check.archetype] : null; if (A) return A.rate[n] || 0; return N ? Math.max(0, ...Object.values(N).map(a => a.rate[n] || 0)) : 0; };
+  const inList = n => ver.list.main.filter(c => c.name === n).reduce((t, c) => t + c.qty, 0);
+  const missing = ver.list.main.filter(c => !BASICS.test(c.name) && (owned[c.name] || 0) < c.qty).map(c => ({ name: c.name, need: c.qty - (owned[c.name] || 0), price: meta.cardFacts(c.name).price || 0 }))
+    .sort((a, b) => b.price - a.price).slice(0, CRAFT_MAX);
+  const tests = [];
+  for (const m of missing) {
+    const km = find(m.name); if (!km) continue;
+    const cands = Object.keys(owned).map(n => [n, find(n)]).filter(([n, k]) => k && n !== m.name && !BASICS.test(n) && kind(k) === kind(km) && (owned[n] - inList(n)) >= m.need
+      && Math.abs((k.cmc || 0) - (km.cmc || 0)) <= 1 && (!colors(km).size || [...colors(k)].some(c => colors(km).has(c)) || !colors(k).size) && ['legal', 'restricted'].includes(k.legalities?.[b.format]))
+      .sort((x, y) => rateOf(y[0]) - rateOf(x[0]));
+    if (!cands.length) continue;
+    const sub = cands[0][0], main = ver.list.main.map(c => ({ ...c }));
+    main.find(c => c.name === m.name).qty -= m.need; const i = main.find(c => c.name === sub); if (i) i.qty += m.need; else main.push({ qty: m.need, name: sub });
+    tests.push({ id: crypto.randomBytes(4).toString('hex'), v: base.v, oppSet: base.oppSet, created: Date.now(), status: 'preparing', kind: 'craft', list: { ...ver.list, main: main.filter(c => c.qty > 0) },
+      swap: { shelf: 'paper', out: [{ qty: m.need, name: m.name }], in: [{ qty: m.need, name: sub }], savesUsd: +(m.need * m.price).toFixed(2), rarity: km.rarity || null } });
+  }
+  b.craft = { at: Date.now(), run: base.id, rows: [], pending: tests.length };
+  b.craftRuns = tests; saveBrews();
+  for (const t of tests) prepareRun(b, t, { name: b.owner }, { low: true, onDone: () => {} });
+}
+function craftCollect(b) {
+  if (!b.craft || !b.craft.pending || !b.craftRuns) return;
+  const base = b.runs.find(r => r.id === b.craft.run), a = base && runView(b, base).score;
+  let pending = 0; const rows = [];
+  for (const t of b.craftRuns) {
+    const tv = runView(b, t);
+    if (['queued', 'running', 'preparing'].includes(tv.status)) { pending++; continue; }
+    if (tv.status !== 'done' || !a || !tv.score) continue;
+    const se = x => (x.hi - x.lo) / 3.92, d = (tv.score.p - a.p) * 100, w = 1.96 * Math.hypot(se(a), se(tv.score)) * 100;
+    rows.push({ ...t.swap, saves: t.swap.rarity ? { [t.swap.rarity]: t.swap.out[0].qty } : {}, delta: +d.toFixed(1), lo: +(d - w).toFixed(1), hi: +(d + w).toFixed(1), games: tv.score.n || null });
+  }
+  if (pending !== b.craft.pending || rows.length !== b.craft.rows.length) { b.craft.pending = pending; b.craft.rows = rows; saveBrews(); }
+}
+setInterval(() => { for (const b of brews) { craftStart(b).catch(e => console.error('craft:', b.id, e.message)); craftCollect(b); } }, 60e3);
+
+// The field, by what the paper collection can build (change 20 §5): each field deck's share owned and the price of
+// the rest, with the missing cards for a buy link (change 23).
+async function fieldCraft(owner, format = 'standard') {
+  const paper = collection.get(owner).paper, field = fieldLists(format); if (!paper || !field) return null;
+  const shares = {}; try { (await meta.goldfishMeta(format)).forEach(d => { shares[d.name] = d.pct; }); } catch {}
+  await meta.cards([...new Set(field.flatMap(d => d.main.map(c => c.name)))]);
+  const BASICS = /^(plains|island|swamp|mountain|forest|wastes)$/i;
+  const rows = field.map(d => {
+    let owned = 0, size = 0, usd = 0; const missing = [];
+    for (const c of d.main) { size += c.qty; const have = BASICS.test(c.name) ? c.qty : Math.min(c.qty, paper.cards[c.name] || 0); owned += have; if (have < c.qty) { missing.push({ qty: c.qty - have, name: c.name }); usd += (c.qty - have) * (meta.cardFacts(c.name).price || 0); } }
+    return { name: d.name, metaPct: shares[d.name] ?? null, owned, size, usd: +usd.toFixed(2), missing };
+  });
+  return { paper: { field: `the ${format} field, ${field.length} decks`, at: Date.now(), rows } };
+}
+
 // The brew check (change 24, shell.js) on each of a brew's last three versions: worked out in the background and
 // kept on the version, keyed by the field, the paper collection and the Cards dial, so it is redone when any moves.
 // Constructed brews in a format with a field only.
@@ -964,8 +1094,9 @@ setTimeout(warmNorms, 20e3); setInterval(warmNorms, 6 * 36e5);
 
 // every version's rows carry today's card facts (type, rarity, price, buy link) from the card cache, so a version
 // saved before they existed shows them and prices stay current
-const versionsView = b => (b.versions || []).map(v => ({ ...v, rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })) }));
-const brewView = b => (ensureChecks(b), { ...b, versions: versionsView(b), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
+const versionsView = b => (b.versions || []).map(v => { const o = b.optimize, mine = o && [o.from, o.v, o.test && o.test.v].includes(v.v);
+  return { ...v, rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })), ...(mine ? { optimize: { status: o.status, steps: o.steps, final: o.final || null } } : {}) }; });
+const brewView = b => (ensureChecks(b), { ...b, craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -1397,7 +1528,7 @@ const server = http.createServer(async (req, res) => {
     // a simulator account can delete itself and its decks; a founder's account goes through Justin
     if (p === '/api/account' && req.method === 'DELETE') {
       if (user.source !== 'sim') return send(res, 400, { error: 'a founder account is removed by Justin' });
-      for (const b of brews.filter(x => x.owner === user.name)) { for (const r of b.runs) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); } try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
+      for (const b of brews.filter(x => x.owner === user.name)) { for (const r of [...b.runs, ...(b.craftRuns || [])]) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); } try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
       brews = brews.filter(x => x.owner !== user.name); saveBrews(); collection.remove(user.name);
       A.db.prepare('DELETE FROM accounts WHERE id = ?').run(user.accountId);
       console.log(`account deleted: ${user.name}`);
@@ -1518,6 +1649,30 @@ const server = http.createServer(async (req, res) => {
       if (runIt) { const r = startRun(b, user, latest(b).v, 'meta10'); if (r.error) return send(res, 200, { ...brewView(b), runError: r.error }); }
       return send(res, 200, brewView(b));
     }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/optimize$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (b.seats !== 2) return send(res, 400, { error: 'Optimize is for 60-card decks.' });
+      if (b.optimize && !['done', 'failed'].includes(b.optimize.status)) return send(res, 409, { error: 'Optimize is already working on this deck.' });
+      const field = fieldLists(b.format); if (!field) return send(res, 400, { error: `No ${b.format} field yet to optimize against.` });
+      const { from } = await readBody(req), ver = b.versions.find(x => x.v === from) || latest(b);
+      const paper = collection.get(b.owner).paper || null, budget = settingsOf(b).budget;
+      const st = await shell.structure(ver.list, { field, format: b.format, paper, budget });
+      if (!st) return send(res, 400, { error: 'That list has nothing to check against yet.' });
+      b.optimize = { status: 'structure', from: ver.v, v: ver.v, steps: [], at: Date.now(), who: { name: user.name, accountId: user.accountId, plan: user.plan, source: user.source, isAdmin: user.isAdmin } };
+      if (st.swaps.length) {
+        const d = await meta.describeDeck(st.list, b.format), prev = latest(b), diff = diffLists(prev.list, d.list);
+        if (diff.length && !(d.legality && !d.legality.ok)) {
+          const note = 'Optimize, structure: ' + st.lines.join('; ');
+          b.versions.push({ v: prev.v + 1, created: Date.now(), list: d.list, rows: d.rows, style: d.style, diff, note });
+          readSoon(b, b.versions[b.versions.length - 1]); b.optimize.v = prev.v + 1;
+          optLine(b, 'structure', `Structure: ${st.lines.join('; ')}${st.usd ? ` (about $${st.usd.toFixed(2)} of cards you don't own)` : ''}. Saved as v${prev.v + 1}.`);
+        } else optLine(b, 'structure', `Structure: v${ver.v} already matches its shell, nothing to change.`);
+      } else optLine(b, 'structure', `Structure: ${st.check.archetype ? `v${ver.v} already matches ${st.check.archetype}` : `v${ver.v} has no meta shell to match, so only its mana was checked, and it holds`}. Nothing to change.`);
+      const r = startRun(b, user, b.optimize.v, 'meta10');
+      if (r.error) { optLine(b, 'failed', `I couldn't start the run: ${r.error}`); return send(res, 200, brewView(b)); }
+      b.optimize.run = r.run.id; optLine(b, 'running', `Running v${b.optimize.v} against this week's top 10.`);
+      return send(res, 200, brewView(b));
+    }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/run$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const body = await readBody(req);
@@ -1530,6 +1685,10 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/collection' && req.method === 'GET') {
       const c = collection.get(user.name);
       return c.paper || c.arena ? send(res, 200, c) : send(res, 404, { error: 'no collection yet' });
+    }
+    if (p === '/api/field/craft' && req.method === 'GET') {
+      const fc = await fieldCraft(user.name, FORMATS.includes(u.searchParams.get('format')) ? u.searchParams.get('format') : 'standard');
+      return fc ? send(res, 200, fc) : send(res, 404, { error: 'no paper collection or no field yet' });
     }
     if (p === '/api/collection/paper' && req.method === 'POST') {
       const { text } = await readBody(req);

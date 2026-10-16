@@ -151,4 +151,64 @@ async function check(list, { field, format = 'standard', legality = null, paper 
     findings: findings.slice(0, 8), collection, at: Date.now() };
 }
 
-module.exports = { norms, check, roleOf, shapeOf };
+// Optimize's first step (NOTE-TO-CODE-16OCT-CHECK.md §2.1): the check's high and mid fixes as swaps, within the
+// Cards dial. Adds: removal, interaction and card draw up to the shell's count (the shell's picks, owned first), and
+// lands to Karsten's range. Cuts, in order: cards the shell never plays (highest mana value first), then cards in
+// the curve slots the list is over the shell in, least played by the shell first. Nothing changes for a list with
+// no shell beyond its land count. At most 12 cards move.
+//   -> { list, swaps: [{ out, in }], lines: ["−1 X, +1 Y (removal)", ...], usd }
+async function structure(list, { field, format = 'standard', paper = null, budget = null } = {}) {
+  const c = await check(list, { field, format, paper, budget }); if (!c) return null;
+  const N = await norms(field, format), A = c.archetype ? N[c.archetype] : null;
+  const main = list.main.map(x => ({ ...x }));
+  const find = await meta.cards([...new Set([...main.map(x => x.name), ...(A ? Object.keys(A.rate) : [])])]);
+  const owned = (paper && paper.cards) || {}, mode = (budget && budget.mode) || 'any';
+  let usdLeft = mode === 'usd' ? +budget.usd || 0 : Infinity, usd = 0;
+  const qty = n => main.filter(x => x.name === n).reduce((t, x) => t + x.qty, 0);
+  const bump = (n, d) => { const x = main.find(y => y.name === n); if (x) x.qty += d; else main.push({ qty: d, name: n }); };
+  // may this card go in once more? owned copies first; else by the dial and its price
+  const affordable = n => {
+    if (BASIC.test(n) || (owned[n] || 0) > qty(n)) return true;
+    if (mode === 'owned') return false;
+    const p = meta.cardFacts(n).price; if (mode === 'usd' && (p == null || p > usdLeft)) return false;
+    usdLeft -= p || 0; usd += p || 0; return true;
+  };
+  const cutOrder = () => {
+    const nonland = main.filter(x => x.qty > 0 && !meta.isLand(find(x.name)));
+    const over = A ? new Set(c.mine.map((n, i) => n - A.curve[i] >= 2 ? i : -1).filter(i => i >= 0)) : new Set();
+    const rate = n => (A && A.rate[n]) || 0, mvOf = n => Math.min(7, Math.floor(find(n)?.cmc || 0));
+    return [...nonland.filter(x => A && rate(x.name) < 0.05).sort((a, b) => (find(b.name)?.cmc || 0) - (find(a.name)?.cmc || 0)),
+      ...nonland.filter(x => rate(x.name) >= 0.05 && over.has(mvOf(x.name))).sort((a, b) => rate(a.name) - rate(b.name))].map(x => x.name);
+  };
+  const swaps = [], lines = [], MAX = 12;
+  const swap = (out, inn, why) => { bump(out, -1); bump(inn, 1); swaps.push({ out, in: inn }); return why; };
+  const why = {};
+  if (A) for (const role of ['removal', 'interaction', 'draw']) {
+    const m = c.mix.find(x => ({ removal: 'Removal', interaction: 'Interaction', draw: 'Card draw' })[role] === x.k);
+    let need = m ? m.norm - m.mine : 0; if (need < 2) continue;
+    const picks = Object.entries(A.rate).filter(([n, r]) => r >= 0.15 && roleOf(find(n))[role]).sort((x, y) => ((owned[y[0]] || 0) > 0) - ((owned[x[0]] || 0) > 0) || y[1] - x[1]).map(([n]) => n);
+    for (const n of picks) while (need > 0 && swaps.length < MAX && qty(n) < Math.round(A.copies[n] || 1)) {
+      const out = cutOrder().find(x => !roleOf(find(x))[role]); if (!out || !affordable(n)) break;
+      swap(out, n, role); why[out + '>' + n] = role; need--;
+    }
+  }
+  // lands to Karsten's range for the curve the list now has
+  const fc = await functional.check({ main }, field, c.archetype).catch(() => null);
+  if (fc && swaps.length < MAX) {
+    const [lo, hi] = fc.landRange, cols = ['W', 'U', 'B', 'R', 'G'];
+    const basicFor = col => ({ W: 'Plains', U: 'Island', B: 'Swamp', R: 'Mountain', G: 'Forest' })[col];
+    const shortCol = () => { const x = (fc.colours || []).slice().sort((a, b) => (b.need - b.sources) - (a.need - a.sources))[0]; return x ? cols.find(k => x.colour === ({ W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' })[k]) || 'W' : 'W'; };
+    for (let n = fc.lands; n < lo && swaps.length < MAX; n++) { const out = cutOrder()[0] || main.filter(x => x.qty > 0 && !meta.isLand(find(x.name))).sort((a, b) => (find(b.name)?.cmc || 0) - (find(a.name)?.cmc || 0))[0]?.name; if (!out) break; swap(out, basicFor(shortCol()), 'land'); why[out + '>' + basicFor(shortCol())] = 'land'; }
+    for (let n = fc.lands; n > hi && swaps.length < MAX; n--) {
+      const out = main.filter(x => x.qty > 0 && BASIC.test(x.name)).sort((a, b) => b.qty - a.qty)[0]?.name; if (!out) break;
+      const inn = A ? Object.entries(A.rate).filter(([k, r]) => r >= 0.3 && !meta.isLand(find(k)) && qty(k) < Math.round(A.copies[k] || 1)).sort((x, y) => y[1] - x[1]).map(([k]) => k).find(affordable) : null;
+      if (!inn) break; swap(out, inn, 'spell'); why[out + '>' + inn] = 'spell';
+    }
+  }
+  // the note: one line per distinct swap, counted
+  const count = new Map(); for (const sw of swaps) { const k = sw.out + '>' + sw.in; count.set(k, (count.get(k) || 0) + 1); }
+  for (const [k, n] of count) { const [o, i] = k.split('>'); lines.push(`−${n} ${o}, +${n} ${i}${why[k] ? ` (${why[k] === 'land' ? 'lands up to Karsten\'s count' : why[k] === 'spell' ? 'lands down to Karsten\'s count' : why[k] === 'draw' ? 'card draw' : why[k]})` : ''}`); }
+  return { list: { ...list, main: main.filter(x => x.qty > 0) }, swaps, lines, usd: +usd.toFixed(2), check: c };
+}
+
+module.exports = { norms, check, structure, roleOf, shapeOf };
