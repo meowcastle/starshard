@@ -17,6 +17,7 @@ const leaks = require('./leaks');
 const weekly = require('./weekly');
 const accounts = require('./accounts');
 const mail = require('./mail');
+const collection = require('./collection');
 const calib = require('./calib');
 const aihints = require('./aihints');
 const codex = require('./codex');
@@ -910,7 +911,10 @@ async function archetypeOf(cards, format = 'standard') {
   } catch { /* the label falls back */ }
   return 'Unknown';
 }
-const brewView = b => ({ ...b, real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
+// every version's rows carry today's card facts (type, rarity, price, buy link) from the card cache, so a version
+// saved before they existed shows them and prices stay current
+const versionsView = b => (b.versions || []).map(v => ({ ...v, rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })) }));
+const brewView = b => ({ ...b, versions: versionsView(b), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }), oppSets: oppSets(b), coachOn: claude.available() });
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -1237,6 +1241,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/api/logout') { A.endSession(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
     if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion(), signup: config.SIM_SIGNUP === 'open' });
+    if (p === '/api/public') return send(res, 200, { signup: config.SIM_SIGNUP === 'open', forge: forgeVersion() }); // change 19: no auth
     if (!p.startsWith('/api/')) return serveStatic(req, res, p);
     // remote workers authenticate with SIM_WORKER_TOKEN, not a person's session
     if (p.startsWith('/api/worker/')) {
@@ -1271,6 +1276,11 @@ const server = http.createServer(async (req, res) => {
       }
       // the player's own Arena matches (arena.js on the Mac): each one is filed once on the owner's brew
       // whose latest list holds most of the cards the player showed (half or more of the nonbasic ones)
+      // the owner's Arena wildcards, from the StartHook inventory in the Mac's Player.log (collection.js)
+      if (p === '/api/worker/collection' && req.method === 'POST') {
+        const owner = String(body.owner || ''); if (!owner) return send(res, 400, { error: 'no owner' });
+        return send(res, 200, { arena: collection.setArena(owner, body.wildcards) });
+      }
       if (p === '/api/worker/real' && req.method === 'POST') {
         const owner = String(body.owner || '').toLowerCase(), out = { added: 0, known: 0, unmatched: [] };
         const mine = brews.filter(b => b.owner.toLowerCase() === owner && b.seats === 2);
@@ -1337,7 +1347,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/account' && req.method === 'DELETE') {
       if (user.source !== 'sim') return send(res, 400, { error: 'a founder account is removed by Justin' });
       for (const b of brews.filter(x => x.owner === user.name)) { for (const r of b.runs) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); } try { fs.unlinkSync(path.join(DATA, 'covers', b.id + '.img')); } catch {} }
-      brews = brews.filter(x => x.owner !== user.name); saveBrews();
+      brews = brews.filter(x => x.owner !== user.name); saveBrews(); collection.remove(user.name);
       A.db.prepare('DELETE FROM accounts WHERE id = ?').run(user.accountId);
       console.log(`account deleted: ${user.name}`);
       return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` });
@@ -1403,6 +1413,8 @@ const server = http.createServer(async (req, res) => {
     if ((m = p.match(/^\/api\/codex\/([\w%:-]+)\/notes$/)) && req.method === 'POST') { const { t } = await readBody(req); const n = codex.addNote(decodeURIComponent(m[1]), user.name, t); return n ? send(res, 200, { notes: n }) : send(res, 400, { error: 'empty note' }); }
     if (p === '/api/brews' && req.method === 'GET') {
       const mine = brews.filter(b => b.owner === user.name); mine.forEach(coachWriteups);
+      // refresh stale prices in the background (the card cache asks Scryfall again after a week); this answer uses what's cached
+      meta.cards([...new Set(mine.flatMap(b => latest(b).list.main.concat(latest(b).list.side || []).map(c => c.name)))]).catch(() => {});
       return send(res, 200, { brews: mine.map(brewView), queueLength: queue.length, bo3: sideboard.available(), limits: limitsFor(user) });
     }
     if (p === '/api/brews' && req.method === 'POST') {
@@ -1464,6 +1476,15 @@ const server = http.createServer(async (req, res) => {
     }
     // ask the coach: the question goes in the thread now, the answer when it is written
     // card search for editing a list (Design's change 7): ?q=<text>&format=<f>, 8 results
+    // the collection (changes 20 and 22): both shelves; 404 while neither has anything
+    if (p === '/api/collection' && req.method === 'GET') {
+      const c = collection.get(user.name);
+      return c.paper || c.arena ? send(res, 200, c) : send(res, 404, { error: 'no collection yet' });
+    }
+    if (p === '/api/collection/paper' && req.method === 'POST') {
+      const { text } = await readBody(req);
+      try { return send(res, 200, await collection.setPaper(user.name, text)); } catch (e) { if (e.status) return send(res, e.status, { error: e.message }); throw e; }
+    }
     if (p === '/api/cards' && req.method === 'GET') {
       const q = String(u.searchParams.get('q') || '').slice(0, 60), f = String(u.searchParams.get('format') || 'standard').toLowerCase();
       if (!FORMATS.includes(f) && f !== 'commander') return send(res, 400, { error: 'unknown format' });
@@ -1591,13 +1612,19 @@ const server = http.createServer(async (req, res) => {
     // parsed ones in b.realMatches
     if ((m = p.match(/^\/api\/brews\/(\w+)\/real$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
-      const { opponent, won, onPlay, source, at } = await readBody(req);
+      const { opponent, won, onPlay, source, at, games, mulls, id } = await readBody(req);
       const opp = String(opponent || '').trim().slice(0, 60);
       if (!opp || typeof won !== 'boolean') return send(res, 400, { error: 'pick the opponent and the result' });
-      const src = ['Arena Bo1', 'Arena Bo3', 'Paper'].includes(source) ? source : 'Arena Bo1';
+      const src = ['Arena Bo1', 'Arena Bo3', 'Paper'].includes(source) ? source : 'Paper'; // the sim is a paper tool (change 21)
       const when = at && !isNaN(Date.parse(at)) ? new Date(at).toISOString() : new Date().toISOString();
-      (b.realMatches = b.realMatches || []).push({ matchId: 'manual-' + crypto.randomBytes(5).toString('hex'), at: when, event: src, won, onThePlay: onPlay === true ? 'player' : onPlay === false ? 'opponent' : null,
-        opponent: opp, v: latest(b).v, games: null, source: 'manual' });
+      // the phone's counter (change 18) sends each game and the mulligans, and its own id, so a match it queued
+      // offline and sends twice is filed once
+      const matchId = 'manual-' + (/^[\w-]{6,40}$/.test(String(id || '')) ? String(id) : crypto.randomBytes(5).toString('hex'));
+      if ((b.realMatches || []).some(x => x.matchId === matchId)) return send(res, 200, brewView(b));
+      const gs = Array.isArray(games) ? games.slice(0, 3).filter(g => g && typeof g.won === 'boolean').map(g => ({ won: g.won, onPlay: g.onPlay === true ? true : g.onPlay === false ? false : null, ...([5, 6, 7].includes(+g.mull) ? { mull: +g.mull } : {}) })) : null;
+      const ms = Array.isArray(mulls) ? mulls.slice(0, 3).map(Number).filter(x => x >= 0 && x <= 7) : null;
+      (b.realMatches = b.realMatches || []).push({ matchId, at: when, event: src, won, onThePlay: onPlay === true ? 'player' : onPlay === false ? 'opponent' : null,
+        opponent: opp, v: latest(b).v, games: gs && gs.length ? gs.length : null, ...(gs && gs.length ? { gameList: gs } : {}), ...(ms && ms.length ? { mulls: ms } : {}), source: 'manual' });
       saveBrews();
       return send(res, 200, brewView(b));
     }

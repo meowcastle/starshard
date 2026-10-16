@@ -87,6 +87,9 @@ async function arenaSweep() {
       fs.mkdirSync(path.join(DATA, 'arena'), { recursive: true });
       fs.writeFileSync(path.join(DATA, 'arena', `${f.replace('.log', '')}-${new Date(st.mtimeMs).toISOString().replace(/[:.]/g, '-')}.log`), text);
       const { matches, logs } = await require('./arena').parse(text);
+      // the wildcards for the Arena shelf (the newest log wins, so Player.log is read last)
+      const inv = require('./arena').inventory(text);
+      if (inv) await call('/api/worker/collection', { owner: config.ARENA_OWNER, wildcards: inv }).catch(e => log(`arena: wildcards not sent (${e.message})`));
       // each match's leaks (leaks.js: the pilot statistics on the player's own turns); the game logs stay here
       const leaksOf = m => { try { const t = require('./leaks').tally(logs.get(m.matchId) || []); t.moments = t.moments.map(x => ({ ...x, match: String(x.match).slice(0, 8) })); return t; } catch { return null; } };
       if (matches.length) {

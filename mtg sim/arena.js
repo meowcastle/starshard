@@ -264,4 +264,13 @@ async function parse(text, OUT = null) {
   return { matches: played, games: written, logs };
 }
 
-module.exports = { parse };
+// the player's wildcards at the last login (StartHook's InventoryInfo), for the Arena shelf (collection.js); null if
+// the log has none. The card collection itself is no longer in the log.
+function inventory(text) {
+  const i = String(text).lastIndexOf('"InventoryInfo"'); if (i < 0) return null;
+  const s = text.slice(i, i + 2000), n = k => { const m = s.match(new RegExp('"' + k + '"\\s*:\\s*(\\d+)')); return m ? +m[1] : null; };
+  const w = { common: n('WildCardCommons'), uncommon: n('WildCardUnCommons'), rare: n('WildCardRares'), mythic: n('WildCardMythics') };
+  return Object.values(w).some(x => x == null) ? null : w;
+}
+
+module.exports = { parse, inventory };

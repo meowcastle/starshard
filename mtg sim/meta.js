@@ -143,20 +143,25 @@ const config = require('./config');
 const { writeJson } = require('./store');
 const SCRY_FILE = () => path.join(config.DATA_DIR, 'scryfall.json');
 const scry = new Map(); // lowercased name -> card | null
-const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_cost', 'cmc', 'colors', 'legalities', 'games', 'set', 'set_name', 'image_uris', 'power', 'toughness', 'loyalty'];
+const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_cost', 'cmc', 'colors', 'legalities', 'games', 'set', 'set_name', 'image_uris', 'power', 'toughness', 'loyalty', 'rarity', 'prices', 'purchase_uris'];
+// prices move: a card older than this is asked for again (with its price, TCGplayer link and rarity, 16 Oct)
+const SCRY_STALE_MS = 7 * 864e5;
 // misses are remembered for a day, so a restart does not ask about them again straight away
 const missed = new Map(); // key -> when
 try { const d = JSON.parse(fs.readFileSync(SCRY_FILE(), 'utf8')); for (const [k, c] of Object.entries(d.cards || d)) if (k !== 'missed') scry.set(nk(k), c); for (const [k, at] of Object.entries(d.missed || {})) if (Date.now() - at < 864e5) { missed.set(k, at); scry.set(k, null); } } catch {}
 let scrySave = null;
 const persist = () => { clearTimeout(scrySave); scrySave = setTimeout(() => { try { writeJson(SCRY_FILE(), { cards: Object.fromEntries([...scry].filter(([, c]) => c)), missed: Object.fromEntries(missed) }, { keep: 0 }); } catch {} }, 2000); };
-const slim = c => Object.fromEntries(KEEP.filter(k => c[k] != null).map(k => [k, c[k]]));
+const slim = c => { const x = Object.fromEntries(KEEP.filter(k => c[k] != null).map(k => [k, c[k]]));
+  if (x.prices) x.prices = { usd: x.prices.usd || null, usd_foil: x.prices.usd_foil || null };
+  if (x.purchase_uris) x.purchase_uris = { tcgplayer: x.purchase_uris.tcgplayer || null };
+  x._at = Date.now(); return x; };
 const FRONT_ONLY = new Set(['transform', 'modal_dfc', 'flip', 'adventure', 'meld', 'reversible_card', 'prepare']);
 const forgeName = c => (FRONT_ONLY.has(c.layout) && c.card_faces ? c.card_faces[0].name : c.name);
 // Names are keyed without case or accents: decklists write "Dain's Company" for Dáin's Company.
 const nk = n => String(n).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const findCard = n => scry.get(nk(n)) ?? scry.get(nk(n.split(' // ')[0]));
 async function scryfall(names) {
-  const need = [...new Set(names.map(nk))].filter(n => !scry.has(n));
+  const need = [...new Set(names.map(nk))].filter(n => !scry.has(n) || (scry.get(n) && !(Date.now() - (scry.get(n)._at || 0) < SCRY_STALE_MS)));
   for (let i = 0; i < need.length; i += 75) {
     let r;
     // 429 means slow down: wait (Scryfall's Retry-After if it gives one) and try again, four times at most
@@ -172,6 +177,15 @@ async function scryfall(names) {
     const j = await r.json();
     const keep = c0 => { const c = slim(c0); [c.name, c.card_faces?.[0]?.name, forgeName(c)].filter(Boolean).forEach(k => scry.set(nk(k), c)); return c; };
     (j.data || []).forEach(keep);
+    // the printing Scryfall returns can have no market price (a promo, a showcase): price those from the
+    // cheapest printing that has one, which is what a player would buy (basic lands are left unpriced)
+    for (const c of (j.data || []).map(x => findCard(x.name)).filter(c => c && !c.prices?.usd && !/\bBasic\b/.test(c.type_line || ''))) {
+      await new Promise(ok => setTimeout(ok, 100));
+      const q = 'https://api.scryfall.com/cards/search?unique=prints&order=usd&dir=asc&q=' + encodeURIComponent(`!"${c.name}" usd>0`);
+      const f = await fetch(q, { headers: { Accept: 'application/json', 'User-Agent': 'sim.starshard.net' } }).catch(() => null);
+      const x = f && f.ok ? ((await f.json()).data || [])[0] : null;
+      if (x) { c.prices = { usd: x.prices?.usd || null, usd_foil: x.prices?.usd_foil || null }; c.purchase_uris = { tcgplayer: x.purchase_uris?.tcgplayer || null }; c.rarity = c.rarity || x.rarity; }
+    }
     // an exact miss is often a spelling variant (accents, punctuation): one fuzzy try each
     for (const nf of j.not_found || []) {
       const want = nk(nf.name);
@@ -245,7 +259,7 @@ async function describeDeck(deck, format = null) {
   const row = (c, section) => {
     const k = find(c.name);
     const type = (k?.card_faces?.[0]?.type_line || k?.type_line || '');
-    return { qty: c.qty, name: k ? forgeName(k) : c.name, section, cost: costOf(k), land: isLand(k), cmc: k?.cmc || 0, arena: k ? (k.games || []).includes('arena') : false, status: k ? 'ok' : 'unknown', legend: /\bLegendary\b/.test(type) && /\b(Creature|Planeswalker)\b/.test(type) };
+    return { qty: c.qty, name: k ? forgeName(k) : c.name, section, ...cardFacts(c.name), cost: costOf(k), land: isLand(k), cmc: k?.cmc || 0, arena: k ? (k.games || []).includes('arena') : false, status: k ? 'ok' : 'unknown', legend: /\bLegendary\b/.test(type) && /\b(Creature|Planeswalker)\b/.test(type) };
   };
   const rows = [...deck.main.map(c => row(c, 'main')), ...(deck.side || []).map(c => row(c, 'side')), ...(deck.commander || []).map(c => row(c, 'commander'))];
   const list = { main: rows.filter(r => r.section === 'main').map(({ qty, name }) => ({ qty, name })), side: rows.filter(r => r.section === 'side').map(({ qty, name }) => ({ qty, name })), commander: rows.filter(r => r.section === 'commander').map(({ qty, name }) => ({ qty, name })) };
@@ -287,5 +301,21 @@ async function faceOf(deck, name) {
 
 // Raw Scryfall cards for a set of names (for the Codex): a lookup function, or null per unknown name.
 async function cards(names) { await scryfall(names); return findCard; }
+// what a deck row shows about a card from the cache (no fetch): its type line, rarity (lands: 'land'), the
+// TCGplayer market price in dollars (Scryfall's prices.usd for the printing it returned, else foil) and the
+// TCGplayer product link. Changes 19, 20 and 23.
+function cardFacts(name) {
+  const k = findCard(String(name || '')); if (!k) return {};
+  const type = k.card_faces?.[0]?.type_line || k.type_line || '';
+  const usd = +(k.prices?.usd || k.prices?.usd_foil || NaN);
+  return { type, rarity: /\bLand\b/.test(type) ? 'land' : (k.rarity || null), price: Number.isFinite(usd) ? usd : null, buy: tcgProduct(k.purchase_uris?.tcgplayer) };
+}
+// Scryfall's TCGplayer link is its own affiliate redirect (partner.tcgplayer.com/c/<Scryfall's id>/...?u=<product>):
+// take the product page out of it, so a sale isn't credited to Scryfall. The page adds our own code (AFF) when there is one.
+function tcgProduct(u) {
+  if (!u) return null;
+  try { const x = new URL(u), inner = x.searchParams.get('u'), p = new URL(inner || u);
+    return /(^|\.)tcgplayer\.com$/.test(p.hostname) && !/^partner\./.test(p.hostname) ? 'https://www.tcgplayer.com' + p.pathname : null; } catch { return null; }
+}
 
-module.exports = { legalFor, legalityError, legalIn, cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
+module.exports = { cardFacts, legalFor, legalityError, legalIn, cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
