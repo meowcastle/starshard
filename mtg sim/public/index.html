@@ -78,7 +78,11 @@ a[style*="border-radius:999px"]:not([style*="background:var(--accent)"]):hover{b
 .fs-brew:hover{background:var(--surface)!important}
 .fs-bar{display:none!important}
 /* v5: the decks drawer on every width; the header always; the coach docked on the right */
-.fs-shell{grid-template-columns:minmax(0,1fr) clamp(360px,28vw,600px)!important;min-width:0!important}
+.fs-shell{grid-template-columns:minmax(0,1fr) var(--coachW,clamp(360px,28vw,600px))!important;min-width:0!important}
+.fs-grip{position:absolute;left:-5px;top:0;bottom:0;width:10px;cursor:col-resize;z-index:6}
+.fs-grip::after{content:'';position:absolute;left:4px;top:0;bottom:0;width:2px;background:transparent;transition:background var(--t1,.12s)}
+.fs-grip:hover::after,.fs-gripping .fs-grip::after{background:var(--accent)}
+.fs-gripping,.fs-gripping *{user-select:none!important;cursor:col-resize!important}
 .fs-main{max-width:1320px!important;margin:0 auto;width:100%}
 .fs-side{display:none!important}
 .fs-side.open{animation:fsSlide var(--t2) var(--ease) both;display:flex!important;position:fixed!important;inset:0;z-index:50;height:100vh;width:100%;max-width:320px;box-shadow:0 0 0 100vmax rgba(0,0,0,.55)}
@@ -103,6 +107,7 @@ a[style*="border-radius:999px"]:not([style*="background:var(--accent)"]):hover{b
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 /* change 16 · phone and iPad */
 @media (max-width:900px){
+.fs-grip{display:none}
 .fs-search,.fs-word{display:none!important}
 [data-v5="header"] a:first-child{max-width:58vw!important}
 .fs-shell{grid-template-columns:minmax(0,1fr)!important}
@@ -661,7 +666,7 @@ Deck
     </sc-if>
     <div data-change18="bar" class="fs-bar"><a href="#" data-v5="bar" data-on="{{ barDeckOn }}" onClick="{{ goDeck }}"><i></i>Deck</a><a href="#" data-on="{{ barCodexOn }}" onClick="{{ cxBrowse }}"><i></i>Codex</a><a href="#" data-on="{{ tabTableOn }}" onClick="{{ goTable }}"><i></i>Table</a><a href="#" data-on="{{ barAccountOn }}" onClick="{{ openAccount }}"><i></i>Account</a></div>
   </main>
-  <aside class="{{ coachCls }}" data-v5="coach-col">
+  <aside class="{{ coachCls }}" data-v5="coach-col"><div class="fs-grip" data-grip="1" title="Drag to resize · double-click to reset" onMouseDown="{{ gripDown }}" onDoubleClick="{{ gripReset }}"></div>
     <sc-if value="{{ hasCoachCol }}" hint-placeholder-val="{{ true }}">
     <div data-screen-label="Coach" data-v5="coach" class="fs-in" style="display:flex;flex-direction:column;gap:28px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font-weight:600">Coach</span><span style="font-size:var(--fs-xs);color:var(--muted)">reads {{ coachReads }}</span><a href="#" class="fs-close" onClick="{{ coachClose }}" aria-label="Close" style="color:var(--muted);font-size:var(--fs-l)">✕</a></div>
@@ -714,7 +719,17 @@ class Component extends DCLogic {
     deckId: null, runId: null, tab: null, view: 'run', methodOpen: false, oppOpen: null, hover: null, askText: '', bo3: false, delAsk: null, cancelAsk: null, look: null, lookErr: '',
     deckName: '', cover: 0, upload: null, uploadErr: '',
     codex: null, cxIndex: null, cxEntry: null, cxQuery: '', cxFilter: 'all', cxNoteText: '' };
+  // drag the coach column's edge: width follows the pointer, clamped so the main column keeps 560px
+  grip(e) {
+    e.preventDefault(); const col = e.currentTarget.parentElement, x0 = e.clientX, w0 = col.getBoundingClientRect().width, root = document.documentElement;
+    const max = () => Math.min(900, window.innerWidth - 560); let w = w0;
+    const move = (ev) => { w = Math.round(Math.max(300, Math.min(max(), w0 + (x0 - ev.clientX)))); root.style.setProperty('--coachW', w + 'px'); };
+    const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); document.body.classList.remove('fs-gripping'); try { localStorage.setItem('fs-coachW', String(w)); } catch (x) {} };
+    document.body.classList.add('fs-gripping'); document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+  }
   async componentDidMount() {
+    // the coach column's width, as the player last dragged it (patch_coach_grip.py)
+    try { const w = +localStorage.getItem('fs-coachW'); if (w >= 300) document.documentElement.style.setProperty('--coachW', w + 'px'); } catch (e) {}
     // whether new people can make an account (SIM_SIGNUP on the server); closed unless it says open
     this.api('/api/health').then(h => this.setState({ signupOpen: !!(h && h.signup) })).catch(() => {});
     try { const me = await this.api('/api/me'); this.setState({ me }); await this.load(true); this.fromLink(); } catch (e) { this.setState({ stage: 'signin' }); }
@@ -1138,12 +1153,12 @@ class Component extends DCLogic {
       queueRun: pe(() => d && this.queue(d.id, S.oppSet)), runBo: 1, runBoToggle: '', toggleBo: pe(() => {}),
       adminStopOn: false, adminStop: '', who: S.me ? '@' + S.me.user.name : '', forgeVer: S.me ? S.me.forge : '', isAdmin: !!(S.me && S.me.user && S.me.user.isAdmin), spentToday: S.me && S.me.spentToday != null ? '$' + S.me.spentToday.toFixed(2) + ' today' : '', hasForgeUpdate: !!(S.me && S.me.forgeUpdate), forgeUpdateVer: S.me && S.me.forgeUpdate ? S.me.forgeUpdate.version : '',
       forgeUpdateNote: S.me && S.me.forgeUpdate ? 'Engine ' + S.me.forgeUpdate.version + ' is out (' + new Date(S.me.forgeUpdate.published).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + '). New sets and AI fixes land with it. To update, set' : '',
-      plans: [], hasPlans: false, brewList: [], showPrompts: false, hasCoachCol: false, pickerLabel: 'Decks', coachReads: 'deck', coachCls: 'fs-coach', coachOpen: pe(() => {}), coachClose: pe(() => {}), bfNoteOn: false, bfServerNote: '', colHeadLine: '', colStats: [], isCollection: false, isSim: false, simEmpty: false, simStopped: false, stopLabel: '', stopRerunLabel: '', stopRerun: pe(() => {}), ckLoading: false, noCol: false, colPaste: pe(() => {}), hasCheck: false, ckColor: MUTED, ckArch: '', ckTitle: '', ckSub: '', ckCurve: [], ckCurveNote: '', ckMix: [], ckFindings: [], ckFoot: '', ckBtnLabel: '', ckBtnBg: 'var(--track)', ckBtnInk: MUTED, ckOptimize: pe(() => {}), hasPaper: false, goBrewFrom: pe(() => {}), goBrewFromFs: pe(() => {}), closeBrewFrom: pe(() => {}), isBrewFrom: false, bfLoading: false, bfHas: false, bfEmpty: false, bfNote: '', bfEmptyNote: '', bfFoot: '', bfRows: [], hasCol: false, colShelves: [], hasBuyMissing: false, buyMissing: '#', ownLine: '', ownColor: MUTED, craftLine: '', colNote: '', hasMissing: false, noMissing: false, missingRows: [], wcLine: '', hasCraft: false, noCraft: false, craftPending: '', craftNote: '', craftRows: [], buildLabel: '', buildBg: 'var(--track)', buildInk: MUTED, buildNote: '', buildOwned: pe(() => {}), hasFieldCraft: false, fieldCraftNote: '', fieldCraftRows: [], tbPick: true, tbPlay: false, tbDone: false, tbPickNote: '', tbOpps: [], tbSeats: [], tbStartBg: 'var(--track)', tbStartInk: MUTED, tbStartLabel: '', tbStart: pe(() => {}), memory: [], memoryCount: 0, deck: { name: '', version: '', versionLabel: '', subtitle: '', format: '', goal: { label: '' } }, deckArt: '', deckPips: [], seatsLabel: '',
+      plans: [], hasPlans: false, brewList: [], showPrompts: false, hasCoachCol: false, pickerLabel: 'Decks', coachReads: 'deck', coachCls: 'fs-coach', coachOpen: pe(() => {}), coachClose: pe(() => {}), gripDown: () => {}, gripReset: () => {}, bfNoteOn: false, bfServerNote: '', colHeadLine: '', colStats: [], isCollection: false, isSim: false, simEmpty: false, simStopped: false, stopLabel: '', stopRerunLabel: '', stopRerun: pe(() => {}), ckLoading: false, noCol: false, colPaste: pe(() => {}), hasCheck: false, ckColor: MUTED, ckArch: '', ckTitle: '', ckSub: '', ckCurve: [], ckCurveNote: '', ckMix: [], ckFindings: [], ckFoot: '', ckBtnLabel: '', ckBtnBg: 'var(--track)', ckBtnInk: MUTED, ckOptimize: pe(() => {}), hasPaper: false, goBrewFrom: pe(() => {}), goBrewFromFs: pe(() => {}), closeBrewFrom: pe(() => {}), isBrewFrom: false, bfLoading: false, bfHas: false, bfEmpty: false, bfNote: '', bfEmptyNote: '', bfFoot: '', bfRows: [], hasCol: false, colShelves: [], hasBuyMissing: false, buyMissing: '#', ownLine: '', ownColor: MUTED, craftLine: '', colNote: '', hasMissing: false, noMissing: false, missingRows: [], wcLine: '', hasCraft: false, noCraft: false, craftPending: '', craftNote: '', craftRows: [], buildLabel: '', buildBg: 'var(--track)', buildInk: MUTED, buildNote: '', buildOwned: pe(() => {}), hasFieldCraft: false, fieldCraftNote: '', fieldCraftRows: [], tbPick: true, tbPlay: false, tbDone: false, tbPickNote: '', tbOpps: [], tbSeats: [], tbStartBg: 'var(--track)', tbStartInk: MUTED, tbStartLabel: '', tbStart: pe(() => {}), memory: [], memoryCount: 0, deck: { name: '', version: '', versionLabel: '', subtitle: '', format: '', goal: { label: '' } }, deckArt: '', deckPips: [], seatsLabel: '',
       isCoach: tab === 'deck', isSim: tab === 'sim', isResults: tab === 'sim', isDeck: tab === 'deck', isCollection: tab === 'collection', isTable: tab === 'table', goCoach: goTab('deck'), goResults: goTab('sim'), goSim: goTab('sim'), goDeck: pe(() => this.setState({ tab: 'deck', hover: null, codex: null, account: null, brewFrom: null })), goTable: goTab('table'),
       goCollection: pe(() => { this.setState({ tab: 'collection', hover: null, codex: null, account: null, brewFrom: null }); if (!S.bfData) this.api('/api/collection/brews').then(r => this.setState({ bfData: r || { rows: [] } })).catch(e => this.setState({ bfData: { rows: [] }, bfErr: e.message })); }),
       tabSimOn: tab === 'sim' ? '1' : '0', tabSimColor: tabS('sim').color, tabCollectionOn: tab === 'collection' ? '1' : '0', tabCollectionColor: tabS('collection').color, tabDeckColor: tabS('deck').color,
       barDeckOn: !S.codex && !S.account && tab !== 'table' ? '1' : '0', barCodexOn: S.codex ? '1' : '0', barAccountOn: S.account ? '1' : '0',
-      coachReads: tab === 'collection' ? 'collection' : tab === 'sim' ? 'sim' : 'deck', coachCls: 'fs-coach' + (S.coachOpen ? ' open' : ''), coachOpen: pe(() => this.setState({ coachOpen: true })), coachClose: pe(() => this.setState({ coachOpen: false })),
+      coachReads: tab === 'collection' ? 'collection' : tab === 'sim' ? 'sim' : 'deck', coachCls: 'fs-coach' + (S.coachOpen ? ' open' : ''), coachOpen: pe(() => this.setState({ coachOpen: true })), gripDown: (e) => this.grip(e), gripReset: () => { document.documentElement.style.removeProperty('--coachW'); try { localStorage.removeItem('fs-coachW'); } catch (x) {} }, coachClose: pe(() => this.setState({ coachOpen: false })),
       tabTableOn: tab === 'table' ? '1' : '0', tabTableColor: tabS('table').color, barDecksOn: S.navOpen ? '1' : '0',
       tabCoachOn: tab === 'coach' ? '1' : '0', tabResultsOn: tab === 'results' ? '1' : '0', tabDeckOn: tab === 'deck' ? '1' : '0',
       tabCoachLine: tabS('coach').line, tabCoachColor: tabS('coach').color, tabResultsLine: tabS('results').line, tabResultsColor: tabS('results').color, tabDeckLine: tabS('deck').line, tabDeckColor: tabS('deck').color,
@@ -1260,7 +1275,7 @@ class Component extends DCLogic {
           costS: miss ? (r.usd != null ? money(r.usd) : miss + ' cards') : 'buildable', costColor: miss ? 'var(--ink)' : WIN, hasBuy: miss > 0 && !!(r.missing && r.missing.length), noBuy: !(miss > 0 && r.missing && r.missing.length), buy: r.missing ? v.buyList(r.missing) : '#',
           pS: r.p != null ? Math.round(r.p * 100) + '%' : '—', pSub: r.p != null ? (r.lo != null ? Math.round(r.lo * 100) + '–' + Math.round(r.hi * 100) : '') : 'not run', pColor: r.p == null ? MUTED : r.p >= 0.5 ? WIN : LOSS,
           startLabel: started ? 'Open' : 'Start this deck', start: pe(async () => { if (started) return this.setState({ brewFrom: false, deckId: r.brew, runId: null, tab: 'results' }); if (S.busy) return; this.setState({ busy: true }); try { const b = await this.api('/api/collection/brews/' + r.id + '/start', { method: 'POST' }); if (b && b.id) { this.setState(s => ({ brews: [b].concat(s.brews || []), brewFrom: false, deckId: b.id, runId: null, tab: 'results', stage: 'app' })); } } catch (e) { this.setState({ bfErr: e.message }); } this.setState({ busy: false }); }) }; }) : []; }
-    v.hasCoachCol = !S.codex && !S.account && !S.brewFrom && tab !== 'table'; v.pickerLabel = (d.name || 'Decks') + ' · v' + ((d.versions || []).slice(-1)[0] || {}).v;
+    v.hasCoachCol = !S.codex && !S.account && !S.brewFrom && tab !== 'table'; v.pickerLabel = (d.name || 'Decks') + ' · v' + ver.v;
     { const BF5 = S.bfData; if (tab === 'collection') v.bfLoading = !BF5; v.bfNoteOn = !!(BF5 && BF5.note); v.bfServerNote = (BF5 && BF5.note) || '';
       const P5 = S.collection && S.collection.paper; v.colHeadLine = P5 ? (P5.size + ' cards · ' + (P5.source || 'pasted') + ' · updated ' + new Date(P5.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })) : 'No collection yet'; }
     v.sideCls = 'fs-side' + (S.navOpen ? ' open' : ''); v.navOpen = pe(() => this.setState({ navOpen: true })); v.navClose = pe(() => this.setState({ navOpen: false }));
@@ -1798,7 +1813,8 @@ class Component extends DCLogic {
         v.ckMix = (CK.mix || []).map(m => { const maxv = Math.max(m.mine, m.norm, 1), off = Math.abs(m.mine - m.norm) >= (m.tol || 3); return { k: m.k, mine: String(m.mine), norm: String(m.norm), w: Math.round(m.mine / maxv * 100), normW: Math.round(m.norm / maxv * 100), color: off ? AMBER : 'var(--ink-2)' }; });
         v.ckFindings = findings.slice(0, 5).map(f => ({ text: f.text, fix: f.fix || '', color: SEV[f.sev] || MUTED }));
         v.ckFoot = (() => { const o = ver.optimize; if (!o || o.status !== 'failed') return ''; const last = o.steps && o.steps.length ? o.steps[o.steps.length - 1].text : ''; return 'Optimize stopped: ' + (last || 'its run was lost') + ' Press Optimize to try again. '; })() + 'Structure first, then games: a list off its shell\'s curve or short on interaction loses before the matchup does. ' + (CK.collection ? CK.collection : '');
-        const OP = ver.optimize || null, optimizing = !!OP && ['preparing', 'structure', 'running', 'matchups', 'writing'].includes(OP.status);
+        const OP = d.optimize || ver.optimize || null, optimizing = !!OP && ['preparing', 'structure', 'running', 'matchups', 'writing'].includes(OP.status);
+        if (optimizing) { const STEP = { preparing: 1, structure: 1, running: 2, matchups: 3, writing: 4 }, last = OP.steps && OP.steps.length ? OP.steps[OP.steps.length - 1].text : ''; v.ckSub = (OP.from !== ver.v ? 'On v' + OP.from + ', not this version · ' : '') + 'Optimize · step ' + (STEP[OP.status] || 1) + ' of 4: ' + last + (OP.status === 'running' ? ' About 30 minutes; you can leave this page.' : ''); }
         v.ckBtnLabel = optimizing ? 'Optimizing…' : S.busy ? '…' : 'Optimize'; v.ckBtnBg = optimizing ? 'var(--track)' : ACC; v.ckBtnInk = optimizing ? MUTED : 'var(--bg)';
         v.ckOptimize = pe(async () => { if (optimizing || S.busy) return; this.setState({ busy: true }); try { const b = await this.api('/api/brews/' + d.id + '/optimize', { method: 'POST', body: { from: ver.v } }); if (b && b.id) this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), tab: 'coach' })); } catch (e) { this.setState({ edErr: e.message }); } this.setState({ busy: false }); });
       } else { v.ckColor = MUTED; v.ckArch = ''; v.ckTitle = ''; v.ckSub = ''; v.ckCurve = []; v.ckCurveNote = ''; v.ckMix = []; v.ckFindings = []; v.ckFoot = ''; v.ckBtnLabel = ''; v.ckBtnBg = 'var(--track)'; v.ckBtnInk = MUTED; v.ckOptimize = pe(() => {}); } }
