@@ -1783,6 +1783,46 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { v, current: v === current(b).v, oppSet: set.id, field: set.title, games: set.n * GAMES * (b.seats === 2 && sideboard.available() ? 2 : 1), time: set.time, credits: set.credits, ahead,
         line: `Run v${v} · ${set.n * GAMES * (b.seats === 2 && sideboard.available() ? 2 : 1)} games · ${set.time} · ${set.title.replace(/^The field · /, '')}${ahead ? ` · ${ahead} run${ahead === 1 ? '' : 's'} ahead` : ''}` });
     }
+    // Suggestions (Justin, 16 Oct: "Optimize should provide ideas and suggestions, but clicking it shouldn't change a
+    // bunch of shit"): everything the sim and the collection know that could improve this version, each with the
+    // exact swap, nothing saved and nothing run. Applying one is a separate POST /versions the player confirms.
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/suggestions$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const vq = +u.searchParams.get('v'), ver = b.versions.find(x => x.v === vq) || current(b);
+      const paper = collection.get(b.owner).paper || null, budget = settingsOf(b).budget, mode = (budget && budget.mode) || 'any';
+      const owned = (paper && paper.cards) || {}, items = [];
+      const pairs = (outs, ins) => { const o = outs.flatMap(c => Array(c.qty).fill(c.name)), i = ins.flatMap(c => Array(c.qty).fill(c.name)); return o.length === i.length && o.length ? o.map((x, k) => ({ out: x, in: i[k] })) : null; };
+      const own = n => paper ? Math.min(1, (owned[n] || 0)) : null;
+      // 1. structure: the deck check's fixes, as swaps (within the Cards dial)
+      const field = fieldLists(b.format);
+      const st = field && b.seats === 2 ? await shell.structure(ver.list, { field, format: b.format, paper, budget }) : null;
+      if (st && st.swaps.length) {
+        const groups = new Map(); for (const sw of st.swaps) { const k = sw.out + '>' + sw.in; groups.set(k, (groups.get(k) || 0) + 1); }
+        [...groups].forEach(([k, n], i) => { const [o, inn] = k.split('>');
+          items.push({ id: 's' + i, kind: 'structure', title: st.lines[i] || `−${n} ${o}, +${n} ${inn}`, why: 'From the deck check: mana and curve against the numbers that make a list cast its spells on time.',
+            out: [{ qty: n, name: o }], in: [{ qty: n, name: inn }], swaps: Array(n).fill({ out: o, in: inn }), owned: own(inn) }); });
+      }
+      // 2-3. the sim's own tests of owned substitutes (change 20): free swaps, and buys worth points
+      const cr = b.craft && b.craft.rows && b.runs.find(r => r.id === b.craft.run && r.v === ver.v) ? b.craft.rows : [];
+      cr.forEach((r, i) => {
+        const outS = r.out.map(c => c.qty + ' ' + c.name).join(', '), inS = r.in.map(c => c.qty + ' ' + c.name).join(', ');
+        if (r.hi >= 0) items.push({ id: 'o' + i, kind: 'owned', title: `Play ${inS} instead of buying ${outS}`, why: `Tested in the sim: ${r.delta >= 0 ? '+' : '−'}${Math.abs(r.delta)} points, inside the noise${r.savesUsd != null ? `, and it saves $${r.savesUsd.toFixed(2)}` : ''}.`,
+          out: r.out, in: r.in, swaps: pairs(r.out, r.in), evidence: r.games ? 'tested' : null });
+        else items.push({ id: 'b' + i, kind: 'buy', title: `Buy ${outS}`, why: `Tested in the sim: playing ${inS} instead costs ${Math.abs(r.delta)} points (${Math.abs(r.hi)} to ${Math.abs(r.lo)}).${r.savesUsd != null ? ` About $${r.savesUsd.toFixed(2)}.` : ''}`,
+          out: [], in: r.out, swaps: null, usd: r.savesUsd ?? null });
+      });
+      // 4. the coach's matchup swaps from this version's newest finished run
+      const done = b.runs.find(r => r.v === ver.v && runView(b, r).status === 'done' && r.coach && r.coach.options);
+      ((done && done.coach.options) || []).forEach((o, i) => { if (o.kind !== 'swap' || !o.out || !o.in) return;
+        items.push({ id: 'c' + i, kind: 'coach', title: o.title, why: o.detail, evidence: o.evidence || null, basis: o.basis || '', out: o.out, in: o.in, swaps: pairs(o.out, o.in),
+          missing: paper ? o.in.filter(c => (owned[c.name] || 0) < c.qty).map(c => ({ qty: c.qty - (owned[c.name] || 0), name: c.name, price: meta.cardFacts(c.name).price ?? null })) : null }); });
+      // what the list is missing from the collection, priced
+      const missing = paper ? [...ver.list.main, ...(ver.list.side || [])].filter(c => !/^(Plains|Island|Swamp|Mountain|Forest|Wastes)$/.test(c.name) && (owned[c.name] || 0) < c.qty)
+        .map(c => ({ qty: c.qty - (owned[c.name] || 0), name: c.name, price: meta.cardFacts(c.name).price ?? null })) : null;
+      return send(res, 200, { v: ver.v, current: ver.v === current(b).v, cards: mode, collection: paper ? { size: paper.size, at: paper.at, source: paper.source } : null,
+        items, missing, missingUsd: missing ? +missing.reduce((t, c) => t + (c.price || 0) * c.qty, 0).toFixed(2) : null,
+        note: !paper ? 'Paste your ManaBox export to get suggestions from the cards you own.' : !done ? `Run v${ver.v} for the coach's matchup swaps; the fixes below need no games.` : '' });
+    }
     // Optimize, before it starts: what it will change and how long it takes. Nothing is saved.
     if ((m = p.match(/^\/api\/brews\/(\w+)\/optimize\/preview$/)) && req.method === 'GET') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
