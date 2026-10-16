@@ -891,7 +891,7 @@ function relativeOf(b, rv) {
 function leaksIn(t) {
   if (!t || typeof t !== 'object' || !t.acc) return null;
   const n = x => Math.max(0, Math.min(1e5, +x || 0));
-  return { games: n(t.games), wins: n(t.wins), turns: n(t.turns), acc: Object.fromEntries(leaks.KEYS.map(k => [k, Array.isArray(t.acc[k]) ? [n(t.acc[k][0]), n(t.acc[k][1])] : [0, 0]])),
+  return { grade: n(t.grade), games: n(t.games), wins: n(t.wins), turns: n(t.turns), acc: Object.fromEntries(leaks.KEYS.map(k => [k, Array.isArray(t.acc[k]) ? [n(t.acc[k][0]), n(t.acc[k][1])] : [0, 0]])),
     moments: (Array.isArray(t.moments) ? t.moments : []).slice(0, 30).map(x => ({ match: String(x.match || '').slice(0, 8), game: n(x.game), turn: n(x.turn), kind: String(x.kind || '').slice(0, 12), text: String(x.text || '').slice(0, 240) })) };
 }
 // the meta deck an opponent was most likely on: the field list sharing the most of the cards they showed
@@ -1277,7 +1277,7 @@ const server = http.createServer(async (req, res) => {
         for (const m of (Array.isArray(body.matches) ? body.matches : []).slice(0, 200)) {
           if (!m || !m.matchId || !m.result) continue;
           const had = mine.flatMap(b => b.realMatches || []).find(x => x.matchId === m.matchId);
-          if (had) { if (!had.leaks && leaksIn(m.leaks)) { had.leaks = leaksIn(m.leaks); out.leaks = (out.leaks || 0) + 1; } out.known++; continue; }
+          if (had) { const nl = leaksIn(m.leaks); if (nl && (!had.leaks || nl.grade > (had.leaks.grade || 0))) { had.leaks = nl; out.leaks = (out.leaks || 0) + 1; } out.known++; continue; } // a newer grading replaces the old
           const cards = (m.playerCards || []).map(String).filter(n => !BASIC.test(n));
           let best = null, bs = 0;
           for (const b of mine) { const names = new Set(latest(b).list.main.map(c => c.name)), share = cards.length ? cards.filter(n => names.has(n)).length / cards.length : 0; if (share > bs) { best = b; bs = share; } }

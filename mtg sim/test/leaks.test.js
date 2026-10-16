@@ -22,3 +22,23 @@ test('pools two matches', () => {
   assert.strictEqual(v.stats.keeps7.value, 1);
   assert.ok(v.moments.some(m => m.kind === 'held' && m.match === 'aaaaaaaa1'));
 });
+
+// 16 Oct, Justin's Arena games: a protection-only instant held through a quiet turn is not a leak, it does not
+// excuse a creature left in hand, and the turn a game is conceded in is not graded
+test('protection is not held mana; the conceded turn is not graded', () => {
+  const v4 = { me: { handSize: 7, life: 20 }, opp: { life: 20 } };
+  const g = [
+    { t: 'game', match: 'cccccccc1', game: 1, decks: ['player', 'opponent'] },
+    { t: 'turn', turn: 1, active: 0, board: [], views: [v4, v4] },
+    { t: 'turn_end', turn: 1, active: 0, seats: [{ manaAvailable: 3, castable: [{ name: 'Restoration Magic', mv: 1, instant: true, protect: true }, { name: 'Aerith Gainsborough', mv: 3 }] }, { manaAvailable: 0, castable: [] }] },
+    { t: 'turn', turn: 2, active: 1, board: [], views: [v4, v4] },
+    { t: 'turn_end', turn: 2, active: 1, seats: [{ manaAvailable: 3, castable: [] }, { manaAvailable: 0, castable: [] }] },
+    { t: 'turn', turn: 3, active: 0, board: [], views: [v4, v4] },
+    { t: 'turn_end', turn: 3, active: 0, seats: [{ manaAvailable: 2, castable: [{ name: 'Haliya, Guided by Light', mv: 2 }] }, { manaAvailable: 0, castable: [] }] },
+    { t: 'end', winner: 1 },
+  ];
+  const v = leaks.view(leaks.tally([g]));
+  assert.strictEqual(v.stats.heldUsed.n, 0);
+  assert.deepStrictEqual(v.moments.map(m => m.kind + ' ' + m.turn), ['mana 1']);
+  assert.ok(v.moments[0].text.includes('Aerith') && !v.moments[0].text.includes('Restoration'));
+});

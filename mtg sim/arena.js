@@ -51,8 +51,28 @@ async function namesFor(ids) {
     cache[id] = r.ok ? meta.forgeName(await r.json()) : null; // tokens and Arena-only objects have no entry
     await sleep(110);
   }
+  // what Scryfall has no arena_id for yet (a new set's first weeks: Thalia, the Survivor and FRA's Plains
+  // on 16 Oct), from Arena's own card database on this machine; a null cached earlier is retried here
+  Object.assign(cache, localNames(ids.filter(id => !cache[id])));
   writeJson(IDS(), cache, { keep: 0 });
   return id => cache[id] || null;
+}
+
+// Arena's card database (SQLite, beside its downloads; the Mac's path, else none): grpId -> English name
+function localNames(ids) {
+  if (!ids.length) return {};
+  try {
+    const dir = path.join(path.dirname(path.dirname(path.dirname(config.ARENA_LOG_DIR))), 'Application Support', 'com.wizards.mtga', 'Downloads', 'Raw');
+    const f = fs.readdirSync(dir).filter(x => /^Raw_CardDatabase_.*\.mtga$/.test(x)).map(x => path.join(dir, x)).sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
+    if (!f) return {};
+    const { DatabaseSync } = require('node:sqlite');
+    const db = new DatabaseSync(f, { readOnly: true });
+    const q = db.prepare('SELECT l.Loc AS name FROM Cards c JOIN Localizations_enUS l ON l.LocId = c.TitleId WHERE c.GrpId = ? ORDER BY l.Formatted LIMIT 1');
+    const out = {};
+    for (const id of ids) { const r = q.get(+id); if (r && r.name) out[id] = String(r.name).replace(/<[^>]*>/g, '').trim(); }
+    db.close();
+    return out;
+  } catch { return {}; }
 }
 
 async function parse(text, OUT = null) {
@@ -200,6 +220,10 @@ async function parse(text, OUT = null) {
   const find = await meta.cards([...ids].map(name).filter(Boolean));
   const kw = n => { const k = n && find(n); if (!k) return []; const t = [...(k.card_faces || [k])].map(f => f.oracle_text || '').join('\n'); return ['flying', 'menace', 'trample', 'lifelink', 'deathtouch', 'first strike', 'vigilance', 'reach', 'haste', 'flash'].filter(w => new RegExp('(^|\\n|, )' + w + '\\b', 'i').test(t)); };
   const mv = n => { const k = n && find(n); return k ? (k.cmc || 0) : -1; };
+  // a spell that only protects (Restoration Magic, Celestial Armor): holding it through a turn with nothing to
+  // protect against is right, so leaks.js doesn't count it as held mana. Anything that also answers is not one.
+  const protect = n => { const k = n && find(n); if (!k) return false; const t = [...(k.card_faces || [k])].map(f => f.oracle_text || '').join('\n');
+    return /hexproof|indestructible|protection from|phases? out/i.test(t) && !/counter target|destroy|exile target|deals? (?:\d+|X) damage|gets? -\d|-X\/-X|return target (?:[\w-]+ )*(?:creature|permanent|nonland)|tap target/i.test(t); };
   if (OUT) fs.mkdirSync(OUT, { recursive: true });
   let written = 0;
   const logs = new Map(); // matchId -> each game's records, for leaks.js
@@ -215,7 +239,7 @@ async function parse(text, OUT = null) {
       if (r.t === 'cast') { const n = r.spell ? name(r.grpId) : null; r.name = n || (r.spell ? 'arena:' + r.grpId : 'an ability'); r.mv = mv(n); const k = n && find(n); if (kw(n).includes('flash') || (k && /Instant/.test((k.card_faces?.[0] || k).type_line || ''))) r.instant = true; delete r.grpId; }
       if (r.t === 'attack') r.attackers = r.attackers.map(c => { const n = name(c.grpId); const x = { name: n || 'arena:' + c.grpId, power: c.power, toughness: c.toughness }; return x; });
       if (r.t === 'block') r.blocks = r.blocks.map(b => ({ ...b, blocker: name(b.blocker) || 'arena:' + b.blocker, attacker: name(b.attacker) || 'arena:' + b.attacker }));
-      if (r.t === 'turn_end') for (const s of r.seats) s.castable = s.castable.map(c => { const n = name(c.grpId); const k = n && find(n); return { name: n || 'arena:' + c.grpId, mv: mv(n), ...(k && (/Instant/.test((k.card_faces?.[0] || k).type_line || '') || kw(n).includes('flash')) ? { instant: true } : {}) }; });
+      if (r.t === 'turn_end') for (const s of r.seats) s.castable = s.castable.map(c => { const n = name(c.grpId); const k = n && find(n); return { name: n || 'arena:' + c.grpId, mv: mv(n), ...(k && (/Instant/.test((k.card_faces?.[0] || k).type_line || '') || kw(n).includes('flash')) ? { instant: true, ...(protect(n) ? { protect: true } : {}) } : {}) }; });
       recs.push(r);
     }
     const last = gm.recs.filter(r => r.t === 'turn').pop();

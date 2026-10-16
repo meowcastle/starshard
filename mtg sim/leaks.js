@@ -11,7 +11,10 @@ const KEYS = ['unspentOwn', 'unspentOpp', 'heldUsed', 'threatsAnswered', 'openBo
 const UNIT = k => k.startsWith('unspent') ? 'mana' : 'share';
 const isEarly = p => /UPKEEP|DRAW|Beginning|Step_Upkeep|Step_Draw/.test(p || '');
 const isThreat = r => r.kind === 'creature' || r.kind === 'planeswalker';
-const empty = () => ({ games: 0, wins: 0, turns: 0, acc: Object.fromEntries(KEYS.map(k => [k, [0, 0]])), moments: [] });
+// the grading's version: a match graded by an older one is regraded when the worker sends it again
+// (2, 16 Oct: protection-only instants are not held mana; the conceded turn is not graded)
+const GRADE = 2;
+const empty = () => ({ grade: GRADE, games: 0, wins: 0, turns: 0, acc: Object.fromEntries(KEYS.map(k => [k, [0, 0]])), moments: [] });
 
 function tally(games, SEAT = 'player') {
   const S = empty(), acc = S.acc;
@@ -50,8 +53,13 @@ function tally(games, SEAT = 'player') {
         if (r.active === me) {
           acc.unspentOwn[0] += s.manaAvailable || 0; acc.unspentOwn[1]++;
           const castable = (s.castable || []).filter(c => c.mv >= 0);
-          if ((s.manaAvailable || 0) >= 2 && castable.length && !castable.some(c => c.instant)) mom(r.turn, 'mana', `${s.manaAvailable} mana unspent with ${castable.map(c => c.name).join(', ')} castable`);
-          heldInstant = castable.some(c => c.instant) ? castable.filter(c => c.instant).map(c => c.name) : null;
+          // an instant that only protects (arena.js `protect`) is no reason to hold mana: it neither excuses
+          // an unspent turn nor counts as held when nothing threatened (16 Oct: Restoration Magic, Celestial Armor)
+          const answer = c => c.instant && !c.protect, main = castable.filter(c => !c.instant);
+          // the turn the game ended in (a concession mid-turn) is not a turn the mana went unspent
+          const final = recs.slice(i + 1).every(x => x.t === 'end');
+          if (!final && (s.manaAvailable || 0) >= 2 && main.length && !castable.some(answer)) mom(r.turn, 'mana', `${s.manaAvailable} mana unspent with ${main.map(c => c.name).join(', ')} castable`);
+          heldInstant = castable.some(answer) ? castable.filter(answer).map(c => c.name) : null;
           if (heldInstant) acc.heldUsed[1]++;
         } else {
           acc.unspentOpp[0] += s.manaAvailable || 0; acc.unspentOpp[1]++;
@@ -81,4 +89,4 @@ const view = (t, seat = 'player') => ({ seat, games: t.games, wins: t.wins, turn
   stats: Object.fromEntries(KEYS.map(k => [k, stat(t.acc[k], UNIT(k))])),
   moments: [...t.moments].sort((a, b) => (a.match > b.match ? 1 : a.match < b.match ? -1 : 0) || a.turn - b.turn) });
 
-module.exports = { tally, merge, view, KEYS };
+module.exports = { tally, merge, view, KEYS, GRADE };

@@ -92,7 +92,7 @@ async function arenaSweep() {
       if (matches.length) {
         const r = await call('/api/worker/real', { owner: config.ARENA_OWNER, matches: matches.map(m => ({ matchId: m.matchId, at: m.at, event: m.event, result: m.result, games: m.games, playerCards: m.playerCards, opponentCards: m.opponentCards, leaks: leaksOf(m) })) });
         if (r.status !== 200) { log(`arena: the server answered ${r.status}`); continue; } // try again next sweep
-        if (r.data.added || r.data.unmatched.length) log(`arena: ${f}: ${matches.length} matches, ${r.data.added} new, ${r.data.known} already filed${r.data.unmatched.length ? ', ' + r.data.unmatched.length + ' not matched to a brew' : ''}`);
+        if (r.data.added || r.data.leaks || r.data.unmatched.length) log(`arena: ${f}: ${matches.length} matches, ${r.data.added} new, ${r.data.known} already filed${r.data.leaks ? ', ' + r.data.leaks + ' regraded' : ''}${r.data.unmatched.length ? ', ' + r.data.unmatched.length + ' not matched to a brew' : ''}`);
       }
       seenLogs.set(f, key);
     } catch (e) { log(`arena: ${f}: ${e.message}`); }
