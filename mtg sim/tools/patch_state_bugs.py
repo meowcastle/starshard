@@ -19,9 +19,10 @@ def sub1(a, b, what):
 
 # Optimize: working only in its working states; failed frees the button and says so
 sub1("const optimizing = !!(ver.optimize && ver.optimize.status && ver.optimize.status !== 'done');",
-     "const OP = ver.optimize || null, optimizing = !!OP && ['preparing', 'structure', 'running', 'matchups', 'writing'].includes(OP.status);\n"
-     "        const opFailed = !!OP && OP.status === 'failed', opWhy = opFailed && OP.steps && OP.steps.length ? OP.steps[OP.steps.length - 1].text : '';", 'optimizing')
-sub1("v.ckFoot = 'Structure first, then games:", "v.ckFoot = (opFailed ? 'Optimize stopped: ' + (opWhy || 'its run was lost') + ' Press Optimize to try again. ' : '') + 'Structure first, then games:", 'optimize failed line')
+     "const OP = ver.optimize || null, optimizing = !!OP && ['preparing', 'structure', 'running', 'matchups', 'writing'].includes(OP.status);", 'optimizing')
+# (ckFoot is set above the optimizing line, so it reads ver.optimize itself: a const declared below would be in its TDZ;
+#  that shipped once, 16 Oct, and blanked every deck with a check)
+sub1("v.ckFoot = 'Structure first, then games:", "v.ckFoot = (() => { const o = ver.optimize; if (!o || o.status !== 'failed') return ''; const last = o.steps && o.steps.length ? o.steps[o.steps.length - 1].text : ''; return 'Optimize stopped: ' + (last || 'its run was lost') + ' Press Optimize to try again. '; })() + 'Structure first, then games:", 'optimize failed line')
 
 # a stopped run says why
 sub1("v.brief = { status: 'Stopped', statusNote: 'Stopped at game ' + (run.played || 0) + ' of ' + (run.total || 0) + '.', weakness: '', weaknessNote: '' };",

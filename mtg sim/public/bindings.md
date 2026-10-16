@@ -491,7 +491,7 @@ Types: **string** text, **colour** a CSS colour inside a style, **url** an image
 - `ckCurve` · list of {mineH, color (colour), normH, label} · constant or derived
 - `ckCurveNote` · string · constant or derived
 - `ckFindings` · list of {color (colour), text, fix} · constant or derived
-- `ckFoot` · string · constant or derived
+- `ckFoot` · string · reads brew.versions, run.status, run.queuePos, run.played, run.total
 - `ckLoading` · flag · reads state.ed, state.tab, brew.id
 - `ckMix` · list of {k, w, color (colour), normW, mine, norm} · constant or derived
 - `ckOptimize` · handler · reads this.api(), brew.versions, state.busy, brew.id · sets busy, edErr
