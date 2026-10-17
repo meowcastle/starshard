@@ -85,7 +85,10 @@ async function arenaSweep() {
     try {
       const text = fs.readFileSync(src, 'utf8');
       fs.mkdirSync(path.join(DATA, 'arena'), { recursive: true });
-      fs.writeFileSync(path.join(DATA, 'arena', `${f.replace('.log', '')}-${new Date(st.mtimeMs).toISOString().replace(/[:.]/g, '-')}.log`), text);
+      // one copy per Arena launch, named by when the log was started: Player.log keeps its birth time when Arena
+      // renames it to Player-prev.log, so a session overwrites its own copy (named by mtime, it was one 23 MB
+      // copy a minute while Arena ran: 1.3 GB on 17 Oct)
+      fs.writeFileSync(path.join(DATA, 'arena', `Player-${new Date(st.birthtimeMs || st.mtimeMs).toISOString().replace(/[:.]/g, '-')}.log`), text);
       const { matches, logs } = await require('./arena').parse(text);
       // the wildcards for the Arena shelf (the newest log wins, so Player.log is read last)
       const inv = require('./arena').inventory(text);
@@ -95,7 +98,7 @@ async function arenaSweep() {
       if (matches.length) {
         const r = await call('/api/worker/real', { owner: config.ARENA_OWNER, matches: matches.map(m => ({ matchId: m.matchId, at: m.at, event: m.event, result: m.result, games: m.games, playerCards: m.playerCards, opponentCards: m.opponentCards, leaks: leaksOf(m) })) });
         if (r.status !== 200) { log(`arena: the server answered ${r.status}`); continue; } // try again next sweep
-        if (r.data.added || r.data.leaks || r.data.unmatched.length) log(`arena: ${f}: ${matches.length} matches, ${r.data.added} new, ${r.data.known} already filed${r.data.leaks ? ', ' + r.data.leaks + ' regraded' : ''}${r.data.unmatched.length ? ', ' + r.data.unmatched.length + ' not matched to a brew' : ''}`);
+        if (r.data.added || r.data.leaks || r.data.retagged || r.data.unmatched.length) log(`arena: ${f}: ${matches.length} matches, ${r.data.added} new, ${r.data.known} already filed${r.data.leaks ? ', ' + r.data.leaks + ' regraded' : ''}${r.data.retagged ? ', ' + r.data.retagged + ' moved to the version played' : ''}${r.data.unmatched.length ? ', ' + r.data.unmatched.length + ' not matched to a brew' : ''}`);
       }
       seenLogs.set(f, key);
     } catch (e) { log(`arena: ${f}: ${e.message}`); }

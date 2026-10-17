@@ -913,6 +913,15 @@ function coachCollection(b, rv) {
 // The player's own games with a brew (Design's change 8), from Arena logs the Mac worker sends:
 // b.realMatches keeps one row per match; the page reads this summary.
 const BASIC = /^(Plains|Island|Swamp|Mountain|Forest|Wastes)$/;
+// the version a real match was played with: the one holding most of the cards the player showed (main or
+// sideboard); on a tie the current version, then the newest. It used to be the newest, which filed Justin's
+// v3 games (17 Oct) on v5, an Optimize proposal he never played.
+function playedV(b, cards) {
+  const share = v => { const s = new Set([...v.list.main, ...(v.list.side || [])].map(c => c.name)); return cards.filter(n => s.has(n)).length; };
+  let best = current(b), bs = share(best);
+  for (const v of [...b.versions].reverse()) { const n = share(v); if (n > bs) { best = v; bs = n; } }
+  return best.v;
+}
 function realOf(b) {
   const ms = b.realMatches || []; if (!ms.length) return null;
   const by = new Map();
@@ -1665,17 +1674,21 @@ const server = http.createServer(async (req, res) => {
         const mine = brews.filter(b => b.owner.toLowerCase() === owner && b.seats === 2);
         for (const m of (Array.isArray(body.matches) ? body.matches : []).slice(0, 200)) {
           if (!m || !m.matchId || !m.result) continue;
-          const had = mine.flatMap(b => b.realMatches || []).find(x => x.matchId === m.matchId);
-          if (had) { const nl = leaksIn(m.leaks); if (nl && (!had.leaks || nl.grade > (had.leaks.grade || 0))) { had.leaks = nl; out.leaks = (out.leaks || 0) + 1; } out.known++; continue; } // a newer grading replaces the old
           const cards = (m.playerCards || []).map(String).filter(n => !BASIC.test(n));
+          const hb = mine.find(b => (b.realMatches || []).some(x => x.matchId === m.matchId)), had = hb && hb.realMatches.find(x => x.matchId === m.matchId);
+          if (had) {
+            const nl = leaksIn(m.leaks); if (nl && (!had.leaks || nl.grade > (had.leaks.grade || 0))) { had.leaks = nl; out.leaks = (out.leaks || 0) + 1; } // a newer grading replaces the old
+            const pv = playedV(hb, cards); if (pv !== had.v) { had.v = pv; out.retagged = (out.retagged || 0) + 1; }
+            out.known++; continue;
+          }
           let best = null, bs = 0;
           for (const b of mine) { const names = new Set(current(b).list.main.map(c => c.name)), share = cards.length ? cards.filter(n => names.has(n)).length / cards.length : 0; if (share > bs) { best = b; bs = share; } }
           if (!best || bs < 0.5) { out.unmatched.push(m.matchId); continue; }
           (best.realMatches = best.realMatches || []).push({ matchId: String(m.matchId).slice(0, 60), at: m.at || null, event: String(m.event || '').slice(0, 60), won: !!m.result.won,
-            onThePlay: m.games && m.games[0] ? m.games[0].onThePlay : null, opponent: await archetypeOf((m.opponentCards || []).map(String), best.format), v: latest(best).v, games: (m.games || []).length, leaks: leaksIn(m.leaks) });
+            onThePlay: m.games && m.games[0] ? m.games[0].onThePlay : null, opponent: await archetypeOf((m.opponentCards || []).map(String), best.format), v: playedV(best, cards), games: (m.games || []).length, leaks: leaksIn(m.leaks) });
           out.added++;
         }
-        if (out.added || out.leaks) saveBrews();
+        if (out.added || out.leaks || out.retagged) saveBrews();
         return send(res, 200, out);
       }
       return send(res, 404, { error: 'not found' });
