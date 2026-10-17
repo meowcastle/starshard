@@ -743,6 +743,22 @@ class Component extends DCLogic {
     const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); document.body.classList.remove('fs-gripping'); try { localStorage.setItem('fs-coachW', String(w)); } catch (x) {} };
     document.body.classList.add('fs-gripping'); document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
   }
+  // patch_coach_bottom.py: keep the coach column at its newest message
+  coachStick() {
+    const el = document.querySelector('[data-v5="coach-col"]'), c = this._cs;
+    if (!el || !el.clientHeight) { if (c) c.hidden = true; return; }
+    const key = [location.pathname + location.search + location.hash, this.state.tab, this.state.view, el.classList.contains('open')].join('|');   // the tab isn't in the address
+    const bottom = () => { el.scrollTop = el.scrollHeight; };
+    if (!c || c.el !== el || c.key !== key || c.hidden) {
+      if (!c || c.el !== el) el.addEventListener('scroll', () => { if (this._cs && this._cs.el === el) this._cs.at = el.scrollHeight - el.scrollTop - el.clientHeight < 80; }, { passive: true });
+      bottom(); this._cs = { el, key, h: el.scrollHeight, at: true, hidden: false };
+      // pictures and fonts that land after the first paint push the bottom down; follow them for a moment
+      clearTimeout(this._csT); this._csT = setTimeout(() => { if (this._cs && this._cs.el === el && this._cs.at) bottom(); }, 400);
+      return;
+    }
+    if (el.scrollHeight !== c.h) { c.h = el.scrollHeight; if (c.at) bottom(); }
+  }
+  componentDidUpdate() { this.coachStick(); }
   async componentDidMount() {
     // the coach column's width, as the player last dragged it (patch_coach_grip.py)
     try { const w = +localStorage.getItem('fs-coachW'); if (w >= 300) document.documentElement.style.setProperty('--coachW', w + 'px'); } catch (e) {}
