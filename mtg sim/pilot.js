@@ -419,6 +419,7 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   const t0 = Date.now();
   // this match's mulligans so far, per seat, to know the size a hand would be kept at
   let match = 0, mulls = [0, 0], lastGame = 0;
+  const sbDone = {};
   const dead = new Set([...deadCards].map(nk));
   const xPlan = [null, null];
   // the pilot-error knob (research's spread finding, 15 Oct 2026): real players miss plays and Forge doesn't,
@@ -470,7 +471,9 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
           let m; try { m = JSON.parse(l); } catch { continue; }
           if (!authed) { if (m.type === 'hello' && m.token === token) authed = true; else sock.destroy(); continue; }
           if (m.type === 'decision') send({ type: 'answer', rid: m.rid, ...answer(m) });
-          else if (m.type === 'sideboard') { const p = plans[m.seat]; send({ type: 'answer', rid: m.rid, ...(p ? { main: boarded(m.main, p) } : {}) }); }
+          // the plan is applied once per match: before game 3 the deck Forge sends may already be the boarded one,
+          // so game 3 gets the list game 2 got (applying the plan twice asks for more copies than the pool has)
+          else if (m.type === 'sideboard') { const p = plans[m.seat], k = (m.match || match) + ':' + m.seat; if (p && !sbDone[k]) sbDone[k] = boarded(m.main, p); send({ type: 'answer', rid: m.rid, ...(p ? { main: sbDone[k] } : {}) }); }
           else if (m.type === 'between_games') send({ type: 'answer', rid: m.rid });
           else if (m.type === 'game_start') { match = m.match || 0; if (m.game === 1) lastGame = 0; }
           else if (m.type === 'game_end') { const g = { match: m.match || 0, game: m.game, winner: m.winner ?? -1, onThePlay: m.onThePlay, turns: m.turns, ms: m.ms, slow: !!m.slow, reason: m.reason }; if (keepLogs) g.log = m.log; res.games.push(g); onGame && onGame(g); }

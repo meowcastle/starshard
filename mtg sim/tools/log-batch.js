@@ -8,6 +8,11 @@
 //
 // ONLY="Bant Airbending Combo" plays just that deck against each of the top N (it need not be in the top N).
 //
+// SIDES=history.json BOARD=1: games 2 and 3 are sideboarded, as live runs are (server.js boardAll). The
+// calibration lists carry no sideboards, so each deck takes the 15 of the newest benchmark list of that name
+// in a copy of the server's history.json; both sides' plans come from sideboard.js (the coach model, with
+// what real pilots carry as the hint, cached in DATA_DIR/plans.json). Without BOARD, games 2-3 are game 1 again.
+//
 // Writes <out>/logs/<deck A>__<deck B>/m<match>-g<game>.jsonl.gz and <out>/batch.json (results
 // per pairing). Rerunning skips pairings already done.
 const fs = require('fs');
@@ -37,11 +42,20 @@ const c = JSON.parse(fs.readFileSync(CAL, 'utf8')).standard;
 const ONLY = process.env.ONLY || null;
 const decks = c.lists.slice(0, +TOP);
 if (ONLY) { const o = c.lists.find(l => l.name === ONLY); if (!o) { console.error(`no deck named ${ONLY} in ${CAL}`); process.exit(1); } if (!decks.includes(o)) decks.unshift(o); }
+const BOARD = process.env.BOARD === '1';
+if (BOARD) {
+  if (!process.env.SIDES) { console.error('BOARD=1 needs SIDES=<a copy of the server history.json>'); process.exit(1); }
+  const H = new Map();
+  for (const h of JSON.parse(fs.readFileSync(process.env.SIDES, 'utf8')).filter(x => ['benchmark', 'calibration'].includes(x.owner) && x.status === 'done').sort((a, b) => b.finished - a.finished))
+    for (const d of h.decks) if (!H.has(d.name) && d.side && d.side.length) H.set(d.name, d.side);
+  for (const d of decks) d.side = d.side && d.side.length ? d.side : H.get(d.name) || [];
+}
+const realSide = name => { const a = (c.sideboards || {})[name]; return a ? `Real tournament pilots of ${name} (${a.pilots} decks) most often carry in their sideboards: ` + a.cards.slice(0, 12).map(x => `${x.name} (${Math.round(x.share * 100)}% of decks, ${x.copies.toFixed(1)} copies)`).join(', ') + '.' : null; };
 const slug = s => s.replace(/[^\w]+/g, '-');
 const file = path.join(OUT, 'batch.json');
 fs.mkdirSync(OUT, { recursive: true });
 // what this batch was played with, beside its results, so a set of batches can be compared later
-fs.writeFileSync(path.join(OUT, 'settings.json'), JSON.stringify({ policy: POLICY, profileSpells: process.env.PROFILE_SPELLS || null, profileDecks: process.env.PROFILE_DECKS || null, extraDead: process.env.EXTRA_DEAD || null, err: ERR, errPlay: ERR_PLAY, errCombat: ERR_COMBAT, errStyle: process.env.PILOT_ERR_STYLE || null, errDecks: process.env.PILOT_ERR_DECKS || null, classes: process.env.PILOT_CLASSES || null, bridge: process.env.PILOT_BRIDGE || null, top: +TOP, matches: +M }, null, 1));
+fs.writeFileSync(path.join(OUT, 'settings.json'), JSON.stringify({ policy: POLICY, profileSpells: process.env.PROFILE_SPELLS || null, profileDecks: process.env.PROFILE_DECKS || null, extraDead: process.env.EXTRA_DEAD || null, err: ERR, errPlay: ERR_PLAY, errCombat: ERR_COMBAT, errStyle: process.env.PILOT_ERR_STYLE || null, errDecks: process.env.PILOT_ERR_DECKS || null, board: BOARD, classes: process.env.PILOT_CLASSES || null, bridge: process.env.PILOT_BRIDGE || null, top: +TOP, matches: +M }, null, 1));
 const done = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
 const log = (...a) => console.log(new Date().toTimeString().slice(0, 8), ...a);
 const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2147483647; };
@@ -49,7 +63,8 @@ const seedOf = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ 
 const jobs = [];
 for (let i = 0; i < decks.length; i++) for (let j = i + 1; j < decks.length; j++) if (!ONLY || decks[i].name === ONLY || decks[j].name === ONLY) jobs.push([decks[i], decks[j]]);
 const todo = jobs.filter(([a, b]) => !done[a.name + '|' + b.name]);
-log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}${ERR ? ', pilot error ' + ERR : ''}${ERR_PLAY || ERR_COMBAT ? `, bridge error play ${ERR_PLAY} combat ${ERR_COMBAT}` : ''}`);
+if (BOARD) log('sideboards: ' + decks.map(d => `${d.name} ${d.side.reduce((t, x) => t + x.qty, 0)}`).join(', '));
+log(`${jobs.length} pairings among the top ${decks.length}, ${todo.length} to play, ${M} best-of-threes each${BOARD ? ', games 2-3 sideboarded' : ''}, ${POLICY ? 'pilot ' + POLICY + ' on both seats' : 'stock Forge'}${ERR ? ', pilot error ' + ERR : ''}${ERR_PLAY || ERR_COMBAT ? `, bridge error play ${ERR_PLAY} combat ${ERR_COMBAT}` : ''}`);
 if (Object.keys(ERR_STYLE).length || Object.keys(ERR_DECKS).length) log('errors per deck (play/combat): ' + decks.map(d => `${d.name} ${errOf(d.name).join('/')}`).join(', '));
 
 // the profile each plan gets, for POLICY=profiles
@@ -78,10 +93,16 @@ const policyOf = {};
       const p = todo[i++]; if (!p) return;
       const [a, b] = p, key = a.name + '|' + b.name, dir = slug(a.name) + '__' + slug(b.name);
       const pol = POLICY === 'profiles' ? [policyOf[a.name], policyOf[b.name]] : [POLICY, POLICY];
-      const r = await runMatches({ decks: [a, b], matches: +M, seed: seedOf(key), own: pol.map(x => x ? ['priority', 'announce_x'] : []), policy: pol, deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir), err: ERR, errPlay: [errOf(a.name)[0], errOf(b.name)[0]], errCombat: [errOf(a.name)[1], errOf(b.name)[1]] });
+      let plans = [null, null];
+      if (BOARD) {
+        const sb = require('../sideboard'), pl = await sb.planFor(a, b, 'standard', { a: realSide(a.name), b: realSide(b.name) });
+        plans = [pl.a, pl.b]; log(`${key} plan: ${a.name} +${pl.a.in.reduce((t, x) => t + x.qty, 0)}, ${b.name} +${pl.b.in.reduce((t, x) => t + x.qty, 0)}`);
+      }
+      const r = await runMatches({ decks: [a, b], matches: +M, plans, seed: seedOf(key), own: pol.map(x => [...(x ? ['priority', 'announce_x'] : []), ...(BOARD ? ['sideboard'] : [])]), policy: pol, deadCards: POLICY ? DEAD : [], workDir: path.join(OUT, 'work', dir), gameLog: path.join(OUT, 'logs', dir), err: ERR, errPlay: [errOf(a.name)[0], errOf(b.name)[0]], errCombat: [errOf(a.name)[1], errOf(b.name)[1]] });
       const won = r.games.filter(g => g.winner === 0).length, lost = r.games.filter(g => g.winner === 1).length;
       done[key] = { dir, won, lost, games: r.games.length, missed: r.missed || 0, errors: r.errors.slice(0, 2) };
       fs.writeFileSync(file, JSON.stringify(done));
+      const sw = r.warnings.filter(w => /^sideboard/.test(w)); if (sw.length) log(`${key}: ${sw.length} sideboard warnings, e.g. ${sw[0].slice(0, 120)}`);
       log(`${key}: ${won}-${lost}${r.errors.length ? ' ERROR ' + r.errors[0].slice(0, 80) : ''}`);
       fs.rmSync(path.join(OUT, 'work', dir), { recursive: true, force: true });
     }

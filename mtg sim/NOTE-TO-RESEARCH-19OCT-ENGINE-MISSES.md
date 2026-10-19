@@ -29,7 +29,28 @@ What the logs do show:
 - **Smaug the Magnificent cast by game turn 8** takes Dragons from 67%→100% vs Excruciator, 71%→98% vs Prowess, 58%→84% vs Spellementals, 51%→76% vs Mono-Green (`tools/log-card-impact.js`). Opponents aim at Smaug in 41% of casts and it survives 2.4 turn starts on average. The next check is whether opponents' removal is going elsewhere while Smaug is on the board (log-targets "at the biggest" is 81% overall), and whether Forge resolves Smaug's attack trigger correctly.
 - Izzet Spellementals spends 66% of its counters on non-threats (Stock Up, Esper Origins, Jace's Machinations) and 33% on creatures and planeswalkers.
 
-## 4. Next
+## 4. Second pass (19 Oct afternoon): three more candidates ruled out for Dragons, and Jund is the same miss
+- **Smaug's script is right.** Forge's `smaug_the_magnificent.txt` matches the Oracle text (flying, haste, attack trigger = Treasures you control, upkeep Treasure). Its trigger hits the player 81% of the time at a mean 1.6 Treasures.
+- **Opponents do aim at Smaug when they can kill it.** `tools/log-threat-answers.js` (removal table from the card texts: what kills a 4/3 flier with the lands on hand). Of 457 opponent turns with Smaug in play, the opponent held a castable answer in only 52. When they held one they mostly fired it at Smaug (4c Control 50%, Spellementals 89%, Dimir Midrange 83%). The only real waste is 4c Control holding Inevitable Defeat (10 turns). Removal at Dragons creatures is spread evenly across its eight creatures (Momo 16%, Sarkhan 16%, Smaug 15%, ...). Every Dragons threat cast early lifts its win rate (Smaug +20, Magmatic Hellkite +14, Sarkhan +13 points); no single card stands out as broken.
+- **Sideboarding doesn't explain it.** The calibration batches never sideboarded: the lists have no sideboards, and the bridge only boards a seat that owns `sideboard`. Live runs and the server's own round robin do board (separate post-board games). `tools/log-batch.js` now takes `BOARD=1 SIDES=<history.json>`: each deck gets the newest benchmark list's 15, plans come from `sideboard.js` with the real-pilot hint, and games 2-3 play boarded. Also fixed `pilot.js` applying the plan twice before game 3. Dragons-only batch `eng/dD-board` (same settings as dC):
+
+| | unboarded (dC) | boarded (dD) | real games |
+|---|---|---|---|
+| Boros Dragons, all 11 opponents | 293-105, 74% | 294-94, 76% | 57-69, 45% |
+
+  Per opponent, boarding moves nothing outside noise.
+- **Self-inflicted life loss** (shocklands, Starting Town) is 0-2.4 life a game for every deck. Not a lever.
+- **Missed lethal for Jund** (free sacrifices with Biotech/Sackville out) occurs in 5 of 400 games. Not the leak.
+- **Mulligans** are normal once Leyline Axe on the battlefield is counted (Dwarves 22%).
+
+Jund's gap sits in its two Boros aggro matchups: vs Dragons 2-29 in the sim, 7-9 real; vs Dwarves 3-30 (no real games). Against the rest Jund is within noise of real except Spellementals and Dimir Midrange. So Jund's -20 and Dragons' +30 are largely one miss: **the sim's proactive Boros decks beat everything far more than real ones do**, and it isn't removal aim, sideboarding, the cards' scripts or mulligans.
+
+What's left, in order of how testable it is:
+1. **Blocks and races against fliers.** Forge's AI choices when it's behind against evasive threats: chump or race, holding back attackers. Next: per game, the opponent's attacks while Dragons has a flier out, and its life at the point it stops attacking.
+2. **The real Dragons rate.** 126 real games, 45%. The sample is small per opponent (3-30 games), but 45% overall is solid (±9). Pilots of real Dragons may be weaker than the list suggests; that isn't something the engine can fix.
+3. **Boarded calibration for the bar.** Since live runs board, the scoreboard batches should too (`BOARD=1`), so the bar measures what players see. It costs one plan call per pairing, once (cached).
+
+## 5. Next
 1. Smaug: removal targeting while it's in play, and its trigger's damage per attack vs the Treasure count.
 2. Jund: its own sacrifice decisions (what it sacrifices, when, and to which outlet), since removal isn't the leak.
 3. The overlap rule in §2 before any further dial work, so the bar measures the decks we actually play.
