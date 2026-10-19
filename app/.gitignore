@@ -1,0 +1,3 @@
+node_modules/
+# built by tools/build-app.mjs, copied into the native projects by `npx cap sync`
+www/

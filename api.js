@@ -14,7 +14,21 @@
 // and don't assume signup() sends full birth data either — check this
 // comment first.
 
-export const API_BASE = typeof location !== 'undefined' ? `https://api.${location.hostname}` : '';
+// Inside the iOS/Android app (app/, Capacitor) the page is served from the app
+// bundle, so location.hostname is the app's own origin and the API has to be
+// named outright. app-bridge.js sets window.STARSHARD_APP before anything loads;
+// on the web it is absent and nothing below changes.
+const APP = typeof window !== 'undefined' && window.STARSHARD_APP ? window.STARSHARD_APP : null;
+export const API_BASE = APP && APP.apiBase ? APP.apiBase
+  : typeof location !== 'undefined' ? `https://api.${location.hostname}` : '';
+
+// The apps can't rely on the session cookie (a native webview treats it as
+// third-party, and iOS drops it), so the server hands app clients the same JWT
+// in the body and they send it back as a bearer token. Web: never used.
+const appToken = {
+  get() { try { return APP ? localStorage.getItem('starshard-app-session') : null; } catch (e) { return null; } },
+  set(t) { try { if (APP) { if (t) localStorage.setItem('starshard-app-session', t); else localStorage.removeItem('starshard-app-session'); } } catch (e) {} },
+};
 
 const GEOCODER = 'https://geocoding-api.open-meteo.com/v1/search';
 
@@ -25,10 +39,17 @@ class ApiError extends Error {
 async function call(path, { method = 'GET', body } = {}) {
   let r;
   try {
+    const headers = {};
+    if (body) headers['Content-Type'] = 'application/json';
+    if (APP) {
+      headers['X-Starshard-Client'] = 'app';
+      const t = appToken.get();
+      if (t) headers.Authorization = `Bearer ${t}`;
+    }
     r = await fetch(`${API_BASE}${path}`, {
       method,
       credentials: 'include',
-      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      headers: Object.keys(headers).length ? headers : undefined,
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch (e) {
@@ -37,7 +58,17 @@ async function call(path, { method = 'GET', body } = {}) {
   if (r.status === 204) return null;
   let j = null;
   try { j = await r.json(); } catch (e) { /* empty body is fine */ }
-  if (!r.ok) throw new ApiError(j?.error || 'server_error', r.status);
+  if (!r.ok) {
+    // A revoked or expired app token reads as signed out, same as a dead cookie.
+    if (r.status === 401 && APP) appToken.set(null);
+    throw new ApiError(j?.error || 'server_error', r.status);
+  }
+  if (j && typeof j.token === 'string') {
+    // Only ever present for app clients (server.js isAppClient). Kept on the
+    // device and stripped so no caller ever sees or stores it.
+    appToken.set(j.token);
+    delete j.token;
+  }
   return j;
 }
 
@@ -169,6 +200,7 @@ export async function saveManzilProgress(progress) {
 /** Never throws — logging out locally must always succeed. */
 export async function logout() {
   try { await call('/api/auth/logout', { method: 'POST' }); } catch (e) {}
+  appToken.set(null);
 }
 
 export async function forgotPassword(email) {
@@ -207,8 +239,14 @@ export async function exportData() {
  * server never deleted it. Requires the current password; the caller is
  * responsible for collecting it. */
 export async function deleteAccount(password) {
-  return call('/api/me', { method: 'DELETE', body: { password } });
+  const r = await call('/api/me', { method: 'DELETE', body: { password } });
+  appToken.set(null);
+  return r;
 }
+
+/** The app's session token, for the PvP socket handshake (app-bridge.js).
+ * Null on the web, where the socket rides the cookie. */
+export function appSessionToken() { return appToken.get(); }
 
 // --- saved window layout ---------------------------------------------------
 

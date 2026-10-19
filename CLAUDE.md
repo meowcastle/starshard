@@ -1194,6 +1194,22 @@ own predictions corrected below):
    named V1 as canon for two days after the flip to V2, which is why
    `send-to-code/` kept shipping the retired file).
 
+**THE APP SHELL IS BUILT (19 Oct 2026, Justin: "I want this shipped as super clean mobile app on
+iphone and android").** `app/` is the Capacitor project (iOS + Android, committed), `tools/build-app.mjs`
+builds its web bundle by READING `tools/deploy.sh` (the page and `FRONTEND_FILES`), so the app cannot
+drift from staging. The runbook is `app/RELEASING.md`; read it before touching anything under `app/`.
+Three things worth knowing here: **the apps authenticate with a bearer token, not the cookie** (a
+webview's cookies are third-party to the API and iOS drops them): `server.js` `sessionTokenOf()` reads
+either, login/signup add `token` to the body only for `X-Starshard-Client: app`, and `api.js` keeps it
+when `window.STARSHARD_APP` is set and is unchanged on the web; the lobby takes it from the socket
+handshake's `auth.token`. **`app/src/app-bridge.js` is Code's and app-only** (the API base, the socket
+token, the shell, haptics on `manzil:*` events, the nightly reminder); it touches no markup. And
+**`account-data/` is a Code-owned static page** (export + delete, guideline 5.1.1(v)) the app bundles;
+the lobby still needs a menu item that calls `window.STARSHARD_APP.openAccountData()` (Design,
+`MANZIL-QUEUE.md`). Tests: `test/app-auth.test.mjs`, `test/api-app.test.mjs`, and `test/app-e2e.mjs`
+(a phone-sized browser through signup, PvP socket, a full board, export and deletion against a real
+MySQL; CI runs it on every `app-v*` tag). Ticket queue for this work: `MANZIL-QUEUE.md`.
+
 **Then, the app wrapper** (`PLATFORM.md` — decided Aug 13). Ships to the
 App Store as a **Capacitor wrapper around the existing web build, not a
 rewrite**. It must add native value beyond a web clipping or Apple

@@ -1,0 +1,32 @@
+{
+  "appId": "net.starshard.manzil",
+  "appName": "Manzil",
+  "webDir": "www",
+  "server": {
+    "hostname": "app.starshard.net",
+    "androidScheme": "https",
+    "iosScheme": "capacitor"
+  },
+  "backgroundColor": "#040302",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#040302",
+    "scrollEnabled": false
+  },
+  "android": {
+    "backgroundColor": "#040302",
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "backgroundColor": "#040302",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP"
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_moon",
+      "iconColor": "#F0D89A"
+    }
+  }
+}

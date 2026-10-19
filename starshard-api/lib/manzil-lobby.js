@@ -55,13 +55,23 @@ const otherSeat = s => (s === 'you' ? 'sky' : 'you');
 
 // -- account identity ------------------------------------------------------
 
-function tryUidFromCookie(handshake, jwtSecret) {
+// The session JWT from the web cookie, or from `auth.token` in the socket
+// handshake, which is how the iOS/Android apps send it (their webview cookies
+// are third-party to the API; see sessionTokenOf in server.js).
+function handshakeToken(handshake) {
+  const t = handshake.auth && handshake.auth.token;
+  if (typeof t === 'string' && t) return t;
   const raw = handshake.headers && handshake.headers.cookie;
   if (!raw) return null;
   const m = new RegExp('(?:^|;\\s*)' + COOKIE_NAME + '=([^;]+)').exec(raw);
-  if (!m) return null;
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+function tryUidFromCookie(handshake, jwtSecret) {
+  const token = handshakeToken(handshake);
+  if (!token) return null;
   try {
-    const payload = jwt.verify(decodeURIComponent(m[1]), jwtSecret);
+    const payload = jwt.verify(token, jwtSecret);
     if (payload && payload.uid != null) return { gid: 'u_' + payload.uid, displayName: payload.username || null };
   } catch (e) { /* not signed in, or expired */ }
   return null;

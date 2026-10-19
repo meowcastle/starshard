@@ -1,0 +1,179 @@
+# Manzil for iOS and Android: test, build, and hand to the stores' test tracks.
+#
+# Push a tag like app-v1.0.0 (moneybot does it after a Telegram /approve, or by
+# hand: git tag app-v1.0.0 && git push origin app-v1.0.0) and this:
+#   1. runs the unit tests and the end-to-end app test against a real MySQL
+#   2. builds a signed Android App Bundle and uploads it to Play's internal track
+#   3. archives the iOS app and uploads it to App Store Connect (TestFlight)
+# Promotion from the test tracks to the public stores stays a human tap in
+# App Store Connect / Play Console. Nothing here ever ships to the public.
+#
+# Secrets it needs, and how to make each one: app/RELEASING.md.
+name: manzil-app
+
+on:
+  push:
+    tags: ['app-v*']
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'Upload to TestFlight / Play internal (otherwise build only)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: manzil-app-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+  # tag app-v1.2.3 -> 1.2.3; a manual run uses app/package.json's version
+  UPLOAD: ${{ startsWith(github.ref, 'refs/tags/app-v') || inputs.upload }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: starshard
+          MYSQL_USER: ss
+          MYSQL_PASSWORD: ss
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}' }
+      - name: install
+        run: |
+          npm install --no-audit --no-fund
+          (cd starshard-api && npm install --no-audit --no-fund)
+          (cd app && npm install --no-audit --no-fund)
+          npm run vendor
+          npx playwright install --with-deps chromium
+      - name: unit tests (includes the app auth tests)
+        run: npm run check
+      - name: schema
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot starshard < starshard-api/schema.sql
+          for f in starshard-api/migrations/*.sql; do (cd starshard-api && DB_HOST=127.0.0.1 DB_USER=root DB_PASSWORD=root DB_NAME=starshard node migrate.js "../$f"); done
+      - name: end to end on the app bundle
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: ss
+          DB_PASSWORD: ss
+          DB_NAME: starshard
+          JWT_SECRET: ci-only-secret
+          PORT: '4555'
+          ALLOWED_ORIGINS: http://localhost:4556
+        run: |
+          (cd starshard-api && node server.js > /tmp/api.log 2>&1 &)
+          sleep 3
+          node test/app-e2e.mjs --api http://127.0.0.1:4555 --port 4556 --out shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: e2e-screenshots, path: shots }
+
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.v.outputs.name }}
+      code: ${{ steps.v.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/app-v* ]]; then NAME="${GITHUB_REF#refs/tags/app-v}"; else NAME=$(node -p "require('./app/package.json').version"); fi
+          # One build number for both stores, always increasing.
+          CODE=$(( 1000 + GITHUB_RUN_NUMBER ))
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"; echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          echo "Manzil $NAME ($CODE)" >> "$GITHUB_STEP_SUMMARY"
+
+  android:
+    needs: [test, version]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - name: build the web bundle and sync
+        run: |
+          npm install --no-audit --no-fund && npm run vendor
+          cd app && npm install --no-audit --no-fund
+          npm pkg set version='${{ needs.version.outputs.name }}'
+          npm run build && npx cap sync android
+      - name: signing key
+        if: env.UPLOAD == 'true'
+        run: |
+          echo '${{ secrets.ANDROID_KEYSTORE_BASE64 }}' | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "MANZIL_KEYSTORE_FILE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+      - name: bundle
+        env:
+          MANZIL_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          MANZIL_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          MANZIL_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        working-directory: app/android
+        run: ./gradlew --no-daemon bundleRelease -PversionCode=${{ needs.version.outputs.code }} -PversionName=${{ needs.version.outputs.name }}
+      - uses: actions/upload-artifact@v4
+        with: { name: manzil-android-aab, path: app/android/app/build/outputs/bundle/release/*.aab }
+      - name: upload to Play (internal testing)
+        if: env.UPLOAD == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: net.starshard.manzil
+          releaseFiles: app/android/app/build/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+          releaseName: ${{ needs.version.outputs.name }} (${{ needs.version.outputs.code }})
+
+  ios:
+    needs: [test, version]
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}' }
+      - uses: maxim-lobanov/setup-xcode@v1
+        with: { xcode-version: latest-stable }
+      - name: build the web bundle and sync
+        run: |
+          npm install --no-audit --no-fund && npm run vendor
+          cd app && npm install --no-audit --no-fund
+          npm pkg set version='${{ needs.version.outputs.name }}'
+          npm run build && npx cap sync ios
+      - name: App Store Connect API key
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          echo '${{ secrets.ASC_KEY_P8_BASE64 }}' | base64 -d > "$RUNNER_TEMP/keys/AuthKey.p8"
+          echo "ASC_KEY_PATH=$RUNNER_TEMP/keys/AuthKey.p8" >> "$GITHUB_ENV"
+      - name: archive (cloud-managed signing)
+        working-directory: app/ios/App
+        run: |
+          xcodebuild -project App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Manzil.xcarchive" \
+            DEVELOPMENT_TEAM='${{ secrets.APPLE_TEAM_ID }}' CODE_SIGN_STYLE=Automatic \
+            MARKETING_VERSION='${{ needs.version.outputs.name }}' CURRENT_PROJECT_VERSION='${{ needs.version.outputs.code }}' \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID '${{ secrets.ASC_KEY_ID }}' \
+            -authenticationKeyIssuerID '${{ secrets.ASC_ISSUER_ID }}' \
+            archive | tail -40
+      - name: export and upload to TestFlight
+        if: env.UPLOAD == 'true'
+        working-directory: app/ios/App
+        run: |
+          sed "s/TEAM_ID/${{ secrets.APPLE_TEAM_ID }}/" ../ExportOptions.plist > "$RUNNER_TEMP/ExportOptions.plist"
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Manzil.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID '${{ secrets.ASC_KEY_ID }}' \
+            -authenticationKeyIssuerID '${{ secrets.ASC_ISSUER_ID }}' | tail -40

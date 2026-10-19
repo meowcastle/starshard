@@ -7,14 +7,17 @@
     "bindings": "node tools/bindings.mjs",
     "check": "npm run bindings && npm run manzil && npm run selfhost && npm test",
     "manzil": "node tools/check-manzil.mjs",
-    "selfhost": "node tools/selfhost-runtime.mjs --check"
+    "selfhost": "node tools/selfhost-runtime.mjs --check",
+    "vendor": "node tools/vendor.mjs",
+    "app": "node tools/build-app.mjs"
   },
   "devDependencies": {
+    "@babel/standalone": "7.29.0",
     "astronomy-engine": "^2.1.19",
     "esbuild": "^0.24.0",
     "playwright": "^1.62.1",
-    "@babel/standalone": "^7.29.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "socket.io-client": "^4.8.1"
   }
 }

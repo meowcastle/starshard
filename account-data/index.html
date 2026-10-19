@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>your account · Manzil</title>
+<meta name="robots" content="noindex">
+<!-- OWNER: Claude Code. Plain static page, like privacy/ and terms/: the in-app
+     route to export and delete an account (App Store guideline 5.1.1(v), and
+     GDPR Art. 15/17). It calls the endpoints that have existed since 24 Aug
+     through api.js, which stays the only thing that fetches. Inside the app,
+     app-bridge.js is loaded first so api.js talks to the right API with the
+     app's token; on the web it rides the session cookie. -->
+<style>
+  :root { --bg:#040302; --ink:#F2EAD6; --dim:#A99F88; --gold:#F0D89A; --line:rgba(240,216,154,.18); --warn:#E8705A; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--ink); font: 400 16px/1.5 Karla, -apple-system, system-ui, sans-serif; }
+  body { min-height:100vh; padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); display:flex; justify-content:center; }
+  main { width:100%; max-width:520px; }
+  a { color:var(--gold); text-decoration:none; }
+  h1 { font: 600 28px/1.15 'Cormorant Garamond', Georgia, serif; margin: 8px 0 4px; letter-spacing:.01em; }
+  .sub { color:var(--dim); margin:0 0 28px; }
+  section { border-top:1px solid var(--line); padding: 20px 0; }
+  h2 { font-size:15px; font-weight:600; letter-spacing:.06em; text-transform:lowercase; color:var(--gold); margin:0 0 8px; }
+  p { margin: 0 0 12px; }
+  label { display:block; font-size:13px; color:var(--dim); margin: 10px 0 4px; }
+  input { width:100%; background:#0d0b08; border:1px solid var(--line); color:var(--ink); padding:12px 14px; border-radius:10px; font: inherit; }
+  input:focus { outline:none; border-color: var(--gold); }
+  button { appearance:none; border:1px solid var(--gold); background:transparent; color:var(--gold); padding:12px 18px; border-radius:999px; font: 600 15px Karla, system-ui, sans-serif; margin-top:14px; cursor:pointer; }
+  button.solid { background:var(--gold); color:#1a1408; }
+  button.danger { border-color:var(--warn); color:var(--warn); }
+  button[disabled] { opacity:.5; pointer-events:none; }
+  .err { color:var(--warn); min-height:1.5em; font-size:14px; margin-top:8px; }
+  .ok { color:var(--gold); font-size:14px; margin-top:8px; }
+  textarea { width:100%; height:180px; background:#0d0b08; color:var(--dim); border:1px solid var(--line); border-radius:10px; padding:10px; font: 12px/1.4 ui-monospace, Menlo, monospace; }
+  .hide { display:none; }
+  .top { display:flex; justify-content:space-between; align-items:center; font-size:14px; }
+  .foot { color:var(--dim); font-size:13px; margin-top:24px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a href="../index.html" id="back">‹ back to the road</a><span id="who" class="sub" style="margin:0"></span></div>
+  <h1>your account</h1>
+  <p class="sub">sign in, take a copy of everything we hold, or close the account for good.</p>
+
+  <section id="signin" class="hide">
+    <h2>sign in</h2>
+    <label for="u">the name you play under</label>
+    <input id="u" autocomplete="username" autocapitalize="none" spellcheck="false">
+    <label for="p">password</label>
+    <input id="p" type="password" autocomplete="current-password">
+    <button class="solid" id="go">sign in</button>
+    <div class="err" id="sierr"></div>
+  </section>
+
+  <section id="export" class="hide">
+    <h2>your data</h2>
+    <p>everything stored for this account, as one file: your five houses, your progress, your cards, and the reading data if you ever asked for one.</p>
+    <button id="ex">get my data</button>
+    <div class="err" id="exerr"></div>
+    <textarea id="dump" class="hide" readonly></textarea>
+    <button id="share" class="hide">save or share the file</button>
+  </section>
+
+  <section id="delete" class="hide">
+    <h2>delete the account</h2>
+    <p>this removes the account and everything tied to it from our servers, straight away. it can't be undone, and the name becomes free for someone else.</p>
+    <label for="dp">type your password to confirm</label>
+    <input id="dp" type="password" autocomplete="current-password">
+    <button class="danger" id="del">delete my account</button>
+    <div class="err" id="delerr"></div>
+  </section>
+
+  <section id="done" class="hide">
+    <h2>it's gone</h2>
+    <p>the account and its data are deleted. thank you for walking the road.</p>
+    <a href="../index.html"><button class="solid">back to the start</button></a>
+  </section>
+
+  <section>
+    <button id="out" class="hide">sign out</button>
+    <p class="foot"><a href="https://starshard.net/privacy/">privacy</a> · <a href="https://starshard.net/terms/">terms</a></p>
+  </section>
+</main>
+<script type="module">
+  const api = await import('../api.js');
+  const $ = id => document.getElementById(id);
+  const show = (id, on) => $(id).classList.toggle('hide', !on);
+  const busy = (b, on, label) => { b.disabled = on; if (label) b.textContent = on ? '…' : label; };
+
+  async function refresh() {
+    const me = await api.me();
+    show('signin', !me); show('export', !!me); show('delete', !!me); show('out', !!me);
+    $('who').textContent = me ? 'signed in as ' + me.username : '';
+  }
+
+  $('go').onclick = async () => {
+    const b = $('go'); busy(b, true, 'sign in'); $('sierr').textContent = '';
+    try { await api.loginWithUsername($('u').value.trim(), $('p').value); $('p').value = ''; await refresh(); }
+    catch (e) { $('sierr').textContent = api.loginError(e.code); }
+    busy(b, false, 'sign in');
+  };
+
+  let file = null;
+  $('ex').onclick = async () => {
+    const b = $('ex'); busy(b, true, 'get my data'); $('exerr').textContent = '';
+    try {
+      const data = await api.exportData();
+      const text = JSON.stringify(data, null, 2);
+      file = new File([text], 'manzil-account-data.json', { type: 'application/json' });
+      $('dump').value = text; show('dump', true); show('share', true);
+    } catch (e) { $('exerr').textContent = 'could not fetch your data, try again ♡'; }
+    busy(b, false, 'get my data');
+  };
+  $('share').onclick = async () => {
+    if (!file) return;
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: 'Manzil account data' }); return; } catch (e) { /* cancelled */ }
+    }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click();
+  };
+
+  $('del').onclick = async () => {
+    const b = $('del'); busy(b, true, 'delete my account'); $('delerr').textContent = '';
+    try {
+      await api.deleteAccount($('dp').value);
+      // the game's own device-side caches belong to the account that just left
+      try { Object.keys(localStorage).filter(k => k.startsWith('manzil-')).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+      ['signin', 'export', 'delete', 'out'].forEach(id => show(id, false)); show('done', true); $('who').textContent = '';
+    } catch (e) { $('delerr').textContent = api.deleteAccountError(e.code); busy(b, false, 'delete my account'); }
+  };
+
+  $('out').onclick = async () => { await api.logout(); await refresh(); };
+
+  refresh();
+</script>
+</body>
+</html>

@@ -59,8 +59,17 @@ if (IS_PROD && !process.env.ALLOWED_ORIGINS) {
   process.exit(1);
 }
 
+// The iOS and Android apps (app/, Capacitor) load the same Manzil page from
+// inside the app bundle, so their origin is the app's own fixed origin, never
+// a website's. These two can't be claimed by a web page: app.starshard.net is
+// ours and serves nothing, and capacitor:// isn't a scheme a browser loads.
+// They're always allowed, so an ALLOWED_ORIGINS change on the server can't
+// silently lock the store builds out. The apps authenticate with a bearer
+// token, not the cookie (see sessionTokenOf below).
+const APP_ORIGINS = ['https://app.starshard.net', 'capacitor://app.starshard.net'];
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://staging.starshard.net')
-  .split(',').map(o => o.trim()).filter(Boolean);
+  .split(',').map(o => o.trim()).filter(Boolean)
+  .concat(APP_ORIGINS);
 
 // Whether to believe edge-supplied headers (today: CF-IPCountry, which the age
 // gate uses to pick a region minimum). CF-IPCountry is an ordinary request
@@ -96,7 +105,7 @@ app.use((req, res, next) => {
   }
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Starshard-Client');
     return res.status(204).end();
   }
   next();
@@ -122,7 +131,7 @@ function signSession(userId, tokenVersion, username) {
 // of just deleting the cookie on one device. Wrapped like every other async
 // handler — a DB hiccup here must 500, not crash the process.
 const requireAuth = wrap(async (req, res, next) => {
-  const token = req.cookies[COOKIE_NAME];
+  const token = sessionTokenOf(req);
   if (!token) return res.status(401).json({ error: 'not_authenticated' });
   let payload;
   try {
@@ -154,14 +163,31 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+// The session token for this request: the cookie on the web, or an
+// `Authorization: Bearer <jwt>` header from the apps. A native webview's
+// cookies are third-party to this API (iOS blocks those outright), so the apps
+// keep the same JWT themselves and send it as a header. Same token, same
+// token_version revocation, same 90 days; only the transport differs.
+function sessionTokenOf(req) {
+  const h = req.headers.authorization;
+  if (typeof h === 'string' && h.startsWith('Bearer ')) return h.slice(7).trim() || null;
+  return req.cookies[COOKIE_NAME] || null;
+}
+
+const isAppClient = req => req.get('X-Starshard-Client') === 'app';
+
+// Sets the web cookie and returns the token. Routes add `token` to their JSON
+// only for app clients (isAppClient), so the web never sees it in a body.
 function setSessionCookie(res, userId, tokenVersion, username) {
-  res.cookie(COOKIE_NAME, signSession(userId, tokenVersion, username), {
+  const token = signSession(userId, tokenVersion, username);
+  res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
     secure: IS_PROD,
     sameSite: 'lax',
     maxAge: 90 * 24 * 60 * 60 * 1000,
     path: '/',
   });
+  return token;
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -380,8 +406,8 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
       [result.insertId, JSON.stringify(manzilPack.five), JSON.stringify(manzilPack.pack), birthYear]
     );
     await conn.commit();
-    setSessionCookie(res, result.insertId, 0, normalizedUsername);
-    res.status(201).json({ email: normalizedEmail, username: normalizedUsername });
+    const token = setSessionCookie(res, result.insertId, 0, normalizedUsername);
+    res.status(201).json({ email: normalizedEmail, username: normalizedUsername, ...(isAppClient(req) ? { token } : {}) });
     // W6, 2 sep 2026: fire-and-forget, AFTER commit and after the response. A mail
     // failure must never fail a signup or hold the response open — the account is
     // already real and playable, and /api/auth/resend-verification exists precisely
@@ -423,12 +449,12 @@ app.post('/api/auth/login', loginLimiter, wrap(async (req, res) => {
   const ok = await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
-  setSessionCookie(res, user.id, user.token_version, user.username);
-  res.json({ email: user.email, username: user.username });
+  const token = setSessionCookie(res, user.id, user.token_version, user.username);
+  res.json({ email: user.email, username: user.username, ...(isAppClient(req) ? { token } : {}) });
 }));
 
 app.post('/api/auth/logout', wrap(async (req, res) => {
-  const token = req.cookies[COOKIE_NAME];
+  const token = sessionTokenOf(req);
   if (token) {
     try {
       const payload = jwt.verify(token, JWT_SECRET);
@@ -538,7 +564,7 @@ app.post('/api/auth/reset-password', resetPasswordLimiter, wrap(async (req, res)
 }));
 
 app.get('/api/me', wrap(async (req, res) => {
-  const token = req.cookies[COOKIE_NAME];
+  const token = sessionTokenOf(req);
   if (!token) return res.status(401).json({ error: 'not_authenticated' });
   let payload;
   try {

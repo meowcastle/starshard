@@ -1,0 +1,30 @@
+{
+  "name": "manzil-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Manzil for iOS and Android: a Capacitor shell around the same page staging.starshard.net serves. Build with `npm run build` from this folder.",
+  "scripts": {
+    "build": "node ../tools/build-app.mjs",
+    "sync": "npm run build && npx cap sync",
+    "assets": "npx capacitor-assets generate --ios --android --iconBackgroundColor '#040302' --iconBackgroundColorDark '#040302' --splashBackgroundColor '#040302' --splashBackgroundColorDark '#040302'",
+    "ios": "npm run sync && npx cap open ios",
+    "android": "npm run sync && npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/haptics": "8.0.2",
+    "@capacitor/ios": "8.5.3",
+    "@capacitor/local-notifications": "8.3.1",
+    "@capacitor/screen-orientation": "8.0.2",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.4"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3",
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/karla": "5.3.0"
+  }
+}
