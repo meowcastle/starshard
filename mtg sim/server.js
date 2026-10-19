@@ -978,9 +978,11 @@ function leaksIn(t) {
 const COLOR_WORD = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
 async function archetypeOf(cards, format = 'standard') {
   const lists = calibs[format]?.lists || [], seen = new Set(cards.filter(n => !BASIC.test(n)));
-  let best = null, bn = 1;
+  let best = null, bn = 0;
   for (const l of lists) { const n = new Set([...l.main, ...(l.side || [])].map(c => c.name).filter(x => seen.has(x))).size; if (n > bn) { best = l.name; bn = n; } }
-  if (best) return best;
+  // a meta deck only when a real share of what they showed is in its list: two staples in common (Day of Judgment
+  // and Get Lost) named Justin's Orzhov Iroh donate opponent "4c Control" on 19 Oct
+  if (best && bn >= 4 && bn >= 0.3 * seen.size) return best;
   try {
     const find = await meta.cards([...seen]), cols = new Set();
     for (const n of seen) { const k = find(n); for (const c of (k && (k.colors || k.card_faces?.[0]?.colors)) || []) cols.add(c); }
@@ -1679,6 +1681,7 @@ const server = http.createServer(async (req, res) => {
           if (had) {
             const nl = leaksIn(m.leaks); if (nl && (!had.leaks || nl.grade > (had.leaks.grade || 0))) { had.leaks = nl; out.leaks = (out.leaks || 0) + 1; } // a newer grading replaces the old
             const pv = playedV(hb, cards); if (pv !== had.v) { had.v = pv; out.retagged = (out.retagged || 0) + 1; }
+            const op = await archetypeOf((m.opponentCards || []).map(String), hb.format); if (op !== had.opponent) { had.opponent = op; out.retagged = (out.retagged || 0) + 1; }
             out.known++; continue;
           }
           let best = null, bs = 0;
