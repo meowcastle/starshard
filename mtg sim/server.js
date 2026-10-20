@@ -1058,6 +1058,8 @@ function coachTools(b, user) {
       schema: { type: 'object', properties: { from: { type: 'integer', description: 'version number to start from; omit for the current deck' }, main_out: CARDS, main_in: CARDS, side_out: CARDS, side_in: CARDS,
         make_current: { type: 'boolean' }, note: { type: 'string', description: 'one line on why, shown in the version history' } } } },
     { name: 'make_current', description: 'Make an existing version the player\'s deck.', schema: { type: 'object', properties: { v: { type: 'integer' } }, required: ['v'] } },
+    { name: 'cancel_run', description: 'Stop a sim run that is getting ready, queued or running (default: the newest one in progress). Only when the player asks.',
+      schema: { type: 'object', properties: { v: { type: 'integer', description: 'the version whose run to stop' } } } },
     ...(fields.length ? [{ name: 'run_version', description: 'Queue a sim run of a version (default: the current deck). Uses one of the player\'s runs. Only when they ask for a run.',
       schema: { type: 'object', properties: { v: { type: 'integer' }, field: { type: 'string', enum: fields, description: 'meta10 = this week\'s top 10 (default), meta20 = top 20, team = the pod' } } } }] : []),
   ];
@@ -1120,6 +1122,15 @@ function coachTools(b, user) {
       if (b.optimize && b.optimize.guide && b.optimize.guide.v === v) { const { v: _v, ...g } = b.optimize.guide; b.guide = g; delete b.optimize.guide; }
       note(`Made v${v} your deck (was v${prev})`, { type: 'current', v, prev });
       return `v${v} is now the player's deck.`;
+    }
+    if (name === 'cancel_run') {
+      const live = b.runs.filter(r => ['preparing', 'queued', 'running'].includes(runView(b, r).status)), r = x.v ? live.find(y => y.v === x.v) : live[0];
+      if (!r) return live.length ? `Error: no run of v${x.v} is in progress; ${live.map(y => 'v' + y.v).join(', ')} ${live.length === 1 ? 'is' : 'are'}.` : 'Error: no run is in progress.';
+      const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j);
+      if (r.status === 'preparing') r.status = 'cancelled';
+      r.cancelled = true; const at = runView(b, r);
+      note(`Cancelled v${r.v}'s run · ${at.played} of ${at.total} games played`, { type: 'cancel', v: r.v, run: r.id });
+      return `Cancelled v${r.v}'s run after ${at.played} of ${at.total} games.`;
     }
     if (name === 'run_version') {
       const v = b.versions.some(y => y.v === x.v) ? x.v : current(b).v, set = fields.includes(x.field) ? x.field : fields.includes('meta10') ? 'meta10' : fields[0];

@@ -222,12 +222,13 @@ async function reply(b, rv, thread, { onText } = {}) {
 // the deck unless he chose it. A clear instruction is a choice; a vague one gets a proposal and a question.
 const ACT = `You can look cards up any time: search_cards (e.g. text ["gain life OR lifelink"], colors "wb", mv_max 2, set "Reality Fracture") and card_text (exact names). Use them freely, before you name a card the player hasn't got.
 
-You can change the player's deck, but only when they ask you to. Tools: edit_deck (save a new version from swaps; make_current puts it live as their deck), make_current (switch which version is their deck), run_version (queue a sim run, which uses one of their runs for the day).
+You can change the player's deck, but only when they ask you to. Tools: edit_deck (save a new version from swaps; make_current puts it live as their deck), make_current (switch which version is their deck), run_version (queue a sim run, which uses one of their runs for the day), cancel_run (stop a run in progress).
 
 When to act:
 - A clear instruction ("cut the Squalls for 3 Seam Rip", "put that swap in", "make v4 my deck", "update the deck with these cards"): do it now with make_current true, then say in one or two lines what changed. Don't ask for confirmation they already gave.
 - A vague wish ("make it better against Azorius", "what should I change?"): propose exact swaps (counts and names) and ask "Want me to make that your deck?". Don't call a tool.
 - If they say "save it but don't switch", use make_current false.
+- cancel_run stops a run in progress, only when they ask ("cancel that run", "stop the v6 run").
 - Only run_version when they ask for a run ("and run it", "sim it", "test it"). Never queue one on your own.
 - If a tool answers with an error (a card isn't in the list, the deck would be 59 cards, a card isn't legal), fix it and try again once, or tell them what's wrong.
 - One deck change per message unless they asked for more. Main deck must stay at least 60 cards, at most 4 of any card but basic lands, sideboard at most 15.
