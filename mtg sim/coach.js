@@ -33,7 +33,7 @@ Forge's results are a model, not a forecast, and they are checked against real t
 
 Every number comes with a 95% range. Read it: with 40 games a single matchup's range is typically 30 to 40 points wide, so one matchup at 35% and another at 45% are not meaningfully different. Only call something a weakness or a strength when its range sits clearly on one side of 50%, and say "too close to call yet" when the games can't tell (a rerun adds games rather than replacing them).
 
-Cards (Justin, 20 Oct 2026: "the coach should have all the standard legal cards and understand them"): your own memory of Magic cards ends before the newest sets, and you may misremember older ones. The rules text of every card in the player's list is given below; trust it over your memory. In the conversation you have two lookups: search_cards (every Standard card, filtered by rules text, type, colours, mana value, set or rarity, answering with each match's rules text) and card_text (exact names). Never tell the player you don't have a set's cards or a card's text: look it up. Before you recommend a card you weren't given the text of, look it up, and never describe a card you haven't seen the text of. Where you can't look things up (a readout), suggest only cards whose text you were given or know for certain.
+Cards (Justin, 20 Oct 2026: "the coach should have all the standard legal cards and understand them"): your own memory of Magic cards ends before the newest sets, and you may misremember older ones. The rules text of every card in the player's list is given below; trust it over your memory. In the conversation you have two lookups: search_cards (every card legal in the brew's format, filtered by rules text, type, colours, mana value, set or rarity, answering with each match's rules text) and card_text (exact names). Never tell the player you don't have a set's cards or a card's text: look it up. Before you recommend a card you weren't given the text of, look it up, and never describe a card you haven't seen the text of. Where you can't look things up (a readout), suggest only cards whose text you were given or know for certain.
 
 Rules: use only the numbers and lists you are given; never invent a statistic. Name cards exactly as printed. Be concrete: which card, how many, against which deck, why. No hype, no filler, short paragraphs. If the player has written notes (an event date, cards that must stay, a wildcard budget), respect them.`;
 
@@ -69,17 +69,19 @@ function context(b, rv) {
   const hist = b.versions.map(x => `v${x.v}${x.diff ? ': ' + x.diff.map(c => (c.qty > 0 ? '+' : '') + c.qty + ' ' + c.name + (c.section === 'side' ? ' (side)' : '')).join(', ') : ': first paste'}`).join('\n');
   const bm = rv.benchmark && rv.benchmark.status === 'done' ? `The field's #1 deck (${rv.benchmark.name}) ran the same opponents under the same AI for comparison.` : '';
   const cal = rv.calibration;
-  return `Brew: "${b.name}", ${b.format}, version v${v.v}.
+  return `Brew: "${b.name}", ${b.format}, version v${v.v}.${b.seats === 4 ? `
+This is a Commander deck: a commander plus 99 cards, singleton, played in four-player free-for-all pods. Everything above about tournaments, top 8, meta shares, best of three and sideboards does not apply. A pod has no sideboard. Even is a 25% win rate, one win in four. The sim's opponents are EDHREC's most-built commanders as average lists. Every card you suggest must fit the commander's colour identity, and the deck stays at exactly 100 with no duplicates but basic lands.` : ''}
 Player's notes: ${b.notes.map(n => n.t).join(' | ') || 'none'}.${settingsText(rv)}
 Version history:
 ${hist}
 
-${v.reading ? `How the list reads (rules on its cards' functions, research's plan table): ${v.reading.plan} (${v.reading.why})${v.reading.nearest ? `, closest to the meta deck ${v.reading.nearest}${v.reading.nearestPlan && v.reading.nearestPlan !== v.reading.plan ? ` (which plays as ${v.reading.nearestPlan})` : ''}` : ''}.${v.reading.missing.length ? ' Against that deck and the plan: ' + v.reading.missing.join('; ') + '.' : ' Nothing stands out against that deck and the plan.'} Use the plan to frame advice (what this kind of deck needs, how it should be piloted), and say "reads as" rather than asserting it.\n\n` : ''}Main deck (v${v.v}):
+${v.reading ? `How the list reads (rules on its cards' functions, research's plan table): ${v.reading.plan} (${v.reading.why})${v.reading.nearest ? `, closest to the meta deck ${v.reading.nearest}${v.reading.nearestPlan && v.reading.nearestPlan !== v.reading.plan ? ` (which plays as ${v.reading.nearestPlan})` : ''}` : ''}.${v.reading.missing.length ? ' Against that deck and the plan: ' + v.reading.missing.join('; ') + '.' : ' Nothing stands out against that deck and the plan.'} Use the plan to frame advice (what this kind of deck needs, how it should be piloted), and say "reads as" rather than asserting it.\n\n` : ''}${b.seats === 4 ? `Commander: ${list(v.list.commander || [])}
+` : ''}Main deck (v${v.v}):
 ${list(v.list.main)}
 Sideboard:
 ${list(v.list.side || [])}
 
-${rulesText([...v.list.main, ...(v.list.side || [])])}
+${rulesText([...(v.list.commander || []), ...v.list.main, ...(v.list.side || [])])}
 
 Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.date).toDateString() : 'field'}, status ${rv.status}, ${rv.played} of ${rv.total} games played. ${rv.bo3 === 'boarded' ? 'Best of three with sideboard plans.' : 'Game 1 only.'}
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
@@ -101,6 +103,11 @@ const LEVEL = {
 function settingsText(rv) {
   const st = rv.settings, ev = rv.eventInfo; if (!st || !ev) return '';
   const lines = [];
+  if (ev.pod) {
+    if (st.keep.length) lines.push(`Cards to keep, never suggest cutting: ${st.keep.join(', ')}.`);
+    if (st.never.length) lines.push(`Cards the player won't play, never suggest adding: ${st.never.join(', ')}.`);
+    return lines.length ? '\n' + lines.join('\n') : '';
+  }
   lines.push(`Preparing for: ${ev.label}${st.goal.date ? ' on ' + st.goal.date : ''}${ev.noTop8 ? ' (a ladder: no top 8, so judge changes by match win rate and say "points of win rate", not top-8 odds)' : `, ${ev.rounds} rounds, top 8 at ${ev.rounds - 1}-1 or better`}${ev.bo3 ? '' : '; best of one, so sideboards do not count'}.`);
   lines.push(st.goal.posture === 'ceiling' ? 'Posture: ceiling. The player accepts variance for a higher top-8 chance: big swings in the matchups that matter most are welcome.' : 'Posture: consistent. Prefer changes that raise the floor (mana, curve, the worst matchup) over high-variance swings.');
   if (st.keep.length) lines.push(`Cards to keep, never suggest cutting: ${st.keep.join(', ')}. If a fix would need one of them, say so.`);
@@ -237,7 +244,7 @@ async function act(b, rv, thread, { tools, run, deckText, onText } = {}) {
     if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\n\n' + text; else msgs.push({ role, content: text });
   }
   const fresh = await cardSearch.newSets().catch(() => []);
-  const sets = fresh.length ? `\n\nSets released since your training, now part of Standard (look their cards up; you don't know them): ${fresh.map(x => `${x.name} (${x.code}, ${x.released})`).join(', ')}.` : '';
+  const sets = fresh.length ? `\n\nSets released since your training (in Standard, and legal in Commander too; look their cards up, you don't know them): ${fresh.map(x => `${x.name} (${x.code}, ${x.released})`).join(', ')}.` : '';
   const system = [{ type: 'text', text: SYSTEM + '\n\n' + ACT + sets + '\n\nThe current state of this brew:\n\n' + context(b, rv), cache_control: { type: 'ephemeral' } },
     { type: 'text', text: deckText }];
   if (said.length) system.push({ type: 'text', text: 'What you already told the player:\n' + said.join('\n\n') });

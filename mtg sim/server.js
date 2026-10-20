@@ -902,7 +902,7 @@ function ledgerOf(b) {
   return out;
 }
 // what the coach reads beside the run: the player's settings, the event they mean, and the ledger
-const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings: st, eventInfo: { ...EVENTS[st.goal.event], rounds: roundsOf(b) }, ledger: ledgerOf(b), collection: coachCollection(b, rv), check: (b.versions.find(x => x.v === rv.v) || latest(b)).check || null }; };
+const coachRun = (b, rv) => { const st = settingsOf(b); return { ...rv, settings: st, eventInfo: b.seats === 4 ? { label: 'Commander pods', pod: true } : { ...EVENTS[st.goal.event], rounds: roundsOf(b) }, ledger: ledgerOf(b), collection: coachCollection(b, rv), check: (b.versions.find(x => x.v === rv.v) || latest(b)).check || null }; };
 // what the coach is told about the paper collection: what's held, and what this version's list is short of, priced
 function coachCollection(b, rv) {
   const paper = collection.get(b.owner).paper; if (!paper) return null;
@@ -1045,7 +1045,7 @@ function coachTools(b, user) {
   const fields = oppSets(b).filter(x => x.available).map(x => x.id);
   const fmt = b.seats === 4 ? 'commander' : b.format || 'standard';
   const tools = [
-    { name: 'search_cards', description: 'Find Standard-legal cards. Every filter given must hold. Answers with each match\'s printed rules text, mana cost, type and set. Your memory misses the newest sets; use this.',
+    { name: 'search_cards', description: `Find ${fmt === 'standard' ? 'Standard' : fmt}-legal cards. Every filter given must hold. Answers with each match\'s printed rules text, mana cost, type and set. Your memory misses the newest sets; use this.${fmt === 'commander' ? ' For a Commander deck, pass the commander\'s colour identity as colors.' : ''}`,
       schema: { type: 'object', properties: {
         text: { type: 'array', items: { type: 'string' }, description: 'phrases that must all appear in the rules text; one phrase can list alternatives as "gain life OR lifelink"' },
         name: { type: 'string', description: 'part of the name' }, type: { type: 'string', description: 'part of the type line, e.g. "creature", "instant", "equipment"' },
@@ -1093,6 +1093,17 @@ function coachTools(b, user) {
         const tot = new Map(); for (const c of [...list.main, ...list.side]) tot.set(c.name.toLowerCase(), (tot.get(c.name.toLowerCase()) || 0) + c.qty);
         const over = [...tot].filter(([n, q]) => q > 4 && !BASIC_LAND.test(n)); if (over.length) return `Error: more than 4 of ${over.map(([n]) => n).join(', ')} across main and side.`;
       }
+      if (b.seats === 4) {
+        // Commander: exactly 100 with the commander, one of each card but basic lands, inside the commander's colours
+        const n = count(list.main) + count(list.commander || []); if (n !== 100) return `Error: the deck would be ${n} cards with the commander; it must be exactly 100.`;
+        const dup = list.main.filter(c => c.qty > 1 && !BASIC_LAND.test(c.name)); if (dup.length) return `Error: Commander is singleton; ${dup.map(c => c.name).join(', ')} would be in more than once.`;
+        const find = await meta.cards([...list.main, ...(list.commander || [])].map(c => c.name)), idOf = nm => (find(nm) || {}).color_identity;
+        const cmd = (list.commander || []).map(c => idOf(c.name));
+        if (cmd.length && cmd.every(Array.isArray)) {
+          const allowed = new Set(cmd.flat()), off = (x.main_in || []).filter(c => (idOf(c.name) || []).some(k => !allowed.has(k)));
+          if (off.length) return `Error: outside the commander's colour identity (${[...allowed].join('') || 'colourless'}): ${off.map(c => c.name).join(', ')}.`;
+        }
+      }
       const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format);
       if (d.legality && !d.legality.ok) return 'Error: ' + meta.legalityError(d.legality);
       const diff = diffLists(base.list, d.list); if (!diff.length) return `Error: that's the same list as v${base.v}.`;
@@ -1120,7 +1131,7 @@ function coachTools(b, user) {
     return 'Error: no such tool.';
   }
   const cur = current(b), list = l => l.map(c => c.qty + ' ' + c.name).join('\n') || '(none)';
-  const deckText = `The player's deck right now (the current version) is v${cur.v}. Versions: ${b.versions.map(y => `v${y.v} (${y.origin || originOf(y)})`).join(', ')}.\nMain deck (v${cur.v}):\n${list(cur.list.main)}\nSideboard (v${cur.v}):\n${list(cur.list.side || [])}`;
+  const deckText = `The player's deck right now (the current version) is v${cur.v}. Versions: ${b.versions.map(y => `v${y.v} (${y.origin || originOf(y)})`).join(', ')}.\n${b.seats === 4 ? `Commander (v${cur.v}): ${list(cur.list.commander || [])}\n` : ''}Main deck (v${cur.v}):\n${list(cur.list.main)}\nSideboard (v${cur.v}):\n${list(cur.list.side || [])}`;
   return { tools, run, deckText };
 }
 

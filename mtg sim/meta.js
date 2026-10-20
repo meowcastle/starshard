@@ -143,7 +143,7 @@ const config = require('./config');
 const { writeJson } = require('./store');
 const SCRY_FILE = () => path.join(config.DATA_DIR, 'scryfall.json');
 const scry = new Map(); // lowercased name -> card | null
-const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_cost', 'cmc', 'colors', 'legalities', 'games', 'set', 'set_name', 'image_uris', 'power', 'toughness', 'loyalty', 'rarity', 'prices', 'purchase_uris'];
+const KEEP = ['name', 'layout', 'card_faces', 'type_line', 'oracle_text', 'mana_cost', 'cmc', 'colors', 'color_identity', 'legalities', 'games', 'set', 'set_name', 'image_uris', 'power', 'toughness', 'loyalty', 'rarity', 'prices', 'purchase_uris'];
 // prices move: a card older than this is asked for again (with its price, TCGplayer link and rarity, 16 Oct)
 const SCRY_STALE_MS = 7 * 864e5;
 // misses are remembered for a day, so a restart does not ask about them again straight away
@@ -161,7 +161,8 @@ const forgeName = c => (FRONT_ONLY.has(c.layout) && c.card_faces ? c.card_faces[
 const nk = n => String(n).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const findCard = n => scry.get(nk(n)) ?? scry.get(nk(n.split(' // ')[0]));
 async function scryfall(names) {
-  const need = [...new Set(names.map(nk))].filter(n => !scry.has(n) || (scry.get(n) && !(Date.now() - (scry.get(n)._at || 0) < SCRY_STALE_MS)));
+  // a card cached before color_identity was kept (20 Oct) is asked for again
+  const need = [...new Set(names.map(nk))].filter(n => !scry.has(n) || (scry.get(n) && (!(Date.now() - (scry.get(n)._at || 0) < SCRY_STALE_MS) || !scry.get(n).color_identity)));
   for (let i = 0; i < need.length; i += 75) {
     let r;
     // 429 means slow down: wait (Scryfall's Retry-After if it gives one) and try again, four times at most
@@ -185,6 +186,15 @@ async function scryfall(names) {
       const f = await fetch(q, { headers: { Accept: 'application/json', 'User-Agent': 'sim.starshard.net' } }).catch(() => null);
       const x = f && f.ok ? ((await f.json()).data || [])[0] : null;
       if (x) { c.prices = { usd: x.prices?.usd || null, usd_foil: x.prices?.usd_foil || null }; c.purchase_uris = { tcgplayer: x.purchase_uris?.tcgplayer || null }; c.rarity = c.rarity || x.rarity; }
+    }
+    // a name Scryfall answered with a different card (a batch with "Reanimate" and "Grave Researcher // Reanimate"
+    // returns the second for both): ask for that one by its exact name
+    const nf0 = new Set((j.not_found || []).map(x => nk(x.name || '')));
+    for (const n of need.slice(i, i + 75)) {
+      if (nf0.has(n.split(' // ')[0]) || findCard(n)) continue;
+      await new Promise(ok => setTimeout(ok, 100));
+      const f = await fetch('https://api.scryfall.com/cards/named?exact=' + encodeURIComponent(n.split(' // ')[0]), { headers: { Accept: 'application/json', 'User-Agent': 'sim.starshard.net' } }).catch(() => null);
+      if (f && f.ok) { const c = keep(await f.json()); scry.set(n, c); }
     }
     // an exact miss is often a spelling variant (accents, punctuation): one fuzzy try each
     for (const nf of j.not_found || []) {

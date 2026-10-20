@@ -114,7 +114,7 @@ async function lookup(names, format = 'standard') {
 // phrases that must all appear in the rules text; one phrase may give alternatives as "gain life OR lifelink".
 // `colors` is colour identity within (e.g. "wb": white, black, both or colourless).
 async function find({ text = [], name, type, colors, mv_max, mv_min, set, rarity, limit = 30 } = {}, format = 'standard') {
-  if (format !== 'standard') return 'Error: search covers Standard only; use card_text for other formats.';
+  if (format !== 'standard') return findLive({ text, name, type, colors, mv_max, mv_min, set, rarity, limit }, format);
   const ix = await standardIndex(); if (!ix.cards.length) return 'Error: the card list is not loaded yet; try card_text with exact names.';
   const low = x => nk(x || '');
   const phrases = [].concat(text).filter(Boolean).map(p => String(p).split(/\s+OR\s+/).map(low));
@@ -135,6 +135,27 @@ async function find({ text = [], name, type, colors, mv_max, mv_min, set, rarity
   const n = Math.min(Math.max(+limit || 30, 1), 40), shown = rows.slice(0, n);
   if (!rows.length) return 'No Standard cards match.' + (set && !st ? ` (Set filters only know the newest sets: ${ix.sets.map(x => x.name).join(', ')}; older cards match on the set named after their text.)` : '');
   return `${rows.length} Standard card${rows.length === 1 ? '' : 's'} match${rows.length > n ? `; the first ${n} by name (narrow it for the rest)` : ''}:\n` + shown.map(c => c.text || c.name).join('\n');
+}
+
+// Other formats (Commander's pool is every card ever printed, too big to keep): the same filters as a Scryfall search,
+// one page, backing off when Scryfall asks.
+async function findLive({ text = [], name, type, colors, mv_max, mv_min, set, rarity, limit = 30 }, format) {
+  const qs = s => '"' + String(s).replace(/"/g, '') + '"';
+  const q = [`legal:${format}`,
+    ...[].concat(text).filter(Boolean).map(p => { const alts = String(p).split(/\s+OR\s+/).map(a => 'o:' + qs(a)); return alts.length > 1 ? '(' + alts.join(' or ') + ')' : alts[0]; }),
+    name ? 'name:' + qs(name) : '', type ? 't:' + qs(type) : '', colors ? 'id<=' + (String(colors).toLowerCase().replace(/[^wubrg]/g, '') || 'c') : '',
+    mv_max != null ? 'mv<=' + (+mv_max) : '', mv_min != null ? 'mv>=' + (+mv_min) : '', set ? 'set:' + qs(set) : '', rarity ? 'r:' + rarity : ''].filter(Boolean).join(' ');
+  const url = 'https://api.scryfall.com/cards/search?unique=cards&order=edhrec&q=' + encodeURIComponent(q);
+  for (let t = 1; t <= 4; t++) {
+    const r = await fetch(url, { headers: UA }).catch(() => null);
+    if (!r) return 'Error: Scryfall did not answer; try again.';
+    if (r.status === 429) { await sleep((+r.headers.get('retry-after') || 2 ** t) * 1000); continue; }
+    const j = await r.json();
+    if (j.object === 'error') return j.code === 'not_found' ? 'No cards match.' : 'Error: ' + (j.details || j.code);
+    const n = Math.min(Math.max(+limit || 30, 1), 40), rows = j.data.slice(0, n).map(k => meta.textOf(k));
+    return `${j.total_cards} card${j.total_cards === 1 ? '' : 's'} match${j.total_cards > rows.length ? `; the ${rows.length} most played in Commander shown (narrow it for the rest)` : ''}:\n` + rows.join('\n');
+  }
+  return 'Error: Scryfall is busy; try again in a minute.';
 }
 
 // Standard sets released since the model's training ended: the coach is told it has to look these up.
