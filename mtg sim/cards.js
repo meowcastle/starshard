@@ -33,12 +33,15 @@ async function pages(q, keep) {
   return true;
 }
 // v2 (20 Oct): each card carries its rules text, colour identity, rarity and the newest sets it is in, for the coach
+// A set Scryfall lists that the index hasn't seen (a release day) rebuilds it at once rather than at the week's end;
+// the set list itself is asked for at most once a day.
+const unseen = async c => { const have = new Set((c.sets || []).map(x => x.code)); return (await newSets().catch(() => [])).some(x => !have.has(x.code)); };
 async function standardIndex() {
-  if (index && Date.now() - index.at < WEEK) return index;
+  if (index && Date.now() - index.at < WEEK && !(await unseen(index))) return index;
   if (loading) return loading;
   loading = (async () => {
     let c = readJson(FILE(), null);
-    if (!c || c.v !== 2 || Date.now() - c.at > WEEK) {
+    if (!c || c.v !== 2 || Date.now() - c.at > WEEK || await unseen(c)) {
       const cards = [], fresh = await newSets().catch(() => []);
       const ok = await pages('legal:standard', k => { const f = (k.card_faces && k.card_faces[0]) || k;
         cards.push({ name: meta.forgeName(k), type: f.type_line || k.type_line || '', cmc: k.cmc || 0, cost: f.mana_cost || k.mana_cost || '',
@@ -49,9 +52,8 @@ async function standardIndex() {
       else if (!c) c = { at: 0, cards: [] };
     }
     index = { at: c.at || Date.now(), sets: c.sets || [], cards: c.cards.map(x => ({ ...x, key: nk(x.name) })) };
-    loading = null;
     return index;
-  })();
+  })().finally(() => { loading = null; });
   return loading;
 }
 

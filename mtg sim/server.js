@@ -2261,6 +2261,8 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, HOST, () => { console.log(`sim listening on ${HOST}:${PORT}, engine ${engineKey(engine())}, accounts via ${STARSHARD_API}\n${config.describe('server')}`); restoreLive(); });
 backfill().catch(e => console.error('backfill:', e.message));
 setTimeout(() => { cardSearch.forgeView('Plains', forgeVersion()); cardSearch.standardIndex().catch(e => console.warn('card index:', e.message)); }, 20e3); // warm both, so no one waits on the first search
+// the coach's card list follows Standard: checked daily, rebuilt on a new set's release day or after a week
+setInterval(() => cardSearch.standardIndex().catch(e => console.warn('card index:', e.message)), 864e5);
 // calibration: refit from what is on disk, then queue anything due, then check every six hours
 for (const f of new Set(history.filter(h => h.meta).map(h => h.meta))) refit(f).catch(e => console.error('refit:', e.message));
 setTimeout(() => calibrateDue(), 60e3); setInterval(() => calibrateDue(), 6 * 3600e3);
