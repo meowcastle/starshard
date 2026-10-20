@@ -65,7 +65,7 @@ async function agent({ system, messages, tools, run, maxTokens = 8000, onText, r
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': config.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages: msgs, stream: true,
-        tools: tools.map(t => ({ name: t.name, description: t.description, input_schema: t.schema })), tool_choice: { type: 'auto' } }),
+        tools: tools.map(t => ({ name: t.name, description: t.description, input_schema: t.schema })), tool_choice: { type: k === rounds - 1 ? 'none' : 'auto' } }),
     });
     if (!r.ok) throw new Error(`Anthropic answered ${r.status}: ${(await r.text()).slice(0, 200)}`);
     const before = said ? said + '\n\n' : '';
@@ -78,7 +78,7 @@ async function agent({ system, messages, tools, run, maxTokens = 8000, onText, r
     const results = [];
     for (const c of calls) {
       let out; try { out = await run(c.name, c.input || {}); } catch (e) { out = 'Error: ' + e.message; }
-      results.push({ type: 'tool_result', tool_use_id: c.id, content: String(out).slice(0, 4000) });
+      results.push({ type: 'tool_result', tool_use_id: c.id, content: String(out).slice(0, 12000) });
     }
     msgs.push({ role: 'user', content: results });
   }

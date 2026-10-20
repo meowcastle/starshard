@@ -10,6 +10,8 @@
 // thread, so the coach always answers from the current results.
 const claude = require('./claude');
 const functional = require('./functional');
+const meta = require('./meta');
+const cardSearch = require('./cards');
 
 const SYSTEM = `You are the coach in Forge Sim, a deck-testing tool for a small group of Magic: The Gathering players. You are a strong competitive player and a plain-spoken teacher.
 
@@ -30,6 +32,8 @@ How the numbers you see were made: Forge's AI plays both decks, at least 20 game
 Forge's results are a model, not a forecast, and they are checked against real tournaments; you are told how well they match ("Fidelity"). When the match is weak: say so once (not on every number); where Forge's verdict on an opponent clashes with how that archetype does in real events (given per matchup), say so and lean on your own knowledge of the real matchup; and prefer advice that is sound whatever the sim says (a card that answers a real threat, a cleaner mana base) over advice that only chases a Forge number. Never tell the player their real tournament odds as if the sim had measured them.
 
 Every number comes with a 95% range. Read it: with 40 games a single matchup's range is typically 30 to 40 points wide, so one matchup at 35% and another at 45% are not meaningfully different. Only call something a weakness or a strength when its range sits clearly on one side of 50%, and say "too close to call yet" when the games can't tell (a rerun adds games rather than replacing them).
+
+Cards (Justin, 20 Oct 2026: "the coach should have all the standard legal cards and understand them"): your own memory of Magic cards ends before the newest sets, and you may misremember older ones. The rules text of every card in the player's list is given below; trust it over your memory. In the conversation you have two lookups: search_cards (every Standard card, filtered by rules text, type, colours, mana value, set or rarity, answering with each match's rules text) and card_text (exact names). Never tell the player you don't have a set's cards or a card's text: look it up. Before you recommend a card you weren't given the text of, look it up, and never describe a card you haven't seen the text of. Where you can't look things up (a readout), suggest only cards whose text you were given or know for certain.
 
 Rules: use only the numbers and lists you are given; never invent a statistic. Name cards exactly as printed. Be concrete: which card, how many, against which deck, why. No hype, no filler, short paragraphs. If the player has written notes (an event date, cards that must stay, a wildcard budget), respect them.`;
 
@@ -53,6 +57,12 @@ function matchups(rv) {
   }).join('\n');
 }
 
+// the printed text of a list's cards, from the card cache (filled when the list was read)
+function rulesText(cards) {
+  const rows = [...new Set(cards.map(c => c.name))].filter(n => !/^(snow-covered )?(plains|island|swamp|mountain|forest|wastes)$/i.test(n)).map(n => meta.cardText(n)).filter(Boolean);
+  return rows.length ? 'Rules text of these cards (printed, not from memory):\n' + rows.join('\n') + '\n' : '';
+}
+
 function context(b, rv) {
   const v = b.versions.find(x => x.v === rv.v) || b.versions[b.versions.length - 1];
   const list = (l) => l.map(c => c.qty + ' ' + c.name).join('\n') || '(none)';
@@ -68,6 +78,8 @@ ${v.reading ? `How the list reads (rules on its cards' functions, research's pla
 ${list(v.list.main)}
 Sideboard:
 ${list(v.list.side || [])}
+
+${rulesText([...v.list.main, ...(v.list.side || [])])}
 
 Run: against the ${rv.field ? rv.field.label + ' field of ' + new Date(rv.field.date).toDateString() : 'field'}, status ${rv.status}, ${rv.played} of ${rv.total} games played. ${rv.bo3 === 'boarded' ? 'Best of three with sideboard plans.' : 'Game 1 only.'}
 ${cal ? `Calibrated against ${cal.realGames} paper games from ${cal.events} tournaments over ${cal.days} days; the brew reads as closest to ${cal.me.near || 'no meta deck (treated as an average pilot)'}.` : 'Not calibrated yet.'} ${bm}
@@ -201,7 +213,9 @@ async function reply(b, rv, thread, { onText } = {}) {
 // cards, it will update the version and it will go live"). The tools themselves live in the server, which owns the
 // brew; this is the conversation and the rules for when to use them. His standing rule still holds: nothing changes
 // the deck unless he chose it. A clear instruction is a choice; a vague one gets a proposal and a question.
-const ACT = `You can change the player's deck, but only when they ask you to. Tools: edit_deck (save a new version from swaps; make_current puts it live as their deck), make_current (switch which version is their deck), run_version (queue a sim run, which uses one of their runs for the day).
+const ACT = `You can look cards up any time: search_cards (e.g. text ["gain life OR lifelink"], colors "wb", mv_max 2, set "Reality Fracture") and card_text (exact names). Use them freely, before you name a card the player hasn't got.
+
+You can change the player's deck, but only when they ask you to. Tools: edit_deck (save a new version from swaps; make_current puts it live as their deck), make_current (switch which version is their deck), run_version (queue a sim run, which uses one of their runs for the day).
 
 When to act:
 - A clear instruction ("cut the Squalls for 3 Seam Rip", "put that swap in", "make v4 my deck", "update the deck with these cards"): do it now with make_current true, then say in one or two lines what changed. Don't ask for confirmation they already gave.
@@ -222,10 +236,12 @@ async function act(b, rv, thread, { tools, run, deckText, onText } = {}) {
     if (!msgs.length && role === 'assistant') { said.push(text); continue; }
     if (msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\n\n' + text; else msgs.push({ role, content: text });
   }
-  const system = [{ type: 'text', text: SYSTEM + '\n\n' + ACT + '\n\nThe current state of this brew:\n\n' + context(b, rv), cache_control: { type: 'ephemeral' } },
+  const fresh = await cardSearch.newSets().catch(() => []);
+  const sets = fresh.length ? `\n\nSets released since your training, now part of Standard (look their cards up; you don't know them): ${fresh.map(x => `${x.name} (${x.code}, ${x.released})`).join(', ')}.` : '';
+  const system = [{ type: 'text', text: SYSTEM + '\n\n' + ACT + sets + '\n\nThe current state of this brew:\n\n' + context(b, rv), cache_control: { type: 'ephemeral' } },
     { type: 'text', text: deckText }];
   if (said.length) system.push({ type: 'text', text: 'What you already told the player:\n' + said.join('\n\n') });
-  return claude.agent({ system, messages: msgs, tools, run, onText });
+  return claude.agent({ system, messages: msgs, tools, run, onText, rounds: 8 });
 }
 
 // The coach's other modes (COACH-PARAMETERS-13OCT.md part 1, item 3), run on request. The sideboard guide

@@ -1043,7 +1043,17 @@ const swapText = diff => diff.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qt
 function coachTools(b, user) {
   const CARDS = { type: 'array', items: { type: 'object', properties: { qty: { type: 'integer', minimum: 1, maximum: 60 }, name: { type: 'string' } }, required: ['qty', 'name'] } };
   const fields = oppSets(b).filter(x => x.available).map(x => x.id);
+  const fmt = b.seats === 4 ? 'commander' : b.format || 'standard';
   const tools = [
+    { name: 'search_cards', description: 'Find Standard-legal cards. Every filter given must hold. Answers with each match\'s printed rules text, mana cost, type and set. Your memory misses the newest sets; use this.',
+      schema: { type: 'object', properties: {
+        text: { type: 'array', items: { type: 'string' }, description: 'phrases that must all appear in the rules text; one phrase can list alternatives as "gain life OR lifelink"' },
+        name: { type: 'string', description: 'part of the name' }, type: { type: 'string', description: 'part of the type line, e.g. "creature", "instant", "equipment"' },
+        colors: { type: 'string', description: 'colour identity within these colours, e.g. "wb" (colourless always fits)' },
+        mv_max: { type: 'number' }, mv_min: { type: 'number' }, set: { type: 'string', description: 'set name or code, e.g. "Reality Fracture" or "fra"' },
+        rarity: { type: 'string', enum: ['common', 'uncommon', 'rare', 'mythic'] }, limit: { type: 'integer', description: 'at most 40, default 30' } } } },
+    { name: 'card_text', description: 'The printed rules text of cards by exact name, and whether each is legal in ' + fmt + '.',
+      schema: { type: 'object', properties: { names: { type: 'array', items: { type: 'string' }, maxItems: 30 } }, required: ['names'] } },
     { name: 'edit_deck', description: 'Save a new version of the deck from swaps against a base version (default: the current deck). With make_current true (the default) it becomes the player\'s deck right away.',
       schema: { type: 'object', properties: { from: { type: 'integer', description: 'version number to start from; omit for the current deck' }, main_out: CARDS, main_in: CARDS, side_out: CARDS, side_in: CARDS,
         make_current: { type: 'boolean' }, note: { type: 'string', description: 'one line on why, shown in the version history' } } } },
@@ -1053,7 +1063,15 @@ function coachTools(b, user) {
   ];
   let done = 0;
   const note = (text, action) => { (b.thread = b.thread || []).push({ role: 'coach', kind: 'action', text, action: { ...action, at: Date.now() }, at: Date.now() }); saveBrews(); };
+  let looks = 0;
   async function run(name, x) {
+    // lookups change nothing, so they don't count as changes; a cap keeps one message from paging all of Scryfall
+    if (name === 'search_cards' || name === 'card_text') {
+      if (++looks > 8) return 'Error: that is enough lookups for one message. Answer with what you have.';
+      const out = await (name === 'search_cards' ? cardSearch.find(x, fmt) : cardSearch.lookup((x.names || []).map(String).slice(0, 30), fmt));
+      console.log(`coach ${name} ${JSON.stringify(x).slice(0, 200)} -> ${String(out).split('\n')[0].slice(0, 120)}`);
+      return out;
+    }
     if (++done > 4) return 'Error: that is enough changes for one message. Tell the player what you did.';
     if (name === 'edit_deck') {
       const base = b.versions.find(v => v.v === x.from) || current(b);

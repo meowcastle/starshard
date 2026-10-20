@@ -301,6 +301,16 @@ async function faceOf(deck, name) {
 
 // Raw Scryfall cards for a set of names (for the Codex): a lookup function, or null per unknown name.
 async function cards(names) { await scryfall(names); return findCard; }
+// A card as the coach reads it: name, mana cost, type, power/toughness or loyalty, rules text, set. Every face of a
+// two-faced card. The coach's model was trained before the newest sets, so it gets the printed text, not its memory.
+function textOf(k) {
+  if (!k) return null;
+  const face = f => [f.name + (f.mana_cost ? ' ' + f.mana_cost : ''), f.type_line, f.power != null ? f.power + '/' + f.toughness : f.loyalty != null ? 'loyalty ' + f.loyalty : '', (f.oracle_text || '').replace(/\n/g, ' / ')].filter(Boolean).join(' · ');
+  const faces = k.card_faces && k.card_faces.length > 1 && !k.oracle_text ? k.card_faces.map(face).join(' // ') : face(k);
+  return faces + (k.set_name ? ' (' + k.set_name + ')' : '');
+}
+// from the cache only (no fetch): a deck's cards are cached once it has been read
+const cardText = name => textOf(findCard(String(name || '')));
 // what a deck row shows about a card from the cache (no fetch): its type line, rarity (lands: 'land'), the
 // TCGplayer market price in dollars (Scryfall's prices.usd for the printing it returned, else foil) and the
 // TCGplayer product link. Changes 19, 20 and 23.
@@ -318,4 +328,4 @@ function tcgProduct(u) {
     return /(^|\.)tcgplayer\.com$/.test(p.hostname) && !/^partner\./.test(p.hostname) ? 'https://www.tcgplayer.com' + p.pathname : null; } catch { return null; }
 }
 
-module.exports = { cardFacts, legalFor, legalityError, legalIn, cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };
+module.exports = { cardFacts, cardText, textOf, legalFor, legalityError, legalIn, cards, isLand, forgeName, describeDeck, faceOf, parseList, goldfishMeta, goldfishDeck, top8Meta, top8Deck, edhrecMeta, edhrecDeck, importUrl, GOLDFISH_FORMATS, TOP8_FORMATS };

@@ -20,26 +20,35 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const UA = { Accept: 'application/json', 'User-Agent': 'sim.starshard.net' };
 
 let index = null, loading = null;
+// one Scryfall search, every page, politely (Scryfall rate-limits its search hard and the server shares an IP)
+async function pages(q, keep) {
+  let url = 'https://api.scryfall.com/cards/search?q=' + encodeURIComponent(q) + '&unique=cards&order=name', tries = 0;
+  while (url) {
+    const r = await fetch(url, { headers: UA });
+    if (r.status === 429) { if (++tries > 6) return false; await sleep((+r.headers.get('retry-after') || 2 ** tries) * 1000); continue; }
+    const j = await r.json(); if (j.object === 'error') return j.code === 'not_found';
+    j.data.forEach(keep); url = j.has_more ? j.next_page : null; tries = 0;
+    await sleep(300);
+  }
+  return true;
+}
+// v2 (20 Oct): each card carries its rules text, colour identity, rarity and the newest sets it is in, for the coach
 async function standardIndex() {
   if (index && Date.now() - index.at < WEEK) return index;
   if (loading) return loading;
   loading = (async () => {
     let c = readJson(FILE(), null);
-    if (!c || Date.now() - c.at > WEEK) {
-      const cards = [];
-      let url = 'https://api.scryfall.com/cards/search?q=' + encodeURIComponent('legal:standard') + '&unique=cards&order=name';
-      while (url) {
-        const r = await fetch(url, { headers: UA });
-        if (r.status === 429) { await sleep(2000); continue; }
-        const j = await r.json(); if (j.object === 'error') break;
-        for (const k of j.data) { const f = (k.card_faces && k.card_faces[0]) || k; cards.push({ name: meta.forgeName(k), type: f.type_line || k.type_line || '', cmc: k.cmc || 0, cost: f.mana_cost || k.mana_cost || '' }); }
-        url = j.has_more ? j.next_page : null;
-        await sleep(120);
-      }
-      if (cards.length) { c = { at: Date.now(), cards }; writeJson(FILE(), c, { keep: 0 }); }
+    if (!c || c.v !== 2 || Date.now() - c.at > WEEK) {
+      const cards = [], fresh = await newSets().catch(() => []);
+      const ok = await pages('legal:standard', k => { const f = (k.card_faces && k.card_faces[0]) || k;
+        cards.push({ name: meta.forgeName(k), type: f.type_line || k.type_line || '', cmc: k.cmc || 0, cost: f.mana_cost || k.mana_cost || '',
+          text: meta.textOf(k), id: (k.color_identity || []).join('').toLowerCase(), rarity: k.rarity || '', sets: [] }); });
+      // the card list keeps one printing per card, so a new set's reprints are tagged from a search of the set itself
+      for (const st of fresh) { const by = new Map(cards.map(x => [x.name, x])); await pages(`set:${st.code} legal:standard`, k => { const x = by.get(meta.forgeName(k)); if (x) x.sets.push(st.code); }); }
+      if (ok && cards.length) { c = { v: 2, at: Date.now(), cards, sets: fresh }; writeJson(FILE(), c, { keep: 0 }); }
       else if (!c) c = { at: 0, cards: [] };
     }
-    index = { at: c.at || Date.now(), cards: c.cards.map(x => ({ ...x, key: nk(x.name) })) };
+    index = { at: c.at || Date.now(), sets: c.sets || [], cards: c.cards.map(x => ({ ...x, key: nk(x.name) })) };
     loading = null;
     return index;
   })();
@@ -85,4 +94,60 @@ async function search(q, format = 'standard', { n = 8, version, owned = null } =
   return out.sort((a, b) => (b.legal - a.legal)).slice(0, n);
 }
 
-module.exports = { search, standardIndex, forgeView };
+// For the coach (Justin, 20 Oct: "the coach should have all the standard legal cards and understand them"). Its model
+// was trained before the newest sets, so it looks cards up instead of remembering them: by name, or by a Scryfall
+// query held to the brew's format. Both answer with the printed rules text.
+async function lookup(names, format = 'standard') {
+  const find = await meta.cards(names).catch(() => () => null), out = [];
+  const ix = format === 'standard' ? await standardIndex() : null;
+  for (const n of names) {
+    const local = ix && ix.cards.find(c => c.key === nk(n) || c.key === nk(n.split(' // ')[0]));
+    if (local && local.text) { out.push(local.text); continue; }
+    const k = find(n);
+    if (!k) { out.push(`${n}: no card by that name${ix ? ' in Standard' : ''}.`); continue; }
+    const st = k.legalities?.[format];
+    out.push(meta.textOf(k) + (['legal', 'restricted'].includes(st) ? '' : ` [not legal in ${format}]`));
+  }
+  return out.join('\n');
+}
+// The coach's search, from the local index (no network, so no rate limit). Every filter must hold. `text` is a list of
+// phrases that must all appear in the rules text; one phrase may give alternatives as "gain life OR lifelink".
+// `colors` is colour identity within (e.g. "wb": white, black, both or colourless).
+async function find({ text = [], name, type, colors, mv_max, mv_min, set, rarity, limit = 30 } = {}, format = 'standard') {
+  if (format !== 'standard') return 'Error: search covers Standard only; use card_text for other formats.';
+  const ix = await standardIndex(); if (!ix.cards.length) return 'Error: the card list is not loaded yet; try card_text with exact names.';
+  const low = x => nk(x || '');
+  const phrases = [].concat(text).filter(Boolean).map(p => String(p).split(/\s+OR\s+/).map(low));
+  const st = set && ix.sets.find(x => low(x.code) === low(set) || low(x.name) === low(set));
+  const idOk = colors != null && String(colors).trim() !== '' ? new Set(low(colors).replace(/[^wubrg]/g, '')) : null;
+  const rows = ix.cards.filter(c => {
+    const t = low(c.text);
+    if (phrases.some(alts => !alts.some(a => t.includes(a)))) return false;
+    if (name && !c.key.includes(low(name))) return false;
+    if (type && !low(c.type).includes(low(type))) return false;
+    if (idOk && [...(c.id || '')].some(x => !idOk.has(x))) return false;
+    if (mv_max != null && c.cmc > mv_max) return false;
+    if (mv_min != null && c.cmc < mv_min) return false;
+    if (rarity && low(c.rarity) !== low(rarity)) return false;
+    if (set && (st ? !(c.sets || []).includes(st.code) : !t.includes('(' + low(set) + ')'))) return false;
+    return true;
+  });
+  const n = Math.min(Math.max(+limit || 30, 1), 40), shown = rows.slice(0, n);
+  if (!rows.length) return 'No Standard cards match.' + (set && !st ? ` (Set filters only know the newest sets: ${ix.sets.map(x => x.name).join(', ')}; older cards match on the set named after their text.)` : '');
+  return `${rows.length} Standard card${rows.length === 1 ? '' : 's'} match${rows.length > n ? `; the first ${n} by name (narrow it for the rest)` : ''}:\n` + shown.map(c => c.text || c.name).join('\n');
+}
+
+// Standard sets released since the model's training ended: the coach is told it has to look these up.
+const CUTOFF = '2026-06-01';
+let sets = null;
+async function newSets() {
+  if (sets && Date.now() - sets.at < 864e5) return sets.list;
+  try {
+    const j = await (await fetch('https://api.scryfall.com/sets', { headers: UA })).json(), today = new Date().toISOString().slice(0, 10);
+    const list = (j.data || []).filter(x => ['expansion', 'core'].includes(x.set_type) && x.released_at >= CUTOFF && x.released_at <= today).map(x => ({ code: x.code, name: x.name, released: x.released_at }));
+    sets = { at: Date.now(), list };
+  } catch { if (!sets) return []; }
+  return sets.list;
+}
+
+module.exports = { search, standardIndex, forgeView, lookup, find, newSets };
