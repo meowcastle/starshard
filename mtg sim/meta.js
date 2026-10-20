@@ -110,7 +110,8 @@ async function importUrl(url) {
   const u = new URL(url);
   if (/moxfield\.com$/.test(u.hostname)) {
     const id = u.pathname.split('/').filter(Boolean).pop();
-    const j = await get(`https://api2.moxfield.com/v3/decks/all/${id}`, 'json');
+    // Moxfield's API refuses other sites without an approved key (403 since at least 20 Oct 2026): say what works instead
+    const j = await get(`https://api2.moxfield.com/v3/decks/all/${id}`, 'json').catch(e => { throw new Error(/ 403$/.test(e.message) ? "Moxfield doesn't let other sites read its decks. In Moxfield, open the deck, choose Export, copy the text and paste it here." : e.message); });
     const board = b => Object.values(j.boards?.[b]?.cards || {}).map(c => ({ qty: c.quantity, name: c.card.name }));
     return { name: j.name, ...{ main: board('mainboard'), side: board('sideboard'), commander: board('commanders') } };
   }
