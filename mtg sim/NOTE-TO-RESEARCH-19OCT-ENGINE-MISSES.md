@@ -54,3 +54,12 @@ What's left, in order of how testable it is:
 1. Smaug: removal targeting while it's in play, and its trigger's damage per attack vs the Treasure count.
 2. Jund: its own sacrifice decisions (what it sacrifices, when, and to which outlet), since removal isn't the leak.
 3. The overlap rule in §2 before any further dial work, so the bar measures the decks we actually play.
+
+## 6. Third pass (23 Oct): blocks and races against fliers are ruled out
+`tools/log-race.js` reads every opponent turn that starts with the deck holding a flier (power 2+) the opponent can't block, on batches dC and dB (398 and 414 Dragons games):
+- **Opponents mostly have no board to race with.** 418 creatures able to attack over 1,127 such turns (0.37 a turn); most of those turns are the control decks, which have no creatures at all.
+- **Holding back is real but small.** Of creatures that could attack with nothing able to kill them and couldn't block anything next turn (no flying or reach, every Dragons attacker flies), 28% stayed home (dB: 18%). That's 0.17 power a turn across all opponents (dB: 0.06); the worst are Lifegain 0.66, Jeskai 0.56, Jund 0.42 power a turn. A few points of damage a game at most, nowhere near +30.
+- **Blocks are sound.** 42% of opponents' blocks against Dragons are chumps, but 59 of 71 were against an attack that was lethal unblocked; 12 weren't.
+- The same counts for Lifegain and Dimir Midrange (also over-strong) show the same small numbers (0.03-0.05 power held a turn by their opponents).
+
+So the opponent AI doesn't lose to Dragons by failing to race or by blocking badly. With this, the Dragons list in §3-4 (removal aim, counters held, Smaug's script, sideboarding, self life loss, mulligans, missed lethal) and races are all ruled out. Next on our side: the overlap rule (§2), so the bar stops scoring four decks against real decks that are mostly other builds.
