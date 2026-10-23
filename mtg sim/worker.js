@@ -48,13 +48,13 @@ async function slot(n) {
     try { c = await call('/api/worker/claim'); } catch (e) { log(`slot ${n}: can't reach ${URL_} (${e.message}); retrying`); await sleep(IDLE_MS * 2); continue; }
     if (c.status === 204) { await sleep(IDLE_MS); continue; }
     if (c.status !== 200) { log(`slot ${n}: ${c.data?.error || 'status ' + c.status}`); await sleep(c.status === 409 || c.status === 401 ? 5 * 60e3 : IDLE_MS); continue; }
-    const { lease, job, pairing, decks, games, format, clock, seed, log: logIt, meta, bridge } = c.data;
+    const { lease, job, pairing, decks, games, format, clock, seed, log: logIt, meta, bridge, telemetry } = c.data;
     log(`slot ${n}: ${decks.map(d => d.name).join(' vs ')} (${games} games)`);
     // per-turn game logs stay on this machine, under DATA_DIR/gamelogs/<job>/<pairing>
     // (the server says which pairings to log: SIM_GAME_LOG on the server decides)
     const logDir = logIt ? path.join(DATA, 'gamelogs', job, String(pairing)) : null;
     if (logDir) { fs.mkdirSync(logDir, { recursive: true }); fs.writeFileSync(path.join(logDir, 'meta.json'), JSON.stringify({ job, pairing, ...(meta || {}), decks: decks.map(d => d.name), engine: eng, worker: NAME, created: Date.now() })); }
-    const run = runSim({ decks, games, format, clock, seed, bridge: !!bridge, workDir: path.join(DATA, 'jobs', job, String(pairing)), logDir });
+    const run = runSim({ decks, games, format, clock, seed, bridge: !!bridge, telemetry: telemetry || null, workDir: path.join(DATA, 'jobs', job, String(pairing)), logDir });
     let cancelled = false;
     const report = async done => {
       const res = run.results;

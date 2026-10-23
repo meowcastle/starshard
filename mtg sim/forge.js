@@ -88,12 +88,13 @@ function pilotFor(deck, version = forgeVersion()) {
 // Forge deciding everything our pilot doesn't: the same results as `forge sim` (Phase 0,
 // forge-pilot/README.md), about a third slower (13 Oct 2026).
 // bridge: play through the bridge even with no pilot and no log, for its per-match seeds (paired tests, paired.js)
-function runSim({ decks, games, format, clock, seed, workDir, logDir, onLine, bridge = false }) {
+// telemetry: the strategy's spec (telemetry.js); with a logDir, each game's summary rides on its result (games[i].tm)
+function runSim({ decks, games, format, clock, seed, workDir, logDir, onLine, bridge = false, telemetry = null }) {
   fs.mkdirSync(workDir, { recursive: true });
   const names = deckNames(decks);
   const pilots = (!format || format === 'Constructed') && decks.length === 2 ? decks.map(d => pilotFor(d)) : [];
   const logging = config.SIM_GAME_LOG !== 'off' && config.SIM_GAME_LOG !== '0' && logDir && pilotOn() && (!format || format === 'Constructed') && decks.length === 2;
-  if (pilots.some(Boolean) || logging || (bridge && decks.length === 2 && pilotOn())) return runPiloted({ decks, names, pilots: pilots.length ? pilots : [null, null], games, clock, seed, workDir, logDir: logging ? logDir : null, onLine });
+  if (pilots.some(Boolean) || logging || (bridge && decks.length === 2 && pilotOn())) return runPiloted({ decks, names, pilots: pilots.length ? pilots : [null, null], games, clock, seed, workDir, logDir: logging ? logDir : null, onLine, telemetry });
   const files = decks.map((d, i) => {
     const f = `deck${i + 1}.dck`;
     fs.writeFileSync(path.join(workDir, f), toDck(names[i], d));
@@ -165,7 +166,7 @@ function runSim({ decks, games, format, clock, seed, workDir, logDir, onLine, br
 // The same pairing through the bridge: `games` single-game matches (match i seeded seed + i),
 // a pilot policy on the seats that have one and Forge's AI everywhere else, and the same
 // results object runSim fills, updated live, with card stats from the same log parser.
-function runPiloted({ decks, names, pilots, games, clock, seed, workDir, logDir, onLine }) {
+function runPiloted({ decks, names, pilots, games, clock, seed, workDir, logDir, onLine, telemetry = null }) {
   const results = { names, wins: names.map(() => 0), draws: 0, games: [], warnings: [], cards: cardstats.empty(names.length), pilot: pilots };
   const maps = decks.map(cardstats.nameMap);
   let child = null, killed = false;
@@ -176,13 +177,17 @@ function runPiloted({ decks, names, pilots, games, clock, seed, workDir, logDir,
     simLog: true, clock: clock || 120, keepLogs: true, workDir, gameLog: logDir || null,
     onChild: c => { child = c; if (killed) c.kill('SIGKILL'); },
     onGame: g => {
-      const r = { n: results.games.length + 1, ms: g.ms || 0, turn: g.turns, first: g.onThePlay, winner: g.winner };
+      const r = { n: results.games.length + 1, ms: g.ms || 0, turn: g.turns, first: g.onThePlay, winner: g.winner, m: g.match || 0, g: g.game || 1 };
       if (g.winner === -1) results.draws++; else results.wins[g.winner]++;
       results.games.push(r);
       try { cardstats.add(results.cards, cardstats.parseGame(g.log || [], names, maps), g.winner); } catch (e) { results.warnings.length < 50 && results.warnings.push('card stats: ' + e.message); }
       onLine && onLine(`Game Result: Game ${r.n} ${g.winner === -1 ? 'ended in a Draw!' : 'ended in ' + r.ms + ' ms. Ai(' + (g.winner + 1) + ')-' + names[g.winner] + ' has won!'}${g.slow ? ' (time limit)' : ''}`);
     },
-  }).then(res => { for (const e of res.errors) results.warnings.length < 50 && results.warnings.push(e.slice(0, 300)); return { code: res.code ?? (killed ? 137 : 0), results }; });
+  }).then(res => {
+    for (const e of res.errors) results.warnings.length < 50 && results.warnings.push(e.slice(0, 300));
+    // the strategy's telemetry, from each game's log (written by the bridge once the game ends)
+    if (telemetry && logDir) { const T = require('./telemetry'); for (const r of results.games) { try { const L = T.readLog(path.join(logDir, `m${String(r.m).padStart(3, '0')}-g${r.g}.jsonl.gz`)); const x = L && T.extract(L, telemetry); if (x) r.tm = x; } catch (e) { results.warnings.length < 50 && results.warnings.push('telemetry: ' + e.message); } } }
+    return { code: res.code ?? (killed ? 137 : 0), results }; });
   return { child: handle, done, results };
 }
 

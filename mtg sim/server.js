@@ -14,6 +14,7 @@ const usage = require('./usage');
 const score = require('./score');
 const paired = require('./paired');
 const strategyRead = require('./strategy');
+const telemetry = require('./telemetry');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
@@ -238,7 +239,7 @@ function pump() {
 // deck, where nobody waits; the bridge plays about a third slower than forge sim (13 Oct 2026).
 const logsJob = job => config.SIM_GAME_LOG === 'all' || (config.SIM_GAME_LOG === 'background' && (job.owner === 'calibration' || job.owner === 'benchmark'));
 function gameLogDir(job, i) {
-  if (!logsJob(job)) return null;
+  if (!logsJob(job) && !((job.plan[i] && job.plan[i].telemetry) || job.telemetry)) return null;
   const dir = path.join(DATA, 'gamelogs', job.id, String(i));
   try { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, 'meta.json'), JSON.stringify({ job: job.id, pairing: i, mode: job.mode, owner: job.owner, meta: job.meta || null, phase: job.plan[i].phase || null, decks: job.plan[i].decks.map(d => d.name), engine: job.engine || null, created: Date.now() })); } catch { return null; }
   return dir;
@@ -246,7 +247,7 @@ function gameLogDir(job, i) {
 async function playLocal({ job, i, pr }) {
   pr.seed = job.plan[i].seed ?? seedOf(job.id, i);
   const run = runSim({
-    decks: job.plan[i].decks, games: job.plan[i].games || job.games, format: job.format, clock: job.clock, seed: pr.seed, bridge: !!job.plan[i].bridge,
+    decks: job.plan[i].decks, games: job.plan[i].games || job.games, format: job.format, clock: job.clock, seed: pr.seed, bridge: !!job.plan[i].bridge, telemetry: job.plan[i].telemetry || job.telemetry || null,
     workDir: path.join(DATA, 'jobs', job.id, String(i)), logDir: gameLogDir(job, i),
     onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
   });
@@ -277,6 +278,7 @@ function settle(job) {
   saveHist();
   setTimeout(() => jobs.delete(job.id), 6 * 3600e3);
   if (job.brew) try { settleRuns(); } catch (e) { console.error('settle:', e.message); }
+  if (job.brew && job.telemetry && job.status !== 'cancelled') try { runTelemetry(job); } catch (e) { console.error('telemetry:', e.message); }
   if (job.onDone) try { job.onDone(job); } catch (e) { console.error('onDone:', e.message); }
 }
 
@@ -326,7 +328,7 @@ const workerOk = req => {
 setInterval(() => { for (const [id, l] of leases) if (Date.now() > l.until) { leases.delete(id); console.warn(`worker ${l.worker} went quiet; pairing ${l.job.id}/${l.i} back in line`); unclaim(l.job, l.i); } }, Math.min(15e3, LEASE_MS / 2));
 const clean = r => ({
   wins: Array.isArray(r?.wins) ? r.wins.slice(0, 4).map(x => +x || 0) : null, draws: +r?.draws || 0,
-  games: Array.isArray(r?.games) ? r.games.slice(0, MAX_GAMES).map(g => ({ n: +g.n || 0, winner: Number.isInteger(g.winner) ? g.winner : -1, ms: +g.ms || 0, ...(g.turn ? { turn: +g.turn } : {}), ...(g.first === 0 || g.first === 1 ? { first: g.first } : {}) })) : [],
+  games: Array.isArray(r?.games) ? r.games.slice(0, MAX_GAMES).map(g => ({ n: +g.n || 0, winner: Number.isInteger(g.winner) ? g.winner : -1, ms: +g.ms || 0, ...(g.turn ? { turn: +g.turn } : {}), ...(g.first === 0 || g.first === 1 ? { first: g.first } : {}), ...(g.tm && typeof g.tm === 'object' && JSON.stringify(g.tm).length < 3000 ? { tm: g.tm } : {}) })) : [],
   warnings: Array.isArray(r?.warnings) ? r.warnings.slice(0, 50).map(String) : [], cards: Array.isArray(r?.cards) ? r.cards.slice(0, 4) : null,
 });
 
@@ -469,7 +471,7 @@ async function prepareRun(b, run, user, { low = false, onDone = null } = {}) {
       field = (await mapLimit(top, 3, async d => ({ name: d.name, owner: 'EDHREC average', metaPct: null, list: await meta.edhrecDeck(d.id) })));
       run.field = { source: 'edhrec', label: 'EDHREC', date: run.created };
     } else {
-      const n = run.oppSet === 'meta10' ? 10 : 20;
+      const n = run.oppSet === 'meta10' ? 10 : run.oppSet === 'read5' ? 5 : 20;
       const top = (await meta.goldfishMeta(b.format)).slice(0, n);
       field = await mapLimit(top, 4, async d => ({ name: d.name, owner: null, metaPct: d.pct, list: await meta.goldfishDeck(d.id) }));
       field.forEach((f, i) => { if (f.error) f.name = top[i].name; });
@@ -494,7 +496,8 @@ async function prepareRun(b, run, user, { low = false, onDone = null } = {}) {
     }
     if (run.cancelled) { saveBrews(); return; }
     // a weekly rerun waits behind people's runs, like calibration, and is compared with the last run when it finishes
-    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, ...(low ? { low: true, onDone: onDone || (() => weeklyFinish()) } : {}) });
+    const tspec = b.seats === 2 ? telemetrySpec(b, run.list ? { ...b.versions.find(x => x.v === run.v), list: run.list } : b.versions.find(x => x.v === run.v)) : null;
+    const job = enqueue({ mode: b.seats === 4 ? 'matchup' : 'gauntlet', decks, post, games: GAMES, format: b.seats === 4 ? 'Commander' : 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, ...(tspec ? { telemetry: tspec } : {}), ...(low ? { low: true, onDone: onDone || (() => weeklyFinish()) } : {}) });
     run.jobId = job.id; run.status = 'queued';
     if (run.field.source === 'goldfish') run.benchmarkId = (await benchmarkFor(decks.slice(1), b.format)).id;
   } catch (e) { run.status = 'failed'; run.error = e.message; }
@@ -728,7 +731,7 @@ function runView(b, run) {
   const status = run.cancelled && !(j && j.status === 'done') ? 'cancelled' : run.status === 'preparing' || run.status === 'failed' && !j ? run.status : j ? j.status : 'lost';
   const status2 = status;
   const prs = j?.pairings || [];
-  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: waitPos(j), games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null, ...(run.weekly ? { weekly: true } : {}) };
+  const out = { id: run.id, v: run.v, oppSet: run.oppSet, created: run.created, tm: run.tm || null, tmAll: run.tmAll || null, started: j?.started || null, finished: j?.finished || null, status: status2, error: run.error || null, queuePos: waitPos(j), games: GAMES, field: run.field || null, skipped: run.skipped || [], bo3: run.bo3 || null, planErrors: run.planErrors || 0, planError: run.planError || null, ...(run.weekly ? { weekly: true } : {}) };
   if (b.seats === 4) {
     const p = prs[0];
     out.seats = [{ name: b.name, owner: 'you', coverCard: b.coverCard }, ...(run.opponents || [])].map((s, i) => ({ name: s.name, owner: s.owner, commander: s.coverCard, wins: p ? p.wins[i] || 0 : 0 }));
@@ -1271,6 +1274,38 @@ function craftCollect(b) {
 }
 setInterval(() => { for (const b of brews) { craftStart(b).catch(e => console.error('craft:', b.id, e.message)); craftCollect(b); } }, 60e3);
 
+// E2's spec for one version: what the telemetry looks for in its games (telemetry.js). The engine and the champions
+// come from the saved strategy when there is one (the champions are the attackAlone rule's creatures), else from
+// the read; equipment and protection from the cards' types and the read's roles. Null for a deck with no plan.
+function telemetrySpec(b, ver) {
+  const R = ver && ver.read, S = b.strategy; if (!R || (!S && !R.coherent)) return null;
+  const names = (ver.list.main || []).map(c => c.name), inList = n => names.includes(n);
+  const type = n => (meta.cardFacts(n).type || ''), creature = n => /Creature/.test(type(n));
+  const engine = ((S && S.engine && S.engine.length ? S.engine.map(e => e.name || e) : R.engine.map(e => e.name)) || []).filter(inList);
+  const alone = S && (S.piloting || []).find(r => r.rule === 'attackAlone');
+  let champions = alone && alone.cards ? alone.cards.filter(n => inList(n) && creature(n)) : [];
+  if (!champions.length) champions = engine.filter(creature);
+  const equipment = names.filter(n => /Equipment/.test(type(n)));
+  const protection = [...new Set([...((R.roles.find(r => r.role === 'protection') || { cards: [] }).cards.map(c => c.name)), ...(S ? (S.piloting || []).filter(r => r.rule === 'holdProtection').flatMap(r => r.cards || []) : [])])].filter(inList);
+  return { seat: 0, engine, champions, equipment, protection };
+}
+// E0 layer 3: how the deck actually wins. Once per version, after its first draft: a field run against the top 5 at
+// low priority (behind everyone's runs), its games read by the telemetry. Not a run the player asked for, so it
+// isn't counted against their day. The read screen shows "checking how it wins" until it lands.
+function readRunStart(b, ver) {
+  if (b.seats !== 2 || (b.readRun && b.readRun.v === ver.v) || b.runs.some(r => r.v === ver.v && r.tm)) return;
+  const run = { id: crypto.randomBytes(4).toString('hex'), v: ver.v, oppSet: 'read5', created: Date.now(), status: 'preparing', auto: 'read' };
+  b.runs.unshift(run); b.readRun = { v: ver.v, run: run.id }; saveBrews();
+  prepareRun(b, run, { name: b.owner }, { low: true, onDone: () => {} });
+}
+// a finished field run's telemetry, per opponent, kept on the run (the games themselves go when the job does)
+function runTelemetry(job) {
+  if (!job.brew || job.mode !== 'gauntlet' || !job.telemetry) return;
+  const b = brews.find(x => x.id === job.brew), run = b && b.runs.find(r => r.jobId === job.id); if (!run) return;
+  const by = {}; job.pairings.forEach((p, i) => { const name = (job.plan[i].decks[1] || {}).name; if (!name) return; for (const g of p.games || []) if (g.tm) (by[name] = by[name] || []).push(g.tm); });
+  run.tm = Object.fromEntries(Object.entries(by).map(([k, gs]) => [k, telemetry.aggregate(gs)]));
+  const all = Object.values(by).flat(); run.tmAll = telemetry.aggregate(all); saveBrews();
+}
 // ---------- paired tests (E1, STRATEGY-FIRST-REBUILD §4; the arithmetic is paired.js) ----------
 // Version A against version B on the same seeds, opponent by opponent: game 1 and the boarded games separately,
 // each played in chunks of PAIR_CHUNK single-game matches through the bridge (match i seeded seed + i, so A's game i
@@ -1279,7 +1314,7 @@ setInterval(() => { for (const b of brews) { craftStart(b).catch(e => console.er
 // A test lives in b.tests; its job is a person's job in the queue like any run, and survives a restart like one.
 const PAIR_CHUNK = config.SIM_PAIR_CHUNK, PAIR_CAP = config.SIM_PAIR_CAP;
 const pairKey = (opp, phase) => opp + '|' + phase;
-const pairUnit = (t, job, key, side, chunk) => { const [opp, phase] = key.split('|'); return { decks: job.pairDecks[key][side], opp: +opp, phase, side, chunk, a: 0, b: +opp + 1, games: PAIR_CHUNK, bridge: true, seed: seedOf(t.id + ':' + key, chunk) }; };
+const pairUnit = (t, job, key, side, chunk) => { const [opp, phase] = key.split('|'); return { decks: job.pairDecks[key][side], opp: +opp, phase, side, chunk, a: 0, b: +opp + 1, games: PAIR_CHUNK, bridge: true, seed: seedOf(t.id + ':' + key, chunk), ...(job.pairSpec && job.pairSpec[side] ? { telemetry: job.pairSpec[side] } : {}) }; };
 async function pairedStart(b, t, user) {
   try {
     const A = b.versions.find(x => x.v === t.a), B = b.versions.find(x => x.v === t.b); if (!A || !B) throw new Error('one of the versions is gone');
@@ -1305,9 +1340,9 @@ async function pairedStart(b, t, user) {
     } });
     if (!Object.keys(pairDecks).length) throw new Error('nothing to play');
     if (t.cancelled) { saveBrews(); return; }
-    const job = { pairDecks };
+    const pairSpec = { A: telemetrySpec(b, A), B: telemetrySpec(b, B) }, job = { pairDecks, pairSpec };
     for (const key of Object.keys(pairDecks)) for (const side of ['A', 'B']) units.push(pairUnit(t, job, key, side, 0));
-    const j = enqueue({ mode: 'paired', units, pairDecks, decks: dA, games: PAIR_CHUNK, format: 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, test: t.id, onDone: jj => pairedDone(b, t, jj) });
+    const j = enqueue({ mode: 'paired', units, pairDecks, pairSpec, decks: dA, games: PAIR_CHUNK, format: 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, test: t.id, onDone: jj => pairedDone(b, t, jj) });
     t.jobId = j.id; t.status = 'queued';
   } catch (e) { t.status = 'failed'; t.error = e.message; }
   saveBrews();
@@ -1347,6 +1382,8 @@ function pairedSummary(t, job) {
     if (!ph.pre && !ph.post) return;
     const verdict = paired.combine(ph.pre, ph.post), match = paired.perMatches(ph.pre && ph.pre.n ? ph.pre : null, ph.post && ph.post.n ? ph.post : null);
     const r = { opp: name, verdict, match, pre: ph.pre ? { n: ph.pre.n, verdict: ph.pre.verdict, d: ph.pre.d, lo: ph.pre.lo, hi: ph.pre.hi } : null, post: ph.post ? { n: ph.post.n, verdict: ph.post.verdict, d: ph.post.d, lo: ph.post.lo, hi: ph.post.hi } : null };
+    const tmOf = side => telemetry.aggregate(job.pairings.filter(p => p.side === side && p.opp === i).flatMap(p => (p.games || []).map(g => g.tm).filter(Boolean)));
+    const ta = tmOf('A'), tb = tmOf('B'); if (ta || tb) r.tm = { a: ta, b: tb };
     r.line = paired.verdictLine(r, t.a, t.b, name); rows.push(r);
   });
   return rows;
@@ -1395,6 +1432,7 @@ async function strategyDraft(b, ver, { answers = [], steer = '' } = {}) {
     const field = (fieldLists(b.format) || []).map(d => d.name).slice(0, 10);
     const d = await usage.as({ who: b.owner, kind: 'strategy-draft', brew: b.id }, () => coach.draftStrategy(ver.list, read, { name: b.name, format: b.format, field, answers, steer }));
     b.draft = { v: ver.v, status: 'ready', at: Date.now(), answers, steer: steer || null, draft: d };
+    readRunStart(b, ver);
   } catch (e) { b.draft = { v: ver.v, status: 'failed', at: Date.now(), error: e.message }; }
   finally { drafting.delete(id); saveBrews(); }
 }
@@ -1835,7 +1873,7 @@ const server = http.createServer(async (req, res) => {
         const id = crypto.randomBytes(6).toString('hex');
         leases.set(id, { ...t, worker: name, engine: engineKey(body.engine), until: Date.now() + LEASE_MS });
         t.pr.seed = t.job.plan[t.i].seed ?? seedOf(t.job.id, t.i);
-        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.plan[t.i].games || t.job.games, bridge: !!t.job.plan[t.i].bridge, format: t.job.format, clock: t.job.clock, seed: t.pr.seed, log: logsJob(t.job), meta: { mode: t.job.mode, owner: t.job.owner, phase: t.job.plan[t.i].phase || null } });
+        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.plan[t.i].games || t.job.games, bridge: !!t.job.plan[t.i].bridge, telemetry: t.job.plan[t.i].telemetry || t.job.telemetry || null, format: t.job.format, clock: t.job.clock, seed: t.pr.seed, log: logsJob(t.job) || !!(t.job.plan[t.i].telemetry || t.job.telemetry), meta: { mode: t.job.mode, owner: t.job.owner, phase: t.job.plan[t.i].phase || null } });
       }
       if (p === '/api/worker/report' && req.method === 'POST') {
         const l = leases.get(String(body.lease || ''));
