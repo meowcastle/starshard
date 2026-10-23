@@ -12,6 +12,7 @@ const sideboard = require('./sideboard');
 const cardstats = require('./cardstats');
 const usage = require('./usage');
 const score = require('./score');
+const paired = require('./paired');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
@@ -166,7 +167,7 @@ function enqueue(spec) {
   const id = crypto.randomBytes(5).toString('hex');
   const job = { id, status: 'queued', created: Date.now(), engine: engine(), ...spec, log: [], results: null };
   job.plan = pairingsOf(job);
-  job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b }));
+  job.pairings = job.plan.map(p => ({ names: p.decks.map(d => d.name), wins: p.decks.map(() => 0), draws: 0, games: [], status: 'queued', phase: p.phase, opp: p.opp, a: p.a, b: p.b, ...(p.side ? { side: p.side, chunk: p.chunk } : {}) }));
   job.pending = job.plan.map((_, i) => i); job.inflight = 0; job.children = new Set(); job.base = job.plan.length;
   jobs.set(id, job); queue.push(job); pump();
   return job;
@@ -176,6 +177,7 @@ function enqueue(spec) {
 // job carries post-board lists (job.post, keyed like the pairing), each pairing is
 // followed by its games 2 and 3: the same two decks, boarded.
 function pairingsOf(job) {
+  if (job.mode === 'paired') return job.units;
   const base = job.mode === 'gauntlet' ? job.decks.slice(1).map((o, i) => ({ decks: [job.decks[0], o], opp: i, a: 0, b: i + 1 }))
     : job.mode === 'roundrobin' ? job.decks.flatMap((x, i) => job.decks.slice(i + 1).map((y, k) => ({ decks: [x, y], a: i, b: i + 1 + k })))
     : [{ decks: job.decks, opp: 0 }];
@@ -241,9 +243,9 @@ function gameLogDir(job, i) {
   return dir;
 }
 async function playLocal({ job, i, pr }) {
-  pr.seed = seedOf(job.id, i);
+  pr.seed = job.plan[i].seed ?? seedOf(job.id, i);
   const run = runSim({
-    decks: job.plan[i].decks, games: job.games, format: job.format, clock: job.clock, seed: pr.seed,
+    decks: job.plan[i].decks, games: job.plan[i].games || job.games, format: job.format, clock: job.clock, seed: pr.seed, bridge: !!job.plan[i].bridge,
     workDir: path.join(DATA, 'jobs', job.id, String(i)), logDir: gameLogDir(job, i),
     onLine: l => { job.log.push(l); if (job.log.length > 2000) job.log.shift(); },
   });
@@ -262,6 +264,7 @@ function cancelJob(j) {
 }
 // a job is finished once nothing of it is waiting or playing
 function settle(job) {
+  if (job.mode === 'paired') try { pairedExtend(job); } catch (e) { console.error('paired:', e.message); }
   if (!job.pending.length && job.status !== 'cancelled' && !job.finished) { try { extend(job); } catch (e) { console.error('extend:', e.message); } }
   if (job.inflight > 0 || (job.pending.length && job.status !== 'cancelled') || job.finished) return;
   const qi = queue.indexOf(job); if (qi >= 0) queue.splice(qi, 1);
@@ -356,7 +359,11 @@ function restoreLive() {
   let n = 0;
   for (const j of readJson(LIVE, [], { keep: 0 })) {
     if (jobs.has(j.id) || history.some(h => h.id === j.id)) continue;
-    const b = brews.find(x => x.id === j.brew), run = b && b.runs.find(r => r.jobId === j.id);
+    const b = brews.find(x => x.id === j.brew), run = b && b.runs.find(r => r.jobId === j.id), test = b && (b.tests || []).find(t => t.jobId === j.id);
+    if (test && !test.cancelled) {   // a paired test (E1): back in the queue, its finished chunks kept
+      Object.assign(j, { children: new Set(), log: [], inflight: 0, status: j.started ? 'running' : 'queued', onDone: jj => pairedDone(b, test, jj) });
+      jobs.set(j.id, j); queue.push(j); n++; continue;
+    }
     if (!run || run.cancelled) continue;
     Object.assign(j, { children: new Set(), log: [], inflight: 0, status: j.started ? 'running' : 'queued' }, j.low ? { onDone: () => weeklyFinish() } : {});
     jobs.set(j.id, j); queue.push(j); n++;
@@ -1263,6 +1270,99 @@ function craftCollect(b) {
 }
 setInterval(() => { for (const b of brews) { craftStart(b).catch(e => console.error('craft:', b.id, e.message)); craftCollect(b); } }, 60e3);
 
+// ---------- paired tests (E1, STRATEGY-FIRST-REBUILD §4; the arithmetic is paired.js) ----------
+// Version A against version B on the same seeds, opponent by opponent: game 1 and the boarded games separately,
+// each played in chunks of PAIR_CHUNK single-game matches through the bridge (match i seeded seed + i, so A's game i
+// and B's game i start from the same shuffles and the same AI rolls). After each chunk pair the sequential test
+// (paired.decide) says whether the answer is clear; if not, another chunk is queued, up to PAIR_CAP games a side.
+// A test lives in b.tests; its job is a person's job in the queue like any run, and survives a restart like one.
+const PAIR_CHUNK = config.SIM_PAIR_CHUNK, PAIR_CAP = config.SIM_PAIR_CAP;
+const pairKey = (opp, phase) => opp + '|' + phase;
+const pairUnit = (t, job, key, side, chunk) => { const [opp, phase] = key.split('|'); return { decks: job.pairDecks[key][side], opp: +opp, phase, side, chunk, a: 0, b: +opp + 1, games: PAIR_CHUNK, bridge: true, seed: seedOf(t.id + ':' + key, chunk) }; };
+async function pairedStart(b, t, user) {
+  try {
+    const A = b.versions.find(x => x.v === t.a), B = b.versions.find(x => x.v === t.b); if (!A || !B) throw new Error('one of the versions is gone');
+    const top = (await meta.goldfishMeta(b.format)).slice(0, 20).filter(d => t.opps.includes(d.name));
+    if (!top.length) throw new Error('none of those decks is in this week\'s field');
+    const got = await mapLimit(top, 4, async d => ({ name: d.name, list: await meta.goldfishDeck(d.id) }));
+    const field = got.filter(o => o.list && o.list.main && o.list.main.length).map(o => ({ name: o.name, main: o.list.main, side: o.list.side || [], commander: [] }));
+    if (!field.length) throw new Error('no opponent decklists could be read');
+    t.opps = field.map(o => o.name);
+    const mine = ver => ({ name: b.name, ...ver.list, ...(ver.style && ver.style.kind === 'control' ? { ai: 'control' } : {}) });
+    const dA = [mine(A), ...field], dB = [mine(B), ...field], phases = t.phases === 'g1' ? ['pre'] : t.phases === 'post' ? ['post'] : ['pre', 'post'];
+    let pa = null, pb = null;
+    if (phases.includes('post')) {
+      const pairs = field.map((_, i) => [0, i + 1]);
+      const [ba, bb] = await Promise.all([dA, dB].map(d => usage.as({ who: b.owner, kind: 'plans', brew: b.id }, () => boardAll(d, pairs, b.format))));
+      pa = ba.post; pb = bb.post; t.bo3 = ba.note === 'no-model' ? 'unboarded' : 'boarded';
+    }
+    const pairDecks = {}, units = [];
+    field.forEach((o, i) => { for (const ph of phases) {
+      const k = '0:' + (i + 1), a = ph === 'post' ? pa && pa[k] : [dA[0], o], bq = ph === 'post' ? pb && pb[k] : [dB[0], o];
+      if (!a || !bq) continue;   // nothing boards in this matchup: the boarded games are game 1 again, already tested
+      pairDecks[pairKey(i, ph)] = { A: a, B: bq };
+    } });
+    if (!Object.keys(pairDecks).length) throw new Error('nothing to play');
+    if (t.cancelled) { saveBrews(); return; }
+    const job = { pairDecks };
+    for (const key of Object.keys(pairDecks)) for (const side of ['A', 'B']) units.push(pairUnit(t, job, key, side, 0));
+    const j = enqueue({ mode: 'paired', units, pairDecks, decks: dA, games: PAIR_CHUNK, format: 'Constructed', clock: CLOCK_S, owner: user.name, brew: b.id, test: t.id, onDone: jj => pairedDone(b, t, jj) });
+    t.jobId = j.id; t.status = 'queued';
+  } catch (e) { t.status = 'failed'; t.error = e.message; }
+  saveBrews();
+}
+// per key, the pairs both sides have played (game i of A with game i of B, chunk by chunk)
+function pairsOf(job) {
+  const out = {};
+  for (const key of Object.keys(job.pairDecks || {})) {
+    const [opp, phase] = key.split('|'), mine = job.pairings.filter(p => p.side && p.opp === +opp && p.phase === phase);
+    const pairs = []; let open = 0, chunks = 0;
+    for (let c = 0; ; c++) {
+      const a = mine.find(p => p.side === 'A' && p.chunk === c), bq = mine.find(p => p.side === 'B' && p.chunk === c); if (!a || !bq) break;
+      chunks++; if (a.status !== 'done' || bq.status !== 'done') { open++; continue; }
+      const n = Math.min(a.games.length, bq.games.length);
+      for (let i = 0; i < n; i++) pairs.push([a.games[i].winner === 0 ? 1 : 0, bq.games[i].winner === 0 ? 1 : 0]);
+    }
+    out[key] = { pairs, open, chunks };
+  }
+  return out;
+}
+// after every finished pairing: a clear answer stops that matchup, an open one gets its next chunk
+function pairedExtend(job) {
+  if (job.mode !== 'paired' || job.status === 'cancelled') return;
+  const b = brews.find(x => x.id === job.brew), t = b && (b.tests || []).find(x => x.jobId === job.id); if (!t) return;
+  for (const [key, x] of Object.entries(pairsOf(job))) {
+    if (x.open) continue;
+    const d = paired.decide(x.pairs, { cap: PAIR_CAP }); if (d.verdict) continue;
+    for (const side of ['A', 'B']) { const u = pairUnit(t, job, key, side, x.chunks); job.plan.push(u); job.pairings.push({ names: u.decks.map(d => d.name), wins: [0, 0], draws: 0, games: [], status: 'queued', phase: u.phase, opp: u.opp, a: u.a, b: u.b, side, chunk: u.chunk }); job.pending.push(job.plan.length - 1); }
+  }
+}
+// the matchup lines from the pairs: per opponent, game 1 and boarded, the verdict and the difference per 100 matches
+function pairedSummary(t, job) {
+  const P = pairsOf(job), rows = [];
+  t.opps.forEach((name, i) => {
+    const ph = {};
+    for (const phase of ['pre', 'post']) { const x = P[pairKey(i, phase)]; if (!x) continue; const d = paired.decide(x.pairs, { cap: PAIR_CAP }); ph[phase] = { ...d, ...(paired.delta(x.pairs) || {}), playing: x.open > 0 }; }
+    if (!ph.pre && !ph.post) return;
+    const verdict = paired.combine(ph.pre, ph.post), match = paired.perMatches(ph.pre && ph.pre.n ? ph.pre : null, ph.post && ph.post.n ? ph.post : null);
+    const r = { opp: name, verdict, match, pre: ph.pre ? { n: ph.pre.n, verdict: ph.pre.verdict, d: ph.pre.d, lo: ph.pre.lo, hi: ph.pre.hi } : null, post: ph.post ? { n: ph.post.n, verdict: ph.post.verdict, d: ph.post.d, lo: ph.post.lo, hi: ph.post.hi } : null };
+    r.line = paired.verdictLine(r, t.a, t.b, name); rows.push(r);
+  });
+  return rows;
+}
+function pairedDone(b, t, job) {
+  if (job.status === 'cancelled') { t.status = 'cancelled'; saveBrews(); return; }
+  t.rows = pairedSummary(t, job); t.status = job.status === 'failed' ? 'failed' : 'done'; t.finished = Date.now();
+  const games = t.rows.reduce((s, r) => s + (r.match ? r.match.games : 0), 0);
+  (b.thread = b.thread || []).push({ role: 'coach', kind: 'note', text: `Test finished: v${t.a} against v${t.b}, ${games} games a side. ` + t.rows.map(r => r.line).join('; ') + '.', at: Date.now() });
+  saveBrews();
+}
+// what the page sees of a test: live rows while its job plays
+const testView = (b, t) => { const j = t.jobId && jobs.get(t.jobId); const live = j && !t.rows ? pairedSummary(t, j) : null;
+  const status = t.status === 'queued' && j ? (j.status === 'running' ? 'running' : 'queued') : t.status;
+  const played = j ? j.pairings.reduce((s, p) => s + (p.games ? p.games.length : 0), 0) : null;
+  return { id: t.id, a: t.a, b: t.b, opps: t.opps, phases: t.phases, created: t.created, finished: t.finished || null, status, error: t.error || null, bo3: t.bo3 || null, played, rows: t.rows || live || [] }; };
+
 const colBrews = new Map(); // owner -> { key, data }
 async function collectionBrews(owner, format = 'standard') {
   const paper = collection.get(owner).paper, field = fieldLists(format); if (!paper || !field) return null;
@@ -1332,7 +1432,7 @@ function stateOf(rvs, v) {
 }
 const versionsView = (b, rvs = []) => (b.versions || []).map(v => { const o = b.optimize, mine = o && [o.from, o.v, o.test && o.test.v].includes(v.v);
   return { ...v, origin: v.origin || originOf(v), current: v.v === current(b).v, state: stateOf(rvs, v.v), rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })), ...(mine ? { optimize: { status: o.status, steps: o.steps, final: o.final || null } } : {}) }; });
-const brewView = b => { ensureChecks(b); const rvs = b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }); return { ...b, current: current(b).v, craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b, rvs), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: rvs, oppSets: oppSets(b), coachOn: claude.available() }; };
+const brewView = b => { ensureChecks(b); const rvs = b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }); return { ...b, current: current(b).v, tests: (b.tests || []).slice(0, 20).map(t => testView(b, t)), craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b, rvs), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: rvs, oppSets: oppSets(b), coachOn: claude.available() }; };
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -1686,8 +1786,8 @@ const server = http.createServer(async (req, res) => {
         if (t.job.engine && engineKey(t.job.engine) !== engineKey(body.engine)) { t.job.pending.unshift(t.i); t.job.inflight--; t.job.pairings[t.i].status = 'queued'; return send(res, 409, { error: `this run was started with engine ${engineKey(t.job.engine)}; the worker runs ${engineKey(body.engine)}` }); }
         const id = crypto.randomBytes(6).toString('hex');
         leases.set(id, { ...t, worker: name, engine: engineKey(body.engine), until: Date.now() + LEASE_MS });
-        t.pr.seed = seedOf(t.job.id, t.i);
-        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.games, format: t.job.format, clock: t.job.clock, seed: t.pr.seed, log: logsJob(t.job), meta: { mode: t.job.mode, owner: t.job.owner, phase: t.job.plan[t.i].phase || null } });
+        t.pr.seed = t.job.plan[t.i].seed ?? seedOf(t.job.id, t.i);
+        return send(res, 200, { lease: id, job: t.job.id, pairing: t.i, decks: t.job.plan[t.i].decks, games: t.job.plan[t.i].games || t.job.games, bridge: !!t.job.plan[t.i].bridge, format: t.job.format, clock: t.job.clock, seed: t.pr.seed, log: logsJob(t.job), meta: { mode: t.job.mode, owner: t.job.owner, phase: t.job.plan[t.i].phase || null } });
       }
       if (p === '/api/worker/report' && req.method === 'POST') {
         const l = leases.get(String(body.lease || ''));
@@ -2215,6 +2315,30 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, brewView(b));
     }
     // cancel one run: its job stops (or leaves the queue); a run still reading the field is marked so it never queues
+    // a paired test (E1): version a against version b on the same seeds, against the opponents named (up to 5),
+    // game 1 and the boarded games ('both'), or one of them ('g1', 'post'). It counts as a run against the day's runs.
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/tests$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (b.seats !== 2) return send(res, 400, { error: 'Paired tests are for 60-card decks for now.' });
+      const body = await readBody(req), a = +body.a, bv = +body.b;
+      if (!b.versions.some(x => x.v === a) || !b.versions.some(x => x.v === bv)) return send(res, 404, { error: 'There\'s no such version.' });
+      if (a === bv) return send(res, 400, { error: 'Pick two different versions.' });
+      const opps = [...new Set((Array.isArray(body.opps) ? body.opps : []).map(String))].slice(0, 5);
+      if (!opps.length) return send(res, 400, { error: 'Pick at least one opponent.' });
+      if ((b.tests || []).some(t => ['preparing', 'queued'].includes(t.status) && !t.cancelled)) return send(res, 409, { error: 'A test of this deck is already going. Cancel it or wait for it.' });
+      const no = refusal(user, 'run'); if (no) return send(res, 429, { error: no });
+      const t = { id: crypto.randomBytes(4).toString('hex'), a, b: bv, opps, phases: ['g1', 'post'].includes(body.phases) ? body.phases : 'both', created: Date.now(), status: 'preparing' };
+      (b.tests = b.tests || []).unshift(t); b.tests = b.tests.slice(0, 50); saveBrews(); usage.mark(user.name, 'run');
+      pairedStart(b, t, user);
+      return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/tests\/(\w+)\/cancel$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      const t = (b.tests || []).find(x => x.id === m[2]); if (!t) return send(res, 404, { error: 'no such test' });
+      const j = t.jobId && jobs.get(t.jobId); if (j) cancelJob(j);
+      t.cancelled = true; if (['preparing', 'queued'].includes(t.status)) t.status = 'cancelled'; saveBrews();
+      return send(res, 200, brewView(b));
+    }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/runs\/(\w+)\/cancel$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const run = b.runs.find(r => r.id === m[2]); if (!run) return send(res, 404, { error: 'no such run' });

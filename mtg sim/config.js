@@ -39,6 +39,8 @@ const SPEC = {
   SIM_WORKER_TOKEN: S('all', 'str', '', 'shared secret for remote workers', true),
   SIM_LEASE_MS: S('server', 'or', 120e3, 'a worker\'s pairing goes back in line after this long silent'),
   CALIBRATE_TOP: S('server', 'or', 10, 'meta decks in the weekly calibration round robin'),
+  SIM_PAIR_CHUNK: S('server', 'or', 20, 'games a side per chunk of a paired test'),
+  SIM_PAIR_CAP: S('server', 'or', 200, 'most games a side per matchup and phase in a paired test'),
   REAL_DAYS: S('server', 'or', 42, 'days of real tournament results counted'),
   REAL_CLOSE_AT: S('server', 'or', 0.3, 'overlap a real deck needs with a meta list for its matches to score the engine'),
   TCG_AFFILIATE: S('server', 'raw', undefined, 'TCGplayer affiliate link prefix (the shop page goes in its u= parameter); never sent to the owner or an admin'),
