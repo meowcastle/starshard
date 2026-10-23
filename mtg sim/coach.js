@@ -271,4 +271,43 @@ async function mode(b, rv, which, { opp, onText } = {}) {
   return claude.chat({ system: SYSTEM, messages: [{ role: 'user', content: prompt }], onText });
 }
 
-module.exports = { writeup, reply, act, context, headline, useField, mode, MODES: Object.keys(MODES) };
+// E0 layer 4 (STRATEGY-FIRST-REBUILD §4): the first draft of a deck's strategy, from its cards and the read
+// (strategy.js: roles, the engine the link graph found, the shape). Called only for a deck the read found a plan
+// in; a deck without one gets "no clear engine" and its half-plans instead, never an invented strategy. The draft
+// is a proposal: nothing is saved until the player saves it, in their own words if they like.
+const STRATEGY_DRAFT = { type: 'object', properties: {
+  title: { type: 'string', description: 'One line naming what the deck is, in plain words, e.g. "A one-card voltron with a lifegain choir".' },
+  summary: { type: 'string', description: 'Two sentences: what the deck does to win and why these cards do it.' },
+  engine: { type: 'array', maxItems: 4, items: { type: 'object', properties: { name: { type: 'string' }, why: { type: 'string', description: 'A few words: what this card does for the plan.' } }, required: ['name', 'why'] } },
+  winCondition: { type: 'string', description: 'What "working" looks like, something a game log can check, e.g. "one champion connects alone by turn 5".' },
+  piloting: { type: 'array', maxItems: 5, items: { type: 'object', properties: { rule: { type: 'string', enum: ['attackAlone', 'holdProtection', 'tutor', 'equip', 'other'] }, text: { type: 'string' }, cards: { type: 'array', items: { type: 'string' } } }, required: ['rule', 'text'] } },
+  obstacles: { type: 'array', maxItems: 6, items: { type: 'object', properties: { name: { type: 'string', description: 'What stops the win condition, e.g. "big ground blockers", "targeted removal", "sweepers", "racing", "fliers", "running out of cards".' }, answers: { type: 'array', items: { type: 'string' }, description: 'Cards in this list that answer it (exact names), empty if none.' } }, required: ['name', 'answers'] } },
+  weakTo: { type: 'array', maxItems: 4, items: { type: 'string' } },
+  confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
+  leanedOn: { type: 'string', description: 'What the draft rests on when card text and the read disagree, in a few words.' },
+  questions: { type: 'array', maxItems: 2, items: { type: 'object', properties: { q: { type: 'string' }, options: { type: 'array', maxItems: 3, items: { type: 'string' } } }, required: ['q', 'options'] } },
+}, required: ['title', 'summary', 'engine', 'winCondition', 'piloting', 'obstacles', 'weakTo', 'confidence', 'questions'] };
+async function draftStrategy(list, read, { name = '', format = 'standard', field = [], answers = [], steer = '' } = {}) {
+  const cards = [...(list.main || []), ...(list.side || [])];
+  await meta.cards(cards.map(c => c.name));
+  const deck = 'Main deck:\n' + (list.main || []).map(c => c.qty + ' ' + c.name).join('\n') + ((list.side || []).length ? '\nSideboard:\n' + list.side.map(c => c.qty + ' ' + c.name).join('\n') : '');
+  const R = read, roles = R.roles.map(r => `${r.role} ${r.count}: ` + r.cards.map(c => c.qty + ' ' + c.name).join(', ')).join('\n');
+  const prompt = `${rulesText(cards)}
+${deck}
+
+What the cards say on their own (a link graph between their rules text, not a judgement):
+Shape: ${R.shape}${R.engineless ? ' (no engine: read from its counts, ' + R.archetypeWhy + ')' : ''}
+Engine candidates: ${R.engine.map(e => e.name + ' (' + e.why.join(', ') + ')').join('; ') || 'none'}
+Plans the text builds around: ${R.plans.map(p => p.label + ' ' + p.copies + ' cards').join('; ') || 'none'}
+Roles:
+${roles}
+Curve (mana value: copies): ${Object.entries(R.curve).map(([m, n]) => m + ': ' + n).join(' · ')}
+${field.length ? 'The decks it will play against this week: ' + field.join(', ') + '.' : ''}
+${answers.length ? 'The player answered: ' + answers.map(a => a.q + ' → ' + a.a).join('; ') + '.' : ''}
+${steer ? 'The player says what they want the deck to do: "' + steer + '". Build the strategy around that, and say plainly if the cards don\'t support it yet.' : ''}
+
+Draft this deck's strategy: what it is trying to do, as its own deck, never as a copy of a meta deck. Use the engine the read found unless the rules text clearly says otherwise; if you differ, say why in leanedOn. Piloting rules are how this deck should be played (who attacks and when, what mana to hold up and for what, what a tutor fetches against which kind of opponent). Obstacles are what stops the win condition, each with the cards in this list that answer it (exact names; empty if none). Confidence: high when the cards' text and the read agree, low when the read is thin. Ask at most two questions, only where the read genuinely splits (a card that could be removal or a finisher here, two engines pulling apart); ask none if it's clear. Every claim about a card must match its rules text above.`;
+  return claude.ask({ system: SYSTEM, prompt, tool: { name: 'strategy_draft', description: "The deck's strategy, drafted from its cards.", schema: STRATEGY_DRAFT } });
+}
+
+module.exports = { writeup, reply, act, context, headline, useField, mode, draftStrategy, MODES: Object.keys(MODES) };

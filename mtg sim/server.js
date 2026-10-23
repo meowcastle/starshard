@@ -13,6 +13,7 @@ const cardstats = require('./cardstats');
 const usage = require('./usage');
 const score = require('./score');
 const paired = require('./paired');
+const strategyRead = require('./strategy');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
@@ -390,7 +391,7 @@ const PROPOSALS = new Set(['optimize', 'coach', 'owned']);
 const originOf = v => v.origin || (v.v === 1 ? 'pasted' : /^Optimize/.test(v.note || '') ? 'optimize' : v.from && v.from.run ? 'coach' : /^owned version/.test(v.note || '') ? 'owned' : 'edited');
 function pushVersion(b, origin, fields) {
   const v = Math.max(b.maxV || 0, ...b.versions.map(x => x.v)) + 1; b.maxV = v;
-  const ver = { v, created: Date.now(), origin, ...fields }; b.versions.push(ver);
+  const ver = { v, created: Date.now(), origin, ...(b.strategy ? { strategyAt: b.strategy.at } : {}), ...fields }; b.versions.push(ver);
   if (!PROPOSALS.has(origin)) b.current = v;
   return ver;
 }
@@ -1363,6 +1364,53 @@ const testView = (b, t) => { const j = t.jobId && jobs.get(t.jobId); const live 
   const played = j ? j.pairings.reduce((s, p) => s + (p.games ? p.games.length : 0), 0) : null;
   return { id: t.id, a: t.a, b: t.b, opps: t.opps, phases: t.phases, created: t.created, finished: t.finished || null, status, error: t.error || null, bo3: t.bo3 || null, played, rows: t.rows || live || [] }; };
 
+// ---------- the strategy (P2; STRATEGY-FIRST-REBUILD §2, E0) ----------
+// b.strategy: the deck's strategy as the player saved it (title, summary, engine, winCondition, piloting, obstacles,
+// weakTo, goal), with dated history and no number. Each version records the strategy it was saved under (strategyAt).
+// ver.read: E0 layers 1 and 2 (strategy.js), worked out in the background for the last three versions.
+// b.draft: E0 layer 4, the coach's first draft for a deck with no saved strategy, made once per version on its own
+// (and again on request: another reading, answers to its questions, or the player saying what they want).
+const READ_V = 1, reading = new Set(), drafting = new Set();
+function ensureReads(b) {
+  if (b.seats !== 2) return;
+  for (const ver of b.versions.slice(-3)) {
+    const id = b.id + ':' + ver.v; if ((ver.read && ver.read.rv === READ_V) || reading.has(id)) continue;
+    reading.add(id);
+    strategyRead.read(ver.list, b.name).then(r => { ver.read = { ...r, rv: READ_V, links: undefined }; saveBrews(); if (!b.strategy) draftSoon(b); })
+      .catch(e => console.error('read:', b.id, ver.v, e.message)).finally(() => reading.delete(id));
+  }
+}
+// the first draft, on its own: once per version of a deck with no saved strategy, when the read found a plan
+function draftSoon(b) {
+  const ver = current(b); if (b.strategy || !ver.read || !claude.available()) return;
+  if (b.draft && b.draft.v === ver.v) return;
+  if (!ver.read.coherent) { b.draft = { v: ver.v, status: 'noplan', at: Date.now() }; saveBrews(); return; }
+  strategyDraft(b, ver, {}).catch(() => {});
+}
+async function strategyDraft(b, ver, { answers = [], steer = '' } = {}) {
+  const id = b.id; if (drafting.has(id)) return; drafting.add(id);
+  b.draft = { v: ver.v, status: 'drafting', at: Date.now(), answers, steer: steer || null }; saveBrews();
+  try {
+    const read = ver.read && ver.read.rv === READ_V ? ver.read : await strategyRead.read(ver.list, b.name);
+    const field = (fieldLists(b.format) || []).map(d => d.name).slice(0, 10);
+    const d = await usage.as({ who: b.owner, kind: 'strategy-draft', brew: b.id }, () => coach.draftStrategy(ver.list, read, { name: b.name, format: b.format, field, answers, steer }));
+    b.draft = { v: ver.v, status: 'ready', at: Date.now(), answers, steer: steer || null, draft: d };
+  } catch (e) { b.draft = { v: ver.v, status: 'failed', at: Date.now(), error: e.message }; }
+  finally { drafting.delete(id); saveBrews(); }
+}
+const STRAT_FIELDS = ['title', 'summary', 'engine', 'winCondition', 'piloting', 'obstacles', 'weakTo', 'goal'];
+function saveStrategy(b, body, by) {
+  const next = {}; for (const k of STRAT_FIELDS) if (body[k] !== undefined) next[k] = body[k];
+  if (typeof next.summary !== 'string' || !next.summary.trim()) throw new Error('A strategy needs at least a sentence saying what the deck does.');
+  next.summary = next.summary.trim().slice(0, 1200);
+  if (next.title) next.title = String(next.title).slice(0, 200);
+  if (next.engine) next.engine = (Array.isArray(next.engine) ? next.engine : []).slice(0, 6).map(e => typeof e === 'string' ? { name: e } : { name: String(e.name || ''), why: e.why ? String(e.why).slice(0, 300) : undefined }).filter(e => e.name);
+  const prev = b.strategy || null, at = Date.now();
+  b.strategy = { ...(prev || {}), ...next, at, by, history: [...((prev && prev.history) || []), ...(prev ? [{ at: prev.at, by: prev.by, title: prev.title || null, summary: prev.summary, note: body.note || null }] : [])].slice(-30) };
+  if (b.draft) b.draft.status = 'saved';
+  return b.strategy;
+}
+
 const colBrews = new Map(); // owner -> { key, data }
 async function collectionBrews(owner, format = 'standard') {
   const paper = collection.get(owner).paper, field = fieldLists(format); if (!paper || !field) return null;
@@ -1432,7 +1480,7 @@ function stateOf(rvs, v) {
 }
 const versionsView = (b, rvs = []) => (b.versions || []).map(v => { const o = b.optimize, mine = o && [o.from, o.v, o.test && o.test.v].includes(v.v);
   return { ...v, origin: v.origin || originOf(v), current: v.v === current(b).v, state: stateOf(rvs, v.v), rows: (v.rows || []).map(r => ({ ...r, ...meta.cardFacts(r.name) })), ...(mine ? { optimize: { status: o.status, steps: o.steps, final: o.final || null } } : {}) }; });
-const brewView = b => { ensureChecks(b); const rvs = b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }); return { ...b, current: current(b).v, tests: (b.tests || []).slice(0, 20).map(t => testView(b, t)), craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b, rvs), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: rvs, oppSets: oppSets(b), coachOn: claude.available() }; };
+const brewView = b => { ensureChecks(b); ensureReads(b); const rvs = b.runs.map(r => { const v = runView(b, r); if (v.status === 'done' && b.seats === 2) v.relative = relativeOf(b, v); return v; }); return { ...b, current: current(b).v, tests: (b.tests || []).slice(0, 20).map(t => testView(b, t)), craftRuns: undefined, craft: b.craft && b.craft.rows.length ? { at: b.craft.at, run: b.craft.run, pending: b.craft.pending, rows: b.craft.rows } : null, optimize: b.optimize ? { status: b.optimize.status, from: b.optimize.from, v: b.optimize.v, test: b.optimize.test || null, final: b.optimize.final || null, steps: b.optimize.steps } : null, versions: versionsView(b, rvs), real: realOf(b), realMatches: undefined, settings: settingsOf(b), events: Object.fromEntries(Object.entries(EVENTS).map(([k, x]) => [k, x.label])), runs: rvs, oppSets: oppSets(b), coachOn: claude.available() }; };
 
 // ---------- the coach ----------
 // A finished field run gets its readout written once (lazily, when its brew is
@@ -2317,6 +2365,23 @@ const server = http.createServer(async (req, res) => {
     // cancel one run: its job stops (or leaves the queue); a run still reading the field is marked so it never queues
     // a paired test (E1): version a against version b on the same seeds, against the opponents named (up to 5),
     // game 1 and the boarded games ('both'), or one of them ('g1', 'post'). It counts as a run against the day's runs.
+    // the strategy: save it (the player's words, the draft as is, or edited), or ask for another draft
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/strategy$/)) && req.method === 'PUT') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      try { saveStrategy(b, await readBody(req), 'you'); } catch (e) { return send(res, 400, { error: e.message }); }
+      (b.thread = b.thread || []).push({ role: 'coach', kind: 'note', text: `Strategy saved: ${b.strategy.title || b.strategy.summary.slice(0, 120)}`, at: Date.now() });
+      saveBrews(); return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/strategy\/draft$/)) && req.method === 'POST') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (!claude.available()) return send(res, 503, { error: 'The coach is off right now.' });
+      const no = refusal(user, 'ask'); if (no) return send(res, 429, { error: no });
+      const body = await readBody(req), ver = current(b);
+      const answers = (Array.isArray(body.answers) ? body.answers : []).slice(0, 2).map(a => ({ q: String(a.q || '').slice(0, 300), a: String(a.a || '').slice(0, 300) })).filter(a => a.q && a.a);
+      usage.mark(user.name, 'ask');
+      strategyDraft(b, ver, { answers, steer: String(body.steer || '').slice(0, 600) });
+      return send(res, 200, brewView(b));
+    }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/tests$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       if (b.seats !== 2) return send(res, 400, { error: 'Paired tests are for 60-card decks for now.' });
