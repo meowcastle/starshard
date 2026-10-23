@@ -69,7 +69,7 @@ a = "      this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x),
 assert s.count(a) == 1
 s = s.replace(a, """      const nv = Math.max(...b.versions.map(x => x.v)), TV = this.state.tryVs && this.state.tryVs.brew === d.id ? this.state.tryVs : null;
       this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), ed: null, busy: false, cmpA: null, cmpB: null, pickV: nv === b.current ? null : { brew: b.id, v: nv }, tryVs: null,
-        msg: run ? null : { text: 'Saved as v' + nv + '. v' + b.current + ' is still your deck.' + (TV ? ' Start its test against ' + TV.opp + ' below.' : '') } }));
+        msg: run ? null : { text: nv === b.current ? 'Saved as v' + nv + '. It\\'s your deck now and hasn\\'t run yet.' : 'Saved as v' + nv + '. v' + b.current + ' is still your deck.' + (TV ? ' Start its test against ' + TV.opp + ' below.' : '') } }));
       if (TV && run === 'test') { this.setState({ tab: 'sim' }); this.startTest(b, nv, b.current, [TV.opp]); }
       else if (TV && !run && Array.isArray(b.tests)) this.setState({ ptPick: { brew: b.id, a: nv, b: b.current, opps: [TV.opp] }, ptErr: '', tab: 'sim' });""")
 a = "v.edRunLabel = S.busy ? 'Saving…' : 'Save and run'; v.edSaveRun = pe(() => saveable && this.edSave(d, words, true));"
