@@ -208,7 +208,10 @@ async function parse(text, OUT = null) {
         g.recs.push(turnRec());
       }
       if (ti && ti.phase) { g.phase = ti.phase; g.step = ti.step || null; combatTick(); }
-      for (const r of info?.results || []) if (r.scope === 'MatchScope_Game' && !g.result) g.result = { winner: r.winningTeamId === me ? 0 : 1, reason: (r.reason || '').replace('ResultReason_', '') };
+      // Arena lists every game of the match so far, in order, so this game's result is entry number g.number
+      // (taking the first entry gave every game game 1's result: a match won 2-1 read as three losses)
+      const done = (info?.results || []).filter(r => r.scope === 'MatchScope_Game'), r = done[g.number - 1];
+      if (r && !g.result) g.result = { winner: r.winningTeamId === me ? 0 : 1, reason: (r.reason || '').replace('ResultReason_', '') };
     }
   }
   finishTurn();
