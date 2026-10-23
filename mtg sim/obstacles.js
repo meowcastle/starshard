@@ -115,7 +115,7 @@ async function rows({ list, colors, read, strategy, owned, field, shares }) {
     const a = await answersFor(o.kind, { list, colors, read, owned }, { also: list2.map(x => x.kind) });
     out.push({ name: o.name, kind: o.kind, label: KINDS.find(k => k.id === o.kind).label, who, yours: a.yours.map(x => ({ name: x.name, why: x.why })), answers: a.best });
   }
-  return { rows: out, field: model.map(d => ({ name: d.name, share: d.share, plan: d.plan, core: d.core.slice(0, 8), brings: d.brings })) };
+  return { rows: out, field: model.map(d => ({ name: d.name, share: d.share, plan: d.plan, how: d.how, core: d.core.slice(0, 8), brings: d.brings })) };
 }
 
 module.exports = { KINDS, kindOf, fieldModel, whoBrings, answersFor, rows, tutorsOf };

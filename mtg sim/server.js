@@ -1337,6 +1337,34 @@ async function pilotOfStrategy(b, list) {
   const p = strategyPilot.fromStrategy(b.strategy, list, find);
   return p.champions.length ? p : null;
 }
+// P6, Matchups (E7's book, from what's known): per opponent, how they win, which of the strategy's obstacles they bring,
+// your plan against them (the strategy's win condition and your answers to what they bring, with what the tutor
+// grabs), what to kill on sight (their core threats) and what to let be (their cheap utility creatures), the
+// sideboard plan's ins and outs, and the latest test against them. Built on What stops it, so it's ready when that is.
+async function matchupsFor(b, ver) {
+  const e = obstaclesFor(b, ver); if (e.status !== 'ready') return { status: e.status, error: e.error || null };
+  const D = e.data, S = b.strategy || (b.draft && b.draft.draft) || null, tutor = S && (S.piloting || []).find(r => r.rule === 'tutor');
+  const guide = (b.guide && b.guide.rows) || [], T = (b.tests || []).find(t => t.status === 'done');
+  const find = await meta.cards(D.field.flatMap(f => f.core));
+  const rows = [];
+  for (const f of D.field) {
+    const brings = D.rows.filter(o => o.who.some(w => w.deck === f.name));
+    const lines = brings.slice(0, 2).map(o => { const yours = o.yours.slice(0, 2).map(y => y.name.split(',')[0]), grab = o.answers.find(a => a.delivered);
+      return `They bring ${o.label}: ${yours.length ? 'answer with ' + yours.join(' or ') : 'you have little for it'}${grab ? (yours.length ? '; ' : ', ') + grab.delivered.replace(' fetches it', '') + ' grabs ' + grab.name : ''}.`; });
+    const grabOb = brings.find(o => o.answers.some(a => a.delivered)), grab = grabOb ? grabOb.answers.find(a => a.delivered) : null;
+    const threats = f.core.map(n => ({ n, k: find(n) })).filter(x => x.k && /Creature|Planeswalker/.test(x.k.type_line || ''));
+    const kill = threats.filter(x => (x.k.cmc || 0) >= 3 || /Planeswalker/.test(x.k.type_line)).sort((a, b) => (b.k.cmc || 0) - (a.k.cmc || 0)).slice(0, 3).map(x => x.n);
+    const skip = threats.filter(x => (x.k.cmc || 0) <= 1 && !kill.includes(x.n)).slice(0, 2).map(x => x.n);
+    const g = guide.find(r => r.opponent === f.name), tr = T && (T.rows || []).find(r => r.opp === f.name);
+    const HOW = { 'go-wide aggro': 'goes wide with cheap creatures', 'evasive aggro': 'races with fliers and evasive creatures', 'spells-matter': 'cheap spells that pump or copy its creatures', 'disrupt-and-clock': 'a few threats backed by counters and removal',
+      'landfall engine': 'extra land drops that grow its creatures', 'sacrifice engine': 'sacrifices its own creatures for damage and cards', 'lifegain engine': 'gains life to grow its creatures and drain you', 'engine midrange': 'value engines on the battlefield',
+      'discard-as-value': 'discards for value and attacks', 'draw-go control': 'counters and instant-speed answers, then a finisher', 'tap-out control': 'sweepers and card advantage, then a finisher', 'fast combo': 'a combo', midrange: 'threats and answers' };
+    rows.push({ opp: f.name, share: f.share, how: f.plan ? (HOW[f.plan] || f.plan) : null, brings: brings.map(o => o.label),
+      plan: [...(S && S.winCondition ? ['Your plan: ' + S.winCondition] : []), ...lines], grab: grab ? { card: grab.name, by: grab.delivered.replace(' fetches it', ''), why: grabOb.label } : null,
+      kill, skip, inOut: g ? { in: g.in || [], out: g.out || [], why: g.why || null, role: g.role || null } : null, tested: tr ? tr.line : null, inOutTested: false });
+  }
+  return { status: 'ready', rows: rows.sort((a, b) => (b.share || 0) - (a.share || 0)) };
+}
 // ---------- paired tests (E1, STRATEGY-FIRST-REBUILD §4; the arithmetic is paired.js) ----------
 // Version A against version B on the same seeds, opponent by opponent: game 1 and the boarded games separately,
 // each played in chunks of PAIR_CHUNK single-game matches through the bridge (match i seeded seed + i, so A's game i
@@ -2457,6 +2485,12 @@ const server = http.createServer(async (req, res) => {
       if (b.seats !== 2) return send(res, 400, { error: 'Obstacles are for 60-card decks for now.' });
       const v = +u.searchParams.get('v') || current(b).v, ver = b.versions.find(x => x.v === v); if (!ver) return send(res, 404, { error: `There's no v${v}.` });
       const e = obstaclesFor(b, ver); return send(res, 200, { v, status: e.status, error: e.error || null, ...(e.data || {}) });
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/matchups$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (b.seats !== 2) return send(res, 400, { error: 'Matchups are for 60-card decks for now.' });
+      const v = +u.searchParams.get('v') || current(b).v, ver = b.versions.find(x => x.v === v); if (!ver) return send(res, 404, { error: `There's no v${v}.` });
+      return send(res, 200, { v, ...(await matchupsFor(b, ver)) });
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/tests$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
