@@ -40,6 +40,7 @@ const SPEC = {
   SIM_LEASE_MS: S('server', 'or', 120e3, 'a worker\'s pairing goes back in line after this long silent'),
   CALIBRATE_TOP: S('server', 'or', 10, 'meta decks in the weekly calibration round robin'),
   REAL_DAYS: S('server', 'or', 42, 'days of real tournament results counted'),
+  REAL_CLOSE_AT: S('server', 'or', 0.3, 'overlap a real deck needs with a meta list for its matches to score the engine'),
   GITHUB_TOKEN: S('server', 'raw', undefined, 'raises GitHub\'s rate limit for real results', true),
   // the model
   ANTHROPIC_API_KEY: S('server', 'raw', undefined, 'the coach and sideboard plans; unset = off', true),

@@ -149,14 +149,18 @@ function overlap(a, b) {
   return hi ? lo / hi : 0;
 }
 const MATCH_AT = 0.3; // below this a real deck is "other". Checked by hand on six weeks of Standard RCQs: scores split at 0.3, and decks at 0.3-0.4 are their archetype built differently
+// The match records the engine is scored against use only real decks this close to the list the sim plays
+// (research's overlap rule, 19 Oct): at 0.3 most real "Lifegain" or "Izzet Prowess" decks are other builds,
+// so their rate wasn't the rate of the list the sim plays. Field shares still count every deck at MATCH_AT.
+const CLOSE_AT = config.REAL_CLOSE_AT;
 
 // Real results among the field's archetypes: pairs[a][b] = { games: [won, lost], matches: [won, lost, drawn] }
 // from a's side, plus how many real decks each archetype had and how many fell in "other".
-async function matrix(field, format, { days = 42, isLand } = {}) {
+async function matrix(field, format, { days = 42, isLand, closeAt = CLOSE_AT } = {}) {
   const fv = field.map(d => vec(d.main, isLand));
   const evs = await events(format, days);
   const pairs = {}, seen = Object.fromEntries(field.map(d => [d.name, 0])), vsField = {};
-  let decks = 0, other = 0, matches = 0;
+  let decks = 0, other = 0, loose = 0, matches = 0;
   const add = (a, b, gw, gl, mw, ml, md) => {
     const p = (pairs[a] = pairs[a] || {})[b] = pairs[a][b] || { games: [0, 0], matches: [0, 0, 0] };
     p.games[0] += gw; p.games[1] += gl; p.matches[0] += mw; p.matches[1] += ml; p.matches[2] += md;
@@ -167,7 +171,7 @@ async function matrix(field, format, { days = 42, isLand } = {}) {
       decks++;
       const v = vec(d.main, isLand); let best = -1, bi = -1;
       fv.forEach((f, i) => { const s = overlap(v, f); if (s > best) { best = s; bi = i; } });
-      if (best >= MATCH_AT) { arch.set(d.player, field[bi].name); seen[field[bi].name]++; } else other++;
+      if (best >= MATCH_AT) { seen[field[bi].name]++; if (best >= closeAt) arch.set(d.player, field[bi].name); else loose++; } else other++;
     }
     // MTGO events with every player published: each archetype's match record against the whole field
     if (e.complete) for (const r of e.records || []) { const A = arch.get(r.player); if (!A) continue; const x = vsField[A] = vsField[A] || { w: 0, l: 0, events: new Set() }; x.w += r.w; x.l += r.l; x.events.add(e.uri); }
@@ -180,7 +184,7 @@ async function matrix(field, format, { days = 42, isLand } = {}) {
     }
   }
   const complete = evs.filter(e => e.complete).length, mtgo = evs.filter(e => e.source === 'mtgo.com').length;
-  return { pairs, seen, decks, other, matches, events: evs.length, mtgoEvents: mtgo, completeEvents: complete, days, sources: [...SOURCES, 'mtgo.com'], newest: evs[0]?.date || null,
+  return { pairs, seen, decks, other, loose, closeAt, matches, events: evs.length, mtgoEvents: mtgo, completeEvents: complete, days, sources: [...SOURCES, 'mtgo.com'], newest: evs[0]?.date || null,
     vsField: Object.fromEntries(Object.entries(vsField).map(([a, x]) => [a, { w: x.w, l: x.l, events: x.events.size }])) };
 }
 
@@ -215,4 +219,4 @@ async function mains(field, format, { days = 42, isLand } = {}) {
   return out;
 }
 
-module.exports = { matrix, events, sideboards, mains, overlap, vec, MATCH_AT };
+module.exports = { matrix, events, sideboards, mains, overlap, vec, MATCH_AT, CLOSE_AT };

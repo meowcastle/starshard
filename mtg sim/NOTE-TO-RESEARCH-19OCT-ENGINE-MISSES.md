@@ -63,3 +63,15 @@ What's left, in order of how testable it is:
 - The same counts for Lifegain and Dimir Midrange (also over-strong) show the same small numbers (0.03-0.05 power held a turn by their opponents).
 
 So the opponent AI doesn't lose to Dragons by failing to race or by blocking badly. With this, the Dragons list in §3-4 (removal aim, counters held, Smaug's script, sideboarding, self life loss, mulligans, missed lethal) and races are all ruled out. Next on our side: the overlap rule (§2), so the bar stops scoring four decks against real decks that are mostly other builds.
+
+## 7. The overlap rule (§2), measured: it doesn't move the bar
+`realdata.matrix` now takes `closeAt` (config `REAL_CLOSE_AT`, default 0.3, so nothing live changed): real decks between MATCH_AT and closeAt still count toward field shares but not toward the match records the engine is scored on. Same 45 events, field = the newest benchmark lists of the 12 decks, batches dB+dC pooled:
+
+| closeAt | real decks scored | real matches | mean error | noise floor | rank correlation |
+|---|---|---|---|---|---|
+| 0.30 | 998 | 508 | 11.6 | 3.2 | about 0 |
+| 0.55 | 717 | 297 | 11.6 | 4.5 | about 0 |
+
+Per deck it moves things both ways: Lifegain +13.9 → +2.8 (close builds win 59% real, the sim says 61%), Jund −24.2 → −30.5, the rest within a few points. It halves the real sample for no net gain, so it stays off. The single-batch rank correlation between sim and real deck rates is −0.5 to +0.1 at every threshold: the sim doesn't order the field yet, and the real rates sit within about 4 points of each other, most of which is noise.
+
+The misses that hold at every threshold: Boros Dragons +21, Jund Sacrifice −24 to −30, Dimir Excruciator −20 to −23, Azorius Control −13, Izzet Spellementals +13, Dimir Midrange +11. The decks the sim underrates are the ones whose play is sequencing (sacrifice loops, the Excruciator line, draw-go control); the ones it overrates are proactive. Next: Jund's own decisions. A first count from dC: Clue tokens are on Jund's board at 994 of its 3,459 turn starts but cracked 338 times, so resources may sit idle; to be checked against mana left over.
