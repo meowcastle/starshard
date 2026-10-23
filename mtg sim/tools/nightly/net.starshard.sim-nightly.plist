@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- The engine's night shift (tools/nightly-engine.sh), every night at 01:00. Install:
+     cp tools/nightly/net.starshard.sim-nightly.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/net.starshard.sim-nightly.plist -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>net.starshard.sim-nightly</string>
+  <key>ProgramArguments</key><array><string>/bin/bash</string><string>/Users/justinbjur/Desktop/starshard.net/mtg sim/tools/nightly-engine.sh</string></array>
+  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>1</integer><key>Minute</key><integer>0</integer></dict>
+  <key>ProcessType</key><string>Background</string>
+  <key>LowPriorityIO</key><true/>
+  <key>StandardOutPath</key><string>/Users/justinbjur/sim-nightly/launchd.log</string>
+  <key>StandardErrorPath</key><string>/Users/justinbjur/sim-nightly/launchd.log</string>
+</dict>
+</plist>
