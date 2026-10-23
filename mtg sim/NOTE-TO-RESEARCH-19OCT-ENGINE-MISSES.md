@@ -75,3 +75,11 @@ So the opponent AI doesn't lose to Dragons by failing to race or by blocking bad
 Per deck it moves things both ways: Lifegain +13.9 → +2.8 (close builds win 59% real, the sim says 61%), Jund −24.2 → −30.5, the rest within a few points. It halves the real sample for no net gain, so it stays off. The single-batch rank correlation between sim and real deck rates is −0.5 to +0.1 at every threshold: the sim doesn't order the field yet, and the real rates sit within about 4 points of each other, most of which is noise.
 
 The misses that hold at every threshold: Boros Dragons +21, Jund Sacrifice −24 to −30, Dimir Excruciator −20 to −23, Azorius Control −13, Izzet Spellementals +13, Dimir Midrange +11. The decks the sim underrates are the ones whose play is sequencing (sacrifice loops, the Excruciator line, draw-go control); the ones it overrates are proactive. Next: Jund's own decisions. A first count from dC: Clue tokens are on Jund's board at 994 of its 3,459 turn starts but cracked 338 times, so resources may sit idle; to be checked against mana left over.
+
+## 8. A correction to §6-7's logs, and Jund's first pass
+The logs read in §6 and here are batches dB and dC, which inject pilot error on purpose (dC: midrange decks 0.225, aggro 0.05; dB: 0.1 / 0.2): a share of plays and of attackers and blockers is withdrawn. The baseline logs without error (lb-160b) are gone. So:
+- §6's "held home" rates include injected withdrawals; the conclusion (races aren't the Dragons miss) stands, since the measured effect was already small.
+- Jund's early development (`tools/log-curve.js`: spell mana its hand allowed vs spent, own turns 2-4) reads 2.0/1.0, 2.6/1.5, 3.3/1.8 in dC and 2.0/1.3, 2.5/1.7, 3.3/2.0 in dB. The difference is the injected error. Clean numbers come from the first night-shift baseline.
+- What holds regardless: Jund's sacrifice outlets eat the right things (tokens, Greedy Freebooter, Callous Inspector; its engine creatures under 2% of sacrifices), and it doesn't sit on idle mana more than other decks.
+
+The night shift's report now runs `log-curve.js` and `log-race.js` on each night's baseline logs, which carry no injected error.

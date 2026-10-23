@@ -41,3 +41,8 @@ console.log(line('tonight', tonight));
 console.log(line(`pooled over ${nights.length} night${nights.length === 1 ? '' : 's'}`, pooled));
 if (pooled) { console.log('\n  deck                     real    sim    error   real matches'); for (const d of [...pooled.decks].sort((a, b) => Math.abs(b.err) - Math.abs(a.err))) console.log('  ' + d.deck.padEnd(24) + String(d.real).padStart(5) + String(d.sim).padStart(7) + ((d.err >= 0 ? '+' : '') + d.err).padStart(8) + String(d.matches).padStart(14)); }
 for (const e of experiments) console.log('\n' + line(`experiment ${e.name}`, e));
+// how tonight's baseline games were played (no injected error in the baseline, so these read the AI itself)
+const logs = path.join(NIGHT, 'base', 'logs');
+if (fs.existsSync(logs)) for (const [tool, label] of [['log-curve.js', 'early mana use, turns 2-4 (hand could / spent)'], ['log-race.js', 'against fliers']]) {
+  try { console.log(`\n${label}:\n` + execFileSync('node', [path.join(__dirname, tool), logs], { maxBuffer: 1 << 24 }).toString()); } catch (e) { console.log(`\n${label}: ${e.message.split('\n')[0]}`); }
+}
