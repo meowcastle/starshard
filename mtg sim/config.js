@@ -41,6 +41,8 @@ const SPEC = {
   CALIBRATE_TOP: S('server', 'or', 10, 'meta decks in the weekly calibration round robin'),
   REAL_DAYS: S('server', 'or', 42, 'days of real tournament results counted'),
   REAL_CLOSE_AT: S('server', 'or', 0.3, 'overlap a real deck needs with a meta list for its matches to score the engine'),
+  TCG_AFFILIATE: S('server', 'raw', undefined, 'TCGplayer affiliate link prefix (the shop page goes in its u= parameter); never sent to the owner or an admin'),
+  CK_PARTNER: S('server', 'raw', undefined, 'Card Kingdom partner code; never sent to the owner or an admin'),
   GITHUB_TOKEN: S('server', 'raw', undefined, 'raises GitHub\'s rate limit for real results', true),
   // the model
   ANTHROPIC_API_KEY: S('server', 'raw', undefined, 'the coach and sideboard plans; unset = off', true),

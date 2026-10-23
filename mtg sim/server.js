@@ -1201,7 +1201,7 @@ async function optimizeTick(b) {
 function optimizeWrite(b, v, line) {
   const o = b.optimize; o.final = v; optLine(b, 'writing', line);
   // the end hands the choice back: nothing becomes the deck, and the deck's plan isn't replaced, until the player says
-  const cur = current(b).v, ready = v === cur ? `Done. v${v} is still your deck; nothing needed changing.` : `Done. v${v} is ready; v${cur} is still your deck. Make v${v} current, run v${o.from} to compare, or discard v${v}.`;
+  const cur = current(b).v, ready = v === cur ? `Done. v${v} is still your deck; nothing needed changing.` : `Done. v${v} is ready; v${cur} is still your deck. Make v${v} your deck, run v${o.from} to compare, or discard v${v}.`;
   const run = b.runs.find(r => r.v === v && runView(b, r).status === 'done');
   if (!claude.available() || !run) { optLine(b, 'done', ready); return; }
   const keep = g => { if (v === current(b).v) b.guide = g; else o.guide = { ...g, v }; };
@@ -1787,7 +1787,8 @@ const server = http.createServer(async (req, res) => {
       console.log(`account deleted: ${user.name}`);
       return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` });
     }
-    if (p === '/api/me') return send(res, 200, { ok: true, user, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, spentToday: user.isAdmin ? usage.spent(D24) : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
+    // shop codes go to everyone but the owner and admins, by name (admin names are reserved, so nobody else can hold one): affiliate links aren't for the site's own purchases (TCGplayer's rules)
+    if (p === '/api/me') return send(res, 200, { ok: true, user, shopCodes: user.isAdmin || isAdminName(user.name) || !(config.TCG_AFFILIATE || config.CK_PARTNER) ? null : { tcg: config.TCG_AFFILIATE || null, ck: config.CK_PARTNER || null }, forge: forgeVersion(), forgeUpdate: user.isAdmin ? forgeUpdate() : null, spentToday: user.isAdmin ? usage.spent(D24) : null, maxGames: MAX_GAMES, goldfish: meta.GOLDFISH_FORMATS, top8: Object.keys(meta.TOP8_FORMATS) });
 
     // meta
     if (p === '/api/meta') {
@@ -1898,7 +1899,7 @@ const server = http.createServer(async (req, res) => {
     if ((m = p.match(/^\/api\/brews\/(\w+)\/versions\/(\d+)$/)) && req.method === 'DELETE') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
       const v = +m[2], ver = b.versions.find(x => x.v === v); if (!ver) return send(res, 404, { error: `There's no v${v}.` });
-      if (v === current(b).v) return send(res, 400, { error: `v${v} is your deck. Make another version current first.` });
+      if (v === current(b).v) return send(res, 400, { error: `v${v} is your deck. Make another version your deck first.` });
       if (b.optimize && [b.optimize.v, b.optimize.test && b.optimize.test.v].includes(v) && !['done', 'failed', 'cancelled'].includes(b.optimize.status)) return send(res, 409, { error: `Optimize is still working on v${v}. Cancel it first.` });
       for (const r of b.runs.filter(r => r.v === v)) { const j = r.jobId && jobs.get(r.jobId); if (j) cancelJob(j); }
       b.maxV = Math.max(b.maxV || 0, ...b.versions.map(x => x.v));   // a discarded number is never reused

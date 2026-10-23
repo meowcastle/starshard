@@ -364,7 +364,7 @@ Deck
     <sc-if value="{{ notCodex }}" hint-placeholder-val="{{ true }}">
     <div class="fs-head" data-tbl="{{ tabTableOn }}" style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px 24px">
       <div style="display:flex;align-items:center;gap:16px;min-width:0"><div class="fs-cover" style="width:96px;height:56px;border-radius:6px;overflow:hidden;background:{{ deckArtBg }};flex:none"><img src="{{ deckArt }}" alt="" onError="{{ hideImg }}" style="width:100%;height:100%;object-fit:cover;display:block"></div><div style="min-width:0"><div style="font-size:var(--fs-s);color:var(--muted)">{{ deckKicker }}</div><div style="display:flex;align-items:baseline;gap:12px"><span style="font-size:var(--fs-xxl);font-weight:600;letter-spacing:-.01em;line-height:1.1">{{ deck.name }}</span><span style="display:flex;gap:2px;font-size:var(--fs-m)"><sc-for list="{{ deckPips }}" as="p" hint-placeholder-count="2"><i class="ms ms-cost {{ p.cls }}" title="{{ p.title }}" style="color:{{ p.color }}"></i></sc-for></span></div>
-        <div data-s30="state" style="display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;font-family:var(--mono);font-size:var(--fs-s);color:var(--muted);margin-top:6px"><a href="#" onClick="{{ verToggle }}" title="Versions" style="color:var(--ink);font-weight:600;white-space:nowrap">v{{ deck.version }} ▾</a><span>·</span><span>{{ hd.lead }}</span><span>·</span><span style="padding:2px 8px;border-radius:6px;font-weight:600;white-space:nowrap;background:{{ hd.pillBg }};color:{{ hd.pillInk }}">{{ hd.pill }}</span><sc-if value="{{ hd.tailOn }}" hint-placeholder-val="{{ true }}"><span>· {{ hd.tail }}</span></sc-if><sc-if value="{{ hd.actOn }}" hint-placeholder-val="{{ false }}"><span>·</span><a href="#" onClick="{{ hd.act }}" style="color:var(--accent);font-weight:600;white-space:nowrap">{{ hd.actLabel }}</a></sc-if><sc-for list="{{ hd.runs }}" as="x" hint-placeholder-count="0"><span data-p15="cancel" style="display:inline-flex;gap:6px 8px;flex-wrap:wrap;align-items:center"><span>·</span><sc-if value="{{ x.labelOn }}" hint-placeholder-val="{{ true }}"><span style="color:var(--ink-2);white-space:nowrap">{{ x.label }}</span><span>·</span></sc-if><a href="#" onClick="{{ x.go }}" style="color:{{ x.col }};font-weight:600;white-space:nowrap">{{ x.cancel }}</a></span></sc-for></div></div></div>
+        <div data-s30="state" data-p16="state" style="display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;font-family:var(--mono);font-size:var(--fs-s);color:var(--muted);margin-top:6px"><a href="#" onClick="{{ verToggle }}" title="Versions" style="color:var(--ink);font-weight:600;white-space:nowrap">Viewing v{{ deck.version }} ▾</a><span>·</span><span style="white-space:nowrap">your deck: v{{ hd.yours }}</span><sc-if value="{{ hd.makeOn }}" hint-placeholder-val="{{ false }}"><span>·</span><a href="#" onClick="{{ hd.make }}" style="color:var(--accent);font-weight:600;white-space:nowrap">Make v{{ deck.version }} your deck</a></sc-if><sc-if value="{{ hd.madeOn }}" hint-placeholder-val="{{ false }}"><span>·</span><a href="#" onClick="{{ hd.paper }}" style="color:var(--accent);font-weight:600;white-space:nowrap">paper checklist: {{ hd.paperN }}</a><span>·</span><a href="#" onClick="{{ hd.undo }}" style="color:var(--ink);font-weight:600;white-space:nowrap">Undo</a></sc-if><sc-if value="{{ hd.pillOn }}" hint-placeholder-val="{{ false }}"><span>·</span><span style="padding:2px 8px;border-radius:6px;font-weight:600;white-space:nowrap;background:{{ hd.pillBg }};color:{{ hd.pillInk }}">{{ hd.pill }}</span></sc-if><sc-if value="{{ hd.tailOn }}" hint-placeholder-val="{{ false }}"><span>· {{ hd.tail }}</span></sc-if><sc-if value="{{ hd.actOn }}" hint-placeholder-val="{{ false }}"><span>·</span><a href="#" onClick="{{ hd.act }}" style="color:var(--accent);font-weight:600;white-space:nowrap">{{ hd.actLabel }}</a></sc-if><sc-for list="{{ hd.runs }}" as="x" hint-placeholder-count="0"><span data-p15="cancel" style="display:inline-flex;gap:6px 8px;flex-wrap:wrap;align-items:center"><span>·</span><sc-if value="{{ x.labelOn }}" hint-placeholder-val="{{ true }}"><span style="color:var(--ink-2);white-space:nowrap">{{ x.label }}</span><span>·</span></sc-if><a href="#" onClick="{{ x.go }}" style="color:{{ x.col }};font-weight:600;white-space:nowrap">{{ x.cancel }}</a></span></sc-for></div><sc-if value="{{ hd.paperOpen }}" hint-placeholder-val="{{ false }}"><div data-p16="paper" style="margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-width:560px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="font-weight:600">v{{ hd.yours }} is your deck · change your sleeves</span><a href="#" onClick="{{ hd.paper }}" style="font-weight:600;color:var(--ink)">Done</a></div><sc-if value="{{ hd.paperNone }}" hint-placeholder-val="{{ false }}"><span style="color:var(--muted)">Same cards as v{{ hd.paperFrom }}. Nothing to change.</span></sc-if><sc-for list="{{ hd.paperRows }}" as="r" hint-placeholder-count="3"><div style="display:flex;gap:10px;font-family:var(--mono);font-size:var(--fs-s)"><span style="width:84px;color:{{ r.col }}">{{ r.verb }}</span><span style="color:var(--ink)">{{ r.text }}</span></div></sc-for></div></sc-if></div></div>
       <div data-change15="guide-link" style="display:flex;align-items:center;gap:16px"><sc-if value="{{ hasGuideLink }}" hint-placeholder-val="{{ true }}"><a href="{{ guideHref }}" target="_blank" rel="noopener" style="font-size:var(--fs-m);font-weight:600;color:var(--ink-2);white-space:nowrap">Plan ↗</a></sc-if><a href="#" onClick="{{ toggleRun }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:10px 16px;font-weight:600;font-size:var(--fs-m);white-space:nowrap">Run v{{ deck.version }} ▾</a></div>
     </div>
     <sc-if value="{{ verOpen }}" hint-placeholder-val="{{ false }}"><div data-s30="chooser" style="display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;background:var(--surface);max-width:560px">
@@ -521,10 +521,10 @@ Deck
       <div data-sugg="1" style="display:flex;flex-direction:column;gap:12px;border:1px solid var(--line);border-radius:8px;padding:20px 24px;background:var(--surface)">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap"><div><div style="font-size:var(--fs-l);font-weight:600">Suggestions for {{ sgVer }}</div><div style="font-size:var(--fs-s);color:var(--muted);line-height:1.5">{{ sgSub }}</div></div><a href="#" onClick="{{ sgLoad }}" style="background:var(--accent);color:var(--bg);border-radius:6px;padding:9px 14px;font-weight:600;font-size:var(--fs-s);white-space:nowrap">{{ sgBtn }}</a></div>
         <sc-if value="{{ sgNoteOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:var(--fs-s);color:var(--muted)">{{ sgNote }}</div></sc-if>
-        <sc-for list="{{ sgItems }}" as="g" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:16px;align-items:start;padding:12px 0;border-top:1px solid var(--line)"><span style="justify-self:start;font-family:var(--mono);font-size:var(--fs-xs);padding:2px 8px;border-radius:6px;font-weight:600;white-space:nowrap;background:{{ g.kindBg }};color:{{ g.kindColor }}">{{ g.kindLabel }}</span><div><div style="font-weight:600">{{ g.title }}</div><div style="font-size:var(--fs-s);color:var(--muted);line-height:1.5">{{ g.why }}</div><sc-if value="{{ g.confirming }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;font-size:var(--fs-s);color:var(--ink);line-height:1.5">{{ g.confirmLine }} <a href="#" onClick="{{ g.save }}" style="color:var(--accent);font-weight:600">Save</a> · <a href="#" onClick="{{ g.cancel }}" style="color:var(--muted)">Cancel</a></div></sc-if></div><div><sc-if value="{{ g.canApply }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ g.apply }}" style="font-size:var(--fs-s);font-weight:600;color:var(--accent);white-space:nowrap">Apply</a></sc-if><sc-if value="{{ g.isBuy }}" hint-placeholder-val="{{ false }}"><a href="{{ g.buy }}" target="_blank" rel="noopener sponsored" style="display:block;margin-top:6px;font-size:var(--fs-s);color:var(--ink-2);white-space:nowrap">{{ g.price }}TCGplayer ↗</a></sc-if></div></div></sc-for>
+        <sc-for list="{{ sgItems }}" as="g" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:16px;align-items:start;padding:12px 0;border-top:1px solid var(--line)"><span style="justify-self:start;font-family:var(--mono);font-size:var(--fs-xs);padding:2px 8px;border-radius:6px;font-weight:600;white-space:nowrap;background:{{ g.kindBg }};color:{{ g.kindColor }}">{{ g.kindLabel }}</span><div><div style="font-weight:600">{{ g.title }}</div><div style="font-size:var(--fs-s);color:var(--muted);line-height:1.5">{{ g.why }}</div><sc-if value="{{ g.confirming }}" hint-placeholder-val="{{ false }}"><div style="margin-top:8px;font-size:var(--fs-s);color:var(--ink);line-height:1.5">{{ g.confirmLine }} <a href="#" onClick="{{ g.save }}" style="color:var(--accent);font-weight:600">Save</a> · <a href="#" onClick="{{ g.cancel }}" style="color:var(--muted)">Cancel</a></div></sc-if></div><div><sc-if value="{{ g.canApply }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ g.apply }}" style="font-size:var(--fs-s);font-weight:600;color:var(--accent);white-space:nowrap">Try</a></sc-if><sc-if value="{{ g.isBuy }}" hint-placeholder-val="{{ false }}"><a href="{{ g.buy }}" target="_blank" rel="noopener sponsored" style="display:block;margin-top:6px;font-size:var(--fs-s);color:var(--ink-2);white-space:nowrap">{{ g.price }}TCGplayer ↗</a></sc-if></div></div></sc-for>
         <sc-if value="{{ sgMissingOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:var(--fs-s);color:var(--muted);padding-top:10px;border-top:1px solid var(--line)">{{ sgMissingLine }} <a href="{{ sgMissingBuy }}" target="_blank" rel="noopener sponsored" style="color:var(--accent);font-weight:600">Buy the missing ↗</a></div></sc-if>
         <sc-if value="{{ sgSavedOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:var(--fs-s);color:var(--win)">{{ sgSaved }}</div></sc-if>
-        <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted);padding-top:8px;border-top:1px solid var(--line)">Nothing changes until you Apply one. Apply opens the Save sheet with that change; "Save and run" tests it.</div>
+        <div style="font-family:var(--mono);font-size:var(--fs-xs);color:var(--muted);padding-top:8px;border-top:1px solid var(--line)">Nothing changes until you Try one. Try opens the Save sheet with that change; "Save and run" tests it.</div>
       </div>
       <sc-if value="{{ hasCol }}" hint-placeholder-val="{{ true }}"><div data-v5="col-stats" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px"><sc-for list="{{ colStats }}" as="x" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:4px;padding-top:12px;border-top:1px solid var(--line)"><div style="font-size:var(--fs-xs);color:var(--muted)">{{ x.label }}</div><div style="font-family:var(--mono);font-size:var(--fs-l);font-weight:500">{{ x.value }}</div><div style="font-size:var(--fs-xs);color:var(--muted)">{{ x.sub }}</div></div></sc-for></div></sc-if>
           <sc-if value="{{ noCol }}" hint-placeholder-val="{{ false }}"><div data-change25="nocol" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 0;border-top:1px solid var(--line)"><div><div style="font-weight:600">No collection yet</div></div><a href="#" onClick="{{ colPaste }}" style="border:1px solid var(--line-strong);border-radius:6px;padding:9px 14px;font-weight:600;font-size:var(--fs-s);white-space:nowrap">Paste your ManaBox export</a></div></sc-if>
@@ -955,6 +955,27 @@ class Component extends DCLogic {
     catch (e) { this.setState({ msg: { text: 'Not changed: ' + e.message, bad: true } }); }
     this.setState({ busy: false });
   }
+  // patch_p0_state.py: Make vN your deck opens the paper checklist and keeps Undo for the session
+  async makeYours(d, vn) {
+    const from = d.current; await this.makeCurrent(d, vn);
+    const b = (this.state.brews || []).find(x => x.id === d.id);
+    if (b && b.current === vn && from !== vn) this.setState({ made: { brew: d.id, from, to: vn }, paperOpen: true });
+  }
+  async undoYours(d) {
+    const M = this.state.made; if (!M || M.brew !== d.id) return;
+    await this.makeCurrent(d, M.from);
+    const b = (this.state.brews || []).find(x => x.id === d.id);
+    if (b && b.current === M.from) this.setState({ made: null, paperOpen: false, msg: { text: 'v' + M.from + ' is your deck again.' } });
+  }
+  paperRows(d, from, to) {
+    const L = (vn) => { const x = d.versions.find(y => y.v === vn), m = new Map(); if (!x || !x.list) return m;
+      for (const sec of ['main', 'side', 'commander']) for (const c of x.list[sec] || []) { const k = sec + '\u0000' + c.name; m.set(k, (m.get(k) || 0) + c.qty); } return m; };
+    const A = L(from), B = L(to), out = [], inn = [];
+    for (const k of new Set([...A.keys(), ...B.keys()])) { const dq = (B.get(k) || 0) - (A.get(k) || 0); if (!dq) continue;
+      const [sec, name] = k.split('\u0000'), where = sec === 'side' ? ' (sideboard)' : sec === 'commander' ? ' (commander)' : '';
+      (dq < 0 ? out : inn).push({ verb: dq < 0 ? 'Take out' : 'Put in', col: dq < 0 ? 'var(--muted)' : 'var(--accent)', text: Math.abs(dq) + ' ' + name + where }); }
+    return [...out, ...inn];
+  }
   async dropVersion(d, vn) {
     if (this.state.busy) return; this.setState({ busy: true });
     try { const b = await this.api('/api/brews/' + d.id + '/versions/' + vn, { method: 'DELETE' }); this.setState(s => ({ brews: s.brews.map(x => x.id === b.id ? b : x), pickV: null, verDel: null, msg: { text: 'v' + vn + ' deleted.' } })); }
@@ -1317,9 +1338,14 @@ class Component extends DCLogic {
     v.hideImg = (e) => { if (e && e.target) e.target.style.visibility = 'hidden'; };
     // change 23: shop links. buyUrl(card) prefers the exact printing (Scryfall purchase link on the row), else a search by name;
     // buyList(rows) is Mass Entry with "qty name||…". Add the affiliate code here when there is one.
-    const AFF = '';
-    const buyUrl = (c) => (c && c.buy) ? c.buy + AFF : 'https://www.tcgplayer.com/search/magic/product?q=' + encodeURIComponent(c && c.name ? c.name : String(c)) + AFF;
-    const buyList = (xs) => 'https://www.tcgplayer.com/massentry?productline=Magic&c=' + encodeURIComponent((xs || []).map(c => c.qty + ' ' + c.name).join('||')) + AFF;
+    // patch_p0_state.py: the affiliate wrapper (TCGplayer) and partner code (Card Kingdom) come from /api/me, which sends none
+    // to the owner or an admin, so their own purchases never carry a code
+    const CODES = (S.me && S.me.shopCodes) || null;
+    const tcg = (u) => CODES && CODES.tcg ? CODES.tcg + (CODES.tcg.includes('?') ? '&' : '?') + 'u=' + encodeURIComponent(u) : u;
+    const ck = (u) => CODES && CODES.ck ? u + (u.includes('?') ? '&' : '?') + 'partner=' + encodeURIComponent(CODES.ck) : u;
+    v.tcgLink = tcg; v.ckLink = ck;
+    const buyUrl = (c) => tcg((c && c.buy) ? c.buy : 'https://www.tcgplayer.com/search/magic/product?q=' + encodeURIComponent(c && c.name ? c.name : String(c)));
+    const buyList = (xs) => tcg('https://www.tcgplayer.com/massentry?productline=Magic&c=' + encodeURIComponent((xs || []).map(c => c.qty + ' ' + c.name).join('||')));
     v.buyUrl = buyUrl; v.buyList = buyList;
     { const ORIGIN = { pasted: 'pasted', edited: 'saved', optimize: 'from Optimize', coach: 'coach swap', asked: 'from the coach', owned: 'owned version' }, isCur = ver.v === cur30.v;
       const CAUSE = { lost: 'the sim restarted', cancelled: 'cancelled', failed: 'it couldn\'t start' };
@@ -1331,10 +1357,16 @@ class Component extends DCLogic {
           : { t: 'not run yet', bg: 'var(--track)', ink: MUTED, short: 'not run yet' }; };
       const pl = pillOf(ver), vr = ver.state && ver.state.run && d.runs.find(y => y.id === ver.state.run);
       const tail = ver.state && ver.state.kind === 'done' && vr ? [vr.field && vr.field.date ? day(new Date(vr.field.date).getTime()) + ' field' : '', vr.score && vr.score.n ? vr.score.n + ' games' : ''].filter(Boolean).join(' · ') : pl.cause || '';
-      v.hd = { lead: isCur ? 'current · ' + (ORIGIN[ver.origin] || 'saved') + ' ' + day(ver.created) : (ORIGIN[ver.origin] || 'saved') + ' · ' + day(ver.created), pill: pl.t, pillBg: pl.bg, pillInk: pl.ink,
-        tailOn: !!(isCur ? tail : true), tail: isCur ? tail : 'v' + cur30.v + ' stays current',
-        actOn: !isCur || (ver.state && ver.state.kind === 'stopped'), actLabel: !isCur ? 'Make v' + ver.v + ' current' : 'Run again',
-        act: pe(() => !isCur ? this.makeCurrent(d, ver.v) : this.queue(d.id, (vr && vr.oppSet) || S.oppSet, ver.v)) };
+      // patch_p0_state.py: state only. Which version you're viewing, which is your deck, and running / queued / stopped
+      const MADE = S.made && S.made.brew === d.id && S.made.to === cur30.v ? S.made : null;
+      const paper = MADE ? this.paperRows(d, MADE.from, MADE.to) : [];
+      const live = ver.state && ['running', 'queued', 'stopped'].includes(ver.state.kind);
+      v.hd = { yours: cur30.v, makeOn: !isCur, make: pe(() => this.makeYours(d, ver.v)),
+        madeOn: !!MADE, paperN: paper.length === 1 ? '1 change' : paper.length + ' changes', paper: pe(() => this.setState({ paperOpen: !S.paperOpen })),
+        undo: pe(() => this.undoYours(d)), paperOpen: !!(MADE && S.paperOpen), paperRows: paper, paperNone: !!MADE && !paper.length, paperFrom: MADE ? MADE.from : '',
+        pillOn: !!live, pill: pl.t, pillBg: pl.bg, pillInk: pl.ink, tailOn: !!(live && pl.cause), tail: pl.cause || '',
+        actOn: !!(ver.state && ver.state.kind === 'stopped'), actLabel: 'Run again',
+        act: pe(() => this.queue(d.id, (vr && vr.oppSet) || S.oppSet, ver.v)) };
       // patch_run_cancel.py: every run in progress, with a two-click cancel
       v.hd.runs = d.runs.filter(r => this.active(r)).map(r => { const asking = S.cancelAsk === r.id, mine = r.v === ver.v;
         return { labelOn: !mine, label: 'v' + r.v + ' ' + (r.status === 'running' ? 'running · ' + (r.played || 0) + ' of ' + (r.total || 0) : r.status === 'queued' ? 'queued' : 'getting ready'),
@@ -1342,9 +1374,9 @@ class Component extends DCLogic {
           go: pe(() => asking ? (this.setState({ cancelAsk: null }), this.cancelRun(d.id, r.id)) : this.setState({ cancelAsk: r.id })) }; });
       v.verOpen = !!S.verOpen; v.verToggle = pe(() => this.setState({ verOpen: !S.verOpen, verDel: null, runOpen: false }));
       v.verRows = d.versions.slice().reverse().map(x => { const q = pillOf(x), c = x.v === cur30.v;
-        return { v: x.v, dot: c ? ACC : 'transparent', line: (ORIGIN[x.origin] || 'saved') + ' · ' + day(x.created) + (c ? ' · current' : ''), sub: x.note ? '"' + String(x.note).replace(/^(Coach|Suggestion): /, '') + '"' : x.diff ? x.diff.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name + (c.section === 'side' ? ' (side)' : '')).join(', ') : 'first paste',
+        return { v: x.v, dot: c ? ACC : 'transparent', line: (ORIGIN[x.origin] || 'saved') + ' · ' + day(x.created) + (c ? ' · your deck' : ''), sub: x.note ? '"' + String(x.note).replace(/^(Coach|Suggestion): /, '') + '"' : x.diff ? x.diff.map(c => (c.qty > 0 ? '+' : '−') + Math.abs(c.qty) + ' ' + c.name + (c.section === 'side' ? ' (side)' : '')).join(', ') : 'first paste',
           pill: q.short, pillBg: q.bg, pillInk: q.ink, bg: x.v === ver.v ? 'var(--bg)' : 'transparent', pick: pe(() => this.setState({ pickV: x.v === cur30.v ? null : { brew: d.id, v: x.v }, verOpen: false, verDel: null, ed: null })) }; });
-      v.verActs = [...(!isCur ? [{ label: 'Make v' + ver.v + ' current', color: ACC, go: pe(() => this.makeCurrent(d, ver.v)) }] : []),
+      v.verActs = [...(!isCur ? [{ label: 'Make v' + ver.v + ' your deck', color: ACC, go: pe(() => this.makeYours(d, ver.v)) }] : []),
         ...(d.versions.length >= 2 && d.seats === 2 ? [{ label: isCur ? 'Compare versions' : 'Compare v' + ver.v + ' to v' + cur30.v, color: 'var(--ink)', go: pe(() => this.setState({ tab: 'results', view: 'compare', cmpA: isCur ? null : cur30.v, cmpB: ver.v, verOpen: false })) }] : []),
         ...(!isCur ? [{ label: S.verDel === ver.v ? 'Delete v' + ver.v + '? Yes' : 'Delete v' + ver.v, color: S.verDel === ver.v ? LOSS : MUTED, go: pe(() => S.verDel === ver.v ? this.dropVersion(d, ver.v) : this.setState({ verDel: ver.v })) }] : []),
         { label: 'New version', color: 'var(--ink-2)', go: pe(() => this.setState({ stage: 'firstrun', fsStep: 1, fsErr: '', versionOf: d.id, pasteText: '', check: null, noteText: '', verOpen: false })) }];
@@ -1885,8 +1917,8 @@ class Component extends DCLogic {
     v.mainRows = grouped([...cmd, ...curve(main)].map(rowOf)); v.sideRows = grouped(curve(side).map(rowOf));
     v.mainRows.forEach((c, i) => { c.i = i; }); v.sideRows.forEach((c, i) => { c.i = i + 4; });
     { const all = [...(cmd || []), ...main, ...side].filter(c => c.qty > 0), text = all.map(c => c.qty + ' ' + c.name).join('\n');
-      v.buyTcg = 'https://www.tcgplayer.com/massentry?productline=Magic&c=' + encodeURIComponent(all.map(c => c.qty + ' ' + c.name).join('||'));
-      v.buyCk = pe(async () => { try { await navigator.clipboard.writeText(text); } catch (e) {} window.open('https://www.cardkingdom.com/builder', '_blank', 'noopener'); this.setState({ buyNote: 'List copied · paste it into Card Kingdom\'s builder' }); });
+      v.buyTcg = v.tcgLink('https://www.tcgplayer.com/massentry?productline=Magic&c=' + encodeURIComponent(all.map(c => c.qty + ' ' + c.name).join('||')));
+      v.buyCk = pe(async () => { try { await navigator.clipboard.writeText(text); } catch (e) {} window.open(v.ckLink('https://www.cardkingdom.com/builder'), '_blank', 'noopener'); this.setState({ buyNote: 'List copied · paste it into Card Kingdom\'s builder' }); });
       v.buyNote = S.buyNote || 'Opens the shop with the list filled in. Prices are theirs; the sim takes nothing from them yet.'; }
     // change 20: collection and craft
     { const ALL = S.collection || null, RAR = ['common', 'uncommon', 'rare', 'mythic'], R1 = { common: 'C', uncommon: 'U', rare: 'R', mythic: 'M' };
@@ -1909,7 +1941,7 @@ class Component extends DCLogic {
           { label: 'Cheapest deck you could build', value: cheap ? cheap.name : '—', sub: cheap ? (cheap.usd ? money(cheap.usd) + ' to finish' : 'buildable') : 'reading the field' }] : []; }
       v.craftLine = !nMissing ? '' : billS;
       v.wcLine = !nMissing ? '' : (priced ? 'About ' + money(bill) + ' for the ' + nMissing + ' missing at TCGplayer market.' : nMissing + ' cards to buy.');
-      v.buyMissing = 'https://www.tcgplayer.com/massentry?productline=Magic&c=' + encodeURIComponent(missing.map(m => m.need + ' ' + m.name).join('||')); v.hasBuyMissing = nMissing > 0;
+      v.buyMissing = v.tcgLink('https://www.tcgplayer.com/massentry?productline=Magic&c=' + encodeURIComponent(missing.map(m => m.need + ' ' + m.name).join('||'))); v.hasBuyMissing = nMissing > 0;
       const CR = d.craft && d.craft.rows && d.craft.rows.length ? d.craft : null; v.hasCraft = v.hasCol && !!CR; v.noCraft = v.hasCol && !CR && nMissing > 0;
       v.craftPending = run && this.active(run) ? 'The sim tests the owned substitutes once this run finishes.' : 'Run the deck and the sim tests what each missing card is worth against what you own.';
       v.craftNote = CR ? 'each swap vs the full list, ' + CR.rows[0].games + ' games · minus is what the swap costs you' : '';
