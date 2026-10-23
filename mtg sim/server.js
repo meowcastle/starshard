@@ -16,6 +16,7 @@ const paired = require('./paired');
 const strategyRead = require('./strategy');
 const telemetry = require('./telemetry');
 const obstacles = require('./obstacles');
+const strategyPilot = require('./forge-pilot/strategy-pilot');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
@@ -487,7 +488,8 @@ async function prepareRun(b, run, user, { low = false, onDone = null } = {}) {
     run.opponents = await mapLimit(field, 2, async f => ({ name: f.name, owner: f.owner, metaPct: f.metaPct, ...(await meta.faceOf(f.list, f.name)) }));
     // a craft test (change 20) carries its own list: the version with one card swapped, never saved as a version
     const v = run.list ? { list: run.list, style: (b.versions.find(x => x.v === run.v) || {}).style } : b.versions.find(x => x.v === run.v);
-    const decks = [{ name: b.name, ...v.list, ...(v.style?.kind === 'control' ? { ai: 'control' } : {}) }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
+    const sp = await pilotOfStrategy(b, v.list);
+    const decks = [{ name: b.name, ...v.list, ...(v.style?.kind === 'control' ? { ai: 'control' } : {}), ...(sp ? { pilot: sp } : {}) }, ...field.map(f => ({ name: f.name, main: f.list.main, side: f.list.side || [], commander: f.list.commander || [] }))];
     let post = null;
     if (b.seats !== 4) {
       // best of three: game 1 as listed, games 2 and 3 boarded
@@ -1327,6 +1329,14 @@ function obstaclesFor(b, ver) {
   })().catch(err => { e.status = 'failed'; e.error = err.message; });
   return e;
 }
+// E4: a brew with a saved strategy plays by its piloting rules (forge-pilot/strategy-pilot.js), once SIM_STRATEGY_PILOT
+// is on (after the mirror gate: the strategy pilot beats stock Forge with the same 60 55%+ on fixed seeds).
+async function pilotOfStrategy(b, list) {
+  if (!config.SIM_STRATEGY_PILOT || !b.strategy || b.seats !== 2) return null;
+  const find = await meta.cards((list.main || []).map(c => c.name));
+  const p = strategyPilot.fromStrategy(b.strategy, list, find);
+  return p.champions.length ? p : null;
+}
 // ---------- paired tests (E1, STRATEGY-FIRST-REBUILD §4; the arithmetic is paired.js) ----------
 // Version A against version B on the same seeds, opponent by opponent: game 1 and the boarded games separately,
 // each played in chunks of PAIR_CHUNK single-game matches through the bridge (match i seeded seed + i, so A's game i
@@ -1345,8 +1355,9 @@ async function pairedStart(b, t, user) {
     const field = got.filter(o => o.list && o.list.main && o.list.main.length).map(o => ({ name: o.name, main: o.list.main, side: o.list.side || [], commander: [] }));
     if (!field.length) throw new Error('no opponent decklists could be read');
     t.opps = field.map(o => o.name);
-    const mine = ver => ({ name: b.name, ...ver.list, ...(ver.style && ver.style.kind === 'control' ? { ai: 'control' } : {}) });
-    const dA = [mine(A), ...field], dB = [mine(B), ...field], phases = t.phases === 'g1' ? ['pre'] : t.phases === 'post' ? ['post'] : ['pre', 'post'];
+    const [spA, spB] = await Promise.all([pilotOfStrategy(b, A.list), pilotOfStrategy(b, B.list)]);
+    const mine = (ver, sp) => ({ name: b.name, ...ver.list, ...(ver.style && ver.style.kind === 'control' ? { ai: 'control' } : {}), ...(sp ? { pilot: sp } : {}) });
+    const dA = [mine(A, spA), ...field], dB = [mine(B, spB), ...field], phases = t.phases === 'g1' ? ['pre'] : t.phases === 'post' ? ['post'] : ['pre', 'post'];
     let pa = null, pb = null;
     if (phases.includes('post')) {
       const pairs = field.map((_, i) => [0, i + 1]);

@@ -76,6 +76,8 @@ const engineKey = e => !e ? '?' : e.forge + '|' + (e.pilot ? e.pilot.rules + '/'
 const deadKey = n => String(n).split(' // ')[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 function pilotFor(deck, version = forgeVersion()) {
   if (!pilotOn()) return null;
+  // a brew carrying its strategy's pilot (E4, forge-pilot/strategy-pilot.js), when the server switches it on
+  if (deck.pilot && typeof deck.pilot === 'object') return deck.pilot;
   const pol = (readJson('policies.json')[version] || {})[deck.name];
   if (pol) return pol;
   const dead = new Set((readJson('dead-cards.json')[version] || []).map(deadKey));

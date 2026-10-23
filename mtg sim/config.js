@@ -39,6 +39,7 @@ const SPEC = {
   SIM_WORKER_TOKEN: S('all', 'str', '', 'shared secret for remote workers', true),
   SIM_LEASE_MS: S('server', 'or', 120e3, 'a worker\'s pairing goes back in line after this long silent'),
   CALIBRATE_TOP: S('server', 'or', 10, 'meta decks in the weekly calibration round robin'),
+  SIM_STRATEGY_PILOT: S('server', 'num', 0, 'brews with a saved strategy play by its piloting rules (E4); off until the mirror gate passes'),
   SIM_PAIR_CHUNK: S('server', 'or', 20, 'games a side per chunk of a paired test'),
   SIM_PAIR_CAP: S('server', 'or', 200, 'most games a side per matchup and phase in a paired test'),
   REAL_DAYS: S('server', 'or', 42, 'days of real tournament results counted'),

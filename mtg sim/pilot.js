@@ -19,6 +19,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { toDck } = require('./forge');
 const meta = require('./meta');
+const SP = require('./forge-pilot/strategy-pilot');
 
 const FORGE_DIR = config.FORGE_DIR;
 const BRIDGE = config.PILOT_BRIDGE;
@@ -430,6 +431,10 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
   if (err > 0) own = own.map(o => [...new Set([...(o || []), 'priority'])]);
   // a combo seat owns the choices its line needs (anything it doesn't answer goes back to Forge)
   own = own.map((o, i) => policy[i] === 'combo' ? [...new Set([...(o || []), ...COMBO_OWNS])] : o);
+  // a strategy seat (E4, forge-pilot/strategy-pilot.js) owns attackers, priority, the tutor's pick and equip targets, and
+  // knows who it's playing
+  own = own.map((o, i) => policy[i] && policy[i].kind === 'strategy' ? [...new Set([...(o || []), ...SP.OWNS])] : o);
+  policy = policy.map((p, i) => p && p.kind === 'strategy' ? { ...p, opponent: p.opponent || (decks[1 - i] && decks[1 - i].name) || null } : p);
   return meta.cards(names).then(find => new Promise((resolve) => {
     const answer = m => {
       if (m.game !== lastGame) { mulls = [0, 0]; lastGame = m.game; }
@@ -444,6 +449,12 @@ function runMatches({ decks, matches = 1, seed = 1, own = [[], []], plans = [nul
       if (err > 0 && m.kind === 'priority') {
         const st = m.state || {};
         if (st.activePlayer === 'you' && /MAIN/.test(st.phase || '') && !(st.stack || []).length && (m.options || []).some(o => o.meta && o.meta.type === 'spell') && rnd() < err) { res.missed = (res.missed || 0) + 1; return { choice: ['pass'] }; }
+      }
+      if (policy[m.seat] && policy[m.seat].kind === 'strategy') {
+        res.decisions++;
+        const a = SP.answer(m, policy[m.seat], find);
+        if (a) { res.acted = (res.acted || 0) + 1; const s = res.strategy = res.strategy || {}; s[m.kind] = (s[m.kind] || 0) + 1; return a; }
+        return { delegate: true };
       }
       if (policy[m.seat] === 'combo') {
         res.decisions++;
