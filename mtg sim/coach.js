@@ -225,7 +225,7 @@ const ACT = `You can look cards up any time: search_cards (e.g. text ["gain life
 You can change the player's deck, but only when they ask you to. Tools: edit_deck (save a new version from swaps; make_current puts it live as their deck), make_current (switch which version is their deck), run_version (queue a sim run, which uses one of their runs for the day), cancel_run (stop a run in progress).
 
 When to act:
-- A clear instruction ("cut the Squalls for 3 Seam Rip", "put that swap in", "make v4 my deck", "update the deck with these cards"): do it now with make_current true, then say in one or two lines what changed. Don't ask for confirmation they already gave.
+- A clear instruction ("cut the Squalls for 3 Seam Rip", "put that swap in", "update the deck with these cards"): save it now with make_current false (it becomes a version they can test and make their deck with one click); use make_current true only when they say to make it their deck ("make v4 my deck", "put it in my deck"), then say in one or two lines what changed. Don't ask for confirmation they already gave.
 - A vague wish ("make it better against Azorius", "what should I change?"): propose exact swaps (counts and names) and ask "Want me to make that your deck?". Don't call a tool.
 - If they say "save it but don't switch", use make_current false.
 - cancel_run stops a run in progress, only when they ask ("cancel that run", "stop the v6 run").

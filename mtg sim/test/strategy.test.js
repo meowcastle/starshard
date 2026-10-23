@@ -10,3 +10,11 @@ test('Squall read cold: voltron toolbox, with Squall, Aerith and Cloud in the en
   assert.equal(r.coherent, true); assert.equal(r.shape, 'voltron toolbox');
   const e = r.engine.map(x => x.name); for (const n of ['Squall, SeeD Mercenary', 'Aerith Gainsborough', 'Cloud, Midgar Mercenary']) assert.ok(e.includes(n), n + ' in ' + e);
 });
+
+// E5's acceptance: on the thread's 60 before its picks went in, each pick ranks in the top 3 of an obstacle's row
+test("the thread's six picks rank in the top 3 of their obstacle rows", { skip: !cached && 'no card cache in DATA_DIR' }, async () => {
+  const ob = require('../obstacles'), before = SQUALL.filter(c => !["Basilisk Collar", "Orcrist, Goblin-cleaver", "My Precious", "Medic's Kitesail", "Buster Sword", "Enlightened Confidant"].includes(c.name)).concat([{ qty: 2, name: 'Thalia, the Survivor' }, { qty: 2, name: 'Koth of the Homestead' }]);
+  const read = await require('../strategy').read({ main: before }), kinds = ['removal', 'blockers', 'racing', 'fliers', 'sweepers', 'cards'], top = new Set();
+  for (const k of kinds) for (const a of (await ob.answersFor(k, { list: { main: before }, colors: ['W', 'B'], read, owned: {} }, { also: kinds })).best) top.add(a.name);
+  for (const n of ['Basilisk Collar', 'Orcrist, Goblin-cleaver', 'My Precious', "Medic's Kitesail", 'Buster Sword', 'Enlightened Confidant']) assert.ok(top.has(n), n + ' not in any top 3');
+});

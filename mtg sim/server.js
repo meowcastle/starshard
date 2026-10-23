@@ -15,6 +15,7 @@ const score = require('./score');
 const paired = require('./paired');
 const strategyRead = require('./strategy');
 const telemetry = require('./telemetry');
+const obstacles = require('./obstacles');
 const realdata = require('./realdata');
 const leaks = require('./leaks');
 const weekly = require('./weekly');
@@ -389,7 +390,10 @@ const latest = b => b.versions[b.versions.length - 1];
 // owned version are proposals and never change it. Runs, the plan, the guide and the coach default to current.
 // Every version says where it came from (origin), and numbers never repeat, even after a discard (b.maxV).
 const current = b => b.versions.find(x => x.v === b.current) || latest(b);
-const PROPOSALS = new Set(['optimize', 'coach', 'owned']);
+// Since 23 Oct (strategy-first handoff P0: "nothing becomes your deck without the button") a saved edit, a pasted new
+// version and a Try are proposals too: your deck changes only by Make vN your deck (POST /current), or when you tell
+// the coach to make it your deck ('asked').
+const PROPOSALS = new Set(['optimize', 'coach', 'owned', 'edited', 'pasted', 'try']);
 const originOf = v => v.origin || (v.v === 1 ? 'pasted' : /^Optimize/.test(v.note || '') ? 'optimize' : v.from && v.from.run ? 'coach' : /^owned version/.test(v.note || '') ? 'owned' : 'edited');
 function pushVersion(b, origin, fields) {
   const v = Math.max(b.maxV || 0, ...b.versions.map(x => x.v)) + 1; b.maxV = v;
@@ -1065,7 +1069,7 @@ function coachTools(b, user) {
         rarity: { type: 'string', enum: ['common', 'uncommon', 'rare', 'mythic'] }, limit: { type: 'integer', description: 'at most 40, default 30' } } } },
     { name: 'card_text', description: 'The printed rules text of cards by exact name, and whether each is legal in ' + fmt + '.',
       schema: { type: 'object', properties: { names: { type: 'array', items: { type: 'string' }, maxItems: 30 } }, required: ['names'] } },
-    { name: 'edit_deck', description: 'Save a new version of the deck from swaps against a base version (default: the current deck). With make_current true (the default) it becomes the player\'s deck right away.',
+    { name: 'edit_deck', description: 'Save a new version of the deck from swaps against a base version (default: the current deck). With make_current true it becomes the player\'s deck right away; leave it false unless they said to make it their deck.',
       schema: { type: 'object', properties: { from: { type: 'integer', description: 'version number to start from; omit for the current deck' }, main_out: CARDS, main_in: CARDS, side_out: CARDS, side_in: CARDS,
         make_current: { type: 'boolean' }, note: { type: 'string', description: 'one line on why, shown in the version history' } } } },
     { name: 'make_current', description: 'Make an existing version the player\'s deck.', schema: { type: 'object', properties: { v: { type: 'integer' } }, required: ['v'] } },
@@ -1120,7 +1124,7 @@ function coachTools(b, user) {
       const d = await meta.describeDeck(list, b.seats === 4 ? null : b.format);
       if (d.legality && !d.legality.ok) return 'Error: ' + meta.legalityError(d.legality);
       const diff = diffLists(base.list, d.list); if (!diff.length) return `Error: that's the same list as v${base.v}.`;
-      const live = x.make_current !== false, prev = current(b).v;
+      const live = x.make_current === true, prev = current(b).v;
       const nv = pushVersion(b, live ? 'asked' : 'coach', { list: d.list, rows: d.rows, style: d.style, diff, base: base.v, note: ('Coach: ' + (x.note ? String(x.note).trim() : swapText(diff))).slice(0, 500) });
       readSoon(b, nv); saveBrews(); checkSoon(b).catch(() => {});
       note(`Saved v${nv.v} from v${base.v} · ${swapText(diff)}${live ? ` · it's your deck now (was v${prev})` : ` · v${prev} is still your deck`}`, { type: 'save', v: nv.v, prev, live });
@@ -1305,6 +1309,23 @@ function runTelemetry(job) {
   const by = {}; job.pairings.forEach((p, i) => { const name = (job.plan[i].decks[1] || {}).name; if (!name) return; for (const g of p.games || []) if (g.tm) (by[name] = by[name] || []).push(g.tm); });
   run.tm = Object.fromEntries(Object.entries(by).map(([k, gs]) => [k, telemetry.aggregate(gs)]));
   const all = Object.values(by).flat(); run.tmAll = telemetry.aggregate(all); saveBrews();
+}
+// P4, What stops it (E5, E6): per version, the strategy's obstacles, who in this week's field brings each, and the best
+// answers in Standard (owned first). Worked out on request and kept for the version, strategy and field it was made
+// for; the first one takes a while (every field card's data), so the page asks again until it's ready.
+const obsCache = new Map();   // brew:v:strategyAt:fieldKey -> { status, data, error, at }
+function obstaclesFor(b, ver) {
+  const field = (fieldLists(b.format) || []).slice(0, 10), S = b.strategy || (b.draft && b.draft.draft) || null;
+  const key = [b.id, ver.v, S ? (S.at || b.draft && b.draft.at || 0) : 0, field.map(d => d.name).join('|'), (collection.get(b.owner).paper || {}).at || 0].join(':');
+  const c = obsCache.get(key); if (c) return c;
+  const e = { status: 'working', at: Date.now() }; obsCache.set(key, e); if (obsCache.size > 200) obsCache.delete(obsCache.keys().next().value);
+  (async () => {
+    const read = ver.read && ver.read.rv === READ_V ? ver.read : await strategyRead.read(ver.list, b.name);
+    const shares = {}; try { (await meta.goldfishMeta(b.format)).forEach(d => { shares[d.name] = d.pct; }); } catch {}
+    const owned = (collection.get(b.owner).paper || {}).cards || {};
+    e.data = await obstacles.rows({ list: ver.list, colors: read.colors, read, strategy: S, owned, field, shares }); e.status = 'ready';
+  })().catch(err => { e.status = 'failed'; e.error = err.message; });
+  return e;
 }
 // ---------- paired tests (E1, STRATEGY-FIRST-REBUILD §4; the arithmetic is paired.js) ----------
 // Version A against version B on the same seeds, opponent by opponent: game 1 and the boarded games separately,
@@ -2063,7 +2084,7 @@ const server = http.createServer(async (req, res) => {
       if ((d.format === 'commander') !== (b.seats === 4)) return send(res, 400, { error: b.seats === 4 ? 'This brew is a Commander deck; that list has no commander.' : "That's a Commander list. Paste it as a new deck instead." });
       const prev = b.versions.find(x => x.v === from) || current(b), diff = diffLists(prev.list, d.list);
       if (!diff.length) return send(res, 400, { error: `That's the same list as v${prev.v}.` });
-      const origin = ['pasted', 'edited', 'owned'].includes(asked) ? asked : /^owned version/.test(String(note || '')) ? 'owned' : given ? 'pasted' : 'edited';
+      const origin = ['pasted', 'edited', 'owned', 'try'].includes(asked) ? asked : /^owned version/.test(String(note || '')) ? 'owned' : given ? 'pasted' : 'edited';
       const nv = pushVersion(b, origin, { list: d.list, rows: d.rows, style: d.style, diff, base: prev.v, ...(note && String(note).trim() ? { note: String(note).trim().slice(0, 500) } : {}) });
       readSoon(b, nv);
       if (note && String(note).trim()) b.notes.push({ k: crypto.randomBytes(3).toString('hex'), t: String(note).trim().slice(0, 500) });
@@ -2419,6 +2440,12 @@ const server = http.createServer(async (req, res) => {
       usage.mark(user.name, 'ask');
       strategyDraft(b, ver, { answers, steer: String(body.steer || '').slice(0, 600) });
       return send(res, 200, brewView(b));
+    }
+    if ((m = p.match(/^\/api\/brews\/(\w+)\/obstacles$/)) && req.method === 'GET') {
+      const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
+      if (b.seats !== 2) return send(res, 400, { error: 'Obstacles are for 60-card decks for now.' });
+      const v = +u.searchParams.get('v') || current(b).v, ver = b.versions.find(x => x.v === v); if (!ver) return send(res, 404, { error: `There's no v${v}.` });
+      const e = obstaclesFor(b, ver); return send(res, 200, { v, status: e.status, error: e.error || null, ...(e.data || {}) });
     }
     if ((m = p.match(/^\/api\/brews\/(\w+)\/tests$/)) && req.method === 'POST') {
       const b = brews.find(x => x.id === m[1] && x.owner === user.name); if (!b) return send(res, 404, { error: 'no such brew' });
