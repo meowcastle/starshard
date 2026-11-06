@@ -72,7 +72,7 @@ Star Shard's version: **the instrument**. UX-FLOW.md already said it: the surfac
 as a machine that is reading the real sky right now, not a journal. The chart wheel and
 tonight's Moon position are the two objects that prove it, and they are live.
 
-### 2.2 The look is Manzil V2's, and it is one app (decided 26 Oct, late)
+### 2.2 The look is Manzil V2's (26 Oct). The "one app" half is superseded: since 6 Nov the three are separate products, see SEPARATION.md
 
 `DESIGN-SYSTEM.md` (11 Aug) specified a teal-and-cream retro system. The build that actually
 shipped, `Star Shard v4.dc.html` (the 18 Aug "calm pass"), dropped it: warm near-black
