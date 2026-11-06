@@ -1,4 +1,4 @@
-# Forge Sim engine: where it stands (14 Oct 2026)
+# Deck Bench engine: where it stands (14 Oct 2026)
 
 From Code, for research to review. Everything specific to the engine: how games are played, what our pilot changes, what the logs measure, what each experiment found, what is live, and what is open. The page, coach copy and design work are out of scope here except where they read engine output. Commits are on branch `mtg-sim`; the detailed write-ups are the dated NOTE-TO-RESEARCH files in this folder and `forge-pilot/README.md`.
 

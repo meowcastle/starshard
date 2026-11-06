@@ -1,8 +1,8 @@
-// Forge Sim's service worker (Design's change 18, NOTE-TO-CODE-16OCT-PHONE.md §3): the app's shell and the last
+// Deck Bench's service worker (Design's change 18, NOTE-TO-CODE-16OCT-PHONE.md §3): the app's shell and the last
 // decks and guides for reading with no signal (a store basement), a queue for matches logged offline, and push.
 // Network first everywhere, so a deploy reaches the phone on the next load; the cache is only the fallback.
 const SHELL = 'forge-shell-v1', DATA = 'forge-data-v1', QUEUE = 'forge-queue';
-const SHELL_FILES = ['/', '/index.html', '/support.js', '/manifest.webmanifest', '/icon-192.png'];
+const SHELL_FILES = ['/', '/index.html', '/support.js', '/manifest.webmanifest', '/icon-192.png', '/about'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(SHELL_FILES)).catch(() => {})); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
@@ -56,7 +56,7 @@ self.addEventListener('fetch', e => {
 // ---- push: { title, body, url } from the server; a tap opens the deck link ----
 self.addEventListener('push', e => {
   let m = {}; try { m = e.data ? e.data.json() : {}; } catch { m = { body: e.data && e.data.text() }; }
-  e.waitUntil(self.registration.showNotification(m.title || 'Forge Sim', { body: m.body || '', icon: '/icon-192.png', badge: '/icon-192.png', data: { url: m.url || '/' } }));
+  e.waitUntil(self.registration.showNotification(m.title || 'Deck Bench', { body: m.body || '', icon: '/icon-192.png', badge: '/icon-192.png', data: { url: m.url || '/' } }));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();

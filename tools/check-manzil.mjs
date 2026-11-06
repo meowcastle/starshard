@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-// Guards the deployed Manzil page against the regressions that have actually shipped.
+// Guards the Manzil page against the regressions that have actually shipped.
 //
-//   node tools/check-manzil.mjs          # part of `npm run check`
+//   node tools/check-manzil.mjs            # part of `npm run check`: the source file, then the
+//                                          # shipped copy app/dist/play/index.html when it exists
+//   node tools/check-manzil.mjs <file>     # one file, held to the shipped copy's rules
 //
 // WHY THIS EXISTS. Two agents write to the same <script type="text/x-dc"> block, and a Design
 // delivery replaces the page rather than merging it. Five separate deliveries have now reverted the
@@ -13,15 +15,23 @@
 // A note in CLAUDE.md asking people not to revert it has now failed five times. This turns that
 // note into a build failure.
 //
-// FAILURES (exit 1) are things that break the game or lose Code-owned behaviour.
-// WARNINGS (exit 0) are things that only pollute the console — real, but Design's markup to fix,
-// and listed so they can be handed back precisely instead of re-derived each time.
+// TWO FILES, ONE RULEBOOK (MZ5, 3 Nov 2026). The page players load is app/dist/play/index.html,
+// which app/build.mjs makes from the September source file with a fixed list of rewrites and the
+// geometry sweep; the source file is Design's and is not edited. Everything here is a FAILURE
+// (exit 1) on the shipped copy: the crash class, lost code-owned behaviour, roster drift, a
+// duplicate _figs key, a bound geometry attribute, the retired reload hack. There are no warnings
+// any more: the console-noise class was a warning for a year and twenty-eight of them went
+// unnoticed. On the source file the last three are the build's to take out, so they are reported
+// as notes with their counts (the residue the sweep is sized for), and the shipped copy is where
+// they must be zero. Anything else is a failure on both.
 
 import fs from "node:fs";
 
-const PAGE = "Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html";
+const SOURCE = "Star Shard v3 Build Plan/Manzil - Game Prototype V2.dc.html";
+const SHIPPED = "app/dist/play/index.html";
+
+function check(PAGE, strict) {
 const fails = [];
-const warns = [];
 const notes = [];
 
 const src0 = fs.readFileSync(PAGE, "utf8");
@@ -30,6 +40,7 @@ const tagEnd = src0.indexOf(">", scriptAt);
 const scriptEnd = src0.indexOf("</script>", scriptAt);
 const tmpl = src0.slice(0, scriptAt) + src0.slice(scriptEnd);
 const code = src0.slice(tagEnd + 1, scriptEnd);
+const residue = (what) => { if (strict) fails.push(what); else notes.push(`source residue, swept by app/build.mjs: ${what}`); };
 
 // ---- 1. data-props must be valid JSON -------------------------------------------------------
 // The dc-runtime parses this attribute; a malformed one takes the whole page down before React
@@ -221,10 +232,14 @@ for (const [label, marker] of MARKERS)
       if (h === "0") continue;
       for (const [n] of rows) if (!K.has(n)) fails.push(`walker "${n}" (house ${h}) has no _figs entry — they render with no figure.`);
     }
-    // a duplicate key is a silent overwrite: report it, but brann is a known archetype/walker
-    // collision that nothing currently reaches (every walker has art under their own name).
+    // a duplicate key is a silent overwrite. The source file has two "brann" keys (the archetype
+    // figure, drawn on the walkers screen and in the house-0 roster's matches, and house 24's
+    // walker, the fisher); the later wins, so the archetype's drawing was unreachable. The build
+    // moves the fisher's figure under its own key, named by a figKey field on his roster entry that
+    // the match readers consult first (app/build.mjs, MZ5); on the shipped copy any duplicate is a
+    // failure.
     for (const d of [...new Set(dupes)]) {
-      if (d === "brann") warns.push(`_figs has two "brann" keys (the archetype figure and house 24's walker) — the later wins, so the archetype drawing is unreachable. Latent: no walker falls back to it today.`);
+      if (d === "brann") residue(`_figs has two "brann" keys (the archetype figure and house 24's walker) — the later wins and the archetype drawing is unreachable.`);
       else fails.push(`_figs has two "${d}" keys — the later silently wins and one walker wears the other's face.`);
     }
   }
@@ -232,33 +247,63 @@ for (const [label, marker] of MARKERS)
 
 // ---- 5. pre-hydration console noise (Design's markup) ----------------------------------------
 // A mustache in a geometry attribute is invalid to the browser's SVG parse, which happens before
-// the runtime substitutes bindings. It renders correctly afterwards — this is console pollution,
-// not a break — but enough of it buries a real error.
+// the runtime substitutes bindings. It renders correctly afterwards, but every site logs one console
+// error per boot, and enough of it buries a real error. `svg` was once missing from this list, which
+// hid 15 of the 22 tags; a review counted 28 console errors against the 10 this file's own records
+// described. A warning you cannot see is worse than no warning, so this is no longer a warning.
+//
+// The build takes them out: app/build.mjs writes each as the runtime's own `sc-camel-<attr>` form,
+// unknown to the browser's parse and read by the runtime as the same React prop (support.js,
+// CAMEL_ATTR), so the shipped copy must have none. The source file's count is reported so the sweep
+// stays sized to it (GEOM_SWEEP in app/build.mjs counts attributes; this counts tags, one per match).
 {
   const seen = new Map();
-  // `svg` WAS MISSING FROM THIS LIST and it is the biggest group by far — 15 of the 22 bound geometry
-  // attributes in the file are <svg viewBox="{{ … }}">. So this check was not merely lenient about the
-  // class, it could not SEE most of it, and a review counted 28 console errors against the 10 this
-  // file's own records describe. A warning you cannot see is worse than no warning.
   for (const m of tmpl.matchAll(
     /<(svg|rect|circle|line|path|text|ellipse|polygon|polyline)\b[^>]*?\s(x|y|cx|cy|r|x1|y1|x2|y2|d|rx|ry|width|height|points|viewBox)="\{\{\s*([\w$.]+)/g))
     seen.set(`${m[1]}.${m[2]}`, (seen.get(`${m[1]}.${m[2]}`) || 0) + 1);
   let geomTotal = 0;
   for (const [k, n] of seen) {
     geomTotal += n;
-    warns.push(`${k} bound to a mustache ×${n} — invalid to the pre-hydration SVG parse (console noise only)`);
+    residue(`${k} bound to a mustache ×${n} — invalid to the pre-hydration SVG parse, one console error per site per boot`);
   }
-  if (geomTotal) notes.push(`${geomTotal} bound geometry attribute(s) in total. CLAUDE.md records 10 known-exempt <svg viewBox> sites (_artBox measures a real per-card getBBox at runtime and is not inlineable). Anything past that is new and is Design's to sweep. WHEN THE SWEEP LANDS: turn these into failures against a named exempt list — the reason twenty-eight went unnoticed is that this was a warning.`);
+  if (geomTotal && !strict) notes.push(`${geomTotal} tag(s) with a bound geometry attribute in the source; the shipped copy is held to zero.`);
+  if (strict) {
+    const swept = (src0.slice(0, scriptAt).match(/\ssc-camel-(x|y|cx|cy|r|x1|y1|x2|y2|d|rx|ry|width|height|points|view-box)="\{\{/g) || []).length;
+    if (swept) notes.push(`${swept} geometry attribute(s) carried in the runtime's sc-camel- form (set after hydration, silent before).`);
+  }
 }
 
-// ---- report ----------------------------------------------------------------------------------
-for (const n of notes) console.log(`  note: ${n}`);
-for (const w of warns) console.log(`  warn: ${w}`);
-if (warns.length) console.log(`  (warnings are Design's markup: a bound geometry attribute is never safe — use a style\n   transform on a wrapping <g>, a static attribute, or an injected string.)`);
-if (fails.length) {
-  console.error(`\n✗ manzil check: ${fails.length} failure(s)\n`);
-  for (const f of fails) console.error("  - " + f + "\n");
-  process.exit(1);
+// ---- 6. the retired reload hack ------------------------------------------------------------------
+// Lines 6-8 of the source carry __mzRetry/__mzHeal: a cache-busting re-fetch of support.js,
+// manzil-art2.js and ephemeris2.js when they fail to load, written for the retired manzil/
+// subdirectory deploy that lacked two of them. Every file the shipped page loads is copied beside it
+// by the build, and a missing one is a build failure, so the shipped copy must load the runtime
+// plainly (research/audits/manzil-sept-audit-26oct.md; BACKLOG MZ5).
+{
+  const hits = (src0.match(/__mzRetry|__mzHeal/g) || []).length;
+  if (hits) residue(`the __mzRetry/__mzHeal reload hack is present (${hits} reference(s)) — the shipped page loads its scripts plainly.`);
+  if (/<script src="\.\/support\.js"[^>]*onerror=/.test(src0)) residue(`support.js is loaded with an onerror retry.`);
 }
-console.log(`✓ manzil check — ${svgHoles.size} svg holes resolved, ${MARKERS.length} code-owned behaviours present` +
-            (warns.length ? `, ${warns.length} console-noise warning(s)` : ""));
+
+return { fails, notes, svgHoles: svgHoles.size, markers: MARKERS.length };
+}
+
+// ---- run -----------------------------------------------------------------------------------------
+const arg = process.argv[2];
+const runs = arg ? [[arg, true]] : [[SOURCE, false], ...(fs.existsSync(SHIPPED) ? [[SHIPPED, true]] : [])];
+let failed = 0;
+for (const [file, strict] of runs) {
+  if (!fs.existsSync(file)) { console.error(`✗ manzil check: ${file} does not exist`); failed++; continue; }
+  const r = check(file, strict);
+  console.log(`${strict ? "shipped" : "source "}  ${file}`);
+  for (const n of r.notes) console.log(`  note: ${n}`);
+  if (r.fails.length) {
+    console.error(`\n✗ manzil check: ${r.fails.length} failure(s) in ${file}\n`);
+    for (const f of r.fails) console.error("  - " + f + "\n");
+    failed++;
+    continue;
+  }
+  console.log(`✓ manzil check — ${r.svgHoles} svg holes resolved, ${r.markers} code-owned behaviours present, 0 warnings${strict ? ", 0 bound geometry attributes, no duplicate _figs key, no reload hack" : ""}`);
+}
+if (!arg && !fs.existsSync(SHIPPED)) console.log(`  note: ${SHIPPED} is absent, so the shipped copy was not checked; npm --prefix app run build:app makes it.`);
+if (failed) process.exit(1);

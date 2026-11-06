@@ -54,3 +54,11 @@ build/
 mtg sim/env.txt
 mtg sim/.env
 mtg sim/data/
+
+# agent scratch and build output (added 6 Nov): bundles the build shift moved
+# aside instead of deleting, staged snapshots, and the app's regenerated build
+_incoming/
+_to_delete/
+app/dist/
+app/node_modules/
+test/_tmp_*

@@ -1,0 +1,3481 @@
+[
+ {
+  "n": 1,
+  "epithet": "The Gate",
+  "slug": "the-gate",
+  "kanji": "婁宿",
+  "position": "0°00′ Aries to 12°51′ Aries",
+  "stars": "β, γ Ari (Sheratan)",
+  "keyword": "arriving first",
+  "poem": "two stars at the year's door, and the moon goes between them.",
+  "skies": {
+   "arabia": {
+    "name": "al-Sharaṭān",
+    "meaning": "\"the Two Signs / Horns\" — the marks that open the year"
+   },
+   "india": {
+    "name": "Ashvinī",
+    "deity": "Aśvins",
+    "symbol": "horse's head"
+   },
+   "china": {
+    "name": "婁 Lóu",
+    "gloss": null,
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "dog"
+   },
+   "japan": {
+    "name": "たたらぼし Tatara-boshi",
+    "kanji": "婁宿"
+   }
+  },
+  "guardian": "the dog",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "every degree of sky anyone has ever measured is counted from a point on this mansion's floor. it is the place the wheel starts, and the only one that has to be.",
+  "synthesis": "two horns opening the year, twin physicians who reach the accident before anyone finishes calling for help, and a dog that hears it at the gate before the house does. three names for arriving first.",
+  "election": "the medieval election books gave these degrees beginnings and journeys. picatrix marks them for safe travel and safe return. and the same books are blunt that it is a poor stretch for weddings — a gate is built for passing through, not for staying in.",
+  "archetype": "a light here arrives before it is invited. the aśvins are the gods' first responders and they are twins, which is the part the symbol keeps: arriving is a thing done in pairs, at speed, with the treatment worked out on the way. the dog is the same instinct one register down — it announces every time, including the nine times it was nothing, and its alarm runs on affection rather than suspicion. what this mansion does not supply is the second half. the horns open the year and then the year has to be lived by somebody. arriving first and being ready are different skills, and these degrees only ever handed out the one.",
+  "born": {
+   "strike": "you landed at the very front of aries — and not just early aries: the first stretch of the first station, the point the entire wheel counts from. every degree of sky anyone has ever measured is measured from somewhere near where your sun stood. the old desert astronomers called these two stars the two signs: the pair of horns that opened the year, the marker you watched for to know the season had turned. india put the twin horse-headed physicians here — the gods' first responders, the ones who arrive at the accident before anyone has finished calling for help. that is your hunger, and it isn't ambition: you want to be there first, before you're asked, before it's officially anyone's problem. the cost is exact. arriving first and being ready are different skills, and this sky only gave you the one. you will get to things you cannot yet finish, and the hardest habit you'll ever build is staying past the arrival.",
+   "facing": "you enter through the gate itself — the opening mark of the whole wheel. people meet a beginning when they meet you: you make rooms feel like something is about to start. it's a genuine gift and it is occasionally exhausting to be the weather that arrives."
+  },
+  "card": {
+   "left": 6,
+   "right": 6,
+   "ab": "gate",
+   "text": "the first strike misses",
+   "verb": "deny a fight",
+   "fires": "on being struck"
+  },
+  "walkers": [
+   {
+    "name": "orin",
+    "fig": "imra",
+    "them": "him",
+    "in": "orin is the porter. he leans on the open leaf, because in forty years nobody has asked him to close it."
+   },
+   {
+    "name": "sefa",
+    "fig": "sef",
+    "them": "her",
+    "in": "sefa takes the toll. she holds the bowl out upside down, so nobody is confused about the price."
+   },
+   {
+    "name": "dagan",
+    "fig": "odel",
+    "them": "him",
+    "in": "dagan carries the bar. it is on his shoulder, and it has been on his shoulder since he was given it, and it has never been in the brackets."
+   },
+   {
+    "name": "miro",
+    "fig": "tesh",
+    "them": "him",
+    "in": "miro lights the arch. both torches, every dusk, so nobody coming in at night mistakes an open door for a wall."
+   },
+   {
+    "name": "halla",
+    "fig": "ruen",
+    "them": "her",
+    "in": "halla counts who comes in. the tally is full of marks and there is no column for turned away, because there has never been a need for one."
+   },
+   {
+    "name": "tesk",
+    "fig": "brann",
+    "them": "him",
+    "in": "tesk is the crier. every hour he calls that the gate stands open, to a city that already knows."
+   },
+   {
+    "name": "the captain",
+    "fig": "mave",
+    "them": "her",
+    "in": "the captain of a gate that does not close. her sword is sheathed, her hands are behind her back,"
+   },
+   {
+    "name": "the dog's keeper",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the dog's keeper holds a leash with no dog on it. the dog is in the gateway, and has been for longer than the keeper has been alive."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[0].epithet",
+   "position": "stations.js[0].position",
+   "stars": "stations.js[0].stars",
+   "kanji": "stations.js[0].kanji",
+   "keyword": "reading-copy.js MANSION.01.keyword",
+   "poem": "the game's _mPoem[0] (station-poems.json)",
+   "skies.arabia": "stations.js[0].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 1 nakshatra",
+   "skies.china": "mansions-table.json id 1 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.01 metadata line",
+   "guardian": "corpus-mansions.md MANSION.01 metadata line",
+   "match": "stations.js[0].match",
+   "claim": "reading-copy.js MANSION.01.claim",
+   "synthesis": "reading-copy.js MANSION.01.synthesis",
+   "election": "reading-copy.js MANSION.01.election",
+   "archetype": "reading-copy.js MANSION.01.archetype",
+   "born": "reading-copy.js STATION.01.strike, STATION.01.facing",
+   "card": "the game's pool[0] and ABS[1]",
+   "walkers": "walker-sheet.js WALKERS[1]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 2,
+  "epithet": "The Bearer",
+  "slug": "the-bearer",
+  "kanji": "胃宿",
+  "position": "12°51′ Aries to 25°43′ Aries",
+  "stars": "ε, δ, ρ Ari (Botein)",
+  "keyword": "what is carried",
+  "poem": "a little belly of three faint stars. what it carries has not shown yet.",
+  "skies": {
+   "arabia": {
+    "name": "al-Buṭayn",
+    "meaning": "\"the Little Belly (of the Ram)\" — where soft things are kept"
+   },
+   "india": {
+    "name": "Bharaṇī",
+    "deity": "Yama",
+    "symbol": "yoni"
+   },
+   "china": {
+    "name": "胃 Wèi",
+    "gloss": "the Stomach",
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "pheasant"
+   },
+   "japan": {
+    "name": "えきえぼし Ekie-boshi",
+    "kanji": "胃宿"
+   }
+  },
+  "guardian": "the pheasant",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": null
+  },
+  "claim": "arabia called it the little belly. china called it the stomach. india called it she who bears. three of the four traditions independently looked at these degrees and named an organ that holds something inside it.",
+  "synthesis": "a belly, a womb, a stomach — and yama at the door of them. the god of this mansion is the keeper of thresholds, which is the other half of carrying: something is held, and then something decides when it comes out.",
+  "election": "picatrix gives these degrees the finding of hidden treasure, and the increase of wheat. agrippa adds the retaining of captives — a use that stays on the history shelf, and the same instinct as the rest: this is the stretch of sky for things kept somewhere until they are wanted.",
+  "archetype": "a light here carries a full term. the work is interior and mostly invisible, and the mansion's whole difficulty is that nobody can see the difference between carrying something and doing nothing. yama is not a cruel god in the oldest layer — he is the first to die, and therefore the one who knows the way, and therefore the one at the threshold deciding what passes. so the capacity comes with a gate on it. to be born under the bearer is to hold more than you show and to be the one who says when. a thing held too long stops being carried and starts being stored.",
+  "born": {
+   "strike": "you landed in late aries, and here the ram stops charging. the arabs looked at these three dim stars and saw the little belly — the soft underside where anything valuable gets carried, close and warm and out of sight. india named the same sky for the one who bears: its deity is yama, who meets people at the threshold and carries them across the one crossing nobody makes alone. so your hunger isn't conquest, whatever your sign's reputation promised. you want to get the precious thing to the other side. you have been handed responsibilities early and repeatedly, by people who could not have explained why they trusted you. a bearer is measured by what they carry, so you keep accepting weight as proof. some of what you've been handed was never yours. you've known that about one or two things for years.",
+   "facing": "you enter carrying something. people can't always see what, but they feel it — the sense that you arrived from somewhere with a purpose, already holding a thing that matters. rooms hand you responsibility within minutes of meeting you."
+  },
+  "card": {
+   "left": 5,
+   "right": 6,
+   "ab": "bearer",
+   "text": "strikes beside it fight −2",
+   "verb": "lower a number",
+   "fires": "always"
+  },
+  "walkers": [
+   {
+    "name": "hessa",
+    "fig": "imra",
+    "them": "her",
+    "in": "hessa has held the same clay token since the number wore off it. she is very sure it is her turn next."
+   },
+   {
+    "name": "orv",
+    "fig": "sef",
+    "them": "him",
+    "in": "orv keeps the order of the queue on a tally stick. there are more notches on it than there have ever been people."
+   },
+   {
+    "name": "belu",
+    "fig": "odel",
+    "them": "him",
+    "in": "belu has carried the same bundle so long the cloth has gone to dust. he is not about to set it down at this stage."
+   },
+   {
+    "name": "sena",
+    "fig": "tesh",
+    "them": "her",
+    "in": "sena reads one letter over and over. she has known it by heart for a very long time and reads it anyway."
+   },
+   {
+    "name": "tomek",
+    "fig": "ruen",
+    "them": "him",
+    "in": "tomek fell asleep leaning on his staff some centuries ago. the queue steps politely around him and has stopped bringing it up."
+   },
+   {
+    "name": "arda",
+    "fig": "brann",
+    "them": "her",
+    "in": "arda plays knucklebones against herself on a flat stone. she is winning, and also losing, and finds this funnier than she used to."
+   },
+   {
+    "name": "veda",
+    "fig": "mave",
+    "them": "her",
+    "in": "veda counts the stones of the lintel and gets a different number every night."
+   },
+   {
+    "name": "the one at the front",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one at the front has stood at the threshold longer than the stones have and has never once stepped through."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[1].epithet",
+   "position": "stations.js[1].position",
+   "stars": "stations.js[1].stars",
+   "kanji": "stations.js[1].kanji",
+   "keyword": "reading-copy.js MANSION.02.keyword",
+   "poem": "the game's _mPoem[1] (station-poems.json)",
+   "skies.arabia": "stations.js[1].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 2 nakshatra",
+   "skies.china": "mansions-table.json id 2 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.02 metadata line",
+   "guardian": "corpus-mansions.md MANSION.02 metadata line",
+   "match": "stations.js[1].match",
+   "claim": "reading-copy.js MANSION.02.claim",
+   "synthesis": "reading-copy.js MANSION.02.synthesis",
+   "election": "reading-copy.js MANSION.02.election",
+   "archetype": "reading-copy.js MANSION.02.archetype",
+   "born": "reading-copy.js STATION.02.strike, STATION.02.facing",
+   "card": "the game's pool[1] and ABS[2]",
+   "walkers": "walker-sheet.js WALKERS[2]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 3,
+  "epithet": "The Gathered Stars",
+  "slug": "the-gathered-stars",
+  "kanji": "昴宿",
+  "position": "25°43′ Aries to 8°34′ Taurus",
+  "stars": "the Pleiades (M45) · determinant Alcyone (η Tau)",
+  "keyword": "the many as one",
+  "poem": "the many small ones, close enough to cover with a thumb.",
+  "skies": {
+   "arabia": {
+    "name": "al-Thurayyā",
+    "meaning": "\"the many little ones\"; root linked to tharwa, abundance. So famous that al-Najm — \"the Star,\" no qualifier — meant this one"
+   },
+   "india": {
+    "name": "Kṛttikā",
+    "deity": "Agni",
+    "symbol": "knife/flame"
+   },
+   "china": {
+    "name": "昴 Mǎo",
+    "gloss": null,
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "rooster"
+   },
+   "japan": {
+    "name": "すばる Subaru",
+    "kanji": "昴宿"
+   }
+  },
+  "guardian": "the rooster",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "two of the four traditions named these stars a crowd, and japan still says it in ordinary speech: subaru is the everyday japanese word for this cluster today, and it means to gather.",
+  "synthesis": "the many little ones and the gathered stars. the other two refuse the crowd entirely — china sees a hairy head, and india hands the cluster a blade: kṛttikā means the cutters, its deity is agni, and its emblem is a flame or a cutting edge.",
+  "election": "al-bīrūnī's lineage marks these degrees for trade and marriage. agrippa, in 1533, is more specific and more strange: \"profitable to sailors, huntsmen, and alchemists.\" picatrix gives it safe sailing, work with fire, and married love.",
+  "archetype": "a light here reads as one object from a distance and resolves into six or seven the moment anyone looks properly. the arabs called this cluster al-najm — \"the Star,\" no qualifier — as though the sky contained only one, and the joke inside that name is that it is the most plural thing up there. so the mansion is about being counted wrong in both directions: taken for a single thing when you are several, taken for a crowd when you are one. agni's blade is what resolves it. fire separates what it burns, and these degrees belong to people who find out what they are made of by what survives the heat.",
+  "born": {
+   "strike": "your sun landed on the most famous handful of stars in the sky: the pleiades. japan calls them subaru — the gathered ones; that is where the car logo comes from, and the stars in the badge are these. the arabs called them the many little ones and made them so central that you could say simply \"the star\" and everyone knew which. six or seven separate lights that everyone's eye reads as one shine. india names this sky kṛttikā, and its deity is agni, fire — its emblem a blade. that is the hunger under all that prettiness: you want to cut a thing down to the part that's actually true. you are not the soft light people expect from the prettiest station on the road. the cost lives inside the gift: a cluster is loved as a cluster. you have spent real time unsure whether you were being seen or whether the group you were part of was, and the blade in you knows the difference even when you're too polite to say it.",
+   "facing": "you enter as a group even when you're alone — a bright, plural first impression that people remember before they remember details. it takes them a while to notice that under the shine there is a blade with an opinion."
+  },
+  "card": {
+   "left": 7,
+   "right": 7,
+   "ab": "gathered",
+   "text": "held while a friend stands beside",
+   "verb": "deny a fight",
+   "fires": "always"
+  },
+  "walkers": [
+   {
+    "name": "maia",
+    "fig": "imra",
+    "them": "her",
+    "in": "maia drives the sledge, and will not start it until everyone is on the floor. she counts heads twice."
+   },
+   {
+    "name": "elet",
+    "fig": "sef",
+    "them": "her",
+    "in": "elet binds the sheaves two at a time, never one. she says a sheaf alone falls over."
+   },
+   {
+    "name": "tay",
+    "fig": "odel",
+    "them": "her",
+    "in": "tay winnows, and reads the wind for the others before she throws. nobody on this floor throws first."
+   },
+   {
+    "name": "alke",
+    "fig": "tesh",
+    "them": "her",
+    "in": "alke sings the count so the flails fall together. she has never once sung alone."
+   },
+   {
+    "name": "kelā",
+    "fig": "ruen",
+    "them": "her",
+    "in": "kelā rakes the chaff and keeps the floor's edge. everyone else works inside the line she draws."
+   },
+   {
+    "name": "aste",
+    "fig": "brann",
+    "them": "her",
+    "in": "aste carries the water and gives it to everyone else before she drinks. she is always the last to drink."
+   },
+   {
+    "name": "the eldest",
+    "fig": "mave",
+    "them": "her",
+    "in": "the eldest sets the pace of the floor. the others watch her hands."
+   },
+   {
+    "name": "the seventh",
+    "fig": "the quiet one",
+    "them": "her",
+    "in": "the seventh sister is not on the floor tonight, or any night. her place is kept: the sledge stands where she would stand, and nobody takes it."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[2].epithet",
+   "position": "stations.js[2].position",
+   "stars": "stations.js[2].stars",
+   "kanji": "stations.js[2].kanji",
+   "keyword": "reading-copy.js MANSION.03.keyword",
+   "poem": "the game's _mPoem[2] (station-poems.json)",
+   "skies.arabia": "stations.js[2].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 3 nakshatra",
+   "skies.china": "mansions-table.json id 3 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.03 metadata line",
+   "guardian": "corpus-mansions.md MANSION.03 metadata line",
+   "match": "stations.js[2].match",
+   "claim": "reading-copy.js MANSION.03.claim",
+   "synthesis": "reading-copy.js MANSION.03.synthesis",
+   "election": "reading-copy.js MANSION.03.election",
+   "archetype": "reading-copy.js MANSION.03.archetype",
+   "born": "reading-copy.js STATION.03.strike, STATION.03.facing",
+   "card": "the game's pool[2] and ABS[3]",
+   "walkers": "walker-sheet.js WALKERS[3]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 4,
+  "epithet": "The Follower",
+  "slug": "the-follower",
+  "kanji": "畢宿",
+  "position": "8°34′ Taurus to 21°26′ Taurus",
+  "stars": "Aldebaran + the Hyades",
+  "keyword": "the pursuit",
+  "poem": "the red follower, walking behind the gathered stars at the same distance forever.",
+  "skies": {
+   "arabia": {
+    "name": "al-Dabarān",
+    "meaning": "\"the Follower\" — forever walking behind the Pleiades"
+   },
+   "india": {
+    "name": "Rohiṇī",
+    "deity": "Brahmā",
+    "symbol": "chariot"
+   },
+   "china": {
+    "name": "畢 Bì",
+    "gloss": "the Net",
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "crow"
+   },
+   "japan": {
+    "name": "あめふりぼし Amefuri-boshi",
+    "kanji": "畢宿"
+   }
+  },
+  "guardian": "the crow",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "aldebaran rises just behind the pleiades and chases them across the sky every night without ever closing the gap. it is also far brighter than any star in the cluster it is named for following.",
+  "synthesis": "the follower, the growing one, and a net. arabia recorded the chase, india recorded what the chase accumulates — rohiṇī means growing, and its deity is brahmā, the maker — and china put down a thing that holds whatever walks into it.",
+  "election": "poor for building and poor for marriage, say the old books, with agrippa specific about it — these degrees cause \"the destruction and hindrances of buildings, fountains, wells,\" and discord between man and wife. picatrix agrees. the poets had already noticed the irony and kept it: the eternal suitor never weds.",
+  "archetype": "a light here is behind something on purpose. a person, a standard, a version of the thing seen once and never unseen. the arrangement is usually chosen and rarely discussed, and the brightness makes it strange: the follower is not less than what it follows, it has simply declined the front. the crow is the detail that turns the mansion. crows recognise individual faces years later and hold the grudge that goes with them, so the accumulation is not only material. rohiṇī grows things where they stand. what gets kept here — the standard, the memory, the position behind — gets kept for a very long time.",
+  "born": {
+   "strike": "your sun landed on aldebaran — the red eye of the bull, one of the brightest stars in the sky, and named for what it does rather than what it is. al-dabarān means the follower: it rises just behind the pleiades and chases them across the sky every night, forever, without catching them. and here is the fact the name never mentions. aldebaran is far brighter than any star in the cluster it follows. that is your entire reading. you are behind something on purpose — a person, a standard, a version of this you saw once and can't unsee — and you outshine it, and the arrangement suits you, and you'd rather not discuss it. india's name for this sky is rohiṇī: growing, the station of things that thicken and take root where they stand. your hunger is not to arrive; it's to make the thing you're tending get bigger. the cost: following is only a strategy while you're still learning. some people never notice the day it turned into a hiding place.",
+   "facing": "you enter a step behind the front of the room, and end up being the person everyone checks with. people mistake it for shyness for about a month, until they notice that nothing gets past you and the quiet was attention."
+  },
+  "card": {
+   "left": 8,
+   "right": 7,
+   "ab": "follower",
+   "text": "answers when a neighbour falls",
+   "verb": "add a fight",
+   "fires": "on being struck"
+  },
+  "walkers": [
+   {
+    "name": "nell",
+    "fig": "imra",
+    "them": "her",
+    "in": "nell carries the lantern for the one ahead of her and has never seen her face. she describes it beautifully."
+   },
+   {
+    "name": "osk",
+    "fig": "sef",
+    "them": "him",
+    "in": "osk counts steps so the gap stays honest. eleven, always eleven. once it was ten and he has not forgiven himself."
+   },
+   {
+    "name": "pim",
+    "fig": "odel",
+    "them": "him",
+    "in": "pim carries the spare wick. nobody has ever asked for it. pim is ready."
+   },
+   {
+    "name": "rahel",
+    "fig": "tesh",
+    "them": "her",
+    "in": "rahel joined the procession by accident, on her way somewhere else, and stayed on principle."
+   },
+   {
+    "name": "tal",
+    "fig": "ruen",
+    "them": "him",
+    "in": "tal thinks the procession is a race and is losing it, very slowly, to people who do not know they are in one."
+   },
+   {
+    "name": "hesper",
+    "fig": "brann",
+    "them": "her",
+    "in": "hesper writes down what the one ahead does, every night, in a book, in case it ever changes. it has not."
+   },
+   {
+    "name": "the red one",
+    "fig": "mave",
+    "them": "her",
+    "in": "the red one carries the only red lantern in the line and insists she is not at the front."
+   },
+   {
+    "name": "the first lantern",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the first lantern has never once turned round."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[3].epithet",
+   "position": "stations.js[3].position",
+   "stars": "stations.js[3].stars",
+   "kanji": "stations.js[3].kanji",
+   "keyword": "reading-copy.js MANSION.04.keyword",
+   "poem": "the game's _mPoem[3] (station-poems.json)",
+   "skies.arabia": "stations.js[3].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 4 nakshatra",
+   "skies.china": "mansions-table.json id 4 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.04 metadata line",
+   "guardian": "corpus-mansions.md MANSION.04 metadata line",
+   "match": "stations.js[3].match",
+   "claim": "reading-copy.js MANSION.04.claim",
+   "synthesis": "reading-copy.js MANSION.04.synthesis",
+   "election": "reading-copy.js MANSION.04.election",
+   "archetype": "reading-copy.js MANSION.04.archetype",
+   "born": "reading-copy.js STATION.04.strike, STATION.04.facing",
+   "card": "the game's pool[3] and ABS[4]",
+   "walkers": "walker-sheet.js WALKERS[4]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 5,
+  "epithet": "The Blaze",
+  "slug": "the-blaze",
+  "kanji": "觜宿",
+  "position": "21°26′ Taurus to 4°17′ Gemini",
+  "stars": "λ, φ¹, φ² Ori (Orion's head)",
+  "keyword": "the searching face",
+  "poem": "a white mark burned into the hunter's head.",
+  "skies": {
+   "arabia": {
+    "name": "al-Haqʿa",
+    "meaning": "\"the White Spot\" — a horse's star-blaze, on Orion's brow"
+   },
+   "india": {
+    "name": "Mṛgaśīrṣā",
+    "deity": "Soma, the moon-draught",
+    "symbol": "deer's head"
+   },
+   "china": {
+    "name": "觜 Zī",
+    "gloss": "the Beak",
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "monkey"
+   },
+   "japan": {
+    "name": "とろきぼし Toroki-boshi",
+    "kanji": "觜宿"
+   }
+  },
+  "guardian": "the monkey",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "a white blaze on a horse's forehead, a deer's head, a beak. every tradition put a face in these degrees and then marked the front of it — the part that goes first and finds out.",
+  "synthesis": "the seeking end of an animal, three times over. and the deity is soma, the draught the gods went looking for: the mansion names both the nose and the thing it is following.",
+  "election": "the old books gave these degrees travel, learning, and safe returns from journeys. picatrix keeps all three and adds teaching and health — one of the few stations that stays gentle even on the history shelf, where most of the martial mansions live.",
+  "archetype": "a light here is curious the way an animal is curious: forward, quick, close to the ground, and without much dignity about it. mṛgaśīrṣā is the deer's head, and a deer is alert — a cheaper faculty than courage and a more useful one. the monkey does the same job with hands. what these degrees hand out is a nose for the thing itself, and what they withhold is the patience to stay once it has been found. soma is a draught, not a meal. the search is the pleasure here, and a search that succeeds has to end, which is the quiet difficulty of a blaze-marked chart: arriving is faintly disappointing, and there is always another scent.",
+  "born": {
+   "strike": "your sun landed on a small triangle of faint stars on orion's head — and both of the traditions that named it saw the same thing, which almost never happens. the arabs called it al-haq'a: the white mark — the same word they used for a pale whorl on a horse's coat, the mark that makes one animal identifiable in a herd. india called this sky mṛgaśīrṣa, the deer's head. one tradition marked the hunter's brow, the other put a deer there; between them sits the reading — you are the mark on the hunter and the thing being hunted, at once. the old station-lists gave this sky travel and study, and the hunger fits both: you follow a faint trail because it's faint. you are the person who leaves to learn something and comes back changed and slightly unbearable about it. the cost is that the search is genuinely more pleasurable than the finding. you can leave in order to keep leaving, and call it curiosity for a decade.",
+   "facing": "you enter fast, mark yourself instantly, and are remembered as the one who — the blaze on the forehead, impossible to confuse with anyone else in the herd. people know exactly which one you are; whether they know you is a separate question."
+  },
+  "card": {
+   "left": 6,
+   "right": 6,
+   "ab": "blaze",
+   "text": "marks a neighbour −2, for good",
+   "verb": "lower a number",
+   "fires": "on lodge"
+  },
+  "walkers": [
+   {
+    "name": "tamsin",
+    "fig": "imra",
+    "them": "her",
+    "in": "tamsin heats the irons and has never once touched a horse. she knows the colour a mark wants by the sound the fire makes."
+   },
+   {
+    "name": "bekk",
+    "fig": "sef",
+    "them": "him",
+    "in": "bekk holds the head. he has a scar from the one that would not be held, and he is proud of both."
+   },
+   {
+    "name": "ori",
+    "fig": "odel",
+    "them": "her",
+    "in": "ori keeps the tally-book of every mark the yard has made. there is one page nobody may read, and it is blank."
+   },
+   {
+    "name": "sayen",
+    "fig": "tesh",
+    "them": "them",
+    "in": "sayen is the gelder. people are polite to sayen."
+   },
+   {
+    "name": "hult",
+    "fig": "ruen",
+    "them": "him",
+    "in": "hult cuts the brands themselves, the iron heads, and has never made two alike. he would like you to notice."
+   },
+   {
+    "name": "marra",
+    "fig": "brann",
+    "them": "her",
+    "in": "marra buys the marked and sells the unmarked, and says the difference is the whole trade."
+   },
+   {
+    "name": "the brander",
+    "fig": "mave",
+    "them": "her",
+    "in": "the brander's hand does not shake. it has not shaken in thirty years, and"
+   },
+   {
+    "name": "the unbranded",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the unbranded has stood in this yard for years and never once been marked, because nobody has ever managed to take hold of it."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[4].epithet",
+   "position": "stations.js[4].position",
+   "stars": "stations.js[4].stars",
+   "kanji": "stations.js[4].kanji",
+   "keyword": "reading-copy.js MANSION.05.keyword",
+   "poem": "the game's _mPoem[4] (station-poems.json)",
+   "skies.arabia": "stations.js[4].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 5 nakshatra",
+   "skies.china": "mansions-table.json id 5 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.05 metadata line",
+   "guardian": "corpus-mansions.md MANSION.05 metadata line",
+   "match": "stations.js[4].match",
+   "claim": "reading-copy.js MANSION.05.claim",
+   "synthesis": "reading-copy.js MANSION.05.synthesis",
+   "election": "reading-copy.js MANSION.05.election",
+   "archetype": "reading-copy.js MANSION.05.archetype",
+   "born": "reading-copy.js STATION.05.strike, STATION.05.facing",
+   "card": "the game's pool[4] and ABS[5]",
+   "walkers": "walker-sheet.js WALKERS[5]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 6,
+  "epithet": "The Storm",
+  "slug": "the-storm",
+  "kanji": "參宿",
+  "position": "4°17′ Gemini to 17°09′ Gemini",
+  "stars": "γ, ξ Gem (Alhena)",
+  "keyword": "no undo",
+  "poem": "a brand on the neck. the weather passes and the mark stays.",
+  "skies": {
+   "arabia": {
+    "name": "al-Hanʿa",
+    "meaning": "\"the Brand\" — the camel's neck-mark"
+   },
+   "india": {
+    "name": "Ārdrā",
+    "deity": "Rudra, the howler in the storm",
+    "symbol": "teardrop · a head"
+   },
+   "china": {
+    "name": "參 Shēn",
+    "gloss": null,
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "ape"
+   },
+   "japan": {
+    "name": "からすきぼし Karasuki-boshi",
+    "kanji": "參宿"
+   }
+  },
+  "guardian": "the ape",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "brand, teardrop, carrying voice — one theme, three constellations"
+  },
+  "claim": "every tradition that looked at these degrees named something that cannot be taken back.",
+  "synthesis": "a brand burned into a camel's neck to say whose it is, the howling god's teardrop, and a long-armed caller heard across miles before anything sees it. a mark, a tear, and a voice — three things that arrive whole and do not retract.",
+  "election": "the medieval electors gave these degrees the fierce work: hunting, sieges, the jobs done at full force. picatrix adds revenge and the harming of crops, firmly on the history shelf. their reasoning was consistent — this is the stretch of sky for actions without an undo.",
+  "archetype": "a light here goes all the way in. rudra is not the god of the storm's damage, he is the god of its sound — the howler — and the mansion keeps that distinction. the difficulty is amplitude rather than anger. things are felt at full volume, and full volume gets filed as too much by rooms that were only ever set up for one register. the mark left on a room stays on it after the person has gone, which is a gift when it was meant and a debt when it was not. ārdrā's emblem is a teardrop, and a teardrop is what a storm leaves once it has stopped being weather.",
+  "born": {
+   "strike": "your sun landed on alhena, the bright star in the twins' foot. the arabs called this stretch al-hanʿa — the brand, the mark burned into a camel's neck to say whose it is. india called it ārdrā, the moist one: rudra's star, the howler, and its emblem is a teardrop. china saw 參 shēn — orion entire — and set the ape over it, the long-armed caller of the canopy, heard across miles before anything sees it. a mark of ownership, a storm, and a voice that carries. you want to break the surface of a thing and find out what it actually cost — the question nobody at the table wants asked, asked anyway, usually by you, usually correctly. the cost is amplitude. you feel at full volume, and full volume is routinely misfiled as too much. it isn't damage. it's voltage, and voltage needs somewhere to go or it goes everywhere.",
+   "facing": "you enter at full amplitude and the room adjusts around you within seconds. some people brace. the ones who don't brace become important to you very fast."
+  },
+  "card": {
+   "left": 6,
+   "right": 8,
+   "ab": "storm",
+   "text": "no ties against it",
+   "verb": "deny a fight",
+   "fires": "on being struck"
+  },
+  "walkers": [
+   {
+    "name": "ashur",
+    "fig": "imra",
+    "them": "him",
+    "in": "ashur drives the herd, when there is a herd to drive. tonight he is crouched with his back to it, counting breaths until the rain lets up."
+   },
+   {
+    "name": "temi",
+    "fig": "sef",
+    "them": "her",
+    "in": "temi keeps the brand-iron. it lies across her lap, cold, because nothing gets marked in a storm and she is in no hurry to warm it."
+   },
+   {
+    "name": "rook",
+    "fig": "odel",
+    "them": "him",
+    "in": "rook reads the cloud wall. he can tell you which way it is turning and how long it has left, and he will not tell you it is safe until it is."
+   },
+   {
+    "name": "isen",
+    "fig": "tesh",
+    "them": "her",
+    "in": "isen holds the well-rope. it hangs slack in her hands, because the well is full to the lip tonight and there is nothing to draw."
+   },
+   {
+    "name": "ghalib",
+    "fig": "ruen",
+    "them": "him",
+    "in": "ghalib lit no fire. he laid it, and looked at the sky, and left it laid. a fire in this is a thing you do for the look of it."
+   },
+   {
+    "name": "suri",
+    "fig": "brann",
+    "them": "her",
+    "in": "suri sings the herd still. low, the same three notes, one hand flat on a wet neck, and not one of them has bolted."
+   },
+   {
+    "name": "the old drover",
+    "fig": "mave",
+    "them": "her",
+    "in": "the old drover has one hand flat on the ground, feeling for the moment the rain stops."
+   },
+   {
+    "name": "the stray",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the stray stands in the rain, out past the herd, and does not mind it. nobody knows whose it was."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[5].epithet",
+   "position": "stations.js[5].position",
+   "stars": "stations.js[5].stars",
+   "kanji": "stations.js[5].kanji",
+   "keyword": "reading-copy.js MANSION.06.keyword",
+   "poem": "the game's _mPoem[5] (station-poems.json)",
+   "skies.arabia": "stations.js[5].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 6 nakshatra",
+   "skies.china": "mansions-table.json id 6 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.06 metadata line",
+   "guardian": "corpus-mansions.md MANSION.06 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 6",
+   "claim": "reading-copy.js MANSION.06.claim",
+   "synthesis": "reading-copy.js MANSION.06.synthesis",
+   "election": "reading-copy.js MANSION.06.election",
+   "archetype": "reading-copy.js MANSION.06.archetype",
+   "born": "reading-copy.js STATION.06.strike, STATION.06.facing",
+   "card": "the game's pool[5] and ABS[6]",
+   "walkers": "walker-sheet.js WALKERS[6]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 7,
+  "epithet": "The Return",
+  "slug": "the-return",
+  "kanji": "井宿",
+  "position": "17°09′ Gemini to 0°00′ Cancer",
+  "stars": "Castor & Pollux",
+  "keyword": "what comes back",
+  "poem": "the lion's forearm, reaching out and drawing back.",
+  "skies": {
+   "arabia": {
+    "name": "al-Dhirāʿ",
+    "meaning": "\"the Forearm\" — reaching out"
+   },
+   "india": {
+    "name": "Punarvasu",
+    "deity": "Aditi, the boundless mother",
+    "symbol": "bow and quiver"
+   },
+   "china": {
+    "name": "井 Jǐng",
+    "gloss": "the Well",
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "bian"
+   },
+   "japan": {
+    "name": "ちちりぼし Chichiri-boshi",
+    "kanji": "井宿"
+   }
+  },
+  "guardian": "the bian",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": "forearm, well, returning light: one gesture"
+  },
+  "claim": "a forearm, a well, and the light that returns. three ways of describing one gesture — reaching down and drawing something back up.",
+  "synthesis": "punarvasu means the good things coming again, and its deity is aditi, the boundless mother — the one who is not diminished by what is taken from her. a well is the same idea with a rope on it.",
+  "election": "the old books gave these degrees gain, friendship, and lovers. picatrix keeps trade and friendship and adds royal favour. the whole stretch reads gently in every source that touched it, which is uncommon on this road.",
+  "archetype": "a light here gets a second time. the mansion governs things coming back, which requires that they left, and the leaving is not the optional half. castor and pollux are the twins one of whom is mortal, and the myth is entirely about the arrangement they reached to keep from losing each other: alternating days, forever, on opposite sides of the same door. that is the shape these degrees hand out. recovery is the native talent and the native expectation, and the cost of expecting recovery is that leaving stops feeling final, so goodbyes here are often provisional in a way the other person did not agree to.",
+  "born": {
+   "strike": "your sun landed on castor and pollux — the twins, the two bright heads of gemini, which the arabs read as the outstretched forearm of a much larger sky-figure. in the greek story the brothers were half-mortal, and when the mortal one died the immortal one refused to take eternity alone, so they split it — alternating, one up while the other is under, forever. india's name for this sky is punarvasu — literally the goods returned, the restoration of what was lost, and usually rendered as the light that comes back — and its deity is aditi, the boundless mother — the sky of restoration, of second arrivals. that is your hunger: you want the return. friends who drift back. projects that revive the moment you touch them. the door you left open on purpose. the cost is exactly that door. if everything can come back, nothing has to be finished now — and a life can quietly become a hallway of things still technically open.",
+   "facing": "you enter like someone coming back — even the first time. people routinely feel they've met you before, and relax faster around you than they can explain to themselves."
+  },
+  "card": {
+   "left": 7,
+   "right": 7,
+   "ab": "return",
+   "text": "took nothing: it strikes again",
+   "verb": "add a fight",
+   "fires": "on lodge"
+  },
+  "walkers": [
+   {
+    "name": "wenna",
+    "fig": "imra",
+    "them": "her",
+    "in": "wenna came back down off the hill with the herd and one fewer than she took up, and rang the bell at the gate anyway."
+   },
+   {
+    "name": "josse",
+    "fig": "sef",
+    "them": "him",
+    "in": "josse came back from the war with a limp and a song, and plays the song on a whistle every night so the limp has company."
+   },
+   {
+    "name": "amira",
+    "fig": "odel",
+    "them": "her",
+    "in": "amira came back to bury her mother and stayed. the spade is clean now and leans by the door."
+   },
+   {
+    "name": "teodor",
+    "fig": "tesh",
+    "them": "him",
+    "in": "teodor went to sea for twelve years and came back with every tide-table in his head and no use for any of them."
+   },
+   {
+    "name": "ilse",
+    "fig": "ruen",
+    "them": "her",
+    "in": "ilse ran off at fifteen and walked back at forty with one small bag, and nobody asked, and she has never said."
+   },
+   {
+    "name": "bram",
+    "fig": "brann",
+    "them": "him",
+    "in": "bram comes back every night from the fields with the scythe on his shoulder and has never once been anywhere else, and says that counts."
+   },
+   {
+    "name": "the one who waits up",
+    "fig": "mave",
+    "them": "her",
+    "in": "the one who waits up keeps a lamp in the window every night for whoever is on the road."
+   },
+   {
+    "name": "the one at the milestone",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one at the milestone sits on the last stone facing away from the village, and has not gone the last mile, and may yet."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[6].epithet",
+   "position": "stations.js[6].position",
+   "stars": "stations.js[6].stars",
+   "kanji": "stations.js[6].kanji",
+   "keyword": "reading-copy.js MANSION.07.keyword",
+   "poem": "the game's _mPoem[6] (station-poems.json)",
+   "skies.arabia": "stations.js[6].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 7 nakshatra",
+   "skies.china": "mansions-table.json id 7 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.07 metadata line",
+   "guardian": "corpus-mansions.md MANSION.07 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 7",
+   "claim": "reading-copy.js MANSION.07.claim",
+   "synthesis": "reading-copy.js MANSION.07.synthesis",
+   "election": "reading-copy.js MANSION.07.election",
+   "archetype": "reading-copy.js MANSION.07.archetype",
+   "born": "reading-copy.js STATION.07.strike, STATION.07.facing",
+   "card": "the game's pool[6] and ABS[7]",
+   "walkers": "walker-sheet.js WALKERS[7]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 8,
+  "epithet": "The Ghost",
+  "slug": "the-ghost",
+  "kanji": "鬼宿",
+  "position": "0°00′ Cancer to 12°51′ Cancer",
+  "stars": "Praesepe (M44, the Beehive cluster) + γ, δ Cnc",
+  "keyword": "the haze that feeds",
+  "poem": "the gap in the lion's muzzle: a little cloud where a star should be.",
+  "skies": {
+   "arabia": {
+    "name": "al-Nathra",
+    "meaning": "\"the Nostril / gap\" — the Lion's muzzle-tuft of mist"
+   },
+   "india": {
+    "name": "Puṣya",
+    "deity": "Bṛhaspati, priest of the gods",
+    "symbol": "cow's udder · lotus"
+   },
+   "china": {
+    "name": "鬼 Guǐ",
+    "gloss": "the Ghost",
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "goat"
+   },
+   "japan": {
+    "name": "たまほめぼし Tamahome-boshi",
+    "kanji": "鬼宿"
+   }
+  },
+  "guardian": "the goat",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "a smudge of haze that resolves, under any lens at all, into a thousand stars. every tradition named the smudge and none of them named the stars — the mansion is the blur itself.",
+  "synthesis": "a ghost, the misted nostril of a lion, and a cow's udder. china saw vapour and india saw milk, and both of them were describing the same soft white patch that turns out to be feeding something.",
+  "election": "the old books gave these degrees love, friendship, and the company of fellow travellers. picatrix keeps all three and adds safe travel. the indian tradition rates puṣya the most auspicious of the twenty-seven — the station where anything begun is nourished.",
+  "archetype": "a light here is read as insubstantial by people standing far enough away. the mansion's whole trick is the resolution: what looks like a haze is a crowd, and what looks like a ghost is a food source. puṣya means the nourisher, its deity is bṛhaspati — the priest, the one who speaks for others to the gods — and the emblem is the udder, which is the least mystical object in the entire corpus and the most exact. something is being fed here and it is rarely the person doing the feeding. the difficulty is proportion. an udder does not decide how much is taken, and neither does a haze that nobody can see the edges of.",
+  "born": {
+   "strike": "you landed at 0° cancer — a hinge of the whole year — on a patch of sky that is not really a star at all. it's praesepe, a soft smudge of hundreds of stars too faint to separate by eye; today we call it the beehive. its older latin name is the manger, and the two dim stars flanking it were the two donkeys feeding there. china saw something ghostlier in the haze and named the station for spirits; the arabs called it the lion's nostril — the breath, the soft opening. india calls this sky puṣya, one of the most auspicious stations on the whole road, and gives it an emblem you can't misread: a cow's udder. so every tradition arrived at the same idea by a different door. this is the sky of feeding. your hunger is to nourish the thing that will outlast you — a person, a practice, a household, a body of work. feeders eat last and call it a personality. you are not actually built to run empty; you have just gotten very good at it.",
+   "facing": "you enter gently and the temperature of the room comes up a degree. people find themselves telling you things they hadn't planned to. the hazy little cloud is doing its work: nobody can quite point to what you did, only that it's easier here now."
+  },
+  "card": {
+   "left": 7,
+   "right": 6,
+   "ab": "ghost",
+   "text": "take it and you trade places",
+   "verb": "change the owner",
+   "fires": "on being struck"
+  },
+  "walkers": [
+   {
+    "name": "perrin",
+    "fig": "imra",
+    "them": "him",
+    "in": "perrin carries the hay up from the barn in armfuls, and the last armful is always for the one at the back."
+   },
+   {
+    "name": "ollin",
+    "fig": "sef",
+    "them": "him",
+    "in": "ollin fills the trough and does not stop pouring until it runs over, so the small ones get a drink too."
+   },
+   {
+    "name": "mab",
+    "fig": "odel",
+    "them": "her",
+    "in": "mab feeds the orphan lamb by hand, at midnight and at four, and has not slept a whole night since the spring."
+   },
+   {
+    "name": "tarn",
+    "fig": "tesh",
+    "them": "him",
+    "in": "tarn breaks the ice on the water with a stone every morning before anything else is done."
+   },
+   {
+    "name": "dessa",
+    "fig": "ruen",
+    "them": "her",
+    "in": "dessa salts the lick and holds her hand out flat for the ones too shy to come to the stone."
+   },
+   {
+    "name": "fen",
+    "fig": "brann",
+    "them": "her",
+    "in": "fen counts them in at the gap with a bit of bread for each, and no animal has ever been counted twice or missed."
+   },
+   {
+    "name": "the flockmaster",
+    "fig": "mave",
+    "them": "her",
+    "in": "the flockmaster stands at the gap with the crook and knows every animal by its walk."
+   },
+   {
+    "name": "the one at the gap",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one at the gap sits on the wall in the mist and has sat there every night the fold has stood."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[7].epithet",
+   "position": "stations.js[7].position",
+   "stars": "stations.js[7].stars",
+   "kanji": "stations.js[7].kanji",
+   "keyword": "reading-copy.js MANSION.08.keyword",
+   "poem": "the game's _mPoem[7] (station-poems.json)",
+   "skies.arabia": "stations.js[7].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 8 nakshatra",
+   "skies.china": "mansions-table.json id 8 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.08 metadata line",
+   "guardian": "corpus-mansions.md MANSION.08 metadata line",
+   "match": "stations.js[7].match",
+   "claim": "reading-copy.js MANSION.08.claim",
+   "synthesis": "reading-copy.js MANSION.08.synthesis",
+   "election": "reading-copy.js MANSION.08.election",
+   "archetype": "reading-copy.js MANSION.08.archetype",
+   "born": "reading-copy.js STATION.08.strike, STATION.08.facing",
+   "card": "the game's pool[7] and ABS[8]",
+   "walkers": "walker-sheet.js WALKERS[8]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 9,
+  "epithet": "The Glance",
+  "slug": "the-glance",
+  "kanji": "柳宿",
+  "position": "12°51′ Cancer to 25°43′ Cancer",
+  "stars": "κ Cnc + λ Leo",
+  "keyword": "contact that holds",
+  "poem": "two stars for the lion's eyes. nothing crosses here unseen.",
+  "skies": {
+   "arabia": {
+    "name": "al-Ṭarf",
+    "meaning": "\"the Glance\" — the Lion's eye"
+   },
+   "india": {
+    "name": "Āśleṣā",
+    "deity": "the Nāgas, serpents of hidden knowledge",
+    "symbol": "coiled serpent"
+   },
+   "china": {
+    "name": "柳 Liǔ",
+    "gloss": "the Willow",
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "river-deer"
+   },
+   "japan": {
+    "name": "ぬりこぼし Nuriko-boshi",
+    "kanji": "柳宿"
+   }
+  },
+  "guardian": "the river-deer",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": null
+  },
+  "claim": "this is the only mansion on the road named for an act of perception. not a creature, not an object — a look.",
+  "synthesis": "the eye of the lion, the serpent's coil, and the willow that trails in water and never quite lets go of it. three images of contact that does not release. india's nāgas are the serpents who keep the knowledge that is not said out loud.",
+  "election": "the medieval electors were wary of these degrees. they marked them for discord, said the stretch hindered travel, and gave it a wide berth; picatrix goes as far as harming harvests and travellers, a hostile flag kept on the history shelf. the lion's eye misses nothing, and calendar-keepers found that an uncomfortable sky to plan under.",
+  "archetype": "a light here notices at a resolution most charts do not carry: the pause before the answer, the name that stopped being mentioned, who stopped being copied in. and then it holds. the willow, the coil and the eye all say the same thing from different angles — contact is made easily here and released with difficulty. what the mansion is genuinely good at is knowing a thing is over long before anyone announces it. what it costs is that seeing and gripping arrive as one motion, so the knowledge that should have been passed on sits, coiled, being kept instead.",
+  "born": {
+   "strike": "your sun landed on the lion's eye — that is what al-ṭarf means: the glance, the look itself. china put a willow here, the tree that bends and trails and never quite lets go of the water. and india named this sky āśleṣā, which means the embrace — the coiled serpent, the sky of the nāgas, who in that tradition keep the knowledge that isn't said out loud. the eye, the willow, the coil. what all three are describing is your hunger: you want to know the thing nobody announced. you read rooms at a resolution most people don't have — the pause before the answer, the name that stopped getting mentioned, who stopped being cc'd. the third image is the honest one. the coil holds. what you notice, you keep hold of; a glance can become a grip. the question that follows you is not whether you see clearly. it's when seeing turns into not letting go.",
+   "facing": "you enter quietly and start reading immediately. people notice being noticed — one look from you and they feel clocked, in a way that is either the beginning of trust or the end of the conversation."
+  },
+  "card": {
+   "left": 5,
+   "right": 6,
+   "ab": "glance",
+   "text": "strikes the station opposite",
+   "verb": "add a fight",
+   "fires": "on lodge, always"
+  },
+  "walkers": [
+   {
+    "name": "ada",
+    "fig": "imra",
+    "them": "her",
+    "in": "ada carries at night. the lantern is hooded so the road can see her before she sees it, which she says is only polite. she read the list and packed anyway."
+   },
+   {
+    "name": "birun",
+    "fig": "sef",
+    "them": "him",
+    "in": "birun reads the almanac every evening and folds it away every evening. tonight it said not to travel. it is folded in his coat, where it always is."
+   },
+   {
+    "name": "helda",
+    "fig": "odel",
+    "them": "her",
+    "in": "helda drives a herd that is not behind her. the crook is, and the whistle, and the habit of looking back to count. she counts anyway."
+   },
+   {
+    "name": "tolm",
+    "fig": "tesh",
+    "them": "him",
+    "in": "tolm walks the road backwards, watching where he has been. he says the thing that watches you is never in front. he has not tripped yet."
+   },
+   {
+    "name": "senne",
+    "fig": "ruen",
+    "them": "her",
+    "in": "senne carries a sealed satchel and wears running shoes on a road nobody runs. the seal is not hers to break and the warning was not hers to read. she is late."
+   },
+   {
+    "name": "iku",
+    "fig": "brann",
+    "them": "her",
+    "in": "iku set out with the others and stopped to look at something in the verge. that was some time ago. the others are far ahead and iku is still looking."
+   },
+   {
+    "name": "the almanac-keeper",
+    "fig": "mave",
+    "them": "her",
+    "in": "the almanac-keeper wrote the list. she knows exactly what it says about tonight and she is walking under it with the book under her arm."
+   },
+   {
+    "name": "the one at the verge",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one at the verge is half in the scrub and you have never seen more of them than the eyes. they have been there the whole way."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[8].epithet",
+   "position": "stations.js[8].position",
+   "stars": "stations.js[8].stars",
+   "kanji": "stations.js[8].kanji",
+   "keyword": "reading-copy.js MANSION.09.keyword",
+   "poem": "the game's _mPoem[8] (station-poems.json)",
+   "skies.arabia": "stations.js[8].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 9 nakshatra",
+   "skies.china": "mansions-table.json id 9 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.09 metadata line",
+   "guardian": "corpus-mansions.md MANSION.09 metadata line",
+   "match": "stations.js[8].match",
+   "claim": "reading-copy.js MANSION.09.claim",
+   "synthesis": "reading-copy.js MANSION.09.synthesis",
+   "election": "reading-copy.js MANSION.09.election",
+   "archetype": "reading-copy.js MANSION.09.archetype",
+   "born": "reading-copy.js STATION.09.strike, STATION.09.facing",
+   "card": "the game's pool[8] and ABS[9]",
+   "walkers": "walker-sheet.js WALKERS[9]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 10,
+  "epithet": "The Throne",
+  "slug": "the-throne",
+  "kanji": "星宿",
+  "position": "25°43′ Cancer to 8°34′ Leo",
+  "stars": "the Lion's brow — ζ, γ, η, α Leonis, including Regulus, the Little King · determinant η Leo",
+  "keyword": "the carved chair",
+  "poem": "the lion's forehead, and in summer the sun sits on it.",
+  "skies": {
+   "arabia": {
+    "name": "al-Jabha",
+    "meaning": "\"the Forehead of the Lion\" — the brow of the old-Arab super-Lion that sprawled across a third of the sky"
+   },
+   "india": {
+    "name": "Maghā",
+    "deity": "Pitṛs (ancestors)",
+    "symbol": "royal throne"
+   },
+   "china": {
+    "name": "星 Xīng",
+    "gloss": null,
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "horse"
+   },
+   "japan": {
+    "name": "ほとおりぼし Hotohori-boshi",
+    "kanji": "星宿"
+   }
+  },
+  "guardian": "the horse",
+  "match": {
+   "flag": "DIVERGENT",
+   "test": "the traditions describe genuinely different or opposed things",
+   "why": "Regulus vs Alphard; king's seat vs serpent's heart"
+  },
+  "claim": "two civilisations looked at these degrees and saw the seat of a king. one looked at the same degrees and saw the heart of a water-snake. the disagreement is old and nobody has ever settled it.",
+  "synthesis": "arabia put the lion's forehead here and india put the royal throne, both on regulus — and china fixed the mansion instead on alphard, in hydra, a different star in a different animal. the flag on these degrees reads DIVERGENT, and it is one of four that do.",
+  "election": "favourable for trade and building, say the old books. agrippa's line is the one worth keeping: these degrees \"strengthen buildings.\" picatrix gives them love and alliance. the sky of things meant to outlast whoever made them.",
+  "archetype": "regulus sits almost exactly on the ecliptic, so the moon and the planets pass over it in an endless procession — the way a court files past a chair. a light here keeps its bearing. there is a carriage to it even at rest, an instinct not to be seen flinching, and the room responds by bringing its best behaviour and taking its mess elsewhere. the indian reading is the one that turns the mansion, because it refuses the obvious: the seat is real and its deity is not a king — it is the ancestors, the dead who are owed offerings. the chair was carved before anyone arrived to sit in it, and these degrees carry the private question of whether the occupant is worthy of a thing they did not build.",
+  "born": {
+   "strike": "your sun landed on regulus — the little king. it is one of the four stars the ancient world called royal, it sits almost exactly on the ecliptic so the moon and planets keep passing over it like a procession, and the arabs read this group as the forehead of a lion so large it took up a quarter of the sky. india's name for the same stars is maghā, and here the tradition turns the reading in a direction people don't expect: its deity is not a king but the ancestors — the fathers, the dead who are owed offerings. the seat is real, and you did not carve it. that is the hunger of this sky: you want to be worthy of the chair, not merely in it. the cost is legitimacy, and it will follow you: a person who inherits authority spends a long time proving it wasn't only inherited — often to a room that already stopped asking, and occasionally to nobody but themselves.",
+   "facing": "you enter and the room reorganizes slightly around you, and you didn't do anything. it is an unfair advantage and an unfair burden: people decide you're the one in charge before you've spoken, then hold you to it."
+  },
+  "card": {
+   "left": 7,
+   "right": 9,
+   "ab": "throne",
+   "text": "what it takes fights +1",
+   "verb": "raise a number",
+   "fires": "on claim"
+  },
+  "walkers": [
+   {
+    "name": "halim",
+    "fig": "imra",
+    "them": "him",
+    "in": "halim the herald announces every walker to an empty chair. he will announce you too."
+   },
+   {
+    "name": "sura",
+    "fig": "tesh",
+    "them": "her",
+    "in": "sura fills a cup nobody drinks. it has never once spilled."
+   },
+   {
+    "name": "benna",
+    "fig": "sef",
+    "them": "him",
+    "in": "benna carries the standard furled. it opens for the king alone."
+   },
+   {
+    "name": "okka",
+    "fig": "ruen",
+    "them": "him",
+    "in": "okka keeps the hall's one door. the roof left; the door stayed."
+   },
+   {
+    "name": "meret",
+    "fig": "odel",
+    "them": "her",
+    "in": "meret writes the minutes of a court that never sits. tonight's entry is you."
+   },
+   {
+    "name": "kasran",
+    "fig": "brann",
+    "them": "him",
+    "in": "kasran claims the throne nightly. he has never once sat down."
+   },
+   {
+    "name": "reya",
+    "fig": "mave",
+    "them": "her",
+    "in": "reya rules in no one's name."
+   },
+   {
+    "name": "the throne-warden",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the throne-warden has dusted an empty chair longer than anyone has been alive."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[9].epithet",
+   "position": "stations.js[9].position",
+   "stars": "stations.js[9].stars",
+   "kanji": "stations.js[9].kanji",
+   "keyword": "reading-copy.js MANSION.10.keyword",
+   "poem": "the game's _mPoem[9] (station-poems.json)",
+   "skies.arabia": "stations.js[9].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 10 nakshatra",
+   "skies.china": "mansions-table.json id 10 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.10 metadata line",
+   "guardian": "corpus-mansions.md MANSION.10 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 10",
+   "claim": "reading-copy.js MANSION.10.claim",
+   "synthesis": "reading-copy.js MANSION.10.synthesis",
+   "election": "reading-copy.js MANSION.10.election",
+   "archetype": "reading-copy.js MANSION.10.archetype",
+   "born": "reading-copy.js STATION.10.strike, STATION.10.facing",
+   "card": "the game's pool[9] and ABS[10]",
+   "walkers": "walker-sheet.js WALKERS[10]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 11,
+  "epithet": "The Mane",
+  "slug": "the-mane",
+  "kanji": "張宿",
+  "position": "8°34′ Leo to 21°26′ Leo",
+  "stars": "δ, θ Leo (Zosma)",
+  "keyword": "the spread",
+  "poem": "the mane raised over the shoulders, before anything is done.",
+  "skies": {
+   "arabia": {
+    "name": "al-Zubra / al-Kharātān",
+    "meaning": "\"the Mane\" — the Lion's glorious ruff"
+   },
+   "india": {
+    "name": "P. Phālgunī",
+    "deity": "Bhaga, of allotted fortune",
+    "symbol": "front legs of a bed"
+   },
+   "china": {
+    "name": "張 Zhāng",
+    "gloss": "the Extended Net",
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "deer"
+   },
+   "japan": {
+    "name": "ちりこぼし Chiriko-boshi",
+    "kanji": "張宿"
+   }
+  },
+  "guardian": "the deer",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": "mane, bed, drawn net — all spread"
+  },
+  "claim": "a lion's mane, the front legs of a bed, and a net drawn open. three spread things — and 張 zhāng is literally the verb for stretching something wide.",
+  "synthesis": "india's deity here is bhaga, god of the share you were allotted — not what is earned, what is assigned. the classical power given to these degrees is prajanana śakti, the power of procreation. a bed, a mane, and an open net all hold whatever is brought to them.",
+  "election": "the old books gave these degrees travel and commerce, and then the theme that recurs across this whole stretch of sky: the release of captives. picatrix keeps the freeing and the wealth, and adds sieges — a mixed flag, half of it on the history shelf.",
+  "archetype": "a light here is comfortable being looked at, and the comfort is the mansion rather than the personality. a mane does exactly one job: it makes the animal read as larger and better than the animal. bhaga hands out portions, so the difficulty is never scarcity — it is the suspicion that the portion arrived rather than being won. these degrees give ease and rest and display, and take the same thing back on the other side: what is spread open cannot also be held in reserve, and a bed with its legs showing is furniture nobody thinks to ask permission to use.",
+  "born": {
+   "strike": "your sun landed on the lion's mane — al-zubra, the ruff, the volume, the part of the animal that arrives before the animal does. india's name for this sky is pūrva phālgunī, and its emblem is the front legs of a bed: rest, pleasure, the good half of the night. its deity is bhaga, who hands out the share of delight a life is allotted. the old station-lists gave this sky the release of captives. mane energy here is not vanity, it's liberation. your hunger is to be delighted in, and to hand delight around, and you have a talent for making other people feel unfastened. the cost arrives when the delight stops coming back. this sky needs to be enjoyed out loud by somebody, and it will keep performing to get there — the difference between being adored and being appreciated is a distinction you'll have to learn on purpose, usually the hard way, once.",
+   "facing": "you enter warmly and loudly and the party starts. people are pleased to see you before they've decided anything about you, which means you almost never get a neutral first impression — and almost never get a quiet one."
+  },
+  "card": {
+   "left": 6,
+   "right": 6,
+   "ab": "mane",
+   "text": "your cards beside it fight +1",
+   "verb": "raise a number",
+   "fires": "always"
+  },
+  "walkers": [
+   {
+    "name": "yann",
+    "fig": "imra",
+    "them": "him",
+    "in": "yann is lying flat in the grass with his hands behind his head, and has been since the afternoon, and calls it a walk."
+   },
+   {
+    "name": "brisa",
+    "fig": "sef",
+    "them": "her",
+    "in": "brisa is somewhere in the grass to your left, humming. she will not say where, and does not need to."
+   },
+   {
+    "name": "hollin",
+    "fig": "odel",
+    "them": "him",
+    "in": "hollin cuts a path through the grass with a hook and has cut this one so many times he could do it asleep, and possibly is."
+   },
+   {
+    "name": "ottilie",
+    "fig": "tesh",
+    "them": "her",
+    "in": "ottilie lost a ring in this grass twenty years ago and comes back every summer to not look for it."
+   },
+   {
+    "name": "pike",
+    "fig": "ruen",
+    "them": "him",
+    "in": "pike is a boy up to his shoulders in grass, moving in a straight line because he cannot see over it and does not want to."
+   },
+   {
+    "name": "renn",
+    "fig": "brann",
+    "them": "him",
+    "in": "renn ties grass-heads into knots to mark the way and has never once needed them."
+   },
+   {
+    "name": "the hunter",
+    "fig": "mave",
+    "them": "her",
+    "in": "the hunter has walked this grass every night for a stag she has seen once and never raised the bow to."
+   },
+   {
+    "name": "the one lying still",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one lying still is somewhere close and you cannot see them, and they can see you."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[10].epithet",
+   "position": "stations.js[10].position",
+   "stars": "stations.js[10].stars",
+   "kanji": "stations.js[10].kanji",
+   "keyword": "reading-copy.js MANSION.11.keyword",
+   "poem": "the game's _mPoem[10] (station-poems.json)",
+   "skies.arabia": "stations.js[10].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 11 nakshatra",
+   "skies.china": "mansions-table.json id 11 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.11 metadata line",
+   "guardian": "corpus-mansions.md MANSION.11 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 11",
+   "claim": "reading-copy.js MANSION.11.claim",
+   "synthesis": "reading-copy.js MANSION.11.synthesis",
+   "election": "reading-copy.js MANSION.11.election",
+   "archetype": "reading-copy.js MANSION.11.archetype",
+   "born": "reading-copy.js STATION.11.strike, STATION.11.facing",
+   "card": "the game's pool[10] and ABS[11]",
+   "walkers": "walker-sheet.js WALKERS[11]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 12,
+  "epithet": "The Turning",
+  "slug": "the-turning",
+  "kanji": "翼宿",
+  "position": "21°26′ Leo to 4°17′ Virgo",
+  "stars": "Denebola (β Leo)",
+  "keyword": "the weather breaks",
+  "poem": "the star whose rising turns the heat. the year changes its mind here.",
+  "skies": {
+   "arabia": {
+    "name": "al-Ṣarfa",
+    "meaning": "\"the Turning (of the heat)\""
+   },
+   "india": {
+    "name": "U. Phālgunī",
+    "deity": "Aryaman, of kinship and contract",
+    "symbol": "back legs of a bed"
+   },
+   "china": {
+    "name": "翼 Yì",
+    "gloss": "the Wings",
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "snake"
+   },
+   "japan": {
+    "name": "たすきぼし Tasuki-boshi",
+    "kanji": "翼宿"
+   }
+  },
+  "guardian": "the snake",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "a change, a contract, a pair of wings"
+  },
+  "claim": "arabia named these degrees for a change in the weather rather than a thing in the sky. al-ṣarfa is the turning of the heat — the point in the year when summer breaks and the season changes its mind.",
+  "synthesis": "the turning, a pair of wings, and a snake that grows only by leaving a skin behind. india's deity is aryaman, god of kinship and the kept contract — so the mansion holds a change and an obligation in the same hand. (the oldest sanskrit list, the taittirīya brāhmaṇa, assigns aryaman and bhaga the other way round; later jyotiṣa reversed them, and this is the later reading.)",
+  "election": "the old books gave these degrees harvests and household matters, and warned against putting to sea. picatrix has crops increased and ships harmed, a mixed flag. a stretch of sky for bringing things in and finishing them, and a poor one for setting out.",
+  "archetype": "a light here molts. a snake does not shed a percentage. what makes these degrees difficult is the second deity: aryaman keeps contracts, and a contract is a thing that survives the change, so the mansion asks for both at once. what is finished here is finished completely, and what is owed is still owed. the pairing runs through the whole stretch: uttara phalgunī is the second half of a pair whose first half is a bed's front legs, and the classical power given to it is prosperity that arrives through union. what is shed is a skin. what is kept is everyone else.",
+  "born": {
+   "strike": "your sun landed on denebola, the star at the end of the lion's tail — and the arabs named this station for what happens when it rises: al-ṣarfa, the turning, the point where the summer heat finally breaks. the whole station is named after a change in the weather. india pairs it deliberately with the sky before it: if the last station was the front of the bed, this is the foot of it, and where that one had bhaga handing out delight, this one has aryaman — the god of kinship, alliance, and the promise that has to hold after the party. that's your hunger. you want to be the one who keeps it going once the pleasant part is over. you are the hinge in every group: the one present when the mood turns, the plan changes, the season ends. hinges take the strain from both sides. being the person who manages the turn means you are rarely allowed to simply have the feeling everyone else is having.",
+   "facing": "you enter and something shifts. people can't always name it; the conversation changes direction shortly after you sit down. you are read as someone who ends things, which is only half of it — you also start what comes after."
+  },
+  "card": {
+   "left": 7,
+   "right": 6,
+   "ab": "turning",
+   "text": "what it takes strikes onward",
+   "verb": "add a fight",
+   "fires": "on claim"
+  },
+  "walkers": [
+   {
+    "name": "nael",
+    "fig": "imra",
+    "them": "him",
+    "in": "nael keeps the great vane's pivot oiled. it has never once stuck."
+   },
+   {
+    "name": "vesh",
+    "fig": "sef",
+    "them": "him",
+    "in": "vesh rings the bell of the change, and never one hour early."
+   },
+   {
+    "name": "thea",
+    "fig": "odel",
+    "them": "her",
+    "in": "thea keeps the almanac with her thumb in this week. the heat ends on a date, not a whim."
+   },
+   {
+    "name": "sabi",
+    "fig": "tesh",
+    "them": "her",
+    "in": "sabi flies a kite on a line long enough to read air nobody can feel."
+   },
+   {
+    "name": "orun",
+    "fig": "ruen",
+    "them": "him",
+    "in": "orun reads smoke off a slow taper. the smoke has started leaning the other way."
+   },
+   {
+    "name": "duna",
+    "fig": "brann",
+    "them": "her",
+    "in": "duna is already turning the flock. she turned before the vanes did and dares you to say she guessed."
+   },
+   {
+    "name": "kip",
+    "fig": "mave",
+    "them": "him",
+    "in": "kip tastes the air off his palm, and says nothing useful."
+   },
+   {
+    "name": "the weather-watch",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the weather-watch has read this hill since before the vanes were planted, and watches the ground instead of the sky."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[11].epithet",
+   "position": "stations.js[11].position",
+   "stars": "stations.js[11].stars",
+   "kanji": "stations.js[11].kanji",
+   "keyword": "reading-copy.js MANSION.12.keyword",
+   "poem": "the game's _mPoem[11] (station-poems.json)",
+   "skies.arabia": "stations.js[11].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 12 nakshatra",
+   "skies.china": "mansions-table.json id 12 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.12 metadata line",
+   "guardian": "corpus-mansions.md MANSION.12 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 12",
+   "claim": "reading-copy.js MANSION.12.claim",
+   "synthesis": "reading-copy.js MANSION.12.synthesis",
+   "election": "reading-copy.js MANSION.12.election",
+   "archetype": "reading-copy.js MANSION.12.archetype",
+   "born": "reading-copy.js STATION.12.strike, STATION.12.facing",
+   "card": "the game's pool[11] and ABS[12]",
+   "walkers": "walker-sheet.js WALKERS[12]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 13,
+  "epithet": "The Hand",
+  "slug": "the-hand",
+  "kanji": "軫宿",
+  "position": "4°17′ Virgo to 17°09′ Virgo",
+  "stars": "β, η, γ, δ, ε Vir",
+  "keyword": "the maker's hand",
+  "poem": "five stars bent like a howl, or like a hand about to close.",
+  "skies": {
+   "arabia": {
+    "name": "al-ʿAwwāʾ",
+    "meaning": "\"the Barker / the Bend\" — the curve of stars in Virgo"
+   },
+   "india": {
+    "name": "Hasta",
+    "deity": "Savitṛ, the impeller who sets things moving",
+    "symbol": "an open hand"
+   },
+   "china": {
+    "name": "軫 Zhěn",
+    "gloss": "the Chariot-board",
+    "quadrant": "Vermilion Bird (South/Summer)",
+    "animal": "earthworm"
+   },
+   "japan": {
+    "name": "みつかけぼし Mitsukake-boshi",
+    "kanji": "軫宿"
+   }
+  },
+  "guardian": "the earthworm",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "hand and chariot-board converge; Arabia's bend does not"
+  },
+  "claim": "an open hand, a barking dog, and the board of a chariot. the mansion of things you hold on to and things that hold you up — and india's name for it is simply the hand.",
+  "synthesis": "hasta's deity is savitṛ, the impeller — the god who sets things in motion rather than making them. arabia's al-ʿawwāʾ is read as the barker and, by a minority, as the bend of the figure. china's 軫 zhěn is the crossboard at the back of a chariot, the part a driver braces against. a hand, and the thing the hand pushes off.",
+  "election": "the old books gave these degrees benevolence, gain, voyages, and freedom. picatrix keeps trade and harvests and adds the freeing of captives. gentle in every source that recorded it, which on this road is worth noting.",
+  "archetype": "a light here works with its hands, in the wide sense — the talent is making a thing exist that did not, and the mansion does not care whether the thing is a chair or an argument. savitṛ's job is the impulse, not the object, so what these degrees hand out is the ability to start the motion in something else. the earthworm is the guardian and it is not a joke: it moves more soil than any machine and is never once observed doing it. the difficulty is the open palm. a hand that can make can also give away, and the mansion has no built-in instinct for keeping count of what has left it.",
+  "born": {
+   "strike": "your sun landed on a bend of five stars in virgo — and this is the other place on the road where the sky-maps flatly disagree. the arabs called it al-ʿAwwā, the barker: dogs sounding in the dark, the noise that tells you something is out there. india looked at the same five and saw an open hand — hasta, whose deity is savitṛ, the one who sets things in motion. a warning bark and a working hand. we didn't reconcile them, because they weren't reconciled. the hunger belongs to the hand: you want the whole thing to pass through your fingers. the drawing, the repair, the meal, the sentence that steadied someone — you don't fully believe in a thing until you have made it or fixed it yourself. the cost is the bark. you are the one who says the thing is not ready, out loud, while everyone else is celebrating — and being right about that repeatedly is a very effective way to be left off invitations.",
+   "facing": "you enter already noticing what needs fixing, and usually fix it before anyone's said hello. people experience you as capable within about ninety seconds, and start handing you things shortly after."
+  },
+  "card": {
+   "left": 5,
+   "right": 7,
+   "ab": "hand",
+   "text": "what you lodge beside it, +1",
+   "verb": "raise a number",
+   "fires": "on lodge"
+  },
+  "walkers": [
+   {
+    "name": "orrin",
+    "fig": "imra",
+    "them": "him",
+    "in": "orrin is the wheelwright. the mallet rides his shoulder between strokes and he has not put it down in thirty years."
+   },
+   {
+    "name": "tamsa",
+    "fig": "sef",
+    "them": "her",
+    "in": "tamsa shaves the spokes with a drawknife pulled toward her chest. the curl comes off in one piece or she starts over."
+   },
+   {
+    "name": "dun",
+    "fig": "odel",
+    "them": "him",
+    "in": "dun bends the felloes, the wheel's rim, over steam. he says wood remembers a bend the way a hand remembers a grip."
+   },
+   {
+    "name": "ilka",
+    "fig": "tesh",
+    "them": "her",
+    "in": "ilka is the tyre-smith. the iron hoop goes on red and shrinks cold, and the wheel is a wheel from then on."
+   },
+   {
+    "name": "pem",
+    "fig": "ruen",
+    "them": "him",
+    "in": "pem is the apprentice and holds the lamp, and holds it wherever he is looking, which is not where the work is."
+   },
+   {
+    "name": "varo",
+    "fig": "brann",
+    "them": "her",
+    "in": "varo turns the axles on the pole-lathe, one foot on the treadle. a true axle rolls off the bench in a straight line and stops."
+   },
+   {
+    "name": "the master",
+    "fig": "mave",
+    "them": "her",
+    "in": "the master measures every gap with the span of one hand and is never wrong."
+   },
+   {
+    "name": "the crossbar-hand",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the crossbar-hand keeps both palms flat on the vice's beam and has not spoken since the beam went in."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[12].epithet",
+   "position": "stations.js[12].position",
+   "stars": "stations.js[12].stars",
+   "kanji": "stations.js[12].kanji",
+   "keyword": "reading-copy.js MANSION.13.keyword",
+   "poem": "the game's _mPoem[12] (station-poems.json)",
+   "skies.arabia": "stations.js[12].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 13 nakshatra",
+   "skies.china": "mansions-table.json id 13 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.13 metadata line",
+   "guardian": "corpus-mansions.md MANSION.13 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 13",
+   "claim": "reading-copy.js MANSION.13.claim",
+   "synthesis": "reading-copy.js MANSION.13.synthesis",
+   "election": "reading-copy.js MANSION.13.election",
+   "archetype": "reading-copy.js MANSION.13.archetype",
+   "born": "reading-copy.js STATION.13.strike, STATION.13.facing",
+   "card": "the game's pool[12] and ABS[13]",
+   "walkers": "walker-sheet.js WALKERS[13]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 14,
+  "epithet": "The Jewel",
+  "slug": "the-jewel",
+  "kanji": "角宿",
+  "position": "17°09′ Virgo to 0°00′ Libra",
+  "stars": "Spica (α Vir)",
+  "keyword": "the unarmed bright",
+  "poem": "the unarmed one: bright, and carrying nothing.",
+  "skies": {
+   "arabia": {
+    "name": "al-Simāk al-Aʿzal",
+    "meaning": "\"the Unarmed High One\" — the tall star that carries no weapon (its twin, Arcturus, is al-Simāk the Lance-bearer)"
+   },
+   "india": {
+    "name": "Chitrā",
+    "deity": "Tvaṣṭṛ, the divine artisan",
+    "symbol": "a bright jewel"
+   },
+   "china": {
+    "name": "角 Jiǎo",
+    "gloss": "the Horn",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "flood-dragon"
+   },
+   "japan": {
+    "name": "すぼし Suboshi",
+    "kanji": "角宿"
+   }
+  },
+  "guardian": "the flood-dragon",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "arabia's name for spica is the unarmed high one — al-simāk al-aʿzal, the tall star that carries no weapon. its twin, arcturus, is al-simāk the lance-bearer. the sky named the pair and then took the weapon off one of them.",
+  "synthesis": "a jewel, an unarmed height, and the azure dragon's own horn. india's chitrā means the brilliant one and its deity is tvaṣṭṛ, the divine artisan — the maker of made things, including the weapon this mansion is not carrying.",
+  "election": "the old books gave these degrees love, marriage, and the healing of the sick. agrippa is good to sailors here and hinders journeys by land; picatrix cures the sick and destroys the harvest. every source gives this mansion something it loves and something it ruins.",
+  "archetype": "a light here is visible and undefended, and the two are the same condition. spica is the brightest star in virgo and one of the brightest in the sky, and the tradition that named it went out of its way to say it is holding nothing. tvaṣṭṛ makes objects of great beauty and is famous in the myths for what happens to them afterward — the artisan's problem is never the making. these degrees give craft and the attention craft attracts, and withhold the instinct to arm against that attention. what is built here is admired first and protected second, if at all.",
+  "born": {
+   "strike": "your sun landed on spica — the brightest star in virgo, a single clean white light with nothing near it. the arabic name is the one to keep: al-simāk al-aʿzal, the unarmed high one. there are two tall bright stars in that part of the sky, and the old astronomers distinguished them by what they carried: the other one, arcturus, is al-simāk al-rāmiḥ — the high one with a lance. you got the one who came up that high carrying nothing. india names the same star citrā, the brilliant one, and gives it to tvaṣṭṛ, the divine craftsman who shapes every form. so the hunger here is to make the one beautiful thing that doesn't need defending. you'd rather build the argument than win it. the cost is right there in the name. unarmed is a choice, and it is not always returned. you will meet people who read the absence of a weapon as an invitation, and you will have to decide — repeatedly, and without becoming someone else — how to hold the ground anyway.",
+   "facing": "you enter clean and unarmed and people notice the absence of edge before they notice anything else. it reads as poise. it is also, in certain rooms, read as an opening — and you find out early which room you're in."
+  },
+  "card": {
+   "left": 9,
+   "right": 5,
+   "ab": "jewel",
+   "text": "turns its stronger face to meet",
+   "verb": "turn a card",
+   "fires": "always"
+  },
+  "walkers": [
+   {
+    "name": "ozan",
+    "fig": "imra",
+    "them": "him",
+    "in": "ozan keeps the tally: every dull stone in the hall has a line in his book and not one of them has a name."
+   },
+   {
+    "name": "mirel",
+    "fig": "sef",
+    "them": "her",
+    "in": "mirel weighs. the scales are true, and every stone weighs what it weighs, which is never what it looks."
+   },
+   {
+    "name": "sefir",
+    "fig": "odel",
+    "them": "him",
+    "in": "sefir holds the keys. there are more keys than doors, and he has never said which is which."
+   },
+   {
+    "name": "tunn",
+    "fig": "tesh",
+    "them": "him",
+    "in": "tunn trims the lamps, all of them, every night, and lights none: the hall has one light and it is not a lamp."
+   },
+   {
+    "name": "roka",
+    "fig": "ruen",
+    "them": "her",
+    "in": "roka polishes the stones that will never shine, one a night, for as long as anyone remembers."
+   },
+   {
+    "name": "esen",
+    "fig": "brann",
+    "them": "him",
+    "in": "esen appraises through a glass and has yet to find a flaw in anything in this hall, because nothing here has a face to hold one."
+   },
+   {
+    "name": "the treasurer",
+    "fig": "mave",
+    "them": "her",
+    "in": "the treasurer counts the whole hall every night and arrives at the same number."
+   },
+   {
+    "name": "the duster",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the duster keeps one jewel clean and has never touched another stone in the hall."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[13].epithet",
+   "position": "stations.js[13].position",
+   "stars": "stations.js[13].stars",
+   "kanji": "stations.js[13].kanji",
+   "keyword": "reading-copy.js MANSION.14.keyword",
+   "poem": "the game's _mPoem[13] (station-poems.json)",
+   "skies.arabia": "stations.js[13].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 14 nakshatra",
+   "skies.china": "mansions-table.json id 14 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.14 metadata line",
+   "guardian": "corpus-mansions.md MANSION.14 metadata line",
+   "match": "stations.js[13].match",
+   "claim": "reading-copy.js MANSION.14.claim",
+   "synthesis": "reading-copy.js MANSION.14.synthesis",
+   "election": "reading-copy.js MANSION.14.election",
+   "archetype": "reading-copy.js MANSION.14.archetype",
+   "born": "reading-copy.js STATION.14.strike, STATION.14.facing",
+   "card": "the game's pool[13] and ABS[14]",
+   "walkers": "walker-sheet.js WALKERS[14]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 15,
+  "epithet": "The Veil",
+  "slug": "the-veil",
+  "kanji": "亢宿",
+  "position": "0°00′ Libra to 12°51′ Libra",
+  "stars": "ι, κ, λ Vir",
+  "keyword": "the cover",
+  "poem": "faint stars under a cover. what stands here is easy to walk past.",
+  "skies": {
+   "arabia": {
+    "name": "al-Ghafr",
+    "meaning": "\"the Cover / the Veil\""
+   },
+   "india": {
+    "name": "Svātī",
+    "deity": "Vāyu, the wind",
+    "symbol": "a young shoot in wind"
+   },
+   "china": {
+    "name": "亢 Kàng",
+    "gloss": "the Neck",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "dragon"
+   },
+   "japan": {
+    "name": "あみぼし Amiboshi",
+    "kanji": "亢宿"
+   }
+  },
+  "guardian": "the dragon",
+  "match": {
+   "flag": "DIVERGENT",
+   "test": "the traditions describe genuinely different or opposed things",
+   "why": "cover vs *the one that stands apart*; India is on Arcturus"
+  },
+  "claim": "arabia named these degrees the cover. india looked at the same stretch and put its station on arcturus — a star off the road entirely — and called it svātī, the one that goes by itself. cover, and the thing that will not be covered.",
+  "synthesis": "a veil, a young shoot bending in the wind, and the dragon's exposed throat. svātī is self-going; its deity is vāyu, the wind itself. the flag here reads DIVERGENT — the traditions are not describing one place, and the argument is between hiding and standing apart.",
+  "election": "the old books gave these degrees digging, wells, and the finding of treasure — all three of them things retrieved from under something. picatrix keeps the treasure and the wells and adds separation, a mixed flag. the same sources say the stretch hinders travel.",
+  "archetype": "a light here is not hidden so much as unplaced. svātī is the star that stands apart from every group near it, and vāyu is the one element that cannot be held; the arabic cover and the chinese throat are both about the thin layer between something soft and the open air. independence arrives here as a fact rather than a decision, which is the difficulty: a shoot in wind bends because nothing is holding it. these degrees give a self that does not need the room's permission, and take away the option of belonging to the room without thinking about it.",
+  "born": {
+   "strike": "your sun landed at 0° libra — the autumn balance point, where day and night come level — on three stars so faint that the name the arabs gave them is al-ghafr, the cover: the thing that veils. medieval writers argued about why. some said the stars are simply dim, as though something were laid over them. others said the word means the tuft of hair at the tip of the old sky-lion's tail. the root is the same one that gives the arabic word for forgiveness — because to forgive, in that language's logic, is to cover something over. the oldest books call al-ghafr the best of the twenty-eight mansions, and the reason is position, not poetry. the lion's dangerous end is teeth and claws, and this station has only its tail. the scorpion's dangerous end is the sting, and this station has only its claws. it is the one stretch of the road that is out of reach of both. the best station for ever, between the claws and the lion, went the old line. so your hunger is to find the safe gap and work in it. india's name here is svāti, given to vāyu, the wind, with a young shoot for its emblem — bending without snapping. you have organized more of your life around staying unpinned than you would probably admit, and it has worked. the oldest books also give this sky one job above all: the finding of water underground. later magicians in europe upgraded that to buried treasure. keep the older version — you are the one who knows where the water is. a cover works on everyone, including the people who would have helped. the drafts folder, the private practice, the version of the work nobody has seen: the habit of staying out of reach stops being protection at some point and becomes the reason nobody found you.",
+   "facing": "you enter without announcing anything, and people fill the space with their own assumptions — which you allow. it takes a specific kind of attention to notice how much you're not saying, and you tend to like whoever notices."
+  },
+  "card": {
+   "left": 3,
+   "right": 8,
+   "ab": "veil",
+   "text": "turns the first beside it",
+   "verb": "turn a card",
+   "fires": "on lodge"
+  },
+  "walkers": [
+   {
+    "name": "hala",
+    "fig": "imra",
+    "them": "her",
+    "in": "hala dyes. her hands are stained to the wrist and her sleeves are down over them, and the colour of tonight's vat is nobody's business."
+   },
+   {
+    "name": "merin",
+    "fig": "sef",
+    "them": "her",
+    "in": "merin folds. the stack beside her is taller than she is, every fold the same width, and what is in the middle of it has not been seen since it went in."
+   },
+   {
+    "name": "tobiah",
+    "fig": "odel",
+    "them": "him",
+    "in": "tobiah hangs the lines. he keeps the pegs in his mouth, which is why he says nothing, which is also why they gave him the lines."
+   },
+   {
+    "name": "senna",
+    "fig": "tesh",
+    "them": "her",
+    "in": "senna mends. there is a tear in the great cloth that nobody else has noticed, and she has been at it for three nights, and nobody will ever notice that either."
+   },
+   {
+    "name": "ilke",
+    "fig": "ruen",
+    "them": "her",
+    "in": "ilke carries the bride's cloth. she has carried it three years, folded, and has never seen the bride, and has never asked."
+   },
+   {
+    "name": "oran",
+    "fig": "brann",
+    "them": "him",
+    "in": "oran keeps the vat. the lid is on. it has been on all night and it will be on in the morning, and the dye keeps better for it."
+   },
+   {
+    "name": "the seamstress",
+    "fig": "mave",
+    "them": "her",
+    "in": "the seamstress has a needle and no thread you can see."
+   },
+   {
+    "name": "the covered one",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the covered one stands under a sheet. all of them. nobody has said who it is, and"
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[14].epithet",
+   "position": "stations.js[14].position",
+   "stars": "stations.js[14].stars",
+   "kanji": "stations.js[14].kanji",
+   "keyword": "reading-copy.js MANSION.15.keyword",
+   "poem": "the game's _mPoem[14] (station-poems.json)",
+   "skies.arabia": "stations.js[14].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 15 nakshatra",
+   "skies.china": "mansions-table.json id 15 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.15 metadata line",
+   "guardian": "corpus-mansions.md MANSION.15 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 15",
+   "claim": "reading-copy.js MANSION.15.claim",
+   "synthesis": "reading-copy.js MANSION.15.synthesis",
+   "election": "reading-copy.js MANSION.15.election",
+   "archetype": "reading-copy.js MANSION.15.archetype",
+   "born": "reading-copy.js STATION.15.strike, STATION.15.facing",
+   "card": "the game's pool[14] and ABS[15]",
+   "walkers": "walker-sheet.js WALKERS[15]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 16,
+  "epithet": "The Claws",
+  "slug": "the-claws",
+  "kanji": "氐宿",
+  "position": "12°51′ Libra to 25°43′ Libra",
+  "stars": "α, β Lib — Zubenelgenubi and Zubeneschamali, \"the southern claw\" and \"the northern claw\"",
+  "keyword": "the fork",
+  "poem": "the scorpion's claws, held open, before there was a balance here.",
+  "skies": {
+   "arabia": {
+    "name": "al-Zubānā",
+    "meaning": "\"the Claws (of the Scorpion)\""
+   },
+   "india": {
+    "name": "Viśākhā",
+    "deity": "Indrāgnī, force and fire as one",
+    "symbol": "triumphal arch"
+   },
+   "china": {
+    "name": "氐 Dǐ",
+    "gloss": "the Foundation",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "raccoon-dog"
+   },
+   "japan": {
+    "name": "ともぼし Tomo-boshi",
+    "kanji": "氐宿"
+   }
+  },
+  "guardian": "the raccoon-dog",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "libra's two brightest stars are still called the southern claw and the northern claw. the greeks kept them on the scorpion as the chelae; rome cut them off and handed the space back to a balance babylon had already put there. the names never changed.",
+  "synthesis": "two claws, a forked star, and a foundation. viśākhā means the branched one, and its deity is indrāgnī — indra and agni worshipped as a single god, force and fire welded into one name. everything in this mansion comes in twos that refuse to separate.",
+  "election": "the old books say these degrees hinder journeys and marriage, and picatrix marks them for discord and the destruction of crops — hostile flags, kept on the history shelf. the one use every source agrees on is the freeing of captives.",
+  "archetype": "a light here goes two ways at once and does not experience this as indecision. the classical power given to these degrees is vyāpana śakti, the power to achieve many and various fruits, and its stated basis is the pair of ploughing and harvest — the same field, twice, at opposite ends of the year. the mansion's whole architecture is the fork: two claws on one animal, two gods in one name, a triumphal arch that is two pillars before it is a victory. what these degrees withhold is the single-mindedness that makes things fast. the arch stands because it is carrying weight in two directions.",
+  "born": {
+   "strike": "your sun landed on two bright stars whose names still say what they used to be: zubenelgenubi and zubeneschamali — the southern claw and the northern claw. they belong to libra now, the scales, but they were the scorpion's grip first. babylon saw both readings; greece kept the claws; rome gave the balance back. the same two stars, held by every tradition as a weapon and as a measuring instrument, at once. india agrees in its own vocabulary: viśākhā means forked — two branches — and its deity is indrāgnī, a fused pair, force and fire together. its emblem is a triumphal arch, which has two legs and one opening. so the hunger of this sky is to reach the thing, and to find out what the reaching made of you. you weigh and you seize, and the order in which you do those two is the entire question of your life. the cost: a person who can hold both readings can also stall between them. weighing forever is a way of never gripping, and you will call it fairness, and sometimes it will be.",
+   "facing": "you enter and start weighing — the room, the mood, who's not being listened to. people find you even-handed on sight and bring you both sides of things within a week of knowing you."
+  },
+  "card": {
+   "left": 7,
+   "right": 6,
+   "ab": "claws",
+   "text": "shoves her card along",
+   "verb": "move a card",
+   "fires": "always"
+  },
+  "walkers": [
+   {
+    "name": "odri",
+    "fig": "imra",
+    "them": "her",
+    "in": "odri is the weigh-master and owns a set of brass weights, polished, none of which has been in a pan since she was given them."
+   },
+   {
+    "name": "pol",
+    "fig": "sef",
+    "them": "him",
+    "in": "pol checks the merchants' scales against the great one every market day and has never once found a true pair."
+   },
+   {
+    "name": "senga",
+    "fig": "odel",
+    "them": "her",
+    "in": "senga sells by the handful and refuses the balance on principle. her handfuls are, as it happens, exactly equal."
+   },
+   {
+    "name": "kade",
+    "fig": "tesh",
+    "them": "him",
+    "in": "kade carries the sacks and knows the weight of each by the shoulder it sits on, to the ounce, and has never needed the pan."
+   },
+   {
+    "name": "imke",
+    "fig": "ruen",
+    "them": "her",
+    "in": "imke is the assayer and tests gold by rubbing it beside a known streak on a black stone. two things side by side, and the eye decides."
+   },
+   {
+    "name": "ruf",
+    "fig": "brann",
+    "them": "him",
+    "in": "ruf oils the chains so the beam swings free, and says a balance that sticks is a balance that lies."
+   },
+   {
+    "name": "the arbiter",
+    "fig": "mave",
+    "them": "her",
+    "in": "the arbiter settles disputes by standing between two people until they agree."
+   },
+   {
+    "name": "the one in the other pan",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one in the other pan sits in the empty pan of the great balance, and it stays exactly level, which nobody can explain."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[15].epithet",
+   "position": "stations.js[15].position",
+   "stars": "stations.js[15].stars",
+   "kanji": "stations.js[15].kanji",
+   "keyword": "reading-copy.js MANSION.16.keyword",
+   "poem": "the game's _mPoem[15] (station-poems.json)",
+   "skies.arabia": "stations.js[15].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 16 nakshatra",
+   "skies.china": "mansions-table.json id 16 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.16 metadata line",
+   "guardian": "corpus-mansions.md MANSION.16 metadata line",
+   "match": "stations.js[15].match",
+   "claim": "reading-copy.js MANSION.16.claim",
+   "synthesis": "reading-copy.js MANSION.16.synthesis",
+   "election": "reading-copy.js MANSION.16.election",
+   "archetype": "reading-copy.js MANSION.16.archetype",
+   "born": "reading-copy.js STATION.16.strike, STATION.16.facing",
+   "card": "the game's pool[15] and ABS[16]",
+   "walkers": "walker-sheet.js WALKERS[16]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 17,
+  "epithet": "The Crown",
+  "slug": "the-crown",
+  "kanji": "房宿",
+  "position": "25°43′ Libra to 8°34′ Scorpio",
+  "stars": "β, δ, π Sco",
+  "keyword": "the kept oath",
+  "poem": "a crown of three stars above the scorpion's heart.",
+  "skies": {
+   "arabia": {
+    "name": "al-Iklīl",
+    "meaning": "\"the Crown (of the Scorpion)\" — the diadem across its brow"
+   },
+   "india": {
+    "name": "Anurādhā",
+    "deity": "Mitra, god of friendship and sworn alliance",
+    "symbol": "archway · lotus"
+   },
+   "china": {
+    "name": "房 Fáng",
+    "gloss": "the Room",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "rabbit"
+   },
+   "japan": {
+    "name": "そいぼし Soi-boshi",
+    "kanji": "房宿"
+   }
+  },
+  "guardian": "the rabbit",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "a diadem across a scorpion's brow, an archway, and a room. three things a person walks under or into, and all three of them were built by somebody who expected them to still be standing later.",
+  "synthesis": "india's deity here is mitra — the god of the sworn oath between equals, the contract nobody is forced into. anurādhā means following rādhā, and the classical power given to it is rādhana śakti, the power of worship. devotion here is a thing entered on purpose.",
+  "election": "the old books gave these degrees fortune, love of long duration, buildings, and armies. picatrix keeps the long-lasting love and adds the safety of sailors. the durability station — every recorded use is about something that has to hold up over time.",
+  "archetype": "a light here builds the kind of thing that is judged in decades. mitra is not the god of feeling; he is the god of the agreement that outlives the feeling, which is a colder idea and a warmer practice. the crown sits on the scorpion — the mansion puts a diadem on the most dangerous animal in the sky and the diadem stays on — so what is governed here is the arrangement under which a dangerous thing consents to be governed. the difficulty is exit. a chart that specialises in durable bonds is a chart with no instinct for how to leave one, and these degrees supply no such instinct at all.",
+  "born": {
+   "strike": "your sun landed on three stars in a clean row across the scorpion's brow — al-iklīl, the crown, and one of the very few stations every old sky-map agreed about completely. the election books give this sky one signature above all others: love of long duration. not the spark. the thing that is still there in year nine. india calls it anurādhā and gives it to mitra — and that word is worth stopping on. it began as covenant, the sworn contract, and only in later sanskrit did it simply become the word for friend. he is the god of the sworn alliance, the contract, the promise between equals. so this is not a crown of rank. it is a crown you are given by the people who chose to keep you. your hunger is to stay through the part that isn't fun — and you are unusual in that you are not actually bored by the maintenance. you like the ninth year. loyalty this durable will occasionally be spent on something that stopped deserving it, and you will be the last to notice, because noticing feels like betrayal.",
+   "facing": "you enter and people relax. you are read as safe within minutes, and told real things within days — which is a gift and a filter you didn't ask for, since it also draws people who need somewhere soft to put things down."
+  },
+  "card": {
+   "left": 7,
+   "right": 6,
+   "ab": "crown",
+   "text": "what it takes cannot be taken back",
+   "verb": "deny a fight",
+   "fires": "on claim"
+  },
+  "walkers": [
+   {
+    "name": "ardith",
+    "fig": "imra",
+    "them": "her",
+    "in": "ardith is the wall-warden and carries the keys on a ring. no gate on this wall has been unlocked in her lifetime, and the keys are polished anyway."
+   },
+   {
+    "name": "temmin",
+    "fig": "sef",
+    "them": "him",
+    "in": "temmin lights the torches along the walk each night with a taper, one at a time, and puts none of them out."
+   },
+   {
+    "name": "sol",
+    "fig": "odel",
+    "them": "him",
+    "in": "sol is the sentry and looks out, never in. in all his watches nothing has come within an arrow's flight and he has not stopped looking."
+   },
+   {
+    "name": "brannoc",
+    "fig": "tesh",
+    "them": "him",
+    "in": "brannoc the mason repoints stones that have not shifted a hair. he says a wall is kept, not built."
+   },
+   {
+    "name": "ives",
+    "fig": "ruen",
+    "them": "him",
+    "in": "ives carries water up from the keep's well, which has never once run dry, in the same two buckets."
+   },
+   {
+    "name": "lune",
+    "fig": "brann",
+    "them": "her",
+    "in": "lune is the archer and her bow is unstrung. nothing has come in range in a hundred years and she is at her post every night regardless."
+   },
+   {
+    "name": "the castellan",
+    "fig": "mave",
+    "them": "her",
+    "in": "the castellan holds the keep's one key and has never needed it."
+   },
+   {
+    "name": "the gate-hand",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the gate-hand stands with one hand on the portcullis chain, and has stood there since the chain was hung."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[16].epithet",
+   "position": "stations.js[16].position",
+   "stars": "stations.js[16].stars",
+   "kanji": "stations.js[16].kanji",
+   "keyword": "reading-copy.js MANSION.17.keyword",
+   "poem": "the game's _mPoem[16] (station-poems.json)",
+   "skies.arabia": "stations.js[16].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 17 nakshatra",
+   "skies.china": "mansions-table.json id 17 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.17 metadata line",
+   "guardian": "corpus-mansions.md MANSION.17 metadata line",
+   "match": "stations.js[16].match",
+   "claim": "reading-copy.js MANSION.17.claim",
+   "synthesis": "reading-copy.js MANSION.17.synthesis",
+   "election": "reading-copy.js MANSION.17.election",
+   "archetype": "reading-copy.js MANSION.17.archetype",
+   "born": "reading-copy.js STATION.17.strike, STATION.17.facing",
+   "card": "the game's pool[16] and ABS[17]",
+   "walkers": "walker-sheet.js WALKERS[17]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 18,
+  "epithet": "The Heart",
+  "slug": "the-heart",
+  "kanji": "心宿",
+  "position": "8°34′ Scorpio to 21°26′ Scorpio",
+  "stars": "Antares — Qalb al-ʿAqrab, the Scorpion's heart",
+  "keyword": "the eldest",
+  "poem": "antares, the heart. red, and answering mars.",
+  "skies": {
+   "arabia": {
+    "name": "al-Qalb",
+    "meaning": "\"the Heart\" — Antares, red in the scorpion's chest"
+   },
+   "india": {
+    "name": "Jyeṣṭhā",
+    "deity": "Indra, king of the gods",
+    "symbol": "amulet · umbrella"
+   },
+   "china": {
+    "name": "心 Xīn",
+    "gloss": "the Heart",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "fox"
+   },
+   "japan": {
+    "name": "なかごぼし Nakago-boshi",
+    "kanji": "心宿"
+   }
+  },
+  "guardian": "the fox",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "arabia, china and japan all call these degrees the heart — the same word, the same star. it is the clearest agreement anywhere on the road, and the flag reads STRONG.",
+  "synthesis": "antares is red and it sits in the scorpion's chest. the arabic qalb al-ʿaqrab translates the greek kardia skorpiou — the agreement here is inheritance rather than coincidence, one name carried across three languages without anyone changing their mind about it. india calls the station jyeṣṭhā, the eldest — the senior-most, the one who was here first — and gives it indra, king of the gods.",
+  "election": "the old books gave these degrees victory over enemies, and the same books mark them for sedition and discord. both entries survive in every source. picatrix has victory and conspiracies together, a mixed flag. a heart this strong was understood to need aiming.",
+  "archetype": "a light here is senior. not older — senior, which is a position rather than an age, and these degrees confer it early and without asking. the classical power given to jyeṣṭhā is ārohana śakti, the power to rise, and its stated basis is attack above and defence below: the same motion serving either. antares means rival of mars, a name given by people watching a red star hold its own against a red planet all year. the mansion's difficulty is that seniority is not the same as being loved for it. the eldest gets the responsibility, the deference, and the specific loneliness of a position nobody else applied for.",
+  "born": {
+   "strike": "your sun landed on antares — the red star at the center of the scorpion, and one of the few places where two sky-cultures that never met reached for the same word. the arabs called it qalb al-ʿaqrab, the scorpion's heart. china's name for this station is 心 — heart. the greek name, antares, means rival of ares — the rival of mars. it is red enough, and bright enough, that it competes with a planet. india names this sky jyeṣṭhā, which means the eldest, and gives it to indra, king of the gods. your hunger: you want to be the most important one to somebody — the first called, the one who gets told first — and you will take on any amount of protecting to earn it. the cost is the rivalry buried in the name. a heart that burns that hot keeps score of its own significance, and the ugliest hours of this station are the ones spent quietly measuring your place against someone else's. it isn't jealousy exactly. it's the eldest's terror of being replaceable.",
+   "facing": "you enter at full color and people know how they feel about you almost immediately. nobody meets you neutrally. that's the red star doing its work — you can't arrive dimly."
+  },
+  "card": {
+   "left": 8,
+   "right": 7,
+   "ab": "heart",
+   "text": "at the fill, it strikes both sides",
+   "verb": "add a fight",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "asha",
+    "fig": "imra",
+    "them": "her",
+    "in": "asha feeds the kiln before she fights."
+   },
+   {
+    "name": "derev",
+    "fig": "sef",
+    "them": "him",
+    "in": "derev counts embers, not cards."
+   },
+   {
+    "name": "onna",
+    "fig": "odel",
+    "them": "her",
+    "in": "onna waits the way the sting waits."
+   },
+   {
+    "name": "kel",
+    "fig": "tesh",
+    "them": "him",
+    "in": "kel keeps the rain off his corners."
+   },
+   {
+    "name": "sorev",
+    "fig": "ruen",
+    "them": "him",
+    "in": "sorev reads heat the way others read hands."
+   },
+   {
+    "name": "brakka",
+    "fig": "brann",
+    "them": "her",
+    "in": "brakka answers red with red."
+   },
+   {
+    "name": "immi",
+    "fig": "mave",
+    "them": "her",
+    "in": "immi gives the fire nothing to eat."
+   },
+   {
+    "name": "the rain-keeper",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the rain-keeper has tended this road since the first rains broke."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[17].epithet",
+   "position": "stations.js[17].position",
+   "stars": "stations.js[17].stars",
+   "kanji": "stations.js[17].kanji",
+   "keyword": "reading-copy.js MANSION.18.keyword",
+   "poem": "the game's _mPoem[17] (station-poems.json)",
+   "skies.arabia": "stations.js[17].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 18 nakshatra",
+   "skies.china": "mansions-table.json id 18 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.18 metadata line",
+   "guardian": "corpus-mansions.md MANSION.18 metadata line",
+   "match": "stations.js[17].match",
+   "claim": "reading-copy.js MANSION.18.claim",
+   "synthesis": "reading-copy.js MANSION.18.synthesis",
+   "election": "reading-copy.js MANSION.18.election",
+   "archetype": "reading-copy.js MANSION.18.archetype",
+   "born": "reading-copy.js STATION.18.strike, STATION.18.facing",
+   "card": "the game's pool[17] and ABS[18]",
+   "walkers": "walker-sheet.js WALKERS[18]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 19,
+  "epithet": "The Root",
+  "slug": "the-root",
+  "kanji": "尾宿",
+  "position": "21°26′ Scorpio to 4°17′ Sagittarius",
+  "stars": "λ, υ Sco — Shaula, the raised sting",
+  "keyword": "the bottom of it",
+  "poem": "the sting held up, and not yet brought down.",
+  "skies": {
+   "arabia": {
+    "name": "al-Shawla",
+    "meaning": "\"the Sting\" — the raised barb"
+   },
+   "india": {
+    "name": "Mūla",
+    "deity": "Nirṛti in practice, Prajāpati in the oldest text (§4)",
+    "symbol": "a bundle of tied roots"
+   },
+   "china": {
+    "name": "尾 Wěi",
+    "gloss": "the Tail",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "tiger"
+   },
+   "japan": {
+    "name": "あしたれぼし Ashitare-boshi",
+    "kanji": "尾宿"
+   }
+  },
+  "guardian": "the tiger",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": null
+  },
+  "claim": "india calls these degrees the root and everyone else calls them the tail. same stars, opposite ends of the same idea — the part of the animal that comes last, and the part of the plant that came first.",
+  "synthesis": "a raised sting, a tail, and a bundle of roots tied together. mūla means the bottom, the origin, the thing you hit when you have dug all the way down. its deity is nirṛti, dissolution — named in the oldest text and softened by later hands into alakṣmī, misfortune personified.",
+  "election": "the medieval electors kept peace-work away from these degrees. picatrix sends armies against cities and takes fugitives — and then, without comment, increases the crops. the harming of ships is agrippa's entry, not his. the martial end of the scorpion, and not uniformly so.",
+  "archetype": "a light here goes to the bottom of things, and the mansion is honest that this is a destructive act. you cannot examine a root without pulling the plant up. nirṛti is the goddess of dissolution and she is not a villain in the texts — she is what is left when a structure is taken apart, and somebody has to be able to do that. the talent is finding the actual cause, the one under the three plausible ones. the search is not gentle and does not stop on request, and these degrees supply no mechanism for deciding that a thing has been understood well enough already.",
+  "born": {
+   "strike": "your sun landed at the end of the scorpion's tail — and the two traditions named the same spot from opposite directions. the arabs saw al-shawla, the raised sting: the business end, lifted. india saw mūla, which means the root — its emblem a bundle of tied roots, because the tail's end is also where the tail begins. you go to the bottom of things. where other people take the account they were given, you dig for the cause. the origin, the real reason, the first version of the story before it got tidy. the cost is what's at the bottom. digging to the root means handling the sting, every time — the true reason is frequently the one nobody wanted found, and you will be the person who found it. you have been thanked for this far less often than you have been right.",
+   "facing": "you enter and people sense the floor of you — that there is something solid and slightly dangerous down there. it makes small talk difficult and real conversation fast."
+  },
+  "card": {
+   "left": 7,
+   "right": 7,
+   "ab": "root",
+   "text": "turns both its neighbours",
+   "verb": "turn a card",
+   "fires": "on lodge"
+  },
+  "walkers": [
+   {
+    "name": "muza",
+    "fig": "imra",
+    "them": "her",
+    "in": "muza runs the cut. she chalked tonight's edge before you got here, and the line does not move."
+   },
+   {
+    "name": "hev",
+    "fig": "sef",
+    "them": "him",
+    "in": "hev shores whatever the digging opens. nothing has come down on anyone yet."
+   },
+   {
+    "name": "ansu",
+    "fig": "odel",
+    "them": "her",
+    "in": "ansu sifts every basket. what is worth keeping was never the big pieces."
+   },
+   {
+    "name": "kori",
+    "fig": "tesh",
+    "them": "him",
+    "in": "kori carries spoil up and empty baskets down, all night, and has never been asked twice."
+   },
+   {
+    "name": "zayn",
+    "fig": "ruen",
+    "them": "him",
+    "in": "zayn cuts the roots that grew down into the grave. they take longer to get through than the stone did."
+   },
+   {
+    "name": "orsa",
+    "fig": "brann",
+    "them": "her",
+    "in": "orsa tallies what comes out. she has the whole burial written down twice, in case."
+   },
+   {
+    "name": "veya",
+    "fig": "mave",
+    "them": "her",
+    "in": "veya came with the bones and will walk behind them to the new ground."
+   },
+   {
+    "name": "the ground-watch",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the ground-watch keeps a palm flat on the cut face and feels for movement."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[18].epithet",
+   "position": "stations.js[18].position",
+   "stars": "stations.js[18].stars",
+   "kanji": "stations.js[18].kanji",
+   "keyword": "reading-copy.js MANSION.19.keyword",
+   "poem": "the game's _mPoem[18] (station-poems.json)",
+   "skies.arabia": "stations.js[18].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 19 nakshatra",
+   "skies.china": "mansions-table.json id 19 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.19 metadata line",
+   "guardian": "corpus-mansions.md MANSION.19 metadata line",
+   "match": "stations.js[18].match",
+   "claim": "reading-copy.js MANSION.19.claim",
+   "synthesis": "reading-copy.js MANSION.19.synthesis",
+   "election": "reading-copy.js MANSION.19.election",
+   "archetype": "reading-copy.js MANSION.19.archetype",
+   "born": "reading-copy.js STATION.19.strike, STATION.19.facing",
+   "card": "the game's pool[18] and ABS[19]",
+   "walkers": "walker-sheet.js WALKERS[19]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 20,
+  "epithet": "The Flock",
+  "slug": "the-flock",
+  "kanji": "箕宿",
+  "position": "4°17′ Sagittarius to 17°09′ Sagittarius",
+  "stars": "eight stars in Sgr, two groups of four",
+  "keyword": "to the water and back",
+  "poem": "ostriches at the river: four drinking, four turned away.",
+  "skies": {
+   "arabia": {
+    "name": "al-Naʿāʾim",
+    "meaning": "\"the Ostriches\" — four walking to the river to drink, four walking back"
+   },
+   "india": {
+    "name": "P. Aṣāḍhā",
+    "deity": "Āpas, the divine waters",
+    "symbol": "elephant tusk · fan"
+   },
+   "china": {
+    "name": "箕 Jī",
+    "gloss": "the Winnowing Basket",
+    "quadrant": "Azure Dragon (East/Spring)",
+    "animal": "leopard"
+   },
+   "japan": {
+    "name": "みぼし Miboshi",
+    "kanji": "箕宿"
+   }
+  },
+  "guardian": "the leopard",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": "ostriches at the river, the divine waters, the winnowing basket"
+  },
+  "claim": "eight stars, in two groups of four. arabia read them as ostriches walking to the river to drink, and ostriches walking back — one flock, photographed going both directions at once.",
+  "synthesis": "the ostriches go to the water; india's deity for the same degrees is āpas, the divine waters themselves; and china's winnowing basket is the tool that separates what is worth keeping from what blows away. two traditions independently put water at the centre of this stretch.",
+  "election": "the old books gave these degrees the taming of wild beasts and the laying of a first brick. and then the entry that turns it: agrippa has them destroying the wealth of societies, picatrix breaking the bonds between companions. the mansion tames the animal and dissolves the partnership.",
+  "archetype": "a light here belongs to a group and is never entirely inside it. the image is exact: half the flock is arriving and half is leaving, and no single bird is doing both, but from the ground it reads as one animal with two intentions. pūrva aṣāḍhā means the former unconquered, and the power given to it is invigoration — the mansion refills things. the difficulty is the basket. winnowing separates, and the old books were blunt about what gets separated here — these degrees hand out an unusual talent for sorting what matters from what does not, applied to harvests that were never the sorter's to begin with.",
+  "born": {
+   "strike": "your sun landed on one of the loveliest pictures in the whole sky-map: eight stars at the bank of the milky way, which the arabs read as ostriches — four of them walking down to the river to drink, and four walking back. the same birds, on both sides of the water, and none of them missing. china's name for this station is the winnowing basket, and india's name for the sky, pūrva aṣāḍhā, belongs to the waters — with a winnowing fan among its emblems. two traditions independently put a basket for separating grain from chaff next to the river. so the hunger is double and it fits together: you keep the group together, and you can tell what's worth keeping. your instinct in any gathering is a headcount, and your gift is that you can do it without making it strange. the person counting heads never quite gets to be at the river. you have been present at a great many good evenings and fully inside surprisingly few of them.",
+   "facing": "you enter and immediately know who hasn't been introduced. people experience you as the connective tissue of a room within one evening, and start routing things through you shortly after."
+  },
+  "card": {
+   "left": 7,
+   "right": 6,
+   "ab": "flock",
+   "text": "trades places with a neighbour",
+   "verb": "move a card",
+   "fires": "on lodge"
+  },
+  "walkers": [
+   {
+    "name": "merit",
+    "fig": "imra",
+    "them": "her",
+    "in": "merit is going down with the jars empty, one on each hip, and does not hurry because the river is not going anywhere."
+   },
+   {
+    "name": "oba",
+    "fig": "sef",
+    "them": "him",
+    "in": "oba is coming back with the jars full and walks slower for it, and is glad of the excuse."
+   },
+   {
+    "name": "tesfa",
+    "fig": "odel",
+    "them": "him",
+    "in": "tesfa is the herd-boy driving the birds down to the water with a switch he has never once had to use."
+   },
+   {
+    "name": "nuru",
+    "fig": "tesh",
+    "them": "her",
+    "in": "nuru is the herd-girl bringing the birds back with nothing but her voice, and they come."
+   },
+   {
+    "name": "kito",
+    "fig": "ruen",
+    "them": "him",
+    "in": "kito goes down to the river every night and has never been seen to come back, and is here every night, going down."
+   },
+   {
+    "name": "dalia",
+    "fig": "brann",
+    "them": "her",
+    "in": "dalia is only ever coming back, and nobody saw her go down, and she does not say what she was doing at the water."
+   },
+   {
+    "name": "the drover",
+    "fig": "mave",
+    "them": "her",
+    "in": "the drover stands where the two files pass and lets neither through first."
+   },
+   {
+    "name": "the one on the bank",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the one on the bank sits at the water's edge facing the river and has neither gone down nor come back."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[19].epithet",
+   "position": "stations.js[19].position",
+   "stars": "stations.js[19].stars",
+   "kanji": "stations.js[19].kanji",
+   "keyword": "reading-copy.js MANSION.20.keyword",
+   "poem": "the game's _mPoem[19] (station-poems.json)",
+   "skies.arabia": "stations.js[19].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 20 nakshatra",
+   "skies.china": "mansions-table.json id 20 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.20 metadata line",
+   "guardian": "corpus-mansions.md MANSION.20 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 20",
+   "claim": "reading-copy.js MANSION.20.claim",
+   "synthesis": "reading-copy.js MANSION.20.synthesis",
+   "election": "reading-copy.js MANSION.20.election",
+   "archetype": "reading-copy.js MANSION.20.archetype",
+   "born": "reading-copy.js STATION.20.strike, STATION.20.facing",
+   "card": "the game's pool[19] and ABS[20]",
+   "walkers": "walker-sheet.js WALKERS[20]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 21,
+  "epithet": "The Empty District",
+  "slug": "the-empty-district",
+  "kanji": "斗宿",
+  "position": "17°09′ Sagittarius to 0°00′ Capricorn",
+  "stars": "none. The famous starless stretch of sky; π Sgr stands at its edge as a marker.",
+  "keyword": "the blank that holds everything",
+  "poem": "a district with no stars in it. the moon crosses an empty place.",
+  "skies": {
+   "arabia": {
+    "name": "al-Balda",
+    "meaning": "\"the Empty District\" — the sky's deliberate blank"
+   },
+   "india": {
+    "name": "U. Aṣāḍhā",
+    "deity": "the Viśvedevas, the all-gods together",
+    "symbol": "elephant tusk"
+   },
+   "china": {
+    "name": "斗 Dǒu",
+    "gloss": "the Dipper",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "xiezhi"
+   },
+   "japan": {
+    "name": "ひきつぼし Hikitsu-boshi",
+    "kanji": "斗宿"
+   }
+  },
+  "guardian": "the xiezhi",
+  "match": {
+   "flag": "DIVERGENT",
+   "test": "the traditions describe genuinely different or opposed things",
+   "why": "an empty lot vs every god at once"
+  },
+  "claim": "arabia named these degrees for having nothing in them — al-balda, the empty district, the sky's deliberate blank. india put every god in the pantheon here at once.",
+  "synthesis": "the viśvedevas are the all-gods, worshipped as a collective of ten and never individually. so the same stretch of sky is a vacant lot and a full assembly, and the flag reads DIVERGENT — one of only four on the road. china's dipper is a container, which is the one image that works either way.",
+  "election": "harvests, gain, buildings, travel — a productive station despite the blankness, and every major source agrees on that. agrippa and picatrix both add a warning about separations, a mixed flag kept on the history shelf.",
+  "archetype": "india's own wheel has a seam on the far edge of these degrees. the older lists counted twenty-eight nakshatras, with abhijit — vega — standing immediately after this station and before śravaṇa; it was dropped so that twenty-seven divisions would come out at exactly 13°20′ each. the tradition that counts twenty-seven is the tradition that once counted twenty-eight and chose the arithmetic. a light here stands in that decision. the classical power given to uttara aṣāḍhā is apradhṛṣya śakti, the power to grant an unchallengeable victory — and it is granted in the emptiest quarter of the road. what these degrees offer is room. what they do not offer is anything already in it.",
+  "born": {
+   "strike": "your sun landed in the one station on the road with almost nothing in it. the old arab astronomers mapped twenty-eight stations across the sky, and this one — al-balda, the empty district — is the bare stretch between the archer's head and the goat's horns. al-bīrūnī described it by comparing it to the blank space between two eyebrows that don't meet. one modest star sits in the middle of all that room, and it still carries the station's name: albaldah. and here is the fact that makes this station the strangest and best on the whole wheel: the center of our galaxy lies in this direction. the hundreds of billions of stars we orbit are behind that patch — invisible, because the dust and gas between here and there is too thick to see through. the emptiest sky on the map is the way to the middle of everything. that is your hunger, and it is not what people assume when they hear \"empty\": you want the thing that stays won. india's name here is uttara aṣāḍhā, the sky of the all-gods, the undefeated victory. the pause is not the absence of the work. it's where the work is. you will be read as unproductive during the exact periods when you are doing the most, and you will not always have the vocabulary to defend it — least of all to yourself, at 2am.",
+   "facing": "you enter and the room gets slightly quieter, in a way nobody can account for. you don't fill space; you make some. it is the rarest first impression on the road and people remember it without being able to describe it."
+  },
+  "card": {
+   "left": 3,
+   "right": 8,
+   "ab": "district",
+   "text": "counts two, silences hers",
+   "verb": "change the worth",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "daru",
+    "fig": "imra",
+    "them": "her",
+    "in": "daru walks the night watch with a lantern she stopped filling."
+   },
+   {
+    "name": "nesh",
+    "fig": "sef",
+    "them": "him",
+    "in": "nesh cried the hour here for thirty years. the bell is wrapped in cloth now."
+   },
+   {
+    "name": "olm",
+    "fig": "tesh",
+    "them": "him",
+    "in": "olm carries the lighting-pole past hooks with nothing on them, every night, in order."
+   },
+   {
+    "name": "tavi",
+    "fig": "odel",
+    "them": "her",
+    "in": "tavi chalks the doors. she will not say what the marks mean."
+   },
+   {
+    "name": "ren",
+    "fig": "ruen",
+    "them": "her",
+    "in": "ren mends shutters that are latched from the inside. someone latched them."
+   },
+   {
+    "name": "sabb",
+    "fig": "brann",
+    "them": "him",
+    "in": "sabb sweeps a street nobody walks and dares you to say it is pointless."
+   },
+   {
+    "name": "iyad",
+    "fig": "mave",
+    "them": "him",
+    "in": "iyad the bailiff carries a writ nobody will accept."
+   },
+   {
+    "name": "the last tenant",
+    "fig": "the quiet one",
+    "them": "her",
+    "in": "the last tenant stands in her doorway holding a key she has not used since the quarter emptied."
+   }
+  ],
+  "alignNote": null,
+  "trace": {
+   "epithet": "stations.js[20].epithet",
+   "position": "stations.js[20].position",
+   "stars": "stations.js[20].stars",
+   "kanji": "stations.js[20].kanji",
+   "keyword": "reading-copy.js MANSION.21.keyword",
+   "poem": "the game's _mPoem[20] (station-poems.json)",
+   "skies.arabia": "stations.js[20].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 21 nakshatra",
+   "skies.china": "mansions-table.json id 21 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.21 metadata line",
+   "guardian": "corpus-mansions.md MANSION.21 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 21",
+   "claim": "reading-copy.js MANSION.21.claim",
+   "synthesis": "reading-copy.js MANSION.21.synthesis",
+   "election": "reading-copy.js MANSION.21.election",
+   "archetype": "reading-copy.js MANSION.21.archetype",
+   "born": "reading-copy.js STATION.21.strike, STATION.21.facing",
+   "card": "the game's pool[20] and ABS[21]",
+   "walkers": "walker-sheet.js WALKERS[21]",
+   "alignNote": null
+  }
+ },
+ {
+  "n": 22,
+  "epithet": "The Listener",
+  "slug": "the-listener",
+  "kanji": "牛宿",
+  "position": "0°00′ Capricorn to 12°51′ Capricorn",
+  "stars": "α, β Cap (Giedi, Dabih)",
+  "keyword": "the ear",
+  "poem": "the slaughterer's luck. what is done here is done quickly.",
+  "skies": {
+   "arabia": {
+    "name": "Saʿd al-Dhābiḥ",
+    "meaning": "\"Luck of the Slaughterer\" — the old herding calendar's hard-season station, named plainly for midwinter's work; kept in the depth layer, told honestly, not dwelled on"
+   },
+   "india": {
+    "name": "Śravaṇa",
+    "deity": "Viṣṇu, who crossed the worlds in three strides",
+    "symbol": "an ear · three footprints"
+   },
+   "china": {
+    "name": "牛 Niú",
+    "gloss": "the Ox",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "ox"
+   },
+   "japan": {
+    "name": "いなみぼし Inami-boshi",
+    "kanji": "牛宿"
+   }
+  },
+  "guardian": "the ox",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "Arabia and China agree (slaughterer / ox); India is on Altair"
+  },
+  "claim": "india calls these degrees the ear. japan stopped counting them altogether. this is the station the sukuyō system dropped to get from twenty-eight down to twenty-seven.",
+  "synthesis": "arabia and china agree closely and grimly — saʿd al-dhābiḥ, the luck of the slaughterer, and 牛 niú, the ox — the midwinter herding calendar's hard season, named plainly for its work. india is somewhere else entirely: śravaṇa, the listening one, on altair, with viṣṇu who crossed the whole world in three strides.",
+  "election": "agrippa gave these degrees the flight of captives and the curing of disease. picatrix keeps the cure and adds discord between people — the mansion lets something out, and the books do not agree that what gets out is the prisoner.",
+  "archetype": "in the buddhist tables that carried the twenty-eight from china to japan, this mansion is abhijit — 斗 is uttara aṣāḍhā, 牛 is abhijit, 女 is śravaṇa. so when the sukuyō system cut 牛宿 it was not making a second decision. it was inheriting india's, one language later, and the same station fell out twice. a light here stands on the road's one transmitted seam. the compensation is śravaṇa: the ear, the organ that works in the dark and cannot be closed, and viṣṇu's three footprints, which measure a thing by walking it rather than looking at it. the talent is hearing what a room is actually saying under what it is saying. the difficulty is the ox — the mansion also hands out the season's work, and nobody thanks the animal that carried it.",
+  "born": {
+   "strike": "you landed at 0° capricorn — the winter solstice point, the hinge where the year turns back toward light. a saying still current in the levant marks these nights by how cold they get: cold enough that saʿd al-dhābiḥ left no barking dog outdoors. what that leaves is silence. and india hung its name for this sky on exactly that: śravaṇa, which means the hearing — the ear of the sky. its deity is viṣṇu, who crossed the whole world in three strides, so the listening here isn't passive; it's how you cover ground. your hunger is to listen until the pattern shows itself. you are the one who has actually heard what was said — the phrasing, the hesitation, the thing repeated twice — and you can usually reconstruct a situation from evidence other people threw away. the listener is rarely the one heard. you have built a life where people talk to you, and it is entirely possible to reach forty inside that arrangement without anyone having asked you a second question.",
+   "facing": "you enter and go quiet, and within an hour someone is telling you the real version. people identify you as safe to talk to before you've said much of anything — which is a compliment, and a job you did not apply for."
+  },
+  "card": {
+   "left": 7,
+   "right": 5,
+   "ab": "listener",
+   "text": "counts one more per neighbour",
+   "verb": "change the worth",
+   "fires": "at the count"
+  },
+  "walkers": [],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[21].epithet",
+   "position": "stations.js[21].position",
+   "stars": "stations.js[21].stars",
+   "kanji": "stations.js[21].kanji",
+   "keyword": "reading-copy.js MANSION.22.keyword",
+   "poem": "the game's _mPoem[21] (station-poems.json)",
+   "skies.arabia": "stations.js[21].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 22 nakshatra",
+   "skies.china": "mansions-table.json id 22 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.22 metadata line",
+   "guardian": "corpus-mansions.md MANSION.22 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 22",
+   "claim": "reading-copy.js MANSION.22.claim",
+   "synthesis": "reading-copy.js MANSION.22.synthesis",
+   "election": "reading-copy.js MANSION.22.election",
+   "archetype": "reading-copy.js MANSION.22.archetype",
+   "born": "reading-copy.js STATION.22.strike, STATION.22.facing",
+   "card": "the game's pool[21] and ABS[22]",
+   "walkers": "walker-sheet.js WALKERS[22]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ },
+ {
+  "n": 23,
+  "epithet": "The Drum",
+  "slug": "the-drum",
+  "kanji": "女宿",
+  "position": "12°51′ Capricorn to 25°43′ Capricorn",
+  "stars": "ε, μ, ν Aqr (Albali)",
+  "keyword": "the beat",
+  "poem": "the swallower's luck: three stars, and one takes the others in.",
+  "skies": {
+   "arabia": {
+    "name": "Saʿd Bulaʿ",
+    "meaning": "\"Luck of the Swallower\" — the star that swallows the rain"
+   },
+   "india": {
+    "name": "Dhaniṣṭhā",
+    "deity": "the eight Vasus, gods of abundance",
+    "symbol": "a drum"
+   },
+   "china": {
+    "name": "女 Nǚ",
+    "gloss": "the Girl",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "bat"
+   },
+   "japan": {
+    "name": "うるきぼし Uruki-boshi",
+    "kanji": "女宿"
+   }
+  },
+  "guardian": "the bat",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "drum, swallower, weaving girl"
+  },
+  "claim": "india heard percussion in these degrees. dhaniṣṭhā's emblem is a drum, and its gods are the eight vasus — the elemental abundances, earth, water, fire, wind, sky and the rest, worshipped as a set.",
+  "synthesis": "a drum, the luck of the swallower — the star that drinks the rain — and china's girl. the guardian is the bat, the animal that finds a pitch-black world by making a sound and listening to what comes back. an instrument, a mouth, and an echo.",
+  "election": "picatrix gives these degrees the curing of the sick and the joining of men with wives. the liberty of captives is agrippa's entry, and it arrives paired with divorce, which stays glossed on the history shelf. the letting-go work, in both senses the books meant it.",
+  "archetype": "a light here sets a tempo other people keep without noticing they are doing it. the bat is the whole mansion in one animal: you find out where you are by putting something out and reading the return, which is a method, and it only works if you keep emitting. the eight vasus are abundances that arrive as a group, so what these degrees hand out is rarely one thing. a drummer does not get to be off-beat. a slow week registers to everyone else as the whole system faltering, because the system had quietly been keeping time off one person.",
+  "born": {
+   "strike": "india heard percussion at this station — dhaniṣṭhā, whose emblem is a drum and whose deities are the eight vasus, the gods of elemental abundance. the arabs called it the luck of the swallower, one of the four lucky stations, and hung it on faint stars in the water-carrier's stream. so the hunger is rhythm: you set the tempo of the room you're in. not the loudest person, not necessarily the leader — the one everyone unconsciously syncs to. groups organize their pace around you, and most of them have never noticed they're doing it. a drummer doesn't get to be off-beat. you keep the time for other people, which means your own irregularity — the slow week, the month you were not okay — registers to everyone else as the whole system faltering. you have almost certainly held a rhythm past the point where you wanted to, because stopping felt like it would take a group down with you.",
+   "facing": "you enter and the pace changes to yours within a few minutes. people find you steadying without being able to say why — you simply set a tempo the room prefers to the one it had."
+  },
+  "card": {
+   "left": 5,
+   "right": 7,
+   "ab": "drum",
+   "text": "the station on its right is its own",
+   "verb": "change the owner",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "sema",
+    "fig": "imra",
+    "them": "her",
+    "in": "sema keeps the beat with her knuckles on the rail. the drums are asleep; she isn't."
+   },
+   {
+    "name": "odu",
+    "fig": "sef",
+    "them": "him",
+    "in": "odu sweeps under bells that no longer ring, and counts the dust."
+   },
+   {
+    "name": "lien",
+    "fig": "tesh",
+    "them": "her",
+    "in": "lien lights the galleries one flame a night. tonight she lights them for you."
+   },
+   {
+    "name": "pava",
+    "fig": "ruen",
+    "them": "him",
+    "in": "pava hauls the great drum's hoist rope. he has never heard it struck."
+   },
+   {
+    "name": "meki",
+    "fig": "odel",
+    "them": "her",
+    "in": "meki counts the echoes of strikes nobody living struck."
+   },
+   {
+    "name": "doran",
+    "fig": "brann",
+    "them": "him",
+    "in": "doran the drummer is deaf, and reads your game through the floor."
+   },
+   {
+    "name": "sorn",
+    "fig": "mave",
+    "them": "her",
+    "in": "sorn calls no curfew anymore."
+   },
+   {
+    "name": "the tower-heart",
+    "fig": "the quiet one",
+    "them": "her",
+    "in": "the tower-heart has stood under the great drum so long her pulse keeps the hour."
+   }
+  ],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[22].epithet",
+   "position": "stations.js[22].position",
+   "stars": "stations.js[22].stars",
+   "kanji": "stations.js[22].kanji",
+   "keyword": "reading-copy.js MANSION.23.keyword",
+   "poem": "the game's _mPoem[22] (station-poems.json)",
+   "skies.arabia": "stations.js[22].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 23 nakshatra",
+   "skies.china": "mansions-table.json id 23 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.23 metadata line",
+   "guardian": "corpus-mansions.md MANSION.23 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 23",
+   "claim": "reading-copy.js MANSION.23.claim",
+   "synthesis": "reading-copy.js MANSION.23.synthesis",
+   "election": "reading-copy.js MANSION.23.election",
+   "archetype": "reading-copy.js MANSION.23.archetype",
+   "born": "reading-copy.js STATION.23.strike, STATION.23.facing",
+   "card": "the game's pool[22] and ABS[23]",
+   "walkers": "walker-sheet.js WALKERS[23]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ },
+ {
+  "n": 24,
+  "epithet": "The Void",
+  "slug": "the-void",
+  "kanji": "虛宿",
+  "position": "25°43′ Capricorn to 8°34′ Aquarius",
+  "stars": "β Aqr — still named Sadalsuud — + ξ Aqr",
+  "keyword": "the opening",
+  "poem": "the luckiest of the lucky, and the sky gives no reason.",
+  "skies": {
+   "arabia": {
+    "name": "Saʿd al-Suʿūd",
+    "meaning": "\"the Luckiest of the Lucky\" — the grandest of the ten Saʿd (luck) asterisms"
+   },
+   "india": {
+    "name": "Śatabhiṣā",
+    "deity": "Varuṇa",
+    "symbol": "empty circle"
+   },
+   "china": {
+    "name": "虛 Xū",
+    "gloss": "Emptiness",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "rat"
+   },
+   "japan": {
+    "name": "とみてぼし Tomite-boshi",
+    "kanji": "虛宿"
+   }
+  },
+  "guardian": "the rat",
+  "match": {
+   "flag": "DIVERGENT",
+   "test": "the traditions describe genuinely different or opposed things",
+   "why": "emptiness vs the luckiest of the lucky vs a hundred healers"
+  },
+  "claim": "china named these degrees emptiness. arabia named the same star the luckiest of the lucky. india put a hundred physicians around an empty circle. the flag reads DIVERGENT and it is the widest spread on the road.",
+  "synthesis": "they are not looking at different stars — china, arabia and japan all fix on β aquarii, and the star's formal name in astronomy today is still sadalsuud, from the arabic. one place, three verdicts. india's varuṇa is the god of oaths and of deep water, and its emblem is a ring with nothing in it.",
+  "election": "robson calls it the luckiest of the lucky and gives it marital happiness and victory for soldiers — then adds, in the same breath, that it prevents the execution of government. agrippa says the same. build, marry, make friends, travel; do not expect the paperwork to clear.",
+  "archetype": "a void, the greatest luck there is, and a hundred healers standing around a ring with nothing in it. the old election books had already resolved it by naming the emptiest station on the road for luck: an opening is not a wound. a light here makes room, and the room is genuine and genuinely lucky. varuṇa watches oaths, so what gets held in the space is binding. the difficulty belongs to whoever can always make room — they keep making it long after everyone else has stopped bringing anything to put there.",
+  "born": {
+   "strike": "this is the station with the frightening name and the best hand on the road, and the three traditions disagree so completely that the disagreement is the reading. china calls it 虛 — the void, emptiness. the arabs looked at the same star and named it saʿd al-suʿūd, the luck of lucks — the luckiest star in the entire sky, and the name survives today: astronomers still call it sadalsuud. india named this sky śatabhiṣā, which means the hundred healers, and gave it an emblem of an empty circle, under varuṇa — god of oaths, hidden law, and deep water. a void. the greatest luck there is. a hundred physicians around an empty ring. put them together and you get something true: an opening is not a wound. your hunger is to heal the thing nobody could name — the undiagnosed, the unspoken, the problem everyone had learned to work around. the cost is the circle's own shape. you make room for other people's illness by keeping yourself open, and an opening does not close on command. you are extremely good at holding space and notably worse at being held.",
+   "facing": "you enter and something in the room opens. people say things to you they have not said to anyone, often within the first conversation, and are sometimes embarrassed afterward. you are read as safe and slightly bottomless."
+  },
+  "card": {
+   "left": 9,
+   "right": 3,
+   "ab": "void",
+   "text": "counts two, its right counts less",
+   "verb": "change the worth",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "nefa",
+    "fig": "imra",
+    "them": "her",
+    "in": "nefa cuts the ice, where there is ice. tonight there is nothing to cut and she is standing with the saw down, and does not seem to mind."
+   },
+   {
+    "name": "brann",
+    "fig": "sef",
+    "them": "him",
+    "in": "brann fishes. through the ice, when there is ice; tonight through nothing at all. he has caught nothing and is not surprised."
+   },
+   {
+    "name": "oda",
+    "fig": "odel",
+    "them": "her",
+    "in": "oda draws the blood off. the jar is at her hip and it is empty, which is how a physician likes a jar."
+   },
+   {
+    "name": "tam",
+    "fig": "tesh",
+    "them": "him",
+    "in": "tam sets bones. nothing is broken here. he is holding the splints anyway, because a physician who puts them down is not a physician."
+   },
+   {
+    "name": "hesh",
+    "fig": "ruen",
+    "them": "him",
+    "in": "hesh carries water. two pails on a yoke, both empty, both light, and he walks as if they were full."
+   },
+   {
+    "name": "sil",
+    "fig": "brann",
+    "them": "her",
+    "in": "sil bleeds the fever out. there is no fever. she has let everything go that could be let go, and it went."
+   },
+   {
+    "name": "the old physician",
+    "fig": "mave",
+    "them": "her",
+    "in": "the old physician's bag is closed. there is nothing left in it to give and nothing left out here to give it to."
+   },
+   {
+    "name": "the hundredth",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the hundredth physician is the one who healed by leaving. you cannot quite see them."
+   }
+  ],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[23].epithet",
+   "position": "stations.js[23].position",
+   "stars": "stations.js[23].stars",
+   "kanji": "stations.js[23].kanji",
+   "keyword": "reading-copy.js MANSION.24.keyword",
+   "poem": "the game's _mPoem[23] (station-poems.json)",
+   "skies.arabia": "stations.js[23].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 24 nakshatra",
+   "skies.china": "mansions-table.json id 24 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.24 metadata line",
+   "guardian": "corpus-mansions.md MANSION.24 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 24",
+   "claim": "reading-copy.js MANSION.24.claim",
+   "synthesis": "reading-copy.js MANSION.24.synthesis",
+   "election": "reading-copy.js MANSION.24.election",
+   "archetype": "reading-copy.js MANSION.24.archetype",
+   "born": "reading-copy.js STATION.24.strike, STATION.24.facing",
+   "card": "the game's pool[23] and ABS[24]",
+   "walkers": "walker-sheet.js WALKERS[24]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ },
+ {
+  "n": 25,
+  "epithet": "The Hideaway",
+  "slug": "the-hideaway",
+  "kanji": "危宿",
+  "position": "8°34′ Aquarius to 21°26′ Aquarius",
+  "stars": "γ, π, ζ, η Aqr — the little \"tent\" asterism (Sadachbia)",
+  "keyword": "the single pole",
+  "poem": "the luck of the tents: stars pitched in a circle, and something inside.",
+  "skies": {
+   "arabia": {
+    "name": "Saʿd al-Akhbiya",
+    "meaning": "\"Luck of the Tents / of Hidden Things\""
+   },
+   "india": {
+    "name": "P. Bhādrapadā",
+    "deity": "Aja Ekapāda, the one-footed fire-pillar",
+    "symbol": "front legs of a cot"
+   },
+   "china": {
+    "name": "危 Wēi",
+    "gloss": "the Rooftop",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "swallow"
+   },
+   "japan": {
+    "name": "うみやめぼし Umiyame-boshi",
+    "kanji": "危宿"
+   }
+  },
+  "guardian": "the swallow",
+  "match": {
+   "flag": "STRONG",
+   "test": "the traditions describe the same thing",
+   "why": "tent, rooftop, one-footed pillar"
+  },
+  "claim": "a tent, a rooftop, and a god who stands on one foot. three names for a shelter and the single upright holding it up.",
+  "synthesis": "saʿd al-akhbiya is the luck of the tents — and of hidden things; china's 危 wēi is the rooftop; and india's aja ekapāda, the one-footed, is read as a pillar of fire, a thing that stands by having exactly one point of contact with the ground. the flag reads STRONG.",
+  "election": "protection and hiding — what is inside the tent is safe, and every source recorded it that way. agrippa and picatrix also mark these degrees for sieges and binding, hostile flags kept on the history shelf.",
+  "archetype": "a light here builds cover and lives under it. the four stars form a small tent shape and the mansion means it literally: this is enclosed ground, and what is inside is not available for inspection. the difficulty is load-bearing. a structure with one pole is standing because of one thing, and aja ekapāda is a single upright doing the work of a foundation. the classical power given to pūrva bhādrapadā is the fire that raises a person up, with the good of all as its stated basis — so the shelter is not built for one. these degrees hand out the instinct to house other people and no instinct at all for who houses the housekeeper.",
+  "born": {
+   "strike": "four stars pitch a small tent in aquarius — saʿd al-akhbiya, the last of the four lucky stations, and the name means the luck of the tents — rendered in the older english lists as the luck of hidden things. the classical sense is seasonal: this is the sky of the moment when the cold breaks and the creatures that had been sheltering come back out of their burrows. so your hunger has two halves. the first is shelter: you are the keeper of safe places — the room people can cry in, the group chat where the bad news gets said first, the friend whose door is a known quantity. the second half is stranger, and it comes from india's name for this sky: pūrva bhādrapadā, whose deity is a one-footed fire-pillar, and whose work is burning off what is false. the same person who makes the safest room in the building also has an incinerator running. you cannot be lied to in your own house. the cost: everyone's shelter, nobody's guest. you have somewhere for everyone to go and no clear answer to where you go.",
+   "facing": "you enter and people exhale. within one meeting they've decided you're somewhere they can put something down. you're read as shelter before you're read as a person."
+  },
+  "card": {
+   "left": 6,
+   "right": 6,
+   "ab": "hideaway",
+   "text": "counts nothing, its sides +1",
+   "verb": "change the worth",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "naila",
+    "fig": "imra",
+    "them": "her",
+    "in": "naila keeps a name that was never written down."
+   },
+   {
+    "name": "veth",
+    "fig": "sef",
+    "them": "him",
+    "in": "veth counts what the camp buried, and where."
+   },
+   {
+    "name": "orna",
+    "fig": "odel",
+    "them": "her",
+    "in": "orna guards a grave with no stone on it."
+   },
+   {
+    "name": "pell",
+    "fig": "tesh",
+    "them": "him",
+    "in": "pell holds a debt nobody living can collect."
+   },
+   {
+    "name": "sarai",
+    "fig": "ruen",
+    "them": "her",
+    "in": "sarai keeps a letter she has never opened."
+   },
+   {
+    "name": "dov",
+    "fig": "brann",
+    "them": "him",
+    "in": "dov guards the way in, which is also the way out."
+   },
+   {
+    "name": "lys",
+    "fig": "mave",
+    "them": "her",
+    "in": "lys shows you seven tents. she sleeps in the eighth."
+   },
+   {
+    "name": "the lamp-keeper",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the lamp-keeper trims the one lit wick, and has kept every secret the camp ever gave."
+   }
+  ],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[24].epithet",
+   "position": "stations.js[24].position",
+   "stars": "stations.js[24].stars",
+   "kanji": "stations.js[24].kanji",
+   "keyword": "reading-copy.js MANSION.25.keyword",
+   "poem": "the game's _mPoem[24] (station-poems.json)",
+   "skies.arabia": "stations.js[24].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 25 nakshatra",
+   "skies.china": "mansions-table.json id 25 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.25 metadata line",
+   "guardian": "corpus-mansions.md MANSION.25 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 25",
+   "claim": "reading-copy.js MANSION.25.claim",
+   "synthesis": "reading-copy.js MANSION.25.synthesis",
+   "election": "reading-copy.js MANSION.25.election",
+   "archetype": "reading-copy.js MANSION.25.archetype",
+   "born": "reading-copy.js STATION.25.strike, STATION.25.facing",
+   "card": "the game's pool[24] and ABS[25]",
+   "walkers": "walker-sheet.js WALKERS[25]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ },
+ {
+  "n": 26,
+  "epithet": "The Chamber",
+  "slug": "the-chamber",
+  "kanji": "室宿",
+  "position": "21°26′ Aquarius to 4°17′ Pisces",
+  "stars": "α, β Peg (Markab, Scheat) — the first wall of the Great Square of Pegasus",
+  "keyword": "the first wall",
+  "poem": "the first spout of the water jar, where the pouring starts.",
+  "skies": {
+   "arabia": {
+    "name": "al-Fargh al-Muqaddam",
+    "meaning": "\"the Fore-Spout of the Bucket\" — the great dalw that pours the spring rain begins here"
+   },
+   "india": {
+    "name": "U. Bhādrapadā",
+    "deity": "Ahirbudhnya, serpent of the deep foundation",
+    "symbol": "back legs of a cot"
+   },
+   "china": {
+    "name": "室 Shì",
+    "gloss": "the Room / the Encampment",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "pig"
+   },
+   "japan": {
+    "name": "はついぼし Hatsui-boshi",
+    "kanji": "室宿"
+   }
+  },
+  "guardian": "the pig",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "room and foundation-serpent converge; the bucket-spout does not"
+  },
+  "claim": "the great square of pegasus begins here — the most recognisable four-sided figure in the northern sky, and these degrees are its first wall.",
+  "synthesis": "a room, an encampment, and the fore-spout of the great bucket that pours the spring rain. india's deity is ahirbudhnya, the serpent of the deep — the coil at the bottom of the foundation, holding it. a wall above and a serpent underneath it.",
+  "election": "the old books gave these degrees the union of lovers and goodwill, and agrippa — on the mansion of the wall — has them destroying prisons and buildings. the classical indian power assigned here is the bringing of rain, with the growing of plants as its result. every source agrees something comes down.",
+  "archetype": "a light here builds the enclosure other people will live inside, and the mansion is specific that this is structural work rather than hospitality. markab and scheat are corners, not ornaments. the pairing matters: uttara bhādrapadā is the second half of a pair whose first half is the one-footed pillar, so the sequence runs pole, then wall — and a wall is what makes a shelter into a room. ahirbudhnya is at the bottom of it, in the dark, and the tradition never asks the serpent whether it minds. nobody in a room thinks about the wall, and these degrees do not supply the impulse to mention it.",
+  "born": {
+   "strike": "your sun landed on the first wall of the great square of pegasus — four bright stars that make the most obviously built shape in the autumn sky. china saw exactly that and called this station 室, the chamber: a room. the arabs saw the same stars as the fore-spout of an enormous bucket — the lip that the spring rain pours out of. a room, and a spout. both of them are about holding something and then giving it out, and india's name completes the thought: uttara bhādrapadā, whose deity is ahirbudhnya, the serpent of the deep foundation — the thing coiled underneath that makes the structure possible. your hunger is to go still and deep enough to hold weight. you build the room. you are the reason a group has somewhere to be. foundations are under the house. the people enjoying the room are not thinking about what's holding it up, and you will occasionally resent that, and then feel small for resenting it — which is its own second weight.",
+   "facing": "you enter and start building the room — arranging, seating, making sure there's enough. people read you as the host within minutes, whether or not it's your house."
+  },
+  "card": {
+   "left": 7,
+   "right": 6,
+   "ab": "chamber",
+   "text": "two untaken, four untouched",
+   "verb": "change the worth",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "tamir",
+    "fig": "imra",
+    "them": "him",
+    "in": "tamir keeps the gate. your quarter's token goes in his box as you pass, and comes back when you leave, not before."
+   },
+   {
+    "name": "nasha",
+    "fig": "sef",
+    "them": "her",
+    "in": "nasha keeps the hearth alight all night, because the cot is cold and the room should not be."
+   },
+   {
+    "name": "vell",
+    "fig": "odel",
+    "them": "him",
+    "in": "vell carries water up from the fore spout. the jar pours whether anyone is lodged here or not."
+   },
+   {
+    "name": "sadir",
+    "fig": "tesh",
+    "them": "him",
+    "in": "sadir mends saddles by lamplight, and every guest's saddle hangs in the bay they slept in. markab is the saddle; this house is named for it."
+   },
+   {
+    "name": "ennu",
+    "fig": "ruen",
+    "them": "her",
+    "in": "ennu cooks for whoever is in, and tonight there is one plate more than there are mouths."
+   },
+   {
+    "name": "borin",
+    "fig": "brann",
+    "them": "him",
+    "in": "borin walks the hall gate to gate all night and dares it to bring him something."
+   },
+   {
+    "name": "raqi",
+    "fig": "mave",
+    "them": "her",
+    "in": "raqi keeps the book of guests. she has your name from last time."
+   },
+   {
+    "name": "the house-watch",
+    "fig": "the quiet one",
+    "them": "her",
+    "in": "the house-watch sits where she can see both gates and the cot between them."
+   }
+  ],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[25].epithet",
+   "position": "stations.js[25].position",
+   "stars": "stations.js[25].stars",
+   "kanji": "stations.js[25].kanji",
+   "keyword": "reading-copy.js MANSION.26.keyword",
+   "poem": "the game's _mPoem[25] (station-poems.json)",
+   "skies.arabia": "stations.js[25].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 26 nakshatra",
+   "skies.china": "mansions-table.json id 26 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.26 metadata line",
+   "guardian": "corpus-mansions.md MANSION.26 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 26",
+   "claim": "reading-copy.js MANSION.26.claim",
+   "synthesis": "reading-copy.js MANSION.26.synthesis",
+   "election": "reading-copy.js MANSION.26.election",
+   "archetype": "reading-copy.js MANSION.26.archetype",
+   "born": "reading-copy.js STATION.26.strike, STATION.26.facing",
+   "card": "the game's pool[25] and ABS[26]",
+   "walkers": "walker-sheet.js WALKERS[26]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ },
+ {
+  "n": 27,
+  "epithet": "The Guide",
+  "slug": "the-guide",
+  "kanji": "壁宿",
+  "position": "4°17′ Pisces to 17°09′ Pisces",
+  "stars": "γ Peg + α And (Algenib, Alpheratz) — the Square's far wall",
+  "keyword": "the far side",
+  "poem": "the second spout. the same water, further along.",
+  "skies": {
+   "arabia": {
+    "name": "al-Fargh al-Muʾakhkhar",
+    "meaning": "\"the Hind-Spout of the Bucket\" — the pour completes"
+   },
+   "india": {
+    "name": "Revatī",
+    "deity": "Pūṣan",
+    "symbol": "fish"
+   },
+   "china": {
+    "name": "壁 Bì",
+    "gloss": "the Wall",
+    "quadrant": "Black Tortoise (North/Winter)",
+    "animal": "yayu"
+   },
+   "japan": {
+    "name": "なまめぼし Namame-boshi",
+    "kanji": "壁宿"
+   }
+  },
+  "guardian": "the yayu",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "guide and fish vs wall and completed pour"
+  },
+  "claim": "revatī is the last station of india's wheel, and its god is pūṣan — the one who walks travellers to the far side and does not come with them. the arabic name says the same thing about water: the pour completes here.",
+  "synthesis": "the hind-spout of the bucket, the square's far wall, and a fish. these degrees are where three of the four traditions put an ending that is also a delivery — the last of india's twenty-seven, the closing of the great rain, the far side of the wall.",
+  "election": "the old books gave these degrees harvests, revenue, and gain, and marked them favourable for marriage. picatrix adds the increase of trade with a caution for sailors, a mixed flag. they also say the stretch hinders building — even guides do not pour foundations.",
+  "archetype": "a light here takes other people the rest of the way. pūṣan is the god of roads and of lost things and of animals that stray, and his defining quality in the hymns is that he knows the paths and travels them for others' sake. the fish is the same idea in water: something that moves through a medium other creatures cannot. what these degrees withhold is arrival. a guide's work ends at the boundary of the country the traveller wanted, and the one talent this mansion does not confer is knowing what to do once the delivery is made.",
+  "born": {
+   "strike": "your sun landed on the far wall of the great square — the second spout of the bucket, the back lip, where the pouring finishes. and india gave this sky the most tender assignment in its entire system: revatī, the last of its twenty-seven stations, ruled by pūṣan — the nourisher, keeper of roads, the god whose specific job is to walk travelers safely home and guide souls on the final road. its emblem is a pair of fish. your hunger is exactly that: you want to see everyone home. the address in the group chat, the text me when you're back, the friend who notices someone left the party alone. you are the last one awake making sure the count is right. the cost is in the job description. a guide walks other people to their doors. you have spent years on the road on behalf of other people's arrivals, and if you sit still long enough to ask where you were going, the honest answer is sometimes that you stopped choosing a destination a while ago because escorting was simpler.",
+   "facing": "you enter checking exits and headcounts, and people feel looked after before they can say why. you are read as gentle immediately and as formidable much later, usually by accident."
+  },
+  "card": {
+   "left": 6,
+   "right": 6,
+   "ab": "guide",
+   "text": "your home cards count one more",
+   "verb": "change the worth",
+   "fires": "at the count"
+  },
+  "walkers": [
+   {
+    "name": "teru",
+    "fig": "imra",
+    "them": "her",
+    "in": "teru sets back every stone the water lifts. she has done it every season and the line is still straight."
+   },
+   {
+    "name": "isha",
+    "fig": "odel",
+    "them": "her",
+    "in": "isha sounds the depth beside the crossing. she can tell you the number before the pole is wet."
+   },
+   {
+    "name": "malek",
+    "fig": "tesh",
+    "them": "him",
+    "in": "malek carries fill up to the crown all night, so the crown stays a hand above the water."
+   },
+   {
+    "name": "wen",
+    "fig": "sef",
+    "them": "her",
+    "in": "wen marks the water's height on a post each night. there are a great many marks and this year's is high."
+   },
+   {
+    "name": "sabra",
+    "fig": "ruen",
+    "them": "her",
+    "in": "sabra ferried this crossing before there were stones. her boat is tied up and she would rather it stayed that way."
+   },
+   {
+    "name": "corvin",
+    "fig": "brann",
+    "them": "him",
+    "in": "corvin opens the culverts so the flood goes under the road instead of over it. it has never once gone over."
+   },
+   {
+    "name": "dala",
+    "fig": "mave",
+    "them": "her",
+    "in": "dala walks the stones at night with the lantern held low, reading the surface."
+   },
+   {
+    "name": "the water-watch",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the water-watch stands at the middle of the crossing and does not look away from the surface."
+   }
+  ],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[26].epithet",
+   "position": "stations.js[26].position",
+   "stars": "stations.js[26].stars",
+   "kanji": "stations.js[26].kanji",
+   "keyword": "reading-copy.js MANSION.27.keyword",
+   "poem": "the game's _mPoem[26] (station-poems.json)",
+   "skies.arabia": "stations.js[26].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 27 nakshatra",
+   "skies.china": "mansions-table.json id 27 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.27 metadata line",
+   "guardian": "corpus-mansions.md MANSION.27 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 27",
+   "claim": "reading-copy.js MANSION.27.claim",
+   "synthesis": "reading-copy.js MANSION.27.synthesis",
+   "election": "reading-copy.js MANSION.27.election",
+   "archetype": "reading-copy.js MANSION.27.archetype",
+   "born": "reading-copy.js STATION.27.strike, STATION.27.facing",
+   "card": "the game's pool[26] and ABS[27]",
+   "walkers": "walker-sheet.js WALKERS[27]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ },
+ {
+  "n": 28,
+  "epithet": "The Thread",
+  "slug": "the-thread",
+  "kanji": "奎宿",
+  "position": "17°09′ Pisces to 0°00′ Aries",
+  "stars": "β And (Mirach)",
+  "keyword": "the cord",
+  "poem": "the belly of the fish, and a thread of faint stars running out of it.",
+  "skies": {
+   "arabia": {
+    "name": "Baṭn al-Ḥūt / al-Rishāʾ",
+    "meaning": "two names at once: \"the Belly of the Fish\" and \"the Cord\" — the bucket-rope. The double name is the classic example of layered Bedouin sky-imagery"
+   },
+   "india": {
+    "name": null,
+    "deity": null,
+    "symbol": null
+   },
+   "china": {
+    "name": "奎 Kuí",
+    "gloss": "the Stride",
+    "quadrant": "White Tiger (West/Autumn)",
+    "animal": "wolf"
+   },
+   "japan": {
+    "name": "とかきぼし Tokaki-boshi",
+    "kanji": null
+   }
+  },
+  "guardian": "the wolf",
+  "match": {
+   "flag": "PARTIAL",
+   "test": "related, with different emphasis — or one tradition is elsewhere",
+   "why": "fish-belly and cord vs stride — and India is absent"
+  },
+  "claim": "arabia gave these degrees two names at once — baṭn al-ḥūt, the belly of the fish, and al-rishāʾ, the cord. india gave them none. the twenty-seven-fold wheel has already returned to its first station by the time the sky gets here.",
+  "synthesis": "a fish's belly, a rope, and a stride. the double arabic name is the classic example of layered bedouin sky-imagery — the same stars read as an animal and as a piece of equipment, and both names kept, because neither reading was wrong.",
+  "election": "journeys, trade, and peace between spouses — the closing works. picatrix has trade, marital peace, and safe travel, and then both books turn: agrippa's twenty-eighth \"strengtheneth prisons and causeth loss of treasures.\" the road ends on a knot, not a bow.",
+  "archetype": "a light here stands where the road runs out and has not started again. al-rishāʾ is the well-rope, the object that connects two things by being long enough and by being under tension the whole way. china's 奎 kuí is the stride, the gap between one footfall and the next, which is the same fact told as motion instead of rope. what these degrees hand out is the ability to hold two things together across a distance nobody else finds crossable — and the corresponding difficulty, which is that a rope is only doing its job while it is pulled tight from both ends.",
+  "born": {
+   "strike": "your sun landed in the last station on the road, and it is the only one that has two arabic names at once: baṭn al-ḥūt, the belly of the fish, and al-rishāʾ, the cord — the well-rope, the tie. the astronomers of that sky could not settle on one image, so both were kept. and there is something here no other station has. the indian sky-map counts twenty-seven stations where ours counts twenty-eight, so this one has no indian name at all. you did not land in a station that four traditions argued over. you landed in the seam between two ways of counting. it is a real feature of the sky, and it is yours. your hunger is the cord's: you want to tie the ends together. you are the person who connects the two groups that should have met, the one who notices that the beginning of one thing is the end of another. and this station's own position says it plainly — it runs right up to 0° aries, where the gate, station one, begins again. you are the knot that closes the wheel and the reason it can start over. the cost of living in a seam: you belong to both sides and are counted by neither. you have been the connector in rooms where nobody thought to count you as a member.",
+   "facing": "you enter and start tying things together — this person to that one, this idea to that project. people meet you and immediately think of someone you should know. you are read as a hub before you are read as a person."
+  },
+  "card": {
+   "left": 6,
+   "right": 6,
+   "ab": "thread",
+   "text": "everything beside it fights −1",
+   "verb": "lower a number",
+   "fires": "always"
+  },
+  "walkers": [
+   {
+    "name": "hara",
+    "fig": "imra",
+    "them": "her",
+    "in": "hara turns the windlass. she has never once asked what is on the rope."
+   },
+   {
+    "name": "tovi",
+    "fig": "sef",
+    "them": "him",
+    "in": "tovi drops a stone and counts. that is how deep you still are."
+   },
+   {
+    "name": "esk",
+    "fig": "odel",
+    "them": "him",
+    "in": "esk mends buckets. nothing he has patched has ever come up empty."
+   },
+   {
+    "name": "nira",
+    "fig": "tesh",
+    "them": "her",
+    "in": "nira finds water with a bent rod and no explanation."
+   },
+   {
+    "name": "bel",
+    "fig": "ruen",
+    "them": "him",
+    "in": "bel inspects the rope hand over hand, and knows every splice by feel."
+   },
+   {
+    "name": "kesh",
+    "fig": "brann",
+    "them": "him",
+    "in": "kesh went down once and came back changed. he will not say what he saw."
+   },
+   {
+    "name": "aven",
+    "fig": "mave",
+    "them": "her",
+    "in": "aven keeps the ladder nobody uses."
+   },
+   {
+    "name": "the well-watch",
+    "fig": "the quiet one",
+    "them": "them",
+    "in": "the well-watch has looked into the mouth for as long as there has been a mouth."
+   }
+  ],
+  "alignNote": "This corpus pairs nakshatra *n* with mansion *n* by ordinal index, which is what `mansions-table.json` already does. That is not the classical Sino-Indian correspondence. In the Buddhist tables (Amoghavajra's *Xiuyao jing*), 牛 = Abhijit and the pairings from mansion 22 onward run one step later than this file's — so under the received scheme mansion 26 is Pūrva Bhādrapadā, 27 is Uttara Bhādrapadā, and 28 is Revatī rather than nothing. The ordinal alignment is a choice, it is already shipped in the data, and it is defensible — but it must be stated rather than assumed. See the escalation at the foot of this file.",
+  "trace": {
+   "epithet": "stations.js[27].epithet",
+   "position": "stations.js[27].position",
+   "stars": "stations.js[27].stars",
+   "kanji": "stations.js[27].kanji",
+   "keyword": "reading-copy.js MANSION.28.keyword",
+   "poem": "the game's _mPoem[27] (station-poems.json)",
+   "skies.arabia": "stations.js[27].crossCultural Arabia",
+   "skies.india": "mansions-table.json id 28 nakshatra",
+   "skies.china": "mansions-table.json id 28 xiu; the gloss from stations.js crossCultural China",
+   "skies.japan": "corpus-mansions.md MANSION.28 metadata line",
+   "guardian": "corpus-mansions.md MANSION.28 metadata line",
+   "match": "corpus-mansions.md, the sixteen match flags, row 28",
+   "claim": "reading-copy.js MANSION.28.claim",
+   "synthesis": "reading-copy.js MANSION.28.synthesis",
+   "election": "reading-copy.js MANSION.28.election",
+   "archetype": "reading-copy.js MANSION.28.archetype",
+   "born": "reading-copy.js STATION.28.strike, STATION.28.facing",
+   "card": "the game's pool[27] and ABS[28]",
+   "walkers": "walker-sheet.js WALKERS[28]",
+   "alignNote": "corpus-mansions.md, \"One alignment note\""
+  }
+ }
+]

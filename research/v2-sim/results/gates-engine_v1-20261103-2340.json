@@ -1,0 +1,338 @@
+{
+ "bands": {
+  "pack of 5": {
+   "label": "pack of 5",
+   "careful": {
+    "win": 73.2,
+    "n": 448,
+    "lead_changes": 2.59,
+    "comeback_pct": 55.4,
+    "margin": 2.84,
+    "close_pct": 30.4,
+    "flips": 4.7
+   },
+   "casual": {
+    "win": 26.8,
+    "n": 448,
+    "lead_changes": 3.02,
+    "comeback_pct": 19.6,
+    "margin": 4.25,
+    "close_pct": 8.9,
+    "flips": 6.95
+   },
+   "gap": 46.4
+  },
+  "pack of 12": {
+   "label": "pack of 12",
+   "careful": {
+    "win": 71.2,
+    "n": 448,
+    "lead_changes": 2.62,
+    "comeback_pct": 43.8,
+    "margin": 3.32,
+    "close_pct": 28.8,
+    "flips": 5.09
+   },
+   "casual": {
+    "win": 47.1,
+    "n": 448,
+    "lead_changes": 3.14,
+    "comeback_pct": 35.0,
+    "margin": 3.96,
+    "close_pct": 22.8,
+    "flips": 8.56
+   },
+   "gap": 24.1
+  }
+ },
+ "solve": {
+  "you": [
+   {
+    "leader": "you",
+    "night": 1,
+    "leader_wins": true,
+    "nodes": 206657,
+    "seconds": 42
+   },
+   {
+    "leader": "you",
+    "night": 5,
+    "leader_wins": true,
+    "nodes": 213763,
+    "seconds": 39
+   },
+   {
+    "leader": "you",
+    "night": 10,
+    "leader_wins": true,
+    "nodes": 228848,
+    "seconds": 49
+   },
+   {
+    "leader": "you",
+    "night": 15,
+    "leader_wins": true,
+    "nodes": 244317,
+    "seconds": 49
+   },
+   {
+    "leader": "you",
+    "night": 20,
+    "leader_wins": true,
+    "nodes": 234733,
+    "seconds": 49
+   },
+   {
+    "leader": "you",
+    "night": 25,
+    "leader_wins": true,
+    "nodes": 233865,
+    "seconds": 54
+   },
+   {
+    "leader": "you",
+    "night": 28,
+    "leader_wins": true,
+    "nodes": 222956,
+    "seconds": 46
+   }
+  ],
+  "sky": [
+   {
+    "leader": "sky",
+    "night": 1,
+    "leader_wins": true,
+    "nodes": 310341,
+    "seconds": 82
+   },
+   {
+    "leader": "sky",
+    "night": 5,
+    "leader_wins": true,
+    "nodes": 277151,
+    "seconds": 61
+   },
+   {
+    "leader": "sky",
+    "night": 10,
+    "leader_wins": true,
+    "nodes": 308684,
+    "seconds": 69
+   },
+   {
+    "leader": "sky",
+    "night": 15,
+    "leader_wins": true,
+    "nodes": 353747,
+    "seconds": 101
+   },
+   {
+    "leader": "sky",
+    "night": 20,
+    "leader_wins": true,
+    "nodes": 214782,
+    "seconds": 59
+   },
+   {
+    "leader": "sky",
+    "night": 25,
+    "leader_wins": true,
+    "nodes": 263396,
+    "seconds": 66
+   },
+   {
+    "leader": "sky",
+    "night": 28,
+    "leader_wins": true,
+    "nodes": 331607,
+    "seconds": 83
+   }
+  ]
+ },
+ "vectors": {
+  "passed": 36,
+  "total": 36,
+  "fails": []
+ },
+ "scan": {
+  "openings": 54,
+  "all28": [
+   "The Storm@3",
+   "The Storm@5",
+   "The Storm@6",
+   "The Crown@2",
+   "The Crown@7",
+   "The Heart@1"
+  ],
+  "top": [
+   {
+    "opening": "The Storm@3",
+    "nights_won": 28
+   },
+   {
+    "opening": "The Storm@5",
+    "nights_won": 28
+   },
+   {
+    "opening": "The Storm@6",
+    "nights_won": 28
+   },
+   {
+    "opening": "The Crown@2",
+    "nights_won": 28
+   },
+   {
+    "opening": "The Crown@7",
+    "nights_won": 28
+   },
+   {
+    "opening": "The Heart@1",
+    "nights_won": 28
+   },
+   {
+    "opening": "The Blaze@7",
+    "nights_won": 27
+   },
+   {
+    "opening": "The Crown@4",
+    "nights_won": 27
+   },
+   {
+    "opening": "The Crown@5",
+    "nights_won": 27
+   },
+   {
+    "opening": "The Crown@6",
+    "nights_won": 27
+   },
+   {
+    "opening": "The Throne@0",
+    "nights_won": 26
+   },
+   {
+    "opening": "The Throne@0 rev",
+    "nights_won": 26
+   }
+  ]
+ },
+ "engine": "engine_v1",
+ "seeds": 8,
+ "solve_nights": [
+  1,
+  5,
+  10,
+  15,
+  20,
+  25,
+  28
+ ],
+ "assembled": "2026-11-03T23:40:54",
+ "missing": [],
+ "table": [
+  {
+   "gate": "vectors",
+   "check": "the 33 conformance and 3 agent vectors",
+   "value": "36/36",
+   "want": "36/36",
+   "ok": true
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 5, careful",
+   "value": 73.2,
+   "want": "55 to 65",
+   "ok": null
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 5, casual",
+   "value": 26.8,
+   "want": "35 to 45",
+   "ok": null
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 5, skill gap",
+   "value": 46.4,
+   "want": "20 or more",
+   "ok": null
+  },
+  {
+   "gate": "reproduce v1",
+   "check": "pack of 5, careful / casual",
+   "value": "73.2 / 26.8",
+   "want": "73.2 / 26.8",
+   "ok": true
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 5, careful proxies recorded",
+   "value": "lc 2.59 cb 55.4 close 30.4",
+   "want": "baseline",
+   "ok": null
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 12, careful",
+   "value": 71.2,
+   "want": "55 to 65",
+   "ok": null
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 12, casual",
+   "value": 47.1,
+   "want": "35 to 45",
+   "ok": null
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 12, skill gap",
+   "value": 24.1,
+   "want": "20 or more",
+   "ok": null
+  },
+  {
+   "gate": "reproduce v1",
+   "check": "pack of 12, careful / casual",
+   "value": "71.2 / 47.1",
+   "want": "71.2 / 47.1",
+   "ok": true
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 12, careful proxies recorded",
+   "value": "lc 2.62 cb 43.8 close 28.8",
+   "want": "baseline",
+   "ok": null
+  },
+  {
+   "gate": "scan",
+   "check": "openings that win all 28 nights",
+   "value": 6,
+   "want": "0",
+   "ok": null
+  },
+  {
+   "gate": "reproduce v1",
+   "check": "all-28 openings",
+   "value": 6,
+   "want": "6",
+   "ok": true
+  },
+  {
+   "gate": "reproduce v1",
+   "check": "you leads: leader wins",
+   "value": "7/7",
+   "want": "7/7",
+   "ok": true
+  },
+  {
+   "gate": "reproduce v1",
+   "check": "sky leads: leader wins",
+   "value": "7/7",
+   "want": "7/7",
+   "ok": true
+  }
+ ]
+}

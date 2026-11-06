@@ -1,0 +1,74 @@
+{
+ "shipped: fixed chart five": {
+  "careful": {
+   "lead_changes": 2.13,
+   "comeback_pct": 30.5,
+   "margin": 2.9,
+   "close_pct": 37.8,
+   "flips": 4.16,
+   "n": 896
+  },
+  "casual": {
+   "lead_changes": 2.73,
+   "comeback_pct": 14.4,
+   "margin": 4.56,
+   "close_pct": 16.1,
+   "flips": 7.15,
+   "n": 896
+  }
+ },
+ "dealt five of 12 @L3": {
+  "careful": {
+   "lead_changes": 1.92,
+   "comeback_pct": 37.3,
+   "margin": 2.41,
+   "close_pct": 39.6,
+   "flips": 3.63,
+   "n": 896
+  },
+  "casual": {
+   "lead_changes": 2.48,
+   "comeback_pct": 20.2,
+   "margin": 3.5,
+   "close_pct": 25.3,
+   "flips": 6.11,
+   "n": 896
+  }
+ },
+ "dealt five of 12, proto levels": {
+  "careful": {
+   "lead_changes": 1.75,
+   "comeback_pct": 29.6,
+   "margin": 2.56,
+   "close_pct": 40.1,
+   "flips": 3.69,
+   "n": 896
+  },
+  "casual": {
+   "lead_changes": 1.92,
+   "comeback_pct": 9.6,
+   "margin": 4.73,
+   "close_pct": 17.4,
+   "flips": 5.83,
+   "n": 896
+  }
+ },
+ "draw 3 from 28 (for contrast)": {
+  "careful": {
+   "lead_changes": 1.72,
+   "comeback_pct": 19.9,
+   "margin": 3.48,
+   "close_pct": 27.7,
+   "flips": 4.53,
+   "n": 896
+  },
+  "casual": {
+   "lead_changes": 1.97,
+   "comeback_pct": 12.4,
+   "margin": 5.28,
+   "close_pct": 13.4,
+   "flips": 6.56,
+   "n": 896
+  }
+ }
+}

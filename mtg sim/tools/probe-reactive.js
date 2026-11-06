@@ -62,7 +62,7 @@ async function play(j) {
       else forgeR[j.key] = flip ? [x.lost, x.won] : [x.won, x.lost];
     }
     const m = [0, 1].map(at => done[`${d}|mirror|${at}`]).filter(Boolean), mw = m.reduce((s, x) => s + x.won, 0), mn = m.reduce((s, x) => s + x.won + x.lost, 0);
-    log(`${d}: real ${pct(...t.real)} | forge sim (calibration) ${pct(...t.oldForge)} | bridge, Forge decides ${pct(...t.stock)} (${t.stock[1]} games) | reactive pilot ${pct(...t.reactive)} (${t.reactive[1]} games) | mirror, pilot vs stock ${pct(mw, mn)} of ${mn}`);
+    log(`${d}: real ${pct(...t.real)} | Forge alone (calibration) ${pct(...t.oldForge)} | bridge, Forge decides ${pct(...t.stock)} (${t.stock[1]} games) | reactive pilot ${pct(...t.reactive)} (${t.reactive[1]} games) | mirror, pilot vs stock ${pct(mw, mn)} of ${mn}`);
   }
   // k with these pairings replayed through the bridge (stock), then with the pilot
   const f0 = calib.fidelity(forgeAll, c.inputs.real), f1 = calib.fidelity(forgeR, c.inputs.real);

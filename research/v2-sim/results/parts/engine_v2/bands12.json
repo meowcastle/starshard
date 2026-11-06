@@ -1,0 +1,22 @@
+{
+ "label": "pack of 12",
+ "careful": {
+  "win": 77.0,
+  "n": 448,
+  "lead_changes": 2.57,
+  "comeback_pct": 34.6,
+  "margin": 3.54,
+  "close_pct": 29.0,
+  "flips": 3.72
+ },
+ "casual": {
+  "win": 55.8,
+  "n": 448,
+  "lead_changes": 3.2,
+  "comeback_pct": 29.7,
+  "margin": 4.24,
+  "close_pct": 20.8,
+  "flips": 8.21
+ },
+ "gap": 21.2
+}

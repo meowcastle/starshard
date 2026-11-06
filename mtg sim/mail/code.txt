@@ -1,5 +1,5 @@
-Subject: Your Forge Sim code: {{code}}
-Your Forge Sim code is {{code}}
+Subject: Your Deck Bench code: {{code}}
+Your Deck Bench code is {{code}}
 
 It expires in 10 minutes.
 

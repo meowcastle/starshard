@@ -1,0 +1,110 @@
+{
+ "0 abilities": {
+  "1": {
+   "careful": 69.2,
+   "casual": 53.7,
+   "gap": 15.5
+  },
+  "2": {
+   "careful": 86.5,
+   "casual": 52.2,
+   "gap": 34.3
+  },
+  "3": {
+   "careful": 67.6,
+   "casual": 42.6,
+   "gap": 25.0
+  },
+  "4": {
+   "careful": 68.9,
+   "casual": 42.7,
+   "gap": 26.2
+  },
+  "5": {
+   "careful": 29.9,
+   "casual": 26.6,
+   "gap": 3.3
+  }
+ },
+ "2 abilities": {
+  "1": {
+   "careful": 79.5,
+   "casual": 53.0,
+   "gap": 26.5
+  },
+  "2": {
+   "careful": 89.1,
+   "casual": 52.2,
+   "gap": 36.9
+  },
+  "3": {
+   "careful": 71.4,
+   "casual": 45.2,
+   "gap": 26.2
+  },
+  "4": {
+   "careful": 73.7,
+   "casual": 43.6,
+   "gap": 30.1
+  },
+  "5": {
+   "careful": 45.8,
+   "casual": 28.7,
+   "gap": 17.1
+  }
+ },
+ "4 abilities": {
+  "1": {
+   "careful": 83.2,
+   "casual": 57.0,
+   "gap": 26.2
+  },
+  "2": {
+   "careful": 90.8,
+   "casual": 55.5,
+   "gap": 35.3
+  },
+  "3": {
+   "careful": 75.7,
+   "casual": 47.2,
+   "gap": 28.5
+  },
+  "4": {
+   "careful": 74.3,
+   "casual": 45.7,
+   "gap": 28.6
+  },
+  "5": {
+   "careful": 47.6,
+   "casual": 35.3,
+   "gap": 12.3
+  }
+ },
+ "6 abilities": {
+  "1": {
+   "careful": 91.8,
+   "casual": 60.7,
+   "gap": 31.1
+  },
+  "2": {
+   "careful": 94.0,
+   "casual": 60.3,
+   "gap": 33.7
+  },
+  "3": {
+   "careful": 81.4,
+   "casual": 52.4,
+   "gap": 29.0
+  },
+  "4": {
+   "careful": 84.1,
+   "casual": 51.6,
+   "gap": 32.5
+  },
+  "5": {
+   "careful": 60.4,
+   "casual": 37.8,
+   "gap": 22.6
+  }
+ }
+}

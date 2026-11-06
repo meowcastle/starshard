@@ -1,8 +1,15 @@
-# sim.starshard.net — Forge MTG simulator
+# Deck Bench (sim.starshard.net): a test bench for deck changes
 
 Private web UI, signed in with **Star Shard accounts**, around [Forge](https://github.com/Card-Forge/forge)'s
 headless AI-vs-AI simulator (`forge sim`). Separate from Star Shard; it only
-shares the domain and the NAS.
+shares the domain and the NAS. Not affiliated with Forge or Wizards of the Coast.
+
+**The name.** Deck Bench since 5 Nov 2026 (BACKLOG.md FS1). The product used to carry the
+engine's name, which read as an official Forge product (SHIP-AUDIT-26OCT.md §3); the old name
+now appears nowhere but as `forge sim`, Forge's own command for a headless game, which is
+what `forge.js` spawns. `/about` (`public/about.html`) is the about and attribution page:
+Forge, Scryfall, the Mana font, the field sources, MTGODecklistCache, the coach, and the
+Fan Content notice, which also stays in the page footer and in every email.
 
 - **Matchup**: 2–4 decks, N games (3–4 decks = free-for-all).
 - **Gauntlet**: deck 1 plays N games against each other deck in turn

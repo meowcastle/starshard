@@ -1,0 +1,58 @@
+--- vectors  (engine_v1, seeds 8)
+    33/33 pass  [    0s]
+--- bands5  (engine_v1, seeds 8)
+    pack of 5   careful  73.2  casual  26.8  gap  46.4   (448 boards a cell)  [   42s]
+    pack of 5   careful: lead-changes 2.59  comeback 55.4%  margin 2.84  close(<=1) 30.4%  flips 4.70
+--- bands12  (engine_v1, seeds 8)
+    pack of 12  careful  71.2  casual  47.1  gap  24.1   (448 boards a cell)  [   43s]
+    pack of 12  careful: lead-changes 2.62  comeback 43.8%  margin 3.32  close(<=1) 28.8%  flips 5.09
+--- scan  (engine_v1, seeds 8)
+    54 openings; best The Storm@3 28/28, The Storm@5 28/28, The Storm@6 28/28; winning all 28: 6  [   61s]
+    all-28: The Storm@3, The Storm@5, The Storm@6, The Crown@2, The Crown@7, The Heart@1
+--- solve-you-1  (engine_v1, seeds 8)
+    you leads, night  1: YOU win under perfect play  (206657 nodes, 41s)
+--- solve-you-5  (engine_v1, seeds 8)
+    you leads, night  5: YOU win under perfect play  (213763 nodes, 38s)
+--- solve-you-10  (engine_v1, seeds 8)
+    you leads, night 10: YOU win under perfect play  (228848 nodes, 49s)
+--- solve-you-15  (engine_v1, seeds 8)
+    you leads, night 15: YOU win under perfect play  (244317 nodes, 48s)
+--- solve-you-20  (engine_v1, seeds 8)
+    you leads, night 20: YOU win under perfect play  (234733 nodes, 48s)
+--- solve-you-25  (engine_v1, seeds 8)
+    you leads, night 25: YOU win under perfect play  (233865 nodes, 54s)
+--- solve-you-28  (engine_v1, seeds 8)
+    you leads, night 28: YOU win under perfect play  (222956 nodes, 45s)
+--- solve-sky-1  (engine_v1, seeds 8)
+    sky leads, night  1: SKY wins under perfect play  (310341 nodes, 81s)
+--- solve-sky-5  (engine_v1, seeds 8)
+    sky leads, night  5: SKY wins under perfect play  (277151 nodes, 60s)
+--- solve-sky-10  (engine_v1, seeds 8)
+    sky leads, night 10: SKY wins under perfect play  (308684 nodes, 69s)
+--- solve-sky-15  (engine_v1, seeds 8)
+    sky leads, night 15: SKY wins under perfect play  (353747 nodes, 101s)
+--- solve-sky-20  (engine_v1, seeds 8)
+    sky leads, night 20: SKY wins under perfect play  (214782 nodes, 59s)
+--- solve-sky-25  (engine_v1, seeds 8)
+    sky leads, night 25: SKY wins under perfect play  (263396 nodes, 65s)
+--- solve-sky-28  (engine_v1, seeds 8)
+    sky leads, night 28: SKY wins under perfect play  (331607 nodes, 82s)
+
+=== engine_v1: pass/fail ===
+  gate          check                                    value                        want                         result
+  vectors       the 33 conformance vectors               33/33                        33/33                        PASS
+  bands         pack of 5, careful                       73.2                         55 to 65                     INFO
+  bands         pack of 5, casual                        26.8                         35 to 45                     INFO
+  bands         pack of 5, skill gap                     46.4                         20 or more                   INFO
+  reproduce v1  pack of 5, careful / casual              73.2 / 26.8                  73.2 / 26.8                  PASS
+  drama         pack of 5, careful proxies recorded      lc 2.59 cb 55.4 close 30.4   baseline                     INFO
+  bands         pack of 12, careful                      71.2                         55 to 65                     INFO
+  bands         pack of 12, casual                       47.1                         35 to 45                     INFO
+  bands         pack of 12, skill gap                    24.1                         20 or more                   INFO
+  reproduce v1  pack of 12, careful / casual             71.2 / 47.1                  71.2 / 47.1                  PASS
+  drama         pack of 12, careful proxies recorded     lc 2.62 cb 43.8 close 28.8   baseline                     INFO
+  scan          openings that win all 28 nights          6                            0                            INFO
+  reproduce v1  all-28 openings                          6                            6                            PASS
+  reproduce v1  you leads: leader wins                   7/7                          7/7                          PASS
+  reproduce v1  sky leads: leader wins                   7/7                          7/7                          PASS
+  6/6 counted rows pass (9 info); results in results/gates-engine_v1-20261103-2339.json

@@ -1,6 +1,6 @@
 {
-  "name": "Forge Sim",
-  "short_name": "Forge Sim",
+  "name": "Deck Bench",
+  "short_name": "Deck Bench",
   "description": "Test a Standard deck against this week's field before the event.",
   "start_url": "/",
   "scope": "/",

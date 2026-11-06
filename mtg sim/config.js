@@ -58,7 +58,7 @@ const SPEC = {
   // mail (mail.js, NOTE-TO-CODE-14OCT-EMAIL.md): Resend's REST API; unset key = no mail, and sign-in codes say so
   RESEND_API_KEY: S('server', 'raw', undefined, 'sends sign-in codes, the weekly digest and run-finished mail; unset = off', true),
   RESEND_WEBHOOK_SECRET: S('server', 'raw', undefined, 'whsec_... from the Resend webhook, for bounces and complaints', true),
-  MAIL_FROM: S('server', 'str', 'Forge Sim <noreply@sim.starshard.net>', 'the From line'),
+  MAIL_FROM: S('server', 'str', 'Deck Bench <noreply@sim.starshard.net>', 'the From line'),
   MAIL_REPLY_TO: S('server', 'str', '', 'the Reply-To address (empty = none)'),
   SITE_URL: S('server', 'str', 'https://sim.starshard.net', 'the address links in mail point at'),
   // a remote worker

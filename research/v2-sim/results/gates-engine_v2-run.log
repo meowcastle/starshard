@@ -1,0 +1,32 @@
+--- bands5  (engine_v2, seeds 8)
+    pack of 5   careful  67.9  casual  55.4  gap  12.5   (448 boards a cell)  [   45s]
+    pack of 5   careful: lead-changes 2.66  comeback 32.1%  margin 2.71  close(<=1) 32.1%  flips 2.62
+--- bands12  (engine_v2, seeds 8)
+    pack of 12  careful  77.0  casual  55.8  gap  21.2   (448 boards a cell)  [   44s]
+    pack of 12  careful: lead-changes 2.57  comeback 34.6%  margin 3.54  close(<=1) 29.0%  flips 3.72
+--- scan  (engine_v2, seeds 8)
+    54 openings; best The Crown@6 26/28, The Crown@3 25/28, The Crown@8 24/28; winning all 28: 0  [   57s]
+--- solve-you-1  (engine_v2, seeds 8)
+    you leads, night  1: unsolved within 1500000 nodes (49s)
+--- solve-sky-1  (engine_v2, seeds 8)
+    sky leads, night  1: unsolved within 1500000 nodes (43s)
+
+=== engine_v2: pass/fail ===
+  gate          check                                    value                        want                         result
+  vectors       the 33 conformance and 3 agent vectors   53/53                        53/53                        PASS
+  bands         pack of 5, careful                       67.9                         55 to 65                     FAIL
+  bands         pack of 5, casual                        55.4                         35 to 45                     FAIL
+  bands         pack of 5, skill gap                     12.5                         20 or more                   FAIL
+  drama         pack of 5, careful lead_changes          2.66                         at or above v1 (2.59)        PASS
+  drama         pack of 5, careful comeback_pct          32.1                         at or above v1 (55.4)        FAIL
+  drama         pack of 5, careful close_pct             32.1                         at or above v1 (30.4)        PASS
+  bands         pack of 12, careful                      77.0                         55 to 65                     FAIL
+  bands         pack of 12, casual                       55.8                         35 to 45                     FAIL
+  bands         pack of 12, skill gap                    21.2                         20 or more                   PASS
+  drama         pack of 12, careful lead_changes         2.57                         at or above v1 (2.62)        FAIL
+  drama         pack of 12, careful comeback_pct         34.6                         at or above v1 (43.8)        FAIL
+  drama         pack of 12, careful close_pct            29.0                         at or above v1 (28.8)        PASS
+  scan          openings that win all 28 nights          0                            0                            PASS
+  solve         you leads: leader wins                   0/0 solved, 1 unsolved       fewer than all sampled       FAIL
+  solve         sky leads: leader wins                   0/0 solved, 1 unsolved       fewer than all sampled       FAIL
+  6/16 counted rows pass (0 info); MISSING parts: solve-you-5, solve-you-10, solve-you-15, solve-you-20, solve-you-25, solve-you-28, solve-sky-5, solve-sky-10, solve-sky-15, solve-sky-20, solve-sky-25, solve-sky-28; results in results/gates-engine_v2-20261104-0539.json

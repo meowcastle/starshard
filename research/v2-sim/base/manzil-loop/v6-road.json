@@ -1,0 +1,83 @@
+{
+ "rung 1": {
+  "careful": 87.9,
+  "careful_flips": 6.03,
+  "casual": 64.1,
+  "casual_flips": 7.71,
+  "gap": 23.8,
+  "n": 672,
+  "reads": 3
+ },
+ "rung 2": {
+  "careful": 74.1,
+  "careful_flips": 6.51,
+  "casual": 56.1,
+  "casual_flips": 8.46,
+  "gap": 18.0,
+  "n": 672,
+  "reads": 4
+ },
+ "rung 3": {
+  "careful": 67.9,
+  "careful_flips": 4.43,
+  "casual": 48.5,
+  "casual_flips": 6.77,
+  "gap": 19.4,
+  "n": 672,
+  "reads": 5
+ },
+ "rung 4": {
+  "careful": 91.8,
+  "careful_flips": 5.5,
+  "casual": 69.6,
+  "casual_flips": 7.51,
+  "gap": 22.2,
+  "n": 672,
+  "reads": 6
+ },
+ "rung 5": {
+  "careful": 80.2,
+  "careful_flips": 5.15,
+  "casual": 50.1,
+  "casual_flips": 8.29,
+  "gap": 30.1,
+  "n": 672,
+  "reads": 7
+ },
+ "rung 6": {
+  "careful": 66.4,
+  "careful_flips": 3.4,
+  "casual": 42.9,
+  "casual_flips": 6.36,
+  "gap": 23.5,
+  "n": 672,
+  "reads": 8
+ },
+ "rung 7": {
+  "careful": 64.0,
+  "careful_flips": 5.71,
+  "casual": 46.9,
+  "casual_flips": 7.96,
+  "gap": 17.1,
+  "n": 672,
+  "reads": 9
+ },
+ "rung 8": {
+  "careful": 68.5,
+  "careful_flips": 3.64,
+  "casual": 48.7,
+  "casual_flips": 6.33,
+  "gap": 19.8,
+  "n": 672,
+  "reads": 11
+ },
+ "rung 9 the sky": {
+  "careful": 44.3,
+  "careful_flips": 3.09,
+  "casual": 17.7,
+  "casual_flips": 5.86,
+  "gap": 26.6,
+  "n": 672,
+  "reads": 14
+ }
+}

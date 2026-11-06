@@ -1,0 +1,251 @@
+{
+ "source": "Swiss Ephemeris, pyswisseph 2.10.03, Moshier ephemeris (SEFLG_MOSEPH), Placidus houses; computed 1 Nov 2026",
+ "charts": [
+  {
+   "id": "greenwich-2000",
+   "label": "1 January 2000, 12:00 UT, Greenwich",
+   "year": 2000,
+   "month": 1,
+   "day": 1,
+   "hour": 12,
+   "minute": 0,
+   "tzOffset": 0,
+   "lat": 51.4769,
+   "lon": 0.0,
+   "tz": "Etc/UTC",
+   "jd": 2451545.0,
+   "planets": {
+    "sun": {
+     "lon": 280.3689,
+     "speed": 1.01943,
+     "retrograde": false
+    },
+    "moon": {
+     "lon": 223.3238,
+     "speed": 12.02118,
+     "retrograde": false
+    },
+    "mercury": {
+     "lon": 271.8893,
+     "speed": 1.55625,
+     "retrograde": false
+    },
+    "venus": {
+     "lon": 241.5658,
+     "speed": 1.20904,
+     "retrograde": false
+    },
+    "mars": {
+     "lon": 327.9633,
+     "speed": 0.77567,
+     "retrograde": false
+    },
+    "jupiter": {
+     "lon": 25.253,
+     "speed": 0.04076,
+     "retrograde": false
+    },
+    "saturn": {
+     "lon": 40.3956,
+     "speed": -0.01994,
+     "retrograde": true
+    },
+    "uranus": {
+     "lon": 314.8092,
+     "speed": 0.05034,
+     "retrograde": false
+    },
+    "neptune": {
+     "lon": 303.193,
+     "speed": 0.03557,
+     "retrograde": false
+    },
+    "pluto": {
+     "lon": 251.4547,
+     "speed": 0.03515,
+     "retrograde": false
+    }
+   },
+   "asc": 24.2652,
+   "mc": 279.6111,
+   "cusps": [
+    24.2652,
+    61.1415,
+    82.0204,
+    99.6111,
+    119.0623,
+    147.7013,
+    204.2652,
+    241.1415,
+    262.0204,
+    279.6111,
+    299.0623,
+    327.7013
+   ]
+  },
+  {
+   "id": "new-york-1985",
+   "label": "15 March 1985, 06:30 EST, New York",
+   "year": 1985,
+   "month": 3,
+   "day": 15,
+   "hour": 6,
+   "minute": 30,
+   "tzOffset": -5,
+   "lat": 40.7128,
+   "lon": -74.006,
+   "tz": "America/New_York",
+   "jd": 2446139.979167,
+   "planets": {
+    "sun": {
+     "lon": 354.829,
+     "speed": 0.99631,
+     "retrograde": false
+    },
+    "moon": {
+     "lon": 286.2405,
+     "speed": 12.99489,
+     "retrograde": false
+    },
+    "mercury": {
+     "lon": 13.0145,
+     "speed": 1.17677,
+     "retrograde": false
+    },
+    "venus": {
+     "lon": 22.2362,
+     "speed": -0.06998,
+     "retrograde": true
+    },
+    "mars": {
+     "lon": 30.1936,
+     "speed": 0.72687,
+     "retrograde": false
+    },
+    "jupiter": {
+     "lon": 307.919,
+     "speed": 0.19553,
+     "retrograde": false
+    },
+    "saturn": {
+     "lon": 238.0729,
+     "speed": -0.01336,
+     "retrograde": true
+    },
+    "uranus": {
+     "lon": 257.9613,
+     "speed": 0.00667,
+     "retrograde": false
+    },
+    "neptune": {
+     "lon": 273.4986,
+     "speed": 0.01149,
+     "retrograde": false
+    },
+    "pluto": {
+     "lon": 214.3543,
+     "speed": -0.0198,
+     "retrograde": true
+    }
+   },
+   "asc": 2.6195,
+   "mc": 271.3825,
+   "cusps": [
+    2.6195,
+    43.398,
+    69.9121,
+    91.3825,
+    113.0801,
+    140.4166,
+    182.6195,
+    223.398,
+    249.9121,
+    271.3825,
+    293.0801,
+    320.4166
+   ]
+  },
+  {
+   "id": "sydney-1992",
+   "label": "23 November 1992, 22:45 AEDT, Sydney",
+   "year": 1992,
+   "month": 11,
+   "day": 23,
+   "hour": 22,
+   "minute": 45,
+   "tzOffset": 11,
+   "lat": -33.8688,
+   "lon": 151.2093,
+   "tz": "Australia/Sydney",
+   "jd": 2448949.989583,
+   "planets": {
+    "sun": {
+     "lon": 241.4458,
+     "speed": 1.01137,
+     "retrograde": false
+    },
+    "moon": {
+     "lon": 230.1964,
+     "speed": 13.72604,
+     "retrograde": false
+    },
+    "mercury": {
+     "lon": 237.7637,
+     "speed": -1.29712,
+     "retrograde": true
+    },
+    "venus": {
+     "lon": 281.931,
+     "speed": 1.19405,
+     "retrograde": false
+    },
+    "mars": {
+     "lon": 117.4207,
+     "speed": 0.07275,
+     "retrograde": false
+    },
+    "jupiter": {
+     "lon": 188.4981,
+     "speed": 0.16743,
+     "retrograde": false
+    },
+    "saturn": {
+     "lon": 313.0457,
+     "speed": 0.06214,
+     "retrograde": false
+    },
+    "uranus": {
+     "lon": 285.5763,
+     "speed": 0.04663,
+     "retrograde": false
+    },
+    "neptune": {
+     "lon": 287.0405,
+     "speed": 0.02867,
+     "retrograde": false
+    },
+    "pluto": {
+     "lon": 233.2086,
+     "speed": 0.03996,
+     "retrograde": false
+    }
+   },
+   "asc": 102.6431,
+   "mc": 32.3466,
+   "cusps": [
+    102.6431,
+    141.1298,
+    180.1916,
+    212.3466,
+    237.7965,
+    259.9713,
+    282.6431,
+    321.1298,
+    0.1916,
+    32.3466,
+    57.7965,
+    79.9713
+   ]
+  }
+ ]
+}

@@ -1,0 +1,61 @@
+{
+ "openings": 54,
+ "all28": [
+  "The Storm@3",
+  "The Storm@5",
+  "The Storm@6",
+  "The Crown@2",
+  "The Crown@7",
+  "The Heart@1"
+ ],
+ "top": [
+  {
+   "opening": "The Storm@3",
+   "nights_won": 28
+  },
+  {
+   "opening": "The Storm@5",
+   "nights_won": 28
+  },
+  {
+   "opening": "The Storm@6",
+   "nights_won": 28
+  },
+  {
+   "opening": "The Crown@2",
+   "nights_won": 28
+  },
+  {
+   "opening": "The Crown@7",
+   "nights_won": 28
+  },
+  {
+   "opening": "The Heart@1",
+   "nights_won": 28
+  },
+  {
+   "opening": "The Blaze@7",
+   "nights_won": 27
+  },
+  {
+   "opening": "The Crown@4",
+   "nights_won": 27
+  },
+  {
+   "opening": "The Crown@5",
+   "nights_won": 27
+  },
+  {
+   "opening": "The Crown@6",
+   "nights_won": 27
+  },
+  {
+   "opening": "The Throne@0",
+   "nights_won": 26
+  },
+  {
+   "opening": "The Throne@0 rev",
+   "nights_won": 26
+  }
+ ]
+}

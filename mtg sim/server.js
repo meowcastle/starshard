@@ -80,7 +80,7 @@ const verNum = v => (String(v).match(/\d+(\.\d+)*/) || ['0'])[0].split('.').map(
 const newer = (a, b) => { const x = verNum(a), y = verNum(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; };
 async function checkForge() {
   try {
-    const r = await fetch('https://api.github.com/repos/Card-Forge/forge/releases/latest', { headers: { 'User-Agent': 'forge-sim', Accept: 'application/vnd.github+json' } });
+    const r = await fetch('https://api.github.com/repos/Card-Forge/forge/releases/latest', { headers: { 'User-Agent': 'deck-bench', Accept: 'application/vnd.github+json' } });
     if (!r.ok) throw new Error('GitHub answered ' + r.status);
     const j = await r.json(), version = String(j.tag_name || '').replace(/^forge-/, '');
     if (version) forgeLatest = { version, published: j.published_at, url: j.html_url, checked: Date.now() };
@@ -238,7 +238,7 @@ function pump() {
 }
 // Where a pairing's per-turn game logs go, with a meta.json saying what was played and by which engine.
 // background (the default): the calibration round robins and benchmarks, meta deck against meta
-// deck, where nobody waits; the bridge plays about a third slower than forge sim (13 Oct 2026).
+// deck, where nobody waits; the bridge plays about a third slower than `forge sim` (13 Oct 2026).
 const logsJob = job => config.SIM_GAME_LOG === 'all' || (config.SIM_GAME_LOG === 'background' && (job.owner === 'calibration' || job.owner === 'benchmark'));
 function gameLogDir(job, i) {
   if (!logsJob(job) && !((job.plan[i] && job.plan[i].telemetry) || job.telemetry)) return null;
@@ -1911,13 +1911,14 @@ const server = http.createServer(async (req, res) => {
       const a = Number.isInteger(id) && A.account(id), want = a ? offToken(id) : '';
       if (!a || t.length !== want.length || !crypto.timingSafeEqual(Buffer.from(t), Buffer.from(want))) return send(res, 400, 'That link is not valid.', { 'Content-Type': 'text/plain; charset=utf-8' });
       A.setMail(a.id, { digest: false });
-      return send(res, 200, '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Weekly digest off</title><body style="font-family:system-ui;max-width:520px;margin:48px auto;padding:0 16px;line-height:1.5"><p>The weekly digest is off. Turn it back on under Account any time.</p><p><a href="/">Back to Forge Sim</a></p><p style="color:#777;font-size:13px">' + mail.FAN + '</p>', { 'Content-Type': 'text/html; charset=utf-8' });
+      return send(res, 200, '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Weekly digest off</title><body style="font-family:system-ui;max-width:520px;margin:48px auto;padding:0 16px;line-height:1.5"><p>The weekly digest is off. Turn it back on under Account any time.</p><p><a href="/">Back to Deck Bench</a></p><p style="color:#777;font-size:13px">' + mail.FAN + '</p>', { 'Content-Type': 'text/html; charset=utf-8' });
     }
     if (p === '/api/logout') { A.endSession(tokenOf(req)); return send(res, 200, { ok: true }, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0` }); }
     if (p === '/api/health') return send(res, 200, { ok: true, forge: forgeVersion(), signup: config.SIM_SIGNUP === 'open' });
     if (p === '/api/public') return send(res, 200, { signup: config.SIM_SIGNUP === 'open', forge: forgeVersion() }); // change 19: no auth
     // the plan page (Design's Guide.dc.html): /g/<brew>/v<n> for the owner, /g/<token> shared
     if (/^\/g\/[\w-]+(\/v\d+)?\/?$/.test(p)) return serveStatic(req, res, '/guide.html');
+    if (p === '/about') return serveStatic(req, res, '/about.html');   // FS1: the about and attribution page
     if (!p.startsWith('/api/')) return serveStatic(req, res, p);
     // remote workers authenticate with SIM_WORKER_TOKEN, not a person's session
     if (p.startsWith('/api/worker/')) {

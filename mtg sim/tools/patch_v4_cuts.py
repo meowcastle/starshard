@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Change 28 (FORGE-SIM-DISTILL.md §5, the end-user cut list) on the live page: the second, third and fourth way of
+"""Change 28 (DECK-BENCH-DISTILL.md §5, the end-user cut list) on the live page: the second, third and fourth way of
 saying a thing goes; nothing that does something goes.
   - Trust is one stat in the Sim stat row ("Trust · fair on versions, weak on matchups"), its "how" opens the method
     sheet, which now holds the caveat once. The trust line under the stats, "(sim)", "Test the big ones yourself" and
@@ -73,8 +73,8 @@ sub('padding:12px 0">Nothing yet. A run or a coach question will show here with 
 sub('<div data-change22="collection" style="display:flex;flex-direction:column;gap:10px"><div style="font-size:var(--fs-xl);font-weight:600">Your collection</div>', '<div data-change22="collection" data-change28="cuts" style="display:flex;flex-direction:column;gap:10px"><div style="font-size:var(--fs-xl);font-weight:600">Collection</div>')
 sub('color:var(--loss)">This deletes your decks, runs and record for good. There is no undo.</span>', 'color:var(--loss)">Deletes your decks and runs. No undo.</span>')
 sub('font-size:var(--fs-s)">Delete everything</a>', 'font-size:var(--fs-s)">Delete my account</a>')
-sub("this.setState({ accountErr: 'On iPhone: Share → Add to Home Screen. Then open Forge Sim from there.' });", "this.setState({ accountErr: 'Share → Add to Home Screen' });")
-sub("v.acPhoneNote = standalone ? 'Installed. Run done, weekly changes and coach answers arrive as notifications when they are on.' : 'Add Forge Sim to your Home Screen for notifications and the Table counter at events.';",
+sub("this.setState({ accountErr: 'On iPhone: Share → Add to Home Screen. Then open Deck Bench from there.' });", "this.setState({ accountErr: 'Share → Add to Home Screen' });")
+sub("v.acPhoneNote = standalone ? 'Installed. Run done, weekly changes and coach answers arrive as notifications when they are on.' : 'Add Deck Bench to your Home Screen for notifications and the Table counter at events.';",
     "v.acPhoneNote = standalone ? 'Installed' : 'Share → Add to Home Screen';")
 # ---------- Codex ----------
 sub("<div style=\"font-size:var(--fs-l);color:var(--muted);line-height:1.5\">Every card and deck the sim knows about, with where it's played this week and how it did in your runs. Standard only for now.</div>", '')

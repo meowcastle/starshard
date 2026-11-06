@@ -1,0 +1,170 @@
+{
+ "0 abilities": {
+  "0": {
+   "careful": 29.6,
+   "casual": 23.1,
+   "gap": 6.5
+  },
+  "2": {
+   "careful": 25.0,
+   "casual": 22.6,
+   "gap": 2.4
+  },
+  "4": {
+   "careful": 27.4,
+   "casual": 26.9,
+   "gap": 0.5
+  },
+  "8": {
+   "careful": 29.9,
+   "casual": 26.6,
+   "gap": 3.3
+  },
+  "12": {
+   "careful": 19.6,
+   "casual": 13.7,
+   "gap": 5.9
+  },
+  "16": {
+   "careful": 19.0,
+   "casual": 13.1,
+   "gap": 5.9
+  },
+  "24": {
+   "careful": 19.2,
+   "casual": 10.4,
+   "gap": 8.8
+  }
+ },
+ "2 abilities": {
+  "0": {
+   "careful": 32.4,
+   "casual": 24.9,
+   "gap": 7.5
+  },
+  "2": {
+   "careful": 32.0,
+   "casual": 20.8,
+   "gap": 11.2
+  },
+  "4": {
+   "careful": 35.4,
+   "casual": 28.7,
+   "gap": 6.7
+  },
+  "8": {
+   "careful": 45.8,
+   "casual": 28.7,
+   "gap": 17.1
+  },
+  "12": {
+   "careful": 37.1,
+   "casual": 18.9,
+   "gap": 18.2
+  },
+  "16": {
+   "careful": 36.8,
+   "casual": 17.6,
+   "gap": 19.2
+  },
+  "24": {
+   "careful": 36.5,
+   "casual": 13.7,
+   "gap": 22.8
+  }
+ },
+ "4 abilities": {
+  "0": {
+   "careful": 32.0,
+   "casual": 26.5,
+   "gap": 5.5
+  },
+  "2": {
+   "careful": 34.2,
+   "casual": 24.0,
+   "gap": 10.2
+  },
+  "4": {
+   "careful": 38.1,
+   "casual": 30.5,
+   "gap": 7.6
+  },
+  "8": {
+   "careful": 47.6,
+   "casual": 35.3,
+   "gap": 12.3
+  },
+  "12": {
+   "careful": 37.2,
+   "casual": 21.1,
+   "gap": 16.1
+  },
+  "16": {
+   "careful": 36.5,
+   "casual": 20.7,
+   "gap": 15.8
+  },
+  "24": {
+   "careful": 35.7,
+   "casual": 18.5,
+   "gap": 17.2
+  }
+ },
+ "6 abilities": {
+  "0": {
+   "careful": 39.3,
+   "casual": 28.4,
+   "gap": 10.9
+  },
+  "2": {
+   "careful": 38.7,
+   "casual": 31.0,
+   "gap": 7.7
+  },
+  "4": {
+   "careful": 48.1,
+   "casual": 32.4,
+   "gap": 15.7
+  },
+  "8": {
+   "careful": 60.4,
+   "casual": 37.8,
+   "gap": 22.6
+  },
+  "12": {
+   "careful": 50.4,
+   "casual": 26.2,
+   "gap": 24.2
+  },
+  "16": {
+   "careful": 49.9,
+   "casual": 26.0,
+   "gap": 23.9
+  },
+  "24": {
+   "careful": 49.3,
+   "casual": 24.0,
+   "gap": 25.3
+  }
+ },
+ "0 abilities, reads 4, 0 planets swapped": {
+  "careful": 27.4,
+  "casual": 26.9,
+  "gap": 0.5
+ },
+ "0 abilities, reads 4, 1 planets swapped": {
+  "careful": 63.2,
+  "casual": 40.5,
+  "gap": 22.7
+ },
+ "0 abilities, reads 4, 2 planets swapped": {
+  "careful": 64.4,
+  "casual": 40.5,
+  "gap": 23.9
+ },
+ "0 abilities, reads 4, 3 planets swapped": {
+  "careful": 73.8,
+  "casual": 47.8,
+  "gap": 26.0
+ }
+}

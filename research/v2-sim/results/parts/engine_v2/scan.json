@@ -1,0 +1,54 @@
+{
+ "openings": 54,
+ "all28": [],
+ "top": [
+  {
+   "opening": "The Crown@6",
+   "nights_won": 26
+  },
+  {
+   "opening": "The Crown@3",
+   "nights_won": 25
+  },
+  {
+   "opening": "The Crown@8",
+   "nights_won": 24
+  },
+  {
+   "opening": "The Blaze@2",
+   "nights_won": 22
+  },
+  {
+   "opening": "The Crown@4",
+   "nights_won": 22
+  },
+  {
+   "opening": "The Crown@7",
+   "nights_won": 21
+  },
+  {
+   "opening": "The Blaze@3",
+   "nights_won": 20
+  },
+  {
+   "opening": "The Crown@5",
+   "nights_won": 20
+  },
+  {
+   "opening": "The Blaze@4",
+   "nights_won": 19
+  },
+  {
+   "opening": "The Throne@2 rev",
+   "nights_won": 19
+  },
+  {
+   "opening": "The Blaze@0",
+   "nights_won": 18
+  },
+  {
+   "opening": "The Blaze@1",
+   "nights_won": 18
+  }
+ ]
+}

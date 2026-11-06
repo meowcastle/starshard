@@ -142,7 +142,7 @@ sub1("      plans: [], hasPlans: false, brewList: [], noCol: false,",
 
 # the phone (16 Oct, after the first screenshots): the tabs were hidden with the v4 nav, so Collection and Sim
 # could not be reached; they become a segmented control. The header drops the wordmark and search (Codex is in the bar).
-sub1('<span style="font-weight:600">Forge Sim</span></div><div data-v5="header"', '<span class="fs-word" style="font-weight:600">Forge Sim</span></div><div data-v5="header"', 'wordmark')
+sub1('<span style="font-weight:600">Deck Bench</span></div><div data-v5="header"', '<span class="fs-word" style="font-weight:600">Deck Bench</span></div><div data-v5="header"', 'wordmark')
 sub1('<a href="#" onClick="{{ cxBrowse }}" style="font-size:var(--fs-s);color:var(--muted);border:1px solid var(--line-strong);border-radius:999px;padding:6px 14px;white-space:nowrap">Search cards and decks</a>', '<a href="#" class="fs-search" onClick="{{ cxBrowse }}" style="font-size:var(--fs-s);color:var(--muted);border:1px solid var(--line-strong);border-radius:999px;padding:6px 14px;white-space:nowrap">Search cards and decks</a>', 'search')
 sub1('max-width:40vw">{{ pickerLabel }} ▾</a>', 'max-width:min(40vw,360px)">{{ pickerLabel }} ▾</a>', 'picker width')
 sub1('@media (max-width:900px){\n', '@media (max-width:900px){\n.fs-search,.fs-word{display:none!important}\n[data-v5="header"] a:first-child{max-width:58vw!important}\n', 'phone header')

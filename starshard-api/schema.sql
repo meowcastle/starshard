@@ -86,7 +86,10 @@ CREATE TABLE IF NOT EXISTS recollection (
 -- signup writes manzil_pack below instead — five integers, not a birth
 -- certificate. Fields beyond birth_date stay nullable since Star Shard's
 -- onboarding can supply them progressively (date first, place/lat/lon/tz
--- once geocoded).
+-- once geocoded). SS1 (28 Oct 2026): a Star Shard signup with no five/pack
+-- writes this row at signup; Manzil's five are then cast from it on the
+-- first GET /api/me/manzil-pack (server.js, lib/manzil-cast.js). No column
+-- changed; no migration needed.
 CREATE TABLE IF NOT EXISTS birth_data (
   user_id INT NOT NULL PRIMARY KEY,
   birth_date DATE NOT NULL,
@@ -164,4 +167,27 @@ CREATE TABLE IF NOT EXISTS guestbook_entries (
   ip_hash CHAR(64) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_guestbook_ip_hash (ip_hash)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- PRE-SIGNUP EMAIL CAPTURE (MZ3, 2 Nov 2026). A visitor who has finished a first night
+-- (the shard's first run in app/, the practice walk in the game) and has no account can
+-- leave one thing behind: an email. Nothing else is stored about them, and the row says
+-- nothing about who they are beyond the address. `device_hash` is the sha256 of a random
+-- id the device made for itself, so the same device can take the row back without an
+-- account (DELETE /api/email). `user_id` is set when an account with this email is
+-- created, and from then on the row is the account's: it cascades with the account and
+-- appears in its export. DELETE /api/me also removes it by email, so an account that
+-- never got linked (the email was left from another device) still takes it along.
+-- The age gate runs on the request (birthDate in the body, nothing from it stored),
+-- same posture as /api/auth/age-check. Migration: migrations/2026-11-02-email-capture.sql.
+CREATE TABLE IF NOT EXISTS email_capture (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  device_hash CHAR(64) NOT NULL,
+  user_id INT NULL,
+  source VARCHAR(16) NOT NULL DEFAULT 'shard',
+  tz VARCHAR(64) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_email_capture_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_email_capture_device (device_hash)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

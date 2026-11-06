@@ -47,6 +47,11 @@ const COOKIE_NAME = 'starshard_session';
 const MAX_CONNECTIONS = 500;
 const READY_TIMEOUT_MS = 5000;
 const DISCONNECT_GRACE_MS = 60000;
+// MZ6 (3 Nov 2026): a report may follow the match it is about. The client used to drop its
+// socket on match_result, and the server forgot the match in the same breath, so a report
+// from the win or loss screen had nothing to land on. An ended match is remembered, seats
+// only, for this long; the matcher never sees it.
+const REPORT_WINDOW_MS = 10 * 60 * 1000;
 const BOARD_LEN = 9;
 const BEST_OF = 5; // first to 3
 
@@ -101,6 +106,7 @@ function createManzilLobby(io, { jwtSecret, pool }) {
   const matches = new Map(); // matchId -> match
   const gidToMatch = new Map(); // gid -> matchId
   const gidToSocket = new Map(); // gid -> socket (the live one)
+  const ended = new Map(); // matchId -> { seats, reportedBy, timer }, for REPORT_WINDOW_MS after endMatch (MZ6)
 
   const allowQueueJoin = makeLimiter();
   const lastPlaceAt = new Map(); // gid -> timestamp, 1 move / 300ms
@@ -205,6 +211,18 @@ function createManzilLobby(io, { jwtSecret, pool }) {
     matches.delete(match.id);
     gidToMatch.delete(match.seats.you.gid);
     gidToMatch.delete(match.seats.sky.gid);
+    // MZ6: the seats stay reportable for a while after the table closes
+    if (ended.has(match.id)) clearTimeout(ended.get(match.id).timer);
+    const rec = { id: match.id, seats: match.seats, reportedBy: match.reportedBy || new Set(), timer: null };
+    rec.timer = setTimeout(() => ended.delete(match.id), REPORT_WINDOW_MS);
+    rec.timer.unref();
+    ended.set(match.id, rec);
+  }
+
+  // MZ6: a match for a report, live or recently ended.
+  function reportableMatch(matchId) {
+    if (matches.has(matchId)) return matches.get(matchId);
+    return ended.get(matchId) || null;
   }
 
   async function createMatch(p1, p2) {
@@ -221,7 +239,7 @@ function createManzilLobby(io, { jwtSecret, pool }) {
         sky: { gid: p2.gid, displayName: p2.displayName, pack: p2.pack, connected: true },
       },
       round: 0, roundWins: [], game: null,
-      discTimers: {}, readyAcks: new Set(), readyTimer: null,
+      discTimers: {}, readyAcks: new Set(), readyTimer: null, reportedBy: new Set(),
       createdAt: Date.now(),
     };
     matches.set(matchId, match);
@@ -514,14 +532,19 @@ function createManzilLobby(io, { jwtSecret, pool }) {
 
     // Reporting also blocks — the whole point of a block list is that the
     // matchmaker skips it (see tryMatch/isBlockedPair above), so a report
-    // with no accompanying block would defeat its own purpose. Fire-and-
-    // forget from the caller's side; failures are logged, not surfaced,
-    // since there's no useful retry UI for this action.
+    // with no accompanying block would defeat its own purpose.
+    //
+    // MZ6 (3 Nov 2026): the client has a button for this now (the pause overlay and the
+    // player-chip menu in a live match, and on the win or loss screen), so the handler
+    // answers: `reported` when the row is written, `report_failed` when it is not, and the
+    // match may be live or ended within REPORT_WINDOW_MS. One row per reporter per match; a
+    // second tap answers `reported` again and writes nothing.
     socket.on('report_player', async msg => {
-      const match = matches.get(msg && msg.matchId);
-      if (!match) return;
+      const match = reportableMatch(msg && msg.matchId);
+      if (!match) { socket.emit('report_failed', { matchId: msg && msg.matchId, reason: 'no_such_match' }); return; }
       const seat = seatFor(match, identity.gid);
-      if (!seat) return;
+      if (!seat) { socket.emit('report_failed', { matchId: match.id, reason: 'no_such_match' }); return; }
+      if (match.reportedBy.has(seat)) { socket.emit('reported', { matchId: match.id, again: true }); return; }
       const reporterUid = uidFromGid(identity.gid);
       const reportedUid = uidFromGid(match.seats[otherSeat(seat)].gid);
       try {
@@ -533,9 +556,11 @@ function createManzilLobby(io, { jwtSecret, pool }) {
           'INSERT IGNORE INTO manzil_blocks (blocker_user_id, blocked_user_id) VALUES (?, ?)',
           [reporterUid, reportedUid]
         );
+        match.reportedBy.add(seat);
         socket.emit('reported', { matchId: match.id });
       } catch (e) {
         console.error('[manzil-lobby] report_player failed', e);
+        socket.emit('report_failed', { matchId: match.id, reason: 'server_error' });
       }
     });
 
@@ -551,6 +576,40 @@ function createManzilLobby(io, { jwtSecret, pool }) {
       }
     });
   });
+
+  // MZ6 (3 Nov 2026): the graceful restart. The lobby is one process with no persistence
+  // (the header above), so a restart loses every queue and every live match; before SS12's
+  // deploy this happened silently, and a player mid-board saw a dead table. Now server.js
+  // calls this on SIGTERM/SIGINT: every connected socket hears `server_restart` first, the
+  // queue and the matches are let go with their timers, and the sockets are closed by the
+  // server (a client does not auto-reconnect from a server-side close, so the game returns
+  // the player to the open tables with the notice instead of silently reconnecting to a
+  // process that has forgotten them). Resolves once io has closed; the caller exits.
+  let closing = false;
+  async function shutdown(reason = 'restart') {
+    if (closing) return;
+    closing = true;
+    for (const [, sock] of gidToSocket) {
+      try { sock.emit('server_restart', { reason }); } catch (e) {}
+    }
+    for (const m of matches.values()) { clearDisconnectTimer(m, 'you'); clearDisconnectTimer(m, 'sky'); clearTimeout(m.readyTimer); }
+    for (const rec of ended.values()) clearTimeout(rec.timer);
+    matches.clear(); gidToMatch.clear(); ended.clear(); queue.length = 0;
+    // the notice goes out on the wire before the close (a tick for the transport to flush);
+    // then each socket is closed from this side, which the client reads as "io server
+    // disconnect" and does not reconnect from (io.close() alone reads as a transport drop,
+    // which it would retry against the new process, arriving with no match)
+    await new Promise(r => setTimeout(r, 150));
+    for (const sock of [...io.sockets.sockets.values()]) { try { sock.disconnect(true); } catch (e) {} }
+    gidToSocket.clear();
+    await new Promise(r => io.close(() => r()));
+  }
+
+  return {
+    shutdown,
+    // for tests and the health line: counts only, nothing a player reads
+    stats: () => ({ queue: queue.length, matches: matches.size, ended: ended.size, sockets: gidToSocket.size }),
+  };
 }
 
 module.exports = { createManzilLobby };

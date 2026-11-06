@@ -1,0 +1,11 @@
+{
+  "name": "starshard-app",
+  "private": true,
+  "type": "module",
+  "description": "The Star Shard web app shell (STARSHARD-LAUNCH.md section 2). Source in src/, built to dist/ by build.mjs with the esbuild and React 18 already in the root node_modules. Run from this folder or from the root with `npm --prefix app run build:app`.",
+  "scripts": {
+    "build:app": "node build.mjs",
+    "serve:app": "node serve.mjs",
+    "smoke:app": "node ../test/smoke-app.mjs"
+  }
+}

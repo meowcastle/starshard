@@ -1,0 +1,131 @@
+/* pages.css: the lobby (home), the reading page (tonight), the ring and the two cards (SS5).
+   Values come from tokens.css; the scene's own values are the game's, in scene.css. */
+
+/* ─── the lobby ─── */
+.lobby {
+  position: relative;
+  margin: calc(-1 * var(--s6)) calc(-1 * var(--gutter)) 0;
+  border-bottom: 1px solid var(--hair);
+}
+.scene {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #070402;
+}
+.scene-stage {
+  position: absolute;
+  left: 0; top: 0;
+  width: 932px; height: 430px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+/* the stage fades into the page's night at its foot, so the headline stands on the street */
+.lobby-scene::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 46%;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(4, 3, 2, 0.98) 0%, rgba(4, 3, 2, 0.78) 38%, rgba(4, 3, 2, 0) 100%);
+}
+.lobby-head {
+  position: relative;
+  z-index: 2;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter) var(--s6);
+  margin-top: calc(-1 * var(--s8));
+}
+@media (min-width: 1024px) {
+  .lobby-head { margin-top: -128px; padding-bottom: var(--s7); }
+}
+.lobby-head h1 { max-width: 14ch; }
+.lobby-head .station-name { color: var(--gold); text-shadow: 0 0 28px rgba(255, 176, 0, 0.35), 0 2px 14px rgba(5, 3, 2, 0.9); }
+.lobby-head .lead { max-width: 52ch; }
+.lobby-head .doors { margin-top: var(--s5); }
+
+/* ─── the two cards: heterogeneous and tappable as a whole, the game's panel ─── */
+.cards {
+  display: grid;
+  gap: var(--s4);
+  margin-top: var(--s6);
+}
+@media (min-width: 720px) { .cards { grid-template-columns: 1fr 1fr; gap: var(--s5); } }
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  min-height: var(--touch);
+  padding: var(--s5);
+  color: var(--ink);
+  background: rgba(240, 216, 154, 0.05);
+  border: 1px solid rgba(240, 216, 154, 0.14);
+  border-radius: 7px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 5px;
+  border: 1px solid rgba(240, 216, 154, 0.08);
+  pointer-events: none;
+}
+.card:hover { border-color: var(--line-2); background: rgba(240, 216, 154, 0.07); color: var(--ink); }
+.card .eyebrow { margin: 0; }
+.card-title { font-family: var(--font-title); font-weight: 600; font-size: var(--size-h2); line-height: var(--leading-title); color: var(--parchment); }
+.card-line { max-width: 40ch; color: var(--ink); text-wrap: pretty; }
+.card-door { margin-top: var(--s2); color: var(--gold); font-size: var(--size-caption); letter-spacing: var(--track-label); }
+.card:hover .card-door { color: var(--bright); }
+
+/* ─── the ring of 28 ─── */
+.ring { position: relative; flex: none; max-width: 100%; }
+.ring-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; display: block; }
+.ring-seg path { transition: stroke 0.18s ease, stroke-width 0.18s ease; }
+.ring-seg:hover path, .ring-seg:focus-visible path { stroke-width: 17; }
+.ring-seg:focus-visible { outline: none; }
+.ring-seg:focus-visible path { filter: drop-shadow(0 0 6px var(--amber)); }
+.ring-now { filter: drop-shadow(0 0 7px rgba(255, 176, 0, 0.85)); animation: mzBreathe 3.4s ease-in-out infinite; }
+.ring-mark { font-size: 13px; pointer-events: none; }
+.ring-mark-sun { fill: var(--amber); filter: drop-shadow(0 0 4px var(--amber)); }
+.ring-mark-moon { fill: var(--parchment); filter: drop-shadow(0 0 4px var(--parchment)); }
+.ring-core {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 56%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  pointer-events: none;
+}
+.ring-sub { font-size: var(--size-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--amber); }
+.ring-name { font-family: var(--font-title); font-weight: 600; font-size: 22px; line-height: 1.1; color: var(--parchment); text-shadow: 0 0 18px rgba(240, 216, 154, 0.25); text-wrap: pretty; }
+.ring-state { font-size: var(--size-caption); letter-spacing: var(--track-label); color: var(--muted); text-wrap: pretty; }
+@media (prefers-reduced-motion: reduce) { .ring-now { animation: none; } }
+
+/* ─── tonight ─── */
+.tonight-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s5);
+  margin-top: var(--s5);
+}
+@media (min-width: 1024px) {
+  .tonight-top { flex-direction: row; align-items: center; gap: var(--s7); }
+}
+.tonight-prose p:first-child { font-size: var(--size-lead); }
+.section-h { margin: var(--s6) 0 var(--s3); }
+.planets .planet-glyph { font-size: 16px; color: var(--gold); min-width: 1.6ch; }
+.planets .t { font-family: var(--font-body); font-weight: 500; font-size: var(--size-body); color: var(--parchment); }
+.planets .rx { color: var(--amber); font-size: var(--size-caption); }
+.planets .k .deg { color: var(--ink); font-variant-numeric: tabular-nums; }
+@media (max-width: 479px) {
+  .planets a { flex-wrap: wrap; }
+  .planets .k { margin-left: 0; flex-basis: 100%; padding-left: calc(1.6ch + var(--s3)); }
+}

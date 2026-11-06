@@ -1,4 +1,4 @@
-// The distill scorecard (FORGE-SIM-DISTILL.md §1 and §3), measured on public/index.html.
+// The distill scorecard (DECK-BENCH-DISTILL.md §1 and §3), measured on public/index.html.
 // Strings are the page's visible text: markup text between tags, plus string literals in the script
 // that hold a space or a capital (UI copy, not keys). Code identifiers never count.
 // Usage: node tools/distill-count.js [public/index.html] [--list word]

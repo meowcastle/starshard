@@ -1,0 +1,105 @@
+/* codex.css: the codex index and the station pages (SS9, 2 Nov 2026). Values from tokens.css;
+   the card is the game's shard card at a larger size (shard.css's .shard-card, same border,
+   shadow and wash); --q is the station's quarter colour, as the ring paints it. */
+
+/* ─── the index ───────────────────────────────────────────────────────────────────────── */
+.codex-head { display: grid; gap: var(--s5); align-items: center; margin-top: var(--s5); }
+@media (min-width: 1024px) { .codex-head { grid-template-columns: auto minmax(0, var(--measure)); gap: var(--s7); } }
+.codex-head .ring { margin: 0 auto; }
+.codex-tonight { margin: 0 0 var(--s4); font-size: var(--size-lead); color: var(--parchment); text-wrap: pretty; }
+.codex-how { margin: 0; color: var(--ink); text-wrap: pretty; }
+
+.codex-list { list-style: none; margin: var(--s6) 0 0; padding: 0; border-top: 1px solid var(--hair); }
+.codex-list li { border-bottom: 1px solid var(--hair); }
+.codex-row {
+  display: grid;
+  grid-template-columns: 2.5ch 44px minmax(0, 1fr) auto;
+  grid-template-areas: "n art text kanji" "n art range kanji";
+  column-gap: var(--s3);
+  align-items: center;
+  min-height: var(--touch);
+  padding: var(--s3) 0 var(--s3) var(--s3);
+  border-left: 2px solid rgba(var(--q), 0.35);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.codex-row:hover { border-left-color: rgba(var(--q), 1); background: rgba(240, 216, 154, 0.03); color: var(--bright); }
+.codex-row-now .codex-row { border-left-color: var(--amber); }
+.codex-row-n { grid-area: n; font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--size-caption); }
+.codex-row-art { grid-area: art; width: 44px; height: 44px; display: grid; place-items: center; }
+.codex-row-svg { width: 36px; height: 36px; overflow: visible; filter: drop-shadow(0 0 6px rgba(255, 226, 160, 0.3)); }
+.codex-row-text { grid-area: text; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.codex-row-title { font-family: var(--font-title); font-weight: 600; font-size: 20px; line-height: 1.15; color: var(--parchment); }
+.codex-row-key { font-size: var(--size-caption); color: var(--muted); }
+.codex-row-now .codex-row-key { color: var(--amber); }
+.codex-row-range { grid-area: range; font-size: var(--size-caption); color: var(--muted-deep); font-variant-numeric: tabular-nums; }
+.codex-row-kanji { grid-area: kanji; padding-right: var(--s3); font-size: 16px; color: var(--muted); letter-spacing: 0.1em; }
+@media (min-width: 1024px) {
+  .codex-row { grid-template-columns: 2.5ch 48px minmax(0, 1fr) 24ch auto; grid-template-areas: "n art text range kanji"; }
+  .codex-row-range { text-align: right; }
+}
+
+/* ─── one station ─────────────────────────────────────────────────────────────────────── */
+.codex-station h1 { color: var(--gold); text-shadow: 0 0 40px rgba(255, 176, 0, 0.2); }
+.codex-sub { margin: var(--s3) 0 0; color: var(--muted); font-size: var(--size-caption); letter-spacing: var(--track-label); }
+.codex-top { display: grid; gap: var(--s5); align-items: start; margin-top: var(--s5); }
+@media (min-width: 1024px) { .codex-top { grid-template-columns: 200px minmax(0, var(--measure)); gap: var(--s7); } }
+.codex-side { display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
+@media (min-width: 1024px) { .codex-side { position: sticky; top: calc(var(--header-h) + var(--s4)); } }
+.codex-poem { margin: 0; max-width: 200px; font-family: var(--font-title); font-weight: 500; font-style: italic; font-size: 17px; line-height: 1.45; color: var(--ink); text-align: center; text-wrap: pretty; }
+.codex-claim { font-size: var(--size-lead); }
+.codex-portrait .shard-body p { margin: 0 0 var(--s4); }
+
+/* the card: the game's 118 x 160 at 1.5 */
+.codex-card {
+  position: relative;
+  width: 177px; height: 240px;
+  border-radius: 13px;
+  border: 1px solid var(--gold);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65), 0 0 30px rgba(255, 176, 0, 0.24);
+  transform: rotate(-2deg);
+  transition: transform 0.2s ease;
+}
+.codex-card:hover { transform: rotate(0) translateY(-2px); }
+.codex-card-inner { position: absolute; inset: 4px; border-radius: 10px; background: rgba(240, 216, 154, 0.05); border: 1px solid rgba(240, 216, 154, 0.14); }
+.codex-card-halo { position: absolute; left: 20px; right: 20px; top: 14px; bottom: 80px; background: radial-gradient(50% 60% at 50% 40%, rgba(255, 226, 160, 0.15), transparent 75%); }
+.codex-card-art { position: absolute; left: 0; right: 0; margin: 0 auto; top: 34px; width: 110px; height: 96px; opacity: 0.95; filter: drop-shadow(0 0 11px rgba(255, 226, 160, 0.38)); overflow: visible; }
+.codex-card-n { position: absolute; top: 11px; left: 15px; font-size: 15px; color: var(--gold); text-shadow: 0 0 4px rgba(4, 3, 2, 0.95); font-variant-numeric: tabular-nums; }
+.codex-card-face { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--font-title); font-weight: 700; font-size: 26px; color: var(--parchment); text-shadow: 0 0 6px rgba(4, 3, 2, 0.95); }
+.codex-card-left { left: 12px; }
+.codex-card-right { right: 12px; }
+.codex-card-name { position: absolute; top: 146px; left: 0; right: 0; padding: 0 12px; font-family: var(--font-title); font-weight: 600; font-size: 19px; line-height: 1.1; color: var(--parchment); text-align: center; }
+.codex-card-sig { position: absolute; bottom: 14px; left: 0; right: 0; padding: 0 14px; font-size: 11px; line-height: 1.4; color: var(--gold); text-align: center; text-wrap: pretty; }
+
+/* the four skies */
+.codex-skies { margin: 0 0 var(--s4); display: grid; gap: var(--s3); }
+.codex-sky dt { color: var(--parchment); font-size: var(--size-body); }
+.codex-sky dt .fr-k { margin-right: var(--s2); }
+.codex-sky-name { font-family: var(--font-title); font-weight: 600; font-size: 20px; }
+.codex-sky dd { margin: var(--s1) 0 0; color: var(--ink); font-size: var(--size-caption); line-height: 1.6; }
+.codex-synthesis p { margin: 0 0 var(--s3); }
+.codex-match { margin: var(--s3) 0 0; color: var(--muted); font-size: var(--size-caption); }
+.codex-flag { display: inline-block; padding: 1px 8px; margin-right: var(--s2); border: 1px solid var(--hair-2); border-radius: var(--radius-button); font-size: var(--size-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--gold); }
+.codex-flag-divergent { color: var(--amber); border-color: rgba(255, 176, 0, 0.45); }
+.codex-note { margin: var(--s3) 0 0; max-width: var(--measure); color: var(--muted); font-size: var(--size-caption); line-height: 1.6; }
+
+/* the card sheet */
+.codex-cardsheet { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3) var(--s5); }
+@media (min-width: 600px) { .codex-cardsheet { grid-template-columns: repeat(5, auto); justify-content: start; } }
+.codex-cardsheet dt { font-size: var(--size-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--muted); }
+.codex-cardsheet dd { margin: var(--s1) 0 0; color: var(--parchment); font-family: var(--font-title); font-weight: 600; font-size: 22px; line-height: 1.2; }
+.codex-cardsheet div:nth-child(n+3) dd { font-family: var(--font-body); font-weight: 400; font-size: var(--size-body); color: var(--ink); }
+
+/* the walkers */
+.codex-walkers { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s3); }
+.codex-walkers li { display: grid; gap: 2px; padding-left: var(--s3); border-left: 1px solid rgba(var(--q), 0.5); }
+.codex-walker-name { font-family: var(--font-title); font-weight: 600; font-size: 19px; color: var(--parchment); }
+.codex-walker-line { color: var(--ink); font-size: var(--size-body); line-height: 1.6; text-wrap: pretty; }
+
+/* sources */
+.codex-sources { margin: 0; padding: 0 0 0 1.2em; color: var(--muted); font-size: var(--size-caption); line-height: 1.7; }
+.codex-sources li { margin: 0 0 var(--s2); }
+
+.codex-doors { margin-top: var(--s6); }
+@media (prefers-reduced-motion: reduce) { .codex-card, .codex-card:hover { transform: none; } }

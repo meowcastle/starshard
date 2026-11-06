@@ -1,0 +1,158 @@
+{
+ "PLAIN12, dominion as today": {
+  "careful": {
+   "win": 17.1,
+   "margin": 4.37,
+   "n": 560
+  },
+  "casual": {
+   "win": 7.9,
+   "margin": 5.8,
+   "n": 560
+  },
+  "gap": 9.2
+ },
+ "PLAIN12, deepened dominion": {
+  "careful": {
+   "win": 22.1,
+   "margin": 4.64,
+   "n": 560
+  },
+  "casual": {
+   "win": 11.1,
+   "margin": 6.28,
+   "n": 560
+  },
+  "gap": 11.0
+ },
+ "BEST12 (six signatures), as today": {
+  "careful": {
+   "win": 58.0,
+   "margin": 2.55,
+   "n": 560
+  },
+  "casual": {
+   "win": 35.7,
+   "margin": 3.44,
+   "n": 560
+  },
+  "gap": 22.3
+ },
+ "BEST12, deepened dominion": {
+  "careful": {
+   "win": 56.8,
+   "margin": 2.55,
+   "n": 560
+  },
+  "casual": {
+   "win": 32.9,
+   "margin": 3.77,
+   "n": 560
+  },
+  "gap": 23.9
+ },
+ "all 28 have a signature, BEST12": {
+  "careful": {
+   "win": 70.9,
+   "margin": 2.75,
+   "n": 560
+  },
+  "casual": {
+   "win": 46.6,
+   "margin": 3.04,
+   "n": 560
+  },
+  "gap": 24.3
+ },
+ "all 28 have a signature, PLAIN12": {
+  "careful": {
+   "win": 43.6,
+   "margin": 2.29,
+   "n": 560
+  },
+  "casual": {
+   "win": 22.1,
+   "margin": 4.39,
+   "n": 560
+  },
+  "gap": 21.5
+ },
+ "no card has a signature (floor)": {
+  "careful": {
+   "win": 33.2,
+   "margin": 3.35,
+   "n": 560
+  },
+  "casual": {
+   "win": 27.3,
+   "margin": 4.28,
+   "n": 560
+  },
+  "gap": 5.9
+ },
+ "fixed twelve, signatures as today": {
+  "careful": {
+   "win": 58.0,
+   "margin": 2.55,
+   "n": 560
+  },
+  "casual": {
+   "win": 35.7,
+   "margin": 3.44,
+   "n": 560
+  },
+  "gap": 22.3
+ },
+ "drafted for tonight's road, as today": {
+  "careful": {
+   "win": 42.9,
+   "margin": 3.38,
+   "n": 560
+  },
+  "casual": {
+   "win": 29.6,
+   "margin": 4.54,
+   "n": 560
+  },
+  "gap": 13.3
+ },
+ "fixed twelve, deepened dominion": {
+  "careful": {
+   "win": 56.8,
+   "margin": 2.55,
+   "n": 560
+  },
+  "casual": {
+   "win": 32.9,
+   "margin": 3.77,
+   "n": 560
+  },
+  "gap": 23.9
+ },
+ "drafted for tonight, deep dominion": {
+  "careful": {
+   "win": 32.3,
+   "margin": 4.01,
+   "n": 560
+  },
+  "casual": {
+   "win": 22.9,
+   "margin": 5.94,
+   "n": 560
+  },
+  "gap": 9.4
+ },
+ "drafted for tonight, all 28 signed": {
+  "careful": {
+   "win": 66.8,
+   "margin": 2.77,
+   "n": 560
+  },
+  "casual": {
+   "win": 36.4,
+   "margin": 3.59,
+   "n": 560
+  },
+  "gap": 30.4
+ }
+}

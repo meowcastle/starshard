@@ -1,0 +1,155 @@
+{
+ "G shipped (one rule, all nights)": {
+  "best_win": 100.0,
+  "best_perfect_nights": 28,
+  "openings_at_100": 5,
+  "openings_perfect_all_28": 5,
+  "top5": [
+   [
+    "The Storm",
+    8,
+    1,
+    100.0,
+    28
+   ],
+   [
+    "The Throne",
+    6,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Throne",
+    8,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Crown",
+    8,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Crown",
+    8,
+    1,
+    100.0,
+    28
+   ]
+  ]
+ },
+ "G 7 rules rotating by night": {
+  "best_win": 100.0,
+  "best_perfect_nights": 28,
+  "openings_at_100": 2,
+  "openings_perfect_all_28": 2,
+  "top5": [
+   [
+    "The Throne",
+    6,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Throne",
+    8,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Throne",
+    2,
+    0,
+    99.4,
+    27
+   ],
+   [
+    "The Crown",
+    6,
+    0,
+    98.8,
+    27
+   ],
+   [
+    "The Crown",
+    6,
+    1,
+    98.8,
+    27
+   ]
+  ]
+ },
+ "G 28 rules (7 rules x 4 phases)": {
+  "best_win": 100.0,
+  "best_perfect_nights": 28,
+  "openings_at_100": 3,
+  "openings_perfect_all_28": 3,
+  "top5": [
+   [
+    "The Throne",
+    5,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Throne",
+    6,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Throne",
+    8,
+    0,
+    100.0,
+    28
+   ],
+   [
+    "The Crown",
+    6,
+    0,
+    98.8,
+    27
+   ],
+   [
+    "The Crown",
+    6,
+    1,
+    98.8,
+    27
+   ]
+  ]
+ },
+ "H no cube careful": {
+  "match_win": 85.2,
+  "boards": 3.78,
+  "n": 560
+ },
+ "H no cube casual": {
+  "match_win": 25.7,
+  "boards": 3.96,
+  "n": 560
+ },
+ "H cube careful": {
+  "match_win": 88.0,
+  "boards": 3.08,
+  "n": 560
+ },
+ "H cube casual": {
+  "match_win": 29.8,
+  "boards": 3.65,
+  "n": 560
+ },
+ "H skill gap": {
+  "no_cube": 59.5,
+  "cube": 58.2
+ }
+}

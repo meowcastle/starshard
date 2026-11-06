@@ -1,0 +1,154 @@
+{
+ "0 of 6 abilities awake": {
+  "T0 soft: reads 1 ahead": {
+   "careful": 28.6,
+   "casual": 26.8,
+   "gap": 1.8,
+   "n": 672
+  },
+  "T1 shipped: reads 8": {
+   "careful": 29.9,
+   "casual": 26.6,
+   "gap": 3.3,
+   "n": 672
+  },
+  "T2 reads 12": {
+   "careful": 19.6,
+   "casual": 13.7,
+   "gap": 5.9,
+   "n": 672
+  },
+  "T3 reads 12, she leads": {
+   "careful": 21.0,
+   "casual": 10.9,
+   "gap": 10.1,
+   "n": 672
+  },
+  "T4 reads 12, ties to her": {
+   "careful": 14.0,
+   "casual": 11.0,
+   "gap": 3.0,
+   "n": 672
+  },
+  "T5 reads 12, ties, she leads": {
+   "careful": 16.4,
+   "casual": 8.5,
+   "gap": 7.9,
+   "n": 672
+  }
+ },
+ "2 of 6 abilities awake": {
+  "T0 soft: reads 1 ahead": {
+   "careful": 43.0,
+   "casual": 27.7,
+   "gap": 15.3,
+   "n": 672
+  },
+  "T1 shipped: reads 8": {
+   "careful": 45.8,
+   "casual": 28.7,
+   "gap": 17.1,
+   "n": 672
+  },
+  "T2 reads 12": {
+   "careful": 37.1,
+   "casual": 18.9,
+   "gap": 18.2,
+   "n": 672
+  },
+  "T3 reads 12, she leads": {
+   "careful": 26.0,
+   "casual": 17.0,
+   "gap": 9.0,
+   "n": 672
+  },
+  "T4 reads 12, ties to her": {
+   "careful": 24.9,
+   "casual": 15.6,
+   "gap": 9.3,
+   "n": 672
+  },
+  "T5 reads 12, ties, she leads": {
+   "careful": 19.6,
+   "casual": 11.9,
+   "gap": 7.7,
+   "n": 672
+  }
+ },
+ "4 of 6 abilities awake": {
+  "T0 soft: reads 1 ahead": {
+   "careful": 43.2,
+   "casual": 33.6,
+   "gap": 9.6,
+   "n": 672
+  },
+  "T1 shipped: reads 8": {
+   "careful": 47.6,
+   "casual": 35.3,
+   "gap": 12.3,
+   "n": 672
+  },
+  "T2 reads 12": {
+   "careful": 37.2,
+   "casual": 21.1,
+   "gap": 16.1,
+   "n": 672
+  },
+  "T3 reads 12, she leads": {
+   "careful": 27.5,
+   "casual": 21.4,
+   "gap": 6.1,
+   "n": 672
+  },
+  "T4 reads 12, ties to her": {
+   "careful": 25.9,
+   "casual": 15.6,
+   "gap": 10.3,
+   "n": 672
+  },
+  "T5 reads 12, ties, she leads": {
+   "careful": 18.9,
+   "casual": 17.0,
+   "gap": 1.9,
+   "n": 672
+  }
+ },
+ "6 of 6 abilities awake": {
+  "T0 soft: reads 1 ahead": {
+   "careful": 57.4,
+   "casual": 36.0,
+   "gap": 21.4,
+   "n": 672
+  },
+  "T1 shipped: reads 8": {
+   "careful": 60.4,
+   "casual": 37.8,
+   "gap": 22.6,
+   "n": 672
+  },
+  "T2 reads 12": {
+   "careful": 50.4,
+   "casual": 26.2,
+   "gap": 24.2,
+   "n": 672
+  },
+  "T3 reads 12, she leads": {
+   "careful": 38.7,
+   "casual": 26.0,
+   "gap": 12.7,
+   "n": 672
+  },
+  "T4 reads 12, ties to her": {
+   "careful": 36.0,
+   "casual": 19.9,
+   "gap": 16.1,
+   "n": 672
+  },
+  "T5 reads 12, ties, she leads": {
+   "careful": 23.7,
+   "casual": 19.9,
+   "gap": 3.8,
+   "n": 672
+  }
+ }
+}

@@ -1,0 +1,6 @@
+variant alternate, six sets
+pack of 5   careful  82.1  casual  42.9  gap  39.2   leader  39.3%  lc 3.04  cb 58.9%  close 28.6%  (56 boards a cell, 5s)
+pack of 12  careful  85.7  casual  48.2  gap  37.5   leader  51.8%  lc 2.91  cb 49.1%  close 25.0%  (112 boards a cell, 10s)
+variant no-arrival, six sets
+pack of 5   careful  48.2  casual  48.2  gap   0.0   leader  30.4%  lc 2.75  cb 33.9%  close 55.4%  (56 boards a cell, 5s)
+pack of 12  careful  72.3  casual  55.4  gap  16.9   leader  40.2%  lc 2.99  cb 50.9%  close 40.2%  (112 boards a cell, 10s)

@@ -1,0 +1,184 @@
+{
+ "L1 base numbers, no ability": {
+  "careful": {
+   "win": 12.4,
+   "margin": 4.25,
+   "n": 896
+  },
+  "casual": {
+   "win": 11.0,
+   "margin": 5.38,
+   "n": 896
+  },
+  "gap": 1.4
+ },
+ "L2 base numbers, ability": {
+  "careful": {
+   "win": 35.8,
+   "margin": 2.65,
+   "n": 896
+  },
+  "casual": {
+   "win": 16.1,
+   "margin": 4.96,
+   "n": 896
+  },
+  "gap": 19.7
+ },
+ "L3 +1 low face, ability": {
+  "careful": {
+   "win": 59.4,
+   "margin": 2.41,
+   "n": 896
+  },
+  "casual": {
+   "win": 36.7,
+   "margin": 3.5,
+   "n": 896
+  },
+  "gap": 22.7
+ },
+ "L4 +1 both, ability": {
+  "careful": {
+   "win": 80.2,
+   "margin": 2.57,
+   "n": 896
+  },
+  "casual": {
+   "win": 51.5,
+   "margin": 3.11,
+   "n": 896
+  },
+  "gap": 28.7
+ },
+ "flat L3 numbers, 0 of 6 abilities awake": {
+  "careful": {
+   "win": 33.5,
+   "margin": 3.4,
+   "n": 896
+  },
+  "casual": {
+   "win": 25.6,
+   "margin": 4.28,
+   "n": 896
+  },
+  "gap": 7.9
+ },
+ "flat L3 numbers, 1 of 6 abilities awake": {
+  "careful": {
+   "win": 39.5,
+   "margin": 3.07,
+   "n": 896
+  },
+  "casual": {
+   "win": 29.8,
+   "margin": 3.95,
+   "n": 896
+  },
+  "gap": 9.7
+ },
+ "flat L3 numbers, 2 of 6 abilities awake": {
+  "careful": {
+   "win": 44.3,
+   "margin": 2.9,
+   "n": 896
+  },
+  "casual": {
+   "win": 29.2,
+   "margin": 4.08,
+   "n": 896
+  },
+  "gap": 15.1
+ },
+ "flat L3 numbers, 3 of 6 abilities awake": {
+  "careful": {
+   "win": 47.4,
+   "margin": 2.88,
+   "n": 896
+  },
+  "casual": {
+   "win": 33.9,
+   "margin": 3.83,
+   "n": 896
+  },
+  "gap": 13.5
+ },
+ "flat L3 numbers, 4 of 6 abilities awake": {
+  "careful": {
+   "win": 47.5,
+   "margin": 2.72,
+   "n": 896
+  },
+  "casual": {
+   "win": 31.5,
+   "margin": 3.73,
+   "n": 896
+  },
+  "gap": 16.0
+ },
+ "flat L3 numbers, 5 of 6 abilities awake": {
+  "careful": {
+   "win": 59.8,
+   "margin": 2.35,
+   "n": 896
+  },
+  "casual": {
+   "win": 35.2,
+   "margin": 3.46,
+   "n": 896
+  },
+  "gap": 24.6
+ },
+ "flat L3 numbers, 6 of 6 abilities awake": {
+  "careful": {
+   "win": 59.4,
+   "margin": 2.41,
+   "n": 896
+  },
+  "casual": {
+   "win": 36.7,
+   "margin": 3.5,
+   "n": 896
+  },
+  "gap": 22.7
+ },
+ "flat base numbers, 0 of 6 abilities awake": {
+  "careful": {
+   "win": 12.4,
+   "margin": 4.25,
+   "n": 896
+  },
+  "casual": {
+   "win": 11.0,
+   "margin": 5.38,
+   "n": 896
+  },
+  "gap": 1.4
+ },
+ "flat base numbers, 3 of 6 abilities awake": {
+  "careful": {
+   "win": 24.7,
+   "margin": 3.01,
+   "n": 896
+  },
+  "casual": {
+   "win": 12.5,
+   "margin": 5.21,
+   "n": 896
+  },
+  "gap": 12.2
+ },
+ "flat base numbers, 6 of 6 abilities awake": {
+  "careful": {
+   "win": 35.8,
+   "margin": 2.65,
+   "n": 896
+  },
+  "casual": {
+   "win": 16.1,
+   "margin": 4.96,
+   "n": 896
+  },
+  "gap": 19.7
+ }
+}

@@ -73,7 +73,7 @@ function remove(owner) { if (load()[own(owner)]) { delete subs[own(owner)]; writ
 
 async function send(owner, msg) {
   const list = load()[own(owner)] || []; if (!list.length) return { sent: 0 };
-  const payload = JSON.stringify({ title: String(msg.title || 'Forge Sim').slice(0, 80), body: String(msg.body || '').slice(0, 240), url: String(msg.url || '/').slice(0, 300) });
+  const payload = JSON.stringify({ title: String(msg.title || 'Deck Bench').slice(0, 80), body: String(msg.body || '').slice(0, 240), url: String(msg.url || '/').slice(0, 300) });
   let sent = 0; const gone = new Set();
   for (const s of list) {
     try {

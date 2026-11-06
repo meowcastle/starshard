@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Change 27 (FORGE-SIM-DISTILL.md §3, the vocabulary law): one word per concept, in UI strings only. Code identifiers
+"""Change 27 (DECK-BENCH-DISTILL.md §3, the vocabulary law): one word per concept, in UI strings only. Code identifiers
 (brewId, forgeVer, oppOpen, API paths, state keys) are untouched.
-  deck (not brew) · run (not "Queue the run") · the sim (never "Forge" alone; "Forge Sim" is the brand) · matchup
+  deck (not brew) · run (not "Queue the run") · the sim (never "Forge" alone; "Deck Bench" is the brand) · matchup
   (not opponent, outside the Table counter) · field (not meta, gauntlet) · plan (not guide) · inside the noise ·
   done / stopped (not finished). And the goal reads "Competitive tournament", not "RCQ".
 After it, the §3 grep returns no UI hits: node tools/distill-count.js --grep

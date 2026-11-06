@@ -1,0 +1,170 @@
+[
+ {
+  "n": 1,
+  "epithet": "The Gate",
+  "slug": "the-gate",
+  "position": "0°00′ Aries to 12°51′ Aries"
+ },
+ {
+  "n": 2,
+  "epithet": "The Bearer",
+  "slug": "the-bearer",
+  "position": "12°51′ Aries to 25°43′ Aries"
+ },
+ {
+  "n": 3,
+  "epithet": "The Gathered Stars",
+  "slug": "the-gathered-stars",
+  "position": "25°43′ Aries to 8°34′ Tau"
+ },
+ {
+  "n": 4,
+  "epithet": "The Follower",
+  "slug": "the-follower",
+  "position": "8°34′ Taurus to 21°26′ Taurus"
+ },
+ {
+  "n": 5,
+  "epithet": "The Blaze",
+  "slug": "the-blaze",
+  "position": "21°26′ Taurus to 4°17′ Gemini"
+ },
+ {
+  "n": 6,
+  "epithet": "The Storm",
+  "slug": "the-storm",
+  "position": "4°17′ Gemini to 17°09′ Gemini"
+ },
+ {
+  "n": 7,
+  "epithet": "The Return",
+  "slug": "the-return",
+  "position": "17°09′ Gemini to 0°00′ Cancer"
+ },
+ {
+  "n": 8,
+  "epithet": "The Ghost",
+  "slug": "the-ghost",
+  "position": "0°00′ Cancer to 12°51′ Cancer"
+ },
+ {
+  "n": 9,
+  "epithet": "The Glance",
+  "slug": "the-glance",
+  "position": "12°51′ Cancer to 25°43′ Cancer"
+ },
+ {
+  "n": 10,
+  "epithet": "The Throne",
+  "slug": "the-throne",
+  "position": "25°43′ Cancer to 8°34′ Leo"
+ },
+ {
+  "n": 11,
+  "epithet": "The Mane",
+  "slug": "the-mane",
+  "position": "8°34′ Leo to 21°26′ Leo"
+ },
+ {
+  "n": 12,
+  "epithet": "The Turning",
+  "slug": "the-turning",
+  "position": "21°26′ Leo to 4°17′ Virgo"
+ },
+ {
+  "n": 13,
+  "epithet": "The Hand",
+  "slug": "the-hand",
+  "position": "4°17′ Virgo to 17°09′ Virgo"
+ },
+ {
+  "n": 14,
+  "epithet": "The Jewel",
+  "slug": "the-jewel",
+  "position": "17°09′ Virgo to 0°00′ Libra"
+ },
+ {
+  "n": 15,
+  "epithet": "The Veil",
+  "slug": "the-veil",
+  "position": "0°00′ Libra to 12°51′ Libra"
+ },
+ {
+  "n": 16,
+  "epithet": "The Claws",
+  "slug": "the-claws",
+  "position": "12°51′ Libra to 25°43′ Libra"
+ },
+ {
+  "n": 17,
+  "epithet": "The Crown",
+  "slug": "the-crown",
+  "position": "25°43′ Libra to 8°34′ Scorpio"
+ },
+ {
+  "n": 18,
+  "epithet": "The Heart",
+  "slug": "the-heart",
+  "position": "8°34′ Scorpio to 21°26′ Scorpio"
+ },
+ {
+  "n": 19,
+  "epithet": "The Root",
+  "slug": "the-root",
+  "position": "21°26′ Scorpio to 4°17′ Sagittarius"
+ },
+ {
+  "n": 20,
+  "epithet": "The Flock",
+  "slug": "the-flock",
+  "position": "4°17′ Sagittarius to 17°09′ Sagittarius"
+ },
+ {
+  "n": 21,
+  "epithet": "The Empty District",
+  "slug": "the-empty-district",
+  "position": "17°09′ Sagittarius to 0°00′ Capricorn"
+ },
+ {
+  "n": 22,
+  "epithet": "The Listener",
+  "slug": "the-listener",
+  "position": "0°00′ Capricorn to 12°51′ Capricorn"
+ },
+ {
+  "n": 23,
+  "epithet": "The Drum",
+  "slug": "the-drum",
+  "position": "12°51′ Capricorn to 25°43′ Capricorn"
+ },
+ {
+  "n": 24,
+  "epithet": "The Void",
+  "slug": "the-void",
+  "position": "25°43′ Capricorn to 8°34′ Aquarius"
+ },
+ {
+  "n": 25,
+  "epithet": "The Hideaway",
+  "slug": "the-hideaway",
+  "position": "8°34′ Aquarius to 21°26′ Aquarius"
+ },
+ {
+  "n": 26,
+  "epithet": "The Chamber",
+  "slug": "the-chamber",
+  "position": "21°26′ Aquarius to 4°17′ Pisces"
+ },
+ {
+  "n": 27,
+  "epithet": "The Guide",
+  "slug": "the-guide",
+  "position": "4°17′ Pisces to 17°09′ Pisces"
+ },
+ {
+  "n": 28,
+  "epithet": "The Thread",
+  "slug": "the-thread",
+  "position": "17°09′ Pisces to 0°00′ Aries"
+ }
+]

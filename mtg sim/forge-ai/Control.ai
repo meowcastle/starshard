@@ -1,4 +1,4 @@
-# Forge sim: a control profile. Default, except it counters every spell it can (Default
+# Deck Bench: a control profile. Default, except it counters every spell it can (Default
 # counters mana value 1 only 30% of the time and 2 only 75%), and holds flash creatures
 # to answer the stack instead of casting them before its own main phase.
 # The amount of cards at which to stop considering mulligan

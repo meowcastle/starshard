@@ -7,7 +7,7 @@ const path = require('path');
 const crypto = require('crypto');
 const config = require('./config');
 
-const FAN = 'Forge Sim is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.';
+const FAN = 'Deck Bench is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.';
 const DIR = path.join(__dirname, 'mail');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const on = () => !!config.RESEND_API_KEY;

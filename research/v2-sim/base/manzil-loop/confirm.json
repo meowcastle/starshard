@@ -1,0 +1,121 @@
+{
+ "all 28 signed, BEST12, she reads 8": {
+  "careful": {
+   "win": 72.0,
+   "flips": 3.44,
+   "margin": 2.5,
+   "comeback": 41.5,
+   "n": 672
+  },
+  "casual": {
+   "win": 50.4,
+   "flips": 5.82,
+   "margin": 3.0,
+   "comeback": 24.7,
+   "n": 672
+  },
+  "gap": 21.6
+ },
+ "all 28 signed, BEST12, she reads 12": {
+  "careful": {
+   "win": 64.3,
+   "flips": 3.57,
+   "margin": 2.63,
+   "comeback": 40.8,
+   "n": 672
+  },
+  "casual": {
+   "win": 39.4,
+   "flips": 5.34,
+   "margin": 3.07,
+   "comeback": 19.3,
+   "n": 672
+  },
+  "gap": 24.9
+ },
+ "all 28 signed, BEST12, she reads 16": {
+  "careful": {
+   "win": 64.0,
+   "flips": 3.56,
+   "margin": 2.64,
+   "comeback": 41.1,
+   "n": 672
+  },
+  "casual": {
+   "win": 37.6,
+   "flips": 5.21,
+   "margin": 3.09,
+   "comeback": 19.2,
+   "n": 672
+  },
+  "gap": 26.4
+ },
+ "all 28 signed, BEST12, she reads 24": {
+  "careful": {
+   "win": 63.8,
+   "flips": 3.56,
+   "margin": 2.64,
+   "comeback": 41.2,
+   "n": 672
+  },
+  "casual": {
+   "win": 33.8,
+   "flips": 4.9,
+   "margin": 3.18,
+   "comeback": 21.6,
+   "n": 672
+  },
+  "gap": 30.0
+ },
+ "all 28 signed, PLAIN12, she reads 8": {
+  "careful": {
+   "win": 38.8,
+   "flips": 3.34,
+   "margin": 2.42,
+   "comeback": 25.0,
+   "n": 672
+  },
+  "casual": {
+   "win": 22.6,
+   "flips": 5.6,
+   "margin": 4.2,
+   "comeback": 14.6,
+   "n": 672
+  },
+  "gap": 16.2
+ },
+ "all 28 signed, PLAIN12, she reads 12": {
+  "careful": {
+   "win": 31.4,
+   "flips": 3.28,
+   "margin": 2.47,
+   "comeback": 22.3,
+   "n": 672
+  },
+  "casual": {
+   "win": 12.5,
+   "flips": 5.16,
+   "margin": 4.45,
+   "comeback": 9.8,
+   "n": 672
+  },
+  "gap": 18.9
+ },
+ "today's 7 signatures, BEST12, reads 8": {
+  "careful": {
+   "win": 60.4,
+   "flips": 3.5,
+   "margin": 2.39,
+   "comeback": 39.4,
+   "n": 672
+  },
+  "casual": {
+   "win": 37.8,
+   "flips": 6.02,
+   "margin": 3.37,
+   "comeback": 19.9,
+   "n": 672
+  },
+  "gap": 22.6
+ }
+}

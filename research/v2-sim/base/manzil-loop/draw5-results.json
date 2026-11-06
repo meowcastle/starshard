@@ -1,0 +1,110 @@
+{
+ "M L2: five of a drafted 12, revealed": {
+  "careful": {
+   "win": 35.8,
+   "flips": 3.73,
+   "night_sd": 8.7,
+   "n": 896
+  },
+  "casual": {
+   "win": 16.1,
+   "flips": 5.94,
+   "night_sd": 6.2,
+   "n": 896
+  },
+  "skill_gap": 19.7
+ },
+ "M L2: five of all 28, revealed": {
+  "careful": {
+   "win": 15.4,
+   "flips": 4.49,
+   "night_sd": 6.8,
+   "n": 896
+  },
+  "casual": {
+   "win": 10.6,
+   "flips": 6.49,
+   "night_sd": 6.0,
+   "n": 896
+  },
+  "skill_gap": 4.8
+ },
+ "M L3: five of a drafted 12, revealed": {
+  "careful": {
+   "win": 59.4,
+   "flips": 3.63,
+   "night_sd": 14.2,
+   "n": 896
+  },
+  "casual": {
+   "win": 36.7,
+   "flips": 6.11,
+   "night_sd": 12.1,
+   "n": 896
+  },
+  "skill_gap": 22.7
+ },
+ "M L3: five of all 28, revealed": {
+  "careful": {
+   "win": 26.3,
+   "flips": 4.53,
+   "night_sd": 9.3,
+   "n": 896
+  },
+  "casual": {
+   "win": 15.0,
+   "flips": 6.56,
+   "night_sd": 6.6,
+   "n": 896
+  },
+  "skill_gap": 11.3
+ },
+ "M proto levels: five of a drafted 12, revealed": {
+  "careful": {
+   "win": 37.8,
+   "flips": 3.69,
+   "night_sd": 8.7,
+   "n": 896
+  },
+  "casual": {
+   "win": 18.0,
+   "flips": 5.83,
+   "night_sd": 7.2,
+   "n": 896
+  },
+  "skill_gap": 19.8
+ },
+ "M L3 + 28 rotating night rules: five of 12": {
+  "careful": {
+   "win": 50.8,
+   "flips": 3.51,
+   "night_sd": 13.2,
+   "n": 896
+  },
+  "casual": {
+   "win": 34.2,
+   "flips": 5.84,
+   "night_sd": 11.5,
+   "n": 896
+  },
+  "skill_gap": 16.6
+ },
+ "N dealt five of 12 @L3": {
+  "best": "The Crown @7",
+  "best_win": 85.3,
+  "best_perfect_nights": 9,
+  "openings_at_100": 0,
+  "openings_all28": 0
+ },
+ "N dealt five of 12, proto levels": {
+  "best": "The Crown @7",
+  "best_win": 69.2,
+  "best_perfect_nights": 5,
+  "openings_at_100": 0,
+  "openings_all28": 0
+ },
+ "O simultaneous k=1": {
+  "best_win": 75.4,
+  "openings_all28": 0
+ }
+}

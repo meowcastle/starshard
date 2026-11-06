@@ -1,0 +1,106 @@
+/* tokens.css: the one place a color, a type size or a spacing value is written.
+   Every value below is read from the shipped game, "Star Shard v3 Build Plan/Manzil -
+   Game Prototype V2.dc.html" (STARSHARD-LAUNCH.md section 0 and 2.2), not from an older
+   file. The spacing scale is DESIGN-SYSTEM.md section 3, the only part of that document
+   still in force besides its accessibility floor (section 6). */
+
+:root {
+  /* ground: the game's radial night, body #040302 beneath it */
+  --ground-0: #120D06;
+  --ground-1: #0A0603;
+  --ground-2: #050302;
+  --ground-body: #040302;
+  --ground: radial-gradient(90% 120% at 50% 30%, var(--ground-0) 0%, var(--ground-1) 55%, var(--ground-2) 100%);
+  /* a second step of the same ground, for raised surfaces (the game's panels) */
+  --surface-raised: rgba(240, 216, 154, 0.04);
+  --surface-overlay: rgba(9, 6, 2, 0.97);
+
+  /* ink */
+  --parchment: #F2EAD6;   /* headings, the brightest text */
+  --ink: #D8C89C;         /* body */
+  --gold: #F0D89A;        /* links, outlines, accents */
+  --gold-warm: #FFD87A;   /* the game's spoken lines */
+  --amber: #FFB000;       /* whatever is live or lit, and the focus ring */
+  --muted: #9A8A5E;       /* eyebrows, captions */
+  --muted-deep: #8A7B52;  /* the quietest line */
+  --bright: #FFFDF5;      /* link hover */
+
+  /* hairlines and outlines, all the same gold at the game's own alphas */
+  --hair: rgba(240, 216, 154, 0.12);
+  --hair-2: rgba(240, 216, 154, 0.22);
+  --line: rgba(240, 216, 154, 0.3);
+  --line-2: rgba(240, 216, 154, 0.55);
+  --line-3: rgba(240, 216, 154, 0.7);
+  --glow: rgba(240, 216, 154, 0.18);
+  --amber-glow: rgba(255, 176, 0, 0.35);
+
+  /* type: Karla for everything, Cormorant Garamond 600 for titles; the game loads
+     Karla 400/500/600 and Cormorant 500/600/700 */
+  --font-body: 'Karla', sans-serif;
+  --font-title: 'Cormorant Garamond', serif;
+
+  --size-eyebrow: 11px;
+  --size-caption: 12px;
+  --size-body: 15px;
+  --size-lead: 17px;
+  --size-row: 15px;
+  --size-h2: 24px;
+  --size-h1: 40px;
+  --leading-body: 1.7;
+  --leading-title: 1.1;
+  --track-eyebrow: 0.14em;
+  --track-label: 0.05em;
+
+  /* space: 4 8 12 16 24 32 48 64 and nothing between */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+
+  /* shape: the game's buttons and panels carry a 5px radius; its chips are round */
+  --radius-button: 5px;
+  --radius-panel: 5px;
+  --radius-chip: 50%;
+
+  /* the game's button */
+  --button-fill: linear-gradient(180deg, rgba(240, 216, 154, 0.2), rgba(240, 216, 154, 0.07));
+  --button-shadow: 0 3px 0 rgba(38, 30, 12, 0.95), 0 7px 18px rgba(0, 0, 0, 0.4), 0 0 18px rgba(240, 216, 154, 0.18);
+  --button-shadow-hover: 0 3px 0 rgba(38, 30, 12, 0.95), 0 7px 22px rgba(0, 0, 0, 0.45), 0 0 24px rgba(240, 216, 154, 0.26);
+
+  /* the shell */
+  --header-h: 64px;
+  --tabbar-h: 72px;
+  --measure: 65ch;
+  --page-max: 1200px;
+  --gutter: 16px;
+
+  /* accessibility floor (DESIGN-SYSTEM.md section 6) */
+  --focus: var(--amber);
+  --focus-width: 3px;
+  --focus-offset: 2px;
+  --touch: 44px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 32px;
+    --size-body: 16px;
+    --size-h1: 44px;
+    --size-h2: 26px;
+  }
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --size-h1: 32px;
+    --size-h2: 22px;
+    /* 14px is the floor on a phone; 15 is the body */
+    --size-body: 15px;
+    --size-caption: 14px;
+    --size-eyebrow: 12px;
+  }
+}

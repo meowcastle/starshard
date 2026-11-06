@@ -1,0 +1,269 @@
+{
+ "bands": {
+  "pack of 5": {
+   "label": "pack of 5",
+   "careful": {
+    "win": 67.9,
+    "n": 448,
+    "lead_changes": 2.66,
+    "comeback_pct": 32.1,
+    "margin": 2.71,
+    "close_pct": 32.1,
+    "flips": 2.62
+   },
+   "casual": {
+    "win": 55.4,
+    "n": 448,
+    "lead_changes": 3.14,
+    "comeback_pct": 30.4,
+    "margin": 4.12,
+    "close_pct": 21.4,
+    "flips": 7.75
+   },
+   "gap": 12.5
+  },
+  "pack of 12": {
+   "label": "pack of 12",
+   "careful": {
+    "win": 77.0,
+    "n": 448,
+    "lead_changes": 2.57,
+    "comeback_pct": 34.6,
+    "margin": 3.54,
+    "close_pct": 29.0,
+    "flips": 3.72
+   },
+   "casual": {
+    "win": 55.8,
+    "n": 448,
+    "lead_changes": 3.2,
+    "comeback_pct": 29.7,
+    "margin": 4.24,
+    "close_pct": 20.8,
+    "flips": 8.21
+   },
+   "gap": 21.2
+  }
+ },
+ "solve": {
+  "you": [
+   {
+    "leader": "you",
+    "night": 1,
+    "solved": false,
+    "leader_wins": null,
+    "nodes": 1500001,
+    "seconds": 49
+   }
+  ],
+  "sky": [
+   {
+    "leader": "sky",
+    "night": 1,
+    "solved": false,
+    "leader_wins": null,
+    "nodes": 1500001,
+    "seconds": 43
+   }
+  ]
+ },
+ "vectors": {
+  "passed": 53,
+  "total": 53,
+  "fails": []
+ },
+ "scan": {
+  "openings": 54,
+  "all28": [],
+  "top": [
+   {
+    "opening": "The Crown@6",
+    "nights_won": 26
+   },
+   {
+    "opening": "The Crown@3",
+    "nights_won": 25
+   },
+   {
+    "opening": "The Crown@8",
+    "nights_won": 24
+   },
+   {
+    "opening": "The Blaze@2",
+    "nights_won": 22
+   },
+   {
+    "opening": "The Crown@4",
+    "nights_won": 22
+   },
+   {
+    "opening": "The Crown@7",
+    "nights_won": 21
+   },
+   {
+    "opening": "The Blaze@3",
+    "nights_won": 20
+   },
+   {
+    "opening": "The Crown@5",
+    "nights_won": 20
+   },
+   {
+    "opening": "The Blaze@4",
+    "nights_won": 19
+   },
+   {
+    "opening": "The Throne@2 rev",
+    "nights_won": 19
+   },
+   {
+    "opening": "The Blaze@0",
+    "nights_won": 18
+   },
+   {
+    "opening": "The Blaze@1",
+    "nights_won": 18
+   }
+  ]
+ },
+ "engine": "engine_v2",
+ "seeds": 8,
+ "solve_nights": [
+  1,
+  5,
+  10,
+  15,
+  20,
+  25,
+  28
+ ],
+ "assembled": "2026-11-04T05:39:56",
+ "missing": [
+  "solve-you-5",
+  "solve-you-10",
+  "solve-you-15",
+  "solve-you-20",
+  "solve-you-25",
+  "solve-you-28",
+  "solve-sky-5",
+  "solve-sky-10",
+  "solve-sky-15",
+  "solve-sky-20",
+  "solve-sky-25",
+  "solve-sky-28"
+ ],
+ "table": [
+  {
+   "gate": "vectors",
+   "check": "the 33 conformance and 3 agent vectors",
+   "value": "53/53",
+   "want": "53/53",
+   "ok": true
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 5, careful",
+   "value": 67.9,
+   "want": "55 to 65",
+   "ok": false
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 5, casual",
+   "value": 55.4,
+   "want": "35 to 45",
+   "ok": false
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 5, skill gap",
+   "value": 12.5,
+   "want": "20 or more",
+   "ok": false
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 5, careful lead_changes",
+   "value": 2.66,
+   "want": "at or above v1 (2.59)",
+   "ok": true
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 5, careful comeback_pct",
+   "value": 32.1,
+   "want": "at or above v1 (55.4)",
+   "ok": false
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 5, careful close_pct",
+   "value": 32.1,
+   "want": "at or above v1 (30.4)",
+   "ok": true
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 12, careful",
+   "value": 77.0,
+   "want": "55 to 65",
+   "ok": false
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 12, casual",
+   "value": 55.8,
+   "want": "35 to 45",
+   "ok": false
+  },
+  {
+   "gate": "bands",
+   "check": "pack of 12, skill gap",
+   "value": 21.2,
+   "want": "20 or more",
+   "ok": true
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 12, careful lead_changes",
+   "value": 2.57,
+   "want": "at or above v1 (2.62)",
+   "ok": false
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 12, careful comeback_pct",
+   "value": 34.6,
+   "want": "at or above v1 (43.8)",
+   "ok": false
+  },
+  {
+   "gate": "drama",
+   "check": "pack of 12, careful close_pct",
+   "value": 29.0,
+   "want": "at or above v1 (28.8)",
+   "ok": true
+  },
+  {
+   "gate": "scan",
+   "check": "openings that win all 28 nights",
+   "value": 0,
+   "want": "0",
+   "ok": true
+  },
+  {
+   "gate": "solve",
+   "check": "you leads: leader wins",
+   "value": "0/0 solved, 1 unsolved",
+   "want": "fewer than all sampled",
+   "ok": false
+  },
+  {
+   "gate": "solve",
+   "check": "sky leads: leader wins",
+   "value": "0/0 solved, 1 unsolved",
+   "want": "fewer than all sampled",
+   "ok": false
+  }
+ ]
+}

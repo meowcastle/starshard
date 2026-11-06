@@ -1,5 +1,5 @@
-// Forge sim: Forge 2.0.15's forge-gui-desktop/src/main/java/forge/view/SimulateMatch.java
-// (Card-Forge/forge, GPL-3.0), with one change marked "Forge sim patch": -Dsim.ai turns on
+// Deck Bench: Forge 2.0.15's forge-gui-desktop/src/main/java/forge/view/SimulateMatch.java
+// (Card-Forge/forge, GPL-3.0), with one change marked "Deck Bench patch": -Dsim.ai turns on
 // the AI's look-ahead per seat. Build with tools/build-forge-patch.sh. Not used in production.
 package forge.view;
 
@@ -158,7 +158,7 @@ public class SimulateMatch {
                 } else {
                     rp = new RegisteredPlayer(d);
                 }
-                // Forge sim patch: -Dsim.ai=<mode>[,<mode>...] turns on the AI's look-ahead per seat,
+                // Deck Bench patch: -Dsim.ai=<mode>[,<mode>...] turns on the AI's look-ahead per seat,
                 // in deck order (hybrid, full, or none); one value applies to every seat
                 String[] simAis = System.getProperty("sim.ai", "").split(",");
                 String simAi = simAis.length == 0 ? "" : simAis[Math.min(i - 1, simAis.length - 1)].trim();

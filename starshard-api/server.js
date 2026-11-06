@@ -12,6 +12,8 @@ const { Resend } = require('resend');
 const { Server: SocketIOServer } = require('socket.io');
 const { createManzilLobby } = require('./lib/manzil-lobby');
 const { minAgeFor, countryOfRequest } = require('./lib/age-gate');
+const { packFromBirth } = require('./lib/manzil-cast');
+const { tonight } = require('./lib/tonight');
 
 const PORT = process.env.PORT || 4001;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -239,8 +241,12 @@ function parseBirthFields(body) {
 // the 24 Aug PM handoff §2's "store inputs" principle: these ARE the
 // inputs Manzil needs, nothing upstream of them (no raw birth data) is
 // stored for it.
+// SS1 (28 Oct 2026): five/pack are OPTIONAL at signup now. Returns `undefined` when the body
+// carries neither (a Star Shard signup: the server derives the pack from birth_data later,
+// see GET /api/me/manzil-pack), null when they are present but malformed, the pack otherwise.
 function parseManzilPack(body) {
   const { five, pack } = body || {};
+  if (five === undefined && pack === undefined) return undefined;
   const validIds = arr => Array.isArray(arr) && arr.every(n => Number.isInteger(n) && n >= 1 && n <= 28);
   if (!validIds(five) || five.length !== 5) return null;
   if (!validIds(pack) || pack.length < 5 || pack.length > 12) return null;
@@ -271,6 +277,16 @@ const signupLimiter = rateLimit({
 const ageCheckLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
+// GET /api/tonight is public and cheap (two Meeus series and five planet positions, no DB),
+// but it is the one route a signed-out stranger can hit without a session, so it gets a
+// per-IP ceiling well above any honest client (one request a night, maybe a refresh).
+const tonightLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 60,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
@@ -317,6 +333,15 @@ const deleteAccountLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'too_many_requests' },
 });
+// POST/DELETE /api/email are public like the age check and bounded the same way: an
+// honest device leaves one address, maybe twice if it mistyped.
+const emailCaptureLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'too_many_requests' },
+});
 
 // Keep in sync with STAMPS in Star Shard v2.dc.html — the guestbook is
 // public/unauthenticated, so the stamp is validated against a fixed set
@@ -359,15 +384,34 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
   if (age < minAgeFor(regionOf(req))) return res.status(403).json({ error: 'too_young' });
   const birthYear = Number(String(req.body.birthDate).slice(0, 4));
 
+  // SS1 (28 Oct 2026): signup is decoupled from Manzil. Two shapes land here:
+  //   Manzil's own signup sends five/pack (cast client-side) and gets manzil_pack
+  //   written, exactly as before; birth_data is NOT written on this path (the game's
+  //   own one-time chart grab does that itself through PUT /api/me/birth).
+  //   Star Shard's signup (app/) sends birth fields and no five/pack: birth_data is
+  //   written in the same transaction as the user, and manzil_pack is derived from it
+  //   the first time Manzil asks (GET /api/me/manzil-pack). five/pack present but
+  //   malformed is still a 400, as it always was.
   const manzilPack = parseManzilPack(req.body);
-  if (!manzilPack) return res.status(400).json({ error: 'invalid_input' });
+  if (manzilPack === null) return res.status(400).json({ error: 'invalid_input' });
+  let birth = null;
+  if (manzilPack === undefined) {
+    // `tz` on a signup body is the REGION signal for the age gate (api.js fills it in
+    // from the device when the caller sends none), not the birthplace's zone. The
+    // birthplace zone arrives as `birthTz`; as a fallback, `tz` is taken as the
+    // birthplace zone only when it rides along with geocoded lat/lon, the way the
+    // existing star-shard page and Manzil's chart grab send it.
+    const b = req.body;
+    const geocoded = typeof b.lat === 'number' && typeof b.lon === 'number';
+    const birthTz = typeof b.birthTz === 'string' ? b.birthTz : (geocoded && typeof b.tz === 'string' ? b.tz : null);
+    birth = parseBirthFields({ ...b, tz: birthTz || null });
+    if (!birth) return res.status(400).json({ error: 'invalid_birth_date' });
+  }
 
   const passwordHash = await bcrypt.hash(password, 12);
-  // A signup writes to two tables (users, manzil_pack) that must both land
-  // or neither should. manzil_pack, not birth_data — see the 24 Aug PM
-  // handoff §2: Manzil stores five integers, never the birth date/time/
-  // place itself. birth_data stays exclusively the Star Shard opt-in path
-  // (PUT /api/me/birth).
+  // A signup writes to two tables (users and either manzil_pack or birth_data) that
+  // must both land or neither should. See the 24 Aug PM handoff §2 for why Manzil's
+  // path stores five integers and never the birth date/time/place itself.
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -375,10 +419,21 @@ app.post('/api/auth/signup', signupLimiter, wrap(async (req, res) => {
       'INSERT INTO users (email, username, password_hash) VALUES (?, ?, ?)',
       [normalizedEmail, normalizedUsername, passwordHash]
     );
-    await conn.execute(
-      'INSERT INTO manzil_pack (user_id, five_json, pack_json, birth_year) VALUES (?, ?, ?, ?)',
-      [result.insertId, JSON.stringify(manzilPack.five), JSON.stringify(manzilPack.pack), birthYear]
-    );
+    // MZ3: an email left after a first night (email_capture) becomes this account's row,
+    // so it cascades with the account and shows in its export. Same transaction: the
+    // link lands with the user or not at all.
+    await conn.execute('UPDATE email_capture SET user_id = ? WHERE email = ? AND user_id IS NULL', [result.insertId, normalizedEmail]);
+    if (manzilPack) {
+      await conn.execute(
+        'INSERT INTO manzil_pack (user_id, five_json, pack_json, birth_year) VALUES (?, ?, ?, ?)',
+        [result.insertId, JSON.stringify(manzilPack.five), JSON.stringify(manzilPack.pack), birthYear]
+      );
+    } else {
+      await conn.execute(
+        'INSERT INTO birth_data (user_id, birth_date, birth_time, birth_time_known, place_name, lat, lon, tz) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [result.insertId, birth.birthDate, birth.birthTime, birth.birthTimeKnown ? 1 : 0, birth.placeName, birth.lat, birth.lon, birth.tz]
+      );
+    }
     await conn.commit();
     setSessionCookie(res, result.insertId, 0, normalizedUsername);
     res.status(201).json({ email: normalizedEmail, username: normalizedUsername });
@@ -612,9 +667,10 @@ app.post('/api/auth/resend-verification', verifyEmailLimiter, requireAuth, wrap(
   res.status(204).end();
 }));
 
-// Exclusively the Star Shard opt-in path since the 24 Aug PM handoff —
-// Manzil signup writes manzil_pack, never this table (see parseManzilPack
-// above and the signup route). GET here lets Star Shard's onboarding check
+// The Star Shard path since the 24 Aug PM handoff. Manzil signup writes
+// manzil_pack, never this table (see parseManzilPack above and the signup
+// route). Since SS1 (28 Oct 2026) a Star Shard signup (no five/pack) writes
+// this table directly at signup; PUT below remains the upgrade path. GET here lets Star Shard's onboarding check
 // whether an account already has birth_data on file (e.g. a second device)
 // before asking again; PUT below is how it gets there in the first place,
 // or how a later, more complete cast (real geocoded lat/lon/tz) upgrades
@@ -658,15 +714,64 @@ app.put('/api/me/birth', requireAuth, wrap(async (req, res) => {
 // GET /api/me/birth exactly. Signup already returns nothing beyond
 // {email, username}; this is what a client fetches afterward (or on a
 // second device) to rehydrate five/pack locally without asking again.
+//
+// SS1 (28 Oct 2026): when no manzil_pack row exists but birth_data does (a Star Shard
+// signup, or an account that only ever asked for a reading), the five are cast here
+// from the stored birth facts with the same ephemeris and the same rule the game uses
+// (lib/manzil-cast.js), written to manzil_pack once, and returned. Written rather than
+// recomputed every time for the same reason Manzil's own signup writes it: the five
+// are the game's fixed inputs (card ladders key off them), so they are cast once and
+// then held, exactly as a client-side cast is. A later upgrade of birth_data through
+// PUT /api/me/birth does not recast an existing pack. Export and delete already cover
+// manzil_pack, so a derived row carries the same obligations as a sent one.
 app.get('/api/me/manzil-pack', requireAuth, wrap(async (req, res) => {
+  const parseOr = (json, fallback) => { try { return JSON.parse(json); } catch (e) { return fallback; } };
   const [rows] = await pool.execute(
     'SELECT five_json, pack_json FROM manzil_pack WHERE user_id = ?',
     [req.userId]
   );
   const row = rows[0];
-  if (!row) return res.json({ pack: null });
-  const parseOr = (json, fallback) => { try { return JSON.parse(json); } catch (e) { return fallback; } };
-  res.json({ pack: { five: parseOr(row.five_json, []), pack: parseOr(row.pack_json, []) } });
+  if (row) return res.json({ pack: { five: parseOr(row.five_json, []), pack: parseOr(row.pack_json, []) } });
+
+  const [births] = await pool.execute(
+    'SELECT birth_date, birth_time, birth_time_known, tz FROM birth_data WHERE user_id = ?',
+    [req.userId]
+  );
+  const b = births[0];
+  if (!b) return res.json({ pack: null });
+  const birthDate = b.birth_date instanceof Date ? b.birth_date.toISOString().slice(0, 10) : String(b.birth_date);
+  const cast = await packFromBirth({
+    birthDate, birthTime: b.birth_time, birthTimeKnown: !!b.birth_time_known, tz: b.tz,
+  });
+  if (!cast) return res.json({ pack: null });
+  await pool.execute(
+    'INSERT INTO manzil_pack (user_id, five_json, pack_json, birth_year) VALUES (?, ?, ?, ?) ' +
+    'ON DUPLICATE KEY UPDATE user_id = user_id',
+    [req.userId, JSON.stringify(cast.five), JSON.stringify(cast.pack), Number(birthDate.slice(0, 4))]
+  );
+  res.json({ pack: { five: cast.five, pack: cast.pack } });
+}));
+
+// ONE SKY (SS2, 31 Oct 2026). The Moon's station for the night, its degree within it, the
+// seven classical planets and the next crossing, computed on the server by the engines the
+// codebase already calls canonical (lib/tonight.js explains which and why), so the game and
+// the reading stop disagreeing about where the Moon is. Public: it depends on nothing but the
+// clock and the caller's zone. `tz` is an IANA zone (default UTC); `at` is an optional ISO
+// instant for tests and for "that night" (default now). A night runs 06:00 to 06:00 local and
+// is read at 21:00 local, the game's own rule, so the answer is stable all night and can be
+// cached for a few minutes by anyone in between.
+app.get('/api/tonight', tonightLimiter, wrap(async (req, res) => {
+  const tz = req.query.tz === undefined ? 'UTC' : String(req.query.tz);
+  const at = req.query.at === undefined ? new Date() : new Date(String(req.query.at));
+  let sky;
+  try {
+    sky = await tonight({ tz, at });
+  } catch (e) {
+    if (e && (e.code === 'bad_tz' || e.code === 'bad_at')) return res.status(400).json({ error: e.code });
+    throw e;
+  }
+  res.setHeader('Cache-Control', 'public, max-age=300');
+  res.json(sky);
 }));
 
 // Everything this account owns, for the user to keep — W6's "no data
@@ -716,6 +821,12 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
       [req.userId]
     ).then(([r]) => r),
   ]);
+  // MZ3: the email left after a first night, by the account's id or by its address (a row
+  // left from a device that never signed up is still this person's).
+  const [captureRow] = await pool.execute(
+    'SELECT email, source, tz, created_at FROM email_capture WHERE user_id = ? OR email = ? LIMIT 1',
+    [req.userId, user.email]
+  ).then(([r]) => r);
   const parseOr = (json, fallback) => { try { return JSON.parse(json); } catch (e) { return fallback; } };
 
   res.setHeader('Content-Disposition', 'attachment; filename="star-shard-data.json"');
@@ -744,6 +855,7 @@ app.get('/api/me/export', requireAuth, wrap(async (req, res) => {
       castContext: parseOr(r.cast_context_json, {}),
       kindledAt: r.kindled_at,
     })),
+    emailLeft: captureRow ? { email: captureRow.email, source: captureRow.source, tz: captureRow.tz, leftAt: captureRow.created_at } : null,
   });
 }));
 
@@ -760,15 +872,65 @@ app.delete('/api/me', deleteAccountLimiter, requireAuth, wrap(async (req, res) =
   const { password } = req.body || {};
   if (typeof password !== 'string') return res.status(400).json({ error: 'invalid_input' });
 
-  const [rows] = await pool.execute('SELECT password_hash FROM users WHERE id = ?', [req.userId]);
+  const [rows] = await pool.execute('SELECT password_hash, email FROM users WHERE id = ?', [req.userId]);
   const user = rows[0];
   if (!user) return res.status(401).json({ error: 'not_authenticated' });
 
   const ok = await bcrypt.compare(password, user.password_hash);
   if (!ok) return res.status(401).json({ error: 'invalid_credentials' });
 
+  // MZ3: the FK cascade takes a linked email_capture row; an unlinked one with this
+  // account's address (left from another device) goes with it too.
+  await pool.execute('DELETE FROM email_capture WHERE user_id = ? OR email = ?', [req.userId, user.email]);
   await pool.execute('DELETE FROM users WHERE id = ?', [req.userId]);
   res.clearCookie(COOKIE_NAME, { path: '/' });
+  res.status(204).end();
+}));
+
+// MZ3 (2 Nov 2026): one field after the first night. A visitor with no account leaves an
+// email; the row is theirs to take back from the same device (DELETE below), becomes the
+// account's at signup (linked in the signup transaction), cascades with the account and
+// appears in its export. The age gate runs here as it does at signup, on the birthDate
+// in the body with the request's own region read; nothing from the date is stored. The
+// email is the only thing kept about the person; `device` is hashed before it is stored.
+// A repeated address answers 200 and changes nothing, so the route never says whether an
+// address is already known.
+const CAPTURE_SOURCES = new Set(['shard', 'play']);
+const DEVICE_RE = /^[a-f0-9]{16,64}$/;
+app.post('/api/email', emailCaptureLimiter, wrap(async (req, res) => {
+  const { email, device, birthDate, tz, source } = req.body || {};
+  if (typeof email !== 'string' || typeof device !== 'string') return res.status(400).json({ error: 'invalid_input' });
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!EMAIL_RE.test(normalizedEmail) || normalizedEmail.length > 255 || !DEVICE_RE.test(device)) {
+    return res.status(400).json({ error: 'invalid_input' });
+  }
+  const age = computeAge(birthDate);
+  if (age === null) return res.status(400).json({ error: 'invalid_birth_date' });
+  if (age < minAgeFor(regionOf(req))) return res.status(403).json({ error: 'too_young' });
+  const src = CAPTURE_SOURCES.has(source) ? source : 'shard';
+  const zone = typeof tz === 'string' && tz.length <= 64 ? tz : null;
+  const deviceHash = crypto.createHash('sha256').update(device).digest('hex');
+  // If this address already has an account, the row is linked from the start.
+  const [[owner]] = await pool.execute('SELECT id FROM users WHERE email = ?', [normalizedEmail]);
+  try {
+    await pool.execute(
+      'INSERT INTO email_capture (email, device_hash, user_id, source, tz) VALUES (?, ?, ?, ?, ?)',
+      [normalizedEmail, deviceHash, owner ? owner.id : null, src, zone]
+    );
+  } catch (e) {
+    if (e && e.code === 'ER_DUP_ENTRY') return res.status(200).json({ email: normalizedEmail });
+    throw e;
+  }
+  res.status(201).json({ email: normalizedEmail });
+}));
+
+// The same device takes its address back. Only unlinked rows: once an account owns the
+// row, the account page's delete is the way (and the cascade does it).
+app.delete('/api/email', emailCaptureLimiter, wrap(async (req, res) => {
+  const { device } = req.body || {};
+  if (typeof device !== 'string' || !DEVICE_RE.test(device)) return res.status(400).json({ error: 'invalid_input' });
+  const deviceHash = crypto.createHash('sha256').update(device).digest('hex');
+  await pool.execute('DELETE FROM email_capture WHERE device_hash = ? AND user_id IS NULL', [deviceHash]);
   res.status(204).end();
 }));
 
@@ -1075,7 +1237,7 @@ const io = new SocketIOServer(httpServer, {
   cors: { origin: ALLOWED_ORIGINS, credentials: true },
   path: '/socket.io',
 });
-createManzilLobby(io, { jwtSecret: JWT_SECRET, pool });
+const lobby = createManzilLobby(io, { jwtSecret: JWT_SECRET, pool });
 
 // RETENTION SWEEP (2 sep 2026). The per-user delete in /api/auth/forgot-password
 // only reaches accounts that come back and ask again; this catches the rest. Hourly,
@@ -1102,6 +1264,33 @@ async function sweepExpiredResets() {
 setTimeout(sweepExpiredResets, 30 * 1000).unref();
 setInterval(sweepExpiredResets, RESET_SWEEP_MS).unref();
 
-httpServer.listen(PORT, '127.0.0.1', () => {
-  console.log(`starshard-api listening on 127.0.0.1:${PORT} (http + socket.io)`);
-});
+// SS1 (28 Oct 2026): the route tests in test/ require this file and listen on a port of
+// their own, so the listener only starts when this file is the entry point. Nothing else
+// about startup changed; `node server.js` behaves exactly as before.
+if (require.main === module) {
+  httpServer.listen(PORT, '127.0.0.1', () => {
+    console.log(`starshard-api listening on 127.0.0.1:${PORT} (http + socket.io)`);
+  });
+  // MZ6 (3 Nov 2026): the graceful restart. tools/deploy.sh stops this process with pkill
+  // (SIGTERM) and starts the new one a second later. The lobby is in memory, so every queue
+  // and live match dies with the process; until now the players found out by a dead board.
+  // On SIGTERM or SIGINT the lobby tells every connected socket `server_restart` and closes
+  // them, the listener stops taking connections, and the process exits, all well inside the
+  // deploy's one-second gap. A hard deadline covers a close that hangs.
+  let stopping = false;
+  const stop = signal => {
+    if (stopping) return;
+    stopping = true;
+    console.log(`[starshard-api] ${signal}: telling the lobby, closing`);
+    const deadline = setTimeout(() => { console.error('[starshard-api] close timed out, exiting'); process.exit(0); }, 800);
+    deadline.unref();
+    lobby.shutdown('restart')
+      .catch(e => console.error('[starshard-api] lobby shutdown failed', e))
+      .then(() => new Promise(r => httpServer.close(() => r())))
+      .then(() => { pool.end().catch(() => {}); process.exit(0); });
+  };
+  process.on('SIGTERM', () => stop('SIGTERM'));
+  process.on('SIGINT', () => stop('SIGINT'));
+}
+
+module.exports = { app, httpServer, pool, lobby };

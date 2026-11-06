@@ -1,0 +1,53 @@
+/* account.css: the account pages (SS8). The fields are shell.css's .field (the same box the
+   chart's birth form uses); this sheet lays the forms out, sets the account page's sections
+   and the one fold that holds the delete. Every value is a token from tokens.css. */
+
+.account-form { display: grid; gap: var(--s5); margin-top: var(--s5); max-width: 520px; }
+.account-form .field { max-width: none; }
+.account-form .prose, .account-form .prose p { margin: 0; }
+.account-form .doors { margin-top: 0; }
+.account-form .note { margin-top: 0; }
+.account-form input[type="date"], .account-form input[type="text"], .account-form input[type="email"], .account-form input[type="password"] {
+  width: 100%;
+  font-size: 16px; /* iOS does not zoom a 16px field */
+  color-scheme: dark;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.account-form input:disabled { opacity: 0.45; }
+.button:disabled { opacity: 0.6; cursor: progress; transform: none; }
+.su-young { margin-top: var(--s5); font-family: var(--font-title); font-weight: 600; font-size: var(--size-h2); line-height: var(--leading-title); color: var(--gold); }
+.su-birth { color: var(--ink); }
+.acct-email { margin-top: var(--s2); overflow-wrap: anywhere; }
+
+/* the account page: one column of sections, each a header, a line and its doors */
+.acct { max-width: var(--measure); }
+.acct .prose { margin: 0; }
+.acct .doors { margin-top: var(--s4); }
+.acct-status { margin-top: var(--s3); color: var(--gold); }
+
+/* the delete, folded: the summary is a door, the form opens under it */
+.acct-fold { margin-top: var(--s4); border: 1px solid var(--hair-2); border-radius: var(--radius-panel); padding: 0 var(--s4); }
+.acct-fold summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: var(--s2) 0;
+  font-size: var(--size-caption);
+  letter-spacing: var(--track-label);
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+}
+.acct-fold summary::-webkit-details-marker { display: none; }
+.acct-fold summary::before { content: '›'; display: inline-block; width: 1.2em; color: var(--gold); transition: transform 0.15s ease; }
+.acct-fold[open] summary::before { transform: rotate(90deg); }
+.acct-fold summary:hover { color: var(--parchment); }
+.acct-fold summary:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-offset); border-radius: var(--radius-button); }
+.acct-fold .account-form { margin: var(--s2) 0 var(--s4); }
+.button.danger { border-color: rgba(212, 90, 58, 0.8); color: #E8A58F; background: none; box-shadow: none; }
+.button.danger:hover { border-color: rgba(212, 90, 58, 1); color: var(--bright); }
+
+@media (prefers-reduced-motion: reduce) {
+  .acct-fold summary::before { transition: none; }
+}

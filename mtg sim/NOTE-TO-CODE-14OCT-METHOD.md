@@ -1,0 +1,9 @@
+# Note to Code (14 Oct 2026, from Research): change of method before the next fix
+
+Read RESEARCH-METHOD-14OCT.md first. In short: real per-pairing rates are 77% noise (split-half reliability 0.23), and at 20–40 sim games a pairing even a perfect engine would show k ≈ 0.33–0.50, so this week's "inside the noise" verdicts were mostly the ruler. Order of work, replacing NOTE-TO-CODE-14OCT-ENGINE-ORDER.md where they conflict:
+
+1. **The ruler.** In the refit/fidelity output: k raw and de-attenuated (errors-in-variables with each sim estimate's binomial variance; Deming or SIMEX, your choice), archetype-vs-field MAE with intervals, the games per pairing, and the dead-card count. Run one fidelity probe at 160 games a pairing on the top 12 with the current production profiles, so we know where we really stand.
+2. **SPRT gate.** Replace fixed-size A/B batches with a two-stage SPRT (H0: 0, H1: +3 points on the affected decks' field win rate, α = β = 0.05; stage 1 own pairings, stage 2 full field for side effects; same seeds both arms). The spells profile and the Day of Black Sun rule are the first two through it.
+3. **Knobs.** Refactor `answers`, `tapout`, `spells`, the deadcards rules and the new sweeper rule into parameterised profiles: each threshold a named number in `policies.json` with a range, defaults reproducing today's behaviour exactly (engine hash unchanged at defaults). List them back to me; I'll write the target statistics and weights for a Bayesian-optimisation loop (Optuna or scikit-optimize on the Mac, one batch per trial).
+4. **Paired differences for brews.** Server side: a brew's headline = nearest meta deck's real field rate + (brew − nearest deck) from a paired run on the same seeds; show both. Design will draw the line once the fields exist.
+5. Win conditions and instant timing stay on the list but go through 2–3, not around them.

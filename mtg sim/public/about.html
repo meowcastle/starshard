@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Deck Bench</title>
+<meta name="description" content="Deck Bench is a test bench for deck changes, not affiliated with Forge or Wizards of the Coast.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0C0B;--panel:#121211;--ink:#EDEBE6;--mute:#8F8D86;--dim:#5C5B56;--line:rgba(255,255,255,.08);--acc:#C5EC7A;--warn:#F3CB6B;--loss:#F0A070}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+main{max-width:720px;margin:0 auto;padding:40px 16px 80px}
+h1{font-size:34px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:600;margin:40px 0 8px}
+p{margin:0 0 12px;max-width:640px}
+.sub{color:var(--mute)}
+.mono{font-family:'JetBrains Mono',monospace}
+.mark{display:inline-block;width:16px;height:16px;background:var(--acc);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);vertical-align:-2px;margin-right:10px}
+dl{margin:0;max-width:640px}dt{font-weight:600;margin-top:16px}dd{margin:2px 0 0;color:var(--ink)}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;line-height:1.5;color:var(--mute)}
+</style></head>
+<body><main>
+<a href="/" style="font-size:13px">← Deck Bench</a>
+<h1 style="margin-top:16px"><span class="mark" aria-hidden="true"></span>About Deck Bench</h1>
+<div class="sub">A test bench for deck changes, not affiliated with Forge or Wizards of the Coast.</div>
+
+<h2>What it does</h2>
+<p>Deck Bench plays your deck against the field, many games at a time, with every decision made by a rules engine, and shows what changed when you swap a card. Both sides of a change play the same shuffles, so the difference you see is the change and not the draw.</p>
+<p>It is a bench for changes, not a prediction of a tournament. A win rate here is one engine's play against another's.</p>
+
+<h2>Not affiliated</h2>
+<p>Deck Bench is an independent project. It is not affiliated with, approved by or endorsed by Forge, the Card-Forge project, Wizards of the Coast, Scryfall, MTGGoldfish, MTGTop8, EDHREC, Moxfield, Archidekt or TCGplayer. Their names appear on this page to say where things come from.</p>
+
+<h2>Where things come from</h2>
+<dl>
+<dt>The games</dt>
+<dd><a href="https://github.com/Card-Forge/forge" rel="noopener">Forge</a>, the open-source rules engine by the Card-Forge project, licensed under the GPL-3.0. Deck Bench runs Forge as a separate program. A small patch and a bridge, both under the GPL-3.0, let Deck Bench's own pilot make some in-game decisions and set the AI's look-ahead; the rest of each game plays as Forge plays it.</dd>
+<dt>Card names, text, legality, prices and images</dt>
+<dd><a href="https://scryfall.com" rel="noopener">Scryfall</a>, through its public API. Card images are shown from Scryfall's servers.</dd>
+<dt>Mana symbols</dt>
+<dd>The <a href="https://mana.andrewgioia.com" rel="noopener">Mana</a> font by Andrew Gioia.</dd>
+<dt>The field</dt>
+<dd>Metagame lists read from MTGGoldfish and MTGTop8; Commander averages from EDHREC; your own lists from Moxfield, Archidekt or pasted text.</dd>
+<dt>Real results</dt>
+<dd>The open <a href="https://github.com/Jiliac/MTGODecklistCache" rel="noopener">MTGODecklistCache</a> archive of tournament decklists and results.</dd>
+<dt>The coach and sideboard plans</dt>
+<dd>Written by Claude, a model made by Anthropic, from your list and the field. Read them as a strong player's opinion, not a rule.</dd>
+<dt>Shop links</dt>
+<dd>Buy buttons go to TCGplayer and Card Kingdom.</dd>
+</dl>
+
+<h2>Magic: The Gathering</h2>
+<p>Magic: The Gathering, its card names, card text, mana symbols and set names are the property of Wizards of the Coast LLC. Deck Bench uses them under the Fan Content Policy, which asks that fan content stay free: every card, every list and every legality check here is free, and nothing on this site sells Wizards' material.</p>
+
+<footer>Deck Bench is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</footer>
+</main></body></html>

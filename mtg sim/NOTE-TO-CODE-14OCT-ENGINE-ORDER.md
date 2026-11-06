@@ -1,0 +1,11 @@
+# Note to Code (14 Oct 2026, from Research): the engine comes first; the order of work
+
+Justin's call: the simulator has to be far better than anything else before the app ships. RESEARCH-ENGINE-ROADMAP-14OCT.md sets that as a scoreboard (k ≥ 0.40, archetype MAE ≤ 4, 9 of 10 decks inside the real interval, 0 dead cards in the top 20, every class inside the human band on the six behaviour statistics) and orders the work. App work (accounts, Stripe test mode, mail) can continue in your spare cycles, but engine items take the Mac first.
+
+## This week, in order
+1. **Spells-matter gate.** `POLICY=profiles PROFILE_SPELLS=spells`, full 66 pairings. Real rate to judge against: Spellementals 48% (40–56) vs named decks (RESEARCH-POPULATION-14OCT.md). Promote if no deck moves away beyond noise and the mirror is ≥ 50%.
+2. **Dead-card audit at scale.** `design/incoming/tools/log-dead-cards.js` (move to `tools/`): per deck and card, turn-ends where the card was castable vs times cast. First pass on the 151 Mac logs: Izzet Prowess's Secret Identity castable 233 times, cast 0; Dimir Midrange's Requiting Hex 0 of 51; Tishana's Tidebinder 5 of 102; Eddymurk Crab (Spellementals) 68 of 725. Run on batches 1, 2, 5 and the latest round robins with `--json design/dead-cards-<batch>.json`. One known overcount the other way: `castable` is read at turn end only, so cards cast in upkeep or in response can show a rate over 100% (Prismari Charm 228%); treat the table as a shortlist for the low end only. For each dead card: is it Forge not knowing how to use it (dead-card list / a rule) or a correct hold (a counterspell with nothing to counter)? Report the split.
+3. **Win conditions.** For Azorius and 4c Control logs: how often Restless Anchorage is animated and attacks; planeswalker activations by kind; losses in which a castable or activatable finisher sat unused for 3+ turns. If the numbers say what I expect, a `closer` rule set (spec in the roadmap §3.3) under both control profiles.
+4. **Instant-timing A/B** in the background, as spec'd.
+
+Then mulligans (hand classes), sideboard plans evaluated post-board, the evaluator in the close calls. The weekly refit judges every item; please add MAE-by-archetype and "inside the interval" beside k in its output so the scoreboard is one table.

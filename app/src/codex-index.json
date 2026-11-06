@@ -1,0 +1,254 @@
+[
+ {
+  "n": 1,
+  "epithet": "The Gate",
+  "slug": "the-gate",
+  "position": "0°00′ Aries to 12°51′ Aries",
+  "keyword": "arriving first",
+  "kanji": "婁宿",
+  "stars": "β, γ Ari (Sheratan)"
+ },
+ {
+  "n": 2,
+  "epithet": "The Bearer",
+  "slug": "the-bearer",
+  "position": "12°51′ Aries to 25°43′ Aries",
+  "keyword": "what is carried",
+  "kanji": "胃宿",
+  "stars": "ε, δ, ρ Ari (Botein)"
+ },
+ {
+  "n": 3,
+  "epithet": "The Gathered Stars",
+  "slug": "the-gathered-stars",
+  "position": "25°43′ Aries to 8°34′ Taurus",
+  "keyword": "the many as one",
+  "kanji": "昴宿",
+  "stars": "the Pleiades (M45) · determinant Alcyone (η Tau)"
+ },
+ {
+  "n": 4,
+  "epithet": "The Follower",
+  "slug": "the-follower",
+  "position": "8°34′ Taurus to 21°26′ Taurus",
+  "keyword": "the pursuit",
+  "kanji": "畢宿",
+  "stars": "Aldebaran + the Hyades"
+ },
+ {
+  "n": 5,
+  "epithet": "The Blaze",
+  "slug": "the-blaze",
+  "position": "21°26′ Taurus to 4°17′ Gemini",
+  "keyword": "the searching face",
+  "kanji": "觜宿",
+  "stars": "λ, φ¹, φ² Ori (Orion's head)"
+ },
+ {
+  "n": 6,
+  "epithet": "The Storm",
+  "slug": "the-storm",
+  "position": "4°17′ Gemini to 17°09′ Gemini",
+  "keyword": "no undo",
+  "kanji": "參宿",
+  "stars": "γ, ξ Gem (Alhena)"
+ },
+ {
+  "n": 7,
+  "epithet": "The Return",
+  "slug": "the-return",
+  "position": "17°09′ Gemini to 0°00′ Cancer",
+  "keyword": "what comes back",
+  "kanji": "井宿",
+  "stars": "Castor & Pollux"
+ },
+ {
+  "n": 8,
+  "epithet": "The Ghost",
+  "slug": "the-ghost",
+  "position": "0°00′ Cancer to 12°51′ Cancer",
+  "keyword": "the haze that feeds",
+  "kanji": "鬼宿",
+  "stars": "Praesepe (M44, the Beehive cluster) + γ, δ Cnc"
+ },
+ {
+  "n": 9,
+  "epithet": "The Glance",
+  "slug": "the-glance",
+  "position": "12°51′ Cancer to 25°43′ Cancer",
+  "keyword": "contact that holds",
+  "kanji": "柳宿",
+  "stars": "κ Cnc + λ Leo"
+ },
+ {
+  "n": 10,
+  "epithet": "The Throne",
+  "slug": "the-throne",
+  "position": "25°43′ Cancer to 8°34′ Leo",
+  "keyword": "the carved chair",
+  "kanji": "星宿",
+  "stars": "the Lion's brow — ζ, γ, η, α Leonis, including Regulus, the Little King · determinant η Leo"
+ },
+ {
+  "n": 11,
+  "epithet": "The Mane",
+  "slug": "the-mane",
+  "position": "8°34′ Leo to 21°26′ Leo",
+  "keyword": "the spread",
+  "kanji": "張宿",
+  "stars": "δ, θ Leo (Zosma)"
+ },
+ {
+  "n": 12,
+  "epithet": "The Turning",
+  "slug": "the-turning",
+  "position": "21°26′ Leo to 4°17′ Virgo",
+  "keyword": "the weather breaks",
+  "kanji": "翼宿",
+  "stars": "Denebola (β Leo)"
+ },
+ {
+  "n": 13,
+  "epithet": "The Hand",
+  "slug": "the-hand",
+  "position": "4°17′ Virgo to 17°09′ Virgo",
+  "keyword": "the maker's hand",
+  "kanji": "軫宿",
+  "stars": "β, η, γ, δ, ε Vir"
+ },
+ {
+  "n": 14,
+  "epithet": "The Jewel",
+  "slug": "the-jewel",
+  "position": "17°09′ Virgo to 0°00′ Libra",
+  "keyword": "the unarmed bright",
+  "kanji": "角宿",
+  "stars": "Spica (α Vir)"
+ },
+ {
+  "n": 15,
+  "epithet": "The Veil",
+  "slug": "the-veil",
+  "position": "0°00′ Libra to 12°51′ Libra",
+  "keyword": "the cover",
+  "kanji": "亢宿",
+  "stars": "ι, κ, λ Vir"
+ },
+ {
+  "n": 16,
+  "epithet": "The Claws",
+  "slug": "the-claws",
+  "position": "12°51′ Libra to 25°43′ Libra",
+  "keyword": "the fork",
+  "kanji": "氐宿",
+  "stars": "α, β Lib — Zubenelgenubi and Zubeneschamali, \"the southern claw\" and \"the northern claw\""
+ },
+ {
+  "n": 17,
+  "epithet": "The Crown",
+  "slug": "the-crown",
+  "position": "25°43′ Libra to 8°34′ Scorpio",
+  "keyword": "the kept oath",
+  "kanji": "房宿",
+  "stars": "β, δ, π Sco"
+ },
+ {
+  "n": 18,
+  "epithet": "The Heart",
+  "slug": "the-heart",
+  "position": "8°34′ Scorpio to 21°26′ Scorpio",
+  "keyword": "the eldest",
+  "kanji": "心宿",
+  "stars": "Antares — Qalb al-ʿAqrab, the Scorpion's heart"
+ },
+ {
+  "n": 19,
+  "epithet": "The Root",
+  "slug": "the-root",
+  "position": "21°26′ Scorpio to 4°17′ Sagittarius",
+  "keyword": "the bottom of it",
+  "kanji": "尾宿",
+  "stars": "λ, υ Sco — Shaula, the raised sting"
+ },
+ {
+  "n": 20,
+  "epithet": "The Flock",
+  "slug": "the-flock",
+  "position": "4°17′ Sagittarius to 17°09′ Sagittarius",
+  "keyword": "to the water and back",
+  "kanji": "箕宿",
+  "stars": "eight stars in Sgr, two groups of four"
+ },
+ {
+  "n": 21,
+  "epithet": "The Empty District",
+  "slug": "the-empty-district",
+  "position": "17°09′ Sagittarius to 0°00′ Capricorn",
+  "keyword": "the blank that holds everything",
+  "kanji": "斗宿",
+  "stars": "none. The famous starless stretch of sky; π Sgr stands at its edge as a marker."
+ },
+ {
+  "n": 22,
+  "epithet": "The Listener",
+  "slug": "the-listener",
+  "position": "0°00′ Capricorn to 12°51′ Capricorn",
+  "keyword": "the ear",
+  "kanji": "牛宿",
+  "stars": "α, β Cap (Giedi, Dabih)"
+ },
+ {
+  "n": 23,
+  "epithet": "The Drum",
+  "slug": "the-drum",
+  "position": "12°51′ Capricorn to 25°43′ Capricorn",
+  "keyword": "the beat",
+  "kanji": "女宿",
+  "stars": "ε, μ, ν Aqr (Albali)"
+ },
+ {
+  "n": 24,
+  "epithet": "The Void",
+  "slug": "the-void",
+  "position": "25°43′ Capricorn to 8°34′ Aquarius",
+  "keyword": "the opening",
+  "kanji": "虛宿",
+  "stars": "β Aqr — still named Sadalsuud — + ξ Aqr"
+ },
+ {
+  "n": 25,
+  "epithet": "The Hideaway",
+  "slug": "the-hideaway",
+  "position": "8°34′ Aquarius to 21°26′ Aquarius",
+  "keyword": "the single pole",
+  "kanji": "危宿",
+  "stars": "γ, π, ζ, η Aqr — the little \"tent\" asterism (Sadachbia)"
+ },
+ {
+  "n": 26,
+  "epithet": "The Chamber",
+  "slug": "the-chamber",
+  "position": "21°26′ Aquarius to 4°17′ Pisces",
+  "keyword": "the first wall",
+  "kanji": "室宿",
+  "stars": "α, β Peg (Markab, Scheat) — the first wall of the Great Square of Pegasus"
+ },
+ {
+  "n": 27,
+  "epithet": "The Guide",
+  "slug": "the-guide",
+  "position": "4°17′ Pisces to 17°09′ Pisces",
+  "keyword": "the far side",
+  "kanji": "壁宿",
+  "stars": "γ Peg + α And (Algenib, Alpheratz) — the Square's far wall"
+ },
+ {
+  "n": 28,
+  "epithet": "The Thread",
+  "slug": "the-thread",
+  "position": "17°09′ Pisces to 0°00′ Aries",
+  "keyword": "the cord",
+  "kanji": "奎宿",
+  "stars": "β And (Mirach)"
+ }
+]

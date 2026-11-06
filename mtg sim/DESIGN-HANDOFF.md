@@ -1,4 +1,4 @@
-# Forge Sim (sim.starshard.net): Design handoff
+# Deck Bench (sim.starshard.net): Design handoff
 
 **From:** Code · **To:** Claude Design · **Date:** 6 Oct 2026 · **Owner:** Justin
 **Status:** a working v0 UI exists in `mtg sim/public/`. Read it to see the moving parts, but don't treat it as a design. This handoff asks for the real UI.
@@ -144,7 +144,7 @@ Scryfall is called **from the browser** (CORS-friendly): `/cards/autocomplete`, 
 2. **Markup and styles are yours. Data wiring is Code's.** Mock data lives in one clearly named file (`mock-data.js`), never mixed into components. Use the shapes in §6 exactly, including the *planned* fields, so Code can swap mock for live without touching layout.
 3. No build step is assumed today, so plain HTML/CSS/JS is safest. If you want a framework (React via a CDN, Preact, etc.), say so in `WHATS-NEW.md` and Code will decide whether to adopt it. Don't ship a bundler setup unasked.
 4. Don't import or copy `server.js`, `forge.js` or `meta.js`. Those are Code's.
-5. Everything sits behind login, so no SEO or OG work is needed. Set the page `<title>` to "Forge Sim".
+5. Everything sits behind login, so no SEO or OG work is needed. Set the page `<title>` to "Deck Bench".
 
 ## 8. What Code is building in parallel
 

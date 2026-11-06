@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Change 26 (FORGE-SIM-DISTILL.md §7, the safety fixes, shipped before the rename and the cuts):
+"""Change 26 (DECK-BENCH-DISTILL.md §7, the safety fixes, shipped before the rename and the cuts):
   1. Rule zero: the Arena strings that survived change 25 leave the page (paste help, "your games", the wildcard row on
      the run settings, the log-a-match Arena sources and events, "learnable on Arena", the Account's Arena line), and
      the dead isArena fork in the collection row builder goes with them. Wildcards leave settings.budget.

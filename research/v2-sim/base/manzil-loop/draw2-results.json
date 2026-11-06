@@ -1,0 +1,105 @@
+{
+ "E1 draw3/28, all L1 loaners": {
+  "careful": {
+   "win": 20.1,
+   "flips": 5.4,
+   "night_sd": 6.2,
+   "n": 672
+  },
+  "casual": {
+   "win": 14.3,
+   "flips": 6.91,
+   "night_sd": 5.6,
+   "n": 672
+  },
+  "skill_gap": 5.8
+ },
+ "E2 draw3/28, all L2 + signatures": {
+  "careful": {
+   "win": 25.3,
+   "flips": 5,
+   "night_sd": 7.7,
+   "n": 672
+  },
+  "casual": {
+   "win": 16.8,
+   "flips": 6.58,
+   "night_sd": 8.2,
+   "n": 672
+  },
+  "skill_gap": 8.5
+ },
+ "E3 draw3/28, all L3": {
+  "careful": {
+   "win": 34.4,
+   "flips": 4.87,
+   "night_sd": 9.0,
+   "n": 672
+  },
+  "casual": {
+   "win": 22.6,
+   "flips": 6.65,
+   "night_sd": 7.8,
+   "n": 672
+  },
+  "skill_gap": 11.8
+ },
+ "E4 draw3/28, all L4": {
+  "careful": {
+   "win": 72.6,
+   "flips": 4.77,
+   "night_sd": 12.3,
+   "n": 672
+  },
+  "casual": {
+   "win": 47.2,
+   "flips": 6.87,
+   "night_sd": 10.3,
+   "n": 672
+  },
+  "skill_gap": 25.4
+ },
+ "E2c fixed five, all L2": {
+  "careful": {
+   "win": 75.6,
+   "flips": 4.42,
+   "night_sd": 17.6,
+   "n": 672
+  },
+  "casual": {
+   "win": 47.5,
+   "flips": 7.58,
+   "night_sd": 16.2,
+   "n": 672
+  },
+  "skill_gap": 28.1
+ },
+ "E3c fixed five, all L3": {
+  "careful": {
+   "win": 72.3,
+   "flips": 4.1,
+   "night_sd": 16.3,
+   "n": 672
+  },
+  "casual": {
+   "win": 36.8,
+   "flips": 7.04,
+   "night_sd": 16.9,
+   "n": 672
+  },
+  "skill_gap": 35.5
+ },
+ "F5o sky draws 5 of 5, open": {
+  "careful": {
+   "win": 74.9,
+   "night_sd": 12.2,
+   "n": 672
+  },
+  "casual": {
+   "win": 34.5,
+   "night_sd": 16.4,
+   "n": 672
+  },
+  "skill_gap": 40.4
+ }
+}

@@ -1,0 +1,290 @@
+{
+ "all28 real sigs, BEST12, reads 8": {
+  "careful": {
+   "win": 69.9,
+   "flips": 3.97,
+   "margin": 2.49,
+   "n": 672
+  },
+  "casual": {
+   "win": 44.9,
+   "flips": 6.06,
+   "margin": 3.37,
+   "n": 672
+  },
+  "gap": 25.0
+ },
+ "all28 real sigs, BEST12, reads 12": {
+  "careful": {
+   "win": 66.5,
+   "flips": 3.79,
+   "margin": 2.64,
+   "n": 672
+  },
+  "casual": {
+   "win": 39.1,
+   "flips": 5.75,
+   "margin": 3.3,
+   "n": 672
+  },
+  "gap": 27.4
+ },
+ "all28 real sigs, BEST12, reads 16": {
+  "careful": {
+   "win": 66.4,
+   "flips": 3.78,
+   "margin": 2.62,
+   "n": 672
+  },
+  "casual": {
+   "win": 37.6,
+   "flips": 5.62,
+   "margin": 3.23,
+   "n": 672
+  },
+  "gap": 28.8
+ },
+ "all28 real sigs, PLAIN12, reads 8": {
+  "careful": {
+   "win": 35.6,
+   "flips": 4.73,
+   "margin": 3.2,
+   "n": 672
+  },
+  "casual": {
+   "win": 25.7,
+   "flips": 7.01,
+   "margin": 4.51,
+   "n": 672
+  },
+  "gap": 9.9
+ },
+ "all28 real sigs, PLAIN12, reads 12": {
+  "careful": {
+   "win": 30.8,
+   "flips": 4.01,
+   "margin": 3.0,
+   "n": 672
+  },
+  "casual": {
+   "win": 17.9,
+   "flips": 6.14,
+   "margin": 4.68,
+   "n": 672
+  },
+  "gap": 12.9
+ },
+ "all28 real sigs, full 28 pool, reads 8": {
+  "careful": {
+   "win": 37.2,
+   "flips": 5.2,
+   "margin": 3.31,
+   "n": 672
+  },
+  "casual": {
+   "win": 24.7,
+   "flips": 7.24,
+   "margin": 4.75,
+   "n": 672
+  },
+  "gap": 12.5
+ },
+ "per-signature worth": [
+  {
+   "card": "The Heart",
+   "sig": "heart",
+   "delta": -8.8,
+   "on": 44.3,
+   "off": 53.0
+  },
+  {
+   "card": "The Empty District",
+   "sig": "district",
+   "delta": -8.2,
+   "on": 27.3,
+   "off": 35.5
+  },
+  {
+   "card": "The Listener",
+   "sig": "listener",
+   "delta": -0.2,
+   "on": 33.0,
+   "off": 33.2
+  },
+  {
+   "card": "The Mane",
+   "sig": "mane",
+   "delta": 0.0,
+   "on": 34.5,
+   "off": 34.5
+  },
+  {
+   "card": "The Hideaway",
+   "sig": "hideaway",
+   "delta": 0.0,
+   "on": 28.9,
+   "off": 28.9
+  },
+  {
+   "card": "The Chamber",
+   "sig": "chamber",
+   "delta": 0.0,
+   "on": 32.3,
+   "off": 32.3
+  },
+  {
+   "card": "The Turning",
+   "sig": "turning",
+   "delta": 0.2,
+   "on": 33.6,
+   "off": 33.4
+  },
+  {
+   "card": "The Bearer",
+   "sig": "bearer",
+   "delta": 0.4,
+   "on": 27.9,
+   "off": 27.5
+  },
+  {
+   "card": "The Glance",
+   "sig": "glance",
+   "delta": 1.1,
+   "on": 35.7,
+   "off": 34.6
+  },
+  {
+   "card": "The Follower",
+   "sig": "follower",
+   "delta": 1.1,
+   "on": 52.7,
+   "off": 51.6
+  },
+  {
+   "card": "The Gate",
+   "sig": "gate",
+   "delta": 2.0,
+   "on": 34.3,
+   "off": 32.3
+  },
+  {
+   "card": "The Thread",
+   "sig": "thread",
+   "delta": 2.0,
+   "on": 31.6,
+   "off": 29.6
+  },
+  {
+   "card": "The Return",
+   "sig": "twins",
+   "delta": 2.5,
+   "on": 43.8,
+   "off": 41.2
+  },
+  {
+   "card": "The Flock",
+   "sig": "flock",
+   "delta": 2.9,
+   "on": 35.7,
+   "off": 32.9
+  },
+  {
+   "card": "The Void",
+   "sig": "emptiness",
+   "delta": 3.4,
+   "on": 45.7,
+   "off": 42.3
+  },
+  {
+   "card": "The Gathered Stars",
+   "sig": "stars",
+   "delta": 3.8,
+   "on": 49.1,
+   "off": 45.4
+  },
+  {
+   "card": "The Guide",
+   "sig": "guide",
+   "delta": 4.1,
+   "on": 35.0,
+   "off": 30.9
+  },
+  {
+   "card": "The Crown",
+   "sig": "crown",
+   "delta": 4.5,
+   "on": 36.4,
+   "off": 32.0
+  },
+  {
+   "card": "The Jewel",
+   "sig": "jewel",
+   "delta": 4.8,
+   "on": 55.7,
+   "off": 50.9
+  },
+  {
+   "card": "The Throne",
+   "sig": "throne",
+   "delta": 5.2,
+   "on": 48.6,
+   "off": 43.4
+  },
+  {
+   "card": "The Ghost",
+   "sig": "ghost",
+   "delta": 8.2,
+   "on": 43.4,
+   "off": 35.2
+  },
+  {
+   "card": "The Drum",
+   "sig": "drum",
+   "delta": 12.0,
+   "on": 47.9,
+   "off": 35.9
+  },
+  {
+   "card": "The Blaze",
+   "sig": "blaze",
+   "delta": 13.4,
+   "on": 42.9,
+   "off": 29.5
+  },
+  {
+   "card": "The Root",
+   "sig": "root",
+   "delta": 13.4,
+   "on": 50.7,
+   "off": 37.3
+  },
+  {
+   "card": "The Hand",
+   "sig": "hand",
+   "delta": 14.6,
+   "on": 45.4,
+   "off": 30.7
+  },
+  {
+   "card": "The Veil",
+   "sig": "veil",
+   "delta": 14.8,
+   "on": 47.3,
+   "off": 32.5
+  },
+  {
+   "card": "The Claws",
+   "sig": "claws",
+   "delta": 15.0,
+   "on": 46.2,
+   "off": 31.2
+  },
+  {
+   "card": "The Storm",
+   "sig": "storm",
+   "delta": 15.4,
+   "on": 47.5,
+   "off": 32.1
+  }
+ ]
+}

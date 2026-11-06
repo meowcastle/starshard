@@ -1,0 +1,223 @@
+/* shard.css: the first run and the shard document (SS7, 1 Nov 2026). Values from tokens.css;
+   the reveal's measures are the game's own shard screen (the 9 px tracked eyebrow between two
+   hairlines, the 40 px Cormorant name with its amber glow, the 118 by 160 cards tilted 2.5
+   degrees, the 10.5 px card line), scaled to the floor the accessibility rules set. */
+
+@import './station-art.css';
+
+/* ─── the stage ───────────────────────────────────────────────────────────────────────── */
+.firstrun { position: relative; }
+.fr-stage {
+  position: relative;
+  min-height: calc(100vh - var(--header-h) - var(--s8));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--s4);
+  padding: var(--s6) 0;
+}
+@media (max-width: 1023px) { .fr-stage { min-height: calc(100vh - var(--header-h) - var(--tabbar-h) - var(--s6)); } }
+.fr-foot { display: flex; flex-direction: column; align-items: center; gap: var(--s3); margin-top: var(--s4); position: relative; z-index: 2; }
+.fr-skip { background: none; border: 0; min-height: var(--touch); padding: 0 var(--s4); color: var(--muted); font-family: var(--font-body); font-size: var(--size-caption); letter-spacing: var(--track-label); cursor: pointer; }
+.fr-skip:hover { color: var(--gold); }
+.fr-h { max-width: 18ch; }
+.fr-stage > .eyebrow, .fr-stage > h1, .fr-stage > .lead, .fr-stage > .birth-form, .fr-stage > .form-err { position: relative; z-index: 2; }
+.fr-ask { text-align: left; align-items: flex-start; justify-content: flex-start; }
+.fr-ask .lead { max-width: var(--measure); }
+.fr-ask .birth-form { width: 100%; }
+
+/* ─── the sky ─────────────────────────────────────────────────────────────────────────── */
+.shard-sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.shard-sky-core { animation: shardCore 2.6s ease-in-out infinite; }
+.shard-sky-halo { opacity: 0.9; animation: shardHalo 2.6s ease-in-out infinite; }
+.shard-star { opacity: 0; transform: translate(0, 0); }
+.shard-sky-last { opacity: 0; transform-box: fill-box; transform-origin: center; }
+/* the burst: the core holds for a beat, then the shards scatter and settle */
+.is-burst .shard-sky-core { animation: shardCore 2.6s ease-in-out 1, shardGo 0.5s ease-in 2.6s forwards; }
+.is-burst .shard-sky-halo { animation: shardHalo 2.6s ease-in-out 1, shardGo 0.5s ease-in 2.6s forwards; }
+.is-burst .shard-star { animation: shardScatter var(--dur) cubic-bezier(0.18, 0.8, 0.3, 1) calc(2.8s + var(--delay)) forwards, shardTwinkle var(--twinkle) ease-in-out calc(4.6s + var(--delay)) infinite; }
+.is-burst .shard-sky-last { animation: shardLast 3.2s cubic-bezier(0.2, 0.7, 0.3, 1) 3.4s forwards; }
+/* the settled sky, at once */
+.is-settled .shard-sky-core, .is-settled .shard-sky-halo { opacity: 0; animation: none; }
+.is-settled .shard-star { opacity: 0.7; transform: translate(var(--dx), var(--dy)); animation: shardTwinkle var(--twinkle) ease-in-out var(--delay) infinite; }
+.is-settled .shard-sky-last { opacity: 0; animation: none; }
+@keyframes shardCore { 0%, 100% { r: 2.6; opacity: 1; } 50% { r: 3.6; opacity: 0.7; } }
+@keyframes shardHalo { 0%, 100% { opacity: 0.9; } 50% { opacity: 0.45; } }
+@keyframes shardGo { to { opacity: 0; } }
+@keyframes shardScatter { 0% { opacity: 1; transform: translate(0, 0); } 100% { opacity: 0.7; transform: translate(var(--dx), var(--dy)); } }
+@keyframes shardTwinkle { 0%, 100% { opacity: 0.7; } 50% { opacity: 0.25; } }
+@keyframes shardLast { 0% { opacity: 0; transform: scale(0.3); } 25% { opacity: 1; } 100% { opacity: 1; transform: scale(1.5); } }
+@media (prefers-reduced-motion: reduce) {
+  .shard-star, .is-burst .shard-star, .is-settled .shard-star { animation: none; opacity: 0.7; transform: translate(var(--dx), var(--dy)); }
+  .shard-sky-core, .shard-sky-halo, .shard-sky-last, .is-burst .shard-sky-core, .is-burst .shard-sky-halo, .is-burst .shard-sky-last { animation: none; opacity: 0; }
+}
+
+/* ─── the burst and the arrival: one thought per screen ──────────────────────────────── */
+.fr-lines, .fr-story { position: relative; z-index: 1; display: grid; gap: var(--s4); max-width: 30ch; }
+.fr-burst .fr-lines { padding-top: var(--s8); }
+.fr-line, .fr-beat {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: var(--size-h1);
+  line-height: var(--leading-title);
+  color: var(--parchment);
+  text-shadow: 0 2px 18px rgba(5, 3, 2, 0.9);
+  text-wrap: pretty;
+  opacity: 0;
+  animation: mzFadeUp 0.9s ease both;
+}
+.fr-story { max-width: 38ch; gap: var(--s4); }
+.fr-beat { font-size: var(--size-lead); font-family: var(--font-body); font-weight: 400; color: var(--ink); line-height: 1.6; }
+.fr-beat.is-strong { font-family: var(--font-title); font-weight: 600; font-size: var(--size-h1); line-height: 1.2; color: var(--parchment); }
+.fr-arrival .fr-foot .button { opacity: 0; animation: mzFadeUp 0.9s ease both; }
+.fr-burst .button.is-waiting { opacity: 0; pointer-events: none; }
+.fr-burst .button { transition: opacity 0.6s ease; }
+.fr-burst.is-quick .fr-line { animation-duration: 0.6s; }
+@keyframes mzFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .fr-line, .fr-beat, .fr-arrival .fr-foot .button { animation: none; opacity: 1; }
+  .fr-burst .button.is-waiting { opacity: 1; pointer-events: auto; }
+}
+
+/* ─── how this works: terminal-plain, real names ─────────────────────────────────────── */
+.fr-how-body { position: relative; z-index: 1; display: grid; gap: var(--s5); align-items: center; justify-items: center; }
+@media (min-width: 1024px) { .fr-how-body { grid-template-columns: minmax(0, 52ch) auto; gap: var(--s7); text-align: left; } }
+.fr-maps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s3); text-align: left; max-width: 52ch; }
+.fr-maps li { display: grid; grid-template-columns: 7.5ch 1fr; gap: var(--s3); align-items: baseline; color: var(--ink); font-size: var(--size-body); line-height: 1.5; }
+.fr-k { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: var(--size-caption); letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
+.fr-privacy { position: relative; z-index: 1; margin: var(--s2) 0 0; }
+.fr-privacy code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: var(--size-caption); letter-spacing: 0.06em; color: var(--muted); }
+
+/* ─── the compute ─────────────────────────────────────────────────────────────────────── */
+.fr-readout {
+  position: relative; z-index: 1;
+  margin: 0;
+  min-width: min(100%, 44ch);
+  max-width: 100%;
+  min-height: 12em;
+  text-align: left;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: var(--size-body);
+  line-height: 1.8;
+  color: var(--gold);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-shadow: 0 0 8px rgba(255, 176, 0, 0.25);
+}
+.fr-ro { display: block; animation: mzFadeUp 0.25s ease both; }
+.fr-ro.is-found { color: var(--amber); text-shadow: 0 0 14px var(--amber-glow); }
+@media (prefers-reduced-motion: reduce) { .fr-ro { animation: none; } }
+
+/* ─── the reveal ──────────────────────────────────────────────────────────────────────── */
+.fr-reveal { gap: var(--s3); }
+.fr-eyebrow {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: var(--s3);
+  margin: 0;
+  font-size: var(--size-eyebrow);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: mzFadeUp 0.8s ease both;
+}
+.fr-eyebrow .rule { width: 34px; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 176, 0, 0.6)); }
+.fr-eyebrow .rule:last-child { background: linear-gradient(90deg, rgba(255, 176, 0, 0.6), transparent); }
+.fr-reveal-ring { position: relative; z-index: 1; animation: mzFadeUp 1s ease 0.1s both; }
+.fr-name {
+  position: relative; z-index: 1;
+  margin: 0;
+  font-size: var(--size-h1);
+  line-height: 1.15;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(255, 176, 0, 0.3), 0 2px 16px rgba(5, 3, 2, 0.9);
+  animation: mzFadeUp 0.9s ease 0.15s both;
+  max-width: 16ch;
+}
+.fr-sub { position: relative; z-index: 1; margin: 0; color: var(--muted); font-size: var(--size-caption); letter-spacing: var(--track-label); animation: mzFadeUp 0.9s ease 0.25s both; }
+.fr-strange { position: relative; z-index: 1; margin: var(--s3) 0 0; font-family: var(--font-title); font-weight: 600; font-size: 22px; color: var(--parchment); animation: mzFadeUp 0.9s ease 0.8s both; }
+.fr-keep { position: relative; z-index: 1; text-align: center; margin-top: var(--s3); }
+.ring-mark-rising { fill: var(--gold); font-size: 11px; filter: drop-shadow(0 0 4px var(--gold)); }
+@media (prefers-reduced-motion: reduce) { .fr-eyebrow, .fr-reveal-ring, .fr-name, .fr-sub, .fr-strange, .shard-card-wrap { animation: none; } }
+
+/* the two cards */
+.shard-cards { position: relative; z-index: 1; display: flex; gap: var(--s7); align-items: flex-start; justify-content: center; flex-wrap: wrap; margin-top: var(--s3); }
+.shard-card-wrap { display: flex; flex-direction: column; align-items: center; gap: var(--s2); animation: mzFadeUp 0.9s ease both; }
+.shard-card-label { display: flex; align-items: center; gap: 6px; font-size: var(--size-eyebrow); letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.shard-card-label .g { font-size: 13px; color: var(--gold); }
+.shard-card {
+  position: relative;
+  display: block;
+  width: 118px; height: 160px;
+  border-radius: 9px;
+  border: 1px solid var(--gold);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65), 0 0 30px rgba(255, 176, 0, 0.24);
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.shard-card.tilt-sun { transform: rotate(-2.5deg); }
+.shard-card.tilt-moon { transform: rotate(2.5deg); }
+.shard-card:hover { transform: rotate(0) translateY(-2px); }
+.shard-card-inner { position: absolute; inset: 3px; border-radius: 7px; background: rgba(240, 216, 154, 0.05); border: 1px solid rgba(240, 216, 154, 0.14); }
+.shard-card-halo { position: absolute; left: 14px; right: 14px; top: 10px; bottom: 48px; background: radial-gradient(50% 60% at 50% 40%, rgba(255, 226, 160, 0.15), transparent 75%); }
+.shard-card-art { position: absolute; left: 0; right: 0; margin: 0 auto; top: 24px; width: 74px; height: 64px; opacity: 0.95; filter: drop-shadow(0 0 11px rgba(255, 226, 160, 0.38)); overflow: visible; }
+.shard-card-n { position: absolute; top: 8px; left: 11px; font-size: 13.5px; color: var(--gold); text-shadow: 0 0 4px rgba(4, 3, 2, 0.95); font-variant-numeric: tabular-nums; }
+.shard-card-k { position: absolute; bottom: 8px; right: 11px; font-size: 13.5px; color: var(--gold); text-shadow: 0 0 4px rgba(4, 3, 2, 0.95); }
+.shard-card-name { position: absolute; top: 98px; left: 0; right: 0; padding: 0 8px; font-family: var(--font-title); font-weight: 600; font-size: 14px; line-height: 1.15; color: var(--parchment); text-align: center; }
+.shard-card-read { margin: 0; max-width: 236px; font-size: var(--size-caption); line-height: 1.75; color: var(--ink); text-align: center; text-wrap: pretty; }
+
+/* ─── the document ────────────────────────────────────────────────────────────────────── */
+.shard-title { color: var(--gold); text-shadow: 0 0 40px rgba(255, 176, 0, 0.2); }
+.shard-lead { color: var(--muted); }
+.shard-top { display: grid; gap: var(--s5); align-items: start; margin-top: var(--s5); }
+@media (min-width: 1024px) { .shard-top { grid-template-columns: auto minmax(0, var(--measure)); gap: var(--s7); } }
+.shard-open p:first-child { font-size: var(--size-lead); }
+.shard-rare { padding: var(--s3) var(--s4); border: 1px solid var(--hair-2); border-left: 2px solid var(--amber); color: var(--ink); }
+.shard-rare-n { font-family: var(--font-title); font-weight: 600; font-size: 22px; color: var(--amber); margin-right: var(--s2); }
+.shard-doc { margin-top: var(--s6); }
+.shard-sec { padding: var(--s5) 0; border-top: 1px solid var(--hair); max-width: var(--measure); }
+.shard-h { margin: 0 0 var(--s3); }
+.shard-plain { margin: 0 0 var(--s4); font-size: var(--size-lead); color: var(--parchment); line-height: 1.55; text-wrap: pretty; }
+.shard-body p { color: var(--ink); }
+.shard-body em { font-style: italic; color: var(--parchment); }
+.shard-depth { margin-top: var(--s3); border: 1px solid var(--hair-2); border-radius: var(--radius-panel); }
+.shard-depth summary {
+  display: flex; align-items: center; gap: var(--s2);
+  min-height: var(--touch);
+  padding: 0 var(--s4);
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--size-caption);
+  letter-spacing: var(--track-label);
+  color: var(--gold);
+}
+.shard-depth summary::-webkit-details-marker { display: none; }
+.shard-depth summary::after { content: '▾'; margin-left: auto; color: var(--muted); transition: transform 0.2s ease; }
+.shard-depth[open] summary::after { transform: rotate(180deg); }
+.shard-depth summary:hover { color: var(--bright); }
+.shard-depth-body { padding: 0 var(--s4) var(--s4); border-top: 1px solid var(--hair); }
+.shard-depth-intro { margin: var(--s3) 0; color: var(--muted); font-size: var(--size-caption); }
+.shard-skies { margin: 0; display: grid; gap: var(--s3); }
+.shard-sky-row dt { color: var(--parchment); font-size: var(--size-body); }
+.shard-sky-row dt .fr-k { margin-right: var(--s2); }
+.shard-sky-row dd { margin: var(--s1) 0 0; color: var(--ink); font-size: var(--size-caption); line-height: 1.6; }
+.shard-depth-note { margin: var(--s3) 0 0; color: var(--muted); font-size: var(--size-caption); }
+.shard-close { border-top: 1px solid var(--hair-2); }
+.shard-close p { font-size: var(--size-lead); color: var(--parchment); }
+.shard-recognition { padding: var(--s8) 0; text-align: center; border-top: 1px solid var(--hair); }
+.shard-recognition p { margin: 0 auto var(--s3); max-width: 24ch; font-family: var(--font-title); font-weight: 600; font-size: var(--size-h1); line-height: 1.15; color: var(--parchment); text-wrap: pretty; }
+.shard-recognition p:nth-child(2) { color: var(--gold); }
+.shard-recognition p:nth-child(3) { font-size: var(--size-h2); color: var(--ink); font-family: var(--font-body); font-weight: 400; }
+.shard-invite { padding: var(--s5) 0 var(--s6); border-top: 1px solid var(--hair); }
+.link-b { background: none; border: 0; padding: 0; min-height: var(--touch); color: var(--gold); font: inherit; cursor: pointer; }
+.link-b:hover { color: var(--bright); }
+
+/* one field after the first night (MZ3): the email a visitor with no account can leave */
+.leave-email { margin-top: var(--s5); max-width: var(--measure); }
+.leave-email .note { margin-top: 0; }
+.leave-email-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--s3); margin-top: var(--s3); }
+.leave-email-form .field { flex: 1 1 220px; max-width: 420px; }
+.leave-email-form .button { min-height: var(--touch); }
+.leave-email .leave-email-err { margin-top: var(--s2); color: var(--gold); }
